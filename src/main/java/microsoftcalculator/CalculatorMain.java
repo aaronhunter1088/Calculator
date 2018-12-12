@@ -1,7 +1,9 @@
 package microsoftcalculator;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 // Information about this project is just below main method
 public class CalculatorMain 

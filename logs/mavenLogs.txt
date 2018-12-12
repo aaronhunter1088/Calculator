@@ -1,0 +1,38 @@
+999 [INFO] Scanning for projects...
+1079 [INFO] 
+1079 [INFO] --------------< MicrosoftCalculator:MicrosoftCalculator >---------------
+1079 [INFO] Building MicrosoftCalculator 1.0.0-SNAPSHOT
+1079 [INFO] --------------------------------[ jar ]---------------------------------
+1696 [INFO] 
+1696 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ MicrosoftCalculator ---
+1892 [WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+1897 [INFO] Copying 1 resource
+1902 [INFO] 
+1902 [INFO] --- maven-compiler-plugin:3.8.0:compile (default-compile) @ MicrosoftCalculator ---
+2158 [INFO] Nothing to compile - all classes are up to date
+2158 [INFO] 
+2159 [INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ MicrosoftCalculator ---
+2160 [WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2161 [INFO] skip non existing resourceDirectory /Users/michaelball/git/calculator/src/test/resources
+2161 [INFO] 
+2161 [INFO] --- maven-compiler-plugin:3.8.0:testCompile (default-testCompile) @ MicrosoftCalculator ---
+2170 [INFO] Nothing to compile - all classes are up to date
+2170 [INFO] 
+2170 [INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ MicrosoftCalculator ---
+2318 [INFO] Surefire report directory: /Users/michaelball/git/calculator/target/surefire-reports
+5576 [INFO] ------------------------------------------------------------------------
+5576 [INFO] BUILD FAILURE
+5576 [INFO] ------------------------------------------------------------------------
+5577 [INFO] Total time:  4.601 s
+5577 [INFO] Finished at: 2018-12-12T09:41:15-06:00
+5577 [INFO] ------------------------------------------------------------------------
+5580 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.12.4:test (default-test) on project MicrosoftCalculator: There are test failures.
+5580 [ERROR] 
+5580 [ERROR] Please refer to /Users/michaelball/git/calculator/target/surefire-reports for the individual test results.
+5580 [ERROR] -> [Help 1]
+5580 [ERROR] 
+5580 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+5580 [ERROR] Re-run Maven using the -X switch to enable full debug logging.
+5580 [ERROR] 
+5580 [ERROR] For more information about the errors and possible solutions, please read the following articles:
+5580 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -685,28 +685,30 @@ public final class Calculator extends JFrame {
                         System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored textarea confirmation
                         dotButtonPressed = false;
                         System.out.printf("dotButtonPressed: %s\n", dotButtonPressed);
-                    } else if (temp[position].startsWith("-")) {
+                    } else if (temp[position].endsWith("-.0")) {
                         textarea = temp[position];
                         System.out.printf("\ntextarea: %s\n", textarea);
                         textarea = textarea.substring(2, textarea.length());
-                        System.out.printf("\ntextarea: %s\n", textarea);
+                        //System.out.printf("\ntextarea: %s\n", textarea);
                         textarea = textarea + "." + e.getActionCommand();
-                        System.out.printf("\ntextarea: %s\n", textarea);
                         System.out.printf("\ntextarea: -%s\n", textarea);
-                        textArea.setText(textarea + "-");
-                        temp[position] = "-" + textarea;
-                    } else {
+                        textarea = "-" + textarea;
+                        //System.out.printf("\ntextarea: -%s\n", textarea);
+                        textArea.setText("\n" + textarea.replaceAll("-", "") + "-");
+                        temp[position] = textarea;
+                    } else if (temp[position].startsWith("-0.")){
                         textarea = textArea.getText().replaceAll("\\n", ""); // collect textarea
                         System.out.println("Old " + textarea);
-                        textarea = textarea.substring(1, textarea.length());
-                        System.out.println("New " + textarea + ".");
-                        textArea.setText("\n" + textarea + "." + e.getActionCommand()); // update textArea
+                        textarea = textarea.substring(0, textarea.length()-1);
+                        System.out.println("New " + textarea);
+                        textArea.setText("\n" + textarea + e.getActionCommand() + "-"); // update textArea
                         temp[position] = textArea.getText().replaceAll("\\n", ""); // update textarea with decimal
                         //String number = s + "." + event.getActionCommand(); // 504 + . + textarea
-                        dotButtonPressed = false;
+                        //dotButtonPressed = false;
                         //System.out.println("TextArea: " + textArea.getText());
                         System.out.println("button: " + e.getActionCommand()); // print out button confirmation
                         System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored textarea confirmation
+                        textarea = textArea.getText().replaceAll("\\n", "");
                     }
                 }   
             } 
@@ -741,7 +743,7 @@ public final class Calculator extends JFrame {
                 if (firstNumBool == false && negatePressed == false) {
                 	
                     //textArea.setText(textArea.getText() + e.getActionCommand());
-                    textArea.setText("\n " + e.getActionCommand() + textarea.replaceAll("\n", ""));
+                    textArea.setText("\n " + textarea.replaceAll("\n", "") + e.getActionCommand());
                     temp[position] = textArea.getText(); // store textarea
                     System.out.printf("textArea: %s\n", textArea.getText());
                     System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored textarea confirmation
@@ -762,7 +764,7 @@ public final class Calculator extends JFrame {
                     firstNumBool = true;
                 }
             }
-            textarea = textArea.getText();
+            //textarea = textArea.getText();
             confirm();    
         }
     }
@@ -835,6 +837,9 @@ public final class Calculator extends JFrame {
                 position++; // increase position for storing textarea
                 textarea = "";
             } 
+            buttonDot.setEnabled(true);
+            dotButtonPressed = false;
+            dotActive = false;
             confirm();
         }
     }
@@ -886,6 +891,10 @@ public final class Calculator extends JFrame {
                 position++; // increase position for storing textarea
                 textarea = "";
             } 
+            buttonDot.setEnabled(true);
+            dotButtonPressed = false;
+            dotActive = false;
+            confirm();
         }
     }
     
@@ -935,6 +944,10 @@ public final class Calculator extends JFrame {
                 position++; // increase position for storing textarea
                 textarea = "";
             } 
+            buttonDot.setEnabled(true);
+            dotButtonPressed = false;
+            dotActive = false;
+            confirm();
         }
     }
     
@@ -985,6 +998,10 @@ public final class Calculator extends JFrame {
                 position++; // increase position for storing textarea
                 textarea = "";
             } 
+            buttonDot.setEnabled(true);
+            dotButtonPressed = false;
+            dotActive = false;
+            confirm();
         }
     }
     
@@ -1110,7 +1127,7 @@ public final class Calculator extends JFrame {
                     System.out.println("textArea: "+textArea.getText());
                 }
                 
-            }
+            } // end textArea .= ""
             confirm();
         }
     }
@@ -1125,7 +1142,7 @@ public final class Calculator extends JFrame {
             System.out.println("\nNegateButtonHandler started");
             System.out.println("button: " + e.getActionCommand()); // print out button confirmation
             textarea = textArea.getText();
-            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+            //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if (!textArea.getText().equals("")) { 
             // if there is a number in the text area
                 if (isNegativeNumber(temp[position]) == true) { //temp[position].substring(0, 1).equals("-")
@@ -1499,6 +1516,8 @@ public final class Calculator extends JFrame {
             System.out.println("temp[4]: " + temp[4]);
             buttonMR.setEnabled(false);
             buttonMC.setEnabled(false);
+            memAddBool = false;
+            memSubBool = false;
         }
         
     }
@@ -1766,7 +1785,7 @@ public final class Calculator extends JFrame {
                 System.out.printf("%s\n", textarea);
                 textarea = textarea.substring(1, textarea.length());
                 System.out.printf("textarea: %s\n",textarea);
-                textArea.setText(textarea + "-"); // update textArea
+                textArea.setText("\n "+textarea.replaceAll("-", "") + "-"); // update textArea
                 //System.out.printf("temp[%d] %s\n",position, formatNumber(temp[position]));
             }
         } else {// if double == double, keep decimal and number afterwards
@@ -1938,6 +1957,7 @@ public final class Calculator extends JFrame {
         System.out.println("---------------- ");
         for(int i=0; i<5; i++)
             System.out.printf("temp[%d]: \'%s\'\n",i, temp[i]);
+        if (temp[0].contains(".")) dotActive = true;
         System.out.printf("textarea: \'%s\'\n"
                         + "textArea: \'%s\'\n"
                         + "addBool: %s\n"
@@ -1950,7 +1970,6 @@ public final class Calculator extends JFrame {
                         + "dotActive: %s\n",
                 textarea, textArea.getText(), addBool, subBool, mulBool, 
                 divBool, position, firstNumBool, dotButtonPressed, dotActive);
-        
         System.out.println("\n---------------- ");
     }
     

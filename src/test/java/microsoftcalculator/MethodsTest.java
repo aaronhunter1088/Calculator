@@ -5,10 +5,11 @@
  */
 package microsoftcalculator;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -19,11 +20,9 @@ public class MethodsTest {
     public MethodsTest() {
     }
     
-    @BeforeClass
     public static void setUpClass() {
     }
     
-    @AfterClass
     public static void tearDownClass() {
     }
 
@@ -70,7 +69,7 @@ public class MethodsTest {
     @Test
     public void testIsNegativeNumber() {
         System.out.println("isNegativeNumber test running");
-        String currentNumber = "-5";
+        String currentNumber = "0.52-";
         Methods instance = new Methods();
         boolean expResult = true;
         boolean result = instance.isNegativeNumber(currentNumber);
