@@ -108,7 +108,7 @@ public class CalculatorTest {
         Boolean mode = null;
         Calculator instance = new Calculator();
         Boolean expResult = null;
-        Boolean result = instance.getMode(mode);
+        Mode result = instance.getMode();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

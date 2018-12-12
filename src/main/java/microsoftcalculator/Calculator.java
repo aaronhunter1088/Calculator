@@ -579,7 +579,7 @@ public final class Calculator extends JFrame {
     }
     
     public Boolean getBinaryMode() {
-        return binaryMode;
+        return binaryMode.booleanValue();
     }
     
     /**

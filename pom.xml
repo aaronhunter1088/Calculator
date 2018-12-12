@@ -38,8 +38,12 @@
     <resources>
       <resource>
         <directory>src/main/java</directory>
+        
+        <includes>
+          <include>**/*.java</include>
+        </includes>
         <excludes>
-          <exclude>**/*.java</exclude>
+          <exclude>**/*Test.java</exclude>
         </excludes>
       </resource>
     </resources>
