@@ -1,20 +1,41 @@
 package microsoftcalculator;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 // Information about this project is just below main method
 public class CalculatorMain 
 {
-    public static void main(String[] args) 
+    public static void main(String[] args) throws IOException
     {
-        //Calculator calculator = new Calculator();
+    	Image image = null;
+    	ImageIcon iconImage = null;
+    	
+    	//System.out.println(new ImageIcon(Calculator.class.getResource("calculatorOriginal.jpg")).getImageLoadStatus());
+    	iconImage = new ImageIcon(Calculator.class.getResource("calculatorOriginal.jpg"));
+    	image = iconImage.getImage();
+    	//imageIcon = new ImageIcon(new File("calculatorOriginal.jpg").getPath()).getImage();
+    	
+    	if (image != null) {
+    		System.out.println("We have the image...");
+    	}
+    	
+    	//Calculator calculator = new Calculator();
         Calculator calculator = new Calculator(Mode.STANDARD);
         //BinaryCalculator binarycalculator = new BinaryCalculator();
-        ImageIcon image = new ImageIcon("F:\\Advanced Java\\GUIs\\calculator.jpg"); // sets image to location
-        calculator.setIconImage(image.getImage() ); // sets icon to specific image
+        
+        //calculator.setIconImage(iconImage.getImage()); // sets icon that is shown in taskbar to specific image. if not set, 
+        // the image that will appear is exactly the same as what I see when I run the GUI.
         calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         calculator.setMinimumSize(new Dimension(100,200)); //228, 325
         calculator.setResizable(false);
@@ -45,6 +66,17 @@ public class CalculatorMain
 //            // add more modes here!!
 //        }
         
+    }
+    
+    /** Returns an ImageIcon, or null if the path was invalid. */
+    protected static ImageIcon createImageIcon(String path, String description) {
+      java.net.URL imgURL = Calculator.class.getResource(path);
+      if (imgURL != null) {
+        return new ImageIcon(imgURL, description);
+      } else {
+        System.err.println("Couldn't find file: " + path);
+        return null;
+      }
     }
     
     private static void initLookAndFeel(String lookAndFeel) {

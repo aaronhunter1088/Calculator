@@ -7,11 +7,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
+import com.apple.eawt.Application;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,9 +37,9 @@ public final class Calculator extends JFrame {
     public GridBagConstraints constraints; // layout's constraints
     private static JLabel iconLabel;
     private static JLabel textLabel;
-    ImageIcon calculator = new ImageIcon("/Users/michaelball/OneDrive/Documents/NetBeansProjects/MicrosoftCalculator/calculatorOriginal - Copy.jpg"); 
-    ImageIcon calculator2 = new ImageIcon("/Users/michaelball/OneDrive/Documents/NetBeansProjects/MicrosoftCalculator/calculatorOriginal.jpg"); 
-    ImageIcon macLogo = new ImageIcon("/Users/michaelball/OneDrive/Documents/NetBeansProjects/MicrosoftCalculator/maclogo.png");
+    ImageIcon calculator = new ImageIcon(getClass().getResource("calculatorOriginal - Copy.jpg")); 
+    ImageIcon calculator2 = new ImageIcon(getClass().getResource("calculatorOriginal.jpg")); 
+    ImageIcon macLogo = new ImageIcon(getClass().getResource("maclogo.jpg"));
     private final Font font = new Font("Segeo UI", Font.BOLD, 14);
     final private JButton buttonP = new JButton("+");
     final private JButton buttonE = new JButton("=");
@@ -95,10 +98,15 @@ public final class Calculator extends JFrame {
         setInitialStartMode();
     }
     
-    public Calculator(Mode mode) {
+    @SuppressWarnings("restriction")
+	public Calculator(Mode mode) {
         super("Calculator");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
+        
+        // TODO: Update with a screenshot of the final version of the design of the BasicCalculator
+        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
+        Application.getApplication().setDockIconImage(calculator2.getImage());
         constraints = new GridBagConstraints(); // instanitate constraints
         this.mode = mode;
         setInitialStartMode();
@@ -230,12 +238,14 @@ public final class Calculator extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         String COPYRIGHT = "\u00a9";
-                        iconLabel = new JLabel(calculator);
+                        iconLabel = new JLabel();
+                        iconLabel.setIcon(calculator);
+                        //iconLabel.setText(" ");
                         JPanel iconPanel = new JPanel(new GridBagLayout() );
                         
                         iconPanel.add(iconLabel);
-                        textLabel = new JLabel("<html>Microsoft Windows "
-                            + "Version 2.0<br>"
+                        textLabel = new JLabel("<html>Apple MacBook Air "
+                            + "Version 3.0.1<br>"
                             + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
                             + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
                             + "pending or existing intellectual property right in the United States and other<br>"
@@ -266,10 +276,12 @@ public final class Calculator extends JFrame {
                     {
                         String COPYRIGHT = "\u00a9";
                         iconLabel = new JLabel(calculator2);
+                        //iconLabel.setIcon(calculator2);
+                        //iconLabel.setVisible(true);
                         JPanel iconPanel = new JPanel(new GridBagLayout() );
                         iconPanel.add(iconLabel);
-                        textLabel = new JLabel("<html>Microsoft Windows"
-                            + "Version 2.0 (Build 1)<br>"
+                        textLabel = new JLabel("<html>Apple MacBook Air"
+                            + "Version 3.0.1 (Build 1)<br>"
                             + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
                             + "Mac OS mojave and its user interface are<br>"
                             + "protected by trademark and all other pending or existing intellectual property<br>"

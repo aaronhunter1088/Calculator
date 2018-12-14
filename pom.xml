@@ -11,20 +11,26 @@
 	    <artifactId>junit-jupiter-api</artifactId>
 	    <version>5.3.2</version>
 	    <scope>test</scope>
+	    <exclusions>
+	    	<exclusion>
+	    		<groupId>org.apiguardian</groupId>
+	    		<artifactId>apiguardian-api</artifactId>
+	    	</exclusion>
+	    </exclusions>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-	<dependency>
-	    <groupId>org.junit.jupiter</groupId>
-	    <artifactId>junit-jupiter-engine</artifactId>
-	    <version>5.3.2</version>
-	    <scope>test</scope>
-	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
 	<dependency>
 	    <groupId>org.junit.jupiter</groupId>
 	    <artifactId>junit-jupiter-params</artifactId>
 	    <version>5.3.2</version>
 	    <scope>test</scope>
+	    <exclusions>
+	    	<exclusion>
+	    		<groupId>org.apiguardian</groupId>
+	    		<artifactId>apiguardian-api</artifactId>
+	    	</exclusion>
+	    </exclusions>
 	</dependency>
 	<dependency>
 	    <groupId>org.apache.maven.plugins</groupId>
@@ -32,20 +38,25 @@
 	    <version>3.0.0-M2</version>
 	    <type>maven-plugin</type>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
+	<dependency>
+	    <groupId>com.apple</groupId>
+	    <artifactId>AppleJavaExtensions</artifactId>
+	    <version>1.4</version>
+	</dependency>
 	
   </dependencies>
   <build>
     <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        
-        <includes>
-          <include>**/*.java</include>
-        </includes>
-        <excludes>
-          <exclude>**/*Test.java</exclude>
-        </excludes>
-      </resource>
+	  <resource>
+	    <directory>/Users/michaelball/git/calculator/src/main/java</directory>
+	      <includes>
+	        <include>**/*.*</include>
+	      </includes>
+	      <excludes>
+	        <exclude>**/*Test.java</exclude>
+	      </excludes>
+	  </resource>
     </resources>
     <plugins>
       <plugin>
@@ -56,6 +67,22 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+    	<groupId>org.apache.maven.plugins</groupId>
+    	<artifactId>maven-jar-plugin</artifactId>
+    	<version>3.1.0</version>
+    	<configuration>
+        <archive>
+            <manifest>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>libs/</classpathPrefix>
+                <mainClass>
+                    microsoftcalculator.CalculatorMain
+                </mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+</plugin>
     </plugins>
   </build>
 </project>
