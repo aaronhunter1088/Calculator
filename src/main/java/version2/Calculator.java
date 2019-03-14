@@ -1,4 +1,4 @@
- package microsoftcalculator;
+ package version2;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
 import com.apple.eawt.Application;
+
+import microsoftcalculator.Mode;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -143,7 +146,7 @@ public final class Calculator extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     binaryMode = setMode(true);
-                    setBinaryMode();
+                    //setBinaryMode();
                 }
             });
         // Edit Menu and Actions
@@ -554,20 +557,20 @@ public final class Calculator extends JFrame {
     // above this comment is all for the buttons
     } // end method setInitalStartMode()
     
-    public BinaryCalculator setBinaryMode() {
-    	
-    	return new BinaryCalculator();
-//        button2.setEnabled(false);
-//        button3.setEnabled(false);
-//        button4.setEnabled(false);
-//        button5.setEnabled(false);
-//        button6.setEnabled(false);
-//        button7.setEnabled(false);
-//        button8.setEnabled(false);
-//        button9.setEnabled(false);
-//        buttonDot.setEnabled(false);
-        
-    } // end method setButtonBinaryMode
+//    public BinaryCalculator setBinaryMode() {
+//    	
+//    	return new BinaryCalculator();
+////        button2.setEnabled(false);
+////        button3.setEnabled(false);
+////        button4.setEnabled(false);
+////        button5.setEnabled(false);
+////        button6.setEnabled(false);
+////        button7.setEnabled(false);
+////        button8.setEnabled(false);
+////        button9.setEnabled(false);
+////        buttonDot.setEnabled(false);
+//        
+//    } // end method setButtonBinaryMode
     
     protected Boolean setMode(Boolean mode) {
         standardMode = false;
