@@ -39,7 +39,9 @@ import javax.swing.border.TitledBorder;
 
 // Page 945 in textbook
 public final class BinaryCalculator extends JFrame {
-    private final JTextArea textArea = new JTextArea();
+
+    private static final long serialVersionUID = 1L;
+	private final JTextArea textArea = new JTextArea();
     private final ButtonGroup btnGroupOne = new ButtonGroup();
     private final ButtonGroup btnGroupTwo = new ButtonGroup();
     final private JRadioButton buttonHex = new JRadioButton("Hex");
@@ -374,36 +376,36 @@ public final class BinaryCalculator extends JFrame {
         final EqualsButtonHandler equalsButtonHandler = new EqualsButtonHandler();
         final ClearButtonHandler clearButtonHandler = new ClearButtonHandler();
         final ClearEntryButtonHandler CEButtonHandler = new ClearEntryButtonHandler();
-        final NegateButtonHandler negButtonHandler = new NegateButtonHandler();
+        //final NegateButtonHandler negButtonHandler = new NegateButtonHandler();
         final DeleteButtonHandler delButtonHandler = new DeleteButtonHandler();
         //final SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
-        final PercentButtonHandler perButtonHandler = new PercentButtonHandler();
-        final DotButtonHandler dotButtonHandler = new DotButtonHandler();
-        final FracButtonHandler fracButtonHandler = new FracButtonHandler();
-        final MemoryClearButtonHandler memoryClearButtonHandler = new MemoryClearButtonHandler();
-        final MemoryRecallButtonHandler memoryRecallButtonHandler = new MemoryRecallButtonHandler();
-        final MemoryStoreButtonHandler memoryStoreButtonHandler = new MemoryStoreButtonHandler();
-        final MemoryAddButtonHandler memoryAddButtonHandler = new MemoryAddButtonHandler();
-        final MemorySubButtonHandler memorySubButtonHandler = new MemorySubButtonHandler();
+        //final PercentButtonHandler perButtonHandler = new PercentButtonHandler();
+        //final DotButtonHandler dotButtonHandler = new DotButtonHandler();
+        //final FracButtonHandler fracButtonHandler = new FracButtonHandler();
+        //final MemoryClearButtonHandler memoryClearButtonHandler = new MemoryClearButtonHandler();
+        //final MemoryRecallButtonHandler memoryRecallButtonHandler = new MemoryRecallButtonHandler();
+        //final MemoryStoreButtonHandler memoryStoreButtonHandler = new MemoryStoreButtonHandler();
+        //final MemoryAddButtonHandler memoryAddButtonHandler = new MemoryAddButtonHandler();
+        //final MemorySubButtonHandler memorySubButtonHandler = new MemorySubButtonHandler();
         //final String delete = "\u2190";
-        final String negate = "\u00B1";
-        final String SQRT = "\u221A";
-        final HexadecimalRadioButtonHandler hexButtonHandler = new HexadecimalRadioButtonHandler();
-        final LeftParenthesesButtonHandler lparButtonHandler = new LeftParenthesesButtonHandler();
-        final RightParenthesesButtonHandler rparButtonHandler = new RightParenthesesButtonHandler();
-        final DecimalRadioButtonHandler decButtonHandler = new DecimalRadioButtonHandler();
-        final OctalRadioButtonHandler octButtonHandler = new OctalRadioButtonHandler();
-        final BinaryRadioButtonHandler binButtonHandler = new BinaryRadioButtonHandler();
-        final DoNothingButtonHandler buttonButtonHandler = new DoNothingButtonHandler();
-        final ModButtonHandler modButtonHandler = new ModButtonHandler();
-        final RoLButtonHandler rolButtonHandler = new RoLButtonHandler();
-        final RoRButtonHandler rorButtonHandler = new RoRButtonHandler();
-        final OrButtonHandler orButtonHandler = new OrButtonHandler();
-        final ExclusiveOrButtonHandler xorButtonHandler = new ExclusiveOrButtonHandler();
-        final LeftShiftButtonHandler lshButtonHandler = new LeftShiftButtonHandler();
-        final RightShiftButtonHandler rshButtonHandler = new RightShiftButtonHandler();
-        final NotButtonHandler notButtonHandler = new NotButtonHandler();
-        final AndButtonHandler andButtonHandler = new AndButtonHandler();
+        //final String negate = "\u00B1";
+        //final String SQRT = "\u221A";
+        //final HexadecimalRadioButtonHandler hexButtonHandler = new HexadecimalRadioButtonHandler();
+        //final LeftParenthesesButtonHandler lparButtonHandler = new LeftParenthesesButtonHandler();
+        //final RightParenthesesButtonHandler rparButtonHandler = new RightParenthesesButtonHandler();
+        //final DecimalRadioButtonHandler decButtonHandler = new DecimalRadioButtonHandler();
+        //final OctalRadioButtonHandler octButtonHandler = new OctalRadioButtonHandler();
+        //final BinaryRadioButtonHandler binButtonHandler = new BinaryRadioButtonHandler();
+        //final DoNothingButtonHandler buttonButtonHandler = new DoNothingButtonHandler();
+        //final ModButtonHandler modButtonHandler = new ModButtonHandler();
+        //final RoLButtonHandler rolButtonHandler = new RoLButtonHandler();
+        //final RoRButtonHandler rorButtonHandler = new RoRButtonHandler();
+        //final OrButtonHandler orButtonHandler = new OrButtonHandler();
+        //final ExclusiveOrButtonHandler xorButtonHandler = new ExclusiveOrButtonHandler();
+        //final LeftShiftButtonHandler lshButtonHandler = new LeftShiftButtonHandler();
+        //final RightShiftButtonHandler rshButtonHandler = new RightShiftButtonHandler();
+        //final NotButtonHandler notButtonHandler = new NotButtonHandler();
+        //final AndButtonHandler andButtonHandler = new AndButtonHandler();
         final ButtonBinHandler buttonBinHandler = new ButtonBinHandler();
         final ButtonOctHandler buttonOctHandler = new ButtonOctHandler();
         final ButtonDecHandler buttonDecHandler = new ButtonDecHandler();
@@ -1241,7 +1243,7 @@ public final class BinaryCalculator extends JFrame {
             //CharSequence cs = ".";
             //double num1D =0.0, num2D=0.0;
             //int num1=0, num2=0;
-            double result = 0.0;
+            //double result = 0.0;
             
             
             if (addBool == true) {

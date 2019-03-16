@@ -1,10 +1,6 @@
 package version3;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.io.IOException;
-import java.net.URL;
-
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 public class CalculatorMain {
 	public static void main(String[] args) throws IOException {
@@ -17,6 +13,7 @@ public class CalculatorMain {
         calculator.setMenuBar();
         //calculator.setButtonStandardMode();
         calculator.pack();
+        initLookAndFeel("Metal");
         //calculator.setFinishedText();
         calculator.setVisible(true);
     }

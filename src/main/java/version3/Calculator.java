@@ -7,14 +7,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
-import com.apple.eawt.Application;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,15 +26,20 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import com.apple.eawt.Application;
+
 // Page 945 in textbook
+@SuppressWarnings("restriction")
 public final class Calculator extends JFrame {
     
-    private final JTextArea textArea = new JTextArea();
+    private static final long serialVersionUID = 1L;
+	private final JTextArea textArea = new JTextArea();
     private final GridBagLayout standardLayout; // layout of the calculator
     public GridBagConstraints constraints; // layout's constraints
     private JLabel iconLabel;
     private JLabel textLabel;
-    private ImageIcon calculator, calculator2, macLogo;
+    @SuppressWarnings("unused")
+	private ImageIcon calculator, calculator2, macLogo;
     private final Font font = new Font("Segeo UI", Font.BOLD, 14);
     final private JButton buttonP = new JButton("+");
     final private JButton buttonE = new JButton("=");
@@ -87,8 +89,7 @@ public final class Calculator extends JFrame {
     Boolean standardMode = true; // default mode
     Boolean binaryMode = false;
     
-    @SuppressWarnings("restriction")
-	public Calculator() {
+    public Calculator() {
         super("Calculator");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
@@ -101,8 +102,7 @@ public final class Calculator extends JFrame {
         setInitialStartMode();
     }
     
-    @SuppressWarnings("restriction")
-	public Calculator(CalcType calcType) {
+    public Calculator(CalcType calcType) {
         super("Calculator");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
@@ -1036,7 +1036,7 @@ public final class Calculator extends JFrame {
             //CharSequence cs = ".";
             //double num1D =0.0, num2D=0.0;
             //int num1=0, num2=0;
-            double result = 0.0;
+            //double result = 0.0;
             
             
             if (addBool == true) {
@@ -1124,7 +1124,7 @@ public final class Calculator extends JFrame {
             if (!textArea.getText().equals("")) {
                 if (Double.parseDouble(temp[position]) > 0.0) {
                     temp[position] = Double.toString(Math.sqrt(Double.parseDouble(temp[position]))); //4.0
-                    int intRep = (int)Math.sqrt(Double.parseDouble(temp[position])); // 4
+                    //int intRep = (int)Math.sqrt(Double.parseDouble(temp[position])); // 4
                     if (temp[position].contains(".")) { // if int == double, cut off decimal and zero
                         textArea.setText("\n" + temp[position]);
                         textarea = textArea.getText().replaceAll("\n", "");
