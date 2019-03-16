@@ -2,13 +2,16 @@ package microsoftcalculator;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -16,19 +19,31 @@ import javax.swing.JFrame;
 // Information about this project is just below main method
 public class CalculatorMain 
 {
-    public static void main(String[] args) throws IOException
+    static String calculatorOriginalPath = "/calculatorOriginal.jpg";
+    static {
+    	System.out.println(calculatorOriginalPath);
+    }
+	public static void main(String[] args) throws IOException
     {
     	Image image = null;
     	ImageIcon iconImage = null;
-    	
-    	//System.out.println(new ImageIcon(Calculator.class.getResource("calculatorOriginal.jpg")).getImageLoadStatus());
-    	iconImage = new ImageIcon(Calculator.class.getResource("calculatorOriginal.jpg"));
+    	//System.out.println(new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)).getImageLoadStatus());
+    	try { iconImage = new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)); }
+    	catch (NullPointerException e) {
+    		System.out.println("message:" + e.getMessage());
+    		System.out.println("cause: " + e.getCause());
+    		StackTraceElement elem[] = e.getStackTrace();
+    		for (int i=0; i<elem.length; i++) { System.out.println("at" + (i+1) + " " + elem[i]); }
+    		System.out.print("Stack Trace: ");
+    		e.printStackTrace(System.out);
+    		System.out.println("End stack trace");
+    	}
     	image = iconImage.getImage();
     	//imageIcon = new ImageIcon(new File("calculatorOriginal.jpg").getPath()).getImage();
     	
     	if (image != null) {
     		System.out.println("We have the image...");
-    	}
+    	} else System.out.println("The image was NOT loaded.");
     	
     	//Calculator calculator = new Calculator();
         Calculator calculator = new Calculator(Mode.STANDARD);

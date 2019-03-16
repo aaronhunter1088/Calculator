@@ -18,7 +18,7 @@ public class BinaryTest {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Calculator calculator = new Calculator();
+        //Calculator calculator = new Calculator();
         BinaryCalculator binarycalculator = new BinaryCalculator();
         binarycalculator.setSize(600, 405);
         binarycalculator.setLocation(600,300);

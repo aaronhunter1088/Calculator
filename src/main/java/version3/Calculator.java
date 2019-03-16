@@ -1,4 +1,4 @@
- package microsoftcalculator;
+ package version3;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -85,7 +85,7 @@ public final class Calculator extends JFrame {
     Boolean decimal = false;
     Boolean dotActive = false;
     
-    Mode mode = Mode.STANDARD;
+    private CalcType calcType;
     Boolean standardMode = true; // default mode
     Boolean binaryMode = false;
     
@@ -99,7 +99,7 @@ public final class Calculator extends JFrame {
     }
     
     @SuppressWarnings("restriction")
-	public Calculator(Mode mode) {
+	public Calculator(CalcType calcType) {
         super("Calculator");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
@@ -108,7 +108,7 @@ public final class Calculator extends JFrame {
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(calculator2.getImage());
         constraints = new GridBagConstraints(); // instanitate constraints
-        this.mode = mode;
+        this.calcType = calcType;
         setInitialStartMode();
     }
     
@@ -132,7 +132,7 @@ public final class Calculator extends JFrame {
             standard.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    standardMode = setMode(true);
+                    setCalcType(CalcType.STANDARD);
                     setStandardMode();
                     // needs more here
                 }
@@ -142,8 +142,8 @@ public final class Calculator extends JFrame {
             binary.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    binaryMode = setMode(true);
-                    setBinaryMode();
+                    setCalcType(CalcType.BINARY);
+                    //setBinaryMode();
                 }
             });
         // Edit Menu and Actions
@@ -239,7 +239,7 @@ public final class Calculator extends JFrame {
                     public void actionPerformed(ActionEvent event) {
                         String COPYRIGHT = "\u00a9";
                         iconLabel = new JLabel();
-                        iconLabel.setIcon(calculator);
+                        //iconLabel.setIcon(calculator);
                         //iconLabel.setText(" ");
                         JPanel iconPanel = new JPanel(new GridBagLayout() );
                         
@@ -252,7 +252,7 @@ public final class Calculator extends JFrame {
                             + "countries/regions."
                             + "<br><br><br>"
                             + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+                            + "Michael Ball</html>", SwingConstants.LEFT);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
                         
@@ -275,7 +275,7 @@ public final class Calculator extends JFrame {
                     public void actionPerformed(ActionEvent event)
                     {
                         String COPYRIGHT = "\u00a9";
-                        iconLabel = new JLabel(calculator2);
+                        //iconLabel = new JLabel(calculator2);
                         //iconLabel.setIcon(calculator2);
                         //iconLabel.setVisible(true);
                         JPanel iconPanel = new JPanel(new GridBagLayout() );
@@ -288,7 +288,7 @@ public final class Calculator extends JFrame {
                             + "right in the United States and other countries/regions."
                             + "<br><br><br>"
                             + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+                            + "Michael Ball</html>", SwingConstants.LEFT);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
                         
@@ -554,9 +554,9 @@ public final class Calculator extends JFrame {
     // above this comment is all for the buttons
     } // end method setInitalStartMode()
     
-    public BinaryCalculator setBinaryMode() {
+    public void setBinaryMode() {
     	
-    	return new BinaryCalculator();
+    	//return new BinaryCalculator();
 //        button2.setEnabled(false);
 //        button3.setEnabled(false);
 //        button4.setEnabled(false);
@@ -569,11 +569,16 @@ public final class Calculator extends JFrame {
         
     } // end method setButtonBinaryMode
     
-    protected Boolean setMode(Boolean mode) {
+    /**
+     * NOT IMPLEMENTED. FIX!
+     * @param calcType
+     * @return
+     */
+    protected CalcType setCalcType(CalcType calcType) {
         standardMode = false;
         binaryMode = false;
 //        this.mode = ?
-        return mode;
+        return calcType;
     }
     
     /**
@@ -586,8 +591,8 @@ public final class Calculator extends JFrame {
         return mode;
     }
     
-    public Mode getMode() {
-    	return this.mode;
+    public CalcType getCalcType() {
+    	return this.calcType;
     }
     
     public Boolean getBinaryMode() {

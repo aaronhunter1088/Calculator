@@ -1,17 +1,17 @@
 package version3;
 
 public enum CalcType {
-	Base("Base"), Standard("Standard"), Basic("Basic Calcualtor"), 
-	Scientific("Scientific Calculator"), Programmer("Programmer Calculator"), 
-	Date("Date Calculator");
+	BASE("Base"), STANDARD("Standard"), BINARY("Binary Calcualtor"), 
+	SCIENTIFIC("Scientific Calculator"), PROGRAMMER("Programmer Calculator"), 
+	DATE("Date Calculator");
 	// TODO: Add converter types
-	
-	protected String name;
-	
+	private String name;
 	CalcType(String name) {
+		setName(name);
+	}
+	private void setName(String name) {
 		this.name = name;
 	}
-	
 	protected String getName() {
 		return this.name;
 	}
