@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 public class CalculatorMain {
 	public static void main(String[] args) throws IOException {
+		//Calculator calculator = new Calculator();
     	Calculator calculator = new Calculator(CalcType.STANDARD);
         calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         calculator.setMinimumSize(new Dimension(100,200)); //228, 325
@@ -18,16 +19,6 @@ public class CalculatorMain {
         calculator.pack();
         //calculator.setFinishedText();
         calculator.setVisible(true);
-    }
-    /** Returns an ImageIcon, or null if the path was invalid. */
-    protected static ImageIcon createImageIcon(String path, String description) {
-      java.net.URL imgURL = Calculator.class.getResource(path);
-      if (imgURL != null) {
-        return new ImageIcon(imgURL, description);
-      } else {
-        System.err.println("Couldn't find file: " + path);
-        return null;
-      }
     }
     
     private static void initLookAndFeel(String lookAndFeel) {

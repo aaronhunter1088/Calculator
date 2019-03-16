@@ -35,11 +35,9 @@ public final class Calculator extends JFrame {
     private final JTextArea textArea = new JTextArea();
     private final GridBagLayout standardLayout; // layout of the calculator
     public GridBagConstraints constraints; // layout's constraints
-    private static JLabel iconLabel;
-    private static JLabel textLabel;
-    ImageIcon calculator = new ImageIcon(getClass().getResource("/calculatorOriginal - Copy.jpg")); 
-    ImageIcon calculator2 = new ImageIcon(getClass().getResource("/calculatorOriginal.jpg")); 
-    ImageIcon macLogo = new ImageIcon(getClass().getResource("/maclogo.png"));
+    private JLabel iconLabel;
+    private JLabel textLabel;
+    private ImageIcon calculator, calculator2, macLogo;
     private final Font font = new Font("Segeo UI", Font.BOLD, 14);
     final private JButton buttonP = new JButton("+");
     final private JButton buttonE = new JButton("=");
@@ -89,12 +87,17 @@ public final class Calculator extends JFrame {
     Boolean standardMode = true; // default mode
     Boolean binaryMode = false;
     
-    // set up GUI
-    public Calculator() {
+    @SuppressWarnings("restriction")
+	public Calculator() {
         super("Calculator");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
+        
         constraints = new GridBagConstraints(); // instanitate constraints
+        setImageIcons();
+        // TODO: Update with a screenshot of the final version of the design of the BasicCalculator
+        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
+        Application.getApplication().setDockIconImage(calculator2.getImage());
         setInitialStartMode();
     }
     
@@ -103,12 +106,12 @@ public final class Calculator extends JFrame {
         super("Calculator");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
-        
+        constraints = new GridBagConstraints(); // instanitate constraints
+        this.calcType = calcType;
+        setImageIcons();
         // TODO: Update with a screenshot of the final version of the design of the BasicCalculator
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(calculator2.getImage());
-        constraints = new GridBagConstraints(); // instanitate constraints
-        this.calcType = calcType;
         setInitialStartMode();
     }
     
@@ -252,7 +255,7 @@ public final class Calculator extends JFrame {
                             + "countries/regions."
                             + "<br><br><br>"
                             + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", SwingConstants.LEFT);
+                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
                         
@@ -288,7 +291,7 @@ public final class Calculator extends JFrame {
                             + "right in the United States and other countries/regions."
                             + "<br><br><br>"
                             + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", SwingConstants.LEFT);
+                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
                         
@@ -1224,8 +1227,7 @@ public final class Calculator extends JFrame {
         return answer;
     }
     
-    public class DeleteButtonHandler implements ActionListener
-    {
+    public class DeleteButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e)
         {
@@ -1413,8 +1415,7 @@ public final class Calculator extends JFrame {
     
     // PercentButtonHandler operates on this button:
     // final private JButton buttonPer = new JButton("%");
-    public class PercentButtonHandler implements ActionListener 
-    {
+    public class PercentButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e)
         {
@@ -1503,8 +1504,7 @@ public final class Calculator extends JFrame {
     
     // FracButtonHandler operates on this button:
     // final private JButton buttonF = new JButton("1/x");
-    public class FracButtonHandler implements ActionListener // not working
-    {
+    public class FracButtonHandler implements ActionListener { 
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("\nFracStoreButtonHandler started");
@@ -1746,8 +1746,7 @@ public final class Calculator extends JFrame {
     }
     
     // method to set constraints on
-    public void addComponent(Component c, int row, int column, int width, int height)
-    {
+    public void addComponent(Component c, int row, int column, int width, int height) {
         constraints.gridx = column;
         constraints.gridy = row;
         constraints.gridwidth = width;
@@ -1998,6 +1997,33 @@ public final class Calculator extends JFrame {
         textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         textArea.setText("Break my calculator");
     }
-    //
+    
+    /** Calls createImageIcon(String path, String description 
+     * @throws Exception */
+    public ImageIcon createImageIcon(String path) throws Exception {
+    	return createImageIcon(path, "No description given.");
+    }
+    /** Returns an ImageIcon, or null if the path was invalid. 
+     * @throws Exception */
+    protected ImageIcon createImageIcon(String path, String description) throws Exception {
+        java.net.URL imgURL = Calculator.class.getResource(path);
+        if (imgURL != null) {
+    	    System.out.println("the path '" + path + "' created an image!");
+            return new ImageIcon(imgURL, description);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            throw new Exception("Couldn't create an image from the path given: " + path);
+        }
+    }
+    /** Sets the image icons */
+    public void setImageIcons() {
+    	try {
+        	calculator = createImageIcon("../../images/calculatorOriginal - Copy.jpg");
+        	calculator2 = createImageIcon("../../images/calculatorOriginal.jpg");
+        	macLogo = createImageIcon("../../images/maclogo.png");
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        }
+    }
     
 } //end class Calculator
