@@ -2,23 +2,21 @@ package version3;
 import java.awt.Dimension;
 import java.io.IOException;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 public class CalculatorMain {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+		BinaryCalculator calculator = new BinaryCalculator();
 		//Calculator calculator = new Calculator();
-    	Calculator calculator = new Calculator(CalcType.STANDARD);
-        calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        calculator.setMinimumSize(new Dimension(100,200)); //228, 325
-        calculator.setResizable(false);
-        calculator.setLocation(1000, 250);
-        calculator.setMenuBar();
-        //calculator.setButtonStandardMode();
+    	//Calculator calculator = new Calculator(CalcType.STANDARD);
+		initLookAndFeel("Metal");
+        setBinaryCalculatorUp(calculator);
+        SwingUtilities.updateComponentTreeUI(calculator);
         calculator.pack();
-        initLookAndFeel("Metal");
-        //calculator.setFinishedText();
-        calculator.setVisible(true);
     }
     
-    private static void initLookAndFeel(String lookAndFeel) {
+    private static void initLookAndFeel(String lookAndFeel) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
         String thislookAndFeel = lookAndFeel;
         if (thislookAndFeel.equals("Metal")) {
         	thislookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
@@ -28,14 +26,42 @@ public class CalculatorMain {
                 
         } else if (thislookAndFeel.equals("System")) {
         	thislookAndFeel = "javax.swing.plaf.system.SystemLookAndFeel";
+        } else if (thislookAndFeel.equals("Windows")) {
+        	// Not supported on Mac
+        	thislookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
         } else if (thislookAndFeel.equals("Motif")) {
         	thislookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
         } else if (thislookAndFeel.equals("GTK")) { 
+        	// Not supported on Mac
         	thislookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
         } else {
-            System.err.println("Unexpected value of LOOKANDFEEL specified: '" + thislookAndFeel + "'");
-            thislookAndFeel = null;
+            System.out.println("Unexpected value of LOOKANDFEEL specified: '" + thislookAndFeel + "'. Defaulting to Metal.");
+            thislookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
         }
+        UIManager.setLookAndFeel(thislookAndFeel);
+    }
+
+    @SuppressWarnings("unused")
+	private static void setCalculatorUp(Calculator calculator) {
+    	calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        calculator.setMinimumSize(new Dimension(100,200)); //228, 325
+        calculator.setResizable(false);
+        calculator.setLocation(1000, 250);
+        calculator.setMenuBar();
+        calculator.pack();
+        calculator.setVisible(true);
+    }
+    
+    @SuppressWarnings("unused")
+	private static void setBinaryCalculatorUp(BinaryCalculator binarycalculator) {
+    	binarycalculator.setSize(600, 405);
+        binarycalculator.setLocation(600,300);
+        binarycalculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        binarycalculator.setResizable(false);
+        binarycalculator.setMenuBar();
+        binarycalculator.setButton();
+        binarycalculator.pack();
+        binarycalculator.setVisible(true);
     }
 }
 /*

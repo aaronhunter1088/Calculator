@@ -37,6 +37,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import com.apple.eawt.Application;
+
 // Page 945 in textbook
 public final class BinaryCalculator extends JFrame {
 
@@ -60,9 +62,8 @@ public final class BinaryCalculator extends JFrame {
     private final JPanel buttonGroup1ButtonPanel = new JPanel(); // contains the first button group
     private final JPanel buttonGroup2ButtonPanel = new JPanel(); // contains the second button group
     private final JPanel allOtherButtonsPanel = new JPanel(otherButtonLayout); // contains all other buttons
-    ImageIcon calculator = new ImageIcon("C:\\Users\\aaron\\Documents\\NetBeansProjects\\MicrosoftCalculator\\calculatorOriginal - Copy.jpg"); 
-    ImageIcon calculator2 = new ImageIcon("C:\\Users\\aaron\\Documents\\NetBeansProjects\\MicrosoftCalculator\\calculator2.jpg"); 
-    ImageIcon windowsLogo = new ImageIcon("C:\\Users\\aaron\\Documents\\NetBeansProjects\\MicrosoftCalculator\\windows10.jpg");
+    @SuppressWarnings("unused")
+	private ImageIcon calculator, calculator2, macLogo;
     private final Font font = new Font("Segeo UI", Font.BOLD, 14);
     
 // buttons listed as displayed as such:
@@ -140,7 +141,8 @@ public final class BinaryCalculator extends JFrame {
     
     
     // set up GUI
-    public BinaryCalculator()
+    @SuppressWarnings("restriction")
+	public BinaryCalculator()
     {
         super("Binary Calculator");
         setLayout(standardLayout); // set frame layout
@@ -167,6 +169,10 @@ public final class BinaryCalculator extends JFrame {
         buttonPercent.setEnabled(false);
         buttonFraction.setEnabled(false);
         buttonNegate.setEnabled(false);
+        setImageIcons();
+        // TODO: Update with a screenshot of the final version of the design of the BasicCalculator
+        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
+        Application.getApplication().setDockIconImage(calculator2.getImage());
     }
     
     public void setMenuBar() 
@@ -312,7 +318,7 @@ public final class BinaryCalculator extends JFrame {
                             + "right in the United States and other countries/regions."
                             + "<br><br><br>"
                             + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", windowsLogo, SwingConstants.LEFT);
+                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
                         
@@ -346,7 +352,7 @@ public final class BinaryCalculator extends JFrame {
                             + "right in the United States and other countries/regions."
                             + "<br><br><br>"
                             + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", windowsLogo, SwingConstants.LEFT);
+                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
                         
@@ -2504,6 +2510,34 @@ public final class BinaryCalculator extends JFrame {
             buttonDecMode = true;
         else if (buttonHex.isSelected())
             buttonHexMode = true;
+    }
+    
+    /** Calls createImageIcon(String path, String description 
+     * @throws Exception */
+    public ImageIcon createImageIcon(String path) throws Exception {
+    	return createImageIcon(path, "No description given.");
+    }
+    /** Returns an ImageIcon, or null if the path was invalid. 
+     * @throws Exception */
+    protected ImageIcon createImageIcon(String path, String description) throws Exception {
+        java.net.URL imgURL = Calculator.class.getResource(path);
+        if (imgURL != null) {
+    	    System.out.println("the path '" + path + "' created an image!");
+            return new ImageIcon(imgURL, description);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            throw new Exception("Couldn't create an image from the path given: " + path);
+        }
+    }
+    /** Sets the image icons */
+    public void setImageIcons() {
+    	try {
+        	calculator = createImageIcon("../../images/calculatorOriginal - Copy.jpg");
+        	calculator2 = createImageIcon("../../images/calculatorOriginal.jpg");
+        	macLogo = createImageIcon("../../images/maclogo.png");
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        }
     }
     
 } //end class Calculator
