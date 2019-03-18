@@ -15,9 +15,11 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,12 +39,16 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.apple.eawt.Application;
 
 // Page 945 in textbook
 public final class BinaryCalculator extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = LogManager.getLogger(BinaryCalculator.class);
 	private final JTextArea textArea = new JTextArea();
     private final ButtonGroup btnGroupOne = new ButtonGroup();
     private final ButtonGroup btnGroupTwo = new ButtonGroup();
@@ -2519,25 +2525,30 @@ public final class BinaryCalculator extends JFrame {
     }
     /** Returns an ImageIcon, or null if the path was invalid. 
      * @throws Exception */
-    protected ImageIcon createImageIcon(String path, String description) throws Exception {
-        java.net.URL imgURL = Calculator.class.getResource(path);
-        if (imgURL != null) {
-    	    System.out.println("the path '" + path + "' created an image!");
-            return new ImageIcon(imgURL, description);
+    @SuppressWarnings("unused")
+	protected ImageIcon createImageIcon(String path, String description) throws Exception {
+        LOGGER.info("Inside createImageIcon()");
+        File sourceimage = new File(path);
+        if (sourceimage != null) {
+    	    LOGGER.info("the path '" + path + "' created an image! the imageicon is being returned...");
+    	    LOGGER.info("End createImageIcon()");
+    	    return new ImageIcon(ImageIO.read(sourceimage), description);
+    	    //return new ImageIcon(imgURL, description);
         } else {
-            System.err.println("Couldn't find file: " + path);
-            throw new Exception("Couldn't create an image from the path given: " + path);
+        	throw new Exception("The path '" + path + "' could not find an image there!");
         }
     }
     /** Sets the image icons */
     public void setImageIcons() {
+    	LOGGER.info("Inside setImageIcons()");
     	try {
-        	calculator = createImageIcon("../../../../images/calculatorOriginalCopy.jpg");
-        	calculator2 = createImageIcon("../../../../images/calculatorOriginal.jpg");
-        	macLogo = createImageIcon("../../../../images/maclogo.png");
+        	calculator = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
+        	calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
+        	macLogo = createImageIcon("src/main/resources/images/maclogo.png");
         } catch (Exception e) {
-        	System.out.println(e.getMessage());
+        	LOGGER.error(e.getMessage());
         }
+    	LOGGER.info("End setImageIcons()");
     }
     
 } //end class Calculator

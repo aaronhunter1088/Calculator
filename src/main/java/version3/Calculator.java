@@ -1,4 +1,4 @@
- package version3;
+package version3;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -10,8 +10,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.DecimalFormat;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -2011,17 +2013,17 @@ public final class Calculator extends JFrame {
     }
     /** Returns an ImageIcon, or null if the path was invalid. 
      * @throws Exception */
-    protected ImageIcon createImageIcon(String path, String description) throws Exception {
+    @SuppressWarnings("unused")
+	protected ImageIcon createImageIcon(String path, String description) throws Exception {
         LOGGER.info("Inside createImageIcon()");
-        LOGGER.info("Calculator.class.getResource("+path+"): " + getClass().getResource(path));
-        
-    	java.net.URL imgURL = Calculator.class.getResource(path);
-        if (imgURL != null) {
+        File sourceimage = new File(path);
+        //java.net.URL imgURL = getClass().getResource(path);
+        if (sourceimage != null) {
     	    LOGGER.info("the path '" + path + "' created an image! the imageicon is being returned...");
     	    LOGGER.info("End createImageIcon()");
-    	    return new ImageIcon(imgURL, description);
-        } 
-        else {
+    	    return new ImageIcon(ImageIO.read(sourceimage), description);
+    	    //return new ImageIcon(imgURL, description);
+        } else {
         	throw new Exception("The path '" + path + "' could not find an image there!");
         }
     }
@@ -2029,9 +2031,9 @@ public final class Calculator extends JFrame {
     public void setImageIcons() {
     	LOGGER.info("Inside setImageIcons()");
     	try {
-        	calculator = createImageIcon("../../../../calculatorOriginalCopy.jpg");
-        	calculator2 = createImageIcon("/Users/michaeball/git/calculator/images/calculatorOriginal.jpg");
-        	macLogo = createImageIcon("Users/michaeball/git/calculator/images/maclogo.png");
+        	calculator = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
+        	calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
+        	macLogo = createImageIcon("src/main/resources/images/maclogo.png");
         } catch (Exception e) {
         	LOGGER.error(e.getMessage());
         }
