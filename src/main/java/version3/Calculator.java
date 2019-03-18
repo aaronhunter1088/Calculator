@@ -797,8 +797,7 @@ public final class Calculator extends JFrame {
         }
     }
     
-    public class AddButtonHandler implements ActionListener
-    {
+    public class AddButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("AddButtonHandler started");
@@ -807,31 +806,27 @@ public final class Calculator extends JFrame {
                 textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
-                textarea = textArea.getText();
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("temp["+position+"] is "+temp[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            	// subBool can be true because it can be a negative number
-            	LOGGER.info("already chose an operator. choose another number.");
-            } else if (addBool == true) {
+            } else if (addBool == true && !temp[1].equals("")) {
             	LOGGER.info("Performing previous addition calculation");
                 addition();
                 addBool = resetOperator(addBool); // sets addBool to false
                 addBool = true;
-            } else if (subBool == true) {
+            } else if (subBool == true && !temp[1].equals("")) {
             	LOGGER.info("We understand the logic");
                 subtract();
                 subBool = resetOperator(subBool);
                 addBool = true;
-            } else if (mulBool == true) {
+            } else if (mulBool == true && !temp[1].equals("")) {
                 multiply();
                 mulBool = resetOperator(mulBool);
                 addBool = true;
-            } else if (divBool == true) {
+            } else if (divBool == true && !temp[1].equals("")) {
                 divide();
                 divBool = resetOperator(divBool);
                 addBool = true;
@@ -841,7 +836,10 @@ public final class Calculator extends JFrame {
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-            }
+            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+            	// subBool can be true because it can be a negative number
+            	LOGGER.info("already chose an operator. choose another number.");
+            } 
             textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
@@ -850,42 +848,34 @@ public final class Calculator extends JFrame {
         }
     }
     
-    public class SubtractButtonHandler implements ActionListener
-    {
+    public class SubtractButtonHandler implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            System.out.println("\nSubtractButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+        public void actionPerformed(ActionEvent e) {
+            LOGGER.info("SubtractButtonHandler class started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                //textArea.setText(e.getActionCommand() + " " + textArea.getText() ); // "userInput -" 
-                textArea.setText("\n " + e.getActionCommand() + textarea.replaceAll("\n", ""));
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]: %s after subButton pushed",position,temp[position]); // confirming proper textarea before moving on
+            	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textarea = textArea.getText().replaceAll("\\n", "");
+                textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp["+position+"] is "+temp[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-                textarea = "";
-            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            	// subBool can be true because it can be a negative number
-            	System.out.println("already chose an operator. next number is negative...");
-            	// set negative flag to true
-            	negatePressed = true;
-        	} else if (addBool == true) {
+            } else if (addBool == true && !temp[1].equals("")) {
                 addition();
                 addBool = resetOperator(addBool);
                 subBool = true;
-            } else if (subBool == true) {
+            } else if (subBool == true && !temp[1].equals("")) {
                 subtract();
                 subBool = resetOperator(subBool);
                 subBool = true;
-            } else if (mulBool == true) {
+            } else if (mulBool == true && !temp[1].equals("")) {
                 multiply();
                 mulBool = resetOperator(mulBool);
                 subBool = true;
-            } else if (divBool == true) {
+            } else if (divBool == true && !temp[1].equals("")) {
                 divide();
                 divBool = resetOperator(divBool);
                 subBool = true;
@@ -895,8 +885,11 @@ public final class Calculator extends JFrame {
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-                textarea = "";
-            } 
+            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+            	LOGGER.info("already chose an operator. next number is negative...");
+            	negatePressed = true;
+        	}
+            textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotActive = false;
@@ -911,32 +904,28 @@ public final class Calculator extends JFrame {
         	LOGGER.info("MultiplyButtonHandler class started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textArea.setText("\n " + e.getActionCommand() + textarea.replaceAll("\n", ""));
+            	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textarea = textArea.getText().replaceAll("\\n", "");
+                textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp["+position+"] is "+temp[position]+" after mulButton pushed"); // confirming proper textarea before moving on
+                LOGGER.info("temp["+position+"] is "+temp[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-                textarea = "";
-            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            	// subBool can be true because it can be a negative number
-            	LOGGER.info("already chose an operator. choose another number.");
-            	
-        	} else if (addBool == true) {
+            } else if (addBool == true && !temp[1].equals("")) {
                 addition();
                 addBool = resetOperator(addBool);
                 mulBool = true;
-            } else if (subBool == true) {
+            } else if (subBool == true && !temp[1].equals("")) {
                 subtract();
                 subBool = resetOperator(subBool);
                 mulBool = true;
-            } else if (mulBool == true) {
+            } else if (mulBool == true && !temp[1].equals("")) {
                 multiply();
                 mulBool = resetOperator(mulBool);
                 mulBool = true;
-            } else if (divBool == true) {
+            } else if (divBool == true && !temp[1].equals("")) {
                 divide();
                 divBool = resetOperator(divBool);
                 mulBool = true;
@@ -946,8 +935,11 @@ public final class Calculator extends JFrame {
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-                textarea = "";
-            } 
+            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+            	LOGGER.info("already chose an operator. choose another number.");
+            	
+        	}
+            textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotActive = false;
@@ -955,42 +947,34 @@ public final class Calculator extends JFrame {
         }
     }
     
-    public class DivideButtonHandler implements ActionListener
-    {
+    public class DivideButtonHandler implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            System.out.println("\nDivideButtonHandler started");
-                System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+        public void actionPerformed(ActionEvent e) {
+        	LOGGER.info("DivideButtonHandler class started");
+        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
-                
-                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                //textArea.setText(e.getActionCommand() + " " + textArea.getText() ); // "userInput /" 
-                textArea.setText("\n " + e.getActionCommand() + textarea.replaceAll("\n", ""));
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]: %s after divButton pushed",position,temp[position]); // confirming proper textarea before moving on
+            	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textarea = textArea.getText().replaceAll("\\n", "");
+                textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp["+position+"] is "+temp[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 divBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-                textarea = "";
-            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            	// subBool can be true because it can be a negative number
-            	System.out.println("already chose an operator. choose another number.");
-            	
-        	} else if (addBool == true) {
+            } else if (addBool == true && !temp[1].equals("")) {
                 addition();
                 addBool = resetOperator(addBool); // sets addBool to false
                 divBool = true;
-            } else if (subBool == true) {
+            } else if (subBool == true && !temp[1].equals("")) {
                 subtract();
                 subBool = resetOperator(subBool);
                 divBool = true;
-            } else if (mulBool == true) {
+            } else if (mulBool == true && !temp[1].equals("")) {
                 multiply();
                 mulBool = resetOperator(mulBool);
                 divBool = true;
-            } else if (divBool == true) {
+            } else if (divBool == true && !temp[1].equals("") & !temp[1].equals("0")) {
                 divide();
                 divBool = resetOperator(divBool);
                 divBool = true;
@@ -1000,8 +984,10 @@ public final class Calculator extends JFrame {
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 position++; // increase position for storing textarea
-                textarea = "";
-            } 
+            } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+            	LOGGER.info("already chose an operator. choose another number.");
+            }
+            textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotActive = false;
