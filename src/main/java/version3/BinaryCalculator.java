@@ -245,7 +245,7 @@ public final class BinaryCalculator extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     temp[3] = textArea.getText(); // to copy
-                    System.out.println("\ntemp[3]: " + temp[3]);
+                    LOGGER.info("\ntemp[3]: " + temp[3]);
                 }
             });
             
@@ -258,12 +258,12 @@ public final class BinaryCalculator extends JFrame {
                 public void actionPerformed(ActionEvent event)
                 {
                     if (temp[3].equals(""))
-                        System.out.println("Temp[3] is null");
+                        LOGGER.info("Temp[3] is null");
                     else
-                        System.out.println("\ntemp[3]: " + temp[3]);
+                        LOGGER.info("\ntemp[3]: " + temp[3]);
                     textArea.setText(temp[3]); // to paste
                     temp[position] = textArea.getText();
-                    System.out.println("textArea: " + textArea.getText());
+                    LOGGER.info("textArea: " + textArea.getText());
                 }
             }
         );
@@ -836,7 +836,7 @@ public final class BinaryCalculator extends JFrame {
      * @return 
      */
     public Boolean getStandardMode() {
-        System.out.printf("StandardMode is in %s mode\n", standardMode);
+        LOGGER.info("StandardMode is in %s mode\n", standardMode);
         return standardMode;
     }
     
@@ -856,8 +856,8 @@ public final class BinaryCalculator extends JFrame {
      * @return updated currentNumber
      */
     private String clearZeroesAtEnd(String currentNumber) {
-        System.out.println("starting clearZeroesAtEnd()");
-        System.out.println("currentNumber: " + currentNumber);
+        LOGGER.info("starting clearZeroesAtEnd()");
+        LOGGER.info("currentNumber: " + currentNumber);
         input = currentNumber; // copy of currentNumber
         boolean justZeroes = true;
         int index = 0;
@@ -868,7 +868,7 @@ public final class BinaryCalculator extends JFrame {
         check: 
         for(int i = index + 1; i < input.length(); i++) {
             // from decimal point to the end of the number
-            //System.out.println("i: " + i);
+            //LOGGER.info("i: " + i);
             // eliminate decimal first
             if (!input.substring(i, i+1).equals("0")) {
                 // if the string value at position x is not a 0
@@ -881,7 +881,7 @@ public final class BinaryCalculator extends JFrame {
             input = input.substring(0,index);
         }
         
-        System.out.println("output of clearZeroesAtEnd(): " + input);
+        LOGGER.info("output of clearZeroesAtEnd(): " + input);
         return input;
     }
     
@@ -891,8 +891,8 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {   
-            System.out.println("\nButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("ButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if (firstNumBool == true) {
                 if (memAddBool == true || memSubBool == true) { // || position == 0: essentially resetting value
@@ -915,75 +915,75 @@ public final class BinaryCalculator extends JFrame {
                     position = 0;
                 }
                 if (dotButtonPressed == false && !textArea.getText().endsWith("-")) {        
-                    System.out.println("firstNumBool = true \ndotButtonPressed = false");
-                    System.out.print(textArea.getText());
+                    LOGGER.info("firstNumBool = true | dotButtonPressed = false");
+                    LOGGER.info("textArea text: '" + textArea.getText() + "'");
                     textArea.setText(textArea.getText() + e.getActionCommand()); // update textArea
                     temp[position] = textArea.getText(); // store input
-                    System.out.printf("\ntextArea: %s\n", textArea.getText());
-                    System.out.printf("temp[%d]: %s\n",position, temp[position]);
+                    LOGGER.info("textArea: " + textArea.getText());
+                    LOGGER.info("temp["+position+"]: " + temp[position]);
                     //s = s.substring(0,s.length());
                 } else if (dotButtonPressed == false) { // logic for negative numbers
-                    System.out.println("firstNumBool = true \n dotButtonPressed = false : negative number");
+                	LOGGER.info("firstNumBool = true | dotButtonPressed = false : negative number");
                     input = temp[position];
-                    System.out.printf("\ninput: %s\n", input);
+                    LOGGER.info("input: " + input);
                     input = input + e.getActionCommand(); // update textArea
-                    System.out.printf("\ninput: %s", input);
+                    LOGGER.info("input: " + input);
                     temp[position] = input; // store input
                     textArea.setText(convertToPositive(input) + e.getActionCommand() + "-");
-                    System.out.printf("\ntextArea: %s\n", textArea.getText());
-                    System.out.printf("temp[%d]: %s\n",position, temp[position]);
+                    LOGGER.info("textArea: " + textArea.getText());
+                    LOGGER.info("temp["+position+"]: " + temp[position]);
                 }
                 else { // dotPressed = true
-                    System.out.println("firstNumBool = true : dotButtonPressed = true");
+                	LOGGER.info("firstNumBool = true | dotButtonPressed = true");
                     if (input.equals(".0")) {
                         textArea.setText("0.");
                         textArea.setText(textArea.getText() + e.getActionCommand()); // update textArea
                         temp[position] =  textArea.getText(); // store input
-                        System.out.printf("\ttextArea: %s\n", textArea.getText());
-                        System.out.printf("temp[%d]: %s\n",position, temp[position]);
+                        LOGGER.info("textArea: " + textArea.getText());
+                        LOGGER.info("temp["+position+"]: " + temp[position]);
                         //s = s.substring(0,s.length());
-                        System.out.println("\nbutton: " + e.getActionCommand()); // print out button confirmation
+                        LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
                         //temp[0] = s;
                         input = "";
-                        System.out.printf("dotButtonPressed: %s\n", dotButtonPressed);
-                        System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored input confirmation
+                        LOGGER.info("dotButtonPressed: " + dotButtonPressed);
+                        LOGGER.info("temp["+position+"]: " + temp[position]); // print out stored input confirmation
                         dotButtonPressed = false;
-                        System.out.printf("dotButtonPressed: %s\n", dotButtonPressed);
+                        LOGGER.info("dotButtonPressed: " + dotButtonPressed);
                     } else if (temp[position].startsWith("-")) {
                         input = temp[position];
-                        System.out.printf("\ninput: %s\n", input);
+                        LOGGER.info("input: " + input);
                         input = input.substring(2, input.length());
-                        System.out.printf("\ninput: %s\n", input);
+                        LOGGER.info("input: " + input);
                         input = input + "." + e.getActionCommand();
-                        System.out.printf("\ninput: %s\n", input);
-                        System.out.printf("\ninput: -%s\n", input);
+                        LOGGER.info("input: " + input);
+                        LOGGER.info("input: -" + input);
                         textArea.setText(input + "-");
                         temp[position] = "-" + input;
                     } else {
                         temp[position] = textArea.getText(); // collect input
-                        System.out.println("Old " + temp[position]);
+                        LOGGER.info("Old " + temp[position]);
                         temp[position] = temp[position].substring(1, temp[position].length());
-                        System.out.println("New " + temp[position] + ".");
+                        LOGGER.info("New " + temp[position] + ".");
                         textArea.setText(temp[position] + "." + e.getActionCommand()); // update textArea
                         temp[position] = textArea.getText(); // update input with decimal
                         //String number = s + "." + event.getActionCommand(); // 504 + . + input
                         dotButtonPressed = false;
-                        //System.out.println("TextArea: " + textArea.getText());
-                        System.out.println("button: " + e.getActionCommand()); // print out button confirmation
-                        System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored input confirmation
+                        //LOGGER.info("TextArea: " + textArea.getText());
+                        LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+                        LOGGER.info("temp["+position+"]: " + temp[position]); // print out stored input confirmation
                     }
                 }   
             } 
             else { // do for second number
                 if (firstNumBool == false && dotButtonPressed == false) {
                     textArea.setText("");
-                    System.out.println("\nResetting textArea\n");
+                    LOGGER.info("Resetting textArea");
                     if (firstNumBool == false)
                         firstNumBool = true;
                     else
                         dotButtonPressed = true;
                 } 
-                //System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+                //LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
                 if (input.equals(".0"))  {
                     textArea.setText("0.");
                     input = "";
@@ -1004,13 +1004,13 @@ public final class BinaryCalculator extends JFrame {
                 if (firstNumBool == false) {
                     textArea.setText(textArea.getText() + e.getActionCommand());
                     temp[position] = textArea.getText(); // store input
-                    System.out.printf("textArea: %s\n", textArea.getText());
-                    System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored input confirmation
+                    LOGGER.info("textArea: " + textArea.getText());
+                    LOGGER.info("temp["+position+"]: " + temp[position]); // print out stored input confirmation
                 } else {
                     textArea.setText(textArea.getText() + e.getActionCommand());
                     temp[position] = textArea.getText(); // store input
-                    System.out.printf("textArea: %s\n", textArea.getText());
-                    System.out.printf("temp[%d]: %s\n",position, temp[position]); // print out stored input confirmation
+                    LOGGER.info("textArea: " + textArea.getText());
+                    LOGGER.info("temp["+position+"]: " + temp[position]); // print out stored input confirmation
                     firstNumBool = true;
                 }
             }
@@ -1042,7 +1042,8 @@ public final class BinaryCalculator extends JFrame {
                 
             }
             textArea.setLineWrap(true);
-            confirm();    
+            confirm(); 
+            LOGGER.info("End ButtonHandler()");
         }
     }
     
@@ -1050,8 +1051,8 @@ public final class BinaryCalculator extends JFrame {
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nAddButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+        	LOGGER.info("\nAddButtonHandler started");
+        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
 //            if (negatePressed == true) {
 //                temp[0] = Integer.parseInt( textArea.getText().replace("-", ""));
 //                negatePressed = false;
@@ -1066,13 +1067,13 @@ public final class BinaryCalculator extends JFrame {
                     //temp[0] = temp[0];
             
                 textArea.setText(e.getActionCommand() + " " +  textArea.getText()); // "userInput +" // temp[position]
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]: %s after addButton pushed\n",position,temp[position]); // confirming proper input before moving on
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp[%d]: %s after addButton pushed\n",position,temp[position]); // confirming proper input before moving on
                 //}
                 //else { // if number is double
                     //temp[0] = Double.parseDouble(textArea.getText());
                     //textArea.setText(event.getActionCommand() + " " + temp[0] ); // "userInput.input +"
-                    //System.out.printf("temp[0] "+temp[0]);
+                    //LOGGER.info("temp[0] "+temp[0]);
                 //}
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -1081,12 +1082,12 @@ public final class BinaryCalculator extends JFrame {
                 input = "";
                 //secondNumBool = true;
             } else if (addBool == true) {
-                System.out.println("Performing previous addition calculation");
+                LOGGER.info("Performing previous addition calculation");
                 addition();
                 addBool = resetOperator(addBool); // sets addBool to false
                 addBool = true;
             } else if (subBool == true) {
-                System.out.println("We understand the logic");
+                LOGGER.info("We understand the logic");
                 subtract();
                 subBool = resetOperator(subBool);
                 addBool = true;
@@ -1116,13 +1117,13 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nSubtractButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nSubtractButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid input") && !textArea.getText().equals("Cannot divide by 0")) {
                 textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textArea.setText(e.getActionCommand() + " " + textArea.getText() ); // "userInput -" 
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]: %s after subButton pushed",position,temp[position]); // confirming proper input before moving on
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp[%d]: %s after subButton pushed",position,temp[position]); // confirming proper input before moving on
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -1160,13 +1161,13 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nMultiplyButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nMultiplyButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid input") && !textArea.getText().equals("Cannot divide by 0")) {
                 textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textArea.setText(e.getActionCommand() + " " + textArea.getText() ); // "userInput *" 
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]: %s after mulButton pushed",position,temp[position]); // confirming proper input before moving on
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp[%d]: %s after mulButton pushed",position,temp[position]); // confirming proper input before moving on
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -1204,14 +1205,14 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nDivideButtonHandler started");
-                System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nDivideButtonHandler started");
+                LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid input") && !textArea.getText().equals("Cannot divide by 0")) {
                 
                 textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textArea.setText(e.getActionCommand() + " " + textArea.getText() ); // "userInput /" 
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]: %s after divButton pushed",position,temp[position]); // confirming proper input before moving on
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp[%d]: %s after divButton pushed",position,temp[position]); // confirming proper input before moving on
                 divBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -1249,8 +1250,8 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nEqualsButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nEqualsButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             //position++;
             //CharSequence cs = ".";
             //double num1D =0.0, num2D=0.0;
@@ -1295,8 +1296,8 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nClearButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nClearButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             clear();
             confirm();
@@ -1307,8 +1308,8 @@ public final class BinaryCalculator extends JFrame {
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nClearEntryButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nClearEntryButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             input = textArea.getText();
             textArea.setText("");
             if (temp[1].equals("")) {
@@ -1332,8 +1333,8 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nSquare Root ButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nSquare Root ButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (!textArea.getText().equals("")) {
                 if (Double.parseDouble(temp[position]) > 0.0) {
                     temp[position] = Double.toString(Math.sqrt(Double.parseDouble(textArea.getText()))); //4.0
@@ -1346,18 +1347,18 @@ public final class BinaryCalculator extends JFrame {
                         textArea.setText(temp[position]);
                         if (Integer.parseInt(temp[position]) < 0 ) {
                             input = textArea.getText(); // temp[2]
-                            System.out.printf("%s", input);
+                            LOGGER.info("%s", input);
                             input = input.substring(1, input.length());
-                            System.out.printf("input: %s",input);
+                            LOGGER.info("input: %s",input);
                             textArea.setText(input + "-"); // update textArea
-                            System.out.printf("temp[%d] %s\n",position, temp[position]);
+                            LOGGER.info("temp[%d] %s\n",position, temp[position]);
                         }
                     }
                 textArea.setText(temp[position] );
                 } else { // number is negative
                     clear();
                     textArea.setText("Invalid input");
-                    System.out.println("textArea: "+textArea.getText());
+                    LOGGER.info("textArea: "+textArea.getText());
                 }
                 
             }
@@ -1372,15 +1373,15 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nNegateButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nNegateButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             input = textArea.getText();
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if (!textArea.getText().equals("")) { 
             // if there is a number in the text area
                 if (isNegativeNumber(temp[position]) == true) { //temp[position].substring(0, 1).equals("-")
                 // if there is already a negative sign
-                    System.out.println("Reversing number back to positive");
+                    LOGGER.info("Reversing number back to positive");
                     temp[position] = textArea.getText(); // input
                     textArea.setText(temp[position] = convertToPositive(temp[position]));
                 } else  {
@@ -1395,27 +1396,27 @@ public final class BinaryCalculator extends JFrame {
     }
     
     public String convertToNegative(String number) {
-        System.out.print("\nconvertToNegative() running");
+        LOGGER.info("\nconvertToNegative() running");
         //temp[position] = textArea.getText(); // input
-        System.out.println("\nOld: " + number);
+        LOGGER.info("\nOld: " + number);
         //temp[position] = temp[position].substring(1, temp[position].length());
-        System.out.println("New: "  + "-" + number);
+        LOGGER.info("New: "  + "-" + number);
         //textArea.setText(number + "-"); // update textArea
         input = "-" + number;
          
-        System.out.printf("Converted Number: %s\n", input); // confirm();
-        //System.out.printf("temp[%d]: %s\n",position,temp[position]);  
+        LOGGER.info("Converted Number: %s\n", input); // confirm();
+        //LOGGER.info("temp[%d]: %s\n",position,temp[position]);  
         return input;
     }
     
     public String convertToPositive(String number) {
-        System.out.println("\nconvertToPositive() running");
-        System.out.printf("Number to convert: %s\n", number);
+        LOGGER.info("\nconvertToPositive() running");
+        LOGGER.info("Number to convert: %s\n", number);
         if (number.endsWith("-")) {
-            System.out.printf("Converted Number: %s\n", number.substring(0, number.length()-1) );
+            LOGGER.info("Converted Number: %s\n", number.substring(0, number.length()-1) );
             number = number.substring(0, number.length()-1);
         } else {
-            System.out.printf("Converted Number: %s\n", number.substring(1, number.length()) );
+            LOGGER.info("Converted Number: %s\n", number.substring(1, number.length()) );
             number = number.substring(1, number.length());
         }
         
@@ -1426,12 +1427,12 @@ public final class BinaryCalculator extends JFrame {
     
     // tested: passed
     public boolean isDecimal(String number) {
-        System.out.println("isDecimal() running");
+        LOGGER.info("isDecimal() running");
         boolean answer = false;
         //int intRep = (int)Double.parseDouble(result);
         for(int i = 0; i < number.length(); i++) {
             if (number.substring(i).startsWith(".")) {
-                System.out.println("We have a decimal number");
+                LOGGER.info("We have a decimal number");
                 answer = true;
             }
         }
@@ -1443,15 +1444,15 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nDeleteButtonHandler started");
-            System.out.println("button: " + e.getActionCommand() + "\n"); // print out button confirmation
+            LOGGER.info("\nDeleteButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand() + "\n"); // print out button confirmation
             input = temp[position];
-            System.out.printf("temp[%d]: %s\n",position, temp[position]);
-            System.out.printf("input: %s\n",input);
+            LOGGER.info("temp[%d]: %s\n",position, temp[position]);
+            LOGGER.info("input: %s\n",input);
             boolean isNegative = isNegativeNumber(input);
             dotActive = isDecimal(input);
-            System.out.printf("isNegativeNumber() result: %s\n", isNegative);
-            System.out.printf("isDecimal() result: %s\n", dotActive);
+            LOGGER.info("isNegativeNumber() result: %s\n", isNegative);
+            LOGGER.info("isDecimal() result: %s\n", dotActive);
             
             if (addBool == false && subBool == false && mulBool == false && divBool == false) {
                 if (isNegative == false) {
@@ -1466,7 +1467,7 @@ public final class BinaryCalculator extends JFrame {
                         } 
                                 // dotActive == true and length == 3
                                 //input = input.substring(0, 1);
-                        System.out.printf("output: %s\n",input);
+                        LOGGER.info("output: %s\n",input);
                         textArea.setText(input);
                         temp[position] = input;
                         confirm();
@@ -1482,7 +1483,7 @@ public final class BinaryCalculator extends JFrame {
                         } else if (input.length() > 3) { // ex: 3.25 or 0.50
                             input = input.substring(0, input.length() - 1); // inclusive
                         }
-                        System.out.printf("output: %s\n",input);
+                        LOGGER.info("output: %s\n",input);
                         if (input.endsWith(".")) {
                             input = input.substring(0,0);
                         } else if (input.startsWith(".")) {
@@ -1506,7 +1507,7 @@ public final class BinaryCalculator extends JFrame {
                             textArea.setText(input + "-");
                             temp[position] = "-" + input;
                         }
-                        System.out.printf("\noutput: %s\n",input);
+                        LOGGER.info("\noutput: %s\n",input);
                         confirm();
                     }
                     // if no operator has been pushed; number is negative; number is decimal
@@ -1524,7 +1525,7 @@ public final class BinaryCalculator extends JFrame {
                             textArea.setText(input + "-");
                             temp[position] = "-" + input;
                         }
-                        System.out.printf("\noutput: %s\n",input);
+                        LOGGER.info("\noutput: %s\n",input);
                         confirm();
                     }
                 }
@@ -1540,7 +1541,7 @@ public final class BinaryCalculator extends JFrame {
                         } else if (input.length() >= 2) { // ex: 56
                             input = input.substring(0, input.length()-1);
                         } 
-                        System.out.printf("output: %s\n",input);
+                        LOGGER.info("output: %s\n",input);
                         textArea.setText(input);
                         temp[position] = input;
                         confirm();
@@ -1557,7 +1558,7 @@ public final class BinaryCalculator extends JFrame {
                             input = input.substring(0, input.length() -1);
                             input = clearZeroesAtEnd(input);
                         }
-                        System.out.printf("output: %s\n",input);
+                        LOGGER.info("output: %s\n",input);
                         textArea.setText(input);
                         temp[position] = input;
                         confirm();
@@ -1575,7 +1576,7 @@ public final class BinaryCalculator extends JFrame {
                             textArea.setText(input + "-");
                             temp[position] = "-" + input;
                         }
-                        System.out.printf("\ninput: %s\n",input);
+                        LOGGER.info("\ninput: %s\n",input);
                         confirm();
                     }
                     // if an operator has been pushed; number is negative; number is decimal
@@ -1591,7 +1592,7 @@ public final class BinaryCalculator extends JFrame {
                             input = convertToPositive(input); // 3.25 or 0.00
                             input = input.substring(0, input.length()); // 3.2 or 0.0
                             input = clearZeroesAtEnd(input);
-                            System.out.println("input: " + input);
+                            LOGGER.info("input: " + input);
                             if (input.equals("0")) {
                                 textArea.setText(input);
                                 temp[position] = input;
@@ -1600,7 +1601,7 @@ public final class BinaryCalculator extends JFrame {
                                 temp[position] = "-" + input;
                             }
                         }
-                        System.out.printf("\ninput: %s\n",input);
+                        LOGGER.info("\ninput: %s\n",input);
                         confirm();
                     }
                 }
@@ -1612,13 +1613,13 @@ public final class BinaryCalculator extends JFrame {
     
     
     public boolean isNegativeNumber(String result) {
-        System.out.println("\nisNegativeNumber() running");
+        LOGGER.info("\nisNegativeNumber() running");
         boolean answer = false;
         //int intRep = (int)Double.parseDouble(result);
         if (result.startsWith("-")) { // if int == double, cut off decimal and zero
             answer = true;
         }
-        System.out.println("result is = " + answer);
+        LOGGER.info("result is = " + answer);
         return answer;
     }
     
@@ -1629,36 +1630,36 @@ public final class BinaryCalculator extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println("\nPercentStoreButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nPercentStoreButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (!textArea.getText().equals("")) {
                 if(textArea.getText().substring(textArea.getText().length()-1).equals("-")) { // if the last index equals '-'
                     // if the number is negative
-                    System.out.println("if condition true");
+                    LOGGER.info("if condition true");
                     //temp[position] = textArea.getText(); // input
                     double percent = Double.parseDouble(temp[position]); 
                     percent /= 100;
-                    System.out.println("percent: "+percent);
+                    LOGGER.info("percent: "+percent);
                     temp[position] = Double.toString(percent);
                     input = formatNumber(temp[position]);
-                    System.out.println("\nOld " + temp[position]);
+                    LOGGER.info("\nOld " + temp[position]);
                     temp[position] = temp[position].substring(1, temp[position].length());
-                    System.out.println("New " + temp[position] + "-");
+                    LOGGER.info("New " + temp[position] + "-");
                     textArea.setText(temp[position] + "-"); // update textArea
-                    System.out.printf("temp[%d] %s\n",position,temp[position]);
+                    LOGGER.info("temp[%d] %s\n",position,temp[position]);
                     //textArea.setText(input);
                     temp[position] = input;//+input;
                     input = "";
-                    System.out.printf("temp[%d] %s\n",position,temp[position]);
-                    System.out.println("textArea: "+textArea.getText());
+                    LOGGER.info("temp[%d] %s\n",position,temp[position]);
+                    LOGGER.info("textArea: "+textArea.getText());
                 } else {
                     double percent = Double.parseDouble(temp[position]); 
                     percent /= 100;
                     temp[position] = Double.toString(percent);
                     textArea.setText(formatNumber(temp[position]));
                     temp[position] = textArea.getText();
-                    System.out.printf("temp[%d] %s\n",position,temp[position]);
-                    System.out.println("textArea: "+textArea.getText());
+                    LOGGER.info("temp[%d] %s\n",position,temp[position]);
+                    LOGGER.info("textArea: "+textArea.getText());
                 }
             }
             dotButtonPressed = true;
@@ -1672,27 +1673,27 @@ public final class BinaryCalculator extends JFrame {
     public class DotButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
-            System.out.println("\nDotButtonHandler");
-            System.out.println("button: " + event.getActionCommand() + "\n"); // print out button confirmation
+            LOGGER.info("\nDotButtonHandler");
+            LOGGER.info("button: " + event.getActionCommand() + "\n"); // print out button confirmation
             if (!temp[position].equals("")) { // if the input is not null
-                System.out.printf("dotButtonPressed: %s\ndotActive: %s\n", dotButtonPressed, dotActive);
+                LOGGER.info("dotButtonPressed: %s\ndotActive: %s\n", dotButtonPressed, dotActive);
 //                if (!temp[position].endsWith(".")) {
 //                    dotButtonPressed = false;
 //                    dotActive = false;
 //                }
                 
-                System.out.printf("temp[%d]: %s before appending dot\n",position,temp[position]); 
+                LOGGER.info("temp[%d]: %s before appending dot\n",position,temp[position]); 
                 //number = number.substring(0,number.length()-1);
-                //System.out.printf("\ns adjusted: %s",number);
+                //LOGGER.info("\ns adjusted: %s",number);
                 if (dotButtonPressed == false || dotActive == false) {
                     //String x = s.substring(0,s.length()-1);
                     textArea.setText("."+temp[position]);
-                    System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                    LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
                     temp[position] = temp[position] + ".";
                     dotButtonPressed = true;
                     //decimal = true;
                 } 
-                //System.out.printf("temp[0] %.2f", temp[0]);
+                //LOGGER.info("temp[0] %.2f", temp[0]);
             } else { // the first button we are pushing is the dot operator
                 textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 if (firstNumBool == false)
@@ -1713,15 +1714,15 @@ public final class BinaryCalculator extends JFrame {
     public class FracButtonHandler implements ActionListener { // not working 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nFracStoreButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nFracStoreButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (!textArea.getText().equals("")) {
                 double result = Double.parseDouble(temp[position]);
                 result = 1 / result;
-                System.out.printf("result: %.2f", result);
+                LOGGER.info("result: %.2f", result);
                 temp[position] = Double.toString(result);
                 textArea.setText(temp[position]);
-                System.out.printf("temp[%d]: %s\n",position, temp[position]);
+                LOGGER.info("temp[%d]: %s\n",position, temp[position]);
             }
         }
     }
@@ -1732,10 +1733,10 @@ public final class BinaryCalculator extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("MemoryClearButtonHandler started");
-            System.out.println("\nbutton: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("MemoryClearButtonHandler started");
+            LOGGER.info("\nbutton: " + e.getActionCommand()); // print out button confirmation
             temp[4] = "";
-            System.out.println("temp[4]: " + temp[4]);
+            LOGGER.info("temp[4]: " + temp[4]);
             buttonMR.setEnabled(false);
             buttonMC.setEnabled(false);
         }
@@ -1747,22 +1748,22 @@ public final class BinaryCalculator extends JFrame {
     public class MemoryRecallButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nMemoryRecallButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nMemoryRecallButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (Double.parseDouble(temp[4]) < 0.0) {
                 input = temp[4]; 
-                System.out.printf("%s\n", input);
+                LOGGER.info("%s\n", input);
                 input = input.substring(1, input.length());
-                System.out.printf("input: %s\n",input);
+                LOGGER.info("input: %s\n",input);
                 input = input + "-";
                 temp[position] = temp[4];
                 textArea.setText(input); // update textArea
-                System.out.printf("temp[%d] %s\n",position, temp[position]);
+                LOGGER.info("temp[%d] %s\n",position, temp[position]);
             } else {
                 textArea.setText(temp[4]);
                 temp[position] = temp[4];
-                System.out.printf("temp[%d]: %s\n",position, temp[position]);
-                System.out.println("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n",position, temp[position]);
+                LOGGER.info("textArea: " + textArea.getText());
             }
         }
         
@@ -1774,13 +1775,13 @@ public final class BinaryCalculator extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nMemoryStoreButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nMemoryStoreButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if(!textArea.getText().equals("") && !temp[position].equals("")) { // [position-1]
             // if text area has a number AND if storage has a number
                 temp[4] = temp[position];
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
                 buttonMR.setEnabled(true);
                 buttonMC.setEnabled(true);
             } else if (!temp[4].equals("")) {
@@ -1801,8 +1802,8 @@ public final class BinaryCalculator extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nMemoryAddButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nMemoryAddButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
 //            if (negatePressed == true) {
 //                temp[0] = Integer.parseInt( textArea.getText().replace("-", ""));
 //                negatePressed = false;
@@ -1810,28 +1811,28 @@ public final class BinaryCalculator extends JFrame {
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if(!textArea.getText().equalsIgnoreCase("") && !temp[4].equals("")) {
             // if text area has a number and memory storage has a number
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("\n\ntemp[%d]:(memory) %s\n", position, temp[4]);
-                System.out.printf("temp[%d]:(add to) %s\n", position, temp[position]);
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("\n\ntemp[%d]:(memory) %s\n", position, temp[4]);
+                LOGGER.info("temp[%d]:(add to) %s\n", position, temp[position]);
                 double result = Double.parseDouble(temp[4]) + Double.parseDouble(temp[position]); // create result forced double
                 temp[4] = Double.toString(result); // store result
-                System.out.printf("\n%s + %s = \n", temp[4], temp[position]);
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("\n%s + %s = \n", temp[4], temp[position]);
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
                 int intRep = (int)result;
                 if (intRep == result) { // if int == double, cut off decimal and zero
                     //textArea.setText(temp[4]);
                     input = temp[4];
                     input = input.substring(0, input.length()-2); // input changed to whole number, or int
                     temp[4] = input; // update storing
-                    System.out.println("update storing: " + input);
+                    LOGGER.info("update storing: " + input);
                     //textArea.setText(temp[2]);
                     if (Integer.parseInt(temp[4]) < 0 ) { // if result is negative
                         input = temp[4];
-                        System.out.printf("%s", input);
+                        LOGGER.info("%s", input);
                         input = input.substring(1, input.length());
-                        System.out.printf("input: %s",input);
+                        LOGGER.info("input: %s",input);
                         //textArea.setText(input + "-"); // update textArea
-                        System.out.printf("temp[%d] %s\n",position, temp[4]);
+                        LOGGER.info("temp[%d] %s\n",position, temp[4]);
                        }
                 } //else {// if double == double, keep decimal and number afterwards
                     //textArea.setText(temp[2]);
@@ -1839,16 +1840,16 @@ public final class BinaryCalculator extends JFrame {
                 textArea.setText("0");
                 temp[position] = "0";
                 temp[4] = temp[position];
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
             } else if (!temp[position].equals("")) { // position-1 ???
                 temp[4] = temp[position];
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
             } else {
                 temp[4] = temp[position];
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
                 
             }
             
@@ -1857,12 +1858,12 @@ public final class BinaryCalculator extends JFrame {
             
             
             
-            System.out.printf("temp[%d]: %s after memory+ pushed\n",4,temp[4]); // confirming proper input before moving on
+            LOGGER.info("temp[%d]: %s after memory+ pushed\n",4,temp[4]); // confirming proper input before moving on
             //}
             //else { // if number is double
                 //temp[0] = Double.parseDouble(textArea.getText());
                 //textArea.setText(event.getActionCommand() + " " + temp[0] ); // "userInput.input +"
-                //System.out.printf("temp[0] "+temp[0]);
+                //LOGGER.info("temp[0] "+temp[0]);
             //}
             //addBool = true; // sets logic for arithmetic
             //firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -1880,70 +1881,70 @@ public final class BinaryCalculator extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("\nMemorySubButtonHandler started");
-            System.out.println("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("\nMemorySubButtonHandler started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if(!textArea.getText().equalsIgnoreCase("") && !temp[4].equals("")) {
             // if textArea has a number and memory storage has a number
-                System.out.println("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                System.out.printf("temp[%d]:(memory) %s\n", 4, temp[4]);
-                System.out.printf("temp[%d]:(sub from) %s\n", 4, temp[position]);
-                System.out.printf("%s - %s = \n", temp[4], temp[position]);
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp[%d]:(memory) %s\n", 4, temp[4]);
+                LOGGER.info("temp[%d]:(sub from) %s\n", 4, temp[position]);
+                LOGGER.info("%s - %s = \n", temp[4], temp[position]);
                 double result = Double.parseDouble(temp[4]) - Double.parseDouble(temp[position]); // create result forced double
                 temp[4] = Double.toString(result); // store result
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
                 int intRep = (int)result;
                 if (intRep == result) { // if int == double, cut off decimal and zero
                     input = temp[4];
                     input = input.substring(0, input.length()-2); // input changed to whole number, or int
                     temp[4] = input; // update storing
-                    System.out.printf("update storing: %s\n",input);
+                    LOGGER.info("update storing: %s\n",input);
                     if (Integer.parseInt(temp[4]) < 0 ) { // if result is negative
                         input = temp[4];
-                        System.out.printf("%s\n", input);
+                        LOGGER.info("%s\n", input);
                         input = input.substring(1, input.length());
-                        System.out.printf("input: %s\n",input);
-                        System.out.printf("temp[%d] %s\n",position, temp[4]);
+                        LOGGER.info("input: %s\n",input);
+                        LOGGER.info("temp[%d] %s\n",position, temp[4]);
                     }
                 } 
             } else if (textArea.getText().equals("")) {
                 textArea.setText("0");
                 temp[position] = "0";
                 temp[4] = temp[position];
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
                 
                 double result = 0.0;
-                System.out.println("result: " + result);
+                LOGGER.info("result: " + result);
                 int intRep = (int)result; // 9 = 9.0
                 if (intRep == result) { // if int == double, cut off decimal and zero
                     textArea.setText(Double.toString(result));
                     input = textArea.getText();
-                    System.out.println("textArea: " + textArea.getText());
+                    LOGGER.info("textArea: " + textArea.getText());
                     input = input.substring(0, input.length()-2); // input changed to whole number, or int
                     temp[4] = input; // update storing
                     textArea.setText(temp[4]);
                     if (Integer.parseInt(temp[4]) < 0 ) {
                         input = textArea.getText(); // temp[2]
-                        System.out.printf("%s", input);
+                        LOGGER.info("%s", input);
                         input = input.substring(1, input.length());
-                        System.out.printf("input: %s",input);
+                        LOGGER.info("input: %s",input);
                         textArea.setText(input + "-"); // update textArea
-                        System.out.printf("temp[%d] %s\n",position, temp[position]);
+                        LOGGER.info("temp[%d] %s\n",position, temp[position]);
                     }
                 } 
             } else if (!temp[position].equals("")) {
                 temp[4] = convertToNegative(temp[position]);
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
             } else {
                 temp[4] = convertToNegative(temp[position]);
-                System.out.println("textArea: " + textArea.getText());
-                System.out.printf("temp[%d]: %s\n", 4, temp[4]);
+                LOGGER.info("textArea: " + textArea.getText());
+                LOGGER.info("temp[%d]: %s\n", 4, temp[4]);
             }
             buttonMR.setEnabled(true);
             buttonMC.setEnabled(true);
-            System.out.printf("temp[%d]: %s after memory- pushed\n",4,temp[4]); // confirming proper input before moving on
+            LOGGER.info("temp[%d]: %s after memory- pushed\n",4,temp[4]); // confirming proper input before moving on
             dotButtonPressed = false;
             input = "";
             memSubBool = true;
@@ -2191,7 +2192,7 @@ public final class BinaryCalculator extends JFrame {
         // firstNum, secondNum, total, copy/paste, memory
         for ( position=0; position < 4; position++) {
             temp[position] = "";
-            System.out.printf("temp[%d]: \'%s\'\n",position, temp[position]);
+            LOGGER.info("temp[%d]: \'%s\'\n",position, temp[position]);
         }
         input = "";
         textArea.setText("");
@@ -2207,43 +2208,43 @@ public final class BinaryCalculator extends JFrame {
     }
     
     public void addition() {
-        System.out.printf("temp[%d]: %s\n", 0, temp[0]);
-        System.out.printf("temp[%d]: %s\n", 1, temp[1]);
+        LOGGER.info("temp[%d]: %s\n", 0, temp[0]);
+        LOGGER.info("temp[%d]: %s\n", 1, temp[1]);
         double result = Double.parseDouble(temp[0]) + Double.parseDouble(temp[1]); // create result forced double
-        System.out.printf("%s + %s = \n", temp[0], temp[1]);
+        LOGGER.info("%s + %s = \n", temp[0], temp[1]);
         temp[0] = formatNumber(Double.toString(result)); // store result
         temp[0] = clearZeroesAtEnd(temp[0]);
-        System.out.printf("temp[%d]: %s\n", 0, temp[0]);
-        System.out.printf("addBool: "+addBool
+        LOGGER.info("temp[%d]: %s\n", 0, temp[0]);
+        LOGGER.info("addBool: "+addBool
                         + "\nsubBool: "+subBool
                         + "\nmulBool: "+mulBool
                         + "\ndivBool: "+divBool);
         int intRep = (int)result;
         if (intRep == result) { // if int == double, cut off decimal and zero
-            System.out.println("\nWe have a whole number");
+            LOGGER.info("\nWe have a whole number");
             //textArea.setText(temp[2]);
             input = Double.toString(result);
             temp[0] = input.substring(0, input.length()-2); // input changed to whole number, or int
             textArea.setText(temp[0]);
             if (Integer.parseInt(temp[0]) < 0 ) {
                 input = textArea.getText(); // temp[position]
-                System.out.printf("%s\n", input);
+                LOGGER.info("%s\n", input);
                 input = input.substring(1, input.length());
-                System.out.printf("input: %s\n",input);
+                LOGGER.info("input: %s\n",input);
                 textArea.setText(input + "-"); // update textArea
-                //System.out.printf("temp[%d] %s\n",position, formatNumber(temp[position]));
+                //LOGGER.info("temp[%d] %s\n",position, formatNumber(temp[position]));
             }
         } else {// if double == double, keep decimal and number afterwards
-            System.out.println("\nWe have a decimal");
+            LOGGER.info("\nWe have a decimal");
             if (Double.parseDouble(temp[0]) < 0.0 ) {
                 temp[0] = formatNumber(temp[0]);
-                System.out.printf("%s\n", input);
+                LOGGER.info("%s\n", input);
                 input = temp[0];
-                System.out.printf("%s\n", input);
+                LOGGER.info("%s\n", input);
                 input = input.substring(1, input.length());
-                System.out.printf("input: %s\n",input);
+                LOGGER.info("input: %s\n",input);
                 textArea.setText(input + "-"); // update textArea
-                System.out.printf("temp[%d] %s\n",position, temp[position]);
+                LOGGER.info("temp[%d] %s\n",position, temp[position]);
             } else {
                 textArea.setText(formatNumber(temp[0]));
             }
@@ -2252,10 +2253,10 @@ public final class BinaryCalculator extends JFrame {
     
     public void subtract() {
         double result = Double.parseDouble(temp[0]) - Double.parseDouble(temp[1]); // create result forced double
-        System.out.printf("\n%s - %s = \n", temp[0], temp[1]);
+        LOGGER.info("\n%s - %s = \n", temp[0], temp[1]);
         temp[0] = Double.toString(result); // store result
-        System.out.printf("temp[%d]: %s\n", position, temp[0]);
-        System.out.printf("addBool: "+addBool
+        LOGGER.info("temp[%d]: %s\n", position, temp[0]);
+        LOGGER.info("addBool: "+addBool
                       + "\nsubBool: "+subBool
                       + "\nmulBool: "+mulBool
                       + "\ndivBool: "+divBool);
@@ -2268,21 +2269,21 @@ public final class BinaryCalculator extends JFrame {
             textArea.setText(temp[0]);
             if (Integer.parseInt(temp[0]) < 0 ) {
                 input = textArea.getText(); // temp[2]
-                System.out.printf("%s", input);
+                LOGGER.info("%s", input);
                 input = input.substring(1, input.length());
-                System.out.printf("input: %s",input);
+                LOGGER.info("input: %s",input);
                 textArea.setText(input + "-"); // update textArea
-                System.out.printf("temp[%d] %s\n",position, temp[position]);
+                LOGGER.info("temp[%d] %s\n",position, temp[position]);
             }
         } else {// if double == double, keep decimal and number afterwards
             if (Double.parseDouble(temp[0]) < 0.0 ) {
                 temp[0] = formatNumber(temp[0]);
                 input = temp[0];
-                System.out.printf("%s", input);
+                LOGGER.info("%s", input);
                 input = input.substring(1, input.length());
-                System.out.printf("input: %s",input);
+                LOGGER.info("input: %s",input);
                 textArea.setText(input + "-"); // update textArea
-                System.out.printf("temp[%d] %s\n",position, temp[position]);
+                LOGGER.info("temp[%d] %s\n",position, temp[position]);
             } else {
                 textArea.setText(formatNumber(temp[0]));
             }
@@ -2291,10 +2292,10 @@ public final class BinaryCalculator extends JFrame {
     
     public void multiply() {
         double result = Double.parseDouble(temp[0]) * Double.parseDouble(temp[1]); // create result forced double
-        System.out.printf("\n%s * %s = \n", temp[0], temp[1]);
+        LOGGER.info("\n%s * %s = \n", temp[0], temp[1]);
         temp[0] = Double.toString(result); // store result
-        System.out.printf("temp[%d]: %s\n", position, temp[0]);
-        System.out.printf("addBool: "+addBool
+        LOGGER.info("temp[%d]: %s\n", position, temp[0]);
+        LOGGER.info("addBool: "+addBool
                       + "\nsubBool: "+subBool
                       + "\nmulBool: "+mulBool
                       + "\ndivBool: "+divBool);
@@ -2307,11 +2308,11 @@ public final class BinaryCalculator extends JFrame {
             textArea.setText(temp[0]);
             if (Integer.parseInt(temp[0]) < 0 ) {
                 input = textArea.getText(); // temp[2]
-                System.out.printf("%s", input);
+                LOGGER.info("%s", input);
                 input = input.substring(1, input.length());
-                System.out.printf("input: %s",input);
+                LOGGER.info("input: %s",input);
                 textArea.setText(input + "-"); // update textArea
-                System.out.printf("temp[%d] %s\n",position, temp[position]);
+                LOGGER.info("temp[%d] %s\n",position, temp[position]);
             }
         } else {// if double == double, keep decimal and number afterwards
             textArea.setText(formatNumber(temp[0]));
@@ -2322,10 +2323,10 @@ public final class BinaryCalculator extends JFrame {
         if (!temp[1].equals("0")) { 
             // if the second number is not zero, divide as usual
             double result = Double.parseDouble(temp[0]) / Double.parseDouble(temp[1]); // create result forced double
-            System.out.printf("\n%s / %s = \n", temp[0], temp[1]);
+            LOGGER.info("\n%s / %s = \n", temp[0], temp[1]);
             temp[0] = Double.toString(result); // store result
-            System.out.printf("temp[%d]: %s\n", position, temp[0]);
-            System.out.printf("addBool: "+addBool
+            LOGGER.info("temp[%d]: %s\n", position, temp[0]);
+            LOGGER.info("addBool: "+addBool
                           + "\nsubBool: "+subBool
                           + "\nmulBool: "+mulBool
                           + "\ndivBool: "+divBool);
@@ -2339,11 +2340,11 @@ public final class BinaryCalculator extends JFrame {
                 textArea.setText(temp[0]);
                 if (Integer.parseInt(temp[0]) < 0 ) {
                     input = textArea.getText(); // temp[2]
-                    System.out.printf("%s", input);
+                    LOGGER.info("%s", input);
                     input = input.substring(1, input.length());
-                    System.out.printf("input: %s",input);
+                    LOGGER.info("input: %s",input);
                     textArea.setText(input + "-"); // update textArea
-                    System.out.printf("temp[%d] %s\n",position, temp[position]);
+                    LOGGER.info("temp[%d] %s\n",position, temp[position]);
                 }
             } else {
                 // if double == double, keep decimal and number afterwards
@@ -2351,7 +2352,7 @@ public final class BinaryCalculator extends JFrame {
             }
         } else if (temp[1].equals("0")) {
             String result = "0";
-            System.out.println("\nAttemping to divide by zero");
+            LOGGER.info("\nAttemping to divide by zero");
             textArea.setText("Cannot divide by 0");
             temp[0] = result;
             firstNumBool = true;
@@ -2360,22 +2361,22 @@ public final class BinaryCalculator extends JFrame {
     
     public boolean resetOperator(boolean operatorBool) {
         if (operatorBool == true) {
-            System.out.printf("\noperatorBool: %s", operatorBool);
+            LOGGER.info("\noperatorBool: %s", operatorBool);
             //temp[0] = temp[2];
             temp[1]= "";
             //temp[2] = "";
-            System.out.printf("\ntemp[%d]: %s\n",0, temp[0]);
+            LOGGER.info("\ntemp[%d]: %s\n",0, temp[0]);
             position = 1;
             dotButtonPressed = false;
             firstNumBool = false;
             input = "";
             return false;
         } else {
-            System.out.printf("\noperatorBool: %s", operatorBool);
+            LOGGER.info("\noperatorBool: %s", operatorBool);
             //temp[0] = temp[2];
             temp[1]= "";
             //temp[2] = "";
-            System.out.printf("\ntemp[%d]: %s\n",0, temp[0]);
+            LOGGER.info("\ntemp[%d]: %s\n",0, temp[0]);
             position = 1;
             dotButtonPressed = false;
             firstNumBool = false;
@@ -2389,7 +2390,7 @@ public final class BinaryCalculator extends JFrame {
         DecimalFormat df = new DecimalFormat("0.00"); 
         double number = Double.parseDouble(num);
         num = df.format(number);
-        System.out.printf("\nFormated: %s\n", num);
+        LOGGER.info("\nFormated: %s\n", num);
         return num;
         
     }
@@ -2400,23 +2401,21 @@ public final class BinaryCalculator extends JFrame {
      */
     
     public void confirm() {
-        System.out.println("\nConfirm Results: ");
-        System.out.println("---------------- ");
+        LOGGER.info("Confirm Results: ");
+        LOGGER.info("---------------- ");
         for(int i=0; i<5; i++)
-            System.out.printf("temp[%d]: \'%s\'\n",i, temp[i]);
-        System.out.printf("input: \'%s\'\n"
-                        + "inputLength: %d\n"
-                        + "textArea: \'%s\'\n"
-                        + "addBool: %s\n"
-                        + "subBool: %s\n"
-                        + "mulBool: %s\n"
-                        + "divBool: %s\n"
-                        + "position: %s\n"
-                        + "firstNumBool: %s\n"
-                        + "dotButtonPressed: %s\n",
-                input, input.length(), textArea.getText(), addBool, subBool, mulBool, divBool, position, firstNumBool, dotButtonPressed);
-        
-        System.out.println("\n---------------- ");
+            LOGGER.info("temp["+i+"]: \'"+temp[i]+"\'");
+        LOGGER.info("input: '"+input+"'");
+        LOGGER.info("inputLength: '"+input.length()+"'"); 
+        LOGGER.info("textArea: '"+textArea.getText()+"'"); 
+        LOGGER.info("addBool: '"+addBool+"'");
+        LOGGER.info("subBool: '"+subBool+"'"); 
+        LOGGER.info("mulBool: '"+mulBool+"'"); 
+        LOGGER.info("divBool: '"+divBool+"'"); 
+        LOGGER.info("position: '"+position+"'"); 
+        LOGGER.info("firstNumBool: '"+firstNumBool+"'"); 
+        LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
+        LOGGER.info("-------- End Confirm Results --------");
     }
     
     protected void setTemp(String input) {
@@ -2434,13 +2433,13 @@ public final class BinaryCalculator extends JFrame {
         for (i = 0; i < 64; i++)
             conversion[i] = "0";
         i = 63;
-        System.out.println(Arrays.toString(conversion));
+        LOGGER.info(Arrays.toString(conversion));
         if (buttonOctMode == true) {
             // logic for Octal to Binary
         } else if (buttonDecMode == true) {
             // logic for Decimal to Binary
         } else if (buttonBinMode == true) {
-            System.out.println("Here");
+            LOGGER.info("Here");
             input = textArea.getText();
             int number = Integer.parseInt(input);
             while (number != 0) {
@@ -2452,21 +2451,21 @@ public final class BinaryCalculator extends JFrame {
                 i--;
                 number /= 2;
             }
-            System.out.println(Arrays.toString(conversion));
+            LOGGER.info(Arrays.toString(conversion));
             input = "";
             for (i=0; i<64; i++) {
                 input += conversion[i];
             }
-            System.out.println("input:" + input);
+            LOGGER.info("input:" + input);
             // concat input to proper length
             if (buttonByte.isSelected()) {
                 input = input.substring(56,64);
                 textArea.setText(input);
-                System.out.println("input:" + input);
+                LOGGER.info("input:" + input);
             } else if (buttonWord.isSelected()) {
                 input = input.substring(48,64);
                 textArea.setText(input);
-                System.out.println("input:" + input);
+                LOGGER.info("input:" + input);
             }
         } else if (buttonHexMode == true) {
             // llogic for Hexadecimal to Binary

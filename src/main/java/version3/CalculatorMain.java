@@ -12,14 +12,15 @@ public class CalculatorMain {
 	private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class);
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		LOGGER.info("Inside main(). Starting class CalculatorMain");
-		BinaryCalculator calculator = new BinaryCalculator();
-		//Calculator calculator = new Calculator();
+		//BinaryCalculator calculator = new BinaryCalculator();
+		Calculator calculator = new Calculator();
     	//Calculator calculator = new Calculator(CalcType.STANDARD);
 		initLookAndFeel("Metal");
 		setCalculatorUp(calculator);
         SwingUtilities.updateComponentTreeUI(calculator);
         calculator.pack();
-        LOGGER.info("End main()");
+        calculator.confirm();
+        LOGGER.info("End main()\n");
     }
     
     private static void initLookAndFeel(String lookAndFeel) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
