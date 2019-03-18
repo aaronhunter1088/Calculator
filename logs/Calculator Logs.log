@@ -1,0 +1,17 @@
+[INFO ] 03-17-2019 23:07:48.571 [main] version3.CalculatorMain:14 - Inside main(). Starting class CalculatorMain
+[INFO ] 03-17-2019 23:07:49.278 [setImageIcons] version3.BinaryCalculator:2543 - Inside setImageIcons()
+[INFO ] 03-17-2019 23:07:49.279 [createImageIcon] version3.BinaryCalculator:2530 - Inside createImageIcon()
+[INFO ] 03-17-2019 23:07:49.279 [createImageIcon] version3.BinaryCalculator:2533 - the path 'src/main/resources/images/calculatorOriginalCopy.jpg' created an image! the imageicon is being returned...
+[INFO ] 03-17-2019 23:07:49.280 [createImageIcon] version3.BinaryCalculator:2534 - End createImageIcon()
+[INFO ] 03-17-2019 23:07:49.348 [createImageIcon] version3.BinaryCalculator:2530 - Inside createImageIcon()
+[INFO ] 03-17-2019 23:07:49.348 [createImageIcon] version3.BinaryCalculator:2533 - the path 'src/main/resources/images/calculatorOriginal.jpg' created an image! the imageicon is being returned...
+[INFO ] 03-17-2019 23:07:49.348 [createImageIcon] version3.BinaryCalculator:2534 - End createImageIcon()
+[INFO ] 03-17-2019 23:07:49.359 [createImageIcon] version3.BinaryCalculator:2530 - Inside createImageIcon()
+[INFO ] 03-17-2019 23:07:49.359 [createImageIcon] version3.BinaryCalculator:2533 - the path 'src/main/resources/images/maclogo.png' created an image! the imageicon is being returned...
+[INFO ] 03-17-2019 23:07:49.360 [createImageIcon] version3.BinaryCalculator:2534 - End createImageIcon()
+[INFO ] 03-17-2019 23:07:49.366 [setImageIcons] version3.BinaryCalculator:2551 - End setImageIcons()
+[INFO ] 03-17-2019 23:07:49.389 [initLookAndFeel] version3.CalculatorMain:47 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 03-17-2019 23:07:49.415 [setCalculatorUp] version3.CalculatorMain:52 - Setting up the calculator...
+[INFO ] 03-17-2019 23:07:49.417 [setCalculatorUp] version3.CalculatorMain:64 - Setting up a binary calculator
+[INFO ] 03-17-2019 23:07:51.559 [setCalculatorUp] version3.CalculatorMain:75 - End setCalculatorUp()
+[INFO ] 03-17-2019 23:07:51.818 [main] version3.CalculatorMain:22 - End main()
