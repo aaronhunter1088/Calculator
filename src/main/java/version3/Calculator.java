@@ -26,13 +26,15 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.apple.eawt.Application;
 
-// Page 945 in textbook
-@SuppressWarnings("restriction")
 public final class Calculator extends JFrame {
     
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = LogManager.getLogger(Calculator.class);
 	private final JTextArea textArea = new JTextArea();
     private final GridBagLayout standardLayout; // layout of the calculator
     public GridBagConstraints constraints; // layout's constraints
@@ -91,6 +93,7 @@ public final class Calculator extends JFrame {
     
     public Calculator() {
         super("Calculator");
+        LOGGER.info("Inside Calculator constructor.");
         standardLayout = new GridBagLayout();
         setLayout(standardLayout); // set frame layout
         
@@ -100,6 +103,7 @@ public final class Calculator extends JFrame {
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(calculator2.getImage());
         setInitialStartMode();
+        LOGGER.info("End Calculator constructor.");
     }
     
     public Calculator(CalcType calcType) {
@@ -316,8 +320,8 @@ public final class Calculator extends JFrame {
     	return calc;
     }
     
-    public void setInitialStartMode()
-    {
+    public void setInitialStartMode() {
+    	LOGGER.info("Inside setInitalStartMode()");
         // create GUI components
         /* 1) */ final NumberButtonHandler buttonHandler = new NumberButtonHandler(); // This handler handles btns 0 - 9
         /* 11) */ final AddButtonHandler addButtonHandler = new AddButtonHandler();
@@ -338,7 +342,7 @@ public final class Calculator extends JFrame {
         /* 26) */ final MemoryStoreButtonHandler memoryStoreButtonHandler = new MemoryStoreButtonHandler();
         /* 27) */ final MemoryAddButtonHandler memoryAddButtonHandler = new MemoryAddButtonHandler();
         /* 28) */ final MemorySubButtonHandler memorySubButtonHandler = new MemorySubButtonHandler();
-        
+        LOGGER.info("28 button handlers created..."); 
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
         
         // Set text area and buttons size and font
@@ -442,12 +446,14 @@ public final class Calculator extends JFrame {
         buttonMC.setPreferredSize(new Dimension(35, 35) );
         buttonMC.setBorder(new LineBorder(Color.BLACK));
         if (temp[4].equals("")) {
+        	LOGGER.warn("buttonMC.getEnabled() = false");
             buttonMC.setEnabled(false);
         }
         buttonMR.setFont(font);
         buttonMR.setPreferredSize(new Dimension(35, 35) );
         buttonMR.setBorder(new LineBorder(Color.BLACK));
         if (temp[4].equals("")) {
+        	LOGGER.warn("buttonMR.getEnabled() = false");
             buttonMR.setEnabled(false);
         }
         buttonMS.setFont(font);
@@ -462,10 +468,10 @@ public final class Calculator extends JFrame {
         buttonMSub.setPreferredSize(new Dimension(35, 35) );
         buttonMSub.setBorder(new LineBorder(Color.BLACK));
         buttonMSub.setEnabled(true);
+        LOGGER.info("All buttons font set, size set, and border set.");
         // anchor for all components is CENTER: the default
         constraints.fill = GridBagConstraints.BOTH;
         addComponent(textArea, 0, 0, 5, 2);
-        
         // Also add the action listener for each button
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonMC, 2, 0, 1, 1);
@@ -522,7 +528,6 @@ public final class Calculator extends JFrame {
         addComponent(buttonF, 5, 4, 1, 1);
         buttonF.addActionListener(fracButtonHandler);
         
-        
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(button7, 4, 0, 1, 1);
         button7.addActionListener(buttonHandler);
@@ -553,8 +558,9 @@ public final class Calculator extends JFrame {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonSq, 3, 4, 1, 1);
         buttonSq.addActionListener(sqrtButtonHandler);
-        
-    // above this comment is all for the buttons
+        LOGGER.info("All buttons added to the frame.");
+        LOGGER.info("End setInitialStartMode()");
+        // above this comment is all for the buttons
     } // end method setInitalStartMode()
     
     public void setBinaryMode() {
@@ -2006,24 +2012,30 @@ public final class Calculator extends JFrame {
     /** Returns an ImageIcon, or null if the path was invalid. 
      * @throws Exception */
     protected ImageIcon createImageIcon(String path, String description) throws Exception {
-        java.net.URL imgURL = Calculator.class.getResource(path);
+        LOGGER.info("Inside createImageIcon()");
+        LOGGER.info("Calculator.class.getResource("+path+"): " + getClass().getResource(path));
+        
+    	java.net.URL imgURL = Calculator.class.getResource(path);
         if (imgURL != null) {
-    	    System.out.println("the path '" + path + "' created an image!");
-            return new ImageIcon(imgURL, description);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            throw new Exception("Couldn't create an image from the path given: " + path);
+    	    LOGGER.info("the path '" + path + "' created an image! the imageicon is being returned...");
+    	    LOGGER.info("End createImageIcon()");
+    	    return new ImageIcon(imgURL, description);
+        } 
+        else {
+        	throw new Exception("The path '" + path + "' could not find an image there!");
         }
     }
     /** Sets the image icons */
     public void setImageIcons() {
+    	LOGGER.info("Inside setImageIcons()");
     	try {
-        	calculator = createImageIcon("../../images/calculatorOriginal - Copy.jpg");
-        	calculator2 = createImageIcon("../../images/calculatorOriginal.jpg");
-        	macLogo = createImageIcon("../../images/maclogo.png");
+        	calculator = createImageIcon("../../../../calculatorOriginalCopy.jpg");
+        	calculator2 = createImageIcon("/Users/michaeball/git/calculator/images/calculatorOriginal.jpg");
+        	macLogo = createImageIcon("Users/michaeball/git/calculator/images/maclogo.png");
         } catch (Exception e) {
-        	System.out.println(e.getMessage());
+        	LOGGER.error(e.getMessage());
         }
+    	LOGGER.info("End setImageIcons()");
     }
     
 } //end class Calculator

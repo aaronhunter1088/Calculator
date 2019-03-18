@@ -19,7 +19,7 @@ import javax.swing.JFrame;
 // Information about this project is just below main method
 public class CalculatorMain 
 {
-    static String calculatorOriginalPath = "/calculatorOriginal.jpg";
+    static String calculatorOriginalPath = "../../calculatorOriginal.jpg";
     static {
     	System.out.println(calculatorOriginalPath);
     }

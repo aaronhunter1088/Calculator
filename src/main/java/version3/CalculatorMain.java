@@ -5,15 +5,21 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class CalculatorMain {
+	private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class);
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-		BinaryCalculator calculator = new BinaryCalculator();
-		//Calculator calculator = new Calculator();
+		LOGGER.info("Inside main(). Starting class CalculatorMain");
+		//BinaryCalculator calculator = new BinaryCalculator();
+		Calculator calculator = new Calculator();
     	//Calculator calculator = new Calculator(CalcType.STANDARD);
 		initLookAndFeel("Metal");
-        setBinaryCalculatorUp(calculator);
+		setCalculatorUp(calculator);
         SwingUtilities.updateComponentTreeUI(calculator);
         calculator.pack();
+        LOGGER.info("End main()");
     }
     
     private static void initLookAndFeel(String lookAndFeel) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -38,30 +44,35 @@ public class CalculatorMain {
             System.out.println("Unexpected value of LOOKANDFEEL specified: '" + thislookAndFeel + "'. Defaulting to Metal.");
             thislookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
         }
+        LOGGER.info("Setting the look and feel to : " + thislookAndFeel);
         UIManager.setLookAndFeel(thislookAndFeel);
     }
 
-    @SuppressWarnings("unused")
-	private static void setCalculatorUp(Calculator calculator) {
-    	calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        calculator.setMinimumSize(new Dimension(100,200)); //228, 325
-        calculator.setResizable(false);
-        calculator.setLocation(1000, 250);
-        calculator.setMenuBar();
-        calculator.pack();
-        calculator.setVisible(true);
-    }
-    
-    @SuppressWarnings("unused")
-	private static void setBinaryCalculatorUp(BinaryCalculator binarycalculator) {
-    	binarycalculator.setSize(600, 405);
-        binarycalculator.setLocation(600,300);
-        binarycalculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        binarycalculator.setResizable(false);
-        binarycalculator.setMenuBar();
-        binarycalculator.setButton();
-        binarycalculator.pack();
-        binarycalculator.setVisible(true);
+    private static void setCalculatorUp(Object obj) {
+    	LOGGER.info("Setting up the calculator...");
+    	if (obj instanceof Calculator) {
+    		LOGGER.info("Setting up a calculator");
+    		Calculator calculator = (Calculator) obj;
+    		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            calculator.setMinimumSize(new Dimension(100,200)); //228, 325
+            calculator.setResizable(false);
+            calculator.setLocation(1000, 250);
+            calculator.setMenuBar();
+            calculator.pack();
+            calculator.setVisible(true);
+        } else if (obj instanceof BinaryCalculator) {
+        	LOGGER.info("Setting up a binary calculator");
+        	BinaryCalculator binarycalculator = (BinaryCalculator) obj;
+    		binarycalculator.setSize(600, 405);
+            binarycalculator.setLocation(600,300);
+            binarycalculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            binarycalculator.setResizable(false);
+            binarycalculator.setMenuBar();
+            binarycalculator.setButton();
+            binarycalculator.pack();
+            binarycalculator.setVisible(true);
+    	}
+    	LOGGER.info("End setCalculatorUp()");
     }
 }
 /*

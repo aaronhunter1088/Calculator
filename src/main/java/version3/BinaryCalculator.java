@@ -2532,9 +2532,9 @@ public final class BinaryCalculator extends JFrame {
     /** Sets the image icons */
     public void setImageIcons() {
     	try {
-        	calculator = createImageIcon("../../images/calculatorOriginal - Copy.jpg");
-        	calculator2 = createImageIcon("../../images/calculatorOriginal.jpg");
-        	macLogo = createImageIcon("../../images/maclogo.png");
+        	calculator = createImageIcon("../../../../images/calculatorOriginalCopy.jpg");
+        	calculator2 = createImageIcon("../../../../images/calculatorOriginal.jpg");
+        	macLogo = createImageIcon("../../../../images/maclogo.png");
         } catch (Exception e) {
         	System.out.println(e.getMessage());
         }
