@@ -161,7 +161,7 @@
                            <index>>true</index>
                            <manifest>
                            		<addClasspath>true</addClasspath>
-                                <mainClass>carbeeper.MainDemo</mainClass>
+                                <mainClass>version3.CalculatorMain</mainClass>
                            </manifest>
                            <manifestEntries>
             				  <Implementation-Version>${project.version}</Implementation-Version>
