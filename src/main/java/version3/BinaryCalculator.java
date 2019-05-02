@@ -42,7 +42,7 @@ import javax.swing.border.TitledBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.apple.eawt.Application;
+//import com.apple.eawt.Application;
 
 // Page 945 in textbook
 public final class BinaryCalculator extends JFrame {
@@ -178,7 +178,7 @@ public final class BinaryCalculator extends JFrame {
         setImageIcons();
         // TODO: Update with a screenshot of the final version of the design of the BasicCalculator
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
-        Application.getApplication().setDockIconImage(calculator2.getImage());
+        //Application.getApplication().setDockIconImage(calculator2.getImage());
     }
     
     public void setMenuBar() 

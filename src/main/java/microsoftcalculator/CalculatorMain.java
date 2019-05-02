@@ -19,7 +19,7 @@ import javax.swing.JFrame;
 // Information about this project is just below main method
 public class CalculatorMain 
 {
-    static String calculatorOriginalPath = "../../calculatorOriginal.jpg";
+    static String calculatorOriginalPath = "src/main/resources/images/calculatorOriginal.jpg";
     static {
     	System.out.println(calculatorOriginalPath);
     }
@@ -27,7 +27,7 @@ public class CalculatorMain
     {
     	Image image = null;
     	ImageIcon iconImage = null;
-    	//System.out.println(new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)).getImageLoadStatus());
+    	System.out.println(new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)).getImageLoadStatus());
     	try { iconImage = new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)); }
     	catch (NullPointerException e) {
     		System.out.println("message:" + e.getMessage());
