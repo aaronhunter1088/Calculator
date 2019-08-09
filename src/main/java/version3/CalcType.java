@@ -1,7 +1,7 @@
 package version3;
 
 public enum CalcType {
-	BASE("Base"), STANDARD("Standard"), BINARY("Binary Calcualtor"), 
+	BASE("Base"), BASIC("Basic"), BINARY("Binary Calcualtor"), 
 	SCIENTIFIC("Scientific Calculator"), PROGRAMMER("Programmer Calculator"), 
 	DATE("Date Calculator");
 	// TODO: Add converter types

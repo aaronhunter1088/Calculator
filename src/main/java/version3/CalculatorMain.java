@@ -11,14 +11,19 @@ import org.apache.logging.log4j.Logger;
 public class CalculatorMain {
 	private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class);
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-		LOGGER.info("Inside main(). Starting class CalculatorMain");
+		LOGGER.info("Starting class CalculatorMain");
 		//BinaryCalculator calculator = new BinaryCalculator();
-		Calculator calculator = new Calculator();
-    	//Calculator calculator = new Calculator(CalcType.STANDARD);
+		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");
+    	//Calculator calculator = new Calculator();
 		initLookAndFeel("Metal");
-		setCalculatorUp(calculator);
+		
+		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		calculator.setLocation(1000, 250);
+		//calculator.setMenuBar();
+		setupCalculator(calculator);
         SwingUtilities.updateComponentTreeUI(calculator);
         calculator.pack();
+        calculator.setVisible(true);
         calculator.confirm();
         LOGGER.info("End main()\n");
     }
@@ -42,25 +47,24 @@ public class CalculatorMain {
         	// Not supported on Mac
         	thislookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
         } else {
-            System.out.println("Unexpected value of LOOKANDFEEL specified: '" + thislookAndFeel + "'. Defaulting to Metal.");
+            LOGGER.error("Unexpected value of LOOKANDFEEL specified: '" + thislookAndFeel + "'. Defaulting to Metal.");
             thislookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
         }
         LOGGER.info("Setting the look and feel to : " + thislookAndFeel);
         UIManager.setLookAndFeel(thislookAndFeel);
     }
 
-    private static void setCalculatorUp(Object obj) {
+    private static void setupCalculator(Object obj) {
     	LOGGER.info("Setting up the calculator...");
-    	if (obj instanceof Calculator) {
-    		LOGGER.info("Setting up a calculator");
-    		Calculator calculator = (Calculator) obj;
-    		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            calculator.setMinimumSize(new Dimension(100,200)); //228, 325
-            calculator.setResizable(false);
-            calculator.setLocation(1000, 250);
-            calculator.setMenuBar();
-            calculator.pack();
-            calculator.setVisible(true);
+    	if (obj instanceof StandardCalculator_v3) {
+    		LOGGER.info("Setting up a standard calculator");
+    		StandardCalculator_v3 calculator = (StandardCalculator_v3) obj;
+    		//calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // covered
+            //calculator.setMinimumSize(calculator.getCurrentPanel().getSize()); // covered in constructor
+            //calculator.setResizable(false); // covered in constructor
+            calculator.setMenuBar(); // covered
+            //calculator.pack(); // covered
+            calculator.setVisible(true); // covered
         } else if (obj instanceof BinaryCalculator) {
         	LOGGER.info("Setting up a binary calculator");
         	BinaryCalculator binarycalculator = (BinaryCalculator) obj;

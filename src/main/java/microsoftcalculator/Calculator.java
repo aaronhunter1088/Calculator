@@ -37,9 +37,9 @@ public final class Calculator extends JFrame {
     public GridBagConstraints constraints; // layout's constraints
     private static JLabel iconLabel;
     private static JLabel textLabel;
-    ImageIcon calculator = new ImageIcon(getClass().getResource("/calculatorOriginal - Copy.jpg")); 
-    ImageIcon calculator2 = new ImageIcon(getClass().getResource("/calculatorOriginal.jpg")); 
-    ImageIcon macLogo = new ImageIcon(getClass().getResource("/maclogo.png"));
+    //ImageIcon calculator = new ImageIcon(getClass().getResource("/calculatorOriginal - Copy.jpg")); 
+    //ImageIcon calculator2 = new ImageIcon(getClass().getResource("/calculatorOriginal.jpg")); 
+    //ImageIcon macLogo = new ImageIcon(getClass().getResource("/maclogo.png"));
     private final Font font = new Font("Segeo UI", Font.BOLD, 14);
     final private JButton buttonP = new JButton("+");
     final private JButton buttonE = new JButton("=");

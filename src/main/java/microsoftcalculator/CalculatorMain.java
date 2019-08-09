@@ -27,26 +27,26 @@ public class CalculatorMain
     {
     	Image image = null;
     	ImageIcon iconImage = null;
-    	System.out.println(new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)).getImageLoadStatus());
-    	try { iconImage = new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)); }
-    	catch (NullPointerException e) {
-    		System.out.println("message:" + e.getMessage());
-    		System.out.println("cause: " + e.getCause());
-    		StackTraceElement elem[] = e.getStackTrace();
-    		for (int i=0; i<elem.length; i++) { System.out.println("at" + (i+1) + " " + elem[i]); }
-    		System.out.print("Stack Trace: ");
-    		e.printStackTrace(System.out);
-    		System.out.println("End stack trace");
-    	}
-    	image = iconImage.getImage();
+    	//System.out.println(new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)).getImageLoadStatus());
+//    	try { iconImage = new ImageIcon(Calculator.class.getResource(calculatorOriginalPath)); }
+//    	catch (NullPointerException e) {
+//    		System.out.println("message:" + e.getMessage());
+//    		System.out.println("cause: " + e.getCause());
+//    		StackTraceElement elem[] = e.getStackTrace();
+//    		for (int i=0; i<elem.length; i++) { System.out.println("at" + (i+1) + " " + elem[i]); }
+//    		System.out.print("Stack Trace: ");
+//    		e.printStackTrace(System.out);
+//    		System.out.println("End stack trace");
+//    	}
+    	//image = iconImage.getImage();
     	//imageIcon = new ImageIcon(new File("calculatorOriginal.jpg").getPath()).getImage();
     	
-    	if (image != null) {
-    		System.out.println("We have the image...");
-    	} else System.out.println("The image was NOT loaded.");
+//    	if (image != null) {
+//    		System.out.println("We have the image...");
+//    	} else System.out.println("The image was NOT loaded.");
     	
     	//Calculator calculator = new Calculator();
-        Calculator calculator = new Calculator(Mode.STANDARD);
+        Calculator calculator = new Calculator();
         //BinaryCalculator binarycalculator = new BinaryCalculator();
         
         //calculator.setIconImage(iconImage.getImage()); // sets icon that is shown in taskbar to specific image. if not set, 
