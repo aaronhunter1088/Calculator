@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.GridBagConstraints;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,28 +41,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     
     // 4 types of Standard Calculators: create getters and setters
     protected JPanel currentPanel = null;
-    protected JPanel panelBasic = new JPanelBasic_v3(this), panelProgrammer = new JPanelProgrammer_v3(), panelScientific = new JPanelScientific_v3(), panelDate = new JPanelDate_v3();
+    final protected JPanel panelBasic = new JPanelBasic_v3(this), panelProgrammer = new JPanelProgrammer_v3(), panelScientific = new JPanelScientific_v3(), panelDate = new JPanelDate_v3();
 	public JPanel getCurrentJPanel() { return currentPanel; }
-	
-	/*
-	 * TODO: Change method to be a list of tasks that should
-	 * occur when we switch panels.
-	 * 
-	 * method: performTasksWhenChangingJPanels
-	 * 
-	 * tasks: set currentPanel
-	 * 		  set title of frame
-	 */
-	public void performTasksWhenChangingJPanels(JPanel currentPanel, String title) {
-		setCurrentJPanel(currentPanel);
-		// TODO: implement changing frame title based upon jpanel
-	}
-	
 	public void setCurrentJPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
     
 	public StandardCalculator_v3() throws HeadlessException {
 		// TODO Auto-generated constructor stub
-	
 	}
 
 	public StandardCalculator_v3(GraphicsConfiguration gc) {
@@ -71,13 +56,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
 	// TODO: Implement first
 	public StandardCalculator_v3(String title) throws HeadlessException {
-		super(Calculator_v3.BASIC + " " + Calculator_v3.CALCULATOR); // default title is Basic
-		setCalculator(this);
+		super("Standard Calculator"); // default title is Basic
 		setCurrentJPanel(panelBasic);
 		setupStandardCalculator_v3();
 		setImageIcons();
-		//setupMenuBar();
-		
+		setCalculator(this);
 		// adding the buttons is done in the panels
 		setMinimumSize(getCurrentPanel().getSize());
 		
@@ -123,7 +106,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonNegate.setPreferredSize(new Dimension(35, 35) );
         buttonNegate.setBorder(new LineBorder(Color.BLACK));
         buttonNegate.setEnabled(true);
-        //buttonNegate.addActionListener(negButtonHandler);
+        buttonNegate.addActionListener(negButtonHandler);
         
         add(getCurrentPanel());
 	}
@@ -144,7 +127,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             values[0] = textarea.substring(0, textarea.length()-2); // textarea changed to whole number, or int
             textArea.setText("\n" + values[0]);
             if (Integer.parseInt(values[0]) < 0 ) {
-                textarea = textArea.getText(); // temp[valuesPosition]
+                textarea = textArea.getText(); // temp[position]
                 LOGGER.info("textarea: '" + textarea + "'");
                 textarea = textarea.substring(1, textarea.length());
                 LOGGER.info("textarea: '" + textarea + "'");
@@ -162,7 +145,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = textarea.substring(1, textarea.length());
                 LOGGER.info("textarea: '" + textarea + "'");
                 textArea.setText("\n" + textarea + "-"); // update textArea
-                LOGGER.info("temp["+valuesPosition+"] '" + values[valuesPosition] + "'");
+                LOGGER.info("temp["+position+"] '" + values[position] + "'");
             } else {
                 textArea.setText("\n" + formatNumber(values[0]));
                 values[0] = formatNumber(values[0]);
@@ -200,7 +183,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = textarea.substring(1, textarea.length());
                 LOGGER.info("textarea: " + textarea);
                 textArea.setText("\n" + textarea + "-"); // update textArea
-                LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
+                LOGGER.info("temp["+position+"]: " + values[position]);
             } else {
                 textArea.setText("\n" + formatNumber(values[0]));
             }
@@ -227,7 +210,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = textarea.substring(1, textarea.length());
                 LOGGER.info("textarea: " + textarea);
                 textArea.setText("\n" + textarea + "-"); // update textArea
-                LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
+                LOGGER.info("temp["+position+"]: " + values[position]);
             }
         } else {// if double == double, keep decimal and number afterwards
             textArea.setText("\n" + formatNumber(values[0]));
@@ -257,7 +240,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                     textarea = textarea.substring(1, textarea.length());
                     LOGGER.info("textarea: " + textarea);
                     textArea.setText("\n" + textarea + "-"); // update textArea
-                    LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
+                    LOGGER.info("temp["+position+"]: " + values[position]);
                 }
             } else {
                 // if double == double, keep decimal and number afterwards
@@ -323,25 +306,23 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("AddButtonHandler started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") 
-            		&& !textArea.getText().equals("Cannot divide by 0")) {
-                //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+            if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
+                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
-                LOGGER.info("textArea: " + textArea.getText().replaceAll("\\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp["+position+"] is "+values[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
-                if (memorySwitchBool == true) {
-                	memoryValues[memoryPosition] += " + ";
-                }
+                position++; // increase position for storing textarea
             } else if (addBool == true && !values[1].equals("")) {
+            	LOGGER.info("Performing previous addition calculation");
                 add(); //addition();
                 addBool = resetOperator(addBool); // sets addBool to false
                 addBool = true;
             } else if (subBool == true && !values[1].equals("")) {
+            	LOGGER.info("We understand the logic");
                 subtract();
                 subBool = resetOperator(subBool);
                 addBool = true;
@@ -354,16 +335,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 divBool = resetOperator(divBool);
                 addBool = true;
             } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[position]
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
             	// subBool can be true because it can be a negative number
             	LOGGER.info("already chose an operator. choose another number.");
             } 
-            
             textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
@@ -382,11 +362,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                LOGGER.info("temp["+position+"] is "+values[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true && !values[1].equals("")) {
                 add();
                 addBool = resetOperator(addBool);
@@ -404,11 +384,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 divBool = resetOperator(divBool);
                 subBool = true;
             } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[position]
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
             	LOGGER.info("already chose an operator. next number is negative...");
             	negatePressed = true;
@@ -431,11 +411,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                LOGGER.info("temp["+position+"] is "+values[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true && !values[1].equals("")) {
                 add(); // addition();
                 addBool = resetOperator(addBool);
@@ -453,11 +433,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 divBool = resetOperator(divBool);
                 mulBool = true;
             } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[position]
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
             	LOGGER.info("already chose an operator. choose another number.");
             	
@@ -480,11 +460,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                LOGGER.info("temp["+position+"] is "+values[position]+ " after addButton pushed"); // confirming proper textarea before moving on
                 divBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true && !values[1].equals("")) {
                 add(); // addition();
                 addBool = resetOperator(addBool); // sets addBool to false
@@ -502,11 +482,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 divBool = resetOperator(divBool);
                 divBool = true;
             } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[position]
                 divBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
-                valuesPosition++; // increase valuesPosition for storing textarea
+                position++; // increase position for storing textarea
             } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
             	LOGGER.info("already chose an operator. choose another number.");
             }
@@ -526,28 +506,28 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             if (addBool == true) {
                 add(); // addition();
                 addBool = resetOperator(addBool);
-                valuesPosition = 0;
+                position = 0;
             } 
             else if (subBool == true){
                 subtract();
                 subBool = resetOperator(subBool);
-                valuesPosition = 0;
+                position = 0;
             } 
             else if (mulBool == true){
                 multiply();
                 mulBool = resetOperator(mulBool);
-                valuesPosition = 0;
+                position = 0;
             } 
             else if (divBool == true){
                 divide();
                 divBool = resetOperator(divBool);
-                valuesPosition = 0;
+                position = 0;
             } else if (values[0].equals("") && values[1].equals("")) {
                 // if temp[0] and temp[1] do not have a number
-                valuesPosition = 0;
+                position = 0;
             } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setText(e.getActionCommand() + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
-                valuesPosition = 1;
+                textArea.setText(e.getActionCommand() + " " +  values[position]); // "userInput +" // temp[position]
+                position = 1;
                 firstNumBool = true;
             } 
             values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
@@ -559,7 +539,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
 	
 	// NegateButtonHandler operates on this button: 
-    // final private JButton buttonNegate = new JButton("\u00B1");
+    // final private JButton buttonMC = new JButton("\u00B1");
     class NegateButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -569,18 +549,16 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if (!textArea.getText().equals("")) { 
             // if there is a number in the text area
-                if (isNegativeNumber(values[valuesPosition]) == true) { //temp[valuesPosition].substring(0, 1).equals("-")
+                if (isNegativeNumber(values[position]) == true) { //temp[position].substring(0, 1).equals("-")
                 // if there is already a negative sign
                 	LOGGER.info("Reversing number back to positive");
-                    values[valuesPosition] = convertToPositive(values[valuesPosition]);
-                    textArea.setText("\n" + values[valuesPosition]);
+                    values[position] = convertToPositive(values[position]);
+                    textArea.setText("\n" + values[position]);
                 } else  {
                 // whether first or second number, add "-"
-                    values[valuesPosition] = textArea.getText().replaceAll("\n", ""); // textarea
-                    textArea.setText("\n" + values[valuesPosition] + "-");
-                    values[valuesPosition] = convertToNegative(values[valuesPosition]); 
-                    
-                    textarea = textarea + "-";
+                    values[position] = textArea.getText().replaceAll("\\n", ""); // textarea
+                    textArea.setText("\n" + values[position] + "-");
+                    values[position] = convertToNegative(values[position]); 
                 } 
             }
             firstNumBool = true;
