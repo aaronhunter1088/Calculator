@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46a8a212-bab8-4069-9258-efc23b8b6505" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/version3/Calculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/Calculator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/version3/CalculatorMain_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/CalculatorMain_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version2/Calculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version2/Calculator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version2/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version2/Main.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,11 +27,6 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>Tab</find>
-    </findStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="MERGE" />
@@ -44,6 +41,7 @@
   <component name="ProjectId" id="1PX2lY8rsu9r4l5HfyEOm9ey64V" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -54,11 +52,11 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Problems" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.build" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/src/version3" />
   </component>
   <component name="RecentsManager">
@@ -78,7 +76,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.DifferentPanelsTester">
+  <component name="RunManager" selected="Application.CalculatorMain_v3">
     <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
@@ -96,6 +94,7 @@
       </extension>
       <method v="2">
         <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="compiler:compile" />
       </method>
     </configuration>
     <configuration name="DifferentPanelsTester" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -149,8 +148,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.DifferentPanelsTester" />
         <item itemvalue="Application.CalculatorMain_v3" />
+        <item itemvalue="Application.DifferentPanelsTester" />
       </list>
     </recent_temporary>
   </component>
@@ -164,7 +163,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1509068054784</updated>
-      <workItem from="1566006276447" duration="1674000" />
+      <workItem from="1566006276447" duration="2664000" />
+      <workItem from="1566009272465" duration="5635000" />
     </task>
     <servers />
   </component>
@@ -176,10 +176,28 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>565</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>562</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
