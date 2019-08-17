@@ -11,6 +11,7 @@ version3/BinaryCalculator$ButtonDecHandler.class
 version3/CalculatorMain_v3.class
 version3/DifferentPanelsTester.class
 version3/BinaryCalculator$ButtonWordHandler.class
+version3/JPanelBasic_v3$SquareRootButtonHandler.class
 version3/BinaryCalculator$DivideButtonHandler.class
 version3/BinaryCalculator$ButtonByteHandler.class
 version3/BinaryCalculator$NegateButtonHandler.class
@@ -69,7 +70,6 @@ version3/Calculator_v3$DotButtonHandler.class
 version3/StandardCalculator_v3$EqualsButtonHandler.class
 version3/JPanelBasic_v3$MemorySubButtonHandler.class
 version3/JPanelBasic_v3$PercentButtonHandler.class
-version3/JPanelBasic_v3$SqrtButtonHandler.class
 version3/StandardCalculatorOperations.class
 version3/BinaryCalculator$DeleteButtonHandler.class
 version3/BinaryCalculator$DotButtonHandler.class

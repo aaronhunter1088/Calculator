@@ -25,7 +25,7 @@ public class JPanelBasic_v3 extends JPanel {
     final private JButton buttonPercent = new JButton("%");
     
     final private String SQRT = "\u221A";
-    final private SqrtButtonHandler sqrtButtonHandler = new SqrtButtonHandler();
+    final private SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
     final private JButton buttonSqrt = new JButton(SQRT);
     
     final private MemoryClearButtonHandler memoryClearButtonHandler = new MemoryClearButtonHandler();
@@ -217,12 +217,14 @@ public class JPanelBasic_v3 extends JPanel {
         buttonSqrt.addActionListener(sqrtButtonHandler);
         LOGGER.info("Finished addComponentsToPanel_v3");
     }
-    
-    // needs double textarea conditioning
-    public class SqrtButtonHandler implements ActionListener {
+
+    /**
+     * The class which handles operations when the square root button is clicked
+     */
+    public class SquareRootButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            LOGGER.info("Square Root ButtonHandler class started");
+            LOGGER.info("SquareRoot ButtonHandler class started");
             LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             String errorStringNaN = "Not a Number";
             LOGGER.debug("text: " + calculator.getTextArea().getText().replace("\n",""));
@@ -239,51 +241,10 @@ public class JPanelBasic_v3 extends JPanel {
             }
         }
     }
-            /*if (calculator.getTextArea().getText().equals("")) {
-                calculator.getTextArea().setText(errorStringNaN);
-            } else if (!calculator.getTextArea().getText().equals("")) {
-                if (calculator.isPositiveNumber(calculator.getTextArea().getText())) {
-                    String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
-                    result = calculator.formatNumber(result);
-                    calculator.getTextArea().setText(result);
-                } else {
-                    calculator.getTextArea().setText(errorStringNaN);
-                }
-            }*/
 
-            /*if (!calculator.getTextArea().getText().equals("")) {
-                if (Double.parseDouble(calculator.values[calculator.valuesPosition]) > 0.0) {
-                	calculator.values[calculator.valuesPosition] = Double.toString(Math.sqrt(Double.parseDouble(calculator.values[calculator.valuesPosition]))); //4.0
-                    //int intRep = (int)Math.sqrt(Double.parseDouble(temp[valuesPosition])); // 4
-                    if (calculator.values[calculator.valuesPosition].contains(".")) { // if int == double, cut off decimal and zero
-                    	calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
-                    	calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
-                    	calculator.textarea = calculator.textarea.substring(0, calculator.textarea.length()-2); // textarea changed to whole number, or int
-                    	calculator.values[calculator.valuesPosition] = calculator.textarea; // update storing
-                    	calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition]);
-                        if (Integer.parseInt(calculator.values[calculator.valuesPosition]) < 0 ) {
-                        	calculator.textarea = calculator.getTextArea().getText(); // temp[2]
-                            LOGGER.info("textarea: " + calculator.textarea);
-                            calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
-                            LOGGER.info("textarea: " + calculator.textarea);
-                            calculator.getTextArea().setText("\n" + calculator.textarea.replaceAll(" ", "") + "-".replaceAll(" ", "")); // update textArea
-                            LOGGER.info("temp[0]: " + calculator.values[0]);
-                        }
-                    }
-                    calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition] );
-                } else { // number is negative
-                	calculator.clear();
-                	calculator.getTextArea().setText(errorStringNaN);
-                    LOGGER.info("textArea: " + errorStringNaN);
-                }
-                
-            } // end textArea .= ""
-            calculator.confirm();
-        }
-    }*/
-    
-    // PercentButtonHandler operates on this button:
-    // final private JButton buttonPer = new JButton("%");
+    /**
+     * The class which handles the logic for when the percent button is click
+     */
     public class PercentButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -321,7 +282,7 @@ public class JPanelBasic_v3 extends JPanel {
                 }
             }
             calculator.dotButtonPressed = true;
-            calculator.dotActive = true;
+            calculator.dotButtonPressed = true;
             calculator.textarea = calculator.getTextArea().getText();
             calculator.confirm();
         }

@@ -25,6 +25,13 @@
 		    <artifactId>log4j-core</artifactId>
 		    <version>2.11.2</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
 		
     </dependencies>
     
@@ -58,9 +65,9 @@
             				<files>
             					<file>${basedir}/target/filter.properties</file>
             				</files>
-            				<tasks>
+            				<!--<tasks>
             					<echo>BuildTime : ${build.time}</echo>
-            				</tasks>
+            				</tasks>-->
             			</configuration>
             		</execution>
             	</executions>
@@ -72,7 +79,7 @@
 		    	<artifactId>maven-jar-plugin</artifactId>
 		    	<version>3.1.0</version>
 		    	<configuration>
-			    	<executions>
+			    	<!--<executions>
 	            		<execution>
 	            			<id>make-a-jar</id>
 	            			<phase>compile</phase>
@@ -80,7 +87,7 @@
 	            				<goal>jar</goal>
 	            			</goals>
 	            		</execution>
-	            	</executions>
+	            	</executions>-->
 		    	    <includes>
             			<include>**/*.class</include>
             			<include>*.jpg</include>
@@ -93,7 +100,7 @@
             			<manifestEntries>
             				<Implementation-Version>${project.version}</Implementation-Version>
             				<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
-            				<Creation-Time>${build.time}</Creation-Time>
+            				<!--<Creation-Time>${build.time}</Creation-Time>-->
             				<mainClass>version3.CalculatorMain</mainClass>
             			</manifestEntries>
             		</archive>
@@ -117,7 +124,7 @@
             					<tstamp>
             						<format property="last.updated" pattern="MM-dd-YYYY hh:mm:ss"/>
             					</tstamp>
-            					<echo file="${basedir}/target/filter.properties" message="build.time=${last.updated}"/>
+            					<!--<echo file="${basedir}/target/filter.properties" message="build.time=${last.updated}"/>-->
             				</tasks>
             			</configuration>
             		</execution>
@@ -166,7 +173,7 @@
                            <manifestEntries>
             				  <Implementation-Version>${project.version}</Implementation-Version>
             				  <Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
-            				  <Creation-Time>${build.time}</Creation-Time>
+            				  <!--<Creation-Time>${build.time}</Creation-Time>-->
             				  <mainClass>version3.CalculatorMain</mainClass>
             			  </manifestEntries>
                        </archive>

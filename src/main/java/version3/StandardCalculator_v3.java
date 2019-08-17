@@ -123,8 +123,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	}
 	
 	public void add() {
-    	LOGGER.info("temp[0]: '" + values[0] + "'");
-    	LOGGER.info("temp[1]: '" + values[1] + "'");
+    	LOGGER.info("value[0]: '" + values[0] + "'");
+    	LOGGER.info("value[1]: '" + values[1] + "'");
         double result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]); // create result forced double
         LOGGER.info(values[0] + " + " + values[1] + " = " + result);
         values[0] = Double.toString(result);
@@ -144,7 +144,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 LOGGER.info("textarea: '" + textarea + "'");
                 textArea.setText("\n "+textarea.replaceAll("-", "") + "-"); // update textArea
             }
-            dotActive = false;
+            dotButtonPressed = false;
             buttonDot.setEnabled(true);
         } else { // if double == double, keep decimal and number afterwards
         	LOGGER.info("We have a decimal");
@@ -268,7 +268,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
     // used to keep 2 decimals on the number at all times
     public String formatNumber(String num) {
-        DecimalFormat df = new DecimalFormat("0.00"); 
+        DecimalFormat df = new DecimalFormat();
+        if (!numberIsNegative) {
+            if (num.length() == 2) df = new DecimalFormat("0.00");
+            if (num.length() == 3) df = new DecimalFormat("0.000");
+        } else {
+            if (num.length() == 3) df = new DecimalFormat("0.0");
+            if (num.length() == 4) df = new DecimalFormat("0.00");
+            if (num.length() == 5) df = new DecimalFormat("0.000");
+        }
         double number = Double.parseDouble(num);
         number = Double.valueOf(df.format(number));
         String numberAsStr = Double.toString(number);
@@ -361,7 +369,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            dotActive = false;
+            dotButtonPressed = false;
             confirm();
         }
     }
@@ -410,7 +418,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            dotActive = false;
+            dotButtonPressed = false;
             confirm();
         }
     }
@@ -459,7 +467,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            dotActive = false;
+            dotButtonPressed = false;
             confirm();
         }
     }
@@ -507,7 +515,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             textarea = textArea.getText();
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            dotActive = false;
+            dotButtonPressed = false;
             confirm();
         }
     }
@@ -547,7 +555,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
             textarea = textArea.getText();
             firstNumBool = true;
-            dotActive = false;
+            dotButtonPressed = false;
             confirm();
         }
     }
