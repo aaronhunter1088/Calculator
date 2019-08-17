@@ -208,14 +208,14 @@ public class JPanelBasic_v3 extends JPanel {
         addComponent(buttonPercent, 4, 4, 1, 1);
         buttonPercent.addActionListener(perButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonDel, 3, 0, 1, 1);
-        this.calculator.buttonDel.addActionListener(this.calculator.delButtonHandler);
+        addComponent(this.calculator.buttonDelete, 3, 0, 1, 1);
+        this.calculator.buttonDelete.addActionListener(this.calculator.delButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonCE, 3, 1, 1, 1);
-        this.calculator.buttonCE.addActionListener(this.calculator.CEButtonHandler);
+        addComponent(this.calculator.buttonClearEntry, 3, 1, 1, 1);
+        this.calculator.buttonClearEntry.addActionListener(this.calculator.CEButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonC, 3, 2, 1, 1);
-        this.calculator.buttonC.addActionListener(this.calculator.clearButtonHandler);
+        addComponent(this.calculator.buttonClear, 3, 2, 1, 1);
+        this.calculator.buttonClear.addActionListener(this.calculator.clearButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonNegate, 3, 3, 1, 1);
         this.calculator.buttonNegate.addActionListener(this.calculator.negButtonHandler);
@@ -232,16 +232,16 @@ public class JPanelBasic_v3 extends JPanel {
         	LOGGER.info("Square Root ButtonHandler class started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (!calculator.getTextArea().getText().equals("")) {
-                if (Double.parseDouble(calculator.values[calculator.position]) > 0.0) {
-                	calculator.values[calculator.position] = Double.toString(Math.sqrt(Double.parseDouble(calculator.values[calculator.position]))); //4.0
-                    //int intRep = (int)Math.sqrt(Double.parseDouble(temp[position])); // 4
-                    if (calculator.values[calculator.position].contains(".")) { // if int == double, cut off decimal and zero
-                    	calculator.getTextArea().setText("\n" + calculator.values[calculator.position]);
+                if (Double.parseDouble(calculator.values[calculator.valuesPosition]) > 0.0) {
+                	calculator.values[calculator.valuesPosition] = Double.toString(Math.sqrt(Double.parseDouble(calculator.values[calculator.valuesPosition]))); //4.0
+                    //int intRep = (int)Math.sqrt(Double.parseDouble(temp[valuesPosition])); // 4
+                    if (calculator.values[calculator.valuesPosition].contains(".")) { // if int == double, cut off decimal and zero
+                    	calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
                     	calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
                     	calculator.textarea = calculator.textarea.substring(0, calculator.textarea.length()-2); // textarea changed to whole number, or int
-                    	calculator.values[calculator.position] = calculator.textarea; // update storing
-                    	calculator.textArea.setText("\n" + calculator.values[calculator.position]);
-                        if (Integer.parseInt(calculator.values[calculator.position]) < 0 ) {
+                    	calculator.values[calculator.valuesPosition] = calculator.textarea; // update storing
+                    	calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition]);
+                        if (Integer.parseInt(calculator.values[calculator.valuesPosition]) < 0 ) {
                         	calculator.textarea = calculator.getTextArea().getText(); // temp[2]
                             LOGGER.info("textarea: " + calculator.textarea);
                             calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
@@ -250,7 +250,7 @@ public class JPanelBasic_v3 extends JPanel {
                             LOGGER.info("temp[0]: " + calculator.values[0]);
                         }
                     }
-                    calculator.textArea.setText("\n" + calculator.values[calculator.position] );
+                    calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition] );
                 } else { // number is negative
                 	calculator.clear();
                 	calculator.getTextArea().setText("Invalid textarea");
@@ -274,29 +274,29 @@ public class JPanelBasic_v3 extends JPanel {
                 // if the number is negative
                 if (calculator.isNegativeNumber(calculator.getTextArea().getText().replaceAll("\\n", ""))) {
                 	LOGGER.info("if condition true");
-                    //temp[position] = textArea.getText(); // textarea
-                    double percent = Double.parseDouble(calculator.values[calculator.position]); 
+                    //temp[valuesPosition] = textArea.getText(); // textarea
+                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]); 
                     percent /= 100;
                     LOGGER.info("percent: "+percent);
-                    calculator.values[calculator.position] = Double.toString(percent);
-                    calculator.textarea = calculator.formatNumber(calculator.values[calculator.position]);
-                    LOGGER.info("Old " + calculator.values[calculator.position]);
-                    calculator.values[calculator.position] = calculator.values[calculator.position].substring(1, calculator.values[calculator.position].length());
-                    LOGGER.info("New " + calculator.values[calculator.position] + "-");
-                    calculator.getTextArea().setText(calculator.values[calculator.position] + "-"); // update textArea
-                    LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
+                    calculator.textarea = calculator.formatNumber(calculator.values[calculator.valuesPosition]);
+                    LOGGER.info("Old " + calculator.values[calculator.valuesPosition]);
+                    calculator.values[calculator.valuesPosition] = calculator.values[calculator.valuesPosition].substring(1, calculator.values[calculator.valuesPosition].length());
+                    LOGGER.info("New " + calculator.values[calculator.valuesPosition] + "-");
+                    calculator.getTextArea().setText(calculator.values[calculator.valuesPosition] + "-"); // update textArea
+                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
                     //textArea.setText(textarea);
-                    calculator.values[calculator.position] = calculator.textarea;//+textarea;
+                    calculator.values[calculator.valuesPosition] = calculator.textarea;//+textarea;
                     calculator.textarea = "";
-                    LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
                     LOGGER.info("textArea: "+calculator.getTextArea().getText());
                 } else {
-                    double percent = Double.parseDouble(calculator.values[calculator.position]); 
+                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]); 
                     percent /= 100;
-                    calculator.values[calculator.position] = Double.toString(percent);
-                    calculator.getTextArea().setText("\n" + calculator.formatNumber(calculator.values[calculator.position]));
-                    calculator.values[calculator.position] = calculator.getTextArea().getText().replaceAll("\\n", "");
-                    LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
+                    calculator.getTextArea().setText("\n" + calculator.formatNumber(calculator.values[calculator.valuesPosition]));
+                    calculator.values[calculator.valuesPosition] = calculator.getTextArea().getText().replaceAll("\\n", "");
+                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
                     LOGGER.info("textArea: "+calculator.getTextArea().getText());
                 }
             }
@@ -315,12 +315,12 @@ public class JPanelBasic_v3 extends JPanel {
         	LOGGER.info("FracStoreButtonHandler class started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (!calculator.getTextArea().getText().equals("")) {
-                double result = Double.parseDouble(calculator.values[calculator.position]);
+                double result = Double.parseDouble(calculator.values[calculator.valuesPosition]);
                 result = 1 / result;
                 LOGGER.info("result: " + result);
-                calculator.values[calculator.position] = Double.toString(result);
-                calculator.getTextArea().setText("\n" + calculator.values[calculator.position]);
-                LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+                calculator.values[calculator.valuesPosition] = Double.toString(result);
+                calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
+                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
             }
             calculator.confirm();
         }
@@ -335,7 +335,7 @@ public class JPanelBasic_v3 extends JPanel {
     		LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
     		calculator.values[4] = "";
             LOGGER.info("temp[4]: " + calculator.values[4]);
-            LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+            LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
             buttonMR.setEnabled(false);
             buttonMC.setEnabled(false);
             calculator.memAddBool = false;
@@ -357,10 +357,10 @@ public class JPanelBasic_v3 extends JPanel {
             	calculator.textarea = calculator.convertToPositive(calculator.textarea);
             }
             LOGGER.info("textarea: -" + calculator.textarea);
-            calculator.values[calculator.position] = calculator.values[4];
+            calculator.values[calculator.valuesPosition] = calculator.values[4];
             calculator.getTextArea().setText("\n" + calculator.textarea + "-"); // update textArea
             calculator.textarea = calculator.getTextArea().getText();
-            LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+            LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
             calculator.confirm();
         }
     }
@@ -372,9 +372,9 @@ public class JPanelBasic_v3 extends JPanel {
         public void actionPerformed(ActionEvent e) {
     		LOGGER.info("MemoryStoreButtonHandler class started");
     		LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if(!calculator.getTextArea().getText().equals("") && !calculator.values[calculator.position].equals("")) { // [position-1]
+            if(!calculator.getTextArea().getText().equals("") && !calculator.values[calculator.valuesPosition].equals("")) { // [valuesPosition-1]
             // if text area has a number AND if storage has a number
-            	calculator.values[4] = calculator.values[calculator.position];
+            	calculator.values[4] = calculator.values[calculator.valuesPosition];
                 LOGGER.info("textArea: '\\n" + calculator.getTextArea().getText().replaceAll("\n", "") + "'");
                 LOGGER.info("temp[4]: " + calculator.values[4]);
                 buttonMR.setEnabled(true);
@@ -403,9 +403,9 @@ public class JPanelBasic_v3 extends JPanel {
             // if text area has a number and memory storage has a number
             	LOGGER.info("textArea: " + calculator.getTextArea().getText()); // print out textArea has proper value confirmation; recall text area's orientation
             	LOGGER.info("temp[4]:(memory) is " + calculator.values[4]);
-            	LOGGER.info("temp["+calculator.position+"]:(add to) is " + calculator.values[calculator.position]);
-                double result = Double.parseDouble(calculator.values[4]) + Double.parseDouble(calculator.values[calculator.position]); // create result forced double
-                LOGGER.info(calculator.values[4] + " + " + calculator.values[calculator.position] + " = " + result);
+            	LOGGER.info("temp["+calculator.valuesPosition+"]:(add to) is " + calculator.values[calculator.valuesPosition]);
+                double result = Double.parseDouble(calculator.values[4]) + Double.parseDouble(calculator.values[calculator.valuesPosition]); // create result forced double
+                LOGGER.info(calculator.values[4] + " + " + calculator.values[calculator.valuesPosition] + " = " + result);
                 calculator.values[4] = Double.toString(result); // store result
                 LOGGER.info("temp[4]: " + calculator.values[4]);
                 if (result % 1 == 0) { // if int == double, cut off decimal and zero
@@ -426,12 +426,12 @@ public class JPanelBasic_v3 extends JPanel {
                     //textArea.setText(temp[2]);
             } else if (calculator.getTextArea().getText().equals("")) {
             	calculator.getTextArea().setText("0");
-            	calculator.values[calculator.position] = "0";
-            	calculator.values[4] = calculator.values[calculator.position];
-            } else if (!calculator.values[calculator.position].equals("")) { // position-1 ???
-            	calculator.values[4] = calculator.values[calculator.position];
+            	calculator.values[calculator.valuesPosition] = "0";
+            	calculator.values[4] = calculator.values[calculator.valuesPosition];
+            } else if (!calculator.values[calculator.valuesPosition].equals("")) { // valuesPosition-1 ???
+            	calculator.values[4] = calculator.values[calculator.valuesPosition];
             } else {
-            	calculator.values[4] = calculator.values[calculator.position];
+            	calculator.values[4] = calculator.values[calculator.valuesPosition];
             }
             buttonMR.setEnabled(true);
             buttonMC.setEnabled(true);
@@ -455,9 +455,9 @@ public class JPanelBasic_v3 extends JPanel {
             // if textArea has a number and memory storage has a number
             	LOGGER.info("textArea: " + calculator.getTextArea().getText()); // print out textArea has proper value confirmation; recall text area's orientation
             	LOGGER.info("temp[%d]:(memory) %s\n", 4, calculator.values[4]);
-            	LOGGER.info("temp[%d]:(sub from) %s\n", calculator.position, calculator.values[calculator.position]);
-                double result = Double.parseDouble(calculator.values[4]) - Double.parseDouble(calculator.values[calculator.position]); // create result forced double
-                LOGGER.info(calculator.values[4] + " - " + calculator.values[calculator.position] + " = " + result);
+            	LOGGER.info("temp[%d]:(sub from) %s\n", calculator.valuesPosition, calculator.values[calculator.valuesPosition]);
+                double result = Double.parseDouble(calculator.values[4]) - Double.parseDouble(calculator.values[calculator.valuesPosition]); // create result forced double
+                LOGGER.info(calculator.values[4] + " - " + calculator.values[calculator.valuesPosition] + " = " + result);
                 calculator.values[4] = Double.toString(result); // store result
                 LOGGER.info("temp[4]: " + calculator.values[4]);
                 int intRep = (int)result;
@@ -476,8 +476,8 @@ public class JPanelBasic_v3 extends JPanel {
                 } 
             } else if (calculator.getTextArea().getText().equals("")) {
             	calculator.getTextArea().setText("0");
-            	calculator.values[calculator.position] = "0";
-            	calculator.values[4] = calculator.values[calculator.position];
+            	calculator.values[calculator.valuesPosition] = "0";
+            	calculator.values[4] = calculator.values[calculator.valuesPosition];
                 LOGGER.info("textArea: " + calculator.getTextArea().getText());
                 LOGGER.info("temp[4]: " + calculator.values[4]);
                 
@@ -497,15 +497,15 @@ public class JPanelBasic_v3 extends JPanel {
                         calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
                         LOGGER.info("textarea: " + calculator.textarea);
                         calculator.getTextArea().setText(calculator.textarea + "-"); // update textArea
-                        LOGGER.info("temp["+calculator.position+"] is " + calculator.values[calculator.position]);
+                        LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
                     }
                 } 
-            } else if (!calculator.values[calculator.position].equals("")) {
-            	calculator.values[4] = calculator.convertToNegative(calculator.values[calculator.position]);
+            } else if (!calculator.values[calculator.valuesPosition].equals("")) {
+            	calculator.values[4] = calculator.convertToNegative(calculator.values[calculator.valuesPosition]);
                 LOGGER.info("textArea: " + calculator.getTextArea().getText());
                 LOGGER.info("temp[4]: " + calculator.values[4]);
             } else {
-            	calculator.values[4] = calculator.convertToNegative(calculator.values[calculator.position]);
+            	calculator.values[4] = calculator.convertToNegative(calculator.values[calculator.valuesPosition]);
                 LOGGER.info("textArea: " + calculator.getTextArea().getText());
                 LOGGER.info("temp[4]: " + calculator.values[4]);
             }

@@ -19,7 +19,7 @@ public class CalculatorMain_v3 {
 		
 		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		calculator.setLocation(1000, 250);
-		calculator.setMenuBar();
+		calculator.setupMenuBar();
 		setupCalculator(calculator);
         SwingUtilities.updateComponentTreeUI(calculator);
         calculator.pack();
