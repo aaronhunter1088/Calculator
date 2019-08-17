@@ -1160,7 +1160,7 @@ public final class Calculator extends JFrame {
             //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             if (!textArea.getText().equals("")) { 
             // if there is a number in the text area
-                if (isNegativeNumber(temp[position]) == true) { //temp[position].substring(0, 1).equals("-")
+                if (ativeNumber(temp[position]) == true) { //temp[position].substring(0, 1).equals("-")
                 // if there is already a negative sign
                     System.out.println("Reversing number back to positive");
                     temp[position] = convertToPositive(temp[position]);

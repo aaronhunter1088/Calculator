@@ -1,21 +1,13 @@
 package version3;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // The face for a basic calculator
 public class JPanelBasic_v3 extends JPanel {
@@ -36,7 +28,6 @@ public class JPanelBasic_v3 extends JPanel {
     final private SqrtButtonHandler sqrtButtonHandler = new SqrtButtonHandler();
     final private JButton buttonSqrt = new JButton(SQRT);
     
-    // Memory Suite TODO: move to Calculator_v3
     final private MemoryClearButtonHandler memoryClearButtonHandler = new MemoryClearButtonHandler();
     final private JButton buttonMC = new JButton("MC");
     
@@ -55,9 +46,9 @@ public class JPanelBasic_v3 extends JPanel {
     final private int memoryPosition = 0;
     final private String[] memoryValues = {"", "", "", "", ""}; // holds last 5 operations
     
-    private boolean firstNumBool = true;
-    private boolean numberOneNegative = false, numberTwoNegative = false, numberThreeNegative = false;
-    private boolean decimal = false;
+//    private boolean firstNumBool = true;
+//    private boolean numberOneNegative = false, numberTwoNegative = false, numberThreeNegative = false;
+//    private boolean decimal = false;
     
     private StandardCalculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
@@ -80,6 +71,7 @@ public class JPanelBasic_v3 extends JPanel {
     } 
 
 	public void setupPanel_v3() {
+        LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
 
         buttonFraction.setFont(Calculator_v3.font);
@@ -129,11 +121,12 @@ public class JPanelBasic_v3 extends JPanel {
         LOGGER.info("All buttons font set, size set, and border set.");
         
         
-        LOGGER.info("End setInitialStartMode()");
+        LOGGER.info("End setupPanel_v3()");
         // above this comment is all for the buttons
-    } // end method setInitalStartMode()
+    } // end method setupPanel_v3()
     
     public void addComponentsToPanel_v3() {
+        LOGGER.info("Starting addComponentsToPanel_v3");
     	constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.getTextArea(), 0, 0, 5, 2);
         // Also add the action listener for each button
@@ -222,16 +215,43 @@ public class JPanelBasic_v3 extends JPanel {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonSqrt, 3, 4, 1, 1);
         buttonSqrt.addActionListener(sqrtButtonHandler);
-        LOGGER.info("All buttons added to the frame.");
+        LOGGER.info("Finished addComponentsToPanel_v3");
     }
     
     // needs double textarea conditioning
     public class SqrtButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-        	LOGGER.info("Square Root ButtonHandler class started");
-        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (!calculator.getTextArea().getText().equals("")) {
+            LOGGER.info("Square Root ButtonHandler class started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+            String errorStringNaN = "Not a Number";
+            LOGGER.debug("text: " + calculator.getTextArea().getText().replace("\n",""));
+            if (calculator.getTextArea().getText().equals("") || calculator.isNegativeNumber(calculator.getTextArea().getText())) {
+                calculator.getTextArea().setText("\n"+errorStringNaN);
+                calculator.textarea = "\n"+errorStringNaN;
+                calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
+            } else {
+                String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
+                result = calculator.formatNumber(result);
+                calculator.getTextArea().setText("\n"+result);
+                calculator.textarea = result;
+                calculator.confirm();
+            }
+        }
+    }
+            /*if (calculator.getTextArea().getText().equals("")) {
+                calculator.getTextArea().setText(errorStringNaN);
+            } else if (!calculator.getTextArea().getText().equals("")) {
+                if (calculator.isPositiveNumber(calculator.getTextArea().getText())) {
+                    String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
+                    result = calculator.formatNumber(result);
+                    calculator.getTextArea().setText(result);
+                } else {
+                    calculator.getTextArea().setText(errorStringNaN);
+                }
+            }*/
+
+            /*if (!calculator.getTextArea().getText().equals("")) {
                 if (Double.parseDouble(calculator.values[calculator.valuesPosition]) > 0.0) {
                 	calculator.values[calculator.valuesPosition] = Double.toString(Math.sqrt(Double.parseDouble(calculator.values[calculator.valuesPosition]))); //4.0
                     //int intRep = (int)Math.sqrt(Double.parseDouble(temp[valuesPosition])); // 4
@@ -253,14 +273,14 @@ public class JPanelBasic_v3 extends JPanel {
                     calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition] );
                 } else { // number is negative
                 	calculator.clear();
-                	calculator.getTextArea().setText("Invalid textarea");
-                    LOGGER.info("textArea: " + calculator.getTextArea().getText());
+                	calculator.getTextArea().setText(errorStringNaN);
+                    LOGGER.info("textArea: " + errorStringNaN);
                 }
                 
             } // end textArea .= ""
             calculator.confirm();
         }
-    }
+    }*/
     
     // PercentButtonHandler operates on this button:
     // final private JButton buttonPer = new JButton("%");

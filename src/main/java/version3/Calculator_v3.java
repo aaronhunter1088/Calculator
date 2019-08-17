@@ -1,38 +1,16 @@
 package version3;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsConfiguration;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public abstract class Calculator_v3 extends JFrame {
@@ -192,7 +170,7 @@ public abstract class Calculator_v3 extends JFrame {
 	}
 	
 	public void setupMenuBar() {
-    	LOGGER.info("Inside setMenuBar()");
+    	LOGGER.info("Inside setupMenuBar()");
         // Menu Bar and Options
         JMenuBar bar = new JMenuBar(); // create menu bar
         setJMenuBar(bar); // add menu bar to application
@@ -409,25 +387,23 @@ public abstract class Calculator_v3 extends JFrame {
     	LOGGER.info("memoryValue["+memoryPosition+"]: " + memoryValues[memoryPosition]);
     	setMemoryPosition(memoryPosition);
     }
-	
-	/**
+
+    /**
      *  Returns the results of the last action
      *
      */
     public void confirm() {
-        LOGGER.info("Confirm Results: ");
+	    confirm("");
+    }
+	
+
+    /**
+     *  Returns the results of the last action with a specific message to display
+     * @param message a message to send into the confirm results view
+     */
+    public void confirm(String message) {
+        LOGGER.info("Confirm Results: " + message);
         LOGGER.info("---------------- ");
-//        for(int i=0; i<3; i++)
-//            LOGGER.info("temp["+i+"]: \'"+values[i]+"\'");
-//        int local = --memoryPosition;
-//    	if (local != -1) {
-//    		for (String memories : memoryValues) {
-//        		LOGGER.info("memoryValues.get("+local+"): " + memoryValues.get(local));
-//        		local--;
-//        	}
-//    	} else {
-//    		LOGGER.info("no memories stored!");
-//    	}
         LOGGER.info("textarea: '\\n"+textarea.replaceAll("\n", "")+"'");
         LOGGER.info("textArea: '\\n"+textArea.getText().replaceAll("\n", "")+"'");
         if (!memoryValues[memoryPosition].equals("")) {
@@ -522,13 +498,19 @@ public abstract class Calculator_v3 extends JFrame {
         }
         return answer;
     }
+
+    public boolean isPositiveNumber(String result) {
+        boolean answer = !isNegativeNumber(result);
+        LOGGER.info("isPositiveNumber("+result+") == " + answer);
+        return answer;
+    }
     
     public boolean isNegativeNumber(String result) {
         boolean answer = false;
         if (result.contains("-")) { // if int == double, cut off decimal and zero
             answer = true;
         }
-        LOGGER.info("isNegativeNumber("+result+") == " + answer);
+        LOGGER.info("isNegativeNumber("+result.replaceAll("\n", "")+") == " + answer);
         return answer;
     }
     
@@ -536,7 +518,7 @@ public abstract class Calculator_v3 extends JFrame {
     public void clear() {
     	LOGGER.info("Inside clear()");
         // firstNum, secondNum, total, copy/paste, memory
-        for ( valuesPosition=0; valuesPosition < 4; valuesPosition++) {
+        for ( valuesPosition=0; valuesPosition < 3; valuesPosition++) {
             values[valuesPosition] = "";
         } 
         textArea.setText("\n0");
@@ -581,8 +563,9 @@ public abstract class Calculator_v3 extends JFrame {
  	        if (firstNumBool == true) {
  	            if (memAddBool == true || memSubBool == true) { // || valuesPosition == 0: essentially resetting value
  	                textArea.setText("");
- 	            } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
- 	                textArea.setText(values[0]);
+ 	            } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")
+                        || textArea.getText().replace("\n","").equals("Not a Number")) {
+ 	                textArea.setText("");
  	                valuesPosition = 0;
  	                firstNumBool = true;
  	                dotButtonPressed = false;
@@ -598,7 +581,8 @@ public abstract class Calculator_v3 extends JFrame {
  	                values[1] = "";
  	                valuesPosition = 0;
  	            }
- 	            if (firstNumBool == true && !isNegativeNumber(values[valuesPosition])) {        
+
+ 	            if (firstNumBool == true && isPositiveNumber(values[valuesPosition]) && dotButtonPressed == false) {
  	                LOGGER.info("firstNumBool = true | positive number = true");
  	                LOGGER.info("before: " + textArea.getText().replaceAll("\n", ""));
  	                textArea.setText("\n" + textArea.getText().replaceAll("\n", "") + e.getActionCommand()); // update textArea
@@ -619,7 +603,7 @@ public abstract class Calculator_v3 extends JFrame {
  	                LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
  	            }
  	            else { // dotPressed = true
- 	            	LOGGER.info("firstNumBool = true | dotButtonPressed = true");
+ 	            	LOGGER.info("firstNumBool = true | positive number = true | dotButtonPressed = true");
  	                if (!textarea.equals("") && dotButtonPressed) {
  	                	textarea = values[valuesPosition] + "." + e.getActionCommand();
  	                	textArea.setText("\n" + textarea );

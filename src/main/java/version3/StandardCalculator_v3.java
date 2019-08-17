@@ -1,17 +1,11 @@
 package version3;
 
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 
 public class StandardCalculator_v3 extends Calculator_v3 {
@@ -276,15 +270,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     public String formatNumber(String num) {
         DecimalFormat df = new DecimalFormat("0.00"); 
         double number = Double.parseDouble(num);
+        number = Double.valueOf(df.format(number));
         String numberAsStr = Double.toString(number);
         num = df.format(number);
         LOGGER.info("Formatted: " + num);
-        if (numberAsStr.endsWith("0")) {
-        	numberAsStr = numberAsStr.substring(0, numberAsStr.length()-1);
-        	num = df.format(Double.parseDouble(numberAsStr));
-        	LOGGER.info("Formatted again: " + num);
+        if (numberAsStr.charAt(numberAsStr.length()-3) == '.' && numberAsStr.substring(numberAsStr.length()-3).equals(".00") ) {
+            numberAsStr = numberAsStr.substring(0, numberAsStr.length()-3);
+            LOGGER.info("Formatted again: " + num);
         }
-        return num;
+        return numberAsStr;
     }
     
     /*public boolean isNegativeNumber(String result) {
