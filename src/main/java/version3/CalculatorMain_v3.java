@@ -1,13 +1,11 @@
 package version3;
-import java.awt.Dimension;
-import java.io.IOException;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.io.IOException;
+
 public class CalculatorMain_v3 {
 	private final static Logger LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -52,32 +50,6 @@ public class CalculatorMain_v3 {
         }
         LOGGER.info("Setting the look and feel to : " + thislookAndFeel);
         UIManager.setLookAndFeel(thislookAndFeel);
-    }
-
-    private static void setupCalculator(Object obj) {
-    	LOGGER.info("Setting up the calculator...");
-    	if (obj instanceof StandardCalculator_v3) {
-    		LOGGER.info("Setting up a standard calculator");
-    		StandardCalculator_v3 calculator = (StandardCalculator_v3) obj;
-    		//calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // covered
-            //calculator.setMinimumSize(calculator.getCurrentPanel().getSize()); // covered in constructor
-            //calculator.setResizable(false); // covered in constructor
-            //calculator.setMenuBar(); // covered
-            //calculator.pack(); // covered
-            //calculator.setVisible(true); // covered
-        } else if (obj instanceof BinaryCalculator) {
-        	LOGGER.info("Setting up a binary calculator");
-        	BinaryCalculator binarycalculator = (BinaryCalculator) obj;
-    		binarycalculator.setSize(600, 405);
-            binarycalculator.setLocation(600,300);
-            binarycalculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            binarycalculator.setResizable(false);
-            binarycalculator.setMenuBar();
-            binarycalculator.setButton();
-            binarycalculator.pack();
-            binarycalculator.setVisible(true);
-    	}
-    	LOGGER.info("End setCalculatorUp()");
     }
 }
 /*

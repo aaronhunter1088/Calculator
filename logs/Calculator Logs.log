@@ -7085,7 +7085,7 @@
 [INFO ] 08-08-2019 21:10:46.381 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
 [INFO ] 08-08-2019 21:10:46.381 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
 
-[INFO ] 08-16-2019 19:48:31.138 [Method:main] version3.CalculatorMain_v3:14 - Starting class CalculatorMain_v3
+[INFO ] 08-16-2019 19:48:31.138 [Method:main] CalculatorMain_v3:14 - Starting class CalculatorMain_v3
 [INFO ] 08-16-2019 19:48:32.198 [Method:setMenuBar] version3.Calculator_v3:180 - Inside setMenuBar()
 [INFO ] 08-16-2019 19:48:32.342 [Method:setupPanel_v3] version3.JPanelBasic_v3:129 - All buttons font set, size set, and border set.
 [INFO ] 08-16-2019 19:48:32.343 [Method:setupPanel_v3] version3.JPanelBasic_v3:132 - End setInitialStartMode()
@@ -7099,11 +7099,11 @@
 [INFO ] 08-16-2019 19:48:32.524 [Method:createImageIcon] version3.Calculator_v3:938 - Inside createImageIcon()
 [INFO ] 08-16-2019 19:48:32.524 [Method:createImageIcon] version3.Calculator_v3:942 - the path 'src/main/resources/images/maclogo.png' created an image! the imageicon is being returned...
 [INFO ] 08-16-2019 19:48:32.525 [Method:createImageIcon] version3.Calculator_v3:943 - End createImageIcon()
-[INFO ] 08-16-2019 19:48:32.535 [Method:initLookAndFeel] version3.CalculatorMain_v3:53 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 08-16-2019 19:48:32.535 [Method:initLookAndFeel] CalculatorMain_v3:53 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
 [INFO ] 08-16-2019 19:48:32.546 [Method:setMenuBar] version3.Calculator_v3:180 - Inside setMenuBar()
-[INFO ] 08-16-2019 19:48:32.559 [Method:setupCalculator] version3.CalculatorMain_v3:58 - Setting up the calculator...
-[INFO ] 08-16-2019 19:48:32.559 [Method:setupCalculator] version3.CalculatorMain_v3:60 - Setting up a standard calculator
-[INFO ] 08-16-2019 19:48:32.560 [Method:setupCalculator] version3.CalculatorMain_v3:80 - End setCalculatorUp()
+[INFO ] 08-16-2019 19:48:32.559 [Method:setupCalculator] CalculatorMain_v3:58 - Setting up the calculator...
+[INFO ] 08-16-2019 19:48:32.559 [Method:setupCalculator] CalculatorMain_v3:60 - Setting up a standard calculator
+[INFO ] 08-16-2019 19:48:32.560 [Method:setupCalculator] CalculatorMain_v3:80 - End setCalculatorUp()
 [INFO ] 08-16-2019 19:48:34.262 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
 [INFO ] 08-16-2019 19:48:34.263 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
 [INFO ] 08-16-2019 19:48:34.263 [Method:confirm] version3.Calculator_v3:398 - temp[0]: ''
@@ -7120,7 +7120,7 @@
 [INFO ] 08-16-2019 19:48:34.268 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
 [INFO ] 08-16-2019 19:48:34.269 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
 
-[INFO ] 08-16-2019 19:48:34.269 [Method:main] version3.CalculatorMain_v3:28 - End main()
+[INFO ] 08-16-2019 19:48:34.269 [Method:main] CalculatorMain_v3:28 - End main()
 
 [INFO ] 08-16-2019 19:48:36.217 [Method:actionPerformed] version3.Calculator_v3:522 - NumberButtonHandler() started
 [INFO ] 08-16-2019 19:48:36.218 [Method:actionPerformed] version3.Calculator_v3:523 - button: 5
@@ -7233,7 +7233,7 @@
 [INFO ] 08-16-2019 19:48:38.908 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
 [INFO ] 08-16-2019 19:48:38.908 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
 
-[INFO ] 08-16-2019 19:49:46.261 [Method:main] version3.CalculatorMain_v3:14 - Starting class CalculatorMain_v3
+[INFO ] 08-16-2019 19:49:46.261 [Method:main] CalculatorMain_v3:14 - Starting class CalculatorMain_v3
 [INFO ] 08-16-2019 19:49:46.764 [Method:setMenuBar] version3.Calculator_v3:181 - Inside setMenuBar()
 [INFO ] 08-16-2019 19:49:46.835 [Method:setupPanel_v3] version3.JPanelBasic_v3:129 - All buttons font set, size set, and border set.
 [INFO ] 08-16-2019 19:49:46.835 [Method:setupPanel_v3] version3.JPanelBasic_v3:132 - End setInitialStartMode()
@@ -7247,11 +7247,11 @@
 [INFO ] 08-16-2019 19:49:46.884 [Method:createImageIcon] version3.Calculator_v3:939 - Inside createImageIcon()
 [INFO ] 08-16-2019 19:49:46.884 [Method:createImageIcon] version3.Calculator_v3:943 - the path 'src/main/resources/images/maclogo.png' created an image! the imageicon is being returned...
 [INFO ] 08-16-2019 19:49:46.890 [Method:createImageIcon] version3.Calculator_v3:944 - End createImageIcon()
-[INFO ] 08-16-2019 19:49:46.896 [Method:initLookAndFeel] version3.CalculatorMain_v3:53 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 08-16-2019 19:49:46.896 [Method:initLookAndFeel] CalculatorMain_v3:53 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
 [INFO ] 08-16-2019 19:49:46.903 [Method:setMenuBar] version3.Calculator_v3:181 - Inside setMenuBar()
-[INFO ] 08-16-2019 19:49:46.911 [Method:setupCalculator] version3.CalculatorMain_v3:58 - Setting up the calculator...
-[INFO ] 08-16-2019 19:49:46.911 [Method:setupCalculator] version3.CalculatorMain_v3:60 - Setting up a standard calculator
-[INFO ] 08-16-2019 19:49:46.912 [Method:setupCalculator] version3.CalculatorMain_v3:80 - End setCalculatorUp()
+[INFO ] 08-16-2019 19:49:46.911 [Method:setupCalculator] CalculatorMain_v3:58 - Setting up the calculator...
+[INFO ] 08-16-2019 19:49:46.911 [Method:setupCalculator] CalculatorMain_v3:60 - Setting up a standard calculator
+[INFO ] 08-16-2019 19:49:46.912 [Method:setupCalculator] CalculatorMain_v3:80 - End setCalculatorUp()
 [INFO ] 08-16-2019 19:49:48.495 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
 [INFO ] 08-16-2019 19:49:48.496 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
 [INFO ] 08-16-2019 19:49:48.496 [Method:confirm] version3.Calculator_v3:399 - temp[0]: ''
@@ -7268,7 +7268,7 @@
 [INFO ] 08-16-2019 19:49:48.510 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
 [INFO ] 08-16-2019 19:49:48.511 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
 
-[INFO ] 08-16-2019 19:49:48.511 [Method:main] version3.CalculatorMain_v3:28 - End main()
+[INFO ] 08-16-2019 19:49:48.511 [Method:main] CalculatorMain_v3:28 - End main()
 
 [INFO ] 08-16-2019 19:49:49.640 [Method:actionPerformed] version3.Calculator_v3:523 - NumberButtonHandler() started
 [INFO ] 08-16-2019 19:49:49.641 [Method:actionPerformed] version3.Calculator_v3:524 - button: 5
