@@ -32,7 +32,8 @@ import javax.swing.border.LineBorder;
 // Page 945 in textbook
 public final class Calculator extends JFrame {
     
-    private final JTextArea textArea = new JTextArea();
+    final public static String BASIC = "Basic";
+	private final JTextArea textArea = new JTextArea();
     private final GridBagLayout standardLayout; // layout of the calculator
     public GridBagConstraints constraints; // layout's constraints
     private static JLabel iconLabel;
