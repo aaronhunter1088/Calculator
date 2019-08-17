@@ -100,6 +100,7 @@ public abstract class Calculator_v3 extends JFrame {
 	}
 	
 	public void setupCalculator_v3() {
+		textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		textArea.getCaret().isSelectionVisible();
         textArea.setFont(font);
         textArea.setPreferredSize(new Dimension(70, 35));

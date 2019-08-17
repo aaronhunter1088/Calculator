@@ -7085,3 +7085,299 @@
 [INFO ] 08-08-2019 21:10:46.381 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
 [INFO ] 08-08-2019 21:10:46.381 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
 
+[INFO ] 08-16-2019 19:48:31.138 [Method:main] version3.CalculatorMain_v3:14 - Starting class CalculatorMain_v3
+[INFO ] 08-16-2019 19:48:32.198 [Method:setMenuBar] version3.Calculator_v3:180 - Inside setMenuBar()
+[INFO ] 08-16-2019 19:48:32.342 [Method:setupPanel_v3] version3.JPanelBasic_v3:129 - All buttons font set, size set, and border set.
+[INFO ] 08-16-2019 19:48:32.343 [Method:setupPanel_v3] version3.JPanelBasic_v3:132 - End setInitialStartMode()
+[INFO ] 08-16-2019 19:48:32.353 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - All buttons added to the frame.
+[INFO ] 08-16-2019 19:48:32.367 [Method:createImageIcon] version3.Calculator_v3:938 - Inside createImageIcon()
+[INFO ] 08-16-2019 19:48:32.367 [Method:createImageIcon] version3.Calculator_v3:942 - the path 'src/main/resources/images/calculatorOriginalCopy.jpg' created an image! the imageicon is being returned...
+[INFO ] 08-16-2019 19:48:32.368 [Method:createImageIcon] version3.Calculator_v3:943 - End createImageIcon()
+[INFO ] 08-16-2019 19:48:32.481 [Method:createImageIcon] version3.Calculator_v3:938 - Inside createImageIcon()
+[INFO ] 08-16-2019 19:48:32.481 [Method:createImageIcon] version3.Calculator_v3:942 - the path 'src/main/resources/images/calculatorOriginal.jpg' created an image! the imageicon is being returned...
+[INFO ] 08-16-2019 19:48:32.482 [Method:createImageIcon] version3.Calculator_v3:943 - End createImageIcon()
+[INFO ] 08-16-2019 19:48:32.524 [Method:createImageIcon] version3.Calculator_v3:938 - Inside createImageIcon()
+[INFO ] 08-16-2019 19:48:32.524 [Method:createImageIcon] version3.Calculator_v3:942 - the path 'src/main/resources/images/maclogo.png' created an image! the imageicon is being returned...
+[INFO ] 08-16-2019 19:48:32.525 [Method:createImageIcon] version3.Calculator_v3:943 - End createImageIcon()
+[INFO ] 08-16-2019 19:48:32.535 [Method:initLookAndFeel] version3.CalculatorMain_v3:53 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 08-16-2019 19:48:32.546 [Method:setMenuBar] version3.Calculator_v3:180 - Inside setMenuBar()
+[INFO ] 08-16-2019 19:48:32.559 [Method:setupCalculator] version3.CalculatorMain_v3:58 - Setting up the calculator...
+[INFO ] 08-16-2019 19:48:32.559 [Method:setupCalculator] version3.CalculatorMain_v3:60 - Setting up a standard calculator
+[INFO ] 08-16-2019 19:48:32.560 [Method:setupCalculator] version3.CalculatorMain_v3:80 - End setCalculatorUp()
+[INFO ] 08-16-2019 19:48:34.262 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
+[INFO ] 08-16-2019 19:48:34.263 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
+[INFO ] 08-16-2019 19:48:34.263 [Method:confirm] version3.Calculator_v3:398 - temp[0]: ''
+[INFO ] 08-16-2019 19:48:34.263 [Method:confirm] version3.Calculator_v3:398 - temp[1]: ''
+[INFO ] 08-16-2019 19:48:34.264 [Method:confirm] version3.Calculator_v3:398 - temp[2]: ''
+[INFO ] 08-16-2019 19:48:34.265 [Method:confirm] version3.Calculator_v3:399 - textarea: '\n'
+[INFO ] 08-16-2019 19:48:34.265 [Method:confirm] version3.Calculator_v3:400 - textArea: '\n'
+[INFO ] 08-16-2019 19:48:34.266 [Method:confirm] version3.Calculator_v3:401 - addBool: 'false'
+[INFO ] 08-16-2019 19:48:34.266 [Method:confirm] version3.Calculator_v3:402 - subBool: 'false'
+[INFO ] 08-16-2019 19:48:34.266 [Method:confirm] version3.Calculator_v3:403 - mulBool: 'false'
+[INFO ] 08-16-2019 19:48:34.267 [Method:confirm] version3.Calculator_v3:404 - divBool: 'false'
+[INFO ] 08-16-2019 19:48:34.267 [Method:confirm] version3.Calculator_v3:405 - position: '0'
+[INFO ] 08-16-2019 19:48:34.268 [Method:confirm] version3.Calculator_v3:406 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:48:34.268 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:48:34.269 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:48:34.269 [Method:main] version3.CalculatorMain_v3:28 - End main()
+
+[INFO ] 08-16-2019 19:48:36.217 [Method:actionPerformed] version3.Calculator_v3:522 - NumberButtonHandler() started
+[INFO ] 08-16-2019 19:48:36.218 [Method:actionPerformed] version3.Calculator_v3:523 - button: 5
+[INFO ] 08-16-2019 19:48:36.219 [Method:actionPerformed] version3.Calculator_v3:545 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 08-16-2019 19:48:36.220 [Method:actionPerformed] version3.Calculator_v3:546 - before: 
+[INFO ] 08-16-2019 19:48:36.224 [Method:actionPerformed] version3.Calculator_v3:549 - textArea:'\n5'
+[INFO ] 08-16-2019 19:48:36.224 [Method:actionPerformed] version3.Calculator_v3:550 - temp[0]: '5'
+[INFO ] 08-16-2019 19:48:36.225 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
+[INFO ] 08-16-2019 19:48:36.226 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
+[INFO ] 08-16-2019 19:48:36.226 [Method:confirm] version3.Calculator_v3:398 - temp[0]: '5'
+[INFO ] 08-16-2019 19:48:36.227 [Method:confirm] version3.Calculator_v3:398 - temp[1]: ''
+[INFO ] 08-16-2019 19:48:36.227 [Method:confirm] version3.Calculator_v3:398 - temp[2]: ''
+[INFO ] 08-16-2019 19:48:36.228 [Method:confirm] version3.Calculator_v3:399 - textarea: '\n5'
+[INFO ] 08-16-2019 19:48:36.228 [Method:confirm] version3.Calculator_v3:400 - textArea: '\n5'
+[INFO ] 08-16-2019 19:48:36.230 [Method:confirm] version3.Calculator_v3:401 - addBool: 'false'
+[INFO ] 08-16-2019 19:48:36.231 [Method:confirm] version3.Calculator_v3:402 - subBool: 'false'
+[INFO ] 08-16-2019 19:48:36.231 [Method:confirm] version3.Calculator_v3:403 - mulBool: 'false'
+[INFO ] 08-16-2019 19:48:36.234 [Method:confirm] version3.Calculator_v3:404 - divBool: 'false'
+[INFO ] 08-16-2019 19:48:36.234 [Method:confirm] version3.Calculator_v3:405 - position: '0'
+[INFO ] 08-16-2019 19:48:36.235 [Method:confirm] version3.Calculator_v3:406 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:48:36.236 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:48:36.237 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:48:37.007 [Method:actionPerformed] version3.Calculator_v3:307 - AddButtonHandler started
+[INFO ] 08-16-2019 19:48:37.008 [Method:actionPerformed] version3.Calculator_v3:308 - button: +
+[INFO ] 08-16-2019 19:48:37.096 [Method:actionPerformed] version3.Calculator_v3:313 - textArea: 
+ + 5
+[INFO ] 08-16-2019 19:48:37.097 [Method:actionPerformed] version3.Calculator_v3:314 - temp[0] is 5 after addButton pushed
+[INFO ] 08-16-2019 19:48:37.098 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
+[INFO ] 08-16-2019 19:48:37.098 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
+[INFO ] 08-16-2019 19:48:37.099 [Method:confirm] version3.Calculator_v3:398 - temp[0]: '5'
+[INFO ] 08-16-2019 19:48:37.101 [Method:confirm] version3.Calculator_v3:398 - temp[1]: ''
+[INFO ] 08-16-2019 19:48:37.102 [Method:confirm] version3.Calculator_v3:398 - temp[2]: ''
+[INFO ] 08-16-2019 19:48:37.103 [Method:confirm] version3.Calculator_v3:399 - textarea: '\n + 5'
+[INFO ] 08-16-2019 19:48:37.103 [Method:confirm] version3.Calculator_v3:400 - textArea: '\n + 5'
+[INFO ] 08-16-2019 19:48:37.103 [Method:confirm] version3.Calculator_v3:401 - addBool: 'true'
+[INFO ] 08-16-2019 19:48:37.104 [Method:confirm] version3.Calculator_v3:402 - subBool: 'false'
+[INFO ] 08-16-2019 19:48:37.104 [Method:confirm] version3.Calculator_v3:403 - mulBool: 'false'
+[INFO ] 08-16-2019 19:48:37.105 [Method:confirm] version3.Calculator_v3:404 - divBool: 'false'
+[INFO ] 08-16-2019 19:48:37.105 [Method:confirm] version3.Calculator_v3:405 - position: '1'
+[INFO ] 08-16-2019 19:48:37.105 [Method:confirm] version3.Calculator_v3:406 - firstNumBool: 'false'
+[INFO ] 08-16-2019 19:48:37.106 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:48:37.109 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:48:37.111 [Method:actionPerformed] version3.Calculator_v3:307 - AddButtonHandler started
+[INFO ] 08-16-2019 19:48:37.112 [Method:actionPerformed] version3.Calculator_v3:308 - button: +
+[INFO ] 08-16-2019 19:48:37.114 [Method:actionPerformed] version3.Calculator_v3:345 - already chose an operator. choose another number.
+[INFO ] 08-16-2019 19:48:37.114 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
+[INFO ] 08-16-2019 19:48:37.115 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
+[INFO ] 08-16-2019 19:48:37.116 [Method:confirm] version3.Calculator_v3:398 - temp[0]: '5'
+[INFO ] 08-16-2019 19:48:37.116 [Method:confirm] version3.Calculator_v3:398 - temp[1]: ''
+[INFO ] 08-16-2019 19:48:37.117 [Method:confirm] version3.Calculator_v3:398 - temp[2]: ''
+[INFO ] 08-16-2019 19:48:37.126 [Method:confirm] version3.Calculator_v3:399 - textarea: '\n + 5'
+[INFO ] 08-16-2019 19:48:37.127 [Method:confirm] version3.Calculator_v3:400 - textArea: '\n + 5'
+[INFO ] 08-16-2019 19:48:37.127 [Method:confirm] version3.Calculator_v3:401 - addBool: 'true'
+[INFO ] 08-16-2019 19:48:37.128 [Method:confirm] version3.Calculator_v3:402 - subBool: 'false'
+[INFO ] 08-16-2019 19:48:37.128 [Method:confirm] version3.Calculator_v3:403 - mulBool: 'false'
+[INFO ] 08-16-2019 19:48:37.129 [Method:confirm] version3.Calculator_v3:404 - divBool: 'false'
+[INFO ] 08-16-2019 19:48:37.129 [Method:confirm] version3.Calculator_v3:405 - position: '1'
+[INFO ] 08-16-2019 19:48:37.134 [Method:confirm] version3.Calculator_v3:406 - firstNumBool: 'false'
+[INFO ] 08-16-2019 19:48:37.135 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:48:37.135 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:48:38.401 [Method:actionPerformed] version3.Calculator_v3:522 - NumberButtonHandler() started
+[INFO ] 08-16-2019 19:48:38.402 [Method:actionPerformed] version3.Calculator_v3:523 - button: 6
+[INFO ] 08-16-2019 19:48:38.403 [Method:actionPerformed] version3.Calculator_v3:615 - Resetting textArea
+[INFO ] 08-16-2019 19:48:38.409 [Method:actionPerformed] version3.Calculator_v3:655 - textArea: '\n6'
+[INFO ] 08-16-2019 19:48:38.410 [Method:actionPerformed] version3.Calculator_v3:656 - temp[1]: '6'
+[INFO ] 08-16-2019 19:48:38.410 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
+[INFO ] 08-16-2019 19:48:38.411 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
+[INFO ] 08-16-2019 19:48:38.411 [Method:confirm] version3.Calculator_v3:398 - temp[0]: '5'
+[INFO ] 08-16-2019 19:48:38.412 [Method:confirm] version3.Calculator_v3:398 - temp[1]: '6'
+[INFO ] 08-16-2019 19:48:38.412 [Method:confirm] version3.Calculator_v3:398 - temp[2]: ''
+[INFO ] 08-16-2019 19:48:38.413 [Method:confirm] version3.Calculator_v3:399 - textarea: '\n6'
+[INFO ] 08-16-2019 19:48:38.413 [Method:confirm] version3.Calculator_v3:400 - textArea: '\n6'
+[INFO ] 08-16-2019 19:48:38.414 [Method:confirm] version3.Calculator_v3:401 - addBool: 'true'
+[INFO ] 08-16-2019 19:48:38.414 [Method:confirm] version3.Calculator_v3:402 - subBool: 'false'
+[INFO ] 08-16-2019 19:48:38.414 [Method:confirm] version3.Calculator_v3:403 - mulBool: 'false'
+[INFO ] 08-16-2019 19:48:38.416 [Method:confirm] version3.Calculator_v3:404 - divBool: 'false'
+[INFO ] 08-16-2019 19:48:38.416 [Method:confirm] version3.Calculator_v3:405 - position: '1'
+[INFO ] 08-16-2019 19:48:38.417 [Method:confirm] version3.Calculator_v3:406 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:48:38.417 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:48:38.417 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:48:38.888 [Method:actionPerformed] version3.Calculator_v3:504 - EqualsButtonHandler class started
+[INFO ] 08-16-2019 19:48:38.889 [Method:actionPerformed] version3.Calculator_v3:505 - button: =
+[INFO ] 08-16-2019 19:48:38.890 [Method:add] version3.Calculator_v3:115 - temp[0]: '5'
+[INFO ] 08-16-2019 19:48:38.891 [Method:add] version3.Calculator_v3:116 - temp[1]: '6'
+[INFO ] 08-16-2019 19:48:38.893 [Method:add] version3.Calculator_v3:118 - 5 + 6 = 11.0
+[INFO ] 08-16-2019 19:48:38.894 [Method:add] version3.Calculator_v3:120 - addBool: true
+[INFO ] 08-16-2019 19:48:38.895 [Method:add] version3.Calculator_v3:121 - subBool: false
+[INFO ] 08-16-2019 19:48:38.895 [Method:add] version3.Calculator_v3:122 - mulBool: false
+[INFO ] 08-16-2019 19:48:38.895 [Method:add] version3.Calculator_v3:123 - divBool: false
+[INFO ] 08-16-2019 19:48:38.896 [Method:add] version3.Calculator_v3:125 - We have a whole number
+[INFO ] 08-16-2019 19:48:38.900 [Method:resetOperator] version3.Calculator_v3:370 - operatorBool: true
+[INFO ] 08-16-2019 19:48:38.901 [Method:resetOperator] version3.Calculator_v3:372 - temp[0]: '11'
+[INFO ] 08-16-2019 19:48:38.901 [Method:confirm] version3.Calculator_v3:395 - Confirm Results: 
+[INFO ] 08-16-2019 19:48:38.902 [Method:confirm] version3.Calculator_v3:396 - ---------------- 
+[INFO ] 08-16-2019 19:48:38.902 [Method:confirm] version3.Calculator_v3:398 - temp[0]: '11'
+[INFO ] 08-16-2019 19:48:38.903 [Method:confirm] version3.Calculator_v3:398 - temp[1]: ''
+[INFO ] 08-16-2019 19:48:38.903 [Method:confirm] version3.Calculator_v3:398 - temp[2]: ''
+[INFO ] 08-16-2019 19:48:38.904 [Method:confirm] version3.Calculator_v3:399 - textarea: '\n11'
+[INFO ] 08-16-2019 19:48:38.904 [Method:confirm] version3.Calculator_v3:400 - textArea: '\n11'
+[INFO ] 08-16-2019 19:48:38.905 [Method:confirm] version3.Calculator_v3:401 - addBool: 'false'
+[INFO ] 08-16-2019 19:48:38.905 [Method:confirm] version3.Calculator_v3:402 - subBool: 'false'
+[INFO ] 08-16-2019 19:48:38.905 [Method:confirm] version3.Calculator_v3:403 - mulBool: 'false'
+[INFO ] 08-16-2019 19:48:38.906 [Method:confirm] version3.Calculator_v3:404 - divBool: 'false'
+[INFO ] 08-16-2019 19:48:38.906 [Method:confirm] version3.Calculator_v3:405 - position: '0'
+[INFO ] 08-16-2019 19:48:38.906 [Method:confirm] version3.Calculator_v3:406 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:48:38.908 [Method:confirm] version3.Calculator_v3:407 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:48:38.908 [Method:confirm] version3.Calculator_v3:408 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:49:46.261 [Method:main] version3.CalculatorMain_v3:14 - Starting class CalculatorMain_v3
+[INFO ] 08-16-2019 19:49:46.764 [Method:setMenuBar] version3.Calculator_v3:181 - Inside setMenuBar()
+[INFO ] 08-16-2019 19:49:46.835 [Method:setupPanel_v3] version3.JPanelBasic_v3:129 - All buttons font set, size set, and border set.
+[INFO ] 08-16-2019 19:49:46.835 [Method:setupPanel_v3] version3.JPanelBasic_v3:132 - End setInitialStartMode()
+[INFO ] 08-16-2019 19:49:46.837 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - All buttons added to the frame.
+[INFO ] 08-16-2019 19:49:46.842 [Method:createImageIcon] version3.Calculator_v3:939 - Inside createImageIcon()
+[INFO ] 08-16-2019 19:49:46.842 [Method:createImageIcon] version3.Calculator_v3:943 - the path 'src/main/resources/images/calculatorOriginalCopy.jpg' created an image! the imageicon is being returned...
+[INFO ] 08-16-2019 19:49:46.843 [Method:createImageIcon] version3.Calculator_v3:944 - End createImageIcon()
+[INFO ] 08-16-2019 19:49:46.877 [Method:createImageIcon] version3.Calculator_v3:939 - Inside createImageIcon()
+[INFO ] 08-16-2019 19:49:46.878 [Method:createImageIcon] version3.Calculator_v3:943 - the path 'src/main/resources/images/calculatorOriginal.jpg' created an image! the imageicon is being returned...
+[INFO ] 08-16-2019 19:49:46.878 [Method:createImageIcon] version3.Calculator_v3:944 - End createImageIcon()
+[INFO ] 08-16-2019 19:49:46.884 [Method:createImageIcon] version3.Calculator_v3:939 - Inside createImageIcon()
+[INFO ] 08-16-2019 19:49:46.884 [Method:createImageIcon] version3.Calculator_v3:943 - the path 'src/main/resources/images/maclogo.png' created an image! the imageicon is being returned...
+[INFO ] 08-16-2019 19:49:46.890 [Method:createImageIcon] version3.Calculator_v3:944 - End createImageIcon()
+[INFO ] 08-16-2019 19:49:46.896 [Method:initLookAndFeel] version3.CalculatorMain_v3:53 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 08-16-2019 19:49:46.903 [Method:setMenuBar] version3.Calculator_v3:181 - Inside setMenuBar()
+[INFO ] 08-16-2019 19:49:46.911 [Method:setupCalculator] version3.CalculatorMain_v3:58 - Setting up the calculator...
+[INFO ] 08-16-2019 19:49:46.911 [Method:setupCalculator] version3.CalculatorMain_v3:60 - Setting up a standard calculator
+[INFO ] 08-16-2019 19:49:46.912 [Method:setupCalculator] version3.CalculatorMain_v3:80 - End setCalculatorUp()
+[INFO ] 08-16-2019 19:49:48.495 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
+[INFO ] 08-16-2019 19:49:48.496 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
+[INFO ] 08-16-2019 19:49:48.496 [Method:confirm] version3.Calculator_v3:399 - temp[0]: ''
+[INFO ] 08-16-2019 19:49:48.497 [Method:confirm] version3.Calculator_v3:399 - temp[1]: ''
+[INFO ] 08-16-2019 19:49:48.497 [Method:confirm] version3.Calculator_v3:399 - temp[2]: ''
+[INFO ] 08-16-2019 19:49:48.497 [Method:confirm] version3.Calculator_v3:400 - textarea: '\n'
+[INFO ] 08-16-2019 19:49:48.498 [Method:confirm] version3.Calculator_v3:401 - textArea: '\n'
+[INFO ] 08-16-2019 19:49:48.498 [Method:confirm] version3.Calculator_v3:402 - addBool: 'false'
+[INFO ] 08-16-2019 19:49:48.499 [Method:confirm] version3.Calculator_v3:403 - subBool: 'false'
+[INFO ] 08-16-2019 19:49:48.500 [Method:confirm] version3.Calculator_v3:404 - mulBool: 'false'
+[INFO ] 08-16-2019 19:49:48.503 [Method:confirm] version3.Calculator_v3:405 - divBool: 'false'
+[INFO ] 08-16-2019 19:49:48.506 [Method:confirm] version3.Calculator_v3:406 - position: '0'
+[INFO ] 08-16-2019 19:49:48.509 [Method:confirm] version3.Calculator_v3:407 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:49:48.510 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:49:48.511 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:49:48.511 [Method:main] version3.CalculatorMain_v3:28 - End main()
+
+[INFO ] 08-16-2019 19:49:49.640 [Method:actionPerformed] version3.Calculator_v3:523 - NumberButtonHandler() started
+[INFO ] 08-16-2019 19:49:49.641 [Method:actionPerformed] version3.Calculator_v3:524 - button: 5
+[INFO ] 08-16-2019 19:49:49.642 [Method:actionPerformed] version3.Calculator_v3:546 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 08-16-2019 19:49:49.643 [Method:actionPerformed] version3.Calculator_v3:547 - before: 
+[INFO ] 08-16-2019 19:49:49.692 [Method:actionPerformed] version3.Calculator_v3:550 - textArea:'\n5'
+[INFO ] 08-16-2019 19:49:49.692 [Method:actionPerformed] version3.Calculator_v3:551 - temp[0]: '5'
+[INFO ] 08-16-2019 19:49:49.693 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
+[INFO ] 08-16-2019 19:49:49.694 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
+[INFO ] 08-16-2019 19:49:49.694 [Method:confirm] version3.Calculator_v3:399 - temp[0]: '5'
+[INFO ] 08-16-2019 19:49:49.695 [Method:confirm] version3.Calculator_v3:399 - temp[1]: ''
+[INFO ] 08-16-2019 19:49:49.695 [Method:confirm] version3.Calculator_v3:399 - temp[2]: ''
+[INFO ] 08-16-2019 19:49:49.700 [Method:confirm] version3.Calculator_v3:400 - textarea: '\n5'
+[INFO ] 08-16-2019 19:49:49.701 [Method:confirm] version3.Calculator_v3:401 - textArea: '\n5'
+[INFO ] 08-16-2019 19:49:49.701 [Method:confirm] version3.Calculator_v3:402 - addBool: 'false'
+[INFO ] 08-16-2019 19:49:49.702 [Method:confirm] version3.Calculator_v3:403 - subBool: 'false'
+[INFO ] 08-16-2019 19:49:49.702 [Method:confirm] version3.Calculator_v3:404 - mulBool: 'false'
+[INFO ] 08-16-2019 19:49:49.705 [Method:confirm] version3.Calculator_v3:405 - divBool: 'false'
+[INFO ] 08-16-2019 19:49:49.706 [Method:confirm] version3.Calculator_v3:406 - position: '0'
+[INFO ] 08-16-2019 19:49:49.709 [Method:confirm] version3.Calculator_v3:407 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:49:49.710 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:49:49.712 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:49:51.184 [Method:actionPerformed] version3.Calculator_v3:307 - AddButtonHandler started
+[INFO ] 08-16-2019 19:49:51.186 [Method:actionPerformed] version3.Calculator_v3:308 - button: +
+[INFO ] 08-16-2019 19:49:51.197 [Method:actionPerformed] version3.Calculator_v3:313 - textArea: 
+ + 5
+[INFO ] 08-16-2019 19:49:51.198 [Method:actionPerformed] version3.Calculator_v3:314 - temp[0] is 5 after addButton pushed
+[INFO ] 08-16-2019 19:49:51.201 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
+[INFO ] 08-16-2019 19:49:51.203 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
+[INFO ] 08-16-2019 19:49:51.206 [Method:confirm] version3.Calculator_v3:399 - temp[0]: '5'
+[INFO ] 08-16-2019 19:49:51.210 [Method:confirm] version3.Calculator_v3:399 - temp[1]: ''
+[INFO ] 08-16-2019 19:49:51.210 [Method:confirm] version3.Calculator_v3:399 - temp[2]: ''
+[INFO ] 08-16-2019 19:49:51.211 [Method:confirm] version3.Calculator_v3:400 - textarea: '\n + 5'
+[INFO ] 08-16-2019 19:49:51.213 [Method:confirm] version3.Calculator_v3:401 - textArea: '\n + 5'
+[INFO ] 08-16-2019 19:49:51.214 [Method:confirm] version3.Calculator_v3:402 - addBool: 'true'
+[INFO ] 08-16-2019 19:49:51.214 [Method:confirm] version3.Calculator_v3:403 - subBool: 'false'
+[INFO ] 08-16-2019 19:49:51.214 [Method:confirm] version3.Calculator_v3:404 - mulBool: 'false'
+[INFO ] 08-16-2019 19:49:51.215 [Method:confirm] version3.Calculator_v3:405 - divBool: 'false'
+[INFO ] 08-16-2019 19:49:51.219 [Method:confirm] version3.Calculator_v3:406 - position: '1'
+[INFO ] 08-16-2019 19:49:51.223 [Method:confirm] version3.Calculator_v3:407 - firstNumBool: 'false'
+[INFO ] 08-16-2019 19:49:51.224 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:49:51.227 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:49:51.228 [Method:actionPerformed] version3.Calculator_v3:307 - AddButtonHandler started
+[INFO ] 08-16-2019 19:49:51.229 [Method:actionPerformed] version3.Calculator_v3:308 - button: +
+[INFO ] 08-16-2019 19:49:51.230 [Method:actionPerformed] version3.Calculator_v3:345 - already chose an operator. choose another number.
+[INFO ] 08-16-2019 19:49:51.230 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
+[INFO ] 08-16-2019 19:49:51.230 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
+[INFO ] 08-16-2019 19:49:51.231 [Method:confirm] version3.Calculator_v3:399 - temp[0]: '5'
+[INFO ] 08-16-2019 19:49:51.232 [Method:confirm] version3.Calculator_v3:399 - temp[1]: ''
+[INFO ] 08-16-2019 19:49:51.232 [Method:confirm] version3.Calculator_v3:399 - temp[2]: ''
+[INFO ] 08-16-2019 19:49:51.233 [Method:confirm] version3.Calculator_v3:400 - textarea: '\n + 5'
+[INFO ] 08-16-2019 19:49:51.233 [Method:confirm] version3.Calculator_v3:401 - textArea: '\n + 5'
+[INFO ] 08-16-2019 19:49:51.234 [Method:confirm] version3.Calculator_v3:402 - addBool: 'true'
+[INFO ] 08-16-2019 19:49:51.234 [Method:confirm] version3.Calculator_v3:403 - subBool: 'false'
+[INFO ] 08-16-2019 19:49:51.235 [Method:confirm] version3.Calculator_v3:404 - mulBool: 'false'
+[INFO ] 08-16-2019 19:49:51.235 [Method:confirm] version3.Calculator_v3:405 - divBool: 'false'
+[INFO ] 08-16-2019 19:49:51.235 [Method:confirm] version3.Calculator_v3:406 - position: '1'
+[INFO ] 08-16-2019 19:49:51.236 [Method:confirm] version3.Calculator_v3:407 - firstNumBool: 'false'
+[INFO ] 08-16-2019 19:49:51.237 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:49:51.237 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:49:51.935 [Method:actionPerformed] version3.Calculator_v3:523 - NumberButtonHandler() started
+[INFO ] 08-16-2019 19:49:51.935 [Method:actionPerformed] version3.Calculator_v3:524 - button: 6
+[INFO ] 08-16-2019 19:49:51.936 [Method:actionPerformed] version3.Calculator_v3:616 - Resetting textArea
+[INFO ] 08-16-2019 19:49:51.945 [Method:actionPerformed] version3.Calculator_v3:656 - textArea: '\n6'
+[INFO ] 08-16-2019 19:49:51.946 [Method:actionPerformed] version3.Calculator_v3:657 - temp[1]: '6'
+[INFO ] 08-16-2019 19:49:51.948 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
+[INFO ] 08-16-2019 19:49:51.950 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
+[INFO ] 08-16-2019 19:49:51.953 [Method:confirm] version3.Calculator_v3:399 - temp[0]: '5'
+[INFO ] 08-16-2019 19:49:51.954 [Method:confirm] version3.Calculator_v3:399 - temp[1]: '6'
+[INFO ] 08-16-2019 19:49:51.955 [Method:confirm] version3.Calculator_v3:399 - temp[2]: ''
+[INFO ] 08-16-2019 19:49:51.955 [Method:confirm] version3.Calculator_v3:400 - textarea: '\n6'
+[INFO ] 08-16-2019 19:49:51.956 [Method:confirm] version3.Calculator_v3:401 - textArea: '\n6'
+[INFO ] 08-16-2019 19:49:51.958 [Method:confirm] version3.Calculator_v3:402 - addBool: 'true'
+[INFO ] 08-16-2019 19:49:51.958 [Method:confirm] version3.Calculator_v3:403 - subBool: 'false'
+[INFO ] 08-16-2019 19:49:51.959 [Method:confirm] version3.Calculator_v3:404 - mulBool: 'false'
+[INFO ] 08-16-2019 19:49:51.961 [Method:confirm] version3.Calculator_v3:405 - divBool: 'false'
+[INFO ] 08-16-2019 19:49:51.962 [Method:confirm] version3.Calculator_v3:406 - position: '1'
+[INFO ] 08-16-2019 19:49:51.963 [Method:confirm] version3.Calculator_v3:407 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:49:51.963 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:49:51.963 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
+
+[INFO ] 08-16-2019 19:49:52.564 [Method:actionPerformed] version3.Calculator_v3:504 - EqualsButtonHandler class started
+[INFO ] 08-16-2019 19:49:52.564 [Method:actionPerformed] version3.Calculator_v3:505 - button: =
+[INFO ] 08-16-2019 19:49:52.565 [Method:add] version3.Calculator_v3:115 - temp[0]: '5'
+[INFO ] 08-16-2019 19:49:52.566 [Method:add] version3.Calculator_v3:116 - temp[1]: '6'
+[INFO ] 08-16-2019 19:49:52.567 [Method:add] version3.Calculator_v3:118 - 5 + 6 = 11.0
+[INFO ] 08-16-2019 19:49:52.567 [Method:add] version3.Calculator_v3:120 - addBool: true
+[INFO ] 08-16-2019 19:49:52.567 [Method:add] version3.Calculator_v3:121 - subBool: false
+[INFO ] 08-16-2019 19:49:52.568 [Method:add] version3.Calculator_v3:122 - mulBool: false
+[INFO ] 08-16-2019 19:49:52.568 [Method:add] version3.Calculator_v3:123 - divBool: false
+[INFO ] 08-16-2019 19:49:52.569 [Method:add] version3.Calculator_v3:125 - We have a whole number
+[INFO ] 08-16-2019 19:49:52.573 [Method:resetOperator] version3.Calculator_v3:371 - operatorBool: true
+[INFO ] 08-16-2019 19:49:52.573 [Method:resetOperator] version3.Calculator_v3:373 - temp[0]: '11'
+[INFO ] 08-16-2019 19:49:52.574 [Method:confirm] version3.Calculator_v3:396 - Confirm Results: 
+[INFO ] 08-16-2019 19:49:52.575 [Method:confirm] version3.Calculator_v3:397 - ---------------- 
+[INFO ] 08-16-2019 19:49:52.575 [Method:confirm] version3.Calculator_v3:399 - temp[0]: '11'
+[INFO ] 08-16-2019 19:49:52.576 [Method:confirm] version3.Calculator_v3:399 - temp[1]: ''
+[INFO ] 08-16-2019 19:49:52.576 [Method:confirm] version3.Calculator_v3:399 - temp[2]: ''
+[INFO ] 08-16-2019 19:49:52.577 [Method:confirm] version3.Calculator_v3:400 - textarea: '\n11'
+[INFO ] 08-16-2019 19:49:52.578 [Method:confirm] version3.Calculator_v3:401 - textArea: '\n11'
+[INFO ] 08-16-2019 19:49:52.578 [Method:confirm] version3.Calculator_v3:402 - addBool: 'false'
+[INFO ] 08-16-2019 19:49:52.579 [Method:confirm] version3.Calculator_v3:403 - subBool: 'false'
+[INFO ] 08-16-2019 19:49:52.581 [Method:confirm] version3.Calculator_v3:404 - mulBool: 'false'
+[INFO ] 08-16-2019 19:49:52.582 [Method:confirm] version3.Calculator_v3:405 - divBool: 'false'
+[INFO ] 08-16-2019 19:49:52.583 [Method:confirm] version3.Calculator_v3:406 - position: '0'
+[INFO ] 08-16-2019 19:49:52.583 [Method:confirm] version3.Calculator_v3:407 - firstNumBool: 'true'
+[INFO ] 08-16-2019 19:49:52.585 [Method:confirm] version3.Calculator_v3:408 - dotButtonPressed: 'false'
+[INFO ] 08-16-2019 19:49:52.585 [Method:confirm] version3.Calculator_v3:409 - -------- End Confirm Results --------
+
