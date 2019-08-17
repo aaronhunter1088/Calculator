@@ -98,7 +98,7 @@ public final class Calculator extends JFrame {
         setInitialStartMode();
     }
     
-    public void setMenuBar() {
+    public void setupMenuBar() {
         // Menu Bar and Options
         JMenuBar bar = new JMenuBar(); // create menu bar
         setJMenuBar(bar); // add menu bar to application
@@ -288,19 +288,7 @@ public final class Calculator extends JFrame {
             );
     } // end public setMenuBar
     
-    public Calculator setStandardMode() {
-    	Calculator calc = new Calculator();
-    	if (this.isShowing()) {
-    		
-        	this.dispose();
-        	return calc;
-    	}
-    	
-    	return calc;
-    }
-    
-    public void setInitialStartMode()
-    {
+    public void setInitialStartMode() {
         // create GUI components
         /* 1) */ final NumberButtonHandler buttonHandler = new NumberButtonHandler(); // This handler handles btns 0 - 9
         /* 11) */ final AddButtonHandler addButtonHandler = new AddButtonHandler();
@@ -539,43 +527,7 @@ public final class Calculator extends JFrame {
         
     // above this comment is all for the buttons
     } // end method setInitalStartMode()
-    
-    public BinaryCalculator setBinaryMode() {
-    	
-    	return new BinaryCalculator();
-//        button2.setEnabled(false);
-//        button3.setEnabled(false);
-//        button4.setEnabled(false);
-//        button5.setEnabled(false);
-//        button6.setEnabled(false);
-//        button7.setEnabled(false);
-//        button8.setEnabled(false);
-//        button9.setEnabled(false);
-//        buttonDot.setEnabled(false);
-        
-    } // end method setButtonBinaryMode
-    
-    protected Boolean setMode(Boolean mode) {
-        standardMode = false;
-        binaryMode = false;
-//        this.mode = ?
-        return mode;
-    }
-    
-    /**
-     * This method has been replaced with Mode getMode().
-     * @param mode
-     * @return
-     */
-    @Deprecated
-    public Boolean getMode(Boolean mode) {
-        return mode;
-    }
-    
-    public Boolean getBinaryMode() {
-        return binaryMode.booleanValue();
-    }
-    
+
     /**
      * This method does two things:
      * Clears any decimal found.
