@@ -165,6 +165,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
     
     public void subtract() {
+        LOGGER.info("value[0]: '" + values[0] + "'");
+        LOGGER.info("value[1]: '" + values[1] + "'");
         double result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]); // create result forced double
         LOGGER.info(values[0] + " - " + values[1] + " = " + result);
         values[0] = Double.toString(result); // store result
@@ -202,6 +204,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
     
     public void multiply() {
+        LOGGER.info("value[0]: '" + values[0] + "'");
+        LOGGER.info("value[1]: '" + values[1] + "'");
         double result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]); // create result forced double
         LOGGER.info(values[0] + " * " + values[1] + " = " + result);
         values[0] = Double.toString(result); // store result
@@ -229,6 +233,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
     
     public void divide() {
+        LOGGER.info("value[0]: '" + values[0] + "'");
+        LOGGER.info("value[1]: '" + values[1] + "'");
         if (!values[1].equals("0")) { 
             // if the second number is not zero, divide as usual
             double result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]); // create result forced double
@@ -259,7 +265,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         } else if (values[1].equals("0")) {
             String result = "0";
-            LOGGER.info("Attempting to divide by zero. Cannog divide by 0!");
+            LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
             textArea.setText("Cannot divide by 0");
             values[0] = result;
             firstNumBool = true;
@@ -288,45 +294,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         return numberAsStr;
     }
-    
-    /*public boolean isNegativeNumber(String result) {
-    	LOGGER.info("isNegativeNumber() running");
-        boolean answer = false;
-        if (result.contains("-")) { // if int == double, cut off decimal and zero
-            answer = true;
-        }
-        return answer;
-    }*/
-    
-    /*public String convertToNegative(String number) {
-    	LOGGER.info("convertToNegative() running");
-        LOGGER.info("Old: " + number.replaceAll("\n", ""));
-        LOGGER.info("New: "  + "-" + number.replaceAll("\n", ""));
-        number = "-" + number.replaceAll("\n", "");
-        LOGGER.info("Converted Number: " + number);
-        return number;
-    }
-    
-    public String convertToPositive(String number) {
-    	LOGGER.info("convertToPositive() running");
-    	LOGGER.info("Number to convert: " + number);
-        if (number.endsWith("-")) {
-        	LOGGER.info("1Converted Number: " + number.substring(0, number.length()-1) );
-            number = number.substring(0, number.length()-1);
-        } else {
-        	LOGGER.info("2Converted Number: " + number.substring(1, number.length()) );
-            number = number.substring(1, number.length());
-        }
-        return number;
-    }*/
-	
-	class AddButtonHandler implements ActionListener {
+
+    class AddButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("AddButtonHandler started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") 
-            		&& !textArea.getText().equals("Cannot divide by 0")) {
+            if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
                 //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
@@ -355,14 +329,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 divide();
                 divBool = resetOperator(divBool);
                 addBool = true;
-            } else if (textArea.getText().equals("Invalid textarea") || textArea.getText().equals("Cannot divide by 0")) {
+            } else if (calculator.textAreaContainsBadText()) {
                 textArea.setText(e.getActionCommand() + " " +  values[0]); // "userInput +" // temp[valuesPosition]
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
                 valuesPosition++; // increase valuesPosition for storing textarea
             } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            	// subBool can be true because it can be a negative number
             	LOGGER.info("already chose an operator. choose another number.");
             } 
             
@@ -432,8 +405,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textarea = textArea.getText().replaceAll("\\n", "");
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
-                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                LOGGER.info("textArea: \\n" + textArea.getText().replaceAll("\n","")); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after buttonMultiply was pushed"); // confirming proper textarea before moving on
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -559,33 +532,28 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             confirm();
         }
     }
-	
-	// NegateButtonHandler operates on this button: 
-    // final private JButton buttonNegate = new JButton("\u00B1");
+
+    /**
+     * Handles the logic when user clicks the Negate button
+     */
     class NegateButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("NegateButtonHandler started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            textarea = textArea.getText();
-            //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            if (!textArea.getText().equals("")) { 
-            // if there is a number in the text area
-                if (isNegativeNumber(values[valuesPosition]) == true) { //temp[valuesPosition].substring(0, 1).equals("-")
-                // if there is already a negative sign
-                	LOGGER.info("Reversing number back to positive");
-                    values[valuesPosition] = convertToPositive(values[valuesPosition]);
-                    textArea.setText("\n" + values[valuesPosition]);
-                } else  {
-                // whether first or second number, add "-"
-                    values[valuesPosition] = textArea.getText().replaceAll("\n", ""); // textarea
-                    textArea.setText("\n" + values[valuesPosition] + "-");
-                    values[valuesPosition] = convertToNegative(values[valuesPosition]); 
-                    
-                    textarea = textarea + "-";
-                } 
+            if (!textarea.equals("")) {
+                textarea = textarea.replaceAll("\n","");
+                if (isNegativeNumber(textarea)) {
+                    textarea = convertToPositive(textarea);
+                    LOGGER.debug("textarea: " + textarea);
+                    getTextArea().setText("\n"+textarea);
+                } else {
+                    getTextArea().setText("\n"+textarea+"-");
+                    textarea = convertToNegative(textarea);
+                    LOGGER.debug("textarea: " + textarea);
+                }
             }
-            firstNumBool = true;
+            values[valuesPosition] = textarea;
             confirm();    
         }
     }

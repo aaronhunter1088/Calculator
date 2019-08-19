@@ -164,8 +164,8 @@ public class JPanelBasic_v3 extends JPanel {
         addComponent(calculator.button3, 6, 2, 1, 1);
         calculator.button3.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMultiply, 6, 3, 1, 1);
-        calculator.buttonMultiply.addActionListener(this.calculator.subButtonHandler);
+        addComponent(calculator.buttonSub, 6, 3, 1, 1);
+        calculator.buttonSub.addActionListener(this.calculator.subButtonHandler);
         constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.buttonEquals, 6, 4, 1, 2); // idk why its size is not showing on the application; leave a comment for me on why this is
         
@@ -179,8 +179,8 @@ public class JPanelBasic_v3 extends JPanel {
         addComponent(this.calculator.button6, 5, 2, 1, 1);
         this.calculator.button6.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonSub, 5, 3, 1, 1);
-        this.calculator.buttonSub.addActionListener(this.calculator.mulButtonHandler);
+        addComponent(this.calculator.buttonMultiply, 5, 3, 1, 1);
+        this.calculator.buttonMultiply.addActionListener(this.calculator.mulButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonFraction, 5, 4, 1, 1);
         buttonFraction.addActionListener(fracButtonHandler);

@@ -2,40 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46a8a212-bab8-4069-9258-efc23b8b6505" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_9.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/version3/CalculatorMethodsTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/version3/StandardCalculatorMethodsTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_0_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_1_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/Calculator Logs.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/Calculator Logs.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearEntryButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearEntryButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DeleteButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DeleteButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DotButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DotButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$NumberButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$NumberButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$FracButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$FracButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryAddButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryAddButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryClearButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryClearButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryRecallButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryRecallButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryStoreButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryStoreButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemorySubButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemorySubButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$PercentButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$PercentButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$SqrtButtonHandler.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$AddButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$AddButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$DivideButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$DivideButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$EqualsButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$EqualsButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$MultiplyButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$MultiplyButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$NegateButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$NegateButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$SubtractButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$SubtractButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,6 +42,7 @@
         <option value="JavaFXApplication" />
         <option value="package-info" />
         <option value="FxmlFile" />
+        <option value="JUnit4 Test Class" />
         <option value="Class" />
       </list>
     </option>
@@ -79,6 +70,8 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4" value="" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/version3" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -86,7 +79,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Problems" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -94,7 +87,14 @@
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/src/version3" />
   </component>
   <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="" />
+      <recent name="version3" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
   </component>
@@ -110,7 +110,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.CalculatorMain_v3">
+  <component name="RunManager" selected="JUnit.StandardCalculatorMethodsTest">
     <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
@@ -122,7 +122,7 @@
       <module name="MicrosoftCalculator" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="version3.*" />
+          <option name="PATTERN" value=".*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -131,22 +131,91 @@
         <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="compiler:compile" />
       </method>
     </configuration>
-    <configuration name="DifferentPanelsTester" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="version3.DifferentPanelsTester" />
-      <module name="MicrosoftCalculator" />
+    <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CalculatorMethodsTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="MicrosoftCalculator" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="version3.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="version3" />
+      <option name="MAIN_CLASS_NAME" value="version3.CalculatorMethodsTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="Application" factoryName="Application">
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <configuration name="CalculatorMethodsTest.testConvertingToNegative" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="MicrosoftCalculator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="version3.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="version3" />
+      <option name="MAIN_CLASS_NAME" value="version3.CalculatorMethodsTest" />
+      <option name="METHOD_NAME" value="testConvertingToNegative" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CalculatorMethodsTest.testIsDecimalReturnsFalse" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="MicrosoftCalculator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="version3.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="version3" />
+      <option name="MAIN_CLASS_NAME" value="version3.CalculatorMethodsTest" />
+      <option name="METHOD_NAME" value="testIsDecimalReturnsFalse" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CalculatorMethodsTest.testNumberHasADecimalReturnsTrue" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="MicrosoftCalculator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="version3.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="version3" />
+      <option name="MAIN_CLASS_NAME" value="version3.CalculatorMethodsTest" />
+      <option name="METHOD_NAME" value="testNumberHasADecimalReturnsTrue" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StandardCalculatorMethodsTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="MicrosoftCalculator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="version3.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="version3" />
+      <option name="MAIN_CLASS_NAME" value="version3.StandardCalculatorMethodsTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -178,11 +247,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.CalculatorMain_v3" />
-      <item itemvalue="Application.DifferentPanelsTester" />
+      <item itemvalue="JUnit.CalculatorMethodsTest.testConvertingToNegative" />
+      <item itemvalue="JUnit.CalculatorMethodsTest" />
+      <item itemvalue="JUnit.CalculatorMethodsTest.testNumberHasADecimalReturnsTrue" />
+      <item itemvalue="JUnit.CalculatorMethodsTest.testIsDecimalReturnsFalse" />
+      <item itemvalue="JUnit.StandardCalculatorMethodsTest" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.DifferentPanelsTester" />
+        <item itemvalue="JUnit.StandardCalculatorMethodsTest" />
+        <item itemvalue="JUnit.CalculatorMethodsTest.testIsDecimalReturnsFalse" />
+        <item itemvalue="JUnit.CalculatorMethodsTest.testNumberHasADecimalReturnsTrue" />
+        <item itemvalue="JUnit.CalculatorMethodsTest" />
+        <item itemvalue="JUnit.CalculatorMethodsTest.testConvertingToNegative" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +274,7 @@
       <option name="presentableId" value="Default" />
       <updated>1509068054784</updated>
       <workItem from="1566006276447" duration="2664000" />
-      <workItem from="1566009272465" duration="11097000" />
+      <workItem from="1566009272465" duration="24500000" />
     </task>
     <servers />
   </component>
@@ -221,19 +298,29 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
-          <line>565</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
-          <line>562</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java</url>
-          <line>379</line>
+          <line>352</line>
           <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>797</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>791</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>777</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>780</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
