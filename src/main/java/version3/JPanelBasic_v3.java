@@ -68,12 +68,80 @@ public class JPanelBasic_v3 extends JPanel {
         setCalculator(calculator);
         addComponentsToPanel_v3();
         
-    } 
+    }
+
+    public static void performBasicSetup(Calculator_v3 calculator) {
+        LOGGER.info("Preparing programmer buttons");
+        calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
+        calculator.button0.setEnabled(true);
+        calculator.button1.setEnabled(true);
+        calculator.button2.setEnabled(true);
+        calculator.button3.setEnabled(true);
+        calculator.button4.setEnabled(true);
+        calculator.button5.setEnabled(true);
+        calculator.button6.setEnabled(true);
+        calculator.button7.setEnabled(true);
+        calculator.button8.setEnabled(true);
+        calculator.button9.setEnabled(true);
+        LOGGER.info("Finished preparing buttons.");
+    }
 
     // prepare panel's specific objects
 	public void setupPanel_v3() {
         LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
+
+        try {
+            calculator.button0.setFont(calculator.font);
+            calculator.button0.setPreferredSize(new Dimension(70, 35) );
+            calculator.button0.setBorder(new LineBorder(Color.BLACK));
+            calculator.button0.setEnabled(true);
+
+            calculator.button1.setFont(calculator.font);
+            calculator.button1.setPreferredSize(new Dimension(35, 35) );
+            calculator.button1.setBorder(new LineBorder(Color.BLACK));
+            calculator.button1.setEnabled(true);
+
+            calculator.button2.setFont(calculator.font);
+            calculator.button2.setPreferredSize(new Dimension(35, 35) );
+            calculator.button2.setBorder(new LineBorder(Color.BLACK));
+            calculator.button2.setEnabled(true);
+
+            calculator.button3.setFont(calculator.font);
+            calculator.button3.setPreferredSize(new Dimension(35, 35) );
+            calculator.button3.setBorder(new LineBorder(Color.BLACK));
+            calculator.button3.setEnabled(true);
+
+            calculator.button4.setFont(calculator.font);
+            calculator.button4.setPreferredSize(new Dimension(35, 35) );
+            calculator.button4.setBorder(new LineBorder(Color.BLACK));
+            calculator.button4.setEnabled(true);
+
+            calculator.button5.setFont(calculator.font);
+            calculator.button5.setPreferredSize(new Dimension(35, 35) );
+            calculator. button5.setBorder(new LineBorder(Color.BLACK));
+            calculator.button5.setEnabled(true);
+
+            calculator.button6.setFont(calculator.font);
+            calculator. button6.setPreferredSize(new Dimension(35, 35) );
+            calculator. button6.setBorder(new LineBorder(Color.BLACK));
+            calculator. button6.setEnabled(true);
+
+            calculator.button7.setFont(calculator.font);
+            calculator.button7.setPreferredSize(new Dimension(35, 35) );
+            calculator.button7.setBorder(new LineBorder(Color.BLACK));
+            calculator.button7.setEnabled(true);
+
+            calculator.button8.setFont(calculator.font);
+            calculator.button8.setPreferredSize(new Dimension(35, 35) );
+            calculator.button8.setBorder(new LineBorder(Color.BLACK));
+            calculator.button8.setEnabled(true);
+
+            calculator.button9.setFont(calculator.font);
+            calculator.button9.setPreferredSize(new Dimension(35, 35) );
+            calculator.button9.setBorder(new LineBorder(Color.BLACK));
+            calculator. button9.setEnabled(true);
+        } catch (NullPointerException e) {}
 
         buttonFraction.setFont(Calculator_v3.font);
         buttonFraction.setPreferredSize(new Dimension(35, 35) );
@@ -145,7 +213,7 @@ public class JPanelBasic_v3 extends JPanel {
         buttonMSub.addActionListener(memorySubButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button0, 7, 0, 2, 1);
-        calculator.button0.addActionListener(this.calculator.buttonHandler);
+        //calculator.button0.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.buttonDot, 7, 2, 1, 1);
         calculator.buttonDot.addActionListener(this.calculator.dotButtonHandler); 
@@ -154,13 +222,13 @@ public class JPanelBasic_v3 extends JPanel {
         calculator.buttonAdd.addActionListener(this.calculator.addButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button1, 6, 0, 1, 1);
-        calculator.button1.addActionListener(this.calculator.buttonHandler);
+        //calculator.button1.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button2, 6, 1, 1, 1);
-        calculator.button2.addActionListener(this.calculator.buttonHandler);
+        //calculator.button2.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button3, 6, 2, 1, 1);
-        calculator.button3.addActionListener(this.calculator.buttonHandler);
+        //calculator.button3.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.buttonSubtract, 6, 3, 1, 1);
         calculator.buttonSubtract.addActionListener(this.calculator.subtractButtonHandler);
@@ -169,13 +237,13 @@ public class JPanelBasic_v3 extends JPanel {
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button4, 5, 0, 1, 1);
-        this.calculator.button4.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button4.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button5, 5, 1, 1, 1);
-        this.calculator.button5.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button5.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button6, 5, 2, 1, 1);
-        this.calculator.button6.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button6.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonMultiply, 5, 3, 1, 1);
         this.calculator.buttonMultiply.addActionListener(this.calculator.multiplyButtonHandler);
@@ -185,13 +253,13 @@ public class JPanelBasic_v3 extends JPanel {
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button7, 4, 0, 1, 1);
-        this.calculator.button7.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button7.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button8, 4, 1, 1, 1);
-        this.calculator.button8.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button8.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button9, 4, 2, 1, 1);
-        this.calculator.button9.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button9.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonDivide, 4, 3, 1, 1);
         

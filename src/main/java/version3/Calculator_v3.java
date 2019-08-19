@@ -17,6 +17,8 @@ public abstract class Calculator_v3 extends JFrame {
 	
 	final public static String BASIC = "Basic";
 	protected Mode mode = Mode.BASIC;
+	public Mode getMode() { return this.mode; }
+	protected void setMode(Mode mode) { this.mode = mode; }
     final public static String PROGRAMMER = "Programmer";
     final public static String SCIENTIFIC = "Scientific";
     final public static String DATE = "Date";
@@ -98,56 +100,69 @@ public abstract class Calculator_v3 extends JFrame {
         textArea.setFont(font);
         textArea.setPreferredSize(new Dimension(70, 35));
         textArea.setEditable(false);
-        
+
+        // these buttons while are apart of Calculator_v3, must be defined
+        // in the JPanel that uses them.
+        // TODO: Implement in JPanels
         button0.setFont(font);
         button0.setPreferredSize(new Dimension(70, 35) );
         button0.setBorder(new LineBorder(Color.BLACK));
         button0.setEnabled(true);
+        button0.addActionListener(buttonHandler);
         
         button1.setFont(font);
         button1.setPreferredSize(new Dimension(35, 35) );
         button1.setBorder(new LineBorder(Color.BLACK));
         button1.setEnabled(true);
+        button1.addActionListener(buttonHandler);
         
         button2.setFont(font);
         button2.setPreferredSize(new Dimension(35, 35) );
         button2.setBorder(new LineBorder(Color.BLACK));
         button2.setEnabled(true);
+        button2.addActionListener(buttonHandler);
         
         button3.setFont(font);
         button3.setPreferredSize(new Dimension(35, 35) );
         button3.setBorder(new LineBorder(Color.BLACK));
         button3.setEnabled(true);
+        button3.addActionListener(buttonHandler);
         
         button4.setFont(font);
         button4.setPreferredSize(new Dimension(35, 35) );
         button4.setBorder(new LineBorder(Color.BLACK));
         button4.setEnabled(true);
+        button4.addActionListener(buttonHandler);
         
         button5.setFont(font);
         button5.setPreferredSize(new Dimension(35, 35) );
         button5.setBorder(new LineBorder(Color.BLACK));
         button5.setEnabled(true);
+        button5.addActionListener(buttonHandler);
         
         button6.setFont(font);
         button6.setPreferredSize(new Dimension(35, 35) );
         button6.setBorder(new LineBorder(Color.BLACK));
         button6.setEnabled(true);
+        button6.addActionListener(buttonHandler);
         
         button7.setFont(font);
         button7.setPreferredSize(new Dimension(35, 35) );
         button7.setBorder(new LineBorder(Color.BLACK));
         button7.setEnabled(true);
+        button7.addActionListener(buttonHandler);
         
         button8.setFont(font);
         button8.setPreferredSize(new Dimension(35, 35) );
         button8.setBorder(new LineBorder(Color.BLACK));
         button8.setEnabled(true);
+        button8.addActionListener(buttonHandler);
         
         button9.setFont(font);
         button9.setPreferredSize(new Dimension(35, 35) );
         button9.setBorder(new LineBorder(Color.BLACK));
         button9.setEnabled(true);
+        button9.addActionListener(buttonHandler);
         
         buttonClear.setFont(font);
         buttonClear.setPreferredSize(new Dimension(35, 35) );
@@ -243,6 +258,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("memoryPosition: '"+memoryPosition+"'");
         LOGGER.info("firstNumBool: '"+firstNumBool+"'"); 
         LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
+        LOGGER.info("mode: " + mode);
         LOGGER.info("-------- End Confirm Results --------\n");
     }
     

@@ -111,10 +111,44 @@ public class JPanelProgrammer_v3 extends JPanel {
         addComponentsToPanel_v3();
     }
 
+    public static void performBasicSetup(Calculator_v3 calculator) {
+        LOGGER.info("Preparing programmer buttons");
+        calculator.button2.setEnabled(false);
+        calculator.button3.setEnabled(false);
+        calculator.button4.setEnabled(false);
+        calculator.button5.setEnabled(false);
+        calculator.button6.setEnabled(false);
+        calculator.button7.setEnabled(false);
+        calculator.button8.setEnabled(false);
+        calculator.button9.setEnabled(false);
+        LOGGER.info("Finished preparing buttons.");
+    }
+
     // Prepare panel's objects
     public void setupPanel_v3() {
         LOGGER.info("Starting setupProgrammerPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
+
+        try {
+            calculator.button2.setEnabled(false);
+            calculator.button3.setEnabled(false);
+            calculator.button4.setEnabled(false);
+            calculator.button5.setEnabled(false);
+            calculator.button6.setEnabled(false);
+            calculator.button7.setEnabled(false);
+            calculator.button8.setEnabled(false);
+            calculator.button9.setEnabled(false);
+            calculator.buttonNegate.setEnabled(false);
+        } catch (NullPointerException e) {}
+        buttonA.setEnabled(false);
+        buttonB.setEnabled(false);
+        buttonC.setEnabled(false);
+        buttonD.setEnabled(false);
+        buttonE.setEnabled(false);
+        buttonF.setEnabled(false);
+        buttonSqrt.setEnabled(false);
+        buttonPercent.setEnabled(false);
+        buttonFraction.setEnabled(false);
 
         buttonByte.setSelected(true);
         buttonBin.setSelected(true);
@@ -336,11 +370,11 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonRor, 2, 1, 1, 1, otherButtonLayout);
         setComponent(buttonC, 2, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button7, 2, 3, 1, 1, otherButtonLayout);
-        calculator.button7.addActionListener(calculator.buttonHandler);
+        //calculator.button7.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button8, 2, 4, 1, 1, otherButtonLayout);
-        calculator.button8.addActionListener(calculator.buttonHandler);
+        //calculator.button8.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button9, 2, 5, 1, 1, otherButtonLayout);
-        calculator.button9.addActionListener(calculator.buttonHandler);
+        //calculator.button9.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonDivide, 2, 6, 1, 1, otherButtonLayout);
         calculator.buttonDivide.addActionListener(calculator.divideButtonHandler);
         setComponent(buttonPercent, 2, 7, 1, 1, otherButtonLayout);
@@ -357,11 +391,11 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonXor, 3, 1, 1, 1, otherButtonLayout);
         setComponent(buttonD, 3, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button4, 3, 3, 1, 1, otherButtonLayout);
-        calculator.button4.addActionListener(calculator.buttonHandler);
+        //calculator.button4.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button5, 3, 4, 1, 1, otherButtonLayout);
-        calculator.button5.addActionListener(calculator.buttonHandler);
+        //calculator.button5.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button6, 3, 5, 1, 1, otherButtonLayout);
-        calculator.button6.addActionListener(calculator.buttonHandler);
+        //calculator.button6.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonMultiply, 3, 6, 1, 1, otherButtonLayout);
         calculator.buttonMultiply.addActionListener(calculator.multiplyButtonHandler);
         setComponent(buttonFraction, 3, 7, 1, 1, otherButtonLayout);
@@ -378,11 +412,11 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonRSh, 4, 1, 1, 1, otherButtonLayout);
         setComponent(buttonE, 4, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button1, 4, 3, 1, 1, otherButtonLayout);
-        calculator.button1.addActionListener(calculator.buttonHandler);
+        //calculator.button1.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button2, 4, 4, 1, 1, otherButtonLayout);
-        calculator.button2.addActionListener(calculator.buttonHandler);
+        //calculator.button2.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button3, 4, 5, 1, 1, otherButtonLayout);
-        calculator.button3.addActionListener(calculator.buttonHandler);
+        //calculator.button3.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonSubtract, 4, 6, 1, 1, otherButtonLayout);
         calculator.buttonSubtract.addActionListener(calculator.subtractButtonHandler);
         setComponent(calculator.buttonEquals, 4, 7, 1, 2, otherButtonLayout);
@@ -400,7 +434,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonAnd, 5, 1, 1, 1, otherButtonLayout);
         setComponent(buttonF, 5, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button0, 5, 3, 2, 1, otherButtonLayout);
-        calculator.button0.addActionListener(calculator.buttonHandler);
+        //calculator.button0.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonDot, 5, 5, 1, 1, otherButtonLayout);
         setComponent(calculator.buttonAdd, 5, 6, 1, 2, otherButtonLayout);
         calculator.buttonAdd.addActionListener(calculator.addButtonHandler);

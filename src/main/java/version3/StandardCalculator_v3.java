@@ -35,11 +35,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     private void setCalculator(Calculator_v3 calculator) { this.calculator = calculator; }
     
     // 4 types of Standard Calculators: create getters and setters
-    protected JPanel currentPanel = null;
-    protected JPanel panelBasic = new JPanelBasic_v3(this);
-    protected JPanel panelProgrammer;
-    protected JPanel panelScientific;
-    protected JPanel panelDate;
+    protected JPanel currentPanel;
+//    protected JPanel panelBasic = new JPanelBasic_v3(this);
+//    protected JPanel panelProgrammer;
+//    protected JPanel panelScientific;
+//    protected JPanel panelDate;
 	public JPanel getCurrentJPanel() { return currentPanel; }
 	
 	/*
@@ -51,11 +51,36 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	 * tasks: set currentPanel
 	 * 		  set title of frame
 	 *        set the mode of the calculator
+	 *        perform setup tasks based on mode
 	 */
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, String title) {
 		setCurrentJPanel(currentPanel);
+		setupButtonsAndSuch();
+		setupStandardCalculator_v3();
+
+		setMode(determineMode());
+		setupRestOfCalculator();
+
 		super.setTitle(title);
+		confirm("Switched modes to " + super.getTitle());
 	}
+
+	// TODO: When switch mode to programmer, pressing button1 puts onto screen: 11
+    // TOOD: Fix!
+	public void setupRestOfCalculator() {
+	    if (mode == Mode.BASIC) {
+	        JPanelBasic_v3.performBasicSetup(calculator);
+        } else if (mode == Mode.PROGRAMMER) {
+	        JPanelProgrammer_v3.performBasicSetup(calculator);
+        }
+    }
+
+	public Mode determineMode() {
+	    if (currentPanel instanceof JPanelBasic_v3) { this.mode = Mode.BASIC; }
+	    else if (currentPanel instanceof  JPanelProgrammer_v3) { this.mode = Mode.PROGRAMMER; }
+	    else { this.mode = Mode.BASIC; }
+	    return mode;
+    }
 	
 	public void setCurrentJPanel(JPanel currentPanel) {
 	    if (this.currentPanel == null) {}
@@ -90,10 +115,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	public StandardCalculator_v3(String title) throws HeadlessException {
 		super(Calculator_v3.BASIC); // default title is Basic
 		setCalculator(this);
-		setCurrentJPanel(panelBasic);
+		setCurrentJPanel(new JPanelBasic_v3(this));
+
         //setCurrentJPanel(panelProgrammer);
 		setupStandardCalculator_v3();
 		setupMenuBar();
+        setMode(determineMode());
+        setupRestOfCalculator();
 		setImageIcons();
 		setMinimumSize(getCurrentPanel().getSize());
 		
