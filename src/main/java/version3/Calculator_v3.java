@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public abstract class Calculator_v3 extends JFrame {
 	
 	final public static String BASIC = "Basic";
+	protected Mode mode = Mode.BASIC;
     final public static String PROGRAMMER = "Programmer";
     final public static String SCIENTIFIC = "Scientific";
     final public static String DATE = "Date";
@@ -25,6 +26,8 @@ public abstract class Calculator_v3 extends JFrame {
 	protected GridBagLayout layout; // layout of the calculator
     protected GridBagConstraints constraints; // layout's constraints
 	// All calculators have:
+
+
 	
 	final protected NumberButtonHandler buttonHandler = new NumberButtonHandler();
 	final protected JButton button0 = new JButton("0");
@@ -39,10 +42,10 @@ public abstract class Calculator_v3 extends JFrame {
     final protected JButton button9 = new JButton("9");
     final protected ClearButtonHandler clearButtonHandler = new ClearButtonHandler();
     final protected JButton buttonClear = new JButton("C");
-    final protected ClearEntryButtonHandler CEButtonHandler = new ClearEntryButtonHandler();
+    final protected ClearEntryButtonHandler clearEntryButtonHandler = new ClearEntryButtonHandler();
     final protected JButton buttonClearEntry = new JButton("CE");
     //final String delete = "\u2190";
-    final protected DeleteButtonHandler delButtonHandler = new DeleteButtonHandler();
+    final protected DeleteButtonHandler deleteButtonHandler = new DeleteButtonHandler();
     final protected JButton buttonDelete = new JButton("DEL");
     final protected DotButtonHandler dotButtonHandler = new DotButtonHandler();
     final protected JButton buttonDot = new JButton(".");
@@ -78,7 +81,7 @@ public abstract class Calculator_v3 extends JFrame {
         setLayout(layout); // set frame layout
         constraints = new GridBagConstraints(); // instanitate constraints
 		setupButtonsAndSuch();
-		setupMenuBar();
+		//setupMenuBar();
 		setMinimumSize(new Dimension(100,200));
 	}
 
@@ -168,195 +171,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("Finished. Leaving setupButtonsAndSuch()");
 	}
 	
-	public void setupMenuBar() {
-    	LOGGER.info("Inside setupMenuBar()");
-        // Menu Bar and Options
-        JMenuBar bar = new JMenuBar(); // create menu bar
-        setJMenuBar(bar); // add menu bar to application
-        
-        // View Menu and Actions
-        JMenu viewMenu = new JMenu("View"); // create view menu
-        viewMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        bar.add(viewMenu); // add viewMenu to menu bar
-        
-            JMenuItem standard = new JMenuItem("Standard");
-            standard.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            
-            JMenuItem binary = new JMenuItem("Binary");
-            standard.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            
-            viewMenu.add(standard);
-            standard.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    // remove all panels
-                	// add basic panel
-                }
-            });
-            
-            viewMenu.add(binary);
-            binary.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    
-                }
-            });
-        // Edit Menu and Actions
-        JMenu editMenu = new JMenu("Edit"); // create edit menu
-        editMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        bar.add(editMenu); // add editMenu to menu bar
-        
-            JMenuItem copyItem = new JMenuItem("Copy"); 
-            copyItem.setAccelerator(KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_C, java.awt.Event.CTRL_MASK));
-            copyItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-                // create first item in editMenu
-            JMenuItem pasteItem = new JMenuItem("Paste");
-            pasteItem.setAccelerator(KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_V, java.awt.Event.CTRL_MASK));
-            pasteItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-                // create second item in editMenu
-            JMenu historyMenu = new JMenu("History");
-            historyMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-                /// create third time in editMenu
-            
-            // add JMenuItems to editMenu
-            editMenu.add(copyItem);
-            copyItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    values[3] = textArea.getText(); // to copy
-                    textarea = textArea.getText();
-                    confirm();
-                }
-            });
-            
-            editMenu.add(pasteItem);
-            pasteItem.addActionListener(
-            new ActionListener() {
-                // paste from copyItem
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    if (values[3].equals(""))
-                    	LOGGER.info("Temp[3] is null");
-                    else
-                    	LOGGER.info("temp[3]: " + values[3]);
-                    textArea.setText(values[3]); // to paste
-                    values[valuesPosition] = textArea.getText();
-                    textarea = textArea.getText();
-                    confirm();
-                }
-            }
-        );
-        editMenu.addSeparator();
-        editMenu.add(historyMenu);
-            
-        JMenuItem copyHistoryItem = new JMenuItem("Copy History");
-        copyHistoryItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-            // create first item in historyMenu
-        JMenuItem editItem = new JMenuItem("Edit");
-        editItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-            // create second item in historyMenu
-        JMenuItem cancelEditItem = new JMenuItem("Cancel Edit");
-        cancelEditItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-            // create third item in historyMenu
-        JMenuItem clearItem = new JMenuItem("Clear");
-        clearItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-            // create fourth item in historyMenu
 
-        // add JMenuItems to historyMenu
-        historyMenu.add(copyHistoryItem);
-        historyMenu.add(editItem);
-        historyMenu.add(cancelEditItem);
-        historyMenu.add(clearItem);
-                    
-        // Help  Menu and Actions
-        JMenu helpMenu = new JMenu("Help"); // create help menu
-        helpMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        bar.add(helpMenu); // add helpMenu to menu bar
-        
-            JMenuItem viewHelpItem = new JMenuItem("View Help");
-            viewHelpItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-            
-            JMenuItem aboutCalculatorItem = new JMenuItem("About Calculator");
-            aboutCalculatorItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-                // create second item in helpMenu
-            
-                // add JMenuItems to helpMenu
-                helpMenu.add(viewHelpItem);
-                // NEEDS UPDATING
-                // Needs a scroll bar
-                // Text with hyperlinks 
-                // Info about how to use
-                viewHelpItem.addActionListener(new ActionListener() {
-                    // display message dialog box when user selects Help....
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        String COPYRIGHT = "\u00a9";
-                        iconLabel = new JLabel();
-                        //iconLabel.setIcon(calculator);
-                        //iconLabel.setText(" ");
-                        JPanel iconPanel = new JPanel(new GridBagLayout() );
-                        
-                        iconPanel.add(iconLabel);
-                        textLabel = new JLabel("<html>Apple MacBook Air "
-                            + "Version 3.0.1<br>"
-                            + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                            + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
-                            + "pending or existing intellectual property right in the United States and other<br>"
-                            + "countries/regions."
-                            + "<br><br><br>"
-                            + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
-                        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-                        
-                        JPanel mainPanel = new JPanel();
-                        mainPanel.setBackground(Color.white);
-                        mainPanel.add(iconLabel);
-                        mainPanel.add(textLabel);
-                        JOptionPane.showMessageDialog(Calculator_v3.this,
-                            mainPanel, "Help", JOptionPane.PLAIN_MESSAGE); 
-                    }
-                } 
-            );
-            helpMenu.addSeparator();
-            helpMenu.add(aboutCalculatorItem);
-            aboutCalculatorItem.addActionListener(
-            new ActionListener() // anonymous inner class
-            {
-                // display message dialog box when user selects About....
-                @Override
-                public void actionPerformed(ActionEvent event)
-                {
-                    String COPYRIGHT = "\u00a9";
-                    //iconLabel = new JLabel(calculator2);
-                    //iconLabel.setIcon(calculator2);
-                    //iconLabel.setVisible(true);
-                    JPanel iconPanel = new JPanel(new GridBagLayout() );
-                    iconPanel.add(iconLabel);
-                    textLabel = new JLabel("<html>Apple MacBook Air"
-                        + "Version 3.0.1 (Build 1)<br>"
-                        + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                        + "Mac OS mojave and its user interface are<br>"
-                        + "protected by trademark and all other pending or existing intellectual property<br>"
-                        + "right in the United States and other countries/regions."
-                        + "<br><br><br>"
-                        + "This product is licensed under the License Terms to:<br>"
-                        + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
-                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-                    
-                    JPanel mainPanel = new JPanel();
-                    mainPanel.add(iconLabel);
-                    mainPanel.add(textLabel);
-                    JOptionPane.showMessageDialog(Calculator_v3.this,
-                        mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE); 
-                }
-            } 
-        );
-        LOGGER.info("Finished. Leaving setupMenuBar()");
-    } // end public setMenuBar
 	
 	public boolean resetOperator(boolean operatorBool) {
         if (operatorBool == true) {

@@ -13,12 +13,12 @@ import java.awt.event.ActionListener;
 public class JPanelBasic_v3 extends JPanel {
 	
     private static final long serialVersionUID = 1L;
-    final static protected Logger LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
+    protected final static Logger LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
     
     private GridBagLayout basicLayout; // layout of the calculator
     private GridBagConstraints constraints; // layout's constraints
     
-    final private FracButtonHandler fracButtonHandler = new FracButtonHandler();
+    final private FractionButtonHandler fractionButtonHandler = new FractionButtonHandler();
     final private JButton buttonFraction = new JButton("1/x");
     
     final private PercentButtonHandler perButtonHandler = new PercentButtonHandler();
@@ -70,6 +70,7 @@ public class JPanelBasic_v3 extends JPanel {
         
     } 
 
+    // prepare panel's specific objects
 	public void setupPanel_v3() {
         LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
@@ -117,14 +118,11 @@ public class JPanelBasic_v3 extends JPanel {
         buttonMSub.setPreferredSize(new Dimension(35, 35) );
         buttonMSub.setBorder(new LineBorder(Color.BLACK));
         buttonMSub.setEnabled(true);
-        
-        LOGGER.info("All buttons font set, size set, and border set.");
-        
-        
         LOGGER.info("End setupPanel_v3()");
         // above this comment is all for the buttons
     } // end method setupPanel_v3()
-    
+
+    // Add all components to Calculator
     public void addComponentsToPanel_v3() {
         LOGGER.info("Starting addComponentsToPanel_v3");
     	constraints.fill = GridBagConstraints.BOTH;
@@ -164,8 +162,8 @@ public class JPanelBasic_v3 extends JPanel {
         addComponent(calculator.button3, 6, 2, 1, 1);
         calculator.button3.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonSub, 6, 3, 1, 1);
-        calculator.buttonSub.addActionListener(this.calculator.subButtonHandler);
+        addComponent(calculator.buttonSubtract, 6, 3, 1, 1);
+        calculator.buttonSubtract.addActionListener(this.calculator.subtractButtonHandler);
         constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.buttonEquals, 6, 4, 1, 2); // idk why its size is not showing on the application; leave a comment for me on why this is
         
@@ -180,10 +178,10 @@ public class JPanelBasic_v3 extends JPanel {
         this.calculator.button6.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonMultiply, 5, 3, 1, 1);
-        this.calculator.buttonMultiply.addActionListener(this.calculator.mulButtonHandler);
+        this.calculator.buttonMultiply.addActionListener(this.calculator.multiplyButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonFraction, 5, 4, 1, 1);
-        buttonFraction.addActionListener(fracButtonHandler);
+        buttonFraction.addActionListener(fractionButtonHandler);
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button7, 4, 0, 1, 1);
@@ -202,10 +200,10 @@ public class JPanelBasic_v3 extends JPanel {
         buttonPercent.addActionListener(perButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonDelete, 3, 0, 1, 1);
-        this.calculator.buttonDelete.addActionListener(this.calculator.delButtonHandler);
+        this.calculator.buttonDelete.addActionListener(this.calculator.deleteButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonClearEntry, 3, 1, 1, 1);
-        this.calculator.buttonClearEntry.addActionListener(this.calculator.CEButtonHandler);
+        this.calculator.buttonClearEntry.addActionListener(this.calculator.clearEntryButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonClear, 3, 2, 1, 1);
         this.calculator.buttonClear.addActionListener(this.calculator.clearButtonHandler);
@@ -287,10 +285,11 @@ public class JPanelBasic_v3 extends JPanel {
             calculator.confirm();
         }
     }
-    
-    // FracButtonHandler operates on this button:
-    // final private JButton buttonF = new JButton("1/x");
-    public class FracButtonHandler implements ActionListener { 
+
+    /**
+     * The class which handles the logic for when the FractionButton is clicked
+     */
+    public class FractionButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("FracStoreButtonHandler class started");
@@ -307,8 +306,7 @@ public class JPanelBasic_v3 extends JPanel {
         }
     }
     
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("MC");
+    // TODO: Implement new logic and move to Calculator
     public class MemoryClearButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
@@ -325,8 +323,7 @@ public class JPanelBasic_v3 extends JPanel {
         }
     }
     
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("MR");
+    // TODO: Implement new logic and move to Calculator
     public class MemoryRecallButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -346,8 +343,7 @@ public class JPanelBasic_v3 extends JPanel {
         }
     }
     
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("MS");
+    // TODO: Implement new logic and move to Calculator
     public class MemoryStoreButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
@@ -371,9 +367,8 @@ public class JPanelBasic_v3 extends JPanel {
             calculator.confirm();
         }
     }
-    
-    // MemoryAddButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("M+");
+
+    // TODO: Implement new logic and move to Calculator
     public class MemoryAddButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
@@ -423,9 +418,8 @@ public class JPanelBasic_v3 extends JPanel {
             calculator.confirm();
         }
     }
-    
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("M-");
+
+    // TODO: Implement new logic and move to Calculator
     public class MemorySubButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
