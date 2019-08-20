@@ -1,42 +1,33 @@
 package version3;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // The face for a basic calculator
 public class JPanelBasic_v3 extends JPanel {
 	
     private static final long serialVersionUID = 1L;
-    final static protected Logger LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
+    protected final static Logger LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
     
     private GridBagLayout basicLayout; // layout of the calculator
     private GridBagConstraints constraints; // layout's constraints
     
-    final private FracButtonHandler fracButtonHandler = new FracButtonHandler();
+    final private FractionButtonHandler fractionButtonHandler = new FractionButtonHandler();
     final private JButton buttonFraction = new JButton("1/x");
     
     final private PercentButtonHandler perButtonHandler = new PercentButtonHandler();
     final private JButton buttonPercent = new JButton("%");
     
     final private String SQRT = "\u221A";
-    final private SqrtButtonHandler sqrtButtonHandler = new SqrtButtonHandler();
+    final private SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
     final private JButton buttonSqrt = new JButton(SQRT);
     
-    // Memory Suite TODO: move to Calculator_v3
     final private MemoryClearButtonHandler memoryClearButtonHandler = new MemoryClearButtonHandler();
     final private JButton buttonMC = new JButton("MC");
     
@@ -55,9 +46,9 @@ public class JPanelBasic_v3 extends JPanel {
     final private int memoryPosition = 0;
     final private String[] memoryValues = {"", "", "", "", ""}; // holds last 5 operations
     
-    private boolean firstNumBool = true;
-    private boolean numberOneNegative = false, numberTwoNegative = false, numberThreeNegative = false;
-    private boolean decimal = false;
+//    private boolean firstNumBool = true;
+//    private boolean numberOneNegative = false, numberTwoNegative = false, numberThreeNegative = false;
+//    private boolean decimal = false;
     
     private StandardCalculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
@@ -77,10 +68,80 @@ public class JPanelBasic_v3 extends JPanel {
         setCalculator(calculator);
         addComponentsToPanel_v3();
         
-    } 
+    }
 
+    public static void performBasicSetup(Calculator_v3 calculator) {
+        LOGGER.info("Preparing programmer buttons");
+        calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
+        calculator.button0.setEnabled(true);
+        calculator.button1.setEnabled(true);
+        calculator.button2.setEnabled(true);
+        calculator.button3.setEnabled(true);
+        calculator.button4.setEnabled(true);
+        calculator.button5.setEnabled(true);
+        calculator.button6.setEnabled(true);
+        calculator.button7.setEnabled(true);
+        calculator.button8.setEnabled(true);
+        calculator.button9.setEnabled(true);
+        LOGGER.info("Finished preparing buttons.");
+    }
+
+    // prepare panel's specific objects
 	public void setupPanel_v3() {
+        LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
+
+        try {
+            calculator.button0.setFont(calculator.font);
+            calculator.button0.setPreferredSize(new Dimension(70, 35) );
+            calculator.button0.setBorder(new LineBorder(Color.BLACK));
+            calculator.button0.setEnabled(true);
+
+            calculator.button1.setFont(calculator.font);
+            calculator.button1.setPreferredSize(new Dimension(35, 35) );
+            calculator.button1.setBorder(new LineBorder(Color.BLACK));
+            calculator.button1.setEnabled(true);
+
+            calculator.button2.setFont(calculator.font);
+            calculator.button2.setPreferredSize(new Dimension(35, 35) );
+            calculator.button2.setBorder(new LineBorder(Color.BLACK));
+            calculator.button2.setEnabled(true);
+
+            calculator.button3.setFont(calculator.font);
+            calculator.button3.setPreferredSize(new Dimension(35, 35) );
+            calculator.button3.setBorder(new LineBorder(Color.BLACK));
+            calculator.button3.setEnabled(true);
+
+            calculator.button4.setFont(calculator.font);
+            calculator.button4.setPreferredSize(new Dimension(35, 35) );
+            calculator.button4.setBorder(new LineBorder(Color.BLACK));
+            calculator.button4.setEnabled(true);
+
+            calculator.button5.setFont(calculator.font);
+            calculator.button5.setPreferredSize(new Dimension(35, 35) );
+            calculator. button5.setBorder(new LineBorder(Color.BLACK));
+            calculator.button5.setEnabled(true);
+
+            calculator.button6.setFont(calculator.font);
+            calculator. button6.setPreferredSize(new Dimension(35, 35) );
+            calculator. button6.setBorder(new LineBorder(Color.BLACK));
+            calculator. button6.setEnabled(true);
+
+            calculator.button7.setFont(calculator.font);
+            calculator.button7.setPreferredSize(new Dimension(35, 35) );
+            calculator.button7.setBorder(new LineBorder(Color.BLACK));
+            calculator.button7.setEnabled(true);
+
+            calculator.button8.setFont(calculator.font);
+            calculator.button8.setPreferredSize(new Dimension(35, 35) );
+            calculator.button8.setBorder(new LineBorder(Color.BLACK));
+            calculator.button8.setEnabled(true);
+
+            calculator.button9.setFont(calculator.font);
+            calculator.button9.setPreferredSize(new Dimension(35, 35) );
+            calculator.button9.setBorder(new LineBorder(Color.BLACK));
+            calculator. button9.setEnabled(true);
+        } catch (NullPointerException e) {}
 
         buttonFraction.setFont(Calculator_v3.font);
         buttonFraction.setPreferredSize(new Dimension(35, 35) );
@@ -125,15 +186,13 @@ public class JPanelBasic_v3 extends JPanel {
         buttonMSub.setPreferredSize(new Dimension(35, 35) );
         buttonMSub.setBorder(new LineBorder(Color.BLACK));
         buttonMSub.setEnabled(true);
-        
-        LOGGER.info("All buttons font set, size set, and border set.");
-        
-        
-        LOGGER.info("End setInitialStartMode()");
+        LOGGER.info("End setupPanel_v3()");
         // above this comment is all for the buttons
-    } // end method setInitalStartMode()
-    
+    } // end method setupPanel_v3()
+
+    // Add all components to Calculator
     public void addComponentsToPanel_v3() {
+        LOGGER.info("Starting addComponentsToPanel_v3");
     	constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.getTextArea(), 0, 0, 5, 2);
         // Also add the action listener for each button
@@ -154,7 +213,7 @@ public class JPanelBasic_v3 extends JPanel {
         buttonMSub.addActionListener(memorySubButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button0, 7, 0, 2, 1);
-        calculator.button0.addActionListener(this.calculator.buttonHandler);
+        //calculator.button0.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.buttonDot, 7, 2, 1, 1);
         calculator.buttonDot.addActionListener(this.calculator.dotButtonHandler); 
@@ -163,44 +222,44 @@ public class JPanelBasic_v3 extends JPanel {
         calculator.buttonAdd.addActionListener(this.calculator.addButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button1, 6, 0, 1, 1);
-        calculator.button1.addActionListener(this.calculator.buttonHandler);
+        //calculator.button1.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button2, 6, 1, 1, 1);
-        calculator.button2.addActionListener(this.calculator.buttonHandler);
+        //calculator.button2.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button3, 6, 2, 1, 1);
-        calculator.button3.addActionListener(this.calculator.buttonHandler);
+        //calculator.button3.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMultiply, 6, 3, 1, 1);
-        calculator.buttonMultiply.addActionListener(this.calculator.subButtonHandler);
+        addComponent(calculator.buttonSubtract, 6, 3, 1, 1);
+        calculator.buttonSubtract.addActionListener(this.calculator.subtractButtonHandler);
         constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.buttonEquals, 6, 4, 1, 2); // idk why its size is not showing on the application; leave a comment for me on why this is
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button4, 5, 0, 1, 1);
-        this.calculator.button4.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button4.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button5, 5, 1, 1, 1);
-        this.calculator.button5.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button5.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button6, 5, 2, 1, 1);
-        this.calculator.button6.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button6.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonSub, 5, 3, 1, 1);
-        this.calculator.buttonSub.addActionListener(this.calculator.mulButtonHandler);
+        addComponent(this.calculator.buttonMultiply, 5, 3, 1, 1);
+        this.calculator.buttonMultiply.addActionListener(this.calculator.multiplyButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonFraction, 5, 4, 1, 1);
-        buttonFraction.addActionListener(fracButtonHandler);
+        buttonFraction.addActionListener(fractionButtonHandler);
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button7, 4, 0, 1, 1);
-        this.calculator.button7.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button7.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button8, 4, 1, 1, 1);
-        this.calculator.button8.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button8.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.button9, 4, 2, 1, 1);
-        this.calculator.button9.addActionListener(this.calculator.buttonHandler);
+        //this.calculator.button9.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonDivide, 4, 3, 1, 1);
         
@@ -209,10 +268,10 @@ public class JPanelBasic_v3 extends JPanel {
         buttonPercent.addActionListener(perButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonDelete, 3, 0, 1, 1);
-        this.calculator.buttonDelete.addActionListener(this.calculator.delButtonHandler);
+        this.calculator.buttonDelete.addActionListener(this.calculator.deleteButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonClearEntry, 3, 1, 1, 1);
-        this.calculator.buttonClearEntry.addActionListener(this.calculator.CEButtonHandler);
+        this.calculator.buttonClearEntry.addActionListener(this.calculator.clearEntryButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(this.calculator.buttonClear, 3, 2, 1, 1);
         this.calculator.buttonClear.addActionListener(this.calculator.clearButtonHandler);
@@ -222,48 +281,36 @@ public class JPanelBasic_v3 extends JPanel {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonSqrt, 3, 4, 1, 1);
         buttonSqrt.addActionListener(sqrtButtonHandler);
-        LOGGER.info("All buttons added to the frame.");
+        LOGGER.info("Finished addComponentsToPanel_v3");
     }
-    
-    // needs double textarea conditioning
-    public class SqrtButtonHandler implements ActionListener {
+
+    /**
+     * The class which handles operations when the square root button is clicked
+     */
+    public class SquareRootButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-        	LOGGER.info("Square Root ButtonHandler class started");
-        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (!calculator.getTextArea().getText().equals("")) {
-                if (Double.parseDouble(calculator.values[calculator.valuesPosition]) > 0.0) {
-                	calculator.values[calculator.valuesPosition] = Double.toString(Math.sqrt(Double.parseDouble(calculator.values[calculator.valuesPosition]))); //4.0
-                    //int intRep = (int)Math.sqrt(Double.parseDouble(temp[valuesPosition])); // 4
-                    if (calculator.values[calculator.valuesPosition].contains(".")) { // if int == double, cut off decimal and zero
-                    	calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
-                    	calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
-                    	calculator.textarea = calculator.textarea.substring(0, calculator.textarea.length()-2); // textarea changed to whole number, or int
-                    	calculator.values[calculator.valuesPosition] = calculator.textarea; // update storing
-                    	calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition]);
-                        if (Integer.parseInt(calculator.values[calculator.valuesPosition]) < 0 ) {
-                        	calculator.textarea = calculator.getTextArea().getText(); // temp[2]
-                            LOGGER.info("textarea: " + calculator.textarea);
-                            calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
-                            LOGGER.info("textarea: " + calculator.textarea);
-                            calculator.getTextArea().setText("\n" + calculator.textarea.replaceAll(" ", "") + "-".replaceAll(" ", "")); // update textArea
-                            LOGGER.info("temp[0]: " + calculator.values[0]);
-                        }
-                    }
-                    calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition] );
-                } else { // number is negative
-                	calculator.clear();
-                	calculator.getTextArea().setText("Invalid textarea");
-                    LOGGER.info("textArea: " + calculator.getTextArea().getText());
-                }
-                
-            } // end textArea .= ""
-            calculator.confirm();
+            LOGGER.info("SquareRoot ButtonHandler class started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+            String errorStringNaN = "Not a Number";
+            LOGGER.debug("text: " + calculator.getTextArea().getText().replace("\n",""));
+            if (calculator.getTextArea().getText().equals("") || calculator.isNegativeNumber(calculator.getTextArea().getText())) {
+                calculator.getTextArea().setText("\n"+errorStringNaN);
+                calculator.textarea = "\n"+errorStringNaN;
+                calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
+            } else {
+                String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
+                result = calculator.formatNumber(result);
+                calculator.getTextArea().setText("\n"+result);
+                calculator.textarea = result;
+                calculator.confirm();
+            }
         }
     }
-    
-    // PercentButtonHandler operates on this button:
-    // final private JButton buttonPer = new JButton("%");
+
+    /**
+     * The class which handles the logic for when the percent button is click
+     */
     public class PercentButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -301,15 +348,16 @@ public class JPanelBasic_v3 extends JPanel {
                 }
             }
             calculator.dotButtonPressed = true;
-            calculator.dotActive = true;
+            calculator.dotButtonPressed = true;
             calculator.textarea = calculator.getTextArea().getText();
             calculator.confirm();
         }
     }
-    
-    // FracButtonHandler operates on this button:
-    // final private JButton buttonF = new JButton("1/x");
-    public class FracButtonHandler implements ActionListener { 
+
+    /**
+     * The class which handles the logic for when the FractionButton is clicked
+     */
+    public class FractionButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("FracStoreButtonHandler class started");
@@ -326,8 +374,7 @@ public class JPanelBasic_v3 extends JPanel {
         }
     }
     
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("MC");
+    // TODO: Implement new logic and move to Calculator
     public class MemoryClearButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
@@ -344,8 +391,7 @@ public class JPanelBasic_v3 extends JPanel {
         }
     }
     
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("MR");
+    // TODO: Implement new logic and move to Calculator
     public class MemoryRecallButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -365,8 +411,7 @@ public class JPanelBasic_v3 extends JPanel {
         }
     }
     
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("MS");
+    // TODO: Implement new logic and move to Calculator
     public class MemoryStoreButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
@@ -390,9 +435,8 @@ public class JPanelBasic_v3 extends JPanel {
             calculator.confirm();
         }
     }
-    
-    // MemoryAddButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("M+");
+
+    // TODO: Implement new logic and move to Calculator
     public class MemoryAddButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {
@@ -442,9 +486,8 @@ public class JPanelBasic_v3 extends JPanel {
             calculator.confirm();
         }
     }
-    
-    // MemoryClearButtonHandler operates on this button: 
-    // final private JButton buttonMC = new JButton("M-");
+
+    // TODO: Implement new logic and move to Calculator
     public class MemorySubButtonHandler implements ActionListener {
     	@Override
         public void actionPerformed(ActionEvent e) {

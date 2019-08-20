@@ -10,7 +10,7 @@ package microsoftcalculator;
  * @author Michael Ball
  */
 public enum Mode {
-    STANDARD, BINARY;
+    BASIC, PROGRAMMER, SCIENTIFIC, DATE;
     
     
 }
