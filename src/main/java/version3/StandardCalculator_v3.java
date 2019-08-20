@@ -55,7 +55,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	 */
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, String title) {
 		setCurrentJPanel(currentPanel);
-		setupButtonsAndSuch();
+		//setupButtonsAndSuch();
 		setupStandardCalculator_v3();
 
 		setMode(determineMode());

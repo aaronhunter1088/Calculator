@@ -91,7 +91,12 @@ public abstract class Calculator_v3 extends JFrame {
 		super(title, gc);
 		// TODO Auto-generated constructor stub
 	}
-	
+
+    /**
+     * Handles the logic for setting up a Calculator_v3. Should
+     * run once. Anything that needs to be reset, should be reset
+     * where appropriate.
+     */
 	public void setupButtonsAndSuch() {
 		LOGGER.info("Inside setupButtonsAndSuch()");
 		LOGGER.info("preparing buttons");
@@ -258,6 +263,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("memoryPosition: '"+memoryPosition+"'");
         LOGGER.info("firstNumBool: '"+firstNumBool+"'"); 
         LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
+        LOGGER.info("isNegative: '"+numberIsNegative+"'");
         LOGGER.info("mode: " + mode);
         LOGGER.info("-------- End Confirm Results --------\n");
     }
@@ -371,6 +377,7 @@ public abstract class Calculator_v3 extends JFrame {
         number = "-" + number.replaceAll("\n", "");
         LOGGER.info("New: "  + number);
         LOGGER.info("Number converted");
+        numberIsNegative = true;
         return number;
     }
 
@@ -381,6 +388,7 @@ public abstract class Calculator_v3 extends JFrame {
         number = number.replaceAll("-", "").trim();
         LOGGER.info("New: " + number);
         LOGGER.info("Number Converted");
+        numberIsNegative = false;
         return number;
     }
 
@@ -492,25 +500,29 @@ public abstract class Calculator_v3 extends JFrame {
  	        } 
  	        else { // do for second number
  	            if (firstNumBool == false && dotButtonPressed == false) {
- 	                LOGGER.info("Resetting textArea");
- 	                textArea.setText("");
- 	                textarea = textArea.getText();
- 	                if (firstNumBool == false)
- 	                    firstNumBool = true;
+                    LOGGER.info("Resetting textArea");
+                    textArea.setText("");
+                    textarea = textArea.getText();
+                    if (firstNumBool == false) {
+                        firstNumBool = true;
+                        numberIsNegative = false;
+                    }
  	                else
  	                    dotButtonPressed = true;
  	                buttonDot.setEnabled(true);
  	            } 
- 	            if (textarea.equals(".0"))  {
+ 	            /* if (textarea.equals(".0"))  {
  	                textArea.setText("\n" + "0.");
  	                textarea = "0.";
- 	            } else if (textarea.equals("0")) { 
+ 	            } else */
+ 	            if (textarea.equals("0")) {
  	            	values[valuesPosition] = "";
  	                textArea.setText("\n");
  	                valuesPosition = 1;
  	                firstNumBool = true;
  	                dotButtonPressed = false;
                     dotButtonPressed = false;
+                    numberIsNegative = false;
  	            } else if (values[0].equals("") && !values[1].equals("") && negatePressed == false) {
  	                values[0] = values[1];
  	                values[1] = "";

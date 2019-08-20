@@ -2,89 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46a8a212-bab8-4069-9258-efc23b8b6505" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/version3/Mode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/Calculator Logs.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/Calculator Logs.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/microsoftcalculator/Mode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/microsoftcalculator/Mode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/version3/BinaryCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/BinaryCalculator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/version3/CalculatorMain_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/CalculatorMain_v3.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelProgrammer_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelProgrammer_v3.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$6.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$AddButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$AndButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$BinaryRadioButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonBinHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonByteHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonDWordHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonDecHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonHexHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonOctHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonQWordHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ButtonWordHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ClearButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ClearEntryButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$DecimalRadioButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$DeleteButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$DivideButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$DoNothingButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$DotButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$EqualsButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ExclusiveOrButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$FracButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$HexadecimalRadioButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$LeftParenthesesButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$LeftShiftButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$MemoryAddButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$MemoryClearButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$MemoryRecallButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$MemoryStoreButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$MemorySubButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$ModButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$MultiplyButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$NegateButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$NotButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$OctalRadioButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$OrButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$PercentButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$RightParenthesesButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$RightShiftButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$RoLButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$RoRButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$SqButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator$SubtractButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/BinaryCalculator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/CalculatorMain_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/CalculatorMain_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$6.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearEntryButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearEntryButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DeleteButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DeleteButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DotButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DotButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$NumberButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$NumberButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$FracButtonHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryAddButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryAddButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryClearButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryClearButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryRecallButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryRecallButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryStoreButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryStoreButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemorySubButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemorySubButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$PercentButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$PercentButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$SquareRootButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$SquareRootButtonHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$4.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$AddButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$AddButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$DivideButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$DivideButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$EqualsButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$EqualsButtonHandler.class" afterDir="false" />
@@ -92,7 +17,6 @@
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$NegateButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$NegateButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$SubtractButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3$SubtractButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -344,7 +268,7 @@
       <option name="presentableId" value="Default" />
       <updated>1509068054784</updated>
       <workItem from="1566006276447" duration="2664000" />
-      <workItem from="1566009272465" duration="31948000" />
+      <workItem from="1566009272465" duration="38479000" />
     </task>
     <servers />
   </component>
@@ -369,27 +293,27 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java</url>
-          <line>551</line>
+          <line>579</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
-          <line>612</line>
+          <line>640</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
-          <line>606</line>
+          <line>634</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
-          <line>592</line>
+          <line>620</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
-          <line>595</line>
+          <line>623</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
