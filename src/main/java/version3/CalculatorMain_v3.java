@@ -7,7 +7,13 @@ import javax.swing.*;
 import java.io.IOException;
 
 public class CalculatorMain_v3 {
-	private final static Logger LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
+
+    private final static Logger LOGGER;
+    static {
+        System.setProperty("appName", "Calculator");
+        LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
+    }
+
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		LOGGER.info("Starting class CalculatorMain_v3");
 		//BinaryCalculator calculator = new BinaryCalculator();

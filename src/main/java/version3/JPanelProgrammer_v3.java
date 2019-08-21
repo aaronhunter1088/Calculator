@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class JPanelProgrammer_v3 extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    protected final static Logger LOGGER = LogManager.getLogger(JPanelProgrammer_v3.class);
+    protected final static Logger LOGGER;
 
     private GridBagLayout programmerLayout; // layout of the calculator
     private GridBagLayout otherButtonLayout = new GridBagLayout();
@@ -98,7 +98,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     private void setCalculator(StandardCalculator_v3 calculator) { this.calculator = calculator; }
 
     static {
-
+        LOGGER = LogManager.getLogger(JPanelProgrammer_v3.class);
     }
 
     public JPanelProgrammer_v3(StandardCalculator_v3 calculator) {

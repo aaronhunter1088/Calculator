@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 public class JPanelBasic_v3 extends JPanel {
 	
     private static final long serialVersionUID = 1L;
-    protected final static Logger LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
+    protected final static Logger LOGGER;
     
     private GridBagLayout basicLayout; // layout of the calculator
     private GridBagConstraints constraints; // layout's constraints
@@ -53,10 +53,11 @@ public class JPanelBasic_v3 extends JPanel {
     private StandardCalculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
     private void setCalculator(StandardCalculator_v3 calculator) { this.calculator = calculator; }
-    
-    
+
+
     static {
-    	
+        System.setProperty("appName", "Calculator");
+        LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
     }
     
     public JPanelBasic_v3(StandardCalculator_v3 calculator) {

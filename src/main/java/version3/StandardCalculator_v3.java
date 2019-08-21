@@ -1,5 +1,8 @@
 package version3;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -11,6 +14,7 @@ import java.text.DecimalFormat;
 public class StandardCalculator_v3 extends Calculator_v3 {
 
 	private static final long serialVersionUID = 1L;
+	private static Logger LOGGER;
 	
 	// All standard calculators have:
     // The same menu bar
@@ -93,8 +97,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         calculator.pack();
 	}
 
-	static {
-
+    static {
+        LOGGER = LogManager.getLogger(StandardCalculator_v3.class);
     }
 	public StandardCalculator_v3() throws HeadlessException {
 		// TODO Auto-generated constructor stub

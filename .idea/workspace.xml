@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46a8a212-bab8-4069-9258-efc23b8b6505" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/Calculator Logs.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/Calculator Logs.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/michaelball.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/version3/CustomLookupAndReplace.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/Calculator Logs.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/CalculatorMain_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/CalculatorMain_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelProgrammer_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelProgrammer_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,9 +27,18 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/version3" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/version3" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -48,6 +64,7 @@
       </extension>
       <method v="2">
         <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="compiler:compile" />
       </method>
     </configuration>
     <recent_temporary>
@@ -65,7 +82,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1566346411851</updated>
-      <workItem from="1566346422334" duration="259000" />
+      <workItem from="1566346422334" duration="11984000" />
     </task>
     <servers />
   </component>
@@ -84,5 +101,21 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/CustomLookupAndReplace.java</url>
+          <line>65</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/CustomLookupAndReplace.java</url>
+          <line>76</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
