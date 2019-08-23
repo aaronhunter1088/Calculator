@@ -62,28 +62,27 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		//setupButtonsAndSuch();
 		setupStandardCalculator_v3();
 
-		setMode(determineMode());
+		setCalcType(determineCalcType());
 		setupRestOfCalculator();
 
 		super.setTitle(title);
-		confirm("Switched modes to " + super.getTitle());
+		confirm("Switched calculator types to " + super.getTitle());
 	}
 
-	// TODO: When switch mode to programmer, pressing button1 puts onto screen: 11
-    // TOOD: Fix!
+
 	public void setupRestOfCalculator() {
-	    if (mode == Mode.BASIC) {
+	    if (calcType == CalcType_v3.BASIC) {
 	        JPanelBasic_v3.performBasicSetup(calculator);
-        } else if (mode == Mode.PROGRAMMER) {
+        } else if (calcType == CalcType_v3.PROGRAMMER) {
 	        JPanelProgrammer_v3.performBasicSetup(calculator);
         }
     }
 
-	public Mode determineMode() {
-	    if (currentPanel instanceof JPanelBasic_v3) { this.mode = Mode.BASIC; }
-	    else if (currentPanel instanceof  JPanelProgrammer_v3) { this.mode = Mode.PROGRAMMER; }
-	    else { this.mode = Mode.BASIC; }
-	    return mode;
+	public CalcType_v3 determineCalcType() {
+	    if (currentPanel instanceof JPanelBasic_v3) { this.calcType = CalcType_v3.BASIC; }
+	    else if (currentPanel instanceof  JPanelProgrammer_v3) { this.calcType = CalcType_v3.PROGRAMMER; }
+	    else { this.calcType = CalcType_v3.BASIC; }
+	    return calcType;
     }
 	
 	public void setCurrentJPanel(JPanel currentPanel) {
@@ -117,14 +116,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
 	// TODO: Implement first
 	public StandardCalculator_v3(String title) throws HeadlessException {
-		super(Calculator_v3.BASIC); // default title is Basic
+		super(CalcType_v3.BASIC.getName()); // default title is Basic
 		setCalculator(this);
 		setCurrentJPanel(new JPanelBasic_v3(this));
 
         //setCurrentJPanel(panelProgrammer);
 		setupStandardCalculator_v3();
 		setupMenuBar();
-        setMode(determineMode());
+        setCalcType(determineCalcType());
         setupRestOfCalculator();
 		setImageIcons();
 		setMinimumSize(getCurrentPanel().getSize());
@@ -145,16 +144,16 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         basic.setFont(this.font);
         viewMenu.add(basic);
         basic.addActionListener(action -> {
-            mode = Mode.BASIC;
-            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), Calculator_v3.BASIC);
+            calcType = CalcType_v3.BASIC;
+            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC.getName());
         });
 
         JMenuItem programmer = new JMenuItem("Programmer");
         programmer.setFont(this.font);
         viewMenu.add(programmer);
         programmer.addActionListener(action -> {
-            mode = Mode.PROGRAMMER;
-            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), Calculator_v3.PROGRAMMER);
+            calcType = CalcType_v3.PROGRAMMER;
+            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER.getName());
         });
         this.bar.add(viewMenu); // add viewMenu to menu bar
         // Edit Menu and Actions

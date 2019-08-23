@@ -1,5 +1,6 @@
 package version3;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,23 +15,16 @@ import java.util.ArrayList;
 
 
 public abstract class Calculator_v3 extends JFrame {
-	
-	final public static String BASIC = "Basic";
-	protected Mode mode = Mode.BASIC;
-	public Mode getMode() { return this.mode; }
-	protected void setMode(Mode mode) { this.mode = mode; }
-    final public static String PROGRAMMER = "Programmer";
-    final public static String SCIENTIFIC = "Scientific";
-    final public static String DATE = "Date";
+
+	protected CalcType_v3 calcType = CalcType_v3.BASIC;
+	public CalcType_v3 getCalcType() { return this.calcType; }
+	protected void setCalcType(CalcType_v3 calcType) { this.calcType = calcType; }
 	
 	final static protected Logger LOGGER = LogManager.getLogger(Calculator_v3.class);
 	final static private long serialVersionUID = 1L;
 	protected GridBagLayout layout; // layout of the calculator
     protected GridBagConstraints constraints; // layout's constraints
 	// All calculators have:
-
-
-	
 	final protected NumberButtonHandler buttonHandler = new NumberButtonHandler();
 	final protected JButton button0 = new JButton("0");
     final protected JButton button1 = new JButton("1");
@@ -54,19 +48,36 @@ public abstract class Calculator_v3 extends JFrame {
     
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
     protected String[] values = {"","",""}; // firstNum (total), secondNum, copy/paste. memory values now in MemorySuite.getMemoryValues()
-    protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
     protected int valuesPosition = 0;
+
+    public String[] getMemoryValues() { return memoryValues; }
+
+
+    public void setMemoryValueAtPosition(String memoryValue, int memoryPosition) {
+        this.memoryValues[memoryPosition] = memoryValue;
+        LOGGER.info("memoryValue["+memoryPosition+"]: " + memoryValues[memoryPosition]);
+        setMemoryPosition(memoryPosition);
+    }
+
+    protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
+    public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
     protected int memoryPosition = 0;
+
     protected ImageIcon calculatorImage1, calculator2, macLogo;
     protected JLabel iconLabel;
     protected JLabel textLabel;
+
+    protected JTextArea getTextArea() { return this.textArea; }
     protected JTextArea textArea = new JTextArea(2,5); // rows, columns
     protected String textarea = ""; // String representing appropriate visual of number
     
 	protected boolean firstNumBool = true, numberOneNegative = false, numberTwoNegative = false, numberThreeNegative = false, numberIsNegative = false;
 	protected boolean memorySwitchBool = false;
     protected boolean addBool = false, subBool = false, mulBool = false, divBool = false, memAddBool = false, memSubBool = false, negatePressed = false;
-	protected boolean dotButtonPressed = false;
+
+    public boolean getDotButtonPressed() { return this.dotButtonPressed; }
+    private void setDotButtonPressed(boolean bool) { this.dotButtonPressed = bool; }
+    protected boolean dotButtonPressed = false;
 
 	public Calculator_v3() throws HeadlessException {
 		super();
@@ -81,7 +92,7 @@ public abstract class Calculator_v3 extends JFrame {
 		super(title);
 		layout = new GridBagLayout();
         setLayout(layout); // set frame layout
-        constraints = new GridBagConstraints(); // instanitate constraints
+        constraints = new GridBagConstraints();
 		setupButtonsAndSuch();
 		//setupMenuBar();
 		setMinimumSize(new Dimension(100,200));
@@ -190,9 +201,15 @@ public abstract class Calculator_v3 extends JFrame {
         buttonDot.setEnabled(true);
         LOGGER.info("Finished. Leaving setupButtonsAndSuch()");
 	}
-	
 
-	
+    /**
+     * Resets all operators to the given boolean argument
+     *
+     * @param operatorBool
+     * @return
+     *
+     * Fully tested
+     */
 	public boolean resetOperator(boolean operatorBool) {
         if (operatorBool == true) {
         	LOGGER.info("operatorBool: " + operatorBool);
@@ -214,30 +231,22 @@ public abstract class Calculator_v3 extends JFrame {
             return true;
         }
     }
-	
-	public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
-    public void setMemoryValueAtPosition(String memoryValue, int memoryPosition) { 
-    	this.memoryValues[memoryPosition] = memoryValue;
-    	LOGGER.info("memoryValue["+memoryPosition+"]: " + memoryValues[memoryPosition]);
-    	setMemoryPosition(memoryPosition);
-    }
-
-    public boolean getDotButtonPressed() { return this.dotButtonPressed; }
-    private void setDotButtonPressed(boolean bool) { this.dotButtonPressed = bool; }
-
 
     /**
      *  Returns the results of the last action
      *
+     * TODO: Test
      */
     public void confirm() {
 	    confirm("");
     }
-	
 
     /**
      *  Returns the results of the last action with a specific message to display
+     *
      * @param message a message to send into the confirm results view
+     *
+     * TODO: Test
      */
     public void confirm(String message) {
         LOGGER.info("Confirm Results: " + message);
@@ -264,10 +273,18 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("firstNumBool: '"+firstNumBool+"'"); 
         LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
         LOGGER.info("isNegative: '"+numberIsNegative+"'");
-        LOGGER.info("mode: " + mode);
+        LOGGER.info("calcType: '" + calcType + "'");
         LOGGER.info("-------- End Confirm Results --------\n");
     }
-    
+
+    /**
+     * This method returns all the values in memory which are not blank
+     *
+     * @param someValues
+     * @return
+     *
+     * TODO: Test
+     */
     public ArrayList<String> getNonBlankValues(String[] someValues) {
     	ArrayList<String> listToReturn = new ArrayList<>();
     	for (int i=0; i<10; i++) {
@@ -281,7 +298,11 @@ public abstract class Calculator_v3 extends JFrame {
     	return listToReturn;
     }
 	
-    /** This method resets the 4 main operators to the boolean you pass in */
+    /**
+     * This method resets the 4 main operators to the boolean you pass in
+     *
+     * Fully tested
+     */
     public void resetOperators(boolean bool) {
     	addBool = bool;
     	subBool = bool;
@@ -293,8 +314,11 @@ public abstract class Calculator_v3 extends JFrame {
      * This method does two things:
      * Clears any decimal found.
      * Clears all zeroes after decimal (if that is the case).
+     *
      * @param currentNumber
      * @return updated currentNumber
+     *
+     * TODO: Test
      */
     private String clearZeroesAtEnd(String currentNumber) {
         LOGGER.info("starting clearZeroesAtEnd()");
@@ -326,8 +350,15 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("output of clearZeroesAtEnd(): " + textarea);
         return textarea;
     }
-    
-    // tested : passed
+
+    /**
+     * Tests whether a number is a decimal or not
+     *
+     * @param number
+     * @return
+     *
+     * Fully tested
+     */
     public boolean isDecimal(String number) {
         boolean answer = false;
         if (number.contains(".")) answer = true;
@@ -335,14 +366,28 @@ public abstract class Calculator_v3 extends JFrame {
         return answer;
     }
 
-    // tested : passed
+    /**
+     * Tests whether a number is positive
+     *
+     * @param result
+     * @return
+     *
+     * Fully tested
+     */
     public boolean isPositiveNumber(String result) {
         boolean answer = !isNegativeNumber(result);
         LOGGER.info("isPositiveNumber("+result+") == " + answer);
         return answer;
     }
 
-    // tested : passed
+    /**
+     * Tests whether a number is negative
+     *
+     * @param result
+     * @return
+     *
+     * Fully tested
+     */
     public boolean isNegativeNumber(String result) {
         boolean answer = false;
         if (result.contains("-")) {
@@ -351,26 +396,15 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("isNegativeNumber("+result.replaceAll("\n", "")+") == " + answer);
         return answer;
     }
-    
-    // clears the entire calculator
-    public void clear() {
-    	LOGGER.info("Inside clear()");
-        // firstNum/total, secondNum, copy/paste
-        for ( valuesPosition=0; valuesPosition < 3; valuesPosition++) {
-            values[valuesPosition] = "";
-        } 
-        textArea.setText("\n0");
-        textarea = "0";
-        resetOperators(false);
-        valuesPosition = 0;
-        firstNumBool = true;
-        dotButtonPressed = false;
-        dotButtonPressed = false;
-        buttonDot.setEnabled(true);
-               
-    }
 
-    // tested : passed
+    /**
+     * Converts a number to its negative equivalent
+     *
+     * @param number
+     * @return
+     *
+     * Fully tested
+     */
     public String convertToNegative(String number) {
     	LOGGER.info("convertToNegative() running");
         LOGGER.info("Old: " + number.replaceAll("\n", ""));
@@ -381,7 +415,14 @@ public abstract class Calculator_v3 extends JFrame {
         return number;
     }
 
-    // tested : passed
+    /**
+     * Converts a number to its positive equivalent
+     *
+     * @param number
+     * @return
+     *
+     * Fully tested
+     */
     public String convertToPositive(String number) {
     	LOGGER.info("convertToPositive() running");
         LOGGER.info("Old: " + number.replaceAll("\n", ""));
@@ -392,6 +433,13 @@ public abstract class Calculator_v3 extends JFrame {
         return number;
     }
 
+    /**
+     * Tests whether the TextArea contains a String which shows a previous error
+     *
+     * @return
+     *
+     * TODO: Test
+     */
     public boolean textAreaContainsBadText() {
         boolean result = false;
         if (textArea.getText().equals("Invalid textarea")   ||
@@ -403,6 +451,14 @@ public abstract class Calculator_v3 extends JFrame {
         return result;
     }
 
+    /** Used for testing purposes */
+    public NumberButtonHandler getNumberButtonHandler() { return new NumberButtonHandler(); }
+
+    /**
+     * This class handles the logic when a number button is pushed
+     *
+     * TODO: Test
+     */
     class NumberButtonHandler implements ActionListener {
  		public void actionPerformed(ActionEvent e) {
  	        LOGGER.info("NumberButtonHandler() started");
@@ -555,7 +611,15 @@ public abstract class Calculator_v3 extends JFrame {
  	        confirm();    
  	    }
  	}
-    
+
+ 	/** Used for testing purposes */
+ 	public ClearButtonHandler getClearButtonHandler() { return new ClearButtonHandler(); }
+
+    /**
+     * The class which handles the logic when the clear button is pushed
+     *
+     * Fully tested
+     */
  	class ClearButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -566,8 +630,37 @@ public abstract class Calculator_v3 extends JFrame {
             confirm();
         }
     }
-    
- 	// TODO: check
+
+    /**
+     * Clears the calculator
+     *
+     * Fully tested
+     */
+    public void clear() {
+        LOGGER.info("Inside clear()");
+        // firstNum/total, secondNum, copy/paste
+        for (int i=0; i < 3; i++) {
+            values[i] = "";
+        }
+        textArea.setText("\n0");
+        textarea = "0";
+        resetOperators(false);
+        valuesPosition = 0;
+        firstNumBool = true;
+        dotButtonPressed = false;
+        dotButtonPressed = false;
+        buttonDot.setEnabled(true);
+
+    }
+
+    /** Used for testing purposes */
+    public ClearEntryButtonHandler getClearEntryButtonHandler() { return new ClearEntryButtonHandler(); }
+
+    /**
+     * The class which handles the logic when the clear entry button is pushed
+     *
+     * Tested
+     */
  	class ClearEntryButtonHandler implements ActionListener { 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -594,8 +687,13 @@ public abstract class Calculator_v3 extends JFrame {
         }
     }
 
+    /** Used for testing purposes */
+    public DeleteButtonHandler getDeleteButtonHandler() { return new DeleteButtonHandler(); }
+
     /**
      * The class which handles the logic for when the delete button is clicked
+     *
+     * Fully tested
      */
     class DeleteButtonHandler implements ActionListener {
         @Override
@@ -789,17 +887,26 @@ public abstract class Calculator_v3 extends JFrame {
         }
         
     }
-    
-    // DotButtonHandler operates on this button:
-    // final private JButton buttonDot = new JButton(".");
+
+    /** Used for testing purposes */
+    public DotButtonHandler getDotButtonHandler() { return new DotButtonHandler(); }
+
+    /**
+     * The class which handles the logic when the dot button is clicked
+     */
     class DotButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             LOGGER.info("DotButtonHandler() started");
             LOGGER.info("button: " + event.getActionCommand()); // print out button confirmation
             textarea = getTextArea().getText().replaceAll("\n","");
-            getTextArea().setText("\n."+textarea);
-            textarea = textarea + ".";
+            if (StringUtils.isBlank(textarea)) {
+                textarea = "0.";
+                getTextArea().setText("\n.0");
+            } else {
+                getTextArea().setText("\n."+textarea);
+                textarea = textarea + ".";
+            }
             values[valuesPosition] = textarea;
             buttonDot.setEnabled(false);
             setDotButtonPressed(true);
@@ -808,14 +915,20 @@ public abstract class Calculator_v3 extends JFrame {
         }
     }
     
-    /** Calls createImageIcon(String path, String description 
-     * @throws Exception */
+    /**
+     * Calls createImageIcon(String path, String description
+     *
+     * @throws Exception
+     */
     public ImageIcon createImageIcon(String path) throws Exception {
     	return createImageIcon(path, "No description given.");
     }
     
-    /** Returns an ImageIcon, or null if the path was invalid. 
-     * @throws Exception */
+    /**
+     * Returns an ImageIcon, or null if the path was invalid.
+     *
+     * @throws Exception
+     */
     @SuppressWarnings("unused")
 	protected ImageIcon createImageIcon(String path, String description) throws Exception {
         LOGGER.info("Inside createImageIcon()");
@@ -842,7 +955,15 @@ public abstract class Calculator_v3 extends JFrame {
         }
     }
 
-    // method to set constraints on
+    /**
+     * Adds the components to the container
+     *
+     * @param c
+     * @param row
+     * @param column
+     * @param width
+     * @param height
+     */
     public void addComponent(Component c, int row, int column, int width, int height) {
         constraints.gridx = column;
         constraints.gridy = row;
@@ -851,8 +972,6 @@ public abstract class Calculator_v3 extends JFrame {
         layout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
-    
-    protected JTextArea getTextArea() { return this.textArea; }
 
 }
 
