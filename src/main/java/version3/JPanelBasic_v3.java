@@ -27,7 +27,8 @@ public class JPanelBasic_v3 extends JPanel {
     final private String SQRT = "\u221A";
     final private SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
     final private JButton buttonSqrt = new JButton(SQRT);
-    
+
+    // TODO: Move MemorySuite into Calculator_v3
     final private MemoryClearButtonHandler memoryClearButtonHandler = new MemoryClearButtonHandler();
     final private JButton buttonMC = new JButton("MC");
     

@@ -15,7 +15,6 @@ public class TestClass {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         int x = 5;
         System.out.println(Integer.toBinaryString(x));
         System.out.println(Integer.toUnsignedString(x, 3));

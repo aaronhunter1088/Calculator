@@ -17,7 +17,6 @@ public class BinaryTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         //Calculator calculator = new Calculator();
         BinaryCalculator binarycalculator = new BinaryCalculator();
         binarycalculator.setSize(600, 405);

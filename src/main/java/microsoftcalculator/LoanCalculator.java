@@ -15,7 +15,6 @@ public class LoanCalculator {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         double promoCitiAPR = .1099;
         double currentLoanAPR = .1197;
         double currentCitiAPR = .2199;
