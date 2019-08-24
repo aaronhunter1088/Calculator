@@ -77,21 +77,27 @@ public class JPanelProgrammer_v3 extends JPanel {
     final private JButton buttonMS = new JButton("MS");
     final private JButton buttonMAdd = new JButton("M+");
     final private JButton buttonMSub = new JButton("M-");
-    // TODO: Move up into StandardCalculator
-    final private FractionButtonHandler fracButtonHandler = new FractionButtonHandler();
+    // TODO: Move handler classes into StandardCalculator. Think about buttons. may not be so bad if repeated especially if they're not enabled
+//    final private FractionButtonHandler fracButtonHandler = new FractionButtonHandler();
     final private JButton buttonFraction = new JButton("1/x");
-    final private PercentButtonHandler perButtonHandler = new PercentButtonHandler();
+//    final private PercentButtonHandler perButtonHandler = new PercentButtonHandler();
     final private JButton buttonPercent = new JButton("%");
     final private String SQRT = "\u221A";
-    final private SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
+//    final private SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
     final private JButton buttonSqrt = new JButton(SQRT);
 
-    boolean buttonBinMode = false;
-    boolean buttonOctMode = false;
-    boolean buttonDecMode = false;
-    boolean buttonHexMode = false;
+    // programmer booleans
+//    boolean isButtonBinSet = true;
+//    boolean isButtonOctSet = false;
+//    boolean isButtonDecSet = false;
+//    boolean isButtonHexSet = false;
+//
+//    boolean isButtonByteSet = true;
+//    boolean isButtonWordSet = false;
+//    boolean isButtonDwordSet = false;
+//    boolean isButtonQwordSet = false;
 
-    private final String[] conversion = new String[64];
+    private String[] conversion;
 
     private StandardCalculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
@@ -102,27 +108,21 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     public JPanelProgrammer_v3(StandardCalculator_v3 calculator) {
-        setMinimumSize(new Dimension(600,405));
+        setMinimumSize(new Dimension(600,400));
         programmerLayout = new GridBagLayout();
         setLayout(programmerLayout); // set frame layout
         constraints = new GridBagConstraints(); // instantiate constraints
         setupPanel_v3();
         setCalculator(calculator);
         addComponentsToPanel_v3();
+        //performCalculatorTypeSwitchOperations(); // this should be common to all faces
     }
 
-    public static void performBasicSetup(Calculator_v3 calculator) {
-        LOGGER.info("Preparing programmer buttons");
-        calculator.button2.setEnabled(false);
-        calculator.button3.setEnabled(false);
-        calculator.button4.setEnabled(false);
-        calculator.button5.setEnabled(false);
-        calculator.button6.setEnabled(false);
-        calculator.button7.setEnabled(false);
-        calculator.button8.setEnabled(false);
-        calculator.button9.setEnabled(false);
-        LOGGER.info("Finished preparing buttons.");
-    }
+//    public static void performBasicSetup(Calculator_v3 calculator) {
+//        LOGGER.info("Preparing programmer buttons");
+//        //calculator.setButtons2To9(false);
+//        LOGGER.info("Finished preparing buttons.");
+//    }
 
     // Prepare panel's objects
     public void setupPanel_v3() {
@@ -130,14 +130,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
 
         try {
-            calculator.button2.setEnabled(false);
-            calculator.button3.setEnabled(false);
-            calculator.button4.setEnabled(false);
-            calculator.button5.setEnabled(false);
-            calculator.button6.setEnabled(false);
-            calculator.button7.setEnabled(false);
-            calculator.button8.setEnabled(false);
-            calculator.button9.setEnabled(false);
+            setButtons2To9(false);
             calculator.buttonNegate.setEnabled(false);
         } catch (NullPointerException e) {}
         buttonA.setEnabled(false);
@@ -152,12 +145,6 @@ public class JPanelProgrammer_v3 extends JPanel {
 
         buttonByte.setSelected(true);
         buttonBin.setSelected(true);
-        buttonA.setEnabled(false);
-        buttonB.setEnabled(false);
-        buttonC.setEnabled(false);
-        buttonD.setEnabled(false);
-        buttonE.setEnabled(false);
-        buttonF.setEnabled(false);
 
         buttonSqrt.setEnabled(false);
         buttonSqrt.setFont(this.calculator.font);
@@ -183,7 +170,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         btnGroupTwo.add(buttonDWord);
         btnGroupTwo.add(buttonWord);
         btnGroupTwo.add(buttonByte);
-        button.setFont(this.calculator.font);
+
         button.setPreferredSize(new Dimension(35,35));
         button.setBorder(new LineBorder(Color.BLACK));
 
@@ -284,7 +271,11 @@ public class JPanelProgrammer_v3 extends JPanel {
     public void addComponentsToPanel_v3() {
         LOGGER.info("Starting addComponentsToProgrammerPanel_v3");
         constraints.fill = GridBagConstraints.BOTH;
-        addComponent(calculator.getTextArea(), 0, 0, 10, 2);
+        constraints.insets = new Insets(0,7,0,0);
+        addComponent(new JTextArea("Test"), 0, 0, 4, 2);
+        constraints.insets = new Insets(0,0,0,9);
+        addComponent(calculator.getTextArea(), 0, 1, 8, 2);
+        constraints.insets = new Insets(5,5,5,5);
         buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
         this.calculator.button2.setEnabled(false);
         this.calculator.button3.setEnabled(false);
@@ -450,18 +441,18 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     public void setButtonGroup2Mode() {
-        buttonBinMode = false;
-        buttonOctMode = false;
-        buttonDecMode = false;
-        buttonHexMode = false;
+        calculator.isButtonBinSet = false;
+        calculator.isButtonOctSet = false;
+        calculator.isButtonDecSet = false;
+        calculator.isButtonHexSet = false;
         if (buttonBin.isSelected())
-            buttonBinMode = true;
+            calculator.isButtonBinSet = true;
         else if (buttonOct.isSelected())
-            buttonOctMode = true;
+            calculator.isButtonOctSet = true;
         else if (buttonDec.isSelected())
-            buttonDecMode = true;
+            calculator.isButtonDecSet = true;
         else if (buttonHex.isSelected())
-            buttonHexMode = true;
+            calculator.isButtonHexSet = true;
     }
 
     // method to set constraints on
@@ -637,80 +628,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
     }
 
-    public void convertToBinary() {
-        int i;
-        for (i = 0; i < 64; i++)
-            conversion[i] = "0";
-        i = 63;
-        LOGGER.info(Arrays.toString(conversion));
-        if (buttonOctMode == true) {
-            // logic for Octal to Binary
-        } else if (buttonDecMode == true) {
-            // logic for Decimal to Binary
-        } else if (buttonBinMode == true) {
-            LOGGER.info("Here");
-            calculator.textarea = calculator.getTextArea().getText();
-            int number = Integer.parseInt(calculator.textarea);
-            while (number != 0) {
-                if (number % 2 == 0) {
-                    conversion[i] = "0";
-                } else {
-                    conversion[i] = "1";
-                }
-                i--;
-                number /= 2;
-            }
-            LOGGER.info(Arrays.toString(conversion));
-            calculator.textarea = "";
-            for (i=0; i<64; i++) {
-                calculator.textarea += conversion[i];
-            }
-            LOGGER.info("textarea:" + calculator.textarea);
-            // concat input to proper length
-            if (buttonByte.isSelected()) {
-                calculator.textarea = calculator.textarea.substring(56,64);
-                calculator.getTextArea().setText(calculator.textarea);
-                LOGGER.info("input:" + calculator.textarea);
-            } else if (buttonWord.isSelected()) {
-                calculator.textarea = calculator.textarea.substring(48,64);
-                calculator.getTextArea().setText(calculator.textarea);
-                LOGGER.info("input:" + calculator.textarea);
-            }
-        } else if (buttonHexMode == true) {
-            // llogic for Hexadecimal to Binary
-        }
-    }
-
-    public void convertToOctal() {
-        if (buttonBinMode == true) {
-            // logic for Binary to Octal
-        } else if (buttonDecMode == true) {
-            // logic for Decimal to Octal
-        } else if (buttonHexMode == true) {
-            // logic for Hexadecimal to Octal
-        }
-    }
-
-    public void convertToDecimal() {
-        if (buttonBinMode == true) {
-            // logic for Binary to Decimal
-        } else if (buttonOctMode == true) {
-            // logic for Octal to Decimal
-        } else if (buttonHexMode == true) {
-            // logic for Hexadecimal to Decimal
-        }
-    }
-
-    public void convertToHexadecimal() {
-        if (buttonBinMode == true) {
-            // logic for Binary to Hexadecimal
-        } else if (buttonOctMode == true) {
-            // logic for Octal to Hexadecimal
-        } else if (buttonDecMode == true) {
-            // logic for Decimal to Hexadecimal
-        }
-    }
-
     public class OctalButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -828,96 +745,130 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
     }
 
-    /**
-     * The class which handles operations when the square root button is clicked
-     */
-    public class SquareRootButtonHandler implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("SquareRoot ButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            String errorStringNaN = "Not a Number";
-            LOGGER.debug("text: " + calculator.getTextArea().getText().replace("\n",""));
-            if (calculator.getTextArea().getText().equals("") || calculator.isNegativeNumber(calculator.getTextArea().getText())) {
-                calculator.getTextArea().setText("\n"+errorStringNaN);
-                calculator.textarea = "\n"+errorStringNaN;
-                calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
-            } else {
-                String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
-                result = calculator.formatNumber(result);
-                calculator.getTextArea().setText("\n"+result);
-                calculator.textarea = result;
-                calculator.confirm();
-            }
-        }
-    }
+//    public int setBytes() {
+//        if (isButtonByteSet) { return 8; }
+//        else if (isButtonWordSet) { return 16; }
+//        else if (isButtonDwordSet) { return 32; }
+//        else if (isButtonQwordSet) { return 64; }
+//        else { return 0; } // shouldn't ever come here
+//    }
 
-    /**
-     * The class which handles the logic for when the percent button is click
-     */
-    public class PercentButtonHandler implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("PercentStoreButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (!calculator.getTextArea().getText().equals("")) {
-                //if(textArea.getText().substring(textArea.getText().length()-1).equals("-")) { // if the last index equals '-'
-                // if the number is negative
-                if (calculator.isNegativeNumber(calculator.getTextArea().getText().replaceAll("\\n", ""))) {
-                    LOGGER.info("if condition true");
-                    //temp[valuesPosition] = textArea.getText(); // textarea
-                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                    percent /= 100;
-                    LOGGER.info("percent: "+percent);
-                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                    calculator.textarea = calculator.formatNumber(calculator.values[calculator.valuesPosition]);
-                    LOGGER.info("Old " + calculator.values[calculator.valuesPosition]);
-                    calculator.values[calculator.valuesPosition] = calculator.values[calculator.valuesPosition].substring(1, calculator.values[calculator.valuesPosition].length());
-                    LOGGER.info("New " + calculator.values[calculator.valuesPosition] + "-");
-                    calculator.getTextArea().setText(calculator.values[calculator.valuesPosition] + "-"); // update textArea
-                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                    //textArea.setText(textarea);
-                    calculator.values[calculator.valuesPosition] = calculator.textarea;//+textarea;
-                    calculator.textarea = "";
-                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                    LOGGER.info("textArea: "+calculator.getTextArea().getText());
+    public void convertToBinary() {
+        LOGGER.info("convertToBinary started");
+        int i;
+        int bytes = calculator.getBytes();
+        conversion = new String[bytes];
+        for (i = 0; i < bytes; i++)
+            conversion[i] = "0";
+
+        LOGGER.info(Arrays.toString(conversion));
+        if (calculator.isButtonOctSet) {
+            // logic for Octal to Binary
+        } else if (calculator.isButtonDecSet) {
+            // logic for Decimal to Binary
+        } else if (calculator.isButtonBinSet) {
+            LOGGER.info("Here");
+            calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
+            int number = Integer.parseInt(calculator.textarea);
+            i = 0;
+            while(i < calculator.getBytes()) {
+                if (number % 2 == 0) {
+                    conversion[i] = "0";
                 } else {
-                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                    percent /= 100;
-                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                    calculator.getTextArea().setText("\n" + calculator.formatNumber(calculator.values[calculator.valuesPosition]));
-                    calculator.values[calculator.valuesPosition] = calculator.getTextArea().getText().replaceAll("\\n", "");
-                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                    LOGGER.info("textArea: "+calculator.getTextArea().getText());
+                    conversion[i] = "1";
                 }
+                if (number % 2 == 0 && number / 2 == 0) {
+                    // 0r0
+                    for(int k = i; k<calculator.getBytes(); k++) {
+                        conversion[k] = "0";
+                    }
+                    break;
+                }
+                i++;
+                number /= 2;
             }
-            calculator.dotButtonPressed = true;
-            calculator.dotButtonPressed = true;
-            calculator.textarea = calculator.getTextArea().getText();
-            calculator.confirm();
+            LOGGER.info("converted number is: " + Arrays.toString(conversion));
+            calculator.textarea = "";
+            for (i=calculator.getBytes()-1; i>=0; i--) {
+                calculator.textarea += conversion[i];
+            }
+            LOGGER.info("textarea:" + calculator.textarea);
+            calculator.getTextArea().setText("\n"+calculator.textarea);
+
+        } else if (calculator.isButtonHexSet == true) {
+            // logic for Hexadecimal to Binary
+        }
+        LOGGER.info("convertToBinary finished");
+    }
+
+    public void convertToOctal() {
+        if (calculator.isButtonBinSet == true) {
+            // logic for Binary to Octal
+        } else if (calculator.isButtonDecSet == true) {
+            // logic for Decimal to Octal
+        } else if (calculator.isButtonHexSet == true) {
+            // logic for Hexadecimal to Octal
         }
     }
 
+    public void convertToDecimal() {
+        if (calculator.isButtonBinSet == true) {
+            // logic for Binary to Decimal
+        } else if (calculator.isButtonOctSet == true) {
+            // logic for Octal to Decimal
+        } else if (calculator.isButtonHexSet == true) {
+            // logic for Hexadecimal to Decimal
+        }
+    }
+
+    public void convertToHexadecimal() {
+        if (calculator.isButtonBinSet == true) {
+            // logic for Binary to Hexadecimal
+        } else if (calculator.isButtonOctSet == true) {
+            // logic for Octal to Hexadecimal
+        } else if (calculator.isButtonDecSet == true) {
+            // logic for Decimal to Hexadecimal
+        }
+    }
+
+    public void convertTextArea() {
+        LOGGER.info("Converting TextArea");
+        if (calculator.getCalcType() == CalcType_v3.BASIC) {
+            // decimal to binary
+            LOGGER.info("Going from decimal to binary...");
+            convertToBinary();
+        } else {
+            LOGGER.info("Current CalcType is: " + calculator.getCalcType());
+        }
+        LOGGER.info("TextArea converted");
+    }
     /**
-     * The class which handles the logic for when the FractionButton is clicked
+     * This method handles the logic when we switch from any type of calculator
+     * to the Programmer type
+     *
+     * TODO: Implement this method
      */
-    public class FractionButtonHandler implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("FracStoreButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (!calculator.getTextArea().getText().equals("")) {
-                double result = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                result = 1 / result;
-                LOGGER.info("result: " + result);
-                calculator.values[calculator.valuesPosition] = Double.toString(result);
-                calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
-                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-            }
-            calculator.confirm();
-        }
+    public void performCalculatorTypeSwitchOperations() {
+        LOGGER.info("Starting to performCalculatorTypeSwitchOperations");
+        // possible conversion of the value in the textarea from
+        // whatever mode it was in before to binary
+        convertTextArea();
+        // set CalcType now
+        calculator.setCalcType(CalcType_v3.PROGRAMMER);
+        // setting up all the buttons
+        setButtons2To9(false);
+        LOGGER.info("Finished performCalculatorTypeSwitchOperations\n");
     }
 
-
+    public void setButtons2To9(boolean isEnabled) {
+        calculator.button2.setEnabled(isEnabled);
+        calculator.button3.setEnabled(isEnabled);
+        calculator.button4.setEnabled(isEnabled);
+        calculator.button5.setEnabled(isEnabled);
+        calculator.button6.setEnabled(isEnabled);
+        calculator.button7.setEnabled(isEnabled);
+        calculator.button8.setEnabled(isEnabled);
+        calculator.button9.setEnabled(isEnabled);
+    }
 
 }

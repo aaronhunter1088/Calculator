@@ -35,12 +35,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonNegate = new JButton(negate);
     // moving up protected boolean addBool = false, subBool = false, mulBool = false, divBool = false, memAddBool = false, memSubBool = false;
     private Calculator_v3 calculator;
-    public Calculator_v3 getCalculatorImage1() { return calculator; }
+    public Calculator_v3 getCalculator() { return calculator; }
     private void setCalculator(Calculator_v3 calculator) { this.calculator = calculator; }
     
     // 4 types of Standard Calculators: create getters and setters
     protected JPanel currentPanel;
-//    protected JPanel panelBasic = new JPanelBasic_v3(this);
+//    public JPanelBasic_v3 getJPanelBasic() { return new JPanelBasic_v3(this); }
 //    protected JPanel panelProgrammer;
 //    protected JPanel panelScientific;
 //    protected JPanel panelDate;
@@ -59,24 +59,20 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	 */
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, String title) {
 		setCurrentJPanel(currentPanel);
-		//setupButtonsAndSuch();
 		setupStandardCalculator_v3();
-
-		setCalcType(determineCalcType());
-		setupRestOfCalculator();
-
 		super.setTitle(title);
 		confirm("Switched calculator types to " + super.getTitle());
 	}
 
 
-	public void setupRestOfCalculator() {
-	    if (calcType == CalcType_v3.BASIC) {
-	        JPanelBasic_v3.performBasicSetup(calculator);
-        } else if (calcType == CalcType_v3.PROGRAMMER) {
-	        JPanelProgrammer_v3.performBasicSetup(calculator);
-        }
-    }
+//	public void setupRestOfCalculator() {
+//	    if (calcType == CalcType_v3.BASIC) {
+//	        //JPanelBasic_v3.performBasicSetup(calculator);
+//
+//        } else if (calcType == CalcType_v3.PROGRAMMER) {
+//	        //JPanelProgrammer_v3.performBasicSetup(calculator);
+//        }
+//    }
 
 	public CalcType_v3 determineCalcType() {
 	    if (currentPanel instanceof JPanelBasic_v3) { this.calcType = CalcType_v3.BASIC; }
@@ -124,7 +120,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		setupStandardCalculator_v3();
 		setupMenuBar();
         setCalcType(determineCalcType());
-        setupRestOfCalculator();
+        //setupRestOfCalculator();
 		setImageIcons();
 		setMinimumSize(getCurrentPanel().getSize());
 		
@@ -144,16 +140,20 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         basic.setFont(this.font);
         viewMenu.add(basic);
         basic.addActionListener(action -> {
-            calcType = CalcType_v3.BASIC;
-            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC.getName());
+            //calcType = CalcType_v3.BASIC;
+            JPanelBasic_v3 p = new JPanelBasic_v3(this);
+            performTasksWhenChangingJPanels(p, CalcType_v3.BASIC.getName());
+            p.performCalculatorTypeSwitchOperations();
         });
 
         JMenuItem programmer = new JMenuItem("Programmer");
         programmer.setFont(this.font);
         viewMenu.add(programmer);
         programmer.addActionListener(action -> {
-            calcType = CalcType_v3.PROGRAMMER;
-            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER.getName());
+            //calcType = CalcType_v3.PROGRAMMER;
+            JPanelProgrammer_v3 p = new JPanelProgrammer_v3(this);
+            performTasksWhenChangingJPanels(p, CalcType_v3.PROGRAMMER.getName());
+            p.performCalculatorTypeSwitchOperations();
         });
         this.bar.add(viewMenu); // add viewMenu to menu bar
         // Edit Menu and Actions

@@ -75,6 +75,17 @@ public abstract class Calculator_v3 extends JFrame {
 	protected boolean memorySwitchBool = false;
     protected boolean addBool = false, subBool = false, mulBool = false, divBool = false, memAddBool = false, memSubBool = false, negatePressed = false;
 
+    // programmer booleans
+    boolean isButtonBinSet = true;
+    boolean isButtonOctSet = false;
+    boolean isButtonDecSet = false;
+    boolean isButtonHexSet = false;
+
+    boolean isButtonByteSet = true;
+    boolean isButtonWordSet = false;
+    boolean isButtonDwordSet = false;
+    boolean isButtonQwordSet = false;
+
     public boolean getDotButtonPressed() { return this.dotButtonPressed; }
     private void setDotButtonPressed(boolean bool) { this.dotButtonPressed = bool; }
     protected boolean dotButtonPressed = false;
@@ -320,7 +331,7 @@ public abstract class Calculator_v3 extends JFrame {
      *
      * TODO: Test
      */
-    private String clearZeroesAtEnd(String currentNumber) {
+    protected String clearZeroesAtEnd(String currentNumber) {
         LOGGER.info("starting clearZeroesAtEnd()");
         LOGGER.info("currentNumber: " + currentNumber);
         textarea = currentNumber; // copy of currentNumber
@@ -484,75 +495,53 @@ public abstract class Calculator_v3 extends JFrame {
  	                valuesPosition = 0;
  	            }
 
- 	            if (firstNumBool == true && isPositiveNumber(values[valuesPosition]) && dotButtonPressed == false) {
- 	                LOGGER.info("firstNumBool = true | positive number = true | dotButtonPressed = false");
- 	                LOGGER.info("before: " + textArea.getText().replaceAll("\n", ""));
- 	                textArea.setText("\n" + textArea.getText().replaceAll("\n", "") + e.getActionCommand()); // update textArea
- 	                values[valuesPosition] = textArea.getText().replaceAll("\n", ""); // store textarea
- 	                
- 	                LOGGER.info("textArea:'\\n" + textArea.getText().replaceAll("\n", "") + "'");
- 	                LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
- 	                textarea = values[valuesPosition];
- 	            } else if (firstNumBool == true && isNegativeNumber(values[valuesPosition]) && dotButtonPressed == false) { // logic for negative numbers
-                    LOGGER.info("firstNumBool = true | negative number = true | dotButtonPressed = false");
- 	                textarea = values[valuesPosition];
- 	                LOGGER.info("textarea: '", textarea + "'");
- 	                textarea = textarea + e.getActionCommand(); // update textArea
- 	                LOGGER.info("textarea: '" + textarea + "'");
- 	                values[valuesPosition] = textarea; // store textarea
- 	                textArea.setText("\n" + convertToPositive(textarea) + "-");
- 	                LOGGER.info("textArea: '" + textArea.getText() + "'");
- 	                LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
- 	            }
- 	            else { // dotPressed = true
- 	            	LOGGER.info("firstNumBool = true | positive number = true | dotButtonPressed = true");
- 	                if (!textarea.equals("") && dotButtonPressed) {
- 	                	textarea = values[valuesPosition] + e.getActionCommand();
- 	                	textArea.setText("\n" + textarea );
- 	                	LOGGER.info("textarea: " + textarea);
- 	                	values[valuesPosition] = textArea.getText().replaceAll("\n", "");
- 	                } else if (!textarea.equals("") && !dotButtonPressed) {
- 	                	textarea = values[valuesPosition] + e.getActionCommand();
- 	                	textArea.setText("\n" + textarea );
- 	                	LOGGER.info("textarea: " + textarea);
- 	                	values[valuesPosition] = textArea.getText().replaceAll("\n", "");
- 	                } /*else if (textarea.equals(".0")) {
- 	                    textArea.setText("0.");
- 	                    textArea.setText(textArea.getText() + e.getActionCommand()); // update textArea
- 	                    values[valuesPosition] =  textArea.getText(); // store textarea
- 	                    textArea.setText("\n" + textArea.getText());
- 	                    LOGGER.info("textArea: '\\n" + textArea.getText().replaceAll("\n", "") + "'");
- 	                    LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
- 	                    //s = s.substring(0,s.length());
- 	                    LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
- 	                    //temp[0] = s;
- 	                    textarea = "";
- 	                    LOGGER.info("dotButtonPressed: '", dotButtonPressed + "'");
- 	                    LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'"); // print out stored textarea confirmation
- 	                    dotButtonPressed = false;
- 	                    LOGGER.info("dotButtonPressed: '", dotButtonPressed + "'");
- 	                } else if (values[valuesPosition].endsWith("-.0")) {
- 	                    textarea = values[valuesPosition];
- 	                    LOGGER.info("textarea: '", textarea + "'");
- 	                    textarea = textarea.substring(2, textarea.length());
- 	                    //System.out.printf("\ntextarea: %s\n", textarea);
- 	                    textarea = textarea + "." + e.getActionCommand();
- 	                    LOGGER.info("textarea: '-", textarea + "'");
- 	                    textarea = "-" + textarea;
- 	                    textArea.setText("\n" + textarea.replaceAll("-", "") + "-");
- 	                    values[valuesPosition] = textarea;
- 	                } else if (values[valuesPosition].startsWith("-0.")){
- 	                    textarea = textArea.getText().replaceAll("\\n", ""); // collect textarea
- 	                    LOGGER.info("Old " + textarea);
- 	                    textarea = textarea.substring(0, textarea.length()-1);
- 	                    LOGGER.info("New " + textarea);
- 	                    textArea.setText("\n" + textarea + e.getActionCommand() + "-"); // update textArea
- 	                    values[valuesPosition] = textArea.getText().replaceAll("\\n", ""); // update textarea with decimal
- 	                    LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
- 	                    LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'"); // print out stored textarea confirmation
- 	                    textarea = textArea.getText().replaceAll("\\n", "");
- 	                }*/
- 	            }   
+ 	            if (getCalcType() == CalcType_v3.BASIC) {
+ 	                // TODO: reformat. should be much more condensed
+                    if (firstNumBool == true && isPositiveNumber(values[valuesPosition]) && dotButtonPressed == false) {
+                        LOGGER.info("firstNumBool = true | positive number = true | dotButtonPressed = false");
+                        LOGGER.info("before: " + textArea.getText().replaceAll("\n", ""));
+                        textArea.setText("\n" + textArea.getText().replaceAll("\n", "") + e.getActionCommand()); // update textArea
+                        values[valuesPosition] = textArea.getText().replaceAll("\n", ""); // store textarea
+
+                        LOGGER.info("textArea:'\\n" + textArea.getText().replaceAll("\n", "") + "'");
+                        LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
+                        textarea = values[valuesPosition];
+                    } else if (firstNumBool == true && isNegativeNumber(values[valuesPosition]) && dotButtonPressed == false) { // logic for negative numbers
+                        LOGGER.info("firstNumBool = true | negative number = true | dotButtonPressed = false");
+                        textarea = values[valuesPosition];
+                        LOGGER.info("textarea: '", textarea + "'");
+                        textarea = textarea + e.getActionCommand(); // update textArea
+                        LOGGER.info("textarea: '" + textarea + "'");
+                        values[valuesPosition] = textarea; // store textarea
+                        textArea.setText("\n" + convertToPositive(textarea) + "-");
+                        LOGGER.info("textArea: '" + textArea.getText() + "'");
+                        LOGGER.info("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
+                    }
+                    else { // dotPressed = true
+                        LOGGER.info("firstNumBool = true | positive number = true | dotButtonPressed = true");
+                        if (!textarea.equals("") && dotButtonPressed) {
+                            textarea = values[valuesPosition] + e.getActionCommand();
+                            textArea.setText("\n" + textarea );
+                            LOGGER.info("textarea: " + textarea);
+                            values[valuesPosition] = textArea.getText().replaceAll("\n", "");
+                        } else if (!textarea.equals("") && !dotButtonPressed) {
+                            textarea = values[valuesPosition] + e.getActionCommand();
+                            textArea.setText("\n" + textarea );
+                            LOGGER.info("textarea: " + textarea);
+                            values[valuesPosition] = textArea.getText().replaceAll("\n", "");
+                        }
+                    }
+                } else if (getCalcType() == CalcType_v3.PROGRAMMER) {
+ 	                // Calculator needs to know about programmer booleans
+ 	                int appropriateLength = getBytes();
+ 	                textarea = textArea.getText().replaceAll("\n", "");
+ 	                if (textarea.length() == appropriateLength) {
+ 	                    // do nothing. do not append number
+                    } else {
+ 	                    textarea = textarea.replaceAll("\n","") + e.getActionCommand();
+ 	                    textArea.setText("\n" + textarea);
+                    }
+                }
  	        } 
  	        else { // do for second number
  	            if (firstNumBool == false && dotButtonPressed == false) {
@@ -971,6 +960,14 @@ public abstract class Calculator_v3 extends JFrame {
         constraints.gridheight = height;
         layout.setConstraints(c, constraints); // set constraints
         add(c); // add component
+    }
+
+    public int getBytes() {
+        if (isButtonByteSet) { return 8; }
+        else if (isButtonWordSet) { return 16; }
+        else if (isButtonDwordSet) { return 32; }
+        else if (isButtonQwordSet) { return 64; }
+        else { return 0; } // shouldn't ever come here
     }
 
 }

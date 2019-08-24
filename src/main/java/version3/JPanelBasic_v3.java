@@ -69,80 +69,62 @@ public class JPanelBasic_v3 extends JPanel {
         setupPanel_v3();
         setCalculator(calculator);
         addComponentsToPanel_v3();
-        
+        //performCalculatorTypeSwitchOperations();
     }
 
-    public static void performBasicSetup(Calculator_v3 calculator) {
-        LOGGER.info("Preparing programmer buttons");
-        calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
-        calculator.button0.setEnabled(true);
-        calculator.button1.setEnabled(true);
-        calculator.button2.setEnabled(true);
-        calculator.button3.setEnabled(true);
-        calculator.button4.setEnabled(true);
-        calculator.button5.setEnabled(true);
-        calculator.button6.setEnabled(true);
-        calculator.button7.setEnabled(true);
-        calculator.button8.setEnabled(true);
-        calculator.button9.setEnabled(true);
-        LOGGER.info("Finished preparing buttons.");
-    }
+//    public static void performBasicSetup(Calculator_v3 calculator) {
+//        LOGGER.info("Preparing programmer buttons");
+//
+//        //setAllNumberButtons(true);
+//        LOGGER.info("Finished preparing buttons.");
+//    }
 
     // prepare panel's specific objects
 	public void setupPanel_v3() {
         LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-
         try {
+            calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
+            setAllNumberButtons(true);
             calculator.button0.setFont(calculator.font);
             calculator.button0.setPreferredSize(new Dimension(70, 35) );
             calculator.button0.setBorder(new LineBorder(Color.BLACK));
-            calculator.button0.setEnabled(true);
 
             calculator.button1.setFont(calculator.font);
             calculator.button1.setPreferredSize(new Dimension(35, 35) );
             calculator.button1.setBorder(new LineBorder(Color.BLACK));
-            calculator.button1.setEnabled(true);
 
             calculator.button2.setFont(calculator.font);
             calculator.button2.setPreferredSize(new Dimension(35, 35) );
             calculator.button2.setBorder(new LineBorder(Color.BLACK));
-            calculator.button2.setEnabled(true);
 
             calculator.button3.setFont(calculator.font);
             calculator.button3.setPreferredSize(new Dimension(35, 35) );
             calculator.button3.setBorder(new LineBorder(Color.BLACK));
-            calculator.button3.setEnabled(true);
 
             calculator.button4.setFont(calculator.font);
             calculator.button4.setPreferredSize(new Dimension(35, 35) );
             calculator.button4.setBorder(new LineBorder(Color.BLACK));
-            calculator.button4.setEnabled(true);
 
             calculator.button5.setFont(calculator.font);
             calculator.button5.setPreferredSize(new Dimension(35, 35) );
             calculator. button5.setBorder(new LineBorder(Color.BLACK));
-            calculator.button5.setEnabled(true);
 
             calculator.button6.setFont(calculator.font);
             calculator. button6.setPreferredSize(new Dimension(35, 35) );
             calculator. button6.setBorder(new LineBorder(Color.BLACK));
-            calculator. button6.setEnabled(true);
 
             calculator.button7.setFont(calculator.font);
             calculator.button7.setPreferredSize(new Dimension(35, 35) );
             calculator.button7.setBorder(new LineBorder(Color.BLACK));
-            calculator.button7.setEnabled(true);
 
             calculator.button8.setFont(calculator.font);
             calculator.button8.setPreferredSize(new Dimension(35, 35) );
             calculator.button8.setBorder(new LineBorder(Color.BLACK));
-            calculator.button8.setEnabled(true);
 
             calculator.button9.setFont(calculator.font);
             calculator.button9.setPreferredSize(new Dimension(35, 35) );
             calculator.button9.setBorder(new LineBorder(Color.BLACK));
-            calculator. button9.setEnabled(true);
         } catch (NullPointerException e) {}
 
         buttonFraction.setFont(Calculator_v3.font);
@@ -572,6 +554,74 @@ public class JPanelBasic_v3 extends JPanel {
         constraints.gridheight = height;
         basicLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
+    }
+
+    public void convertToDecimal() {
+        LOGGER.info("convertToDecimal started");
+        calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
+        int appropriateLength = calculator.getBytes();
+        LOGGER.info("textarea: " + calculator.textarea);
+        LOGGER.info("appropriateLength: " + appropriateLength);
+
+        double result = 0.0;
+        double num1 = 0.0;
+        double num2 = 0.0;
+        for(int i=0, k=appropriateLength-1; i<appropriateLength; i++, k--) {
+            String c = Character.toString(calculator.textarea.charAt(i));
+            num1 = Double.valueOf(c);
+            num2 = Math.pow(2,k);
+            result = (num1 * num2) + result;
+        }
+        calculator.textarea = Double.toString(result);
+        LOGGER.info("textarea: " + calculator.textarea);
+        if (calculator.isDecimal(calculator.textarea)) {
+            calculator.textarea = calculator.clearZeroesAtEnd(calculator.textarea);
+        }
+        calculator.getTextArea().setText("\n" + calculator.textarea);
+        LOGGER.info("textarea: " + calculator.textarea);
+        LOGGER.info("convertToDecimal finished");
+    }
+
+    public void convertTextArea() {
+        LOGGER.info("Converting TextArea");
+        if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
+            LOGGER.info("Going from binary to decimal...");
+            convertToDecimal();
+        } else {
+            LOGGER.info("Current CalcType is: " + calculator.getCalcType());
+        }
+        LOGGER.info("TextArea converted");
+    }
+
+    /**
+     * This method handles the logic when we switch from any type of calculator
+     * to the Programmer type
+     *
+     * TODO: Implement this method
+     */
+    public void performCalculatorTypeSwitchOperations() {
+        LOGGER.info("Starting to performCalculatorTypeSwitchOperations");
+        // possible conversion of the value in the textarea from
+        // whatever mode it was in before to decimal
+        convertTextArea();
+        // set CalcType now
+        calculator.setCalcType(CalcType_v3.BASIC);
+        // setting up all the buttons
+        setAllNumberButtons(true);
+        LOGGER.info("Finished performCalculatorTypeSwitchOperations\n");
+    }
+
+    public void setAllNumberButtons(boolean isEnabled) {
+        calculator.button0.setEnabled(isEnabled);
+        calculator.button1.setEnabled(isEnabled);
+        calculator.button2.setEnabled(isEnabled);
+        calculator.button3.setEnabled(isEnabled);
+        calculator.button4.setEnabled(isEnabled);
+        calculator.button5.setEnabled(isEnabled);
+        calculator.button6.setEnabled(isEnabled);
+        calculator.button7.setEnabled(isEnabled);
+        calculator.button8.setEnabled(isEnabled);
+        calculator.button9.setEnabled(isEnabled);
     }
     
 }

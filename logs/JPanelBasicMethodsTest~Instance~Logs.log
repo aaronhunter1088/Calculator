@@ -1,0 +1,13 @@
+[INFO ] 08-23-2019 23:08:11.047 [Method:setupPanel_v3] version3.JPanelBasic_v3:84 - Starting setupPanel_v3
+[INFO ] 08-23-2019 23:08:11.057 [Method:setupPanel_v3] version3.JPanelBasic_v3:173 - End setupPanel_v3()
+[INFO ] 08-23-2019 23:08:11.058 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:179 - Starting addComponentsToPanel_v3
+[INFO ] 08-23-2019 23:08:11.064 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:268 - Finished addComponentsToPanel_v3
+[INFO ] 08-23-2019 23:08:11.066 [Method:convertToDecimal] version3.JPanelBasic_v3:560 - convertToDecimal started
+[INFO ] 08-23-2019 23:08:11.067 [Method:convertToDecimal] version3.JPanelBasic_v3:563 - textarea: 00000100
+[INFO ] 08-23-2019 23:08:11.068 [Method:convertToDecimal] version3.JPanelBasic_v3:564 - appropriateLength: 8
+[INFO ] 08-23-2019 23:08:11.071 [Method:isDecimal] version3.Calculator_v3:376 - isDecimal(4.0) == true
+[INFO ] 08-23-2019 23:08:11.072 [Method:clearZeroesAtEnd] version3.Calculator_v3:335 - starting clearZeroesAtEnd()
+[INFO ] 08-23-2019 23:08:11.073 [Method:clearZeroesAtEnd] version3.Calculator_v3:336 - currentNumber: 4.0
+[INFO ] 08-23-2019 23:08:11.074 [Method:clearZeroesAtEnd] version3.Calculator_v3:361 - output of clearZeroesAtEnd(): 4
+[INFO ] 08-23-2019 23:08:11.081 [Method:convertToDecimal] version3.JPanelBasic_v3:580 - textarea: 4
+[INFO ] 08-23-2019 23:08:11.082 [Method:convertToDecimal] version3.JPanelBasic_v3:581 - convertToDecimal finished

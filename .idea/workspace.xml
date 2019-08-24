@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46a8a212-bab8-4069-9258-efc23b8b6505" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/src/test/java/version3/JPanelBasicMethodsTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_all_1_10_19.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Spring_4_3_18_RELEASE.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -17,11 +18,23 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/version2/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version2/MainController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version2/StandardView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version2/StandardView.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version2/StandardViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version2/StandardViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/JPanelProgrammer_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/JPanelProgrammer_v3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/version3/StandardCalculator_v3.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/microsoftcalculator/CalculatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/microsoftcalculator/CalculatorTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/microsoftcalculator/MethodsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/microsoftcalculator/MethodsTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/version3/CalculatorMethodsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/version3/CalculatorMethodsTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/version3/StandardCalculatorMethodsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/version3/StandardCalculatorMethodsTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/microsoftcalculator/BinaryTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/microsoftcalculator/BinaryTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/microsoftcalculator/LoanCalculator.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/microsoftcalculator/LoanCalculator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/microsoftcalculator/TestClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/microsoftcalculator/TestClass.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearEntryButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$ClearEntryButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DeleteButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DeleteButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DotButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$DotButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$NumberButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3$NumberButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/Calculator_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/Calculator_v3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$FractionButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$FractionButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryAddButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryAddButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryClearButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$MemoryClearButtonHandler.class" afterDir="false" />
@@ -31,16 +44,41 @@
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$PercentButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$PercentButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$SquareRootButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3$SquareRootButtonHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelBasic_v3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$BinaryButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$BinaryButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonByteHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonByteHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonDWordHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonDWordHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonDecHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonDecHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonHexidecimalHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonHexidecimalHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonOctHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonOctHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonQWordHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonQWordHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonWordHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ButtonWordHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ByteButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$ByteButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$DWordButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$DWordButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$DecimalButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$DecimalButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$FractionButtonHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$HexidecimalButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$HexidecimalButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$OctalButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$OctalButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$PercentButtonHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$QWordButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$QWordButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$SquareRootButtonHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$WordButtonHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3$WordButtonHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/JPanelProgrammer_v3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/version3/StandardCalculator_v3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-cli/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-cli/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/version3/CalculatorMethodsTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/version3/StandardCalculatorMethodsTest.class" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -126,7 +164,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CalculatorMethodsTest.pressingClearRestoresCalculatorToStartFunctionality" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="JPanelBasicMethodsTest.switchingFromProgrammerToBasicConvertsTextArea" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="MicrosoftCalculator" />
       <extension name="coverage">
         <pattern>
@@ -135,14 +173,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="version3" />
-      <option name="MAIN_CLASS_NAME" value="version3.CalculatorMethodsTest" />
-      <option name="METHOD_NAME" value="pressingClearRestoresCalculatorToStartFunctionality" />
+      <option name="MAIN_CLASS_NAME" value="version3.JPanelBasicMethodsTest" />
+      <option name="METHOD_NAME" value="switchingFromProgrammerToBasicConvertsTextArea" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CalculatorMethodsTest.pressingDotButtonAfterNumberButtonReturnsNumberDot" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="JPanelBasicMethodsTest.testingMathPow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="MicrosoftCalculator" />
       <extension name="coverage">
         <pattern>
@@ -151,8 +189,8 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="version3" />
-      <option name="MAIN_CLASS_NAME" value="version3.CalculatorMethodsTest" />
-      <option name="METHOD_NAME" value="pressingDotButtonAfterNumberButtonReturnsNumberDot" />
+      <option name="MAIN_CLASS_NAME" value="version3.JPanelBasicMethodsTest" />
+      <option name="METHOD_NAME" value="testingMathPow" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -160,18 +198,18 @@
     </configuration>
     <list>
       <item itemvalue="Application.CalculatorMain_v3" />
-      <item itemvalue="JUnit.CalculatorMethodsTest.pressingDotButtonAfterNumberButtonReturnsNumberDot" />
-      <item itemvalue="JUnit.CalculatorMethodsTest.pressingClearRestoresCalculatorToStartFunctionality" />
       <item itemvalue="JUnit.CalculatorMethodsTest.pressingClearEntryClearsJustTheTextArea" />
       <item itemvalue="JUnit.CalculatorMethodsTest.pressingClearEntryAfterPressingAnOperatorResetsTextAreaAndOperator" />
+      <item itemvalue="JUnit.JPanelBasicMethodsTest.switchingFromProgrammerToBasicConvertsTextArea" />
+      <item itemvalue="JUnit.JPanelBasicMethodsTest.testingMathPow" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.CalculatorMain_v3" />
+        <item itemvalue="JUnit.JPanelBasicMethodsTest.switchingFromProgrammerToBasicConvertsTextArea" />
+        <item itemvalue="JUnit.JPanelBasicMethodsTest.testingMathPow" />
         <item itemvalue="JUnit.CalculatorMethodsTest.pressingClearEntryAfterPressingAnOperatorResetsTextAreaAndOperator" />
         <item itemvalue="JUnit.CalculatorMethodsTest.pressingClearEntryClearsJustTheTextArea" />
-        <item itemvalue="JUnit.CalculatorMethodsTest.pressingClearRestoresCalculatorToStartFunctionality" />
-        <item itemvalue="JUnit.CalculatorMethodsTest.pressingDotButtonAfterNumberButtonReturnsNumberDot" />
       </list>
     </recent_temporary>
   </component>
@@ -184,7 +222,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1566346411851</updated>
-      <workItem from="1566346422334" duration="23364000" />
+      <workItem from="1566346422334" duration="36305000" />
     </task>
     <servers />
   </component>
@@ -203,5 +241,56 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>533</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>539</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/Calculator_v3.java</url>
+          <line>474</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java</url>
+          <line>572</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/version3/JPanelBasicMethodsTest.java</url>
+          <line>34</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java</url>
+          <line>565</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java</url>
+          <line>559</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java</url>
+          <line>570</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/version3/JPanelBasic_v3.java</url>
+          <line>571</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
