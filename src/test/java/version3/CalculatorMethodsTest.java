@@ -90,7 +90,7 @@ public class CalculatorMethodsTest {
         Calculator_v3.DeleteButtonHandler handler = c.getDeleteButtonHandler();
         when(ae.getActionCommand()).thenReturn("DEL");
         handler.actionPerformed(ae);
-        assertEquals("Text area does not equal 3", "3", c.getTextArea().getText());
+        assertEquals("Text area does not equal 3", "\n3", c.getTextArea().getText());
     }
 
     @Test

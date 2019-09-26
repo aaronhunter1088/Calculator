@@ -1,0 +1,51 @@
+[INFO ] 08-25-2019 21:49:17.876 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:130 - Starting setupProgrammerPanel_v3
+[INFO ] 08-25-2019 21:49:17.903 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:268 - End setupProgrammerPanel_v3() 
+[INFO ] 08-25-2019 21:49:17.904 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:273 - Starting addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:49:17.941 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:447 - Finished addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:49:17.942 [Method:convertToBinary] version3.JPanelProgrammer_v3:765 - convertToBinary started
+[INFO ] 08-25-2019 21:49:17.944 [Method:convertToBinary] version3.JPanelProgrammer_v3:772 - [0, 0, 0, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:49:17.944 [Method:convertToBinary] version3.JPanelProgrammer_v3:778 - Here
+[INFO ] 08-25-2019 21:49:17.946 [Method:convertToBinary] version3.JPanelProgrammer_v3:798 - converted number is: [0, 0, 1, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:49:17.947 [Method:convertToBinary] version3.JPanelProgrammer_v3:803 - textarea:00000100
+[INFO ] 08-25-2019 21:49:17.954 [Method:convertToBinary] version3.JPanelProgrammer_v3:809 - convertToBinary finished
+[INFO ] 08-25-2019 21:50:54.900 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:130 - Starting setupProgrammerPanel_v3
+[INFO ] 08-25-2019 21:50:54.926 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:268 - End setupProgrammerPanel_v3() 
+[INFO ] 08-25-2019 21:50:54.928 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:273 - Starting addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:50:54.946 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:447 - Finished addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:50:54.947 [Method:convertToBinary] version3.JPanelProgrammer_v3:765 - convertToBinary started
+[INFO ] 08-25-2019 21:50:54.948 [Method:convertToBinary] version3.JPanelProgrammer_v3:766 - textarea: 
+[INFO ] 08-25-2019 21:50:54.949 [Method:convertToBinary] version3.JPanelProgrammer_v3:773 - [0, 0, 0, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:50:54.950 [Method:convertToBinary] version3.JPanelProgrammer_v3:779 - Here
+[INFO ] 08-25-2019 21:50:54.953 [Method:convertToBinary] version3.JPanelProgrammer_v3:799 - converted number is: [0, 0, 1, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:50:54.956 [Method:convertToBinary] version3.JPanelProgrammer_v3:804 - textarea:00000100
+[INFO ] 08-25-2019 21:50:54.962 [Method:convertToBinary] version3.JPanelProgrammer_v3:810 - convertToBinary finished
+[INFO ] 08-25-2019 21:51:55.409 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:130 - Starting setupProgrammerPanel_v3
+[INFO ] 08-25-2019 21:51:55.433 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:268 - End setupProgrammerPanel_v3() 
+[INFO ] 08-25-2019 21:51:55.437 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:273 - Starting addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:51:55.459 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:447 - Finished addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:51:55.462 [Method:convertToBinary] version3.JPanelProgrammer_v3:765 - convertToBinary started
+[INFO ] 08-25-2019 21:51:55.464 [Method:convertToBinary] version3.JPanelProgrammer_v3:766 - textarea: 
+[INFO ] 08-25-2019 21:51:55.473 [Method:convertToBinary] version3.JPanelProgrammer_v3:773 - [0, 0, 0, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:51:55.475 [Method:convertToBinary] version3.JPanelProgrammer_v3:779 - Here
+[INFO ] 08-25-2019 21:51:55.476 [Method:convertToBinary] version3.JPanelProgrammer_v3:799 - converted number is: [0, 0, 1, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:51:55.477 [Method:convertToBinary] version3.JPanelProgrammer_v3:804 - textarea:00000100
+[INFO ] 08-25-2019 21:51:55.481 [Method:convertToBinary] version3.JPanelProgrammer_v3:810 - convertToBinary finished
+[INFO ] 08-25-2019 21:52:25.427 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:130 - Starting setupProgrammerPanel_v3
+[INFO ] 08-25-2019 21:52:25.459 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:268 - End setupProgrammerPanel_v3() 
+[INFO ] 08-25-2019 21:52:25.461 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:273 - Starting addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:52:25.498 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:447 - Finished addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 21:52:25.500 [Method:convertToBinary] version3.JPanelProgrammer_v3:765 - convertToBinary started
+[INFO ] 08-25-2019 21:52:25.501 [Method:convertToBinary] version3.JPanelProgrammer_v3:766 - textarea: 4
+[INFO ] 08-25-2019 21:52:25.503 [Method:convertToBinary] version3.JPanelProgrammer_v3:773 - [0, 0, 0, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:52:25.505 [Method:convertToBinary] version3.JPanelProgrammer_v3:779 - Here
+[INFO ] 08-25-2019 21:52:25.506 [Method:convertToBinary] version3.JPanelProgrammer_v3:799 - converted number is: [0, 0, 1, 0, 0, 0, 0, 0]
+[INFO ] 08-25-2019 21:52:25.511 [Method:convertToBinary] version3.JPanelProgrammer_v3:804 - textarea:00000100
+[INFO ] 08-25-2019 21:52:25.516 [Method:convertToBinary] version3.JPanelProgrammer_v3:810 - convertToBinary finished
+[INFO ] 08-25-2019 22:54:04.868 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:139 - Starting setupProgrammerPanel_v3
+[INFO ] 08-25-2019 22:54:05.077 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:277 - End setupProgrammerPanel_v3() 
+[INFO ] 08-25-2019 22:54:05.081 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:282 - Starting addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 22:54:14.769 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:456 - Finished addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 23:00:44.764 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:139 - Starting setupProgrammerPanel_v3
+[INFO ] 08-25-2019 23:00:44.877 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:277 - End setupProgrammerPanel_v3() 
+[INFO ] 08-25-2019 23:00:44.879 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:282 - Starting addComponentsToProgrammerPanel_v3
+[INFO ] 08-25-2019 23:00:53.838 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:456 - Finished addComponentsToProgrammerPanel_v3

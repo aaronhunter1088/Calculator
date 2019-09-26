@@ -1,5 +1,6 @@
 package version3;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,6 +64,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     final private JButton buttonLSh = new JButton ("Lsh");
     final private JButton buttonRSh = new JButton ("Rsh");
     final private JButton buttonNot = new JButton ("NOT");
+
     final private JButton buttonAnd = new JButton ("AND");
     // A - F
     final private JButton buttonA = new JButton("A");
@@ -97,7 +99,16 @@ public class JPanelProgrammer_v3 extends JPanel {
 //    boolean isButtonDwordSet = false;
 //    boolean isButtonQwordSet = false;
 
-    private String[] conversion;
+    public StringBuffer getConversion() { return conversion; }
+    public String[] getTopQWord() { return topQWord; }
+    public String[] getTopDWord() { return topDWord; }
+    protected StringBuffer conversion = new StringBuffer();
+    protected String[] topQWord = {"0","0","0","0","0","0","0","0","0","0","0","0",
+                                "0","0","0","0","0","0","0","0","0","0","0","0",
+                                "0","0","0","0","0","0","0","0","0"}; // 32 - 63 place bits
+    protected String[] topDWord = {"0","0","0","0","0","0","0","0","0","0","0","0",
+                                "0","0","0","0"}; // 16 - 31 place bits
+    private final String[] eightZeroes = {"0","0","0","0","0","0","0","0"};
 
     private StandardCalculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
@@ -308,6 +319,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonGroup2ButtonPanel.add(buttonDWord);
         buttonGroup2ButtonPanel.add(buttonWord);
         buttonGroup2ButtonPanel.add(buttonByte);
+
         buttonQWord.addActionListener(qwordButtonHandler);
         buttonDWord.addActionListener(dwordButtonHandler);
         buttonWord.addActionListener(dwordButtonHandler);
@@ -428,7 +440,12 @@ public class JPanelProgrammer_v3 extends JPanel {
         //calculator.button0.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonDot, 5, 5, 1, 1, otherButtonLayout);
         setComponent(calculator.buttonAdd, 5, 6, 1, 2, otherButtonLayout);
+        // set actions on buttons
         calculator.buttonAdd.addActionListener(calculator.addButtonHandler);
+        buttonNot.addActionListener(actionEvent -> {
+            performButtonNotActions();
+        });
+
         allOtherButtonsPanel.add(buttonNot);
         allOtherButtonsPanel.add(buttonAnd);
         allOtherButtonsPanel.add(buttonF);
@@ -484,6 +501,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     public class BinaryButtonHandler implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (buttonBin.isSelected()) {
@@ -588,9 +606,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 8) {
                 if (calculator.getTextArea().getText().equals(""))
-                    calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(8,16);
-                calculator.getTextArea().setText(calculator.textarea);
+                    calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(8,16));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -599,9 +617,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 16) {
-                calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(0,16);
-                calculator.getTextArea().setText(calculator.textarea);
+                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,16));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -610,9 +628,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 32) {
-                calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(0,32);
-                calculator.getTextArea().setText(calculator.textarea);
+                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,32));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -621,9 +639,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 64) {
-                calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(0,64);
-                calculator.getTextArea().setText(calculator.textarea);
+                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,64));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -705,9 +723,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 8) {
                 if (calculator.getTextArea().getText().equals(""))
-                    calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(8,16);
-                calculator.getTextArea().setText(calculator.textarea);
+                    calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(8,16));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -716,9 +734,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 16) {
-                calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(0,16);
-                calculator.getTextArea().setText(calculator.textarea);
+                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,16));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -727,9 +745,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 32) {
-                calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(0,32);
-                calculator.getTextArea().setText(calculator.textarea);
+                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,32));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -738,9 +756,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 64) {
-                calculator.textarea = calculator.getTextArea().getText();
-                calculator.textarea = calculator.textarea.substring(0,64);
-                calculator.getTextArea().setText(calculator.textarea);
+                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,64));
+                calculator.getTextArea().setText(calculator.textarea.toString());
             }
         }
     }
@@ -753,44 +771,114 @@ public class JPanelProgrammer_v3 extends JPanel {
 //        else { return 0; } // shouldn't ever come here
 //    }
 
+    public void performButtonNotActions() {
+        final String notOperator = "notOperator";
+        //convert top QWord
+        convertTopQWord(notOperator);
+        //convert top DWord
+        convertTopDWord(notOperator);
+        //convert conversion - should be 8 bits long to start - getBytes()
+        convertConversion(notOperator);
+        calculator.textarea = new StringBuffer();
+        for(String s : getTopDWord()) {
+            calculator.textarea.append(calculator.textarea.toString() + s);
+        }
+        for(String s : getTopDWord()) {
+            calculator.textarea.append(calculator.textarea.toString() + s);
+        }
+        calculator.textarea.append(conversion);
+
+        calculator.getTextArea().setText(calculator.textarea.substring(0,31) + "\n" + calculator.textarea.substring(32));
+    }
+
+    // TODO: add string parameter to tell method how to convert
+    public void convertConversion(String howToConvert) {
+        LOGGER.info("convertConversion: " + howToConvert);
+        LOGGER.info("conversion: " + conversion.reverse());
+        StringBuffer temp = new StringBuffer();
+        if (howToConvert.equals("notOperator")) {
+            for (int i=0; i<conversion.length(); i++) {
+                if (conversion.charAt(i) == '0')
+                    temp.append("1");
+                else
+                    temp.append("0");
+            }
+        }
+        // reverse so printed out correctly
+        conversion = temp;
+        LOGGER.info("converted: " + conversion.toString());
+    }
+
+    // TODO: add string parameter to tell method how to convert
+    public void convertTopDWord(String howToConvert) {
+        LOGGER.info("convertTopDWord: " + howToConvert);
+        if (howToConvert.equals("notOperator")) {
+            for (int i=0; i<topDWord.length; i++) {
+                topDWord[i] = (topDWord[i] == "0") ? "1" : "0";
+            }
+        }
+        LOGGER.info("converted: " + Arrays.toString(topDWord));
+    }
+
+    // TODO: add string parameter to tell method how to convert
+    public void convertTopQWord(String howToConvert) {
+        LOGGER.info("convertTopQWord: " + howToConvert);
+        if (howToConvert.equals("notOperator")) {
+            for (int i=0; i<topQWord.length; i++) {
+                topQWord[i] = (topQWord[i] == "0") ? "1" : "0";
+            }
+        }
+        LOGGER.info("converted: " + Arrays.toString(topQWord)); // converted: [Ljava.lang.String;@7d3b89f1
+    }
+
     public void convertToBinary() {
         LOGGER.info("convertToBinary started");
+        LOGGER.info("textarea: " + calculator.textarea);
         int i;
         int bytes = calculator.getBytes();
-        conversion = new String[bytes];
-        for (i = 0; i < bytes; i++)
-            conversion[i] = "0";
-
-        LOGGER.info(Arrays.toString(conversion));
+        LOGGER.info("conversion: " + conversion);
         if (calculator.isButtonOctSet) {
             // logic for Octal to Binary
         } else if (calculator.isButtonDecSet) {
             // logic for Decimal to Binary
         } else if (calculator.isButtonBinSet) {
-            LOGGER.info("Here");
-            calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
-            int number = Integer.parseInt(calculator.textarea);
-            i = 0;
-            while(i < calculator.getBytes()) {
-                if (number % 2 == 0) {
-                    conversion[i] = "0";
-                } else {
-                    conversion[i] = "1";
-                }
-                if (number % 2 == 0 && number / 2 == 0) {
-                    // 0r0
-                    for(int k = i; k<calculator.getBytes(); k++) {
-                        conversion[k] = "0";
+            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText().replaceAll("\n", ""));
+            int number;
+            try {
+                number = Integer.parseInt(calculator.textarea.toString());
+                i = 0;
+                while(i < calculator.getBytes()) {
+                    if (number % 2 == 0) {
+                        conversion.append("0");
+                    } else {
+                        conversion.append("1");
                     }
-                    break;
+                    if (number % 2 == 0 && number / 2 == 0) {
+                        // 0r0
+                        for(int k = i; k<calculator.getBytes(); k++) {
+                            conversion.append("0");
+                        }
+                        break;
+                    } else if (number / 2 == 0 && number % 2 == 1) {
+                        // 0r1
+                        for(int k = i+1; k<calculator.getBytes(); k++) {
+                            conversion.append("0");
+                        } break;
+                    }
+                    i++;
+                    number /= 2;
                 }
-                i++;
-                number /= 2;
+            } catch (NumberFormatException nfe) {
+                if (StringUtils.isBlank(calculator.textarea)) {
+                    number = 0;
+                    calculator.textarea = new StringBuffer();
+                    conversion = new StringBuffer("00000000");
+                }
             }
-            LOGGER.info("converted number is: " + Arrays.toString(conversion));
-            calculator.textarea = "";
+            LOGGER.info("converted number is: " + conversion);
+            calculator.textarea = new StringBuffer();
             for (i=calculator.getBytes()-1; i>=0; i--) {
-                calculator.textarea += conversion[i];
+                calculator.textarea.append(calculator.textarea.toString() + Character.toString(conversion.charAt(i)));
             }
             LOGGER.info("textarea:" + calculator.textarea);
             calculator.getTextArea().setText("\n"+calculator.textarea);

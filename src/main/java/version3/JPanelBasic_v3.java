@@ -280,13 +280,13 @@ public class JPanelBasic_v3 extends JPanel {
             LOGGER.debug("text: " + calculator.getTextArea().getText().replace("\n",""));
             if (calculator.getTextArea().getText().equals("") || calculator.isNegativeNumber(calculator.getTextArea().getText())) {
                 calculator.getTextArea().setText("\n"+errorStringNaN);
-                calculator.textarea = "\n"+errorStringNaN;
+                calculator.textarea = new StringBuffer().append("\n"+errorStringNaN);
                 calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
             } else {
                 String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
                 result = calculator.formatNumber(result);
                 calculator.getTextArea().setText("\n"+result);
-                calculator.textarea = result;
+                calculator.textarea = new StringBuffer().append(result);
                 calculator.confirm();
             }
         }
@@ -310,15 +310,15 @@ public class JPanelBasic_v3 extends JPanel {
                     percent /= 100;
                     LOGGER.info("percent: "+percent);
                     calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                    calculator.textarea = calculator.formatNumber(calculator.values[calculator.valuesPosition]);
+                    calculator.textarea = new StringBuffer().append(calculator.formatNumber(calculator.values[calculator.valuesPosition]));
                     LOGGER.info("Old " + calculator.values[calculator.valuesPosition]);
                     calculator.values[calculator.valuesPosition] = calculator.values[calculator.valuesPosition].substring(1, calculator.values[calculator.valuesPosition].length());
                     LOGGER.info("New " + calculator.values[calculator.valuesPosition] + "-");
                     calculator.getTextArea().setText(calculator.values[calculator.valuesPosition] + "-"); // update textArea
                     LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
                     //textArea.setText(textarea);
-                    calculator.values[calculator.valuesPosition] = calculator.textarea;//+textarea;
-                    calculator.textarea = "";
+                    calculator.values[calculator.valuesPosition] = calculator.textarea.toString();//+textarea;
+                    calculator.textarea = new StringBuffer();
                     LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
                     LOGGER.info("textArea: "+calculator.getTextArea().getText());
                 } else {
@@ -333,7 +333,7 @@ public class JPanelBasic_v3 extends JPanel {
             }
             calculator.dotButtonPressed = true;
             calculator.dotButtonPressed = true;
-            calculator.textarea = calculator.getTextArea().getText();
+            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
             calculator.confirm();
         }
     }
@@ -382,14 +382,14 @@ public class JPanelBasic_v3 extends JPanel {
         	LOGGER.info("MemoryRecallButtonHandler class started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
         	calculator.getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        	calculator.textarea = calculator.values[4]; 
-            if (calculator.isNegativeNumber(calculator.textarea)) {
-            	calculator.textarea = calculator.convertToPositive(calculator.textarea);
+        	calculator.textarea = new StringBuffer().append(calculator.values[4]);
+            if (calculator.isNegativeNumber(calculator.textarea.toString())) {
+            	calculator.textarea = new StringBuffer().append(calculator.convertToPositive(calculator.textarea.toString()));
             }
             LOGGER.info("textarea: -" + calculator.textarea);
             calculator.values[calculator.valuesPosition] = calculator.values[4];
             calculator.getTextArea().setText("\n" + calculator.textarea + "-"); // update textArea
-            calculator.textarea = calculator.getTextArea().getText();
+            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
             LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
             calculator.confirm();
         }
@@ -410,7 +410,7 @@ public class JPanelBasic_v3 extends JPanel {
                 buttonMC.setEnabled(true);
             } else if (!calculator.values[4].equals("")) {
             // if memory does not have a number
-            	calculator.textarea = calculator.getTextArea().getText();
+            	calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
                 double result = Double.parseDouble(calculator.values[4]) + Double.parseDouble(calculator.getTextArea().getText());
                 LOGGER.info("result: " + result);
                 calculator.getTextArea().setText(Double.toString(result));
@@ -438,15 +438,15 @@ public class JPanelBasic_v3 extends JPanel {
                 LOGGER.info("temp[4]: " + calculator.values[4]);
                 if (result % 1 == 0) { // if int == double, cut off decimal and zero
                     //textArea.setText(temp[4]);
-                	calculator.textarea = calculator.values[4];
-                	calculator.textarea = calculator.textarea.substring(0, calculator.textarea.length()-2); // textarea changed to whole number, or int
-                	calculator.values[4] = calculator.textarea; // update storing
+                	calculator.textarea = new StringBuffer().append(calculator.values[4]);
+                	calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0, calculator.textarea.length()-2)); // textarea changed to whole number, or int
+                	calculator.values[4] = calculator.textarea.toString(); // update storing
                     LOGGER.info("update storing: " + calculator.textarea);
                     //textArea.setText(temp[2]);
                     if (Integer.parseInt(calculator.values[4]) < 0 ) { // if result is negative
-                    	calculator.textarea = calculator.values[4];
+                    	calculator.textarea = new StringBuffer().append(calculator.values[4]);
                         LOGGER.info("textarea: " + calculator.textarea);
-                        calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
+                        calculator.textarea = new StringBuffer().append(calculator.textarea.substring(1, calculator.textarea.length()));
                         LOGGER.info("textarea: " + calculator.textarea);
                         LOGGER.info("temp[4] is " + calculator.values[4]);
                        }
@@ -465,7 +465,7 @@ public class JPanelBasic_v3 extends JPanel {
             buttonMC.setEnabled(true);
             LOGGER.info("temp[4]: is " + calculator.values[4] + " after memory+ pushed"); // confirming proper textarea before moving on
             calculator.dotButtonPressed = false;
-            calculator.textarea = calculator.getTextArea().getText();
+            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
             calculator.memAddBool = true;
             calculator.confirm();
         }
@@ -489,14 +489,14 @@ public class JPanelBasic_v3 extends JPanel {
                 LOGGER.info("temp[4]: " + calculator.values[4]);
                 int intRep = (int)result;
                 if (intRep == result) { // if int == double, cut off decimal and zero
-                	calculator.textarea = calculator.values[4];
-                	calculator.textarea = calculator.textarea.substring(0, calculator.textarea.length()-2); // textarea changed to whole number, or int
-                	calculator.values[4] = calculator.textarea; // update storing
+                	calculator.textarea = new StringBuffer().append(calculator.values[4]);
+                	calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0, calculator.textarea.length()-2)); // textarea changed to whole number, or int
+                	calculator.values[4] = calculator.textarea.toString(); // update storing
                     LOGGER.info("update storing: " + calculator.textarea);
                     if (Integer.parseInt(calculator.values[4]) < 0 ) { // if result is negative
-                    	calculator.textarea = calculator.values[4];
+                    	calculator.textarea = new StringBuffer().append(calculator.values[4]);
                         LOGGER.info("textarea: " + calculator.textarea);
-                        calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
+                        calculator.textarea = new StringBuffer().append(calculator.textarea.substring(1, calculator.textarea.length()));
                         LOGGER.info("textarea: " + calculator.textarea);
                         LOGGER.info("temp[4]: " + calculator.values[4]);
                     }
@@ -513,15 +513,15 @@ public class JPanelBasic_v3 extends JPanel {
                 int intRep = (int)result; // 9 = 9.0
                 if (intRep == result) { // if int == double, cut off decimal and zero
                 	calculator.getTextArea().setText(Double.toString(result));
-                	calculator.textarea = calculator.getTextArea().getText();
+                	calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
                     LOGGER.info("textArea: " + calculator.getTextArea().getText());
-                    calculator.textarea = calculator.textarea.substring(0, calculator.textarea.length()-2); // textarea changed to whole number, or int
-                    calculator.values[4] = calculator.textarea; // update storing
+                    calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0, calculator.textarea.length()-2)); // textarea changed to whole number, or int
+                    calculator.values[4] = calculator.textarea.toString(); // update storing
                     calculator.getTextArea().setText(calculator.values[4]);
                     if (Integer.parseInt(calculator.values[4]) < 0 ) {
-                    	calculator.textarea = calculator.getTextArea().getText(); // temp[2]
+                    	calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText()); // temp[2]
                         LOGGER.info("textarea: " + calculator.textarea);
-                        calculator.textarea = calculator.textarea.substring(1, calculator.textarea.length());
+                        calculator.textarea = new StringBuffer().append(calculator.textarea.substring(1, calculator.textarea.length()));
                         LOGGER.info("textarea: " + calculator.textarea);
                         calculator.getTextArea().setText(calculator.textarea + "-"); // update textArea
                         LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
@@ -540,7 +540,7 @@ public class JPanelBasic_v3 extends JPanel {
             buttonMC.setEnabled(true);
             LOGGER.info("temp[4]: " + calculator.values[4] + " after memory- pushed"); // confirming proper textarea before moving on
             calculator.dotButtonPressed = false;
-            calculator.textarea = calculator.getTextArea().getText();
+            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
             calculator.memSubBool = true;
             calculator.confirm();
         }
@@ -558,10 +558,25 @@ public class JPanelBasic_v3 extends JPanel {
 
     public void convertToDecimal() {
         LOGGER.info("convertToDecimal started");
-        calculator.textarea = calculator.getTextArea().getText().replaceAll("\n", "");
+        calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText().replaceAll("\n", ""));
         int appropriateLength = calculator.getBytes();
         LOGGER.info("textarea: " + calculator.textarea);
         LOGGER.info("appropriateLength: " + appropriateLength);
+        if (calculator.textarea.length() < appropriateLength) {
+            LOGGER.info("textarea, " + calculator.textarea + ", is too short. adding missing zeroes");
+            // user had entered 101, which really is 00000101
+            // but they aren't showing the first 5 zeroes
+            int difference = appropriateLength - calculator.textarea.length();
+            StringBuffer missingZeroes = new StringBuffer();
+            for (int i=0; i<difference; i++) {
+                missingZeroes.append("0");
+            }
+            calculator.textarea = new StringBuffer().append(missingZeroes.toString() + calculator.textarea.toString());
+            // should result in textarea coming from programmer calculator
+            // to always have the same length as to what mode the calculator
+            // was set at (binary, octal, decimal, hexidecimal)
+            LOGGER.info("textarea: " + calculator.textarea);
+        }
 
         double result = 0.0;
         double num1 = 0.0;
@@ -572,10 +587,10 @@ public class JPanelBasic_v3 extends JPanel {
             num2 = Math.pow(2,k);
             result = (num1 * num2) + result;
         }
-        calculator.textarea = Double.toString(result);
+        calculator.textarea = new StringBuffer().append(Double.toString(result));
         LOGGER.info("textarea: " + calculator.textarea);
-        if (calculator.isDecimal(calculator.textarea)) {
-            calculator.textarea = calculator.clearZeroesAtEnd(calculator.textarea);
+        if (calculator.isDecimal(calculator.textarea.toString())) {
+            calculator.textarea = calculator.clearZeroesAtEnd(calculator.textarea.toString());
         }
         calculator.getTextArea().setText("\n" + calculator.textarea);
         LOGGER.info("textarea: " + calculator.textarea);

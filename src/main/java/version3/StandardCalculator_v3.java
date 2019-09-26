@@ -1,5 +1,6 @@
 package version3;
 
+import com.sun.org.apache.xpath.internal.operations.String;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +31,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected EqualsButtonHandler equalsButtonHandler = new EqualsButtonHandler();
     final protected JButton buttonEquals = new JButton("=");
     
-    final String negate = "\u00B1";
+    final java.lang.String negate = "\u00B1";
     final protected NegateButtonHandler negButtonHandler = new NegateButtonHandler();
     final protected JButton buttonNegate = new JButton(negate);
     // moving up protected boolean addBool = false, subBool = false, mulBool = false, divBool = false, memAddBool = false, memSubBool = false;
@@ -57,7 +58,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	 *        set the mode of the calculator
 	 *        perform setup tasks based on mode
 	 */
-	public void performTasksWhenChangingJPanels(JPanel currentPanel, String title) {
+	public void performTasksWhenChangingJPanels(JPanel currentPanel, java.lang.String title) {
 		setCurrentJPanel(currentPanel);
 		setupStandardCalculator_v3();
 		super.setTitle(title);
@@ -95,7 +96,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     static {
         LOGGER = LogManager.getLogger(StandardCalculator_v3.class);
     }
-	public StandardCalculator_v3() throws HeadlessException {
+
+    public StandardCalculator_v3() throws HeadlessException {
 		// TODO Auto-generated constructor stub
 	
 	}
@@ -105,13 +107,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		// TODO Auto-generated constructor stub
 	}
 
-    public StandardCalculator_v3(String title, GraphicsConfiguration gc) {
+    public StandardCalculator_v3(java.lang.String title, GraphicsConfiguration gc) {
         super(title, gc);
         // TODO Auto-generated constructor stub
     }
 
 	// TODO: Implement first
-	public StandardCalculator_v3(String title) throws HeadlessException {
+	public StandardCalculator_v3(java.lang.String title) throws HeadlessException {
 		super(CalcType_v3.BASIC.getName()); // default title is Basic
 		setCalculator(this);
 		setCurrentJPanel(new JPanelBasic_v3(this));
@@ -181,7 +183,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             @Override
             public void actionPerformed(ActionEvent e) {
                 values[3] = textArea.getText(); // to copy
-                textarea = textArea.getText();
+                textarea = new StringBuffer().append(textArea.getText());
                 confirm();
             }
         });
@@ -198,7 +200,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                             LOGGER.info("temp[3]: " + values[3]);
                         textArea.setText(values[3]); // to paste
                         values[valuesPosition] = textArea.getText();
-                        textarea = textArea.getText();
+                        textarea = new StringBuffer().append(textArea.getText());
                         confirm();
                     }
                 }
@@ -247,7 +249,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         // display message dialog box when user selects Help....
         @Override
         public void actionPerformed(ActionEvent event) {
-            String COPYRIGHT = "\u00a9";
+            java.lang.String COPYRIGHT = "\u00a9";
             iconLabel = new JLabel();
             //iconLabel.setIcon(calculator);
             //iconLabel.setText(" ");
@@ -283,7 +285,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 @Override
                 public void actionPerformed(ActionEvent event)
                 {
-                    String COPYRIGHT = "\u00a9";
+                    java.lang.String COPYRIGHT = "\u00a9";
                     //iconLabel = new JLabel(calculator2);
                     //iconLabel.setIcon(calculator2);
                     //iconLabel.setVisible(true);
@@ -364,15 +366,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("divBool: "+divBool);
         if (result % 1 == 0) {
         	LOGGER.info("We have a whole number");
-        	textarea = Double.toString(result);
+        	textarea = new StringBuffer().append(Double.toString(result));
             values[0] = textarea.substring(0, textarea.length()-2); // textarea changed to whole number, or int
             textArea.setText("\n" + values[0]);
             if (Integer.parseInt(values[0]) < 0 ) {
-                textarea = textArea.getText(); // temp[valuesPosition]
+                textarea = new StringBuffer().append(textArea.getText()); // temp[valuesPosition]
                 LOGGER.info("textarea: '" + textarea + "'");
-                textarea = textarea.substring(1, textarea.length());
+                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: '" + textarea + "'");
-                textArea.setText("\n "+textarea.replaceAll("-", "") + "-"); // update textArea
+                textArea.setText("\n "+textarea.toString().replaceAll("-", "") + "-"); // update textArea
             }
             dotButtonPressed = false;
             buttonDot.setEnabled(true);
@@ -381,9 +383,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             if (Double.parseDouble(values[0]) < 0.0 ) {
                 values[0] = formatNumber(values[0]);
                 LOGGER.info("textarea: '" + textarea + "'");
-                textarea = values[0];
+                textarea = new StringBuffer().append(values[0]);
                 LOGGER.info("textarea: '" + textarea + "'");
-                textarea = textarea.substring(1, textarea.length());
+                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: '" + textarea + "'");
                 textArea.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"] '" + values[valuesPosition] + "'");
@@ -406,24 +408,24 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("divBool: " + divBool);
         if (result % 1 == 0) {
             //textArea.setText(temp[0]);
-            textarea = Double.toString(result);
-            textarea = textarea.substring(0, textarea.length()-2); // textarea changed to whole number, or int
-            values[0] = textarea; // update storing
+            textarea = new StringBuffer().append(Double.toString(result));
+            textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
+            values[0] = textarea.toString(); // update storing
             textArea.setText("\n" + values[0]);
             if (Integer.parseInt(values[0]) < 0 ) {
                 //textarea = textArea.getText(); 
                 //System.out.printf("\n%s", textarea);
-                textarea = textarea.substring(1, textarea.length());
+                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: " + textarea);
-                textArea.setText("\n" + textarea.replaceAll(" ", "") + "-".replaceAll(" ", "")); // update textArea
+                textArea.setText("\n" + textarea.toString().replaceAll(" ", "") + "-".replaceAll(" ", "")); // update textArea
                 LOGGER.info("temp[0]: " + values[0]);
             }
         } else {// if double == double, keep decimal and number afterwards
             if (Double.parseDouble(values[0]) < 0.0 ) {
                 values[0] = formatNumber(values[0]);
-                textarea = values[0];
+                textarea = new StringBuffer().append(values[0]);
                 LOGGER.info("textarea: " + textarea);
-                textarea = textarea.substring(1, textarea.length());
+                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: " + textarea);
                 textArea.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
@@ -445,14 +447,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("divBool: " + divBool);
         if (result % 1 == 0) {
             textArea.setText(values[0]);
-            textarea = textArea.getText().replaceAll("\\n", "");
-            textarea = textarea.substring(0, textarea.length()-2); // textarea changed to whole number, or int
-            values[0] = textarea; // update storing
+            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
+            values[0] = textarea.toString(); // update storing
             textArea.setText("\n" + values[0]);
             if (Integer.parseInt(values[0]) < 0 ) {
-                textarea = textArea.getText().replaceAll("\\n", ""); // temp[2]
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", "")); // temp[2]
                 LOGGER.info("textarea: " + textarea);
-                textarea = textarea.substring(1, textarea.length());
+                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: " + textarea);
                 textArea.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
@@ -477,14 +479,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             if (Double.parseDouble(values[0]) % 1 == 0) {
                 // if int == double, cut off decimal and zero
                 textArea.setText("\n" + values[0]);
-                textarea = textArea.getText().replaceAll("\\n", "");
-                textarea = textarea.substring(0, textarea.length()-2); // textarea changed to whole number, or int
-                values[0] = textarea; // update storing
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+                textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
+                values[0] = textarea.toString(); // update storing
                 textArea.setText("\n" + values[0]);
                 if (Integer.parseInt(values[0]) < 0 ) {
-                    textarea = textArea.getText().replaceAll("\\n", ""); // temp[2]
+                    textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", "")); // temp[2]
                     LOGGER.info("textarea: " + textarea);
-                    textarea = textarea.substring(1, textarea.length());
+                    textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                     LOGGER.info("textarea: " + textarea);
                     textArea.setText("\n" + textarea + "-"); // update textArea
                     LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
@@ -494,7 +496,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textArea.setText("\n" + formatNumber(values[0]));
             }
         } else if (values[1].equals("0")) {
-            String result = "0";
+            java.lang.String result = "0";
             LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
             textArea.setText("Cannot divide by 0");
             values[0] = result;
@@ -503,7 +505,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
 
     // used to keep 2 decimals on the number at all times
-    public String formatNumber(String num) {
+    public java.lang.String formatNumber(java.lang.String num) {
         DecimalFormat df = new DecimalFormat();
         if (!numberIsNegative) {
             if (num.length() == 2) df = new DecimalFormat("0.00");
@@ -515,7 +517,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         double number = Double.parseDouble(num);
         number = Double.valueOf(df.format(number));
-        String numberAsStr = Double.toString(number);
+        java.lang.String numberAsStr = Double.toString(number);
         num = df.format(number);
         LOGGER.info("Formatted: " + num);
         if (numberAsStr.charAt(numberAsStr.length()-3) == '.' && numberAsStr.substring(numberAsStr.length()-3).equals(".00") ) {
@@ -532,7 +534,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
                 //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = textArea.getText().replaceAll("\\n", "");
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText().replaceAll("\\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
@@ -569,7 +571,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             	LOGGER.info("already chose an operator. choose another number.");
             } 
             
-            textarea = textArea.getText();
+            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
@@ -584,7 +586,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
             	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = textArea.getText().replaceAll("\\n", "");
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
@@ -618,7 +620,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             	LOGGER.info("already chose an operator. next number is negative...");
             	negatePressed = true;
         	}
-            textarea = textArea.getText();
+            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
@@ -633,7 +635,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
             	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = textArea.getText().replaceAll("\\n", "");
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: \\n" + textArea.getText().replaceAll("\n","")); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after buttonMultiply was pushed"); // confirming proper textarea before moving on
@@ -667,7 +669,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             	LOGGER.info("already chose an operator. choose another number.");
             	
         	}
-            textarea = textArea.getText();
+            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
@@ -682,7 +684,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false && !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") && !textArea.getText().equals("Cannot divide by 0")) {
             	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = textArea.getText().replaceAll("\\n", "");
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
@@ -715,7 +717,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             } else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
             	LOGGER.info("already chose an operator. choose another number.");
             }
-            textarea = textArea.getText();
+            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
@@ -756,7 +758,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 firstNumBool = true;
             } 
             values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
-            textarea = textArea.getText();
+            textarea = new StringBuffer().append(textArea.getText());
             firstNumBool = true;
             dotButtonPressed = false;
             confirm();
@@ -772,18 +774,18 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         	LOGGER.info("NegateButtonHandler started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
             if (!textarea.equals("")) {
-                textarea = textarea.replaceAll("\n","");
-                if (isNegativeNumber(textarea)) {
-                    textarea = convertToPositive(textarea);
+                textarea = new StringBuffer().append(textarea.toString().replaceAll("\n",""));
+                if (isNegativeNumber(textarea.toString())) {
+                    textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
                     LOGGER.debug("textarea: " + textarea);
                     getTextArea().setText("\n"+textarea);
                 } else {
                     getTextArea().setText("\n"+textarea+"-");
-                    textarea = convertToNegative(textarea);
+                    textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
                     LOGGER.debug("textarea: " + textarea);
                 }
             }
-            values[valuesPosition] = textarea;
+            values[valuesPosition] = textarea.toString();
             confirm();    
         }
     }
