@@ -29,6 +29,11 @@ public class JPanelProgrammer_v3 extends JPanel {
     private final JPanel buttonGroup1ButtonPanel = new JPanel(); // contains the first button group
     private final JPanel buttonGroup2ButtonPanel = new JPanel(); // contains the second button group
 
+    protected JTextArea textArea1 = new JTextArea(1,5); // rows, columns
+    protected JTextArea textArea2 = new JTextArea(1,5); // rows, columns
+    protected JTextArea textArea3 = new JTextArea(1,5); // rows, columns
+//    protected JTextArea textArea4 = new JTextArea(1,5); // rows, columns
+
     final HexidecimalButtonHandler hexidecimalButtonHandler = new HexidecimalButtonHandler();
     final private JRadioButton buttonHex = new JRadioButton("Hex");
 
@@ -100,15 +105,16 @@ public class JPanelProgrammer_v3 extends JPanel {
 //    boolean isButtonQwordSet = false;
 
     public StringBuffer getConversion() { return conversion; }
-    public String[] getTopQWord() { return topQWord; }
+//    public String[] getTopQWord() { return topQWord; } 32 - 63 place bits not supported
     public String[] getTopDWord() { return topDWord; }
     protected StringBuffer conversion = new StringBuffer();
-    protected String[] topQWord = {"0","0","0","0","0","0","0","0","0","0","0","0",
-                                "0","0","0","0","0","0","0","0","0","0","0","0",
-                                "0","0","0","0","0","0","0","0","0"}; // 32 - 63 place bits
+//    protected String[] topQWord = {"0","0","0","0","0","0","0","0","0","0","0","0",
+//                                "0","0","0","0","0","0","0","0","0","0","0","0",
+//                                "0","0","0","0","0","0","0","0","0"}; // 32 - 63 place bits not supported
     protected String[] topDWord = {"0","0","0","0","0","0","0","0","0","0","0","0",
                                 "0","0","0","0"}; // 16 - 31 place bits
-    private final String[] eightZeroes = {"0","0","0","0","0","0","0","0"};
+    protected String[] word = {"0","0","0","0","0","0","0","0"};
+    private final String[] eightZeroes = {"0","0","0","0","0","0","0","0"}; // also know as a byte
 
     private StandardCalculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
@@ -774,7 +780,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     public void performButtonNotActions() {
         final String notOperator = "notOperator";
         //convert top QWord
-        convertTopQWord(notOperator);
+//        convertTopQWord(notOperator);
         //convert top DWord
         convertTopDWord(notOperator);
         //convert conversion - should be 8 bits long to start - getBytes()
@@ -821,15 +827,15 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     // TODO: add string parameter to tell method how to convert
-    public void convertTopQWord(String howToConvert) {
-        LOGGER.info("convertTopQWord: " + howToConvert);
-        if (howToConvert.equals("notOperator")) {
-            for (int i=0; i<topQWord.length; i++) {
-                topQWord[i] = (topQWord[i] == "0") ? "1" : "0";
-            }
-        }
-        LOGGER.info("converted: " + Arrays.toString(topQWord)); // converted: [Ljava.lang.String;@7d3b89f1
-    }
+//    public void convertTopQWord(String howToConvert) {
+//        LOGGER.info("convertTopQWord: " + howToConvert);
+//        if (howToConvert.equals("notOperator")) {
+//            for (int i=0; i<topQWord.length; i++) {
+//                topQWord[i] = (topQWord[i] == "0") ? "1" : "0";
+//            }
+//        }
+//        LOGGER.info("converted: " + Arrays.toString(topQWord)); // converted: [Ljava.lang.String;@7d3b89f1
+//    }
 
     public void convertToBinary() {
         LOGGER.info("convertToBinary started");
