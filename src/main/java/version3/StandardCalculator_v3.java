@@ -21,28 +21,29 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	// All standard calculators have:
     // The same menu bar
     JMenuBar bar = new JMenuBar();
-	final protected AddButtonHandler addButtonHandler = new AddButtonHandler();
+//	final protected AddButtonHandler addButtonHandler = new AddButtonHandler();
 	final protected JButton buttonAdd = new JButton("+");
-	final protected SubtractButtonHandler subtractButtonHandler = new SubtractButtonHandler();
+//	final protected SubtractButtonHandler subtractButtonHandler = new SubtractButtonHandler();
 	final protected JButton buttonSubtract = new JButton("-");
-	final protected MultiplyButtonHandler multiplyButtonHandler = new MultiplyButtonHandler();
+//	final protected MultiplyButtonHandler multiplyButtonHandler = new MultiplyButtonHandler();
     final protected JButton buttonMultiply = new JButton("*");
-    final protected DivideButtonHandler divideButtonHandler = new DivideButtonHandler();
+//    final protected DivideButtonHandler divideButtonHandler = new DivideButtonHandler();
     final protected JButton buttonDivide = new JButton("/");
 //    final protected EqualsButtonHandler equalsButtonHandler = new EqualsButtonHandler();
     final protected JButton buttonEquals = new JButton("=");
 
     /** Used for testing purposes and to avoid recreating objects */
-    public AddButtonHandler getAddButtonHandler() { return addButtonHandler; }
-    public SubtractButtonHandler getSubtractButtonHandler() { return subtractButtonHandler; }
-    public MultiplyButtonHandler getMultiplyButtonHandler() { return multiplyButtonHandler; }
-    public DivideButtonHandler getDivideButtonHandler() { return divideButtonHandler; }
+//    public AddButtonHandler getAddButtonHandler() { return addButtonHandler; }
+//    public SubtractButtonHandler getSubtractButtonHandler() { return subtractButtonHandler; }
+//    public MultiplyButtonHandler getMultiplyButtonHandler() { return multiplyButtonHandler; }
+//    public DivideButtonHandler getDivideButtonHandler() { return divideButtonHandler; }
 //    public EqualsButtonHandler getEqualsButtonHandler() { return equalsButtonHandler; }
     
     final java.lang.String negate = "\u00B1";
-    final protected NegateButtonHandler negButtonHandler = new NegateButtonHandler();
+//    final protected NegateButtonHandler negButtonHandler = new NegateButtonHandler();
     final protected JButton buttonNegate = new JButton(negate);
     // moving up protected boolean addBool = false, subBool = false, mulBool = false, divBool = false, memAddBool = false, memSubBool = false;
+
     private Calculator_v3 calculator;
     public Calculator_v3 getCalculator() { return calculator; }
     protected void setCalculator(Calculator_v3 calculator) { this.calculator = calculator; }
@@ -321,25 +322,33 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonAdd.setPreferredSize(new Dimension(35, 35) );
         buttonAdd.setBorder(new LineBorder(Color.BLACK));
         buttonAdd.setEnabled(true);
-        buttonAdd.addActionListener(getAddButtonHandler());
+        buttonAdd.addActionListener(action -> {
+            performAdditionButtonActions(action);
+        });
         
         buttonSubtract.setFont(font);
         buttonSubtract.setPreferredSize(new Dimension(35, 35) );
         buttonSubtract.setBorder(new LineBorder(Color.BLACK));
         buttonSubtract.setEnabled(true);
-        buttonSubtract.addActionListener(getSubtractButtonHandler());
+        buttonSubtract.addActionListener(action -> {
+            performSubtractionButtonActions(action);
+        });
 
         buttonMultiply.setFont(font);
         buttonMultiply.setPreferredSize(new Dimension(35, 35) );
         buttonMultiply.setBorder(new LineBorder(Color.BLACK));
         buttonMultiply.setEnabled(true);
-        buttonMultiply.addActionListener(getMultiplyButtonHandler());
+        buttonMultiply.addActionListener(action -> {
+            performMultiplicationActions(action);
+        });
         
         buttonDivide.setFont(font);
         buttonDivide.setPreferredSize(new Dimension(35, 35) );
         buttonDivide.setBorder(new LineBorder(Color.BLACK));
         buttonDivide.setEnabled(true);
-        buttonDivide.addActionListener(getDivideButtonHandler());
+        buttonDivide.addActionListener(action -> {
+            performDivideButtonActions(action);
+        });
         
         buttonEquals.setFont(font);
         buttonEquals.setPreferredSize(new Dimension(35, 70) );
@@ -357,12 +366,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonNegate.setPreferredSize(new Dimension(35, 35) );
         buttonNegate.setBorder(new LineBorder(Color.BLACK));
         buttonNegate.setEnabled(true);
-        buttonNegate.addActionListener(negButtonHandler);
+        buttonNegate.addActionListener(action -> {
+            performNegateButtonActions(action);
+        });
         
         add(getCurrentPanel());
 	}
-
-
 
     public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings) {
 	    String[] arrToReturn = new String[strings.length];
@@ -732,7 +741,61 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         return numberAsStr;
     }
 
-    class AddButtonHandler implements ActionListener {
+    public void performAdditionButtonActions(ActionEvent action) {
+        LOGGER.info("AddButtonHandler started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (addBool == false && subBool == false && mulBool == false && divBool == false &&
+                !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
+            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+            LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
+            LOGGER.debug("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+            addBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+            if (memorySwitchBool == true) {
+                memoryValues[memoryPosition] += " + ";
+            }
+        }
+        else if (addBool == true && !values[1].equals("")) {
+            addition(calculator.getCalcType());
+            addBool = resetOperator(addBool); // sets addBool to false
+            addBool = true;
+        }
+        else if (subBool == true && !values[1].equals("")) {
+            subtract(calculator.getCalcType());
+            subBool = resetOperator(subBool);
+            addBool = true;
+        }
+        else if (mulBool == true && !values[1].equals("")) {
+            multiply(calculator.getCalcType());
+            mulBool = resetOperator(mulBool);
+            addBool = true;
+        }
+        else if (divBool == true && !values[1].equals("")) {
+            divide(calculator.getCalcType());
+            divBool = resetOperator(divBool);
+            addBool = true;
+        }
+        else if (calculator.textAreaContainsBadText()) {
+            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            addBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
+            LOGGER.info("already chose an operator. choose another number.");
+        }
+        textarea = new StringBuffer().append(textArea.getText().replaceAll("\n",""));
+        buttonDot.setEnabled(true);
+        dotButtonPressed = false;
+        numberIsNegative = false;
+        confirm("");
+    }
+    /*class AddButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("AddButtonHandler started");
@@ -792,9 +855,63 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             numberIsNegative = false;
             confirm("");
         }
-    }
+    }*/
 
-    class SubtractButtonHandler implements ActionListener {
+    public void performSubtractionButtonActions(ActionEvent action) {
+        LOGGER.info("SubtractButtonHandler class started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+//            convertAllValuesToDecimal();
+        if (addBool == false && subBool == false && mulBool == false && divBool == false &&
+                !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
+            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+            LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+            LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+            subBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true && !values[1].equals("")) {
+            addition(calculator.getCalcType());
+            addBool = resetOperator(addBool);
+            subBool = true;
+        }
+        else if (subBool == true && !values[1].equals("")) {
+            subtract(calculator.getCalcType());
+            subBool = resetOperator(subBool);
+            subBool = true;
+        }
+        else if (mulBool == true && !values[1].equals("")) {
+            multiply(calculator.getCalcType());
+            mulBool = resetOperator(mulBool);
+            subBool = true;
+        }
+        else if (divBool == true && !values[1].equals("")) {
+            divide(calculator.getCalcType());
+            divBool = resetOperator(divBool);
+            subBool = true;
+        }
+        else if (calculator.textAreaContainsBadText()) {
+            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            subBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+            LOGGER.info("already chose an operator. next number is negative...");
+            negatePressed = true;
+        }
+        textarea = new StringBuffer().append(textArea.getText());
+        buttonDot.setEnabled(true);
+        dotButtonPressed = false;
+        numberIsNegative = false;
+        confirm();
+    }
+    /*class SubtractButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             LOGGER.info("SubtractButtonHandler class started");
@@ -849,9 +966,64 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             numberIsNegative = false;
             confirm();
         }
-    }
+    }*/
 
-	class MultiplyButtonHandler implements ActionListener {
+    public void performMultiplicationActions(ActionEvent action) {
+        LOGGER.info("performMultiplicationActions started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
+//            convertAllValuesToDecimal();
+        if (addBool == false && subBool == false && mulBool == false &&
+                divBool == false && !textArea.getText().equals("") &&
+                !textArea.getText().equals("Invalid textarea") &&
+                !textArea.getText().equals("Cannot divide by 0")) {
+            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+            LOGGER.info("textArea: \\n" + textArea.getText().replaceAll("\n","")); // print out textArea has proper value confirmation; recall text area's orientation
+            LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after buttonMultiply was pushed"); // confirming proper textarea before moving on
+            mulBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true && !values[1].equals("")) {
+            addition(calculator.getCalcType());
+            addBool = resetOperator(addBool);
+            mulBool = true;
+        }
+        else if (subBool == true && !values[1].equals("")) {
+            subtract(calculator.getCalcType());
+            subBool = resetOperator(subBool);
+            mulBool = true;
+        }
+        else if (mulBool == true && !values[1].equals("")) {
+            multiply(calculator.getCalcType());
+            mulBool = resetOperator(mulBool);
+            mulBool = true;
+        }
+        else if (divBool == true && !values[1].equals("")) {
+            divide(calculator.getCalcType());
+            divBool = resetOperator(divBool);
+            mulBool = true;
+        }
+        else if (calculator.textAreaContainsBadText()) {
+            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            mulBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+            LOGGER.info("already chose an operator. choose another number.");
+        }
+        textarea = new StringBuffer().append(textArea.getText());
+        buttonDot.setEnabled(true);
+        dotButtonPressed = false;
+        dotButtonPressed = false;
+        confirm();
+    }
+	/*class MultiplyButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("MultiplyButtonHandler class started");
@@ -907,18 +1079,73 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             dotButtonPressed = false;
             confirm();
         }
-    }
+    }*/
 
-	class DivideButtonHandler implements ActionListener {
+    public void performDivideButtonActions(ActionEvent action) {
+        LOGGER.info("performDivideButtonActions started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+//            convertAllValuesToDecimal();
+        if (addBool == false && subBool == false && mulBool == false && divBool == false &&
+                !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") &&
+                !textArea.getText().equals("Cannot divide by 0")) {
+            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+            LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+            LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+            divBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true && !values[1].equals("")) {
+            addition(calculator.getCalcType());
+            addBool = resetOperator(addBool); // sets addBool to false
+            divBool = true;
+        }
+        else if (subBool == true && !values[1].equals("")) {
+            subtract(calculator.getCalcType());
+            subBool = resetOperator(subBool);
+            divBool = true;
+        }
+        else if (mulBool == true && !values[1].equals("")) {
+            multiply(calculator.getCalcType());
+            mulBool = resetOperator(mulBool);
+            divBool = true;
+        }
+        else if (divBool == true && !values[1].equals("") & !values[1].equals("0")) {
+            divide(calculator.getCalcType());
+            divBool = resetOperator(divBool);
+            divBool = true;
+        }
+        else if (calculator.textAreaContainsBadText())  {
+            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            divBool = true; // sets logic for arithmetic
+            firstNumBool = false; // sets logic to perform operations when collecting second number
+            dotButtonPressed = false;
+            valuesPosition++; // increase valuesPosition for storing textarea
+        }
+        else if (addBool == true || subBool == true || mulBool == true || divBool == true)
+        {
+            LOGGER.info("already chose an operator. choose another number.");
+        }
+        textarea = new StringBuffer().append(textArea.getText());
+        buttonDot.setEnabled(true);
+        dotButtonPressed = false;
+        dotButtonPressed = false;
+        confirm();
+    }
+	/*class DivideButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-        	LOGGER.info("DivideButtonHandler class started");
-        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+            LOGGER.info("DivideButtonHandler class started");
+            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
 //            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") &&
                     !textArea.getText().equals("Cannot divide by 0")) {
-            	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
                 textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
@@ -957,7 +1184,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
             else if (addBool == true || subBool == true || mulBool == true || divBool == true)
             {
-            	LOGGER.info("already chose an operator. choose another number.");
+                LOGGER.info("already chose an operator. choose another number.");
             }
             textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
@@ -965,7 +1192,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             dotButtonPressed = false;
             confirm();
         }
-    }
+    }*/
 
     public void performButtonEqualsActions(ActionEvent action) throws Calculator_v3Error {
         LOGGER.info("performButtonEqualsActions");
@@ -1013,7 +1240,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         // TODO: values[0], values[1], values[2] should always be in decimal form.
         confirm("");
     }
-
 	/*class EqualsButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -1057,6 +1283,28 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }*/
 
+	public void performNegateButtonActions(ActionEvent action) {
+        LOGGER.info("performNegateButtonActions started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        calculator.clearNewLineFromTextArea();
+        updateTextareaFromTextArea();
+        if (!textarea.equals("")) {
+            if (numberIsNegative) {
+                textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
+                LOGGER.debug("textarea: " + textarea);
+                getTextArea().setText("\n"+textarea);
+
+            }
+            else {
+                getTextArea().setText("\n"+textarea+"-");
+                textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+                LOGGER.debug("textarea: " + textarea);
+            }
+        }
+        values[valuesPosition] = textarea.toString();
+        confirm("");
+    }
     /**
      * Handles the logic when user clicks the Negate button
      */

@@ -823,7 +823,13 @@ public class JPanelProgrammer_v3 extends JPanel {
             calculator.orButtonBool = true;
             calculator.firstNumBool = false;
             calculator.valuesPosition++;
-            calculator.confirm("");
+            calculator.confirm("Show values[0]");
+        }
+        else if (StringUtils.isEmpty(calculator.values[0]) && StringUtils.isEmpty(calculator.values[1]))
+        {
+            calculator.orButtonBool = false;
+            calculator.firstNumBool = true;
+            calculator.confirm("Do nothing");
         }
         else if (!StringUtils.isEmpty(calculator.values[0]) && !StringUtils.isEmpty(calculator.values[1]))
         {
