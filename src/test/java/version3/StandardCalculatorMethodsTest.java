@@ -3,7 +3,6 @@ package version3;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
@@ -25,7 +24,7 @@ public class StandardCalculatorMethodsTest {
     public void testAdditionFunctionality() {
         c.values[0] = "5";
         c.values[1] = "10";
-        c.add();
+        c.addition();
         assertEquals("Did not get back expected result", "15", c.values[0]);
     }
 

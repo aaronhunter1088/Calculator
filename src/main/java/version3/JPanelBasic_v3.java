@@ -1,5 +1,6 @@
 package version3;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -203,7 +204,7 @@ public class JPanelBasic_v3 extends JPanel {
         calculator.buttonDot.addActionListener(this.calculator.dotButtonHandler); 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.buttonAdd, 7, 3, 1, 1);
-        calculator.buttonAdd.addActionListener(this.calculator.addButtonHandler);
+
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button1, 6, 0, 1, 1);
         //calculator.button1.addActionListener(this.calculator.buttonHandler);
@@ -215,56 +216,63 @@ public class JPanelBasic_v3 extends JPanel {
         //calculator.button3.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.buttonSubtract, 6, 3, 1, 1);
-        calculator.buttonSubtract.addActionListener(this.calculator.subtractButtonHandler);
+
         constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.buttonEquals, 6, 4, 1, 2); // idk why its size is not showing on the application; leave a comment for me on why this is
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.button4, 5, 0, 1, 1);
+        addComponent(calculator.button4, 5, 0, 1, 1);
         //this.calculator.button4.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.button5, 5, 1, 1, 1);
+        addComponent(calculator.button5, 5, 1, 1, 1);
         //this.calculator.button5.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.button6, 5, 2, 1, 1);
+        addComponent(calculator.button6, 5, 2, 1, 1);
         //this.calculator.button6.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonMultiply, 5, 3, 1, 1);
-        this.calculator.buttonMultiply.addActionListener(this.calculator.multiplyButtonHandler);
+        addComponent(calculator.buttonMultiply, 5, 3, 1, 1);
+
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonFraction, 5, 4, 1, 1);
         buttonFraction.addActionListener(fractionButtonHandler);
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.button7, 4, 0, 1, 1);
+        addComponent(calculator.button7, 4, 0, 1, 1);
         //this.calculator.button7.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.button8, 4, 1, 1, 1);
+        addComponent(calculator.button8, 4, 1, 1, 1);
         //this.calculator.button8.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.button9, 4, 2, 1, 1);
+        addComponent(calculator.button9, 4, 2, 1, 1);
         //this.calculator.button9.addActionListener(this.calculator.buttonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonDivide, 4, 3, 1, 1);
+        addComponent(calculator.buttonDivide, 4, 3, 1, 1);
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonPercent, 4, 4, 1, 1);
         buttonPercent.addActionListener(perButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonDelete, 3, 0, 1, 1);
-        this.calculator.buttonDelete.addActionListener(this.calculator.deleteButtonHandler);
+        addComponent(calculator.buttonDelete, 3, 0, 1, 1);
+//        this.calculator.buttonDelete.addActionListener(this.calculator.deleteButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonClearEntry, 3, 1, 1, 1);
-        this.calculator.buttonClearEntry.addActionListener(this.calculator.clearEntryButtonHandler);
+        addComponent(calculator.buttonClearEntry, 3, 1, 1, 1);
+//        calculator.buttonClearEntry.addActionListener(calculator.clearEntryButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonClear, 3, 2, 1, 1);
-        this.calculator.buttonClear.addActionListener(this.calculator.clearButtonHandler);
+        addComponent(calculator.buttonClear, 3, 2, 1, 1);
+//        calculator.buttonClear.addActionListener(calculator.clearButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(this.calculator.buttonNegate, 3, 3, 1, 1);
-        this.calculator.buttonNegate.addActionListener(this.calculator.negButtonHandler);
+        addComponent(calculator.buttonNegate, 3, 3, 1, 1);
+//        calculator.buttonNegate.addActionListener(calculator.negButtonHandler);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(buttonSqrt, 3, 4, 1, 1);
         buttonSqrt.addActionListener(sqrtButtonHandler);
+
+        // adding equals button functionality at panel level
+//        calculator.buttonAdd.addActionListener(calculator.addButtonHandler);
+//        calculator.buttonSubtract.addActionListener(calculator.subtractButtonHandler);
+//        calculator.buttonMultiply.addActionListener(calculator.multiplyButtonHandler);
+//        calculator.buttonDivide.addActionListener(calculator.divideButtonHandler);
+//        calculator.buttonEquals.addActionListener(calculator.equalsButtonHandler);
         LOGGER.info("Finished addComponentsToPanel_v3");
     }
 
@@ -558,12 +566,15 @@ public class JPanelBasic_v3 extends JPanel {
 
     public void convertToDecimal() {
         LOGGER.info("convertToDecimal started");
-        calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText().replaceAll("\n", ""));
+        calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText().replaceAll("\n", "").strip());
         int appropriateLength = calculator.getBytes();
-        LOGGER.info("textarea: " + calculator.textarea);
-        LOGGER.info("appropriateLength: " + appropriateLength);
+        LOGGER.debug("textarea: " + calculator.textarea);
+        LOGGER.debug("appropriateLength: " + appropriateLength);
+        String operator = null;
+        boolean operatorIncluded = false;
+        boolean isNumberTrulyNegative = false;
         if (calculator.textarea.length() < appropriateLength) {
-            LOGGER.info("textarea, " + calculator.textarea + ", is too short. adding missing zeroes");
+            LOGGER.debug("textarea, " + calculator.textarea + ", is too short. adding missing zeroes");
             // user had entered 101, which really is 00000101
             // but they aren't showing the first 5 zeroes
             int difference = appropriateLength - calculator.textarea.length();
@@ -575,19 +586,34 @@ public class JPanelBasic_v3 extends JPanel {
             // should result in textarea coming from programmer calculator
             // to always have the same length as to what mode the calculator
             // was set at (binary, octal, decimal, hexidecimal)
-            LOGGER.info("textarea: " + calculator.textarea);
+            LOGGER.debug("textarea: " + calculator.textarea);
+        }
+        else if (calculator.textarea.length() > appropriateLength) // user may have pushed an operator
+        {
+            // text looks like + 00001010
+            operator = String.valueOf(calculator.textarea.charAt(0));
+            switch(operator) {
+                case "+" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.addBool = true; break;
+                case "-" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.subBool = true; break;
+                case "*" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.mulBool = true; break;
+                case "/" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.divBool = true; break;
+                default : LOGGER.error("unknown string means there is another else if case: " + operator);
+            }
+            calculator.textarea = new StringBuffer().append(String.valueOf(calculator.textarea).substring(2,calculator.textarea.length()));
         }
 
         double result = 0.0;
         double num1 = 0.0;
         double num2 = 0.0;
         for(int i=0, k=appropriateLength-1; i<appropriateLength; i++, k--) {
-            String c = Character.toString(calculator.textarea.charAt(i));
-            num1 = Double.valueOf(c);
+            num1 = Double.valueOf(String.valueOf(calculator.textarea.charAt(i)));
             num2 = Math.pow(2,k);
             result = (num1 * num2) + result;
         }
-        calculator.textarea = new StringBuffer().append(Double.toString(result));
+        if (operatorIncluded && StringUtils.isNotBlank(operator)) {
+            calculator.textarea = new StringBuffer().append(operator).append(" ").append(Double.toString(result));
+        }
+        else calculator.textarea = new StringBuffer().append(Double.toString(result));
         LOGGER.info("textarea: " + calculator.textarea);
         if (calculator.isDecimal(calculator.textarea.toString())) {
             calculator.textarea = calculator.clearZeroesAtEnd(calculator.textarea.toString());
@@ -623,6 +649,7 @@ public class JPanelBasic_v3 extends JPanel {
         calculator.setCalcType(CalcType_v3.BASIC);
         // setting up all the buttons
         setAllNumberButtons(true);
+        calculator.buttonNegate.setEnabled(true);
         LOGGER.info("Finished performCalculatorTypeSwitchOperations\n");
     }
 

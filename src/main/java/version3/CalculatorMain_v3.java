@@ -61,8 +61,7 @@ public class CalculatorMain_v3 {
 a. PROGRAMMER: Michael Ball
 b. DATE:   Version 3: 2018
 c. ENVIRONMENT: Mac Mohave 10.14
-d. FILES INCLUDED: Calculator.java, CalculatorMain_v3.java, Calculatortest.java, calculator.jpg, 
-    calculator2.jpg, windows8.jpg, windows10.jpg, windows10Original.jpg, maclogo.jpg, and a screen shot of the below example. 
+d. FILES INCLUDED: TODO: Add file names
 e. PURPOSE: To enhance the functionality of this calculator tenfold. 
 f. INPUT:  user will input numbers and based on the calculator type will return results.
 g. PRECONDITIONS: 

@@ -55,6 +55,7 @@ public class CalculatorMethodsTest {
         number = c.convertToNegative(number);
         assertEquals("Number is not negative", "-5.02", number);
     }
+
     @Test
     public void testIsNegativeReturnsTrue() {
         number = "-6";
@@ -68,7 +69,6 @@ public class CalculatorMethodsTest {
         result = c.isNegativeNumber(number);
         assertFalse("IsNegative did not return false", result);
     }
-
 
     @Test
     public void testIsDecimalReturnsTrue() {
@@ -189,4 +189,6 @@ public class CalculatorMethodsTest {
     public void methodConfirmWithAMessageRunsAfterEachButtonPress() {
         // TODO: This method requires testing all buttons are pushed and the confirm method runs
     }
+
+
 }
