@@ -73,6 +73,7 @@ public abstract class Calculator_v3 extends JFrame {
     protected JLabel iconLabel;
     protected JLabel textLabel;
 
+    protected String getTextAreaWithoutNewLineCharacters() { return getTextArea().getText().replaceAll("\n", ""); }
     protected JTextArea getTextArea() { return this.textArea; }
     protected JTextArea textArea = new JTextArea(2,5); // rows, columns
     protected StringBuffer textarea = new StringBuffer(); // String representing appropriate visual of number
@@ -80,6 +81,7 @@ public abstract class Calculator_v3 extends JFrame {
 	protected boolean firstNumBool = true, numberOneNegative = false, numberTwoNegative = false, numberThreeNegative = false, numberIsNegative = false;
 	protected boolean memorySwitchBool = false;
     protected boolean addBool = false, subBool = false, mulBool = false, divBool = false, memAddBool = false, memSubBool = false, negatePressed = false;
+    protected boolean orButtonBool = false;
 
     // programmer booleans
     boolean isButtonBinSet = true;
@@ -291,10 +293,13 @@ public abstract class Calculator_v3 extends JFrame {
         clearNewLineFromTextArea();
         if (textArea.getText().equals("")) {
             textArea.setText(addNewLineCharacters(1) + buttonChoice);
-        } else {
+        }
+        else
+        {
             textArea.setText(addNewLineCharacters(1) + textArea.getText() + buttonChoice); // update textArea
         }
-        setValuesToTextAreaValue();
+        this.updateTextareaFromTextArea();
+        values[valuesPosition] = textarea.toString(); // store textarea in values
     }
 
     public String addNewLineCharacters(int number) {
@@ -310,7 +315,7 @@ public abstract class Calculator_v3 extends JFrame {
     }
 
     public void updateTextareaFromTextArea() {
-        textarea = new StringBuffer().append(textArea.getText());
+        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
     }
 
     public void performLogicForDotButtonPressed(String buttonChoice) {
@@ -441,6 +446,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("subBool: '"+subBool+"'"); 
         LOGGER.info("mulBool: '"+mulBool+"'"); 
         LOGGER.info("divBool: '"+divBool+"'");
+        LOGGER.info("orButtonBool: '" +orButtonBool+"'");
         LOGGER.info("values["+0+"]: '" + values[0] + "'");
         LOGGER.info("values["+1+"]: '" + values[1] + "'");
         LOGGER.info("values["+2+"]: '" + values[2] + "'");
@@ -510,7 +516,7 @@ public abstract class Calculator_v3 extends JFrame {
             textarea = new StringBuffer().append(currentNumber.substring(0, index));
         }
         LOGGER.info("output of clearZeroesAtEnd(): " + String.valueOf(textarea));
-        return textarea;
+        return new StringBuffer().append(String.valueOf(textarea));
     }
 
     /**
@@ -849,7 +855,7 @@ public abstract class Calculator_v3 extends JFrame {
                     // if no operator has been pushed; number is positive; number is whole
                     if (getDotButtonPressed() == false) {
                         if (textarea.length() == 1) { // ex: 5
-                            textarea = new StringBuffer().append("0");
+                            textarea = new StringBuffer(); //.append("0");
                         }
                         else if (textarea.length() >= 2) { // ex: 56 or 2346
 

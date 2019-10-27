@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.awt.event.ActionEvent;
@@ -19,6 +20,8 @@ public class JPanelProgrammerMethodsTest {
     private static StandardCalculator_v3 c;
     private String number;
     private boolean result;
+
+    @Spy
     private static JPanelProgrammer_v3 p;
 
     @Mock
@@ -62,6 +65,8 @@ public class JPanelProgrammerMethodsTest {
         //3. Input another single, 8 bit number
         //4. Press equals.
         //5. Textarea displays proper sum in 8 bit form
+        c.getTextArea().setText("");
+        c.textarea = new StringBuffer();
         when(ae.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("1").thenReturn("0").thenReturn("1") //5
                                    .thenReturn("+")
@@ -81,8 +86,31 @@ public class JPanelProgrammerMethodsTest {
         c.clearNewLineFromTextArea();
         assertEquals("textArea not as expected", "00000011", c.getTextArea().getText());
 
-        c.getEqualsButtonHandler().actionPerformed(ae);
+        c.performButtonEqualsActions(ae);
         c.clearNewLineFromTextArea();
         assertEquals("textArea not as expected", "00001000", c.getTextArea().getText());
     }
+
+    @Test(expected = Calculator_v3Error.class)
+    public void testPushingButtonOrWithValuesAtZeroNotSet() throws Calculator_v3Error {
+        c.values[0] = "";
+        c.values[1] = "50";
+
+        p.performButtonOrActions(ae);
+    }
+
+    @Test
+    public void testPushingButtonOrWithBothValuesSetReturnsCorrectResult() throws Calculator_v3Error {
+        c.values[0] = "00000101";
+        c.values[1] = "00000011";
+
+        c.getTextArea().setText(c.addNewLineCharacters(1)+c.values[1]);
+
+        when(ae.getActionCommand()).thenReturn("OR");
+        p.performButtonOrActions(ae);
+
+        assertEquals("TextArea not showing expected result", "00000111", c.getTextAreaWithoutNewLineCharacters());
+    }
+
+
 }

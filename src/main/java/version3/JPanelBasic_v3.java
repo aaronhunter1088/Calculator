@@ -566,7 +566,7 @@ public class JPanelBasic_v3 extends JPanel {
 
     public void convertToDecimal() {
         LOGGER.info("convertToDecimal started");
-        calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText().replaceAll("\n", "").strip());
+        calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters().strip());
         int appropriateLength = calculator.getBytes();
         LOGGER.debug("textarea: " + calculator.textarea);
         LOGGER.debug("appropriateLength: " + appropriateLength);
@@ -605,33 +605,50 @@ public class JPanelBasic_v3 extends JPanel {
         double result = 0.0;
         double num1 = 0.0;
         double num2 = 0.0;
-        for(int i=0, k=appropriateLength-1; i<appropriateLength; i++, k--) {
+        for(int i=0, k=appropriateLength-1; i<appropriateLength; i++, k--)
+        {
             num1 = Double.valueOf(String.valueOf(calculator.textarea.charAt(i)));
             num2 = Math.pow(2,k);
             result = (num1 * num2) + result;
         }
-        if (operatorIncluded && StringUtils.isNotBlank(operator)) {
-            calculator.textarea = new StringBuffer().append(operator).append(" ").append(Double.toString(result));
+
+        if (calculator.isDecimal(String.valueOf(result)))
+        {
+            calculator.textarea = calculator.clearZeroesAtEnd(String.valueOf(result));
         }
-        else calculator.textarea = new StringBuffer().append(Double.toString(result));
-        LOGGER.info("textarea: " + calculator.textarea);
-        if (calculator.isDecimal(calculator.textarea.toString())) {
-            calculator.textarea = calculator.clearZeroesAtEnd(calculator.textarea.toString());
+        else
+        {
+            calculator.textarea = new StringBuffer().append(String.valueOf(result));
         }
-        calculator.getTextArea().setText("\n" + calculator.textarea);
+
+        if (operatorIncluded && StringUtils.isNotBlank(operator))
+        {
+            calculator.values[calculator.valuesPosition-1] = String.valueOf(calculator.textarea);
+            calculator.textarea = new StringBuffer().append(operator).append(" ").append(calculator.textarea);
+            calculator.getTextArea().setText("\n" + calculator.textarea);
+        }
+        else
+        {
+            calculator.values[calculator.valuesPosition] = String.valueOf(calculator.textarea);
+            calculator.textarea = new StringBuffer().append(calculator.textarea);
+            calculator.getTextArea().setText("\n" + calculator.textarea);
+        }
         LOGGER.info("textarea: " + calculator.textarea);
         LOGGER.info("convertToDecimal finished");
+        calculator.confirm("");
     }
 
     public void convertTextArea() {
-        LOGGER.info("Converting TextArea");
+        //LOGGER.info("Converting TextArea");
         if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
             LOGGER.info("Going from binary to decimal...");
             convertToDecimal();
-        } else {
+        }
+        else
+        {
             LOGGER.info("Current CalcType is: " + calculator.getCalcType());
         }
-        LOGGER.info("TextArea converted");
+        //LOGGER.info("TextArea converted");
     }
 
     /**

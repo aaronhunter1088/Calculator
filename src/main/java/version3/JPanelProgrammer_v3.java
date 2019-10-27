@@ -129,7 +129,11 @@ public class JPanelProgrammer_v3 extends JPanel {
         programmerLayout = new GridBagLayout();
         setLayout(programmerLayout); // set frame layout
         constraints = new GridBagConstraints(); // instantiate constraints
-        setupPanel_v3(calculator);
+        try {
+            setupPanel_v3(calculator);
+        } catch (Calculator_v3Error ce) {
+            LOGGER.error(ce.getMessage());
+        }
         setCalculator(calculator);
         addComponentsToPanel_v3();
         //performCalculatorTypeSwitchOperations(); // this should be common to all faces
@@ -138,7 +142,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     public JPanelProgrammer_v3() {}
 
     // Prepare panel's objects
-    public void setupPanel_v3(StandardCalculator_v3 calculator) {
+    public void setupPanel_v3(StandardCalculator_v3 calculator) throws Calculator_v3Error {
         LOGGER.info("Starting setupProgrammerPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
 
@@ -210,6 +214,13 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonOr.setFont(this.calculator.font);
         buttonOr.setPreferredSize(new Dimension(35,35));
         buttonOr.setBorder(new LineBorder(Color.BLACK));
+        buttonOr.addActionListener(action -> {
+            try {
+                performButtonOrActions(action);
+            } catch (Calculator_v3Error calculator_v3Error) {
+                LOGGER.error(calculator_v3Error.getMessage());
+            }
+        });
 
         buttonXor.setFont(this.calculator.font);
         buttonXor.setPreferredSize(new Dimension(35,35));
@@ -798,6 +809,31 @@ public class JPanelProgrammer_v3 extends JPanel {
         LOGGER.info("not operation completed.");
     }
 
+    public void performButtonOrActions(ActionEvent action) throws Calculator_v3Error {
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("Button: " + buttonChoice);
+        if (StringUtils.isEmpty(calculator.values[0]) && !StringUtils.isEmpty(calculator.values[1]))
+        {
+            String msg = "calculator.values[1] is set and not calculator.values[0]. This is not allowed.";
+            throw new Calculator_v3Error(msg);
+        }
+        else if (!StringUtils.isEmpty(calculator.values[0]) && StringUtils.isEmpty(calculator.values[1]))
+        {
+            // hence do nothing. just show textarea.
+            calculator.orButtonBool = true;
+            calculator.firstNumBool = false;
+            calculator.valuesPosition++;
+            calculator.confirm("");
+        }
+        else if (!StringUtils.isEmpty(calculator.values[0]) && !StringUtils.isEmpty(calculator.values[1]))
+        {
+//            calculator.convertAllValuesToDecimal();
+            calculator.orButtonBool = true;
+            calculator.performOrLogic();
+//            calculator.convertAllValuesToBinary();
+        }
+    }
+
 //    // TODO: add string parameter to tell method how to convert
 //    public void convertConversion(String howToConvert) {
 //        LOGGER.info("convertConversion: " + howToConvert);
@@ -917,13 +953,30 @@ public class JPanelProgrammer_v3 extends JPanel {
         LOGGER.info("textarea: " + calculator.textarea);
         int i;
         int bytes = calculator.getBytes();
-        if (calculator.isButtonOctSet) {
+        if (calculator.isButtonOctSet)
+        {
             // logic for Octal to Binary
-        } else if (calculator.isButtonDecSet) {
+        }
+        else if (calculator.isButtonDecSet)
+        {
             // logic for Decimal to Binary
-        } else if (calculator.isButtonBinSet) {
+        }
+        else if (calculator.isButtonBinSet)
+        {
             if (calculator.getTextArea().getText().equals("")) { return; }
-            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText().replaceAll("\n", ""));
+            calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters().strip());
+
+            String operator = String.valueOf(calculator.textarea.charAt(0));
+            boolean operatorIncluded = false;
+            switch(operator) {
+                case "+" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.addBool = true; break;
+                case "-" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.subBool = true; break;
+                case "*" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.mulBool = true; break;
+                case "/" : operatorIncluded = true; LOGGER.debug("operator: " + operator); calculator.divBool = true; break;
+                default : LOGGER.error("unknown string means there is another else if case: " + operator);
+            }
+            if (operatorIncluded) calculator.textarea = new StringBuffer().append(String.valueOf(calculator.textarea).substring(2,calculator.textarea.length()));
+
             int number;
             try {
                 number = Integer.parseInt(calculator.textarea.toString());
@@ -931,7 +984,8 @@ public class JPanelProgrammer_v3 extends JPanel {
                 while(i < calculator.getBytes()) {
                     if (number % 2 == 0) {
                         conversion.append("0");
-                    } else {
+                    }
+                    else {
                         conversion.append("1");
                     }
                     if (number % 2 == 0 && number / 2 == 0) {
@@ -958,11 +1012,23 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
             conversion = conversion.reverse(); // reversing so it will display properly
             LOGGER.info("converted number is: " + conversion);
-            calculator.textarea = new StringBuffer().append(conversion);
             LOGGER.info("textarea: " + calculator.textarea);
-            calculator.getTextArea().setText("\n"+calculator.textarea);
 
-        } else if (calculator.isButtonHexSet == true) {
+            if (operatorIncluded)
+            {
+                calculator.values[calculator.valuesPosition-1] = String.valueOf(conversion);
+                calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+operator+" "+conversion);
+                calculator.updateTextareaFromTextArea();
+            }
+            else
+            {
+                calculator.values[calculator.valuesPosition] = String.valueOf(conversion);
+                calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+conversion);
+                calculator.updateTextareaFromTextArea();
+            }
+
+        }
+        else if (calculator.isButtonHexSet == true) {
             // logic for Hexadecimal to Binary
         }
         LOGGER.info("convertToBinary finished");
@@ -999,19 +1065,23 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     public void convertTextArea() {
-        LOGGER.info("Converting TextArea");
+//        LOGGER.info("Converting TextArea");
+        calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters().strip());
         if (calculator.getCalcType() == CalcType_v3.BASIC) {
             // decimal to binary
             LOGGER.info("Going from decimal to binary...");
             if (calculator.isDecimal(calculator.textarea.toString())) {
                 // add appropriate logic
-            } else {
+            }
+            else
+            {
                 convertToBinary();
             }
-        } else {
+        }
+        else {
             LOGGER.info("Current CalcType is: " + calculator.getCalcType());
         }
-        LOGGER.info("TextArea converted");
+//        LOGGER.info("TextArea converted");
     }
     /**
      * This method handles the logic when we switch from any type of calculator
@@ -1029,6 +1099,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         // setting up all the buttons
         setButtons2To9(false);
         LOGGER.info("Finished performCalculatorTypeSwitchOperations\n");
+        calculator.confirm("");
     }
 
     public void setButtons2To9(boolean isEnabled) {

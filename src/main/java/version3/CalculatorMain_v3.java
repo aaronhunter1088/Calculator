@@ -22,7 +22,7 @@ public class CalculatorMain_v3 {
 		initLookAndFeel("Metal");
 		
 		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		calculator.setLocation(1000, 250);
+		calculator.setLocation(750, 250);
 		//calculator.setupMenuBar();
         SwingUtilities.updateComponentTreeUI(calculator);
         calculator.pack();

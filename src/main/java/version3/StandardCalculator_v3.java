@@ -1,5 +1,6 @@
 package version3;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +29,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonMultiply = new JButton("*");
     final protected DivideButtonHandler divideButtonHandler = new DivideButtonHandler();
     final protected JButton buttonDivide = new JButton("/");
-    final protected EqualsButtonHandler equalsButtonHandler = new EqualsButtonHandler();
+//    final protected EqualsButtonHandler equalsButtonHandler = new EqualsButtonHandler();
     final protected JButton buttonEquals = new JButton("=");
 
     /** Used for testing purposes and to avoid recreating objects */
@@ -36,7 +37,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     public SubtractButtonHandler getSubtractButtonHandler() { return subtractButtonHandler; }
     public MultiplyButtonHandler getMultiplyButtonHandler() { return multiplyButtonHandler; }
     public DivideButtonHandler getDivideButtonHandler() { return divideButtonHandler; }
-    public EqualsButtonHandler getEqualsButtonHandler() { return equalsButtonHandler; }
+//    public EqualsButtonHandler getEqualsButtonHandler() { return equalsButtonHandler; }
     
     final java.lang.String negate = "\u00B1";
     final protected NegateButtonHandler negButtonHandler = new NegateButtonHandler();
@@ -82,7 +83,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 //		setupStandardCalculator_v3();
         super.setTitle(title);
         add(getCurrentPanel());
-		confirm("Switched calculator types to " + super.getTitle());
+//		confirm("Switched calculator types to " + super.getTitle());
 	}
 
 	/*
@@ -344,7 +345,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonEquals.setPreferredSize(new Dimension(35, 70) );
         buttonEquals.setBorder(new LineBorder(Color.BLACK));
         buttonEquals.setEnabled(true);
-        buttonEquals.addActionListener(getEqualsButtonHandler());
+        buttonEquals.addActionListener(action -> {
+            performButtonEqualsActions(action);
+        });
         
         buttonNegate.setFont(font);
         buttonNegate.setPreferredSize(new Dimension(35, 35) );
@@ -359,10 +362,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
     public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings) {
 	    String[] arrToReturn = new String[strings.length];
-	    if (type1.equals("Decimal") && type2.equals("Binary")) {
-	        int countOfStr = 1;
+	    int countOfStrings = 0;
+	    if (StringUtils.isEmpty(strings[0])) return new String[]{""};
+	    else countOfStrings = 1;
+	    if (type1.equals("Decimal") && type2.equals("Binary"))
+	    {
 	        for(String str : Arrays.asList(strings)) {
-	            LOGGER.debug("Converting str("+str+") or "+countOfStr+"/"+strings.length);
+	            LOGGER.debug("Converting str("+str+") or "+countOfStrings+"/"+strings.length);
 	            StringBuffer sb = new StringBuffer();
 	            int number = 0;
 	            try {
@@ -394,8 +400,52 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	            sb = sb.reverse();
 	            String strToReturn = sb.toString();
 	            LOGGER.debug("convertFrom("+type1+")To("+type2+") = "+ sb);
-	            arrToReturn[countOfStr-1] = strToReturn;
-	            countOfStr++;
+	            arrToReturn[countOfStrings-1] = strToReturn;
+	            countOfStrings++;
+            }
+        }
+	    else if (type1.equals("Binary") && type2.equals("Decimal"))
+        {
+            for(String str : Arrays.asList(strings)) {
+                LOGGER.debug("Converting str("+str+") or "+countOfStrings+"/"+strings.length);
+                StringBuffer sb = new StringBuffer();
+                sb.append(str);
+
+                int appropriateLength = calculator.getBytes();
+                LOGGER.debug("sb: " + sb);
+                LOGGER.debug("appropriateLength: " + appropriateLength);
+
+                if (sb.length() < appropriateLength)
+                {
+                    LOGGER.error("sb, '" + sb + "', is too short. adding missing zeroes");
+                    // user had entered 101, which really is 00000101
+                    // but they aren't showing the first 5 zeroes
+                    int difference = appropriateLength - sb.length();
+                    StringBuffer missingZeroes = new StringBuffer();
+                    for (int i=0; i<difference; i++) {
+                        missingZeroes.append("0");
+                    }
+                    sb.append(missingZeroes);
+                    LOGGER.debug("sb: " + sb);
+                }
+
+                double result = 0.0;
+                double num1 = 0.0;
+                double num2 = 0.0;
+                for(int i=0, k=appropriateLength-1; i<appropriateLength; i++, k--)
+                {
+                    num1 = Double.valueOf(String.valueOf(sb.charAt(i)));
+                    num2 = Math.pow(2,k);
+                    result = (num1 * num2) + result;
+                }
+
+                arrToReturn[0] = String.valueOf(Double.valueOf(result));
+
+                LOGGER.debug("arrToReturn[0]: " + arrToReturn[0]);
+                if (calculator.isDecimal(arrToReturn[0]))
+                {
+                    arrToReturn[0] = String.valueOf(calculator.clearZeroesAtEnd(arrToReturn[0]));
+                }
             }
         }
 	    return arrToReturn;
@@ -488,7 +538,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         else if (getCalcType().equals(CalcType_v3.PROGRAMMER)) {
             // convert values
-            convertFromTypeToType("Binary", "Decimal");
+//            convertFromTypeToType("Binary", "Decimal");
             // run add
             addition();
 //            values[0] = p.convertToBinary(calculator.values[0]);
@@ -521,7 +571,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textArea.setText("\n" + textarea.toString().replaceAll(" ", "") + "-".replaceAll(" ", "")); // update textArea
                 LOGGER.info("temp[0]: " + values[0]);
             }
-        } else {// if double == double, keep decimal and number afterwards
+        }
+        else {// if double == double, keep decimal and number afterwards
             if (Double.parseDouble(values[0]) < 0.0 ) {
                 values[0] = formatNumber(values[0]);
                 textarea = new StringBuffer().append(values[0]);
@@ -530,7 +581,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 LOGGER.info("textarea: " + textarea);
                 textArea.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
-            } else {
+            }
+            else {
                 textArea.setText("\n" + formatNumber(values[0]));
             }
         }
@@ -541,10 +593,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	        subtract();
         }
 	    else if (calcType_v3.equals(CalcType_v3.PROGRAMMER)) {
-            convertFromTypeToType("Binary", "Decimal");
+//            convertFromTypeToType("Binary", "Decimal");
             subtract();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
             textArea.setText("\n" + values[0]);
+            updateTextareaFromTextArea();
         }
     }
     
@@ -582,10 +635,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             multiply();
         }
         else if (calcType_v3.equals(CalcType_v3.PROGRAMMER)) {
-            convertFromTypeToType("Binary", "Decimal");
+            //convertFromTypeToType("Binary", "Decimal");
             multiply();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
             textArea.setText("\n" + values[0]);
+            updateTextareaFromTextArea();
         }
     }
     
@@ -595,6 +649,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         if (!values[1].equals("0")) { 
             // if the second number is not zero, divide as usual
             double result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]); // create result forced double
+            // TODO: fix logic here to tie in with existing logic above
+            if (getCalcType().equals(CalcType_v3.PROGRAMMER)) {
+                result = Double.valueOf(String.valueOf(clearZeroesAtEnd(String.valueOf(result))));
+            } // PROGRAMMER mode only supports whole numbers at this time
+
             LOGGER.info(values[0] + " / " + values[1] + " = " + result);
             values[0] = Double.toString(result); // store result
             LOGGER.info("addBool: " + addBool);
@@ -608,22 +667,27 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
                 values[0] = textarea.toString(); // update storing
                 textArea.setText("\n" + values[0]);
+                updateTextareaFromTextArea();
                 if (Integer.parseInt(values[0]) < 0 ) {
                     textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", "")); // temp[2]
                     LOGGER.info("textarea: " + textarea);
                     textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                     LOGGER.info("textarea: " + textarea);
                     textArea.setText("\n" + textarea + "-"); // update textArea
-                    LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
+                    updateTextareaFromTextArea();
+                    LOGGER.info("values["+valuesPosition+"]: " + values[valuesPosition]);
                 }
-            } else {
+            }
+            else {
                 // if double == double, keep decimal and number afterwards
                 textArea.setText("\n" + formatNumber(values[0]));
             }
+
+
         } else if (values[1].equals("0")) {
             java.lang.String result = "0";
             LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
-            textArea.setText("Cannot divide by 0");
+            textArea.setText("\nCannot divide by 0");
             values[0] = result;
             firstNumBool = true;
         }
@@ -634,7 +698,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             divide();
         }
         else if (calcType_v3.equals(CalcType_v3.PROGRAMMER)) {
-            convertFromTypeToType("Binary", "Decimal");
+//            convertFromTypeToType("Binary", "Decimal");
             divide();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
             textArea.setText("\n" + values[0]);
@@ -668,7 +732,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("AddButtonHandler started");
         	String buttonChoice = e.getActionCommand();
-        	LOGGER.info("button: " + buttonChoice); // print out button confirmation
+
+        	// TODO: fix logic later but need to make sure values are in decimal form to add
+//            convertAllValuesToDecimal();
+
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
                 textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
@@ -721,11 +789,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-	class SubtractButtonHandler implements ActionListener {
+    class SubtractButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             LOGGER.info("SubtractButtonHandler class started");
             LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+//            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
             	textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -782,6 +851,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("MultiplyButtonHandler class started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+//            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false &&
                     divBool == false && !textArea.getText().equals("") &&
                     !textArea.getText().equals("Invalid textarea") &&
@@ -839,6 +909,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("DivideButtonHandler class started");
         	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+//            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") &&
                     !textArea.getText().equals("Cannot divide by 0")) {
@@ -891,24 +962,65 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-	class EqualsButtonHandler implements ActionListener {
+    public void performButtonEqualsActions(ActionEvent action) {
+        LOGGER.info("EqualsButtonHandler class started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+
+        if (addBool) {
+            addition(calculator.getCalcType()); // addition();
+            addBool = resetOperator(addBool);
+        }
+        else if (subBool){
+            subtract(calculator.getCalcType());
+            subBool = resetOperator(subBool);
+        }
+        else if (mulBool){
+            multiply(calculator.getCalcType());
+            mulBool = resetOperator(mulBool);
+        }
+        else if (divBool){
+            divide(calculator.getCalcType());
+            divBool = resetOperator(divBool);
+        }
+        else if (values[0].equals("") && values[1].equals("")) {
+            // if temp[0] and temp[1] do not have a number
+            valuesPosition = 0;
+        }
+        else if (calculator.textAreaContainsBadText()) {
+            textArea.setText(action.getActionCommand() + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
+            valuesPosition = 1;
+            firstNumBool = true;
+        }
+        else if (orButtonBool) {
+            performOrLogic();
+        }
+        values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
+        updateTextareaFromTextArea();
+        firstNumBool = true;
+        dotButtonPressed = false;
+        confirm("");
+    }
+	/*class EqualsButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("EqualsButtonHandler class started");
-        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if (addBool == true) {
+        	String buttonChoice = e.getActionCommand();
+        	LOGGER.info("button: " + buttonChoice); // print out button confirmation
+
+            if (addBool) {
                 addition(calculator.getCalcType()); // addition();
                 addBool = resetOperator(addBool);
             } 
-            else if (subBool == true){
+            else if (subBool){
                 subtract(calculator.getCalcType());
                 subBool = resetOperator(subBool);
             } 
-            else if (mulBool == true){
+            else if (mulBool){
                 multiply(calculator.getCalcType());
                 mulBool = resetOperator(mulBool);
             } 
-            else if (divBool == true){
+            else if (divBool){
                 divide(calculator.getCalcType());
                 divBool = resetOperator(divBool);
             }
@@ -920,14 +1032,17 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textArea.setText(e.getActionCommand() + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
                 valuesPosition = 1;
                 firstNumBool = true;
-            } 
+            }
+            else if (orButtonBool) {
+                performOrLogic();
+            }
             values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
-            textarea = new StringBuffer().append(textArea.getText());
+            updateTextareaFromTextArea();
             firstNumBool = true;
             dotButtonPressed = false;
             confirm("");
         }
-    }
+    }*/
 
     /**
      * Handles the logic when user clicks the Negate button
@@ -961,7 +1076,50 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		return currentPanel;
 	}
 
-    
+    public void convertAllValuesToDecimal() {
+        if (!getCalcType().equals(CalcType_v3.BASIC)) {
+            if (getCalcType().equals(CalcType_v3.PROGRAMMER)) {
+                values[0] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[0])[0];
+                values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
+            }
+            // TODO: Add more CalcType_v3's here
+        }
+    }
+
+    public void convertAllValuesToBinary() {
+        if (!getCalcType().equals(CalcType_v3.PROGRAMMER)) {
+            if (getCalcType().equals(CalcType_v3.BASIC)) {
+                values[0] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[0])[0];
+                values[1] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[1])[0];
+            }
+            // TODO: Add more CalcType_v3's here
+        }
+    }
+
+    public void performOrLogic() {
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<calculator.values[0].length(); i++) {
+            String letter = "0";
+            if (String.valueOf(calculator.values[0].charAt(i)).equals("0") &&
+                    String.valueOf(calculator.values[1].charAt(i)).equals("0") )
+            { // if the characters at both values at the same position are the same and equal 0
+                letter = "0";
+                sb.append(letter);
+            }
+            else
+            {
+                letter = "1";
+                sb.append(letter);
+            }
+            LOGGER.info(String.valueOf(calculator.values[0].charAt(i))+" + "+String.valueOf(calculator.values[1].charAt(i))+
+                    " = "+ letter);
+        }
+        calculator.values[0] = String.valueOf(sb);
+        calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+calculator.values[0]);
+        orButtonBool = false;
+        valuesPosition = 0;
+    }
+
 }
 
 
