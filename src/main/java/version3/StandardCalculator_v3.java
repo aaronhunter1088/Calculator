@@ -346,7 +346,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonEquals.setBorder(new LineBorder(Color.BLACK));
         buttonEquals.setEnabled(true);
         buttonEquals.addActionListener(action -> {
-            performButtonEqualsActions(action);
+            try {
+                performButtonEqualsActions(action);
+            } catch (Calculator_v3Error calculator_v3Error) {
+                calculator_v3Error.printStackTrace();
+            }
         });
         
         buttonNegate.setFont(font);
@@ -514,7 +518,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
             dotButtonPressed = false;
             buttonDot.setEnabled(true);
-        } else { // if double == double, keep decimal and number afterwards
+        }
+        else
+        { // if double == double, keep decimal and number afterwards
         	LOGGER.info("We have a decimal");
             if (Double.parseDouble(values[0]) < 0.0 ) {
                 values[0] = formatNumber(values[0]);
@@ -542,8 +548,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             // run add
             addition();
 //            values[0] = p.convertToBinary(calculator.values[0]);
-            values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
-            textArea.setText("\n" + values[0]);
+            textArea.setText("\n" + convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0]);
         }
     }
 
@@ -962,10 +967,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performButtonEqualsActions(ActionEvent action) {
-        LOGGER.info("EqualsButtonHandler class started");
+    public void performButtonEqualsActions(ActionEvent action) throws Calculator_v3Error {
+        LOGGER.info("performButtonEqualsActions");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (!getCalcType().equals(CalcType_v3.BASIC)) {
+            convertAllValuesToDecimal();
+        }
 
         if (addBool) {
             addition(calculator.getCalcType()); // addition();
@@ -993,14 +1001,19 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             firstNumBool = true;
         }
         else if (orButtonBool) {
-            performOrLogic();
+//            performOrLogic(action);
+            JPanelProgrammer_v3 p = (JPanelProgrammer_v3) getCurrentPanelFromParentCalculator();
+            p.performButtonOrActions(action);
         }
         values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
         updateTextareaFromTextArea();
         firstNumBool = true;
         dotButtonPressed = false;
+        // TODO: Not a todo, but I did that so this would stand out. It's more an important note
+        // TODO: values[0], values[1], values[2] should always be in decimal form.
         confirm("");
     }
+
 	/*class EqualsButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -1077,13 +1090,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	}
 
     public void convertAllValuesToDecimal() {
-        if (!getCalcType().equals(CalcType_v3.BASIC)) {
-            if (getCalcType().equals(CalcType_v3.PROGRAMMER)) {
-                values[0] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[0])[0];
-                values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
-            }
-            // TODO: Add more CalcType_v3's here
+        if (getCalcType().equals(CalcType_v3.PROGRAMMER))
+        {
+            values[0] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[0])[0];
+            values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
         }
+        // TODO: Add more CalcType_v3's here
     }
 
     public void convertAllValuesToBinary() {
@@ -1096,7 +1108,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performOrLogic() {
+    public void performOrLogic(ActionEvent actionEvent) {
+        LOGGER.info("performOrLogic starts here");
+        LOGGER.info("button: " + actionEvent.getActionCommand());
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<calculator.values[0].length(); i++) {
             String letter = "0";

@@ -11,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -58,7 +59,7 @@ public class JPanelProgrammerMethodsTest {
     }
 
     @Test
-    public void testProgrammerNumberEntry() {
+    public void testProgrammerNumberEntry() throws Calculator_v3Error {
         // This method tests the user's ability to
         //1. Input a single, 8 bit number
         //2. Press an operator
@@ -89,6 +90,7 @@ public class JPanelProgrammerMethodsTest {
         c.performButtonEqualsActions(ae);
         c.clearNewLineFromTextArea();
         assertEquals("textArea not as expected", "00001000", c.getTextArea().getText());
+        assertTrue("values[0] did not stay as a decimal",8 == Integer.parseInt(c.values[0]));
     }
 
     @Test(expected = Calculator_v3Error.class)

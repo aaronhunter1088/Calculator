@@ -810,8 +810,8 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     public void performButtonOrActions(ActionEvent action) throws Calculator_v3Error {
-        String buttonChoice = action.getActionCommand();
-        LOGGER.info("Button: " + buttonChoice);
+        LOGGER.info("performOrLogic starts here");
+        LOGGER.info("button: " + action.getActionCommand());
         if (StringUtils.isEmpty(calculator.values[0]) && !StringUtils.isEmpty(calculator.values[1]))
         {
             String msg = "calculator.values[1] is set and not calculator.values[0]. This is not allowed.";
@@ -829,7 +829,27 @@ public class JPanelProgrammer_v3 extends JPanel {
         {
 //            calculator.convertAllValuesToDecimal();
             calculator.orButtonBool = true;
-            calculator.performOrLogic();
+            StringBuffer sb = new StringBuffer();
+            for (int i=0; i<calculator.values[0].length(); i++) {
+                String letter = "0";
+                if (String.valueOf(calculator.values[0].charAt(i)).equals("0") &&
+                        String.valueOf(calculator.values[1].charAt(i)).equals("0") )
+                { // if the characters at both values at the same position are the same and equal 0
+                    letter = "0";
+                    sb.append(letter);
+                }
+                else
+                {
+                    letter = "1";
+                    sb.append(letter);
+                }
+                LOGGER.info(String.valueOf(calculator.values[0].charAt(i))+" + "+String.valueOf(calculator.values[1].charAt(i))+
+                        " = "+ letter);
+            }
+            calculator.values[0] = String.valueOf(sb);
+            calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+calculator.values[0]);
+            calculator.orButtonBool = false;
+            calculator.valuesPosition = 0;
 //            calculator.convertAllValuesToBinary();
         }
     }
