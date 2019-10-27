@@ -64,7 +64,7 @@ public class JPanelProgrammerMethodsTest {
         //5. Textarea displays proper sum in 8 bit form
         when(ae.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("1").thenReturn("0").thenReturn("1") //5
-                                   .thenReturn("+").thenReturn("+") // called twice
+                                   .thenReturn("+")
                                    .thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("0").thenReturn("1").thenReturn("1") //3
                                    .thenReturn("=");

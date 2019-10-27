@@ -279,11 +279,11 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonMSub.setBorder(new LineBorder(Color.BLACK));
 
         // Remove components
-        calculator.remove(calculator.buttonAdd);
-        calculator.remove(calculator.buttonSubtract);
-        calculator.remove(calculator.buttonMultiply);
-        calculator.remove(calculator.buttonDivide);
-        calculator.remove(calculator.buttonEquals);
+//        calculator.remove(calculator.buttonAdd);
+//        calculator.remove(calculator.buttonSubtract);
+//        calculator.remove(calculator.buttonMultiply);
+//        calculator.remove(calculator.buttonDivide);
+//        calculator.remove(calculator.buttonEquals);
 
         LOGGER.info("End setupProgrammerPanel_v3() ");
     }

@@ -667,11 +667,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         @Override
         public void actionPerformed(ActionEvent e) {
         	LOGGER.info("AddButtonHandler started");
-        	LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
+        	String buttonChoice = e.getActionCommand();
+        	LOGGER.info("button: " + buttonChoice); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
                 textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-                textArea.setText("\n" + " " + e.getActionCommand() + " " + textarea);
+                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
                 LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.debug("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
                 addBool = true; // sets logic for arithmetic
