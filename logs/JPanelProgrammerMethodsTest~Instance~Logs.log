@@ -1,4 +1,0 @@
-[INFO ] 08-25-2019 23:00:44.764 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:139 - Starting setupProgrammerPanel_v3
-[INFO ] 08-25-2019 23:00:44.877 [Method:setupPanel_v3] version3.JPanelProgrammer_v3:277 - End setupProgrammerPanel_v3() 
-[INFO ] 08-25-2019 23:00:44.879 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:282 - Starting addComponentsToProgrammerPanel_v3
-[INFO ] 08-25-2019 23:00:53.838 [Method:addComponentsToPanel_v3] version3.JPanelProgrammer_v3:456 - Finished addComponentsToProgrammerPanel_v3
