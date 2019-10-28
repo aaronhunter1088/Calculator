@@ -16,8 +16,12 @@ import java.util.Arrays;
 
 public class JPanelProgrammer_v3 extends JPanel {
 
-    private static final long serialVersionUID = 1L;
     protected final static Logger LOGGER;
+    static {
+        LOGGER = LogManager.getLogger(JPanelProgrammer_v3.class);
+    }
+
+    private static final long serialVersionUID = 1L;
 
     private GridBagLayout programmerLayout; // layout of the calculator
     private GridBagLayout otherButtonLayout = new GridBagLayout();
@@ -32,31 +36,6 @@ public class JPanelProgrammer_v3 extends JPanel {
     protected JTextArea textArea1 = new JTextArea(1,5); // rows, columns
     protected JTextArea textArea2 = new JTextArea(1,5); // rows, columns
     protected JTextArea textArea3 = new JTextArea(1,5); // rows, columns
-//    protected JTextArea textArea4 = new JTextArea(1,5); // rows, columns
-
-    final HexidecimalButtonHandler hexidecimalButtonHandler = new HexidecimalButtonHandler();
-    final private JRadioButton buttonHex = new JRadioButton("Hex");
-
-    final DecimalButtonHandler decimalButtonHandler = new DecimalButtonHandler();
-    final private JRadioButton buttonDec = new JRadioButton("Dec");
-
-    final OctalButtonHandler octalButtonHandler = new OctalButtonHandler();
-    final private JRadioButton buttonOct = new JRadioButton("Oct");
-
-    final BinaryButtonHandler binaryButtonHandler = new BinaryButtonHandler();
-    final private JRadioButton buttonBin = new JRadioButton("Bin");
-
-    final QWordButtonHandler qwordButtonHandler = new QWordButtonHandler();
-    final private JRadioButton buttonQWord = new JRadioButton("Qword");
-
-    final DWordButtonHandler dwordButtonHandler = new DWordButtonHandler();
-    final private JRadioButton buttonDWord = new JRadioButton("Dword");
-
-    final WordButtonHandler wordButtonHandler = new WordButtonHandler();
-    final private JRadioButton buttonWord = new JRadioButton("Word");
-
-    final ByteButtonHandler byteButtonHandler = new ByteButtonHandler();
-    final private JRadioButton buttonByte = new JRadioButton("Byte");
 
     final private JButton button = new JButton(" ");
     final private JButton buttonMod = new JButton("Mod");
@@ -69,7 +48,6 @@ public class JPanelProgrammer_v3 extends JPanel {
     final private JButton buttonLSh = new JButton ("Lsh");
     final private JButton buttonRSh = new JButton ("Rsh");
     final private JButton buttonNot = new JButton ("NOT");
-
     final private JButton buttonAnd = new JButton ("AND");
     // A - F
     final private JButton buttonA = new JButton("A");
@@ -78,51 +56,19 @@ public class JPanelProgrammer_v3 extends JPanel {
     final private JButton buttonD = new JButton("D");
     final private JButton buttonE = new JButton("E");
     final private JButton buttonF = new JButton("F");
-    // TODO: Move into Calculator
-    final private JButton buttonMC = new JButton("MC");
-    final private JButton buttonMR = new JButton("MR");
-    final private JButton buttonMS = new JButton("MS");
-    final private JButton buttonMAdd = new JButton("M+");
-    final private JButton buttonMSub = new JButton("M-");
-    // TODO: Move handler classes into StandardCalculator. Think about buttons. may not be so bad if repeated especially if they're not enabled
-//    final private FractionButtonHandler fracButtonHandler = new FractionButtonHandler();
+    final private JRadioButton buttonHex = new JRadioButton("Hex");
+    final private JRadioButton buttonDec = new JRadioButton("Dec");
+    final private JRadioButton buttonOct = new JRadioButton("Oct");
+    final private JRadioButton buttonBin = new JRadioButton("Bin");
+    final private JRadioButton buttonQWord = new JRadioButton("Qword");
+    final private JRadioButton buttonDWord = new JRadioButton("Dword");
+    final private JRadioButton buttonWord = new JRadioButton("Word");
+    final private JRadioButton buttonByte = new JRadioButton("Byte");
     final private JButton buttonFraction = new JButton("1/x");
-//    final private PercentButtonHandler perButtonHandler = new PercentButtonHandler();
     final private JButton buttonPercent = new JButton("%");
-    final private String SQRT = "\u221A";
-//    final private SquareRootButtonHandler sqrtButtonHandler = new SquareRootButtonHandler();
-    final private JButton buttonSqrt = new JButton(SQRT);
-
-    // programmer booleans
-//    boolean isButtonBinSet = true;
-//    boolean isButtonOctSet = false;
-//    boolean isButtonDecSet = false;
-//    boolean isButtonHexSet = false;
-//
-//    boolean isButtonByteSet = true;
-//    boolean isButtonWordSet = false;
-//    boolean isButtonDwordSet = false;
-//    boolean isButtonQwordSet = false;
-
-    public StringBuffer getConversion() { return conversion; }
-//    public String[] getTopQWord() { return topQWord; } 32 - 63 place bits not supported
-    public String[] getTopDWord() { return topDWord; }
+    final private JButton buttonSqrt = new JButton("\u221A");
     protected StringBuffer conversion = new StringBuffer();
-//    protected String[] topQWord = {"0","0","0","0","0","0","0","0","0","0","0","0",
-//                                "0","0","0","0","0","0","0","0","0","0","0","0",
-//                                "0","0","0","0","0","0","0","0","0"}; // 32 - 63 place bits not supported
-
-    protected String[] topDWord = {"0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"}; // 16 - 31 place bits
-    protected String[] word = {"0","0","0","0","0","0","0","0"};
-    private final String[] eightZeroes = {"0","0","0","0","0","0","0","0"}; // also know as a byte
-
     protected StandardCalculator_v3 calculator;
-    public Calculator_v3 getCalculator() { return calculator; }
-    private void setCalculator(StandardCalculator_v3 calculator) { this.calculator = calculator; }
-
-    static {
-        LOGGER = LogManager.getLogger(JPanelProgrammer_v3.class);
-    }
 
     public JPanelProgrammer_v3(StandardCalculator_v3 calculator) {
         setMinimumSize(new Dimension(600,400));
@@ -135,13 +81,13 @@ public class JPanelProgrammer_v3 extends JPanel {
             LOGGER.error(ce.getMessage());
         }
         setCalculator(calculator);
-        addComponentsToPanel_v3();
+        addComponentsToPanel_v3(calculator);
         //performCalculatorTypeSwitchOperations(); // this should be common to all faces
     }
-
     public JPanelProgrammer_v3() {}
 
-    // Prepare panel's objects
+    /************* Start of methods here ******************/
+
     public void setupPanel_v3(StandardCalculator_v3 calculator) throws Calculator_v3Error {
         LOGGER.info("Starting setupProgrammerPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
@@ -237,6 +183,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonNot.setFont(this.calculator.font);
         buttonNot.setPreferredSize(new Dimension(35,35));
         buttonNot.setBorder(new LineBorder(Color.BLACK));
+        buttonNot.addActionListener(action -> {
+            performButtonNotActions();
+        });
 
         buttonAnd.setFont(this.calculator.font);
         buttonAnd.setPreferredSize(new Dimension(35,35));
@@ -267,70 +216,51 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonF.setBorder(new LineBorder(Color.BLACK));
 
         // memory
-        buttonMC.setFont(this.calculator.font);
-        buttonMC.setPreferredSize(new Dimension(35, 35) );
-        buttonMC.setBorder(new LineBorder(Color.BLACK));
-        buttonMC.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryClear.setFont(this.calculator.font);
+        calculator.buttonMemoryClear.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
 
-        buttonMR.setFont(this.calculator.font);
-        buttonMR.setPreferredSize(new Dimension(35, 35) );
-        buttonMR.setBorder(new LineBorder(Color.BLACK));
-        buttonMR.setSize(new Dimension(5, 5) );
+        calculator.buttonMemoryRecall.setFont(this.calculator.font);
+        calculator.buttonMemoryRecall.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryRecall.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryRecall.setSize(new Dimension(5, 5) );
 
-        buttonMS.setFont(this.calculator.font);
-        buttonMS.setPreferredSize(new Dimension(35, 35) );
-        buttonMS.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryStore.setFont(this.calculator.font);
+        calculator.buttonMemoryStore.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
 
-        buttonMAdd.setFont(this.calculator.font);
-        buttonMAdd.setPreferredSize(new Dimension(35, 35) );
-        buttonMAdd.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryAddition.setFont(this.calculator.font);
+        calculator.buttonMemoryAddition.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryAddition.setBorder(new LineBorder(Color.BLACK));
 
-        buttonMSub.setFont(this.calculator.font);
-        buttonMSub.setPreferredSize(new Dimension(35, 35) );
-        buttonMSub.setBorder(new LineBorder(Color.BLACK));
-
-        // Remove components
-//        calculator.remove(calculator.buttonAdd);
-//        calculator.remove(calculator.buttonSubtract);
-//        calculator.remove(calculator.buttonMultiply);
-//        calculator.remove(calculator.buttonDivide);
-//        calculator.remove(calculator.buttonEquals);
+        calculator.buttonMemorySubtraction.setFont(this.calculator.font);
+        calculator.buttonMemorySubtraction.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemorySubtraction.setBorder(new LineBorder(Color.BLACK));
 
         LOGGER.info("End setupProgrammerPanel_v3() ");
     }
-
-    // prepare
-    public void addComponentsToPanel_v3() {
+    public void addComponentsToPanel_v3(StandardCalculator_v3 calculator) {
         LOGGER.info("Starting addComponentsToProgrammerPanel_v3");
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.insets = new Insets(0,9,0,9);
+        constraints.insets = new Insets(9,9,0,5);
         calculator.getTextArea().setBorder(new LineBorder(Color.BLACK));
         addComponent(calculator.getTextArea(), 0, 0, 8, 2);
         constraints.insets = new Insets(5,5,5,5);
+
         buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
-        this.calculator.button2.setEnabled(false);
-        this.calculator.button3.setEnabled(false);
-        this.calculator.button4.setEnabled(false);
-        this.calculator.button5.setEnabled(false);
-        this.calculator.button6.setEnabled(false);
-        this.calculator.button7.setEnabled(false);
-        this.calculator.button8.setEnabled(false);
-        this.calculator.button9.setEnabled(false);
-        this.calculator.buttonNegate.setEnabled(false);
         // add buttons to panel
         buttonGroup1ButtonPanel.add(buttonHex);
         buttonGroup1ButtonPanel.add(buttonDec);
         buttonGroup1ButtonPanel.add(buttonOct);
         buttonGroup1ButtonPanel.add(buttonBin);
-        buttonBin.addActionListener(binaryButtonHandler);
-        buttonOct.addActionListener(octalButtonHandler);
-        buttonDec.addActionListener(decimalButtonHandler);
-        buttonHex.addActionListener(hexidecimalButtonHandler);
-        //radioButtonPanel.setBorder(BorderFactory.createTitledBorder(""));
+        buttonBin.addActionListener(action -> {});
+        buttonOct.addActionListener(action -> {});
+        buttonDec.addActionListener(action -> {});
+        buttonHex.addActionListener(action -> {});
         Border border = buttonGroup1ButtonPanel.getBorder();
         Border margin = new TitledBorder("Base");
         buttonGroup1ButtonPanel.setBorder(new CompoundBorder(border, margin));
-        // add panel to Calculator
         addComponent(buttonGroup1ButtonPanel, 4, 0, 1, 4);
 
         buttonGroup2ButtonPanel.setLayout(new GridLayout(4,1)); //rows and columns
@@ -340,45 +270,40 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonGroup2ButtonPanel.add(buttonWord);
         buttonGroup2ButtonPanel.add(buttonByte);
 
-        buttonQWord.addActionListener(qwordButtonHandler);
-        buttonDWord.addActionListener(dwordButtonHandler);
-        buttonWord.addActionListener(dwordButtonHandler);
-        buttonByte.addActionListener(byteButtonHandler);
-        //allOtherButtonPanel.setBorder(BorderFactory.createTitledBorder(""));
+        buttonQWord.addActionListener(action -> {});
+        buttonDWord.addActionListener(action -> {});
+        buttonWord.addActionListener(action -> {});
+        buttonByte.addActionListener(action -> {});
         Border border2 = buttonGroup2ButtonPanel.getBorder();
         Border margin2 = new TitledBorder("Byte");
         buttonGroup2ButtonPanel.setBorder(new CompoundBorder(border2, margin2));
         // add panel to Calculator
         addComponent(buttonGroup2ButtonPanel, 8, 0, 1, 4);
 
-        //allOtherButtonsPanel.setBorder(BorderFactory.createLineBorder(Color.black)); // used to help me see the component on the gui
         constraints.insets = new Insets(5,0,1,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
         setComponent(button, 0, 0, 1, 1, otherButtonLayout);
         setComponent(buttonMod, 0, 1, 1, 1, otherButtonLayout);
         setComponent(buttonA, 0, 2, 1, 1, otherButtonLayout);
-        setComponent(buttonMC, 0, 3, 1, 1, otherButtonLayout);
-        setComponent(buttonMR, 0, 4, 1, 1, otherButtonLayout);
-        setComponent(buttonMS, 0, 5, 1, 1, otherButtonLayout);
-        setComponent(buttonMAdd, 0, 6, 1, 1, otherButtonLayout);
-        setComponent(buttonMSub, 0, 7, 1, 1, otherButtonLayout);
+        setComponent(calculator.buttonMemoryClear, 0, 3, 1, 1, otherButtonLayout);
+        setComponent(calculator.buttonMemoryRecall, 0, 4, 1, 1, otherButtonLayout);
+        setComponent(calculator.buttonMemoryStore, 0, 5, 1, 1, otherButtonLayout);
+        setComponent(calculator.buttonMemoryAddition, 0, 6, 1, 1, otherButtonLayout);
+        setComponent(calculator.buttonMemorySubtraction, 0, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(button);
         allOtherButtonsPanel.add(buttonMod);
         allOtherButtonsPanel.add(buttonA);
-        allOtherButtonsPanel.add(buttonMC);
-        allOtherButtonsPanel.add(buttonMR);
-        allOtherButtonsPanel.add(buttonMS);
-        allOtherButtonsPanel.add(buttonMAdd);
-        allOtherButtonsPanel.add(buttonMSub);
+        allOtherButtonsPanel.add(calculator.buttonMemoryClear);
+        allOtherButtonsPanel.add(calculator.buttonMemoryRecall);
+        allOtherButtonsPanel.add(calculator.buttonMemoryStore);
+        allOtherButtonsPanel.add(calculator.buttonMemoryAddition);
+        allOtherButtonsPanel.add(calculator.buttonMemorySubtraction);
 
         setComponent(buttonLPar, 1, 0, 1, 1, otherButtonLayout);
         setComponent(buttonRPar, 1, 1, 1, 1, otherButtonLayout);
         setComponent(buttonB, 1, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.buttonDelete, 1, 3, 1, 1, otherButtonLayout);
-//        calculator.buttonDelete.addActionListener(calculator.deleteButtonHandler);
         setComponent(calculator.buttonClearEntry, 1, 4, 1, 1, otherButtonLayout);
-//        calculator.buttonClearEntry.addActionListener(calculator.clearEntryButtonHandler);
         setComponent(calculator.buttonClear, 1, 5, 1, 1, otherButtonLayout);
-//        calculator.buttonClear.addActionListener(calculator.clearButtonHandler);
         setComponent(calculator.buttonNegate, 1, 6, 1, 1, otherButtonLayout);
         setComponent(buttonSqrt, 1, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(buttonLPar);
@@ -394,13 +319,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonRor, 2, 1, 1, 1, otherButtonLayout);
         setComponent(buttonC, 2, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button7, 2, 3, 1, 1, otherButtonLayout);
-        //calculator.button7.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button8, 2, 4, 1, 1, otherButtonLayout);
-        //calculator.button8.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button9, 2, 5, 1, 1, otherButtonLayout);
-        //calculator.button9.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonDivide, 2, 6, 1, 1, otherButtonLayout);
-//        calculator.buttonDivide.addActionListener(calculator.divideButtonHandler);
         setComponent(buttonPercent, 2, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(buttonRol);
         allOtherButtonsPanel.add(buttonRor);
@@ -415,13 +336,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonXor, 3, 1, 1, 1, otherButtonLayout);
         setComponent(buttonD, 3, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button4, 3, 3, 1, 1, otherButtonLayout);
-        //calculator.button4.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button5, 3, 4, 1, 1, otherButtonLayout);
-        //calculator.button5.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button6, 3, 5, 1, 1, otherButtonLayout);
-        //calculator.button6.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonMultiply, 3, 6, 1, 1, otherButtonLayout);
-//        calculator.buttonMultiply.addActionListener(calculator.multiplyButtonHandler);
         setComponent(buttonFraction, 3, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(buttonOr);
         allOtherButtonsPanel.add(buttonXor);
@@ -436,13 +353,9 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonRSh, 4, 1, 1, 1, otherButtonLayout);
         setComponent(buttonE, 4, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button1, 4, 3, 1, 1, otherButtonLayout);
-        //calculator.button1.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button2, 4, 4, 1, 1, otherButtonLayout);
-        //calculator.button2.addActionListener(calculator.buttonHandler);
         setComponent(calculator.button3, 4, 5, 1, 1, otherButtonLayout);
-        //calculator.button3.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonSubtract, 4, 6, 1, 1, otherButtonLayout);
-//        calculator.buttonSubtract.addActionListener(calculator.subtractButtonHandler);
         setComponent(calculator.buttonEquals, 4, 7, 1, 2, otherButtonLayout);
         allOtherButtonsPanel.add(buttonLSh);
         allOtherButtonsPanel.add(buttonRSh);
@@ -457,14 +370,8 @@ public class JPanelProgrammer_v3 extends JPanel {
         setComponent(buttonAnd, 5, 1, 1, 1, otherButtonLayout);
         setComponent(buttonF, 5, 2, 1, 1, otherButtonLayout);
         setComponent(calculator.button0, 5, 3, 2, 1, otherButtonLayout);
-        //calculator.button0.addActionListener(calculator.buttonHandler);
         setComponent(calculator.buttonDot, 5, 5, 1, 1, otherButtonLayout);
         setComponent(calculator.buttonAdd, 5, 6, 1, 2, otherButtonLayout);
-        // set actions on buttons
-//        calculator.buttonAdd.addActionListener(calculator.addButtonHandler);
-        buttonNot.addActionListener(actionEvent -> {
-            performButtonNotActions();
-        });
 
         allOtherButtonsPanel.add(buttonNot);
         allOtherButtonsPanel.add(buttonAnd);
@@ -473,10 +380,10 @@ public class JPanelProgrammer_v3 extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonDot);
         allOtherButtonsPanel.add(calculator.buttonAdd);
         // add allOtherButtonsPanel to gui
+        constraints.insets = new Insets(0, 0, 5, 0);
         addComponent(allOtherButtonsPanel, 5, 1, 6, 8, programmerLayout);
         LOGGER.info("Finished addComponentsToProgrammerPanel_v3");
     }
-
     public void setButtonGroup2Mode() {
         calculator.isButtonBinSet = false;
         calculator.isButtonOctSet = false;
@@ -501,7 +408,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         programmerLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
-
     public void addComponent(Component c, int row, int column, int gwidth, int gheight, GridBagLayout layout) {
         constraints.gridx = column;
         constraints.gridy = row;
@@ -510,7 +416,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         layout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
-
     public void setComponent(Component c, int row, int column, int gwidth, int gheight, GridBagLayout layout) {
         constraints.gridx = column;
         constraints.gridy = row;
@@ -548,7 +453,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToBinary();
         }
     }
-
     public class ButtonOctHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -572,7 +476,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToOctal();
         }
     }
-
     public class ButtonDecHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -596,7 +499,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToDecimal();
         }
     }
-
     public class ButtonHexidecimalHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -620,7 +522,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToHexadecimal();
         }
     }
-
     public class ButtonByteHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -632,7 +533,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class ButtonWordHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -643,7 +543,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class ButtonDWordHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -654,7 +553,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class ButtonQWordHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -665,7 +563,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class OctalButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -689,7 +586,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToOctal();
         }
     }
-
     public class DecimalButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -713,7 +609,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToDecimal();
         }
     }
-
     public class HexidecimalButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -737,7 +632,6 @@ public class JPanelProgrammer_v3 extends JPanel {
                 convertToHexadecimal();
         }
     }
-
     public class ByteButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -749,7 +643,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class WordButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -760,7 +653,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class DWordButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -771,7 +663,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public class QWordButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -782,14 +673,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
-//    public int setBytes() {
-//        if (isButtonByteSet) { return 8; }
-//        else if (isButtonWordSet) { return 16; }
-//        else if (isButtonDwordSet) { return 32; }
-//        else if (isButtonQwordSet) { return 64; }
-//        else { return 0; } // shouldn't ever come here
-//    }
 
     public void performButtonNotActions() {
         LOGGER.info("performing not operation...");
@@ -808,7 +691,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         calculator.getTextArea().setText("\n"+calculator.textarea.toString());
         LOGGER.info("not operation completed.");
     }
-
     public void performButtonOrActions(ActionEvent action) throws Calculator_v3Error {
         LOGGER.info("performOrLogic starts here");
         LOGGER.info("button: " + action.getActionCommand());
@@ -859,47 +741,6 @@ public class JPanelProgrammer_v3 extends JPanel {
 //            calculator.convertAllValuesToBinary();
         }
     }
-
-//    // TODO: add string parameter to tell method how to convert
-//    public void convertConversion(String howToConvert) {
-//        LOGGER.info("convertConversion: " + howToConvert);
-//        LOGGER.info("conversion: " + conversion.reverse());
-//        StringBuffer temp = new StringBuffer();
-//        if (howToConvert.equals("notOperator")) {
-//            for (int i=0; i<conversion.length(); i++) {
-//                if (conversion.charAt(i) == '0')
-//                    temp.append("1");
-//                else
-//                    temp.append("0");
-//            }
-//        }
-//        // reverse so printed out correctly
-//        conversion = temp;
-//        LOGGER.info("converted: " + conversion.toString());
-//    }
-
-    // TODO: add string parameter to tell method how to convert
-    public void convertTopDWord(String howToConvert) {
-        LOGGER.info("convertTopDWord: " + howToConvert);
-        if (howToConvert.equals("notOperator")) {
-            for (int i=0; i<topDWord.length; i++) {
-                topDWord[i] = (topDWord[i] == "0") ? "1" : "0";
-            }
-        }
-        LOGGER.info("converted: " + Arrays.toString(topDWord));
-    }
-
-    // TODO: add string parameter to tell method how to convert
-//    public void convertTopQWord(String howToConvert) {
-//        LOGGER.info("convertTopQWord: " + howToConvert);
-//        if (howToConvert.equals("notOperator")) {
-//            for (int i=0; i<topQWord.length; i++) {
-//                topQWord[i] = (topQWord[i] == "0") ? "1" : "0";
-//            }
-//        }
-//        LOGGER.info("converted: " + Arrays.toString(topQWord)); // converted: [Ljava.lang.String;@7d3b89f1
-//    }
-
     public void convertFromTypeToType(String type1, String type2) {
         if (type1.equals("Binary") && type2.equals("Decimal")) {
             // converting both numbers in values if applicable
@@ -937,7 +778,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
         }
     }
-
     public String convertToBinary(String valueToConvert) {
         conversion = new StringBuffer();
         int number = 0;
@@ -973,7 +813,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         conversion = new StringBuffer();
         return strToReturn;
     }
-
     public void convertToBinary() {
         LOGGER.info("convertToBinary started");
         LOGGER.info("textarea: " + calculator.textarea);
@@ -1059,7 +898,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
         LOGGER.info("convertToBinary finished");
     }
-
     public void convertToOctal() {
         if (calculator.isButtonBinSet == true) {
             // logic for Binary to Octal
@@ -1069,7 +907,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             // logic for Hexadecimal to Octal
         }
     }
-
     public void convertToDecimal() {
         if (calculator.isButtonBinSet == true) {
             // logic for Binary to Decimal
@@ -1079,7 +916,6 @@ public class JPanelProgrammer_v3 extends JPanel {
             // logic for Hexadecimal to Decimal
         }
     }
-
     public void convertToHexadecimal() {
         if (calculator.isButtonBinSet == true) {
             // logic for Binary to Hexadecimal
@@ -1089,9 +925,7 @@ public class JPanelProgrammer_v3 extends JPanel {
             // logic for Decimal to Hexadecimal
         }
     }
-
     public void convertTextArea() {
-//        LOGGER.info("Converting TextArea");
         calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters().strip());
         if (calculator.getCalcType() == CalcType_v3.BASIC) {
             // decimal to binary
@@ -1107,7 +941,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         else {
             LOGGER.info("Current CalcType is: " + calculator.getCalcType());
         }
-//        LOGGER.info("TextArea converted");
     }
     /**
      * This method handles the logic when we switch from any type of calculator
@@ -1127,7 +960,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         LOGGER.info("Finished performCalculatorTypeSwitchOperations\n");
         calculator.confirm("");
     }
-
     public void setButtons2To9(boolean isEnabled) {
         calculator.button2.setEnabled(isEnabled);
         calculator.button3.setEnabled(isEnabled);
@@ -1139,4 +971,10 @@ public class JPanelProgrammer_v3 extends JPanel {
         calculator.button9.setEnabled(isEnabled);
     }
 
+
+    /************* All Getters and Setters ******************/
+
+    public StringBuffer getConversion() { return conversion; }
+    public Calculator_v3 getCalculator() { return calculator; }
+    private void setCalculator(StandardCalculator_v3 calculator) { this.calculator = calculator; }
 }

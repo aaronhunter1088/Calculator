@@ -20,15 +20,9 @@ public class CalculatorMain_v3 {
 		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");
     	//Calculator calculator = new Calculator();
 		initLookAndFeel("Metal");
-		
-		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		calculator.setLocation(750, 250);
-		//calculator.setupMenuBar();
         SwingUtilities.updateComponentTreeUI(calculator);
-        calculator.pack();
-        calculator.setVisible(true);
-        calculator.confirm();
-        LOGGER.info("End main()\n");
+		calculator.setLocation(750, 250);
+        calculator.confirm("Calculator started. Initial state");
     }
     
     private static void initLookAndFeel(String lookAndFeel) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
