@@ -86,9 +86,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         basic.setFont(this.font);
         viewMenu.add(basic);
         basic.addActionListener(action -> {
-            JPanelBasic_v3 p = new JPanelBasic_v3(this);
-            performTasksWhenChangingJPanels(p, CalcType_v3.BASIC.getName());
-            p.performCalculatorTypeSwitchOperations();
+//            JPanelBasic_v3 p = new JPanelBasic_v3(this);
+            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC.getName());
+//            p.performCalculatorTypeSwitchOperations();
         });
 
         JMenuItem programmer = new JMenuItem("Programmer");
@@ -96,9 +96,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         viewMenu.add(programmer);
         programmer.addActionListener(action -> {
             //calcType = CalcType_v3.PROGRAMMER;
-            JPanelProgrammer_v3 p = new JPanelProgrammer_v3(this);
-            performTasksWhenChangingJPanels(p, CalcType_v3.PROGRAMMER.getName());
-            p.performCalculatorTypeSwitchOperations();
+//            JPanelProgrammer_v3 p = new JPanelProgrammer_v3(this);
+            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER.getName());
+//            p.performCalculatorTypeSwitchOperations();
         });
 
         this.bar.add(viewMenu); // add viewMenu to menu bar
@@ -850,6 +850,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         setCurrentPanel(currentPanel);
         super.setTitle(title);
         add(getCurrentPanel());
+
+        if (currentPanel instanceof JPanelBasic_v3) { ((JPanelBasic_v3)currentPanel).performCalculatorTypeSwitchOperations(); }
+        if (currentPanel instanceof JPanelProgrammer_v3) { ((JPanelProgrammer_v3)currentPanel).performCalculatorTypeSwitchOperations(); }
+
         pack();
     }
     public void convertAllValuesToDecimal() {

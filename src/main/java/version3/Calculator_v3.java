@@ -337,20 +337,26 @@ public abstract class Calculator_v3 extends JFrame {
         dotButtonPressed = isDecimal(textarea.toString());
         clearNewLineFromTextArea();
         updateTextareaFromTextArea();
-        if (addBool == false && subBool == false && mulBool == false && divBool == false) {
-            if (numberIsNegative == false) {
+        if (addBool == false && subBool == false && mulBool == false && divBool == false)
+        {
+            if (numberIsNegative == false)
+            {
                 // if no operator has been pushed; number is positive; number is whole
-                if (getDotButtonPressed() == false) {
-                    if (textarea.length() == 1) { // ex: 5
-                        textarea = new StringBuffer(); //.append("0");
+                if (getDotButtonPressed() == false)
+                {
+                    if (textarea.length() == 1)
+                    { // ex: 5
+                        getTextArea().setText("");
+                        textarea = new StringBuffer().append(" ");
+                        values[valuesPosition] = "";
                     }
-                    else if (textarea.length() >= 2) { // ex: 56 or 2346
-
+                    else if (textarea.length() >= 2)
+                    { // ex: 56 or 2346
                         textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-1));
+                        getTextArea().setText(addNewLineCharacters(1)+String.valueOf(textarea));
+                        values[valuesPosition] = textarea.toString();
                     }
-                    LOGGER.info("output: '" + textarea.toString().replaceAll("\n","") + "'");
-                    values[valuesPosition] = textarea.toString();
-                    getTextArea().setText("\n"+textarea);
+                    LOGGER.debug("result: '" + textarea.toString().replaceAll("\n","") + "'");
                 }
                 // if no operator has been pushed; number is positive; number is decimal
                 else if (getDotButtonPressed()) {
@@ -417,7 +423,8 @@ public abstract class Calculator_v3 extends JFrame {
             }
 
         }
-        else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+        else if (addBool == true || subBool == true || mulBool == true || divBool == true)
+        {
             if (numberIsNegative == false) {
                 // if an operator has been pushed; number is positive; number is whole
                 if (dotButtonPressed == false) {
@@ -645,10 +652,11 @@ public abstract class Calculator_v3 extends JFrame {
             checkFound = true;
         }
 	    else if (textAreaContainsBadText()) {
-            textArea.setText("");
+            textArea.setText(addNewLineCharacters(1)+"0");
             valuesPosition = 0;
             firstNumBool = true;
             dotButtonPressed = false;
+            numberIsNegative = false;
             checkFound = true;
         }
         else if (textArea.getText().equals("\n0") && getCalcType().equals(CalcType_v3.BASIC)) {
@@ -892,10 +900,10 @@ public abstract class Calculator_v3 extends JFrame {
      */
     public boolean textAreaContainsBadText() {
         boolean result = false;
-        if (textArea.getText().equals("Invalid textarea")   ||
-                textArea.getText().equals("Cannot divide by 0") ||
-                textArea.getText().replace("\n","").equals("Not a Number") ) {
-
+        if (getTextAreaWithoutNewLineCharacters().equals("Invalid textarea")   ||
+            getTextAreaWithoutNewLineCharacters().equals("Cannot divide by 0") ||
+            getTextAreaWithoutNewLineCharacters().equals("Not a Number")       ||
+            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers")) {
             result = true;
         }
         return result;
@@ -1223,7 +1231,7 @@ public abstract class Calculator_v3 extends JFrame {
     public boolean isNumberOneNegative() { return numberOneNegative; }
     public boolean isNumberTwoNegative() { return numberTwoNegative; }
     public boolean isNumberThreeNegative() { return numberThreeNegative; }
-    public boolean isNumberIsNegative() { return numberIsNegative; }
+    public boolean isNumberNegative() { return numberIsNegative; }
     public boolean isMemorySwitchBool() { return memorySwitchBool; }
     public boolean isAddBool() { return addBool; }
     public boolean isSubBool() { return subBool; }

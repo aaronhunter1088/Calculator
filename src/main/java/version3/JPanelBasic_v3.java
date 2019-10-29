@@ -37,7 +37,7 @@ public class JPanelBasic_v3 extends JPanel {
         setupPanel_v3(calculator);
         setCalculator(calculator);
         addComponentsToPanel_v3();
-        //performCalculatorTypeSwitchOperations();
+        performCalculatorTypeSwitchOperations();
     }
 
     /************* Start of methods here ******************/
@@ -335,7 +335,16 @@ public class JPanelBasic_v3 extends JPanel {
         String operator = null;
         boolean operatorIncluded = false;
         boolean isNumberTrulyNegative = false;
-        if (calculator.textarea.length() < appropriateLength) {
+        if (Integer.valueOf(calculator.textarea.toString()) == 0 ||
+            calculator.textarea.toString().equals("") )
+        {
+            calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+"0");
+            calculator.updateTextareaFromTextArea();
+            calculator.values[calculator.valuesPosition] = "0";
+            return; // force out
+        }
+        else if (calculator.textarea.length() < appropriateLength)
+        {
             LOGGER.debug("textarea, " + calculator.textarea + ", is too short. adding missing zeroes");
             // user had entered 101, which really is 00000101
             // but they aren't showing the first 5 zeroes
@@ -403,6 +412,7 @@ public class JPanelBasic_v3 extends JPanel {
         //LOGGER.info("Converting TextArea");
         if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
             LOGGER.info("Going from binary to decimal...");
+            calculator.performInitialChecks();
             convertToDecimal();
         }
         else
