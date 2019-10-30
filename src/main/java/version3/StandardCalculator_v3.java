@@ -39,6 +39,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
     private Calculator_v3 calculator;
+    //TODO: Think about it... move class specific booleans here
 
     public StandardCalculator_v3() throws HeadlessException {
 		// TODO Auto-generated constructor stub
@@ -86,19 +87,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         basic.setFont(this.font);
         viewMenu.add(basic);
         basic.addActionListener(action -> {
-//            JPanelBasic_v3 p = new JPanelBasic_v3(this);
-            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC.getName());
-//            p.performCalculatorTypeSwitchOperations();
+            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC);
         });
 
         JMenuItem programmer = new JMenuItem("Programmer");
         programmer.setFont(this.font);
         viewMenu.add(programmer);
         programmer.addActionListener(action -> {
-            //calcType = CalcType_v3.PROGRAMMER;
-//            JPanelProgrammer_v3 p = new JPanelProgrammer_v3(this);
-            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER.getName());
-//            p.performCalculatorTypeSwitchOperations();
+            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER);
         });
 
         this.bar.add(viewMenu); // add viewMenu to menu bar
@@ -313,13 +309,23 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
         add(getCurrentPanel());
 	}
+    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v3 calcType_v3) {
+	    setTitle(calcType_v3.getName());
+        JPanel oldPanel = updateJPanel(currentPanel);
+        // don't switch calc_types here; later...
+        if (getCurrentPanel() instanceof JPanelBasic_v3) { ((JPanelBasic_v3)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel); }
+        if (getCurrentPanel() instanceof JPanelProgrammer_v3) { ((JPanelProgrammer_v3)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations(); }
+
+        pack();
+    }
 
     public void performAdditionButtonActions(ActionEvent action) {
-        LOGGER.info("AddButtonHandler started");
+        LOGGER.info("AddButtonActions started");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
+                !textArea.getText().equals("") && !calculator.textAreaContainsBadText())
+        {
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             textArea.setText("\n" + " " + buttonChoice + " " + textarea);
             LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
@@ -366,6 +372,16 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         numberIsNegative = false;
+
+        // make sure no matter the mode, values[0] and values[1] are numbers
+        if (getCalcType() == CalcType_v3.PROGRAMMER) {
+            if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isEnabled()) {
+
+            }
+            else {
+                convertAllValuesToDecimal();
+            }
+        }
         confirm("");
     }
     public void addition() {
@@ -421,8 +437,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 //            convertFromTypeToType("Binary", "Decimal");
             // run add
             addition();
-//            values[0] = p.convertToBinary(calculator.values[0]);
-            textArea.setText("\n" + convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0]);
         }
     }
 
@@ -478,6 +492,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         numberIsNegative = false;
+        convertAllValuesToDecimal();
         confirm();
     }
     public void subtract() {
@@ -586,6 +601,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         dotButtonPressed = false;
+        convertAllValuesToDecimal();
         confirm();
     }
     public void multiply() {
@@ -629,14 +645,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performDivideButtonActions(ActionEvent action) {
+    public void performDivideButtonActions(ActionEvent action)
+    {
         LOGGER.info("performDivideButtonActions started");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
 //            convertAllValuesToDecimal();
         if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textArea.getText().equals("") && !textArea.getText().equals("Invalid textarea") &&
-                !textArea.getText().equals("Cannot divide by 0")) {
+                !textAreaContainsBadText())
+        {
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             textArea.setText("\n" + " " + buttonChoice + " " + textarea);
@@ -647,7 +664,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             dotButtonPressed = false;
             valuesPosition++; // increase valuesPosition for storing textarea
         }
-        else if (addBool == true && !values[1].equals("")) {
+        else if (addBool == true && !values[1].equals(""))
+        {
             addition(calculator.getCalcType());
             addBool = resetOperator(addBool); // sets addBool to false
             divBool = true;
@@ -662,7 +680,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             mulBool = resetOperator(mulBool);
             divBool = true;
         }
-        else if (divBool == true && !values[1].equals("") & !values[1].equals("0")) {
+        else if (divBool == true && !values[1].equals("") & !values[1].equals("0"))
+        {
             divide(calculator.getCalcType());
             divBool = resetOperator(divBool);
             divBool = true;
@@ -682,12 +701,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         dotButtonPressed = false;
+        convertAllValuesToDecimal();
         confirm();
     }
     public void divide() {
         LOGGER.info("value[0]: '" + values[0] + "'");
         LOGGER.info("value[1]: '" + values[1] + "'");
-        if (!values[1].equals("0")) { 
+        if (!values[1].equals("0"))
+        {
             // if the second number is not zero, divide as usual
             double result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]); // create result forced double
             // TODO: fix logic here to tie in with existing logic above
@@ -725,7 +746,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
 
 
-        } else if (values[1].equals("0")) {
+        }
+        else if (values[1].equals("0")) {
             java.lang.String result = "0";
             LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
             textArea.setText("\nCannot divide by 0");
@@ -737,7 +759,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         if (calcType_v3.equals(CalcType_v3.BASIC)) {
             divide();
         }
-        else if (calcType_v3.equals(CalcType_v3.PROGRAMMER)) {
+        else if (calcType_v3.equals(CalcType_v3.PROGRAMMER))
+        {
 //            convertFromTypeToType("Binary", "Decimal");
             divide();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
@@ -745,13 +768,42 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performButtonEqualsActions(ActionEvent action) throws Calculator_v3Error {
+    public void performButtonEqualsActions(ActionEvent action) throws Calculator_v3Error
+    {
         LOGGER.info("performButtonEqualsActions");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (!getCalcType().equals(CalcType_v3.BASIC)) {
-            convertAllValuesToDecimal();
+        if (getCalcType() == CalcType_v3.BASIC)
+        {
+
         }
+        else if (getCalcType() == CalcType_v3.PROGRAMMER)
+        {
+            if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected()) {
+                values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
+            }
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonOct().isSelected()) {
+                values[1] = convertFromTypeToTypeOnValues("Octal", "Decimal", values[1])[0];
+            }
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected()) {
+//                addition(CalcType_v3.BASIC);
+//                textArea.setText("\n" + values[0]);
+//                values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
+//                updateTextareaFromTextArea();
+//                firstNumBool = true;
+//                dotButtonPressed = false;
+//                // TODO: Not a todo, but I did that so this would stand out. It's more an important note
+//                // TODO: values[0], values[1], values[2] should always be in decimal form.
+//                confirm("");
+//                return;
+                // DO NOTHING
+            }
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected()) {
+                values[1] = convertFromTypeToTypeOnValues("Hexidecimal", "Decimal", values[1])[0];
+            }
+        }
+
+        //TODO: add more calculator types here
 
         if (addBool) {
             addition(calculator.getCalcType()); // addition();
@@ -783,6 +835,17 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             JPanelProgrammer_v3 p = (JPanelProgrammer_v3) getCurrentPanelFromParentCalculator();
             p.performButtonOrActions(action);
         }
+        else if (modButtonBool) {
+            LOGGER.info("Modulus result");
+            ((JPanelProgrammer_v3)getCurrentPanel()).performModulus();
+            getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+
+                    getCalculator().getValues()[0]);
+            updateTextareaFromTextArea();
+            valuesPosition = 0;
+            modButtonBool = false;
+        }
+
+//        textArea.setText("\n" + convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0]);
         values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
         updateTextareaFromTextArea();
         firstNumBool = true;
@@ -845,16 +908,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
      *        set the mode of the calculator
      *        perform setup tasks based on mode
      */
-    public void performTasksWhenChangingJPanels(JPanel currentPanel, String title) {
+
+    public JPanel updateJPanel(JPanel currentPanel) {
+        JPanel oldPanel = getCurrentPanel();
         remove(getCurrentPanel());
         setCurrentPanel(currentPanel);
-        super.setTitle(title);
         add(getCurrentPanel());
-
-        if (currentPanel instanceof JPanelBasic_v3) { ((JPanelBasic_v3)currentPanel).performCalculatorTypeSwitchOperations(); }
-        if (currentPanel instanceof JPanelProgrammer_v3) { ((JPanelProgrammer_v3)currentPanel).performCalculatorTypeSwitchOperations(); }
-
-        pack();
+        return oldPanel;
     }
     public void convertAllValuesToDecimal() {
         if (getCalcType().equals(CalcType_v3.PROGRAMMER))
@@ -874,6 +934,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
     public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings) {
+        LOGGER.debug("convertFromTypeToTypeOnValues(from: '"+type1+"', "+ "to: '"+type2+"' + " + Arrays.toString(strings));
         String[] arrToReturn = new String[strings.length];
         int countOfStrings = 0;
         if (StringUtils.isEmpty(strings[0])) return new String[]{""};
@@ -888,7 +949,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                     number = Integer.parseInt(str);
                     LOGGER.debug("number: " + number);
                     int i = 0;
-                    while (i < Integer.parseInt(str)) {
+                    while (i <= Integer.parseInt(str)) {
                         if (number % 2 == 0) {
                             sb.append("0");
                         } else {

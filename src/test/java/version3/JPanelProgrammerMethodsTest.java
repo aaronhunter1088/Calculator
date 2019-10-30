@@ -4,12 +4,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -22,7 +20,6 @@ public class JPanelProgrammerMethodsTest {
     private String number;
     private boolean result;
 
-    @Spy
     private static JPanelProgrammer_v3 p;
 
     @Mock
@@ -35,6 +32,7 @@ public class JPanelProgrammerMethodsTest {
         c.setCalcType(CalcType_v3.PROGRAMMER);
         c.firstNumBool = true;
         p = new JPanelProgrammer_v3(c);
+        c.setCurrentPanel(p);
     }
 
     @Test
@@ -67,23 +65,26 @@ public class JPanelProgrammerMethodsTest {
         //4. Press equals.
         //5. Textarea displays proper sum in 8 bit form
         c.getTextArea().setText("");
-        c.textarea = new StringBuffer();
+        c.setTextarea(new StringBuffer());
+        c.setCalcType(CalcType_v3.PROGRAMMER);
+        c.setFirstNumBool(true);
         when(ae.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("1").thenReturn("0").thenReturn("1") //5
                                    .thenReturn("+")
                                    .thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("0").thenReturn("1").thenReturn("1") //3
                                    .thenReturn("=");
-        for(int i=1; i<=8; i++) { c.getNumberButtonHandler_v2().actionPerformed(ae); }
+        c.valuesPosition = 0;
+        for(int i=1; i<=8; i++) { c.performNumberButtonActions(ae); }
 
-        c.clearNewLineFromTextArea();
-        assertEquals("textArea not as expected", "00000101", c.getTextArea().getText());
+        assertEquals("textArea not as expected", "00000101", c.getTextAreaWithoutNewLineCharacters());
 
-        c.getAddButtonHandler().actionPerformed(ae);
+        c.performAdditionButtonActions(ae);
+        assertTrue("Values[0] should not match "+c.getTextArea(), !(String.valueOf(c.values[0]).equals(c.getTextAreaWithoutNewLineCharacters())));
         c.clearNewLineFromTextArea();
         assertEquals("plus operator not appended", " + 00000101", c.getTextArea().getText());
 
-        for(int i=1; i<=8; i++) { c.getNumberButtonHandler_v2().actionPerformed(ae); }
+        for(int i=1; i<=8; i++) { c.performNumberButtonActions(ae); }
         c.clearNewLineFromTextArea();
         assertEquals("textArea not as expected", "00000011", c.getTextArea().getText());
 
@@ -112,6 +113,55 @@ public class JPanelProgrammerMethodsTest {
         p.performButtonOrActions(ae);
 
         assertEquals("TextArea not showing expected result", "00000111", c.getTextAreaWithoutNewLineCharacters());
+    }
+
+    @Test
+    public void testPushingModulusButtonWithOneInputReturnsZero() {
+        when(ae.getActionCommand()).thenReturn("Mod");
+
+        String number = "00000101"; //5
+        c.getTextArea().setText(c.addNewLineCharacters(1)+number);
+        c.updateTextareaFromTextArea();
+        c.values[0] = "5";
+        c.values[1] = "";
+        c.valuesPosition = 0;
+        p.performButtonModActions(ae);
+
+        assertEquals("TextArea not as expected!", number+" Mod", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("Textarea not updated!", number+" Mod", String.valueOf(c.getTextarea()));
+        assertTrue("Values["+c.getValuesPosition()+"] should not match "+c.getTextArea(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharacters()));
+    }
+
+    @Test
+    public void testPushingModulusButtonWithBothValuesSetReturnsProperResult() throws Calculator_v3Error {
+        when(ae.getActionCommand()).thenReturn("Mod").thenReturn("=");
+
+        c.getTextArea().setText("\n00000100");
+        c.values[0] = "4";
+        c.values[1] = "";
+        c.confirm("Entered 4");
+
+        p.performButtonModActions(ae);
+
+        String number = "00000011"; //3
+        c.getTextArea().setText(c.addNewLineCharacters(1)+number);
+        c.updateTextareaFromTextArea();
+        c.valuesPosition = 1;
+        //below is required
+        c.values[1] = number;
+
+        c.performButtonEqualsActions(ae);
+
+        verify(ae, times(2)).getActionCommand();
+        assertEquals("TextArea not as expected!", "00000001", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("Textarea not updated!", "00000001", String.valueOf(c.getTextarea()));
+        assertTrue("Values["+0+"] should not match "+c.getTextAreaWithoutNewLineCharacters(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharacters()));
+        assertEquals("Values["+0+"] not as expected", 1, Integer.parseInt(c.values[0]));
+    }
+
+    @Test
+    public void testPushingOrButtonWithOneInput() {
+
     }
 
 

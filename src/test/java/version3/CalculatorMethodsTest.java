@@ -87,26 +87,26 @@ public class CalculatorMethodsTest {
     @Test
     public void testDeleteButtonFunctionality() {
         c.getTextArea().setText("\n35");
-        Calculator_v3.DeleteButtonHandler handler = c.getDeleteButtonHandler();
+//        Calculator_v3.DeleteButtonHandler handler = c.getDeleteButtonHandler();
         when(ae.getActionCommand()).thenReturn("DEL");
-        handler.actionPerformed(ae);
+        c.performDeleteButtonActions(ae);
         assertEquals("Text area does not equal 3", "\n3", c.getTextArea().getText());
     }
 
     @Test
     public void pressingDotButtonFirstReturns0DotFromTextarea() {
-        Calculator_v3.DotButtonHandler handler = c.getDotButtonHandler();
+//        Calculator_v3.DotButtonHandler handler = c.getDotButtonHandler();
         when(ae.getActionCommand()).thenReturn(".");
-        handler.actionPerformed(ae);
+        c.performDotButtonActions(ae);
         assertEquals("textarea is not as expected", "\n0.", "\n"+c.textarea);
         assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
     }
 
     @Test
     public void pressingDotButtonFirstReturns0DotFromTextArea() {
-        Calculator_v3.DotButtonHandler handler = c.getDotButtonHandler();
+//        Calculator_v3.DotButtonHandler handler = c.getDotButtonHandler();
         when(ae.getActionCommand()).thenReturn(".");
-        handler.actionPerformed(ae);
+        c.performDotButtonActions(ae);
         assertEquals("TextArea is not as expected", "\n.0", c.getTextArea().getText());
         assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
     }
@@ -114,18 +114,18 @@ public class CalculatorMethodsTest {
     @Test
     public void pressingDotButtonAfterNumberButtonReturnsNumberDot() {
         c.getTextArea().setText("5");
-        Calculator_v3.DotButtonHandler handler = c.getDotButtonHandler();
+//        Calculator_v3.DotButtonHandler handler = c.getDotButtonHandler();
         when(ae.getActionCommand()).thenReturn(".");
-        handler.actionPerformed(ae);
+        c.performDotButtonActions(ae);
         assertEquals("TextArea is not as expected", "\n.5", c.getTextArea().getText());
         assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
     }
 
     @Test
     public void pressingClearRestoresCalculatorToStartFunctionality() {
-        Calculator_v3.ClearButtonHandler handler = c.getClearButtonHandler();
+//        Calculator_v3.ClearButtonHandler handler = c.getClearButtonHandler();
         when(ae.getActionCommand()).thenReturn("C");
-        handler.actionPerformed(ae);
+        c.performClearButtonActions(ae);
         for ( int i=0; i<3; i++) {
             assertTrue("Values@"+i+" is not blank", StringUtils.isBlank(c.values[i]));
         }
@@ -144,9 +144,9 @@ public class CalculatorMethodsTest {
     @Test
     public void pressingClearEntryClearsJustTheTextArea() {
         c.getTextArea().setText("1088");
-        Calculator_v3.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
+//        Calculator_v3.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
-        handler.actionPerformed(ae);
+        c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));
         assertTrue("textarea was not cleared", StringUtils.isBlank(c.textarea));
     }
@@ -154,9 +154,9 @@ public class CalculatorMethodsTest {
     @Test
     public void pressingClearEntryAfterPressingAnOperatorResetsTextAreaAndOperator() {
         c.getTextArea().setText("1088 +");
-        Calculator_v3.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
+//        Calculator_v3.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
-        handler.actionPerformed(ae);
+        c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));
         assertTrue("textarea was not cleared", StringUtils.isBlank(c.textarea));
         assertFalse("addBool expected to be false", c.addBool);

@@ -96,6 +96,7 @@ public abstract class Calculator_v3 extends JFrame {
     boolean isButtonDwordSet = false;
     boolean isButtonQwordSet = false;
     protected boolean orButtonBool = false;
+    protected boolean modButtonBool = false;
 
 	public Calculator_v3() throws HeadlessException {
 		super();
@@ -263,17 +264,20 @@ public abstract class Calculator_v3 extends JFrame {
         layout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
-    public void performNumberButtonActions(ActionEvent action) {
+    public void performNumberButtonActions(ActionEvent action)
+    {
         LOGGER.info("NumberButtonHandler_v2 started");
         String buttonChoice = action.getActionCommand();
         LOGGER.debug("button: " + buttonChoice);
         if (getCalcType() == CalcType_v3.BASIC) {
             performBasicCalculatorNumberButtonActions(buttonChoice);
         }
-        else if (getCalcType() == CalcType_v3.PROGRAMMER) {
+        else if (getCalcType() == CalcType_v3.PROGRAMMER)
+        {
             performProgrammerCalculatorNumberButtonActions(buttonChoice);
         }
         //TODO: add more types here
+
         textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         confirm("NumberButtonHandler_v2() finishing");
     }
@@ -591,29 +595,34 @@ public abstract class Calculator_v3 extends JFrame {
     public void performProgrammerNumberButtonActions(String buttonChoice) {
 	    performInitialChecks();
 	    LOGGER.info("Performing programmer actions...");
-	    if (getTextArea().getText().length() > getBytes()) {
+	    if (getTextArea().getText().length() > getBytes())
+	    {
 	        return; // don't allow length to get any longer
         }
-        clearNewLineFromTextArea();
-        if (textArea.getText().equals("")) {
+        if (textArea.getText().equals(""))
+        {
             textArea.setText(addNewLineCharacters(1) + buttonChoice);
         }
         else
         {
-            textArea.setText(addNewLineCharacters(1) + textArea.getText() + buttonChoice); // update textArea
+            textArea.setText(addNewLineCharacters(1) + getTextAreaWithoutNewLineCharacters() + buttonChoice); // update textArea
         }
-        this.updateTextareaFromTextArea();
+        updateTextareaFromTextArea();
         values[valuesPosition] = textarea.toString(); // store textarea in values
     }
-    public void performProgrammerCalculatorNumberButtonActions(String buttonChoice) {
+    public void performProgrammerCalculatorNumberButtonActions(String buttonChoice)
+    {
         LOGGER.info("Starting programmer calculator number button actions");
-        if (firstNumBool) {
+        if (firstNumBool)
+        {
             performProgrammerNumberButtonActions(buttonChoice);
         }
-        else {
+        else
+        {
             firstNumBool = true;
             textArea.setText("");
             textarea = new StringBuffer();
+            valuesPosition = 1;
             performProgrammerNumberButtonActions(buttonChoice);
         }
     }
@@ -641,6 +650,7 @@ public abstract class Calculator_v3 extends JFrame {
         }
 	    return String.valueOf(sb);
     }
+    @Deprecated
     public void clearNewLineFromTextArea() {
         textArea.setText(textArea.getText().replaceAll("\n", ""));
     }
@@ -711,6 +721,8 @@ public abstract class Calculator_v3 extends JFrame {
     public void confirm() {
 	    confirm("");
     }
+
+    //TODO: implement confirm forms by type in a new method
     /**
      *  Returns the results of the last action with a specific message to display
      *
@@ -740,6 +752,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("mulBool: '"+mulBool+"'"); 
         LOGGER.info("divBool: '"+divBool+"'");
         LOGGER.info("orButtonBool: '" +orButtonBool+"'");
+        LOGGER.info("modButtonBool: '" +modButtonBool+"'");
         LOGGER.info("values["+0+"]: '" + values[0] + "'");
         LOGGER.info("values["+1+"]: '" + values[1] + "'");
         LOGGER.info("values["+2+"]: '" + values[2] + "'");
@@ -889,6 +902,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("memoryValue["+memoryPosition+"]: " + memoryValues[memoryPosition]);
         setMemoryPosition(memoryPosition);
     }
+    @Deprecated
     public JPanel getCurrentPanelFromParentCalculator() { return this.currentPanel; }
     protected void setCurrentPanelOnParentCalculator(JPanel panel ) { currentPanel = panel; }
     /**
@@ -1227,6 +1241,8 @@ public abstract class Calculator_v3 extends JFrame {
     public JLabel getIconLabel() { return iconLabel; }
     public JLabel getTextLabel() { return textLabel; }
     public boolean getDotButtonPressed() { return this.dotButtonPressed; }
+    public boolean getModButtonBool() { return modButtonBool; }
+
     public boolean isFirstNumBool() { return firstNumBool; }
     public boolean isNumberOneNegative() { return numberOneNegative; }
     public boolean isNumberTwoNegative() { return numberTwoNegative; }
@@ -1261,6 +1277,7 @@ public abstract class Calculator_v3 extends JFrame {
     public void setTextArea(JTextArea textArea) { this.textArea = textArea; }
     public void setTextarea(StringBuffer textarea) { this.textarea = textarea; }
     public void setCalcType(CalcType_v3 calcType) { this.calcType = calcType; }
+
     public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
     public void setCalculatorImage1(ImageIcon calculatorImage1) { this.calculatorImage1 = calculatorImage1; }
     public void setCalculator2(ImageIcon calculator2) { this.calculator2 = calculator2; }
@@ -1290,6 +1307,7 @@ public abstract class Calculator_v3 extends JFrame {
     public void setButtonDwordSet(boolean buttonDwordSet) { isButtonDwordSet = buttonDwordSet; }
     public void setButtonQwordSet(boolean buttonQwordSet) { isButtonQwordSet = buttonQwordSet; }
     public void setOrButtonBool(boolean orButtonBool) { this.orButtonBool = orButtonBool; }
+    public void setModButtonBool(boolean modButtonBool) { this.modButtonBool = modButtonBool; }
 }
 
 

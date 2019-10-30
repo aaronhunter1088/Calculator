@@ -37,7 +37,7 @@ public class JPanelBasic_v3 extends JPanel {
         setupPanel_v3(calculator);
         setCalculator(calculator);
         addComponentsToPanel_v3();
-        performCalculatorTypeSwitchOperations();
+//        performBasicCalculatorTypeSwitchOperations();
     }
 
     /************* Start of methods here ******************/
@@ -238,17 +238,17 @@ public class JPanelBasic_v3 extends JPanel {
      *
      * TODO: Implement this method
      */
-    public void performCalculatorTypeSwitchOperations() {
-        LOGGER.info("Starting to performCalculatorTypeSwitchOperations");
+    public void performBasicCalculatorTypeSwitchOperations(JPanel oldPanel) {
+        LOGGER.info("Starting to performBasicCalculatorTypeSwitchOperations");
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to decimal
-        convertTextArea();
+        convertTextArea(oldPanel);
         // set CalcType now
         calculator.setCalcType(CalcType_v3.BASIC);
         // setting up all the buttons
         setAllNumberButtons(true);
         calculator.buttonNegate.setEnabled(true);
-        LOGGER.info("Finished performCalculatorTypeSwitchOperations\n");
+        LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations\n");
     }
 
     public void performSquareRootButtonActions(ActionEvent action) {
@@ -408,12 +408,15 @@ public class JPanelBasic_v3 extends JPanel {
         LOGGER.info("convertToDecimal finished");
         calculator.confirm("");
     }
-    public void convertTextArea() {
+    public void convertTextArea(JPanel oldPanel) {
         //LOGGER.info("Converting TextArea");
         if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
             LOGGER.info("Going from binary to decimal...");
             calculator.performInitialChecks();
-            convertToDecimal();
+            if (!calculator.getTextAreaWithoutNewLineCharacters().equals("") &&
+                !((JPanelProgrammer_v3)oldPanel).getButtonDec().isSelected() ) {
+                convertToDecimal();
+            }
         }
         else
         {
