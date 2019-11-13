@@ -342,21 +342,25 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             addition(calculator.getCalcType());
             addBool = resetOperator(addBool); // sets addBool to false
             addBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
             subtract(calculator.getCalcType());
             subBool = resetOperator(subBool);
             addBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
             multiply(calculator.getCalcType());
             mulBool = resetOperator(mulBool);
             addBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("")) {
             divide(calculator.getCalcType());
             divBool = resetOperator(divBool);
             addBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (calculator.textAreaContainsBadText()) {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
@@ -366,22 +370,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             valuesPosition++; // increase valuesPosition for storing textarea
         }
         else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
-            LOGGER.info("already chose an operator. choose another number.");
+            LOGGER.error("already chose an operator. choose another number.");
         }
-        textarea = new StringBuffer().append(textArea.getText().replaceAll("\n",""));
+        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters() + buttonChoice);
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         numberIsNegative = false;
 
-        // make sure no matter the mode, values[0] and values[1] are numbers
-        if (getCalcType() == CalcType_v3.PROGRAMMER) {
-            if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isEnabled()) {
-
-            }
-            else {
-                convertAllValuesToDecimal();
-            }
-        }
+        performValuesConversion();
         confirm("");
     }
     public void addition() {
@@ -390,10 +386,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         double result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]); // create result forced double
         LOGGER.info(values[0] + " + " + values[1] + " = " + result);
         values[0] = Double.toString(result);
-        LOGGER.info("addBool: "+addBool);
-        LOGGER.info("subBool: "+subBool);
-        LOGGER.info("mulBool: "+mulBool);
-        LOGGER.info("divBool: "+divBool);
         if (result % 1 == 0)
         {
         	LOGGER.info("We have a whole number");
@@ -401,7 +393,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             values[0] = String.valueOf(textarea); // textarea changed to whole number, or int
             textArea.setText("\n" + String.valueOf(textarea));
             if (Integer.parseInt(values[0]) < 0 ) {
-                textarea = new StringBuffer().append(textArea.getText()); // temp[valuesPosition]
+                textarea = new StringBuffer().append(textArea.getText()); // values[valuesPosition]
                 LOGGER.info("textarea: '" + textarea + "'");
                 textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: '" + textarea + "'");
@@ -437,6 +429,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 //            convertFromTypeToType("Binary", "Decimal");
             // run add
             addition();
+            textarea = new StringBuffer().append(addNewLineCharacters(1)+
+                    convertFromTypeToTypeOnValues("Decimal", "Binary", String.valueOf(textarea))[0]);
+            textArea.setText(addNewLineCharacters(1)+textarea);
         }
     }
 
@@ -461,21 +456,25 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             addition(calculator.getCalcType());
             addBool = resetOperator(addBool);
             subBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
             subtract(calculator.getCalcType());
             subBool = resetOperator(subBool);
             subBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
             multiply(calculator.getCalcType());
             mulBool = resetOperator(mulBool);
             subBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("")) {
             divide(calculator.getCalcType());
             divBool = resetOperator(divBool);
             subBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (calculator.textAreaContainsBadText()) {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
@@ -492,7 +491,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         numberIsNegative = false;
-        convertAllValuesToDecimal();
+        performValuesConversion();
         confirm();
     }
     public void subtract() {
@@ -571,21 +570,25 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             addition(calculator.getCalcType());
             addBool = resetOperator(addBool);
             mulBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
             subtract(calculator.getCalcType());
             subBool = resetOperator(subBool);
             mulBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
             multiply(calculator.getCalcType());
             mulBool = resetOperator(mulBool);
             mulBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("")) {
             divide(calculator.getCalcType());
             divBool = resetOperator(divBool);
             mulBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (calculator.textAreaContainsBadText()) {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
@@ -601,7 +604,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         dotButtonPressed = false;
-        convertAllValuesToDecimal();
+        performValuesConversion();
         confirm();
     }
     public void multiply() {
@@ -669,22 +672,26 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             addition(calculator.getCalcType());
             addBool = resetOperator(addBool); // sets addBool to false
             divBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
             subtract(calculator.getCalcType());
             subBool = resetOperator(subBool);
             divBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
             multiply(calculator.getCalcType());
             mulBool = resetOperator(mulBool);
             divBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("") & !values[1].equals("0"))
         {
             divide(calculator.getCalcType());
             divBool = resetOperator(divBool);
             divBool = true;
+            textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (calculator.textAreaContainsBadText())  {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
@@ -701,7 +708,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonDot.setEnabled(true);
         dotButtonPressed = false;
         dotButtonPressed = false;
-        convertAllValuesToDecimal();
+        performValuesConversion();
         confirm();
     }
     public void divide() {
@@ -786,16 +793,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 values[1] = convertFromTypeToTypeOnValues("Octal", "Decimal", values[1])[0];
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected()) {
-//                addition(CalcType_v3.BASIC);
-//                textArea.setText("\n" + values[0]);
-//                values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
-//                updateTextareaFromTextArea();
-//                firstNumBool = true;
-//                dotButtonPressed = false;
-//                // TODO: Not a todo, but I did that so this would stand out. It's more an important note
-//                // TODO: values[0], values[1], values[2] should always be in decimal form.
-//                confirm("");
-//                return;
                 // DO NOTHING
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected()) {
@@ -831,16 +828,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             firstNumBool = true;
         }
         else if (orButtonBool) {
-//            performOrLogic(action);
-            JPanelProgrammer_v3 p = (JPanelProgrammer_v3) getCurrentPanelFromParentCalculator();
-            p.performButtonOrActions(action);
+            ((JPanelProgrammer_v3)getCurrentPanel()).performOr();
+            performValuesConversion();
         }
         else if (modButtonBool) {
             LOGGER.info("Modulus result");
             ((JPanelProgrammer_v3)getCurrentPanel()).performModulus();
-            getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+
-                    getCalculator().getValues()[0]);
-            updateTextareaFromTextArea();
+            // update values and textArea accordingly
+            performValuesConversion();
             valuesPosition = 0;
             modButtonBool = false;
         }
@@ -850,8 +845,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         updateTextareaFromTextArea();
         firstNumBool = true;
         dotButtonPressed = false;
+        valuesPosition = 0;
         // TODO: Not a todo, but I did that so this would stand out. It's more an important note
         // TODO: values[0], values[1], values[2] should always be in decimal form.
+
         confirm("");
     }
     public void performNegateButtonActions(ActionEvent action) {
@@ -924,6 +921,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         // TODO: Add more CalcType_v3's here
     }
+    //TODO: Change! This goes against keeping values as regular numbers
     public void convertAllValuesToBinary() {
         if (!getCalcType().equals(CalcType_v3.PROGRAMMER)) {
             if (getCalcType().equals(CalcType_v3.BASIC)) {
@@ -933,6 +931,14 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             // TODO: Add more CalcType_v3's here
         }
     }
+
+    /**
+     * IMPORTANT: Remember that this method returns a String array!!
+     * @param type1
+     * @param type2
+     * @param strings
+     * @return
+     */
     public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings) {
         LOGGER.debug("convertFromTypeToTypeOnValues(from: '"+type1+"', "+ "to: '"+type2+"' + " + Arrays.toString(strings));
         String[] arrToReturn = new String[strings.length];
@@ -1024,6 +1030,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         return arrToReturn;
     }
+    @Deprecated
     public void convertFromTypeToType(String type1, String type2) {
         if (type1.equals("Binary") && type2.equals("Decimal")) {
             // converting both numbers in values if applicable
@@ -1060,6 +1067,38 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 }
             }
         }
+    }
+
+    /**
+     * The purpose of this method is to determine at the end of a "cycle", values[0]
+     * and values[1] are numbers in base 10.
+     * It also determines if textArea and textarea are displayed properly.
+     * Remember textArea is all characters, and textarea is simply the value represented
+     */
+    public void performValuesConversion() {
+        // make sure no matter the mode, values[0] and values[1] are numbers and textArea's display correctly
+        if (getCalcType() == CalcType_v3.PROGRAMMER) {
+            if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
+            {
+                LOGGER.debug("even though we are in programmer mode, decimal base is selected so no conversion is needed");
+                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+
+                        getCalculator().getValues()[0]);
+            }
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected())
+            {
+                LOGGER.debug("Programmer mode buttonBin selected");
+                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+
+                        convertFromTypeToTypeOnValues("Decimal", "Binary", getCalculator().getValues()[0])[0]);
+                getCalculator().updateTextareaFromTextArea();
+            }
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonOct().isSelected()) {}
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected()) {}
+            else {
+                convertAllValuesToDecimal();
+            }
+        }
+        //TODO: add more calctypes here
+
     }
 
     public void performOrLogic(ActionEvent actionEvent) {

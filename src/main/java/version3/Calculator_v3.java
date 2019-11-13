@@ -86,7 +86,7 @@ public abstract class Calculator_v3 extends JFrame {
     protected boolean memSubBool = false;
     protected boolean negatePressed = false;
     protected boolean dotButtonPressed = false;
-    // programmer booleans
+    // programmer related fields
     boolean isButtonBinSet = true;
     boolean isButtonOctSet = false;
     boolean isButtonDecSet = false;
@@ -97,6 +97,12 @@ public abstract class Calculator_v3 extends JFrame {
     boolean isButtonQwordSet = false;
     protected boolean orButtonBool = false;
     protected boolean modButtonBool = false;
+    protected boolean xorButtonBool = false;
+    protected boolean negateButtonBool = false;
+    protected boolean notButtonBool = false;
+    protected boolean andButtonBool = false;
+    protected CalcType_v3 base = null;
+
 
 	public Calculator_v3() throws HeadlessException {
 		super();
@@ -220,6 +226,10 @@ public abstract class Calculator_v3 extends JFrame {
         buttonClear.setEnabled(true);
         buttonClear.addActionListener(action -> {
             performClearButtonActions(action);
+            if (getCalcType() == CalcType_v3.PROGRAMMER)
+            {
+                ((JPanelProgrammer_v3) getCurrentPanel()).resetProgrammerOperators();
+            }
         });
         
         buttonClearEntry.setFont(font);
@@ -346,7 +356,7 @@ public abstract class Calculator_v3 extends JFrame {
             if (numberIsNegative == false)
             {
                 // if no operator has been pushed; number is positive; number is whole
-                if (getDotButtonPressed() == false)
+                if (isDotButtonPressed() == false)
                 {
                     if (textarea.length() == 1)
                     { // ex: 5
@@ -363,7 +373,7 @@ public abstract class Calculator_v3 extends JFrame {
                     LOGGER.debug("result: '" + textarea.toString().replaceAll("\n","") + "'");
                 }
                 // if no operator has been pushed; number is positive; number is decimal
-                else if (getDotButtonPressed()) {
+                else if (isDotButtonPressed()) {
                     if (textarea.length() == 2) { // ex: 3. .... recall textarea looks like .3
                         textarea = new StringBuffer().append(textarea.substring(textarea.length()-1)); // ex: 3
                         dotButtonPressed = false;
@@ -699,9 +709,9 @@ public abstract class Calculator_v3 extends JFrame {
         	LOGGER.info("operatorBool: " + operatorBool);
             values[1]= "";
             LOGGER.info("values[0]: '" + values[0] + "'");
-            valuesPosition = 0;
+            valuesPosition = 1;
             dotButtonPressed = false;
-            firstNumBool = true;
+            firstNumBool = false;
             return false;
         } else {
         	LOGGER.info("operatorBool: " + operatorBool);
@@ -734,7 +744,7 @@ public abstract class Calculator_v3 extends JFrame {
         if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
         else { LOGGER.info("Confirm Results"); }
         LOGGER.info("---------------- ");
-        LOGGER.info("textarea: '\\n"+textarea.toString().replaceAll("\n", "")+"'");
+        LOGGER.info("textarea: '"+textarea.toString()+"'");
         LOGGER.info("textArea: '\\n"+textArea.getText().replaceAll("\n", "")+"'");
         if (!memoryValues[memoryPosition].equals("")) {
         	ArrayList<String> nonBlankValues = getNonBlankValues(memoryValues);
@@ -1240,8 +1250,6 @@ public abstract class Calculator_v3 extends JFrame {
     public ImageIcon getMacLogo() { return macLogo; }
     public JLabel getIconLabel() { return iconLabel; }
     public JLabel getTextLabel() { return textLabel; }
-    public boolean getDotButtonPressed() { return this.dotButtonPressed; }
-    public boolean getModButtonBool() { return modButtonBool; }
 
     public boolean isFirstNumBool() { return firstNumBool; }
     public boolean isNumberOneNegative() { return numberOneNegative; }
@@ -1257,6 +1265,13 @@ public abstract class Calculator_v3 extends JFrame {
     public boolean isMemSubBool() { return memSubBool; }
     public boolean isNegatePressed() { return negatePressed; }
     public boolean isDotButtonPressed() { return dotButtonPressed; }
+    public boolean isOrButtonPressed() { return orButtonBool; }
+    public boolean isModButtonPressed() { return modButtonBool; }
+    public boolean isXorButtonPressed() { return xorButtonBool; }
+    public boolean isNegateButtonPressed() { return negateButtonBool; }
+    public boolean isNotButtonPressed() { return notButtonBool; }
+    public boolean isAndButtonPressed() { return andButtonBool; }
+    public CalcType_v3 getBase() { return base; }
 
     public boolean isButtonBinSet() { return isButtonBinSet; }
     public boolean isButtonOctSet() { return isButtonOctSet; }
@@ -1266,7 +1281,6 @@ public abstract class Calculator_v3 extends JFrame {
     public boolean isButtonWordSet() { return isButtonWordSet; }
     public boolean isButtonDwordSet() { return isButtonDwordSet; }
     public boolean isButtonQwordSet() { return isButtonQwordSet; }
-    public boolean isOrButtonBool() { return orButtonBool; }
 
     public void setLayout(GridBagLayout layout) { this.layout = layout; }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
@@ -1308,6 +1322,12 @@ public abstract class Calculator_v3 extends JFrame {
     public void setButtonQwordSet(boolean buttonQwordSet) { isButtonQwordSet = buttonQwordSet; }
     public void setOrButtonBool(boolean orButtonBool) { this.orButtonBool = orButtonBool; }
     public void setModButtonBool(boolean modButtonBool) { this.modButtonBool = modButtonBool; }
+    public void setXorButtonBool(boolean xorButtonBool) { this.xorButtonBool = xorButtonBool; }
+    public void setNegateButtonBool(boolean negateButtonBool) { this.negateButtonBool = negateButtonBool; }
+    public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
+    public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
+    public void setBase(CalcType_v3 base) { this.base = base; }
+
 }
 
 

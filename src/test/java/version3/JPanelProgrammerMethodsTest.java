@@ -4,7 +4,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.awt.event.ActionEvent;
@@ -67,6 +66,7 @@ public class JPanelProgrammerMethodsTest {
         c.getTextArea().setText("");
         c.setTextarea(new StringBuffer());
         c.setCalcType(CalcType_v3.PROGRAMMER);
+        p.getButtonBin().setSelected(true);
         c.setFirstNumBool(true);
         when(ae.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("1").thenReturn("0").thenReturn("1") //5
@@ -81,25 +81,44 @@ public class JPanelProgrammerMethodsTest {
 
         c.performAdditionButtonActions(ae);
         assertTrue("Values[0] should not match "+c.getTextArea(), !(String.valueOf(c.values[0]).equals(c.getTextAreaWithoutNewLineCharacters())));
-        c.clearNewLineFromTextArea();
         assertEquals("plus operator not appended", " + 00000101", c.getTextArea().getText());
 
         for(int i=1; i<=8; i++) { c.performNumberButtonActions(ae); }
-        c.clearNewLineFromTextArea();
         assertEquals("textArea not as expected", "00000011", c.getTextArea().getText());
 
         c.performButtonEqualsActions(ae);
-        c.clearNewLineFromTextArea();
         assertEquals("textArea not as expected", "00001000", c.getTextArea().getText());
-        assertTrue("values[0] did not stay as a decimal",8 == Integer.parseInt(c.values[0]));
+        assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(c.values[0]));
     }
 
     @Test(expected = Calculator_v3Error.class)
     public void testPushingButtonOrWithValuesAtZeroNotSet() throws Calculator_v3Error {
+        when(ae.getActionCommand()).thenReturn("OR");
         c.values[0] = "";
         c.values[1] = "50";
 
         p.performButtonOrActions(ae);
+    }
+
+    @Test
+    public void testPushingButtonOrWithOneInput() {
+        final String buttonChoice = "OR";
+        when(ae.getActionCommand()).thenReturn(buttonChoice);
+
+        c.textArea.setText(c.addNewLineCharacters(1) + "00000101" + " " + buttonChoice);
+        c.values[0] = "5";
+        c.values[1] = "";
+
+        try {
+            p.performButtonOrActions(ae);
+            c.updateTextareaFromTextArea();
+        } catch (Calculator_v3Error ce) {
+            ce.printStackTrace();
+        }
+
+        assertEquals("TextArea not as expected", "00000101" + " " + buttonChoice, c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("Textarea not as expected", "00000101" + " " + buttonChoice, String.valueOf(c.getTextarea()));
+        assertEquals("Values[0] is not in decimal base form", Integer.valueOf(5), Integer.valueOf(c.values[0]));
     }
 
     @Test
@@ -134,9 +153,11 @@ public class JPanelProgrammerMethodsTest {
 
     @Test
     public void testPushingModulusButtonWithBothValuesSetReturnsProperResult() throws Calculator_v3Error {
+        p.getButtonBin().setSelected(true);
         when(ae.getActionCommand()).thenReturn("Mod").thenReturn("=");
 
         c.getTextArea().setText("\n00000100");
+        c.setTextarea(new StringBuffer().append("\n00000100"));
         c.values[0] = "4";
         c.values[1] = "";
         c.confirm("Entered 4");
@@ -149,6 +170,7 @@ public class JPanelProgrammerMethodsTest {
         c.valuesPosition = 1;
         //below is required
         c.values[1] = number;
+        c.confirm("3 Entered");
 
         c.performButtonEqualsActions(ae);
 
@@ -160,7 +182,31 @@ public class JPanelProgrammerMethodsTest {
     }
 
     @Test
-    public void testPushingOrButtonWithOneInput() {
+    public void testPushingXorButtonWithZeroInputs() {
+        when(ae.getActionCommand()).thenReturn("XOR");
+
+        c.values[0] = "";
+        c.values[1] = "";
+        c.valuesPosition = 0;
+        c.getTextArea().setText(c.addNewLineCharacters(1) + "");
+        c.setTextarea(new StringBuffer());
+
+        p.performButtonXorActions(ae);
+
+        assertEquals("TextArea not as expected", "", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("Textarea not as expected", "", String.valueOf(c.getTextarea()));
+        assertEquals("Values[0] should be empty", "", c.values[0]);
+        assertEquals("Values[1] should be emtpy", "", c.values[1]);
+        assertEquals("XorButton should not be set yet", false, c.isXorButtonPressed());
+    }
+
+    @Test
+    public void testPushingXorButtonWithOneInput() {
+
+    }
+
+    @Test
+    public void testPushingXorButtonWithTwoInputs() {
 
     }
 
