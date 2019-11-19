@@ -60,7 +60,7 @@ public abstract class Calculator_v3 extends JFrame {
     final protected JButton buttonMemoryAddition = new JButton("M+");
     final protected JButton buttonMemorySubtraction = new JButton("M-");
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
-    protected String[] values = {"","",""}; // firstNum (total), secondNum, copy/paste. memory values now in MemorySuite.getMemoryValues()
+    protected String[] values = {"","","", ""}; // firstNum (total), secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
     protected int valuesPosition = 0;
     protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
     protected int memoryPosition = 0;
@@ -763,6 +763,9 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("divBool: '"+divBool+"'");
         LOGGER.info("orButtonBool: '" +orButtonBool+"'");
         LOGGER.info("modButtonBool: '" +modButtonBool+"'");
+        LOGGER.info("xorButtonBool: '" +xorButtonBool+"'");
+        LOGGER.info("notButtonBool: '" +notButtonBool+"'");
+        LOGGER.info("andButtonBool: '" +andButtonBool+"'");
         LOGGER.info("values["+0+"]: '" + values[0] + "'");
         LOGGER.info("values["+1+"]: '" + values[1] + "'");
         LOGGER.info("values["+2+"]: '" + values[2] + "'");
@@ -773,6 +776,7 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
         LOGGER.info("isNegative: '"+numberIsNegative+"'");
         LOGGER.info("calcType: '" + calcType + "'");
+        LOGGER.info("calcBase: '" + base + "'");
         LOGGER.info("-------- End Confirm Results --------\n");
     }
     /**
