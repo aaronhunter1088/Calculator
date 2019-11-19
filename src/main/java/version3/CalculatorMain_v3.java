@@ -7,22 +7,22 @@ import javax.swing.*;
 import java.io.IOException;
 
 public class CalculatorMain_v3 {
-	private final static Logger LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
+
+    private final static Logger LOGGER;
+    static {
+        System.setProperty("appName", "Calculator");
+        LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
+    }
+
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		LOGGER.info("Starting class CalculatorMain_v3");
 		//BinaryCalculator calculator = new BinaryCalculator();
 		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");
     	//Calculator calculator = new Calculator();
 		initLookAndFeel("Metal");
-		
-		calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		calculator.setLocation(1000, 250);
-		//calculator.setupMenuBar();
         SwingUtilities.updateComponentTreeUI(calculator);
-        calculator.pack();
-        calculator.setVisible(true);
-        calculator.confirm();
-        LOGGER.info("End main()\n");
+		calculator.setLocation(750, 250);
+        calculator.confirm("Calculator started. Initial state");
     }
     
     private static void initLookAndFeel(String lookAndFeel) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -55,8 +55,7 @@ public class CalculatorMain_v3 {
 a. PROGRAMMER: Michael Ball
 b. DATE:   Version 3: 2018
 c. ENVIRONMENT: Mac Mohave 10.14
-d. FILES INCLUDED: Calculator.java, CalculatorMain_v3.java, Calculatortest.java, calculator.jpg, 
-    calculator2.jpg, windows8.jpg, windows10.jpg, windows10Original.jpg, maclogo.jpg, and a screen shot of the below example. 
+d. FILES INCLUDED: TODO: Add file names
 e. PURPOSE: To enhance the functionality of this calculator tenfold. 
 f. INPUT:  user will input numbers and based on the calculator type will return results.
 g. PRECONDITIONS: 

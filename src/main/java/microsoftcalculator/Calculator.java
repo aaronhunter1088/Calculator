@@ -103,8 +103,7 @@
 //        super("Calculator");
 //        standardLayout = new GridBagLayout();
 //        setLayout(standardLayout); // set frame layout
-//        
-//        // TODO: Update with a screenshot of the final version of the design of the BasicCalculator
+//
 //        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
 //        //Application.getApplication().setDockIconImage(calculator2.getImage());
 //        constraints = new GridBagConstraints(); // instanitate constraints

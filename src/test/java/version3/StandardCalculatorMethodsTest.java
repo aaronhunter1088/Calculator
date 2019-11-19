@@ -3,11 +3,11 @@ package version3;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public class StandardCalculatorMethodsTest {
 
     private static StandardCalculator_v3 c;
@@ -16,6 +16,7 @@ public class StandardCalculatorMethodsTest {
 
     @BeforeClass
     public static void setup() throws Exception {
+        System.setProperty("appName", "StandardCalculatorMethodsTest");
         c = new StandardCalculator_v3();
     }
 
@@ -23,7 +24,7 @@ public class StandardCalculatorMethodsTest {
     public void testAdditionFunctionality() {
         c.values[0] = "5";
         c.values[1] = "10";
-        c.add();
+        c.addition();
         assertEquals("Did not get back expected result", "15", c.values[0]);
     }
 

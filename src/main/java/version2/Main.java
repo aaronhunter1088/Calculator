@@ -24,7 +24,6 @@
 //        primaryStage.setMinWidth(332);
 //        primaryStage.setScene(new Scene(root));
 //        primaryStage.show();
-//        // TODO: set up root and scene and ...
 //
 //    }
 //}
