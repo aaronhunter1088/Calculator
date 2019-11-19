@@ -244,6 +244,7 @@ public class JPanelBasic_v3 extends JPanel {
         // whatever mode it was in before to decimal
         convertTextArea(oldPanel);
         // set CalcType now
+        getCalculator().setBase(CalcType_v3.DECIMAL);
         calculator.setCalcType(CalcType_v3.BASIC);
         // setting up all the buttons
         setAllNumberButtons(true);

@@ -38,7 +38,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonDivide = new JButton("/");
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
-    private Calculator_v3 calculator;
+//    private Calculator_v3 calculator;
     //TODO: Think about it... move class specific booleans here
 
     public StandardCalculator_v3() throws HeadlessException {
@@ -59,7 +59,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	//TODO: Implement first
 	public StandardCalculator_v3(java.lang.String title) throws HeadlessException {
 		super(CalcType_v3.BASIC.getName()); // default title is Basic
-		setCalculator(this);
 		setCurrentPanel(new JPanelBasic_v3(this));
 		setupStandardCalculator_v3();
 		setupMenuBar();
@@ -324,7 +323,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textArea.getText().equals("") && !calculator.textAreaContainsBadText())
+                !textArea.getText().equals("") && !textAreaContainsBadText())
         {
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             textArea.setText("\n" + " " + buttonChoice + " " + textarea);
@@ -339,30 +338,30 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         }
         else if (addBool == true && !values[1].equals("")) {
-            addition(calculator.getCalcType());
+            addition(getCalcType());
             addBool = resetOperator(addBool); // sets addBool to false
             addBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
-            subtract(calculator.getCalcType());
+            subtract(getCalcType());
             subBool = resetOperator(subBool);
             addBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
-            multiply(calculator.getCalcType());
+            multiply(getCalcType());
             mulBool = resetOperator(mulBool);
             addBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("")) {
-            divide(calculator.getCalcType());
+            divide(getCalcType());
             divBool = resetOperator(divBool);
             addBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
-        else if (calculator.textAreaContainsBadText()) {
+        else if (textAreaContainsBadText()) {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
             addBool = true; // sets logic for arithmetic
             firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -441,7 +440,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
 //            convertAllValuesToDecimal();
         if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textArea.getText().equals("") && !calculator.textAreaContainsBadText()) {
+                !textArea.getText().equals("") && !textAreaContainsBadText()) {
             textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             textArea.setText("\n" + " " + buttonChoice + " " + textarea);
@@ -453,30 +452,30 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             valuesPosition++; // increase valuesPosition for storing textarea
         }
         else if (addBool == true && !values[1].equals("")) {
-            addition(calculator.getCalcType());
+            addition(getCalcType());
             addBool = resetOperator(addBool);
             subBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
-            subtract(calculator.getCalcType());
+            subtract(getCalcType());
             subBool = resetOperator(subBool);
             subBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
-            multiply(calculator.getCalcType());
+            multiply(getCalcType());
             mulBool = resetOperator(mulBool);
             subBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("")) {
-            divide(calculator.getCalcType());
+            divide(getCalcType());
             divBool = resetOperator(divBool);
             subBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
-        else if (calculator.textAreaContainsBadText()) {
+        else if (textAreaContainsBadText()) {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
             subBool = true; // sets logic for arithmetic
             firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -567,30 +566,30 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             valuesPosition++; // increase valuesPosition for storing textarea
         }
         else if (addBool == true && !values[1].equals("")) {
-            addition(calculator.getCalcType());
+            addition(getCalcType());
             addBool = resetOperator(addBool);
             mulBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
-            subtract(calculator.getCalcType());
+            subtract(getCalcType());
             subBool = resetOperator(subBool);
             mulBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
-            multiply(calculator.getCalcType());
+            multiply(getCalcType());
             mulBool = resetOperator(mulBool);
             mulBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("")) {
-            divide(calculator.getCalcType());
+            divide(getCalcType());
             divBool = resetOperator(divBool);
             mulBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
-        else if (calculator.textAreaContainsBadText()) {
+        else if (textAreaContainsBadText()) {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
             mulBool = true; // sets logic for arithmetic
             firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -669,31 +668,31 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         else if (addBool == true && !values[1].equals(""))
         {
-            addition(calculator.getCalcType());
+            addition(getCalcType());
             addBool = resetOperator(addBool); // sets addBool to false
             divBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (subBool == true && !values[1].equals("")) {
-            subtract(calculator.getCalcType());
+            subtract(getCalcType());
             subBool = resetOperator(subBool);
             divBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (mulBool == true && !values[1].equals("")) {
-            multiply(calculator.getCalcType());
+            multiply(getCalcType());
             mulBool = resetOperator(mulBool);
             divBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
         else if (divBool == true && !values[1].equals("") & !values[1].equals("0"))
         {
-            divide(calculator.getCalcType());
+            divide(getCalcType());
             divBool = resetOperator(divBool);
             divBool = true;
             textArea.setText("\n" + buttonChoice + " " + textarea);
         }
-        else if (calculator.textAreaContainsBadText())  {
+        else if (textAreaContainsBadText())  {
             textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
             divBool = true; // sets logic for arithmetic
             firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -803,33 +802,35 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         //TODO: add more calculator types here
 
         if (addBool) {
-            addition(calculator.getCalcType()); // addition();
+            addition(getCalcType()); // addition();
             addBool = resetOperator(addBool);
         }
         else if (subBool){
-            subtract(calculator.getCalcType());
+            subtract(getCalcType());
             subBool = resetOperator(subBool);
         }
         else if (mulBool){
-            multiply(calculator.getCalcType());
+            multiply(getCalcType());
             mulBool = resetOperator(mulBool);
         }
         else if (divBool){
-            divide(calculator.getCalcType());
+            divide(getCalcType());
             divBool = resetOperator(divBool);
         }
         else if (values[0].equals("") && values[1].equals("")) {
             // if temp[0] and temp[1] do not have a number
             valuesPosition = 0;
         }
-        else if (calculator.textAreaContainsBadText()) {
+        else if (textAreaContainsBadText()) {
             textArea.setText(action.getActionCommand() + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
             valuesPosition = 1;
             firstNumBool = true;
         }
         else if (orButtonBool) {
             ((JPanelProgrammer_v3)getCurrentPanel()).performOr();
+            getTextArea().setText(addNewLineCharacters(1) + values[0]);
             performValuesConversion();
+
         }
         else if (modButtonBool) {
             LOGGER.info("Modulus result");
@@ -842,6 +843,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
 //        textArea.setText("\n" + convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0]);
         values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
+        values[3] = "";
         updateTextareaFromTextArea();
         firstNumBool = true;
         dotButtonPressed = false;
@@ -855,7 +857,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("performNegateButtonActions started");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        calculator.clearNewLineFromTextArea();
+        clearNewLineFromTextArea();
         updateTextareaFromTextArea();
         if (!textarea.equals("")) {
             if (numberIsNegative) {
@@ -916,20 +918,25 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     public void convertAllValuesToDecimal() {
         if (getCalcType().equals(CalcType_v3.PROGRAMMER))
         {
-            values[0] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[0])[0];
-            values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
+            values = convertFromTypeToTypeOnValues("Binary", "Decimal", values);
+//            values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
+//            values[3] = convertFromTypeToTypeOnValues(CalcType_v3.BINARY2.getName(), CalcType_v3.DECIMAL.getName(), values[3])[0];
         }
         // TODO: Add more CalcType_v3's here
     }
-    //TODO: Change! This goes against keeping values as regular numbers
+
+    /**
+     * IMPORTANT! You must convert values back to decimal within the same method this
+     * method is called. It is an error to not convert the numbers back.
+     *
+     * This method exists to quickly convert the values to binary, for whatever
+     * the purpose may be. Once the logic for needing the numbers to be in binary
+     * mode, you must convert the values back to decimal!
+     */
     public void convertAllValuesToBinary() {
-        if (!getCalcType().equals(CalcType_v3.PROGRAMMER)) {
-            if (getCalcType().equals(CalcType_v3.BASIC)) {
-                values[0] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[0])[0];
-                values[1] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[1])[0];
-            }
-            // TODO: Add more CalcType_v3's here
-        }
+        values = convertFromTypeToTypeOnValues("Decimal", "Binary", values);
+//        values[1] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[1])[0];
+//        values[3] = convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), values[3])[0];
     }
 
     /**
@@ -943,7 +950,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.debug("convertFromTypeToTypeOnValues(from: '"+type1+"', "+ "to: '"+type2+"' + " + Arrays.toString(strings));
         String[] arrToReturn = new String[strings.length];
         int countOfStrings = 0;
-        if (StringUtils.isEmpty(strings[0])) return new String[]{""};
+        if (StringUtils.isEmpty(strings[0])) return new String[]{"", "", "", ""};
         else countOfStrings = 1;
         if (type1.equals("Decimal") && type2.equals("Binary"))
         {
@@ -963,13 +970,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                         }
                         if (number % 2 == 0 && number / 2 == 0) {
                             // 0r0
-                            for(int k = i; k<calculator.getBytes(); k++) {
+                            for(int k = i; k<getBytes(); k++) {
                                 sb.append("0");
                             }
                             break;
                         } else if (number / 2 == 0 && number % 2 == 1) {
                             // 0r1
-                            for(int k = i+1; k<calculator.getBytes(); k++) {
+                            for(int k = i+1; k<getBytes(); k++) {
                                 sb.append("0");
                             } break;
                         }
@@ -991,12 +998,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 StringBuffer sb = new StringBuffer();
                 sb.append(str);
 
-                int appropriateLength = calculator.getBytes();
+                int appropriateLength = getBytes();
                 LOGGER.debug("sb: " + sb);
                 LOGGER.debug("appropriateLength: " + appropriateLength);
 
                 if (sb.length() < appropriateLength)
                 {
+                    if (sb.length() == 0) { arrToReturn[(countOfStrings-1)] = ""; LOGGER.debug("arrToReturn["+(countOfStrings-1)+"]: '" + arrToReturn[countOfStrings-1] + "'"); countOfStrings++; continue; }
                     LOGGER.error("sb, '" + sb + "', is too short. adding missing zeroes");
                     // user had entered 101, which really is 00000101
                     // but they aren't showing the first 5 zeroes
@@ -1019,13 +1027,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                     result = (num1 * num2) + result;
                 }
 
-                arrToReturn[0] = String.valueOf(Double.valueOf(result));
+                arrToReturn[countOfStrings-1] = String.valueOf(Double.valueOf(result));
 
-                LOGGER.debug("arrToReturn[0]: " + arrToReturn[0]);
-                if (calculator.isDecimal(arrToReturn[0]))
+
+                if (isDecimal(arrToReturn[countOfStrings-1]))
                 {
-                    arrToReturn[0] = String.valueOf(calculator.clearZeroesAtEnd(arrToReturn[0]));
+                    arrToReturn[countOfStrings-1] = String.valueOf(clearZeroesAtEnd(arrToReturn[countOfStrings-1]));
                 }
+                LOGGER.debug("arrToReturn["+(countOfStrings - 1)+"]: " + arrToReturn[countOfStrings-1]);
+                countOfStrings++;
             }
         }
         return arrToReturn;
@@ -1034,34 +1044,34 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     public void convertFromTypeToType(String type1, String type2) {
         if (type1.equals("Binary") && type2.equals("Decimal")) {
             // converting both numbers in values if applicable
-            if (!calculator.values[0].equals("")) {
+            if (!values[0].equals("")) {
                 try {
                     double result = 0.0;
                     double num1 = 0.0;
                     double num2 = 0.0;
-                    for(int i=0, k=calculator.values[0].length()-1; i<calculator.values[0].length(); i++, k--) {
-                        String c = Character.toString(calculator.values[0].charAt(i));
+                    for(int i=0, k=values[0].length()-1; i<values[0].length(); i++, k--) {
+                        String c = Character.toString(values[0].charAt(i));
                         num1 = Double.valueOf(c);
                         num2 = Math.pow(2,k);
                         result = (num1 * num2) + result;
                     }
-                    calculator.values[0] = calculator.clearZeroesAtEnd(Double.toString(result)).toString();
+                    values[0] = clearZeroesAtEnd(Double.toString(result)).toString();
                 } catch (NumberFormatException nfe) {
 
                 }
             }
-            if (!calculator.values[1].equals("")) {
+            if (!values[1].equals("")) {
                 try {
                     double result = 0.0;
                     double num1 = 0.0;
                     double num2 = 0.0;
-                    for(int i=0, k=calculator.values[1].length()-1; i<calculator.values[1].length(); i++, k--) {
-                        String c = Character.toString(calculator.values[1].charAt(i));
+                    for(int i=0, k=values[1].length()-1; i<values[1].length(); i++, k--) {
+                        String c = Character.toString(values[1].charAt(i));
                         num1 = Double.valueOf(c);
                         num2 = Math.pow(2,k);
                         result = (num1 * num2) + result;
                     }
-                    calculator.values[1] = calculator.clearZeroesAtEnd(Double.toString(result)).toString();
+                    values[1] = clearZeroesAtEnd(Double.toString(result)).toString();
                 } catch (NumberFormatException nfe) {
 
                 }
@@ -1081,15 +1091,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
             {
                 LOGGER.debug("even though we are in programmer mode, decimal base is selected so no conversion is needed");
-                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+
-                        getCalculator().getValues()[0]);
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected())
             {
                 LOGGER.debug("Programmer mode buttonBin selected");
-                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+
-                        convertFromTypeToTypeOnValues("Decimal", "Binary", getCalculator().getValues()[0])[0]);
-                getCalculator().updateTextareaFromTextArea();
+                getTextArea().setText(addNewLineCharacters(1)+
+                        convertFromTypeToTypeOnValues("Decimal", "Binary", getValues()[0])[0]);
+                updateTextareaFromTextArea();
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonOct().isSelected()) {}
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected()) {}
@@ -1097,7 +1105,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 convertAllValuesToDecimal();
             }
         }
-        //TODO: add more calctypes here
+        //TODO: add more Calctypes here
 
     }
 
@@ -1105,10 +1113,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("performOrLogic starts here");
         LOGGER.info("button: " + actionEvent.getActionCommand());
         StringBuffer sb = new StringBuffer();
-        for (int i=0; i<calculator.values[0].length(); i++) {
+        for (int i=0; i<values[0].length(); i++) {
             String letter = "0";
-            if (String.valueOf(calculator.values[0].charAt(i)).equals("0") &&
-                    String.valueOf(calculator.values[1].charAt(i)).equals("0") )
+            if (String.valueOf(values[0].charAt(i)).equals("0") &&
+                    String.valueOf(values[1].charAt(i)).equals("0") )
             { // if the characters at both values at the same position are the same and equal 0
                 letter = "0";
                 sb.append(letter);
@@ -1118,11 +1126,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 letter = "1";
                 sb.append(letter);
             }
-            LOGGER.info(String.valueOf(calculator.values[0].charAt(i))+" + "+String.valueOf(calculator.values[1].charAt(i))+
+            LOGGER.info(String.valueOf(values[0].charAt(i))+" + "+String.valueOf(values[1].charAt(i))+
                     " = "+ letter);
         }
-        calculator.values[0] = String.valueOf(sb);
-        calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+calculator.values[0]);
+        values[0] = String.valueOf(sb);
+        getTextArea().setText(addNewLineCharacters(1)+values[0]);
         orButtonBool = false;
         valuesPosition = 0;
     }
@@ -1136,14 +1144,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     public JButton getButtonDivide() { return buttonDivide; }
     public JButton getButtonEquals() { return buttonEquals; }
     public JButton getButtonNegate() { return buttonNegate; }
-    public Calculator_v3 getCalculator() { return calculator; }
     // 4 types of Standard Calculators: create getters and setters
     public JPanel getCurrentPanel() { return super.getCurrentPanel(); }
     public static Logger getLOGGER() { return LOGGER; }
     public static long getSerialVersionUID() { return serialVersionUID; }
 
     private static void setLOGGER(Logger LOGGER) { StandardCalculator_v3.LOGGER = LOGGER; }
-    private void setCalculator(Calculator_v3 calculator) { this.calculator = calculator; }
     public void setCurrentPanel(JPanel currentPanel) { super.setCurrentPanel(currentPanel);}
 
 }
