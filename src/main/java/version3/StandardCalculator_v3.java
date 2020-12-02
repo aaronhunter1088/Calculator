@@ -57,7 +57,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
 
 	//TODO: Implement first
-	public StandardCalculator_v3(java.lang.String title) throws HeadlessException {
+	public StandardCalculator_v3(java.lang.String title) throws HeadlessException
+    {
 		super(CalcType_v3.BASIC.getName()); // default title is Basic
 		setCurrentPanel(new JPanelBasic_v3(this));
 		setupStandardCalculator_v3();
@@ -68,7 +69,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		setMinimumSize(getCurrentPanel().getSize());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
-
 		setVisible(true);
 	}
 
