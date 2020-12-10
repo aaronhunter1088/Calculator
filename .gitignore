@@ -1,5 +1,4 @@
 target/*
-.idea/compiler.xml
-.idea/workspace.xml
-.idea/inspectionProfiles/*
+.idea/
+.settings/
 logs/*
