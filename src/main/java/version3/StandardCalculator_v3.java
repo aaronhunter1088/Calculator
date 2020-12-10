@@ -1,14 +1,18 @@
 package version3;
 
+//import com.apple.eawt.Application; IMPORT FOR CALCULATOR ICON
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
@@ -51,24 +55,27 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		// TODO Auto-generated constructor stub
 	}
 
-    public StandardCalculator_v3(java.lang.String title, GraphicsConfiguration gc) {
+    public StandardCalculator_v3(String title, GraphicsConfiguration gc) {
         super(title, gc);
         // TODO Auto-generated constructor stub
     }
 
 	//TODO: Implement first
-	public StandardCalculator_v3(java.lang.String title) throws HeadlessException
-    {
-		super(CalcType_v3.BASIC.getName()); // default title is Basic
+	public StandardCalculator_v3(String title) throws HeadlessException, IOException {
+		super(StringUtils.isBlank(title) ? title : CalcType_v3.BASIC.getName()); // default title is Basic
 		setCurrentPanel(new JPanelBasic_v3(this));
 		setupStandardCalculator_v3();
 		setupMenuBar();
         setCalcType(determineCalcType());
         //setupRestOfCalculator();
 		setImageIcons();
+        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
+        //Application.getApplication().setDockIconImage(ImageIO.read(new File("src/main/resources/images/calculatorOriginalCopy.jpg")));
+        //setIconImage(calculatorImage1.getImage());
 		setMinimumSize(getCurrentPanel().getSize());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
+        //setIconImage(calculatorImage1.getImage());
 		setVisible(true);
 	}
 
@@ -291,12 +298,31 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonEquals.setEnabled(true);
         buttonEquals.addActionListener(action -> {
             try {
-                performButtonEqualsActions(action);
-            } catch (Calculator_v3Error calculator_v3Error) {
+                LOGGER.info("Equals button pressed");
+                performButtonEqualsActions();
+            } catch (Exception calculator_v3Error) {
                 calculator_v3Error.printStackTrace();
             }
         });
-        
+        buttonEquals.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                try {
+                    LOGGER.info("Return button Pressed");
+                    int code = e.getKeyCode();
+                    LOGGER.info("   Code: " + KeyEvent.getKeyText(code));
+                    performButtonEqualsActions();
+                } catch (Exception calculator_v3Error) {
+                    calculator_v3Error.printStackTrace();
+                }
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        });
         buttonNegate.setFont(font);
         buttonNegate.setPreferredSize(new Dimension(35, 35) );
         buttonNegate.setBorder(new LineBorder(Color.BLACK));
@@ -774,10 +800,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performButtonEqualsActions(ActionEvent action) throws Calculator_v3Error
+    public void performButtonEqualsActions()
     {
         LOGGER.info("performButtonEqualsActions");
-        String buttonChoice = action.getActionCommand();
+        String buttonChoice = "=";
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         if (getCalcType() == CalcType_v3.BASIC)
         {
@@ -822,7 +848,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             valuesPosition = 0;
         }
         else if (textAreaContainsBadText()) {
-            textArea.setText(action.getActionCommand() + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
+            textArea.setText("=" + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
             valuesPosition = 1;
             firstNumBool = true;
         }

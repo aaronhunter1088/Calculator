@@ -764,6 +764,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
     }
 
+    // TODO: Broken
     public void performButtonNotActions(ActionEvent action) {
         LOGGER.info("performing not operation...");
         String buttonChoice = action.getActionCommand();
@@ -771,14 +772,14 @@ public class JPanelProgrammer_v3 extends JPanel {
         getCalculator().setNotButtonBool(false);
         getButtonNot().setEnabled(false);
         calculator.textarea = new StringBuffer(calculator.getTextArea().getText().replaceAll("\n", ""));
-        LOGGER.debug("before not operation: " + calculator.textarea.toString());
+        LOGGER.debug("before operation execution: " + calculator.textarea.toString());
         StringBuffer newBuffer = new StringBuffer();
         for (int i = 0; i < calculator.textarea.length(); i++) {
             String s = Character.toString(calculator.textarea.charAt(i));
             if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
             else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
         }
-        LOGGER.debug("after not operation: " + newBuffer);
+        LOGGER.debug("after operation execution: " + newBuffer);
         calculator.textarea = new StringBuffer(newBuffer);
         calculator.getTextArea().setText("\n"+calculator.textarea.toString());
         LOGGER.info("not operation completed.");

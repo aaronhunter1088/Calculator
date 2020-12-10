@@ -46,13 +46,15 @@ public class JPanelProgrammerMethodsTest {
     // Done by BDD/TDD
     @Test
     public void pressingNotButtonReversesAllBits() {
+        //Assertions
+        when(ae.getActionCommand()).thenReturn("\"\\u00B1\"");
         //Assuming in Bytes form to begin with
         String expected = "11110100";
 
         c.getTextArea().setText("00001011");
-        p.performButtonNotActions();
+        p.performButtonNotActions(ae);
+        //assertEquals("topQWord not as expected", ""); // lots of 1's
         assertEquals("textarea not as expected", expected, c.getTextArea().getText().replaceAll("\n", ""));
-        //assertEquals("topQWord not as expected", "") // lots of 1's
     }
 
     @Test

@@ -11,8 +11,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+//import com.apple.eawt.Application;
 
 public abstract class Calculator_v3 extends JFrame {
 
@@ -111,7 +113,7 @@ public abstract class Calculator_v3 extends JFrame {
 		super(gc);
 		// TODO Auto-generated constructor stub
 	}
-	public Calculator_v3(String title) throws HeadlessException {
+	public Calculator_v3(String title) throws HeadlessException, IOException {
 		super(title);
 		layout = new GridBagLayout();
         setLayout(layout); // set frame layout
@@ -119,6 +121,9 @@ public abstract class Calculator_v3 extends JFrame {
 		setupCalculator_v3();
 		//setupMenuBar();
 		setMinimumSize(new Dimension(100,200));
+        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
+        //Application.getApplication().setDockIconImage(ImageIO.read(new File("src/main/resources/images/calculatorOriginalCopy.jpg")));
+        //setIconImage(new ImageIcon(String.valueOf(new File("src/main/resources/images/calculatorOriginalCopy.jpg"))).getImage());
 	}
 	public Calculator_v3(String title, GraphicsConfiguration gc) {
 		super(title, gc);
@@ -255,7 +260,7 @@ public abstract class Calculator_v3 extends JFrame {
         buttonDot.addActionListener(action -> {
             performDotButtonActions(action);
         });
-        LOGGER.info("Finished. Leaving setupButtonsAndSuch()");
+        LOGGER.info("Finished. Leaving setupCalculator_v3()");
 	}
     /**
      * Adds the components to the container
@@ -953,24 +958,25 @@ public abstract class Calculator_v3 extends JFrame {
     protected ImageIcon createImageIcon(String path, String description) throws Exception {
         LOGGER.info("Inside createImageIcon()");
         File sourceimage = new File(path);
-        //java.net.URL imgURL = getClass().getResource(path);
-        if (sourceimage != null) {
+        if (sourceimage != null)
+        {
             LOGGER.info("the path '" + path + "' created an image! the imageicon is being returned...");
             LOGGER.info("End createImageIcon()");
             return new ImageIcon(ImageIO.read(sourceimage), description);
-            //return new ImageIcon(imgURL, description);
-        } else {
+        }
+        else
+        {
             throw new Exception("The path '" + path + "' could not find an image there!");
         }
     }
     /** Sets the image icons */
     public void setImageIcons() {
         try {
-            calculatorImage1 = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
-            calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
-            macLogo = createImageIcon("src/main/resources/images/maclogo.png");
+            //calculatorImage1 = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
+            //calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
+            //macLogo = createImageIcon("src/main/resources/images/maclogo.png");
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage() + " ");
         }
     }
 

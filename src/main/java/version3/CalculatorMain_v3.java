@@ -14,11 +14,10 @@ public class CalculatorMain_v3 {
         LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
     }
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException {
 		LOGGER.info("Starting class CalculatorMain_v3");
 		//BinaryCalculator calculator = new BinaryCalculator();
 		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");
-    	//Calculator calculator = new Calculator();
 		initLookAndFeel("Metal");
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);
