@@ -88,7 +88,7 @@ public class JPanelProgrammerMethodsTest {
         for(int i=1; i<=8; i++) { c.performNumberButtonActions(ae); }
         assertEquals("textArea not as expected", "00000011", c.getTextArea().getText());
 
-        c.performButtonEqualsActions(ae);
+        c.performButtonEqualsActions();
         assertEquals("textArea not as expected", "00001000", c.getTextArea().getText());
         assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(c.values[0]));
     }
@@ -174,7 +174,7 @@ public class JPanelProgrammerMethodsTest {
         c.values[1] = number;
         c.confirm("3 Entered");
 
-        c.performButtonEqualsActions(ae);
+        c.performButtonEqualsActions();
 
         verify(ae, times(2)).getActionCommand();
         assertEquals("TextArea not as expected!", "00000001", c.getTextAreaWithoutNewLineCharacters());

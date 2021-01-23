@@ -14,7 +14,7 @@ public class CalculatorMain_v3 {
         LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
     }
 
-	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException {
+	public static void main(String[] args) throws Exception {
 		LOGGER.info("Starting class CalculatorMain_v3");
 		//BinaryCalculator calculator = new BinaryCalculator();
 		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");

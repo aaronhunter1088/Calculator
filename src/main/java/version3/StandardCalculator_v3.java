@@ -1,6 +1,6 @@
 package version3;
 
-//import com.apple.eawt.Application; IMPORT FOR CALCULATOR ICON
+import com.apple.eawt.Application; //IMPORT FOR CALCULATOR ICON
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,13 +42,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonDivide = new JButton("/");
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
-//    private Calculator_v3 calculator;
     //TODO: Think about it... move class specific booleans here
 
-    public StandardCalculator_v3() throws HeadlessException {
-		// TODO Auto-generated constructor stub
-	
-	}
+    public StandardCalculator_v3() throws HeadlessException {}
 
 	public StandardCalculator_v3(GraphicsConfiguration gc) {
 		super(gc);
@@ -61,7 +57,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
 
 	//TODO: Implement first
-	public StandardCalculator_v3(String title) throws HeadlessException, IOException {
+	public StandardCalculator_v3(String title) throws Exception {
 		super(StringUtils.isBlank(title) ? title : CalcType_v3.BASIC.getName()); // default title is Basic
 		setCurrentPanel(new JPanelBasic_v3(this));
 		setupStandardCalculator_v3();
@@ -70,8 +66,9 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         //setupRestOfCalculator();
 		setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
-        //Application.getApplication().setDockIconImage(ImageIO.read(new File("src/main/resources/images/calculatorOriginalCopy.jpg")));
-        //setIconImage(calculatorImage1.getImage());
+        Application.getApplication().setDockIconImage(createImageIcon("src/main/resources/images/calculatorOriginal.jpg").getImage());
+
+        setIconImage(calculatorImage1.getImage());
 		setMinimumSize(getCurrentPanel().getSize());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();

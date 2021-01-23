@@ -898,14 +898,14 @@ public class JPanelProgrammer_v3 extends JPanel {
 
     public String determineIfProgrammerOperatorWasPushed()
     {
-        String results = null;
+        String results = "";
         // what operations can be pushed: MOD, OR, XOR, NOT, and AND
         if (getCalculator().isModButtonPressed()) { results = "MOD_true"; }
         else if (getCalculator().isOrButtonPressed()) { results = "OR_true"; }
         else if (getCalculator().isXorButtonPressed()) { results = "XOR_true"; }
         else if (getCalculator().isNotButtonPressed()) { results = "NOT_true"; }
         else if (getCalculator().isAndButtonPressed()) { results = "AND_true"; }
-        getLogger().info("results from determineIfProgrammerOperatorWasPushed: " + (results == null ? "no operator pushed" : results));
+        getLogger().info("results from determineIfProgrammerOperatorWasPushed: " + (results.equals("") ? "no operator pushed" : results));
         return results;
     }
 

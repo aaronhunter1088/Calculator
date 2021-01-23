@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 //import com.apple.eawt.Application;
@@ -954,8 +955,7 @@ public abstract class Calculator_v3 extends JFrame {
      *
      * @throws Exception
      */
-    @SuppressWarnings("unused")
-    protected ImageIcon createImageIcon(String path, String description) throws Exception {
+    /*protected ImageIcon createImageIcon(String path, String description) throws Exception {
         LOGGER.info("Inside createImageIcon()");
         File sourceimage = new File(path);
         if (sourceimage != null)
@@ -968,13 +968,45 @@ public abstract class Calculator_v3 extends JFrame {
         {
             throw new Exception("The path '" + path + "' could not find an image there!");
         }
+    }*/
+
+    /** Returns an ImageIcon, or null if the path was invalid.
+     * @param path the path of the image
+     * @param description a description of the image being set
+     */
+    protected ImageIcon createImageIcon(String path, String description)
+    {
+        LOGGER.info("Inside createImageIcon(): creating image for " + description);
+        ImageIcon retImageIcon = null;
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        URL resource = classLoader.getResource(path.substring(19));
+        if (resource != null) {
+            retImageIcon = new ImageIcon(resource);
+            LOGGER.info("the path '" + path + "' created the '"+description+"'! the ImageIcon is being returned...");
+            LOGGER.info("End createImageIcon()");
+        }
+        else {
+            LOGGER.debug("The path '" + path + "' could not find an image there!. Trying again by removing 'src/main/resources/' from path!");
+            resource = classLoader.getResource(path.substring(19));
+            if (resource != null) {
+                retImageIcon = new ImageIcon(resource);
+                LOGGER.info("the path '" + path + "' created an image after removing 'src/main/resources/'! the ImageIcon is being returned...");
+                LOGGER.info("End createImageIcon()");
+            } else {
+                LOGGER.error("The path '" + path + "' could not find an image there after removing src/main/resources/!. Returning null!");
+            }
+
+        }
+        return retImageIcon;
     }
+
+
     /** Sets the image icons */
     public void setImageIcons() {
         try {
-            //calculatorImage1 = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
-            //calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
-            //macLogo = createImageIcon("src/main/resources/images/maclogo.png");
+            calculatorImage1 = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
+            calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
+            macLogo = createImageIcon("src/main/resources/images/maclogo.jpg");
         } catch (Exception e) {
             LOGGER.error(e.getMessage() + " ");
         }
