@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class StandardCalculator_v3 extends Calculator_v3 {
 
@@ -44,20 +45,21 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonNegate = new JButton("\u00B1");
     //TODO: Think about it... move class specific booleans here
 
-    public StandardCalculator_v3() throws HeadlessException {}
-
-	public StandardCalculator_v3(GraphicsConfiguration gc) {
+    public StandardCalculator_v3() throws HeadlessException
+    {}
+	public StandardCalculator_v3(GraphicsConfiguration gc)
+    {
 		super(gc);
 		// TODO Auto-generated constructor stub
 	}
-
-    public StandardCalculator_v3(String title, GraphicsConfiguration gc) {
+    public StandardCalculator_v3(String title, GraphicsConfiguration gc)
+    {
         super(title, gc);
         // TODO Auto-generated constructor stub
     }
-
 	//TODO: Implement first
-	public StandardCalculator_v3(String title) throws Exception {
+	public StandardCalculator_v3(String title) throws Exception
+    {
 		super(StringUtils.isBlank(title) ? title : CalcType_v3.BASIC.getName()); // default title is Basic
 		setCurrentPanel(new JPanelBasic_v3(this));
 		setupStandardCalculator_v3();
@@ -77,35 +79,101 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 	}
 
     /************* Start of methods here ******************/
-	public void setupMenuBar() {
+	public void setupMenuBar()
+    {
         LOGGER.info("Inside setupMenuBar()");
         // Menu Bar and Options
         setJMenuBar(bar); // add menu bar to application
 
-        JMenu viewMenu = new JMenu("View"); // create view menu
-        viewMenu.setFont(this.font );
+        JMenu lookMenu = new JMenu("Look");
+        lookMenu.setFont(this.font);
+        // Look options
+        JMenuItem metal = new JMenuItem("Metal");
+        metal.addActionListener(action -> {
+            try {
+                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(this);
+                super.pack();
+            } catch (ClassNotFoundException | InstantiationException |
+                    IllegalAccessException | UnsupportedLookAndFeelException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+        JMenuItem system = new JMenuItem("System");
+        system.addActionListener(action -> {
+            try {
+                UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(this);
+                super.pack();
+            } catch (ClassNotFoundException | InstantiationException |
+                    IllegalAccessException | UnsupportedLookAndFeelException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+        JMenuItem windows = new JMenuItem("Windows");
+        system.addActionListener(action -> {
+            try {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(this);
+            } catch (ClassNotFoundException | InstantiationException |
+                    IllegalAccessException | UnsupportedLookAndFeelException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+        JMenuItem motif = new JMenuItem("Motif");
+        system.addActionListener(action -> {
+            try {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(this);
+                super.pack();
+            } catch (ClassNotFoundException | InstantiationException |
+                    IllegalAccessException | UnsupportedLookAndFeelException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+        JMenuItem gtk = new JMenuItem("GTK");
+        system.addActionListener(action -> {
+            try {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(this);
+                super.pack();
+            } catch (ClassNotFoundException | InstantiationException |
+                    IllegalAccessException | UnsupportedLookAndFeelException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
 
+        lookMenu.add(metal);
+        lookMenu.add(system);
+        lookMenu.add(motif);
+        String os = System.getProperty("os.name");
+        if (!StringUtils.contains(os.toLowerCase(), "Mac".toLowerCase()))
+        {
+            lookMenu.add(windows);
+            lookMenu.add(gtk);
+        }
+        this.bar.add(lookMenu);
 
+        JMenu viewMenu = new JMenu("View");
+        viewMenu.setFont(this.font);
+        // View options
         JMenuItem basic = new JMenuItem("Basic");
         basic.setFont(this.font);
         viewMenu.add(basic);
-        basic.addActionListener(action -> {
-            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC);
-        });
-
+        basic.addActionListener(action ->
+            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC)
+        );
         JMenuItem programmer = new JMenuItem("Programmer");
         programmer.setFont(this.font);
         viewMenu.add(programmer);
-        programmer.addActionListener(action -> {
-            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER);
-        });
-
+        programmer.addActionListener(action ->
+            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER));
         this.bar.add(viewMenu); // add viewMenu to menu bar
         // Edit Menu and Actions
         JMenu editMenu = new JMenu("Edit"); // create edit menu
         editMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
         bar.add(editMenu); // add editMenu to menu bar
-
+        // Edit options
         JMenuItem copyItem = new JMenuItem("Copy");
         copyItem.setAccelerator(KeyStroke.getKeyStroke(
                 java.awt.event.KeyEvent.VK_C, java.awt.Event.CTRL_MASK));
@@ -118,36 +186,24 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         // create second item in editMenu
         JMenu historyMenu = new JMenu("History");
         historyMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        /// create third time in editMenu
-
-        // add JMenuItems to editMenu
         editMenu.add(copyItem);
-        copyItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                values[3] = textArea.getText(); // to copy
-                textarea = new StringBuffer().append(textArea.getText());
-                confirm();
-            }
+        copyItem.addActionListener(action -> {
+            values[3] = textArea.getText(); // to copy
+            textarea = new StringBuffer().append(textArea.getText());
+            confirm();
         });
 
         editMenu.add(pasteItem);
-        pasteItem.addActionListener(
-                new ActionListener() {
-                    // paste from copyItem
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        if (values[3].equals(""))
-                            LOGGER.info("Temp[3] is null");
-                        else
-                            LOGGER.info("temp[3]: " + values[3]);
-                        textArea.setText(values[3]); // to paste
-                        values[valuesPosition] = textArea.getText();
-                        textarea = new StringBuffer().append(textArea.getText());
-                        confirm();
-                    }
-                }
-        );
+        pasteItem.addActionListener(action -> {
+            if (values[3].equals(""))
+                LOGGER.info("Temp[3] is null");
+            else
+                LOGGER.info("temp[3]: " + values[3]);
+            textArea.setText(values[3]); // to paste
+            values[valuesPosition] = textArea.getText();
+            textarea = new StringBuffer().append(textArea.getText());
+            confirm();
+        });
         editMenu.addSeparator();
         editMenu.add(historyMenu);
 
@@ -184,20 +240,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
         // add JMenuItems to helpMenu
         helpMenu.add(viewHelpItem);
-        // NEEDS UPDATING
-        // Needs a scroll bar
-        // Text with hyperlinks
-        // Info about how to use
-        viewHelpItem.addActionListener(new ActionListener() {
-        // display message dialog box when user selects Help....
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            java.lang.String COPYRIGHT = "\u00a9";
+        viewHelpItem.addActionListener(action -> {
+            String COPYRIGHT = "\u00a9";
             iconLabel = new JLabel();
-            //iconLabel.setIcon(calculator);
-            //iconLabel.setText(" ");
-            JPanel iconPanel = new JPanel(new GridBagLayout() );
-
+            JPanel iconPanel = new JPanel(new GridBagLayout());
             iconPanel.add(iconLabel);
             textLabel = new JLabel("<html>Apple MacBook Air "
                    + "Version 3.0.1<br>"
@@ -217,46 +263,35 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             mainPanel.add(textLabel);
             JOptionPane.showMessageDialog(StandardCalculator_v3.this,
                    mainPanel, "Help", JOptionPane.PLAIN_MESSAGE);
-        }
-    });
+        });
         helpMenu.addSeparator();
         helpMenu.add(aboutCalculatorItem);
-        aboutCalculatorItem.addActionListener(
-            new ActionListener() // anonymous inner class
-            {
-                // display message dialog box when user selects About....
-                @Override
-                public void actionPerformed(ActionEvent event)
-                {
-                    java.lang.String COPYRIGHT = "\u00a9";
-                    //iconLabel = new JLabel(calculator2);
-                    //iconLabel.setIcon(calculator2);
-                    //iconLabel.setVisible(true);
-                    JPanel iconPanel = new JPanel(new GridBagLayout() );
-                    iconPanel.add(iconLabel);
-                    textLabel = new JLabel("<html>Apple MacBook Air"
-                            + "Version 3.0.1 (Build 1)<br>"
-                            + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                            + "Mac OS mojave and its user interface are<br>"
-                            + "protected by trademark and all other pending or existing intellectual property<br>"
-                            + "right in the United States and other countries/regions."
-                            + "<br><br><br>"
-                            + "This product is licensed under the License Terms to:<br>"
-                            + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
-                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+        aboutCalculatorItem.addActionListener(action -> {
+                java.lang.String COPYRIGHT = "\u00a9";
+                JPanel iconPanel = new JPanel(new GridBagLayout() );
+                iconPanel.add(iconLabel);
+                textLabel = new JLabel("<html>Apple MacBook Air"
+                        + "Version 3.0.1 (Build 1)<br>"
+                        + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
+                        + "Mac OS mojave and its user interface are<br>"
+                        + "protected by trademark and all other pending or existing intellectual property<br>"
+                        + "right in the United States and other countries/regions."
+                        + "<br><br><br>"
+                        + "This product is licensed under the License Terms to:<br>"
+                        + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+                textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-                    JPanel mainPanel = new JPanel();
-                    mainPanel.add(iconLabel);
-                    mainPanel.add(textLabel);
-                    JOptionPane.showMessageDialog(StandardCalculator_v3.this,
-                            mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
-                }
-            }
-        );
+                JPanel mainPanel = new JPanel();
+                mainPanel.add(iconLabel);
+                mainPanel.add(textLabel);
+                JOptionPane.showMessageDialog(StandardCalculator_v3.this, mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
+
+            });
         LOGGER.info("Finished. Leaving setupMenuBar()");
     } // end public setMenuBar
-	public void setupStandardCalculator_v3() {
+	public void setupStandardCalculator_v3()
+    {
 		buttonAdd.setFont(font);
         buttonAdd.setPreferredSize(new Dimension(35, 35) );
         buttonAdd.setBorder(new LineBorder(Color.BLACK));
@@ -331,7 +366,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
         add(getCurrentPanel());
 	}
-    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v3 calcType_v3) {
+    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v3 calcType_v3)
+    {
 	    setTitle(calcType_v3.getName());
         JPanel oldPanel = updateJPanel(currentPanel);
         // don't switch calc_types here; later...
@@ -341,68 +377,78 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         pack();
     }
 
-    public void performAdditionButtonActions(ActionEvent action) {
+    public void performAdditionButtonActions(ActionEvent action)
+    {
         LOGGER.info("AddButtonActions started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textArea.getText().equals("") && !textAreaContainsBadText())
+        if (values[0].contains("E"))
         {
-            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
-            LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
-            LOGGER.debug("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
-            addBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
-            dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
-            if (memorySwitchBool == true) {
-                memoryValues[memoryPosition] += " + ";
+            String errorMsg = "Cannot perform addition. Number too big!";
+            confirm(errorMsg);
+        }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            if (addBool == false && subBool == false && mulBool == false && divBool == false &&
+                    !textArea.getText().equals("") && !textAreaContainsBadText())
+            {
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+                LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.debug("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                addBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+                if (memorySwitchBool == true) {
+                    memoryValues[memoryPosition] += " + ";
+                }
             }
-        }
-        else if (addBool == true && !values[1].equals("")) {
-            addition(getCalcType());
-            addBool = resetOperator(addBool); // sets addBool to false
-            addBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (subBool == true && !values[1].equals("")) {
-            subtract(getCalcType());
-            subBool = resetOperator(subBool);
-            addBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (mulBool == true && !values[1].equals("")) {
-            multiply(getCalcType());
-            mulBool = resetOperator(mulBool);
-            addBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (divBool == true && !values[1].equals("")) {
-            divide(getCalcType());
-            divBool = resetOperator(divBool);
-            addBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (textAreaContainsBadText()) {
-            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
-            addBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
+            else if (addBool == true && !values[1].equals("")) {
+                addition(getCalcType());
+                addBool = resetOperator(addBool); // sets addBool to false
+                addBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (subBool == true && !values[1].equals("")) {
+                subtract(getCalcType());
+                subBool = resetOperator(subBool);
+                addBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (mulBool == true && !values[1].equals("")) {
+                multiply(getCalcType());
+                mulBool = resetOperator(mulBool);
+                addBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (divBool == true && !values[1].equals("")) {
+                divide(getCalcType());
+                divBool = resetOperator(divBool);
+                addBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (textAreaContainsBadText()) {
+                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                addBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
+                LOGGER.error("already chose an operator. choose another number.");
+            }
+            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters() + buttonChoice);
+            buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
-        }
-        else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
-            LOGGER.error("already chose an operator. choose another number.");
-        }
-        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters() + buttonChoice);
-        buttonDot.setEnabled(true);
-        dotButtonPressed = false;
-        numberIsNegative = false;
+            numberIsNegative = false;
 
-        performValuesConversion();
-        confirm("");
+            performValuesConversion();
+            confirm();
+        }
     }
-    public void addition() {
+    public void addition()
+    {
     	LOGGER.info("value[0]: '" + values[0] + "'");
     	LOGGER.info("value[1]: '" + values[1] + "'");
         double result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]); // create result forced double
@@ -442,7 +488,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         }
     }
-    public void addition(CalcType_v3 calcType_v3) {
+    public void addition(CalcType_v3 calcType_v3)
+    {
         if (getCalcType().equals(CalcType_v3.BASIC)) {
             addition();
         }
@@ -457,66 +504,76 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performSubtractionButtonActions(ActionEvent action) {
+    public void performSubtractionButtonActions(ActionEvent action)
+    {
         LOGGER.info("SubtractButtonHandler class started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform subtraction. Number too big!";
+            confirm(errorMsg);
+        }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
 //            convertAllValuesToDecimal();
-        if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textArea.getText().equals("") && !textAreaContainsBadText()) {
-            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
-            LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-            LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
-            subBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
+            if (addBool == false && subBool == false && mulBool == false && divBool == false &&
+                    !textArea.getText().equals("") && !textAreaContainsBadText()) {
+                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                subBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true && !values[1].equals("")) {
+                addition(getCalcType());
+                addBool = resetOperator(addBool);
+                subBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (subBool == true && !values[1].equals("")) {
+                subtract(getCalcType());
+                subBool = resetOperator(subBool);
+                subBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (mulBool == true && !values[1].equals("")) {
+                multiply(getCalcType());
+                mulBool = resetOperator(mulBool);
+                subBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (divBool == true && !values[1].equals("")) {
+                divide(getCalcType());
+                divBool = resetOperator(divBool);
+                subBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (textAreaContainsBadText()) {
+                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                subBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+                LOGGER.info("already chose an operator. next number is negative...");
+                negatePressed = true;
+            }
+            textarea = new StringBuffer().append(textArea.getText());
+            buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
+            numberIsNegative = false;
+            performValuesConversion();
+            confirm();
         }
-        else if (addBool == true && !values[1].equals("")) {
-            addition(getCalcType());
-            addBool = resetOperator(addBool);
-            subBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (subBool == true && !values[1].equals("")) {
-            subtract(getCalcType());
-            subBool = resetOperator(subBool);
-            subBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (mulBool == true && !values[1].equals("")) {
-            multiply(getCalcType());
-            mulBool = resetOperator(mulBool);
-            subBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (divBool == true && !values[1].equals("")) {
-            divide(getCalcType());
-            divBool = resetOperator(divBool);
-            subBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (textAreaContainsBadText()) {
-            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
-            subBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
-            dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
-        }
-        else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            LOGGER.info("already chose an operator. next number is negative...");
-            negatePressed = true;
-        }
-        textarea = new StringBuffer().append(textArea.getText());
-        buttonDot.setEnabled(true);
-        dotButtonPressed = false;
-        numberIsNegative = false;
-        performValuesConversion();
-        confirm();
     }
-    public void subtract() {
+    public void subtract()
+    {
         LOGGER.info("value[0]: '" + values[0] + "'");
         LOGGER.info("value[1]: '" + values[1] + "'");
         double result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]); // create result forced double
@@ -556,7 +613,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         }
     }
-    public void subtract(CalcType_v3 calcType_v3) {
+    public void subtract(CalcType_v3 calcType_v3)
+    {
 	    if (calcType_v3.equals(CalcType_v3.BASIC)) {
 	        subtract();
         }
@@ -569,67 +627,77 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
     }
 
-    public void performMultiplicationActions(ActionEvent action) {
+    public void performMultiplicationActions(ActionEvent action)
+    {
         LOGGER.info("performMultiplicationActions started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform multiplication. Number too big!";
+            confirm(errorMsg);
+        }
+        else
+        {
+            LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
 //            convertAllValuesToDecimal();
-        if (addBool == false && subBool == false && mulBool == false &&
-                divBool == false && !textArea.getText().equals("") &&
-                !textArea.getText().equals("Invalid textarea") &&
-                !textArea.getText().equals("Cannot divide by 0")) {
-            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
-            LOGGER.info("textArea: \\n" + textArea.getText().replaceAll("\n","")); // print out textArea has proper value confirmation; recall text area's orientation
-            LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after buttonMultiply was pushed"); // confirming proper textarea before moving on
-            mulBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
+            if (addBool == false && subBool == false && mulBool == false &&
+                    divBool == false && !textArea.getText().equals("") &&
+                    !textArea.getText().equals("Invalid textarea") &&
+                    !textArea.getText().equals("Cannot divide by 0")) {
+                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+                LOGGER.info("textArea: \\n" + textArea.getText().replaceAll("\n","")); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after buttonMultiply was pushed"); // confirming proper textarea before moving on
+                mulBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true && !values[1].equals("")) {
+                addition(getCalcType());
+                addBool = resetOperator(addBool);
+                mulBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (subBool == true && !values[1].equals("")) {
+                subtract(getCalcType());
+                subBool = resetOperator(subBool);
+                mulBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (mulBool == true && !values[1].equals("")) {
+                multiply(getCalcType());
+                mulBool = resetOperator(mulBool);
+                mulBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (divBool == true && !values[1].equals("")) {
+                divide(getCalcType());
+                divBool = resetOperator(divBool);
+                mulBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (textAreaContainsBadText()) {
+                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                mulBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
+                LOGGER.info("already chose an operator. choose another number.");
+            }
+            textarea = new StringBuffer().append(textArea.getText());
+            buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
-        }
-        else if (addBool == true && !values[1].equals("")) {
-            addition(getCalcType());
-            addBool = resetOperator(addBool);
-            mulBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (subBool == true && !values[1].equals("")) {
-            subtract(getCalcType());
-            subBool = resetOperator(subBool);
-            mulBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (mulBool == true && !values[1].equals("")) {
-            multiply(getCalcType());
-            mulBool = resetOperator(mulBool);
-            mulBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (divBool == true && !values[1].equals("")) {
-            divide(getCalcType());
-            divBool = resetOperator(divBool);
-            mulBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (textAreaContainsBadText()) {
-            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
-            mulBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
             dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
+            performValuesConversion();
+            confirm();
         }
-        else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
-            LOGGER.info("already chose an operator. choose another number.");
-        }
-        textarea = new StringBuffer().append(textArea.getText());
-        buttonDot.setEnabled(true);
-        dotButtonPressed = false;
-        dotButtonPressed = false;
-        performValuesConversion();
-        confirm();
     }
-    public void multiply() {
+    public void multiply()
+    {
         LOGGER.info("value[0]: '" + values[0] + "'");
         LOGGER.info("value[1]: '" + values[1] + "'");
         double result = Double.parseDouble(values[0]) * Double.parseDouble(values[1]); // create result forced double
@@ -639,7 +707,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("subBool: " + subBool);
         LOGGER.info("mulBool: " + mulBool);
         LOGGER.info("divBool: " + divBool);
-        if (result % 1 == 0) {
+        if (result % 1 == 0 && !values[0].contains("E")) {
             textArea.setText(values[0]);
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
@@ -653,11 +721,20 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 textArea.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
             }
-        } else {// if double == double, keep decimal and number afterwards
+        }
+        else if (values[0].contains("E"))
+        {
+            textArea.setText("\n" + values[0]);
+            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            values[0] = textarea.toString(); // update storing
+        }
+        else
+        {// if double == double, keep decimal and number afterwards
             textArea.setText("\n" + formatNumber(values[0]));
         }
     }
-    public void multiply(CalcType_v3 calcType_v3) {
+    public void multiply(CalcType_v3 calcType_v3)
+    {
         if (calcType_v3.equals(CalcType_v3.BASIC)) {
             multiply();
         }
@@ -674,66 +751,75 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     {
         LOGGER.info("performDivideButtonActions started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform division. Number too big!";
+            confirm(errorMsg);
+        }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
 //            convertAllValuesToDecimal();
-        if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                !textAreaContainsBadText())
-        {
-            textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-            textArea.setText("\n" + " " + buttonChoice + " " + textarea);
-            LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-            LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
-            divBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
+            if (addBool == false && subBool == false && mulBool == false && divBool == false &&
+                    !textAreaContainsBadText())
+            {
+                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                divBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true && !values[1].equals(""))
+            {
+                addition(getCalcType());
+                addBool = resetOperator(addBool); // sets addBool to false
+                divBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (subBool == true && !values[1].equals("")) {
+                subtract(getCalcType());
+                subBool = resetOperator(subBool);
+                divBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (mulBool == true && !values[1].equals("")) {
+                multiply(getCalcType());
+                mulBool = resetOperator(mulBool);
+                divBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (divBool == true && !values[1].equals("") & !values[1].equals("0"))
+            {
+                divide(getCalcType());
+                divBool = resetOperator(divBool);
+                divBool = true;
+                textArea.setText("\n" + buttonChoice + " " + textarea);
+            }
+            else if (textAreaContainsBadText())  {
+                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+                divBool = true; // sets logic for arithmetic
+                firstNumBool = false; // sets logic to perform operations when collecting second number
+                dotButtonPressed = false;
+                valuesPosition++; // increase valuesPosition for storing textarea
+            }
+            else if (addBool == true || subBool == true || mulBool == true || divBool == true)
+            {
+                LOGGER.info("already chose an operator. choose another number.");
+            }
+            textarea = new StringBuffer().append(textArea.getText());
+            buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
-        }
-        else if (addBool == true && !values[1].equals(""))
-        {
-            addition(getCalcType());
-            addBool = resetOperator(addBool); // sets addBool to false
-            divBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (subBool == true && !values[1].equals("")) {
-            subtract(getCalcType());
-            subBool = resetOperator(subBool);
-            divBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (mulBool == true && !values[1].equals("")) {
-            multiply(getCalcType());
-            mulBool = resetOperator(mulBool);
-            divBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (divBool == true && !values[1].equals("") & !values[1].equals("0"))
-        {
-            divide(getCalcType());
-            divBool = resetOperator(divBool);
-            divBool = true;
-            textArea.setText("\n" + buttonChoice + " " + textarea);
-        }
-        else if (textAreaContainsBadText())  {
-            textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
-            divBool = true; // sets logic for arithmetic
-            firstNumBool = false; // sets logic to perform operations when collecting second number
             dotButtonPressed = false;
-            valuesPosition++; // increase valuesPosition for storing textarea
+            performValuesConversion();
+            confirm();
         }
-        else if (addBool == true || subBool == true || mulBool == true || divBool == true)
-        {
-            LOGGER.info("already chose an operator. choose another number.");
-        }
-        textarea = new StringBuffer().append(textArea.getText());
-        buttonDot.setEnabled(true);
-        dotButtonPressed = false;
-        dotButtonPressed = false;
-        performValuesConversion();
-        confirm();
     }
-    public void divide() {
+    public void divide()
+    {
         LOGGER.info("value[0]: '" + values[0] + "'");
         LOGGER.info("value[1]: '" + values[1] + "'");
         if (!values[1].equals("0"))
@@ -784,7 +870,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             firstNumBool = true;
         }
     }
-    public void divide(CalcType_v3 calcType_v3) {
+    public void divide(CalcType_v3 calcType_v3)
+    {
         if (calcType_v3.equals(CalcType_v3.BASIC)) {
             divide();
         }
@@ -804,101 +891,114 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         if (getCalcType() == CalcType_v3.BASIC)
         {
-
+            if (addBool) {
+                addition(getCalcType()); // addition();
+                addBool = resetOperator(addBool);
+            }
+            else if (subBool){
+                subtract(getCalcType());
+                subBool = resetOperator(subBool);
+            }
+            else if (mulBool){
+                multiply(getCalcType());
+                mulBool = resetOperator(mulBool);
+            }
+            else if (divBool){
+                divide(getCalcType());
+                divBool = resetOperator(divBool);
+            }
         }
         else if (getCalcType() == CalcType_v3.PROGRAMMER)
         {
-            if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected()) {
+            if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected())
+            {
                 values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
             }
-            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonOct().isSelected()) {
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonOct().isSelected())
+            {
                 values[1] = convertFromTypeToTypeOnValues("Octal", "Decimal", values[1])[0];
             }
-            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected()) {
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
+            {
                 // DO NOTHING
             }
-            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected()) {
+            else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected())
+            {
                 values[1] = convertFromTypeToTypeOnValues("Hexidecimal", "Decimal", values[1])[0];
+            }
+            else if (orButtonBool)
+            {
+                ((JPanelProgrammer_v3)getCurrentPanel()).performOr();
+                getTextArea().setText(addNewLineCharacters(1) + values[0]);
+                performValuesConversion();
+
+            }
+            else if (modButtonBool)
+            {
+                LOGGER.info("Modulus result");
+                ((JPanelProgrammer_v3)getCurrentPanel()).performModulus();
+                // update values and textArea accordingly
+                performValuesConversion();
+                valuesPosition = 0;
+                modButtonBool = false;
             }
         }
 
         //TODO: add more calculator types here
 
-        if (addBool) {
-            addition(getCalcType()); // addition();
-            addBool = resetOperator(addBool);
-        }
-        else if (subBool){
-            subtract(getCalcType());
-            subBool = resetOperator(subBool);
-        }
-        else if (mulBool){
-            multiply(getCalcType());
-            mulBool = resetOperator(mulBool);
-        }
-        else if (divBool){
-            divide(getCalcType());
-            divBool = resetOperator(divBool);
-        }
-        else if (values[0].equals("") && values[1].equals("")) {
+        if (values[0].equals("") && values[1].equals(""))
+        {
             // if temp[0] and temp[1] do not have a number
             valuesPosition = 0;
         }
-        else if (textAreaContainsBadText()) {
+        else if (textAreaContainsBadText())
+        {
             textArea.setText("=" + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
             valuesPosition = 1;
             firstNumBool = true;
         }
-        else if (orButtonBool) {
-            ((JPanelProgrammer_v3)getCurrentPanel()).performOr();
-            getTextArea().setText(addNewLineCharacters(1) + values[0]);
-            performValuesConversion();
 
-        }
-        else if (modButtonBool) {
-            LOGGER.info("Modulus result");
-            ((JPanelProgrammer_v3)getCurrentPanel()).performModulus();
-            // update values and textArea accordingly
-            performValuesConversion();
-            valuesPosition = 0;
-            modButtonBool = false;
-        }
-
-//        textArea.setText("\n" + convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0]);
         values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
         values[3] = "";
         updateTextareaFromTextArea();
         firstNumBool = true;
         dotButtonPressed = false;
         valuesPosition = 0;
-        // TODO: Not a todo, but I did that so this would stand out. It's more an important note
-        // TODO: values[0], values[1], values[2] should always be in decimal form.
-
         confirm("");
     }
-    public void performNegateButtonActions(ActionEvent action) {
+    public void performNegateButtonActions(ActionEvent action)
+    {
         LOGGER.info("performNegateButtonActions started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        clearNewLineFromTextArea();
-        updateTextareaFromTextArea();
-        if (!textarea.equals("")) {
-            if (numberIsNegative) {
-                textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
-                LOGGER.debug("textarea: " + textarea);
-                getTextArea().setText("\n"+textarea);
-
-            }
-            else {
-                getTextArea().setText("\n"+textarea+"-");
-                textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
-                LOGGER.debug("textarea: " + textarea);
-            }
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot negate number. Number too big!";
+            confirm(errorMsg);
         }
-        values[valuesPosition] = textarea.toString();
-        confirm("");
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            clearNewLineFromTextArea();
+            updateTextareaFromTextArea();
+            if (!textarea.equals("")) {
+                if (numberIsNegative) {
+                    textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
+                    LOGGER.debug("textarea: " + textarea);
+                    getTextArea().setText("\n"+textarea);
+
+                }
+                else {
+                    getTextArea().setText("\n"+textarea+"-");
+                    textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+                    LOGGER.debug("textarea: " + textarea);
+                }
+            }
+            values[valuesPosition] = textarea.toString();
+            confirm("");
+        }
     }
-    public java.lang.String formatNumber(java.lang.String num) {
+    public java.lang.String formatNumber(java.lang.String num)
+    {
         DecimalFormat df = new DecimalFormat();
         if (!numberIsNegative) {
             if (num.length() == 2) df = new DecimalFormat("0.00");
@@ -931,14 +1031,16 @@ public class StandardCalculator_v3 extends Calculator_v3 {
      *        perform setup tasks based on mode
      */
 
-    public JPanel updateJPanel(JPanel currentPanel) {
+    public JPanel updateJPanel(JPanel currentPanel)
+    {
         JPanel oldPanel = getCurrentPanel();
         remove(getCurrentPanel());
         setCurrentPanel(currentPanel);
         add(getCurrentPanel());
         return oldPanel;
     }
-    public void convertAllValuesToDecimal() {
+    public void convertAllValuesToDecimal()
+    {
         if (getCalcType().equals(CalcType_v3.PROGRAMMER))
         {
             values = convertFromTypeToTypeOnValues("Binary", "Decimal", values);
@@ -956,7 +1058,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
      * the purpose may be. Once the logic for needing the numbers to be in binary
      * mode, you must convert the values back to decimal!
      */
-    public void convertAllValuesToBinary() {
+    public void convertAllValuesToBinary()
+    {
         values = convertFromTypeToTypeOnValues("Decimal", "Binary", values);
 //        values[1] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[1])[0];
 //        values[3] = convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), values[3])[0];
@@ -969,7 +1072,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
      * @param strings
      * @return
      */
-    public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings) {
+    public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings)
+    {
         LOGGER.debug("convertFromTypeToTypeOnValues(from: '"+type1+"', "+ "to: '"+type2+"' + " + Arrays.toString(strings));
         String[] arrToReturn = new String[strings.length];
         int countOfStrings = 0;
@@ -1064,7 +1168,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         return arrToReturn;
     }
     @Deprecated
-    public void convertFromTypeToType(String type1, String type2) {
+    public void convertFromTypeToType(String type1, String type2)
+    {
         if (type1.equals("Binary") && type2.equals("Decimal")) {
             // converting both numbers in values if applicable
             if (!values[0].equals("")) {
@@ -1108,7 +1213,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
      * It also determines if textArea and textarea are displayed properly.
      * Remember textArea is all characters, and textarea is simply the value represented
      */
-    public void performValuesConversion() {
+    public void performValuesConversion()
+    {
         // make sure no matter the mode, values[0] and values[1] are numbers and textArea's display correctly
         if (getCalcType() == CalcType_v3.PROGRAMMER) {
             if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
@@ -1132,7 +1238,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
     }
 
-    public void performOrLogic(ActionEvent actionEvent) {
+    public void performOrLogic(ActionEvent actionEvent)
+    {
         LOGGER.info("performOrLogic starts here");
         LOGGER.info("button: " + actionEvent.getActionCommand());
         StringBuffer sb = new StringBuffer();

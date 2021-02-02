@@ -538,30 +538,43 @@ public abstract class Calculator_v3 extends JFrame {
         LOGGER.info("DeleteButtonHandler() finished");
         confirm();
     }
-    public void performDotButtonActions(ActionEvent action) {
+    public void performDotButtonActions(ActionEvent action)
+    {
         LOGGER.info("DotButtonHandler() started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (StringUtils.isBlank(getTextAreaWithoutNewLineCharacters().strip())) {
-            textarea.append("0"+buttonChoice);
-            getTextArea().setText(addNewLineCharacters(1)+buttonChoice+"0");
-        } else {
-            getTextArea().setText(addNewLineCharacters(1)+buttonChoice+getTextAreaWithoutNewLineCharacters());
-            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters().replace(".","")
-                + buttonChoice);
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot press dot button. Number too big!";
+            confirm(errorMsg);
         }
-        values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
-        buttonDot.setEnabled(false);
-        setDotButtonPressed(true);
-        LOGGER.info("DotButtonHandler() finished");
-        confirm();
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            if (StringUtils.isBlank(getTextAreaWithoutNewLineCharacters().strip()))
+            {
+                textarea.append("0"+buttonChoice);
+                getTextArea().setText(addNewLineCharacters(1)+buttonChoice+"0");
+            }
+            else
+            {
+                getTextArea().setText(addNewLineCharacters(1)+buttonChoice+getTextAreaWithoutNewLineCharacters());
+                textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters().replace(".","")
+                        + buttonChoice);
+            }
+            values[valuesPosition] = textarea.toString();
+            buttonDot.setEnabled(false);
+            setDotButtonPressed(true);
+            LOGGER.info("DotButtonHandler() finished");
+            confirm();
+        }
     }
-    public void performNumberButtonActions(String buttonChoice) {
+    public void performNumberButtonActions(String buttonChoice)
+    {
         performInitialChecks();
         clearNewLineFromTextArea();
         updateTextareaFromTextArea();
         LOGGER.info("Performing basic actions...");
-        if (!numberIsNegative && dotButtonPressed == false)
+        if (!numberIsNegative && !isDotButtonPressed())
         {
             LOGGER.info("firstNumBool = true | positive number = true & dotButtonPressed = false");
             LOGGER.debug("before: " + textArea.getText());
@@ -579,12 +592,13 @@ public abstract class Calculator_v3 extends JFrame {
             }
 
         }
-        else if (numberIsNegative && dotButtonPressed == false)
+        else if (numberIsNegative && !isDotButtonPressed())
         { // logic for negative numbers
             LOGGER.info("firstNumBool = true | negative number = true & dotButtonPressed = false");
             setTextareaToValuesAtPosition(buttonChoice);
         }
-        else {
+        else
+        {
             LOGGER.info("firstNumBool = true & dotButtonPressed = true");
             performLogicForDotButtonPressed(buttonChoice);
         }
@@ -643,15 +657,17 @@ public abstract class Calculator_v3 extends JFrame {
         }
     }
     public void performLogicForDotButtonPressed(String buttonChoice) {
-        if (!textarea.equals("") && dotButtonPressed) {
-            updateTextareaFromTextArea();
-            textArea.setText(addNewLineCharacters(1) + buttonChoice + textarea);
-            updateTextareaFromTextArea();
+        if (!textarea.equals("") && isDotButtonPressed())
+        {
+            //updateTextareaFromTextArea(); textarea = 5.
+            textArea.setText(addNewLineCharacters(1) + values[valuesPosition] + buttonChoice);
+            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters()); // 5.6
             LOGGER.info("textarea: " + textarea);
             values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
             dotButtonPressed = false;
         }
-        else if (!textarea.equals("") && !dotButtonPressed) {
+        else if (!textarea.equals("") && !isDotButtonPressed())
+        {
             textarea.append(values[valuesPosition] + buttonChoice);
             textArea.setText("\n" + textarea );
             LOGGER.info("textarea: " + textarea);
@@ -667,17 +683,22 @@ public abstract class Calculator_v3 extends JFrame {
 	    return String.valueOf(sb);
     }
     @Deprecated
-    public void clearNewLineFromTextArea() {
+    public void clearNewLineFromTextArea()
+    {
         textArea.setText(textArea.getText().replaceAll("\n", ""));
     }
-    public void updateTextareaFromTextArea() { textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters()); }
-    public void performInitialChecks() {
+    public void updateTextareaFromTextArea()
+    { textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters()); }
+    public void performInitialChecks()
+    {
 	    boolean checkFound = false;
-        if (memAddBool || memSubBool) {
+        if (memAddBool || memSubBool)
+        {
             textArea.setText("");
             checkFound = true;
         }
-	    else if (textAreaContainsBadText()) {
+	    else if (textAreaContainsBadText())
+	    {
             textArea.setText(addNewLineCharacters(1)+"0");
             valuesPosition = 0;
             firstNumBool = true;
@@ -685,7 +706,8 @@ public abstract class Calculator_v3 extends JFrame {
             numberIsNegative = false;
             checkFound = true;
         }
-        else if (textArea.getText().equals("\n0") && getCalcType().equals(CalcType_v3.BASIC)) {
+        else if (textArea.getText().equals("\n0") && getCalcType().equals(CalcType_v3.BASIC))
+        {
             LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
             textArea.setText("");
             values[valuesPosition] = "";
@@ -693,7 +715,8 @@ public abstract class Calculator_v3 extends JFrame {
             dotButtonPressed = false;
             checkFound = true;
         }
-        else if (values[0].equals("") && !values[1].equals("")) {
+        else if (values[0].equals("") && !values[1].equals(""))
+        {
             values[0] = values[1];
             values[1] = "";
             valuesPosition = 0;

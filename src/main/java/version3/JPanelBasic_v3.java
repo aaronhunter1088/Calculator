@@ -13,7 +13,8 @@ import java.awt.event.ActionEvent;
 public class JPanelBasic_v3 extends JPanel {
 
     protected final static Logger LOGGER;
-    static {
+    static
+    {
         System.setProperty("appName", "Calculator");
         LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
     }
@@ -29,11 +30,12 @@ public class JPanelBasic_v3 extends JPanel {
     final private String[] memoryValues = {"", "", "", "", ""}; // holds last 5 operations
     private StandardCalculator_v3 calculator;
 
-    public JPanelBasic_v3(StandardCalculator_v3 calculator) {
+    public JPanelBasic_v3(StandardCalculator_v3 calculator)
+    {
         setMinimumSize(new Dimension(100,200));
         basicLayout = new GridBagLayout();
         setLayout(basicLayout); // set frame layout
-        constraints = new GridBagConstraints(); // instanitate constraints
+        constraints = new GridBagConstraints(); // instantiate constraints
         setupPanel_v3(calculator);
         setCalculator(calculator);
         addComponentsToPanel_v3();
@@ -42,10 +44,12 @@ public class JPanelBasic_v3 extends JPanel {
 
     /************* Start of methods here ******************/
 
-    public void setupPanel_v3(StandardCalculator_v3 calculator) {
+    public void setupPanel_v3(StandardCalculator_v3 calculator)
+    {
         LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        try {
+        try
+        {
             calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
             setAllNumberButtons(true);
             calculator.button0.setFont(calculator.font);
@@ -87,7 +91,9 @@ public class JPanelBasic_v3 extends JPanel {
             calculator.button9.setFont(calculator.font);
             calculator.button9.setPreferredSize(new Dimension(35, 35) );
             calculator.button9.setBorder(new LineBorder(Color.BLACK));
-        } catch (NullPointerException e) {}
+        }
+        catch (NullPointerException e)
+        {}
 
         buttonFraction.setFont(Calculator_v3.font);
         buttonFraction.setPreferredSize(new Dimension(35, 35) );
@@ -134,7 +140,8 @@ public class JPanelBasic_v3 extends JPanel {
         calculator.buttonMemorySubtraction.setEnabled(true);
         LOGGER.info("End setupPanel_v3()");
     }
-    public void addComponentsToPanel_v3() {
+    public void addComponentsToPanel_v3()
+    {
         LOGGER.info("Starting addComponentsToPanel_v3");
         constraints.fill = GridBagConstraints.BOTH;
         calculator.getTextArea().setBorder(new LineBorder(Color.BLACK));
@@ -224,7 +231,8 @@ public class JPanelBasic_v3 extends JPanel {
         });
         LOGGER.info("Finished addComponentsToPanel_v3");
     }
-    public void addComponent(Component c, int row, int column, int width, int height) {
+    public void addComponent(Component c, int row, int column, int width, int height)
+    {
         constraints.gridx = column;
         constraints.gridy = row;
         constraints.gridwidth = width;
@@ -238,7 +246,8 @@ public class JPanelBasic_v3 extends JPanel {
      *
      * TODO: Implement this method
      */
-    public void performBasicCalculatorTypeSwitchOperations(JPanel oldPanel) {
+    public void performBasicCalculatorTypeSwitchOperations(JPanel oldPanel)
+    {
         LOGGER.info("Starting to performBasicCalculatorTypeSwitchOperations");
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to decimal
@@ -252,82 +261,110 @@ public class JPanelBasic_v3 extends JPanel {
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations\n");
     }
 
-    public void performSquareRootButtonActions(ActionEvent action) {
+    public void performSquareRootButtonActions(ActionEvent action)
+    {
         LOGGER.info("SquareRoot ButtonHandler class started");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         String errorStringNaN = "Not a Number";
         LOGGER.debug("text: " + calculator.getTextArea().getText().replace("\n",""));
-        if (calculator.getTextArea().getText().equals("") || calculator.isNegativeNumber(calculator.getTextArea().getText()))
+        if (calculator.values[0].contains("E"))
         {
-            calculator.getTextArea().setText("\n"+errorStringNaN);
-            calculator.textarea = new StringBuffer().append("\n"+errorStringNaN);
-            calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
+            String errorMsg = "Cannot perform square root operation. Number too big!";
+            calculator.confirm(errorMsg);
         }
         else
         {
-            String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
-            result = calculator.formatNumber(result);
-            calculator.getTextArea().setText("\n"+result);
-            calculator.textarea = new StringBuffer().append(result);
+            if (calculator.getTextArea().getText().equals("") || calculator.isNegativeNumber(calculator.getTextArea().getText()))
+            {
+                calculator.getTextArea().setText("\n"+errorStringNaN);
+                calculator.textarea = new StringBuffer().append("\n"+errorStringNaN);
+                calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
+            }
+            else
+            {
+                String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextArea().getText())));
+                result = calculator.formatNumber(result);
+                calculator.getTextArea().setText("\n"+result);
+                calculator.textarea = new StringBuffer().append(result);
+                calculator.confirm();
+            }
+        }
+    }
+    public void performPercentButtonActions(ActionEvent action)
+    {
+        LOGGER.info("PercentStoreButtonHandler class started");
+        String buttonChoice = action.getActionCommand();
+        if (calculator.values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform percent operation. Number too big!";
+            calculator.confirm(errorMsg);
+        }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            if (!calculator.getTextArea().getText().equals("")) {
+                //if(textArea.getText().substring(textArea.getText().length()-1).equals("-")) { // if the last index equals '-'
+                // if the number is negative
+                if (calculator.isNegativeNumber(calculator.getTextArea().getText().replaceAll("\\n", ""))) {
+                    LOGGER.info("if condition true");
+                    //temp[valuesPosition] = textArea.getText(); // textarea
+                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
+                    percent /= 100;
+                    LOGGER.info("percent: "+percent);
+                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
+                    calculator.textarea = new StringBuffer().append(calculator.formatNumber(calculator.values[calculator.valuesPosition]));
+                    LOGGER.info("Old " + calculator.values[calculator.valuesPosition]);
+                    calculator.values[calculator.valuesPosition] = calculator.values[calculator.valuesPosition].substring(1, calculator.values[calculator.valuesPosition].length());
+                    LOGGER.info("New " + calculator.values[calculator.valuesPosition] + "-");
+                    calculator.getTextArea().setText(calculator.values[calculator.valuesPosition] + "-"); // update textArea
+                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
+                    //textArea.setText(textarea);
+                    calculator.values[calculator.valuesPosition] = calculator.textarea.toString();//+textarea;
+                    calculator.textarea = new StringBuffer();
+                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
+                    LOGGER.info("textArea: "+calculator.getTextArea().getText());
+                } else {
+                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
+                    percent /= 100;
+                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
+                    calculator.getTextArea().setText("\n" + calculator.formatNumber(calculator.values[calculator.valuesPosition]));
+                    calculator.values[calculator.valuesPosition] = calculator.getTextArea().getText().replaceAll("\\n", "");
+                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
+                    LOGGER.info("textArea: "+calculator.getTextArea().getText());
+                }
+            }
+            calculator.dotButtonPressed = true;
+            calculator.dotButtonPressed = true;
+            calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
             calculator.confirm();
         }
     }
-    public void performPercentButtonActions(ActionEvent action) {
-        LOGGER.info("PercentStoreButtonHandler class started");
-        String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (!calculator.getTextArea().getText().equals("")) {
-            //if(textArea.getText().substring(textArea.getText().length()-1).equals("-")) { // if the last index equals '-'
-            // if the number is negative
-            if (calculator.isNegativeNumber(calculator.getTextArea().getText().replaceAll("\\n", ""))) {
-                LOGGER.info("if condition true");
-                //temp[valuesPosition] = textArea.getText(); // textarea
-                double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                percent /= 100;
-                LOGGER.info("percent: "+percent);
-                calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                calculator.textarea = new StringBuffer().append(calculator.formatNumber(calculator.values[calculator.valuesPosition]));
-                LOGGER.info("Old " + calculator.values[calculator.valuesPosition]);
-                calculator.values[calculator.valuesPosition] = calculator.values[calculator.valuesPosition].substring(1, calculator.values[calculator.valuesPosition].length());
-                LOGGER.info("New " + calculator.values[calculator.valuesPosition] + "-");
-                calculator.getTextArea().setText(calculator.values[calculator.valuesPosition] + "-"); // update textArea
-                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                //textArea.setText(textarea);
-                calculator.values[calculator.valuesPosition] = calculator.textarea.toString();//+textarea;
-                calculator.textarea = new StringBuffer();
-                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                LOGGER.info("textArea: "+calculator.getTextArea().getText());
-            } else {
-                double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                percent /= 100;
-                calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                calculator.getTextArea().setText("\n" + calculator.formatNumber(calculator.values[calculator.valuesPosition]));
-                calculator.values[calculator.valuesPosition] = calculator.getTextArea().getText().replaceAll("\\n", "");
-                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                LOGGER.info("textArea: "+calculator.getTextArea().getText());
-            }
-        }
-        calculator.dotButtonPressed = true;
-        calculator.dotButtonPressed = true;
-        calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-        calculator.confirm();
-    }
-    public void performFractionButtonActions(ActionEvent action) {
+    public void performFractionButtonActions(ActionEvent action)
+    {
         LOGGER.info("FracStoreButtonHandler class started");
         String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (!calculator.getTextArea().getText().equals("")) {
-            double result = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-            result = 1 / result;
-            LOGGER.info("result: " + result);
-            calculator.values[calculator.valuesPosition] = Double.toString(result);
-            calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
-            LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
+        if (calculator.values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform fraction operation. Number too big!";
+            calculator.confirm(errorMsg);
         }
-        calculator.confirm();
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            if (!calculator.getTextArea().getText().equals("")) {
+                double result = Double.parseDouble(calculator.values[calculator.valuesPosition]);
+                result = 1 / result;
+                LOGGER.info("result: " + result);
+                calculator.values[calculator.valuesPosition] = Double.toString(result);
+                calculator.getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]);
+                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
+            }
+            calculator.confirm();
+        }
     }
-    public void convertToDecimal() {
+    public void convertToDecimal()
+    {
         LOGGER.info("convertToDecimal started");
         calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters().strip());
         int appropriateLength = calculator.getBytes();
@@ -409,7 +446,8 @@ public class JPanelBasic_v3 extends JPanel {
         LOGGER.info("convertToDecimal finished");
         calculator.confirm("");
     }
-    public void convertTextArea(JPanel oldPanel) {
+    public void convertTextArea(JPanel oldPanel)
+    {
         //LOGGER.info("Converting TextArea");
         if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
             LOGGER.info("Going from binary to decimal...");
@@ -425,7 +463,8 @@ public class JPanelBasic_v3 extends JPanel {
         }
         //LOGGER.info("TextArea converted");
     }
-    public void setAllNumberButtons(boolean isEnabled) {
+    public void setAllNumberButtons(boolean isEnabled)
+    {
         calculator.button0.setEnabled(isEnabled);
         calculator.button1.setEnabled(isEnabled);
         calculator.button2.setEnabled(isEnabled);

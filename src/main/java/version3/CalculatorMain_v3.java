@@ -2,52 +2,27 @@ package version3;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import javax.swing.*;
-import java.io.IOException;
 
-public class CalculatorMain_v3 {
+public class CalculatorMain_v3
+{
 
     private final static Logger LOGGER;
-    static {
+    static
+    {
         System.setProperty("appName", "Calculator");
         LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
     }
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception
+    {
 		LOGGER.info("Starting class CalculatorMain_v3");
-		//BinaryCalculator calculator = new BinaryCalculator();
 		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");
-		initLookAndFeel("Metal");
+        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);
+		calculator.setResizable(false);
         calculator.confirm("Calculator started. Initial state");
-    }
-    
-    private static void initLookAndFeel(String lookAndFeel) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-        String thislookAndFeel = lookAndFeel;
-        if (thislookAndFeel.equals("Metal")) {
-        	thislookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
-            //  an alternative way to set the Metal L&F is to replace the 
-            // previous line with:
-            // lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
-                
-        } else if (thislookAndFeel.equals("System")) {
-        	thislookAndFeel = "javax.swing.plaf.system.SystemLookAndFeel";
-        } else if (thislookAndFeel.equals("Windows")) {
-        	// Not supported on Mac
-        	thislookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-        } else if (thislookAndFeel.equals("Motif")) {
-        	thislookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
-        } else if (thislookAndFeel.equals("GTK")) { 
-        	// Not supported on Mac
-        	thislookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-        } else {
-            LOGGER.error("Unexpected value of LOOKANDFEEL specified: '" + thislookAndFeel + "'. Defaulting to Metal.");
-            thislookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
-        }
-        LOGGER.info("Setting the look and feel to : " + thislookAndFeel);
-        UIManager.setLookAndFeel(thislookAndFeel);
     }
 }
 /*
