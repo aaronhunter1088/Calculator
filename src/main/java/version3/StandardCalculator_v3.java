@@ -4,23 +4,18 @@ import com.apple.eawt.Application; //IMPORT FOR CALCULATOR ICON
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class StandardCalculator_v3 extends Calculator_v3 {
 
     private static Logger LOGGER;
-    static {
+    static
+    {
         LOGGER = LogManager.getLogger(StandardCalculator_v3.class);
     }
 
@@ -65,16 +60,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 		setupStandardCalculator_v3();
 		setupMenuBar();
         setCalcType(determineCalcType());
-        //setupRestOfCalculator();
 		setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(createImageIcon("src/main/resources/images/calculatorOriginal.jpg").getImage());
-
         setIconImage(calculatorImage1.getImage());
 		setMinimumSize(getCurrentPanel().getSize());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
-        //setIconImage(calculatorImage1.getImage());
 		setVisible(true);
 	}
 
@@ -1008,7 +1000,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         else
         {
             LOGGER.info("button: " + buttonChoice); // print out button confirmation
-            clearNewLineFromTextArea();
+            getTextArea().setText(getTextAreaWithoutNewLineCharacters());
             updateTextareaFromTextArea();
             if (!textarea.equals("")) {
                 if (numberIsNegative) {
