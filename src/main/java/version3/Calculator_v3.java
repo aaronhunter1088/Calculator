@@ -305,12 +305,13 @@ public abstract class Calculator_v3 extends JFrame {
             values[i] = "";
         }
         textArea.setText("\n0");
-        textarea = new StringBuffer();
+        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
         resetOperators(false);
         valuesPosition = 0;
         firstNumBool = true;
         dotButtonPressed = false;
         dotButtonPressed = false;
+        numberIsNegative = false;
         buttonDot.setEnabled(true);
         LOGGER.info("ClearButtonHandler() finished");
         confirm();
@@ -555,11 +556,19 @@ public abstract class Calculator_v3 extends JFrame {
                 textarea.append("0"+buttonChoice);
                 getTextArea().setText(addNewLineCharacters(1)+buttonChoice+"0");
             }
-            else
+            else if (!isNegativeNumber(values[valuesPosition]))
             {
                 getTextArea().setText(addNewLineCharacters(1)+buttonChoice+getTextAreaWithoutNewLineCharacters());
                 textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters().replace(".","")
                         + buttonChoice);
+            }
+            else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
+            {
+                textarea = new StringBuffer().append(convertToPositive(values[valuesPosition]));
+                getTextArea().setText(addNewLineCharacters(1)+buttonChoice+textarea+"-");
+                LOGGER.info("TextArea: " + getTextArea().getText());
+                textarea.append(".");
+                textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
             }
             values[valuesPosition] = textarea.toString();
             buttonDot.setEnabled(false);
@@ -597,6 +606,11 @@ public abstract class Calculator_v3 extends JFrame {
             LOGGER.info("firstNumBool = true | negative number = true & dotButtonPressed = false");
             setTextareaToValuesAtPosition(buttonChoice);
         }
+        else if (!numberIsNegative && isDotButtonPressed())
+        {
+            LOGGER.info("firstNumBool = true | negative number = false & dotButtonPressed = true");
+            performLogicForDotButtonPressed(buttonChoice);
+        }
         else
         {
             LOGGER.info("firstNumBool = true & dotButtonPressed = true");
@@ -622,7 +636,8 @@ public abstract class Calculator_v3 extends JFrame {
             performNumberButtonActions(buttonChoice);
         }
     }
-    public void performProgrammerNumberButtonActions(String buttonChoice) {
+    public void performProgrammerNumberButtonActions(String buttonChoice)
+    {
 	    performInitialChecks();
 	    LOGGER.info("Performing programmer actions...");
 	    if (getTextArea().getText().length() > getBytes())
@@ -656,15 +671,24 @@ public abstract class Calculator_v3 extends JFrame {
             performProgrammerNumberButtonActions(buttonChoice);
         }
     }
-    public void performLogicForDotButtonPressed(String buttonChoice) {
-        if (!textarea.equals("") && isDotButtonPressed())
+    public void performLogicForDotButtonPressed(String buttonChoice)
+    {
+        if (!textarea.equals("") && isDotButtonPressed() && isNumberNegative())
         {
-            //updateTextareaFromTextArea(); textarea = 5.
-            textArea.setText(addNewLineCharacters(1) + values[valuesPosition] + buttonChoice);
-            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters()); // 5.6
+            textarea = new StringBuffer().append(convertToPositive(values[valuesPosition]));
+            getTextArea().setText(addNewLineCharacters(1)+textarea+buttonChoice+"-");
+            LOGGER.info("TextArea: " + getTextArea().getText());
+            textarea.append(buttonChoice);
+            textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+            values[valuesPosition] = textarea.toString();
+            dotButtonPressed = false;
+        }
+        else if (!textarea.equals("") && isDotButtonPressed() && !isNumberNegative())
+        {
+            textarea = new StringBuffer().append(values[valuesPosition] + buttonChoice);
+            textArea.setText(addNewLineCharacters(1)+textarea.toString() );
             LOGGER.info("textarea: " + textarea);
             values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
-            dotButtonPressed = false;
         }
         else if (!textarea.equals("") && !isDotButtonPressed())
         {
@@ -675,7 +699,8 @@ public abstract class Calculator_v3 extends JFrame {
         }
     }
 
-    public String addNewLineCharacters(int number) {
+    public String addNewLineCharacters(int number)
+    {
 	    StringBuffer sb = new StringBuffer();
 	    for(int i=0; i<number; i++) {
 	        sb.append("\n");
@@ -914,11 +939,10 @@ public abstract class Calculator_v3 extends JFrame {
      * Fully tested
      */
     public String convertToNegative(String number) {
-        LOGGER.info("convertToNegative() running");
+        LOGGER.info("convertToNegative("+number+") running");
         LOGGER.debug("Old: " + number.replaceAll("\n", ""));
         number = "-" + number.replaceAll("\n", "");
         LOGGER.debug("New: "  + number);
-        LOGGER.info("convertToNegative("+number+") done");
         numberIsNegative = true;
         return number;
     }
@@ -931,15 +955,16 @@ public abstract class Calculator_v3 extends JFrame {
      * Fully tested
      */
     public String convertToPositive(String number) {
-        LOGGER.info("convertToPositive() running");
+        LOGGER.info("convertToPositive("+number+") running");
         LOGGER.debug("Old: " + number.replaceAll("\n", ""));
         number = number.replaceAll("-", "").trim();
         LOGGER.debug("New: " + number);
-        LOGGER.info("convertToPositive("+number+") running");
+
         numberIsNegative = false;
         return number;
     }
-    protected String getTextAreaWithoutNewLineCharacters() { return getTextArea().getText().replaceAll("\n", ""); }
+    protected String getTextAreaWithoutNewLineCharacters()
+    { return getTextArea().getText().replaceAll("\n", ""); }
     public void setMemoryValueAtPosition(String memoryValue, int memoryPosition) {
         this.memoryValues[memoryPosition] = memoryValue;
         LOGGER.info("memoryValue["+memoryPosition+"]: " + memoryValues[memoryPosition]);

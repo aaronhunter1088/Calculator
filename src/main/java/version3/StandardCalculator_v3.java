@@ -454,19 +454,23 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         double result = Double.parseDouble(values[0]) + Double.parseDouble(values[1]); // create result forced double
         LOGGER.info(values[0] + " + " + values[1] + " = " + result);
         values[0] = Double.toString(result);
-        if (result % 1 == 0)
+        if (result % 1 == 0 && !isNegativeNumber(values[0]))
         {
-        	LOGGER.info("We have a whole number");
+        	LOGGER.info("We have a whole positive number");
         	textarea = clearZeroesAtEnd(String.valueOf(result));
-            values[0] = String.valueOf(textarea); // textarea changed to whole number, or int
-            textArea.setText("\n" + String.valueOf(textarea));
-            if (Integer.parseInt(values[0]) < 0 ) {
-                textarea = new StringBuffer().append(textArea.getText()); // values[valuesPosition]
-                LOGGER.info("textarea: '" + textarea + "'");
-                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
-                LOGGER.info("textarea: '" + textarea + "'");
-                textArea.setText("\n "+textarea.toString().replaceAll("-", "") + "-"); // update textArea
-            }
+            values[0] = textarea.toString(); // textarea changed to whole number, or int
+            textArea.setText("\n" + textarea.toString());
+            dotButtonPressed = false;
+            buttonDot.setEnabled(true);
+        }
+        else if (result % 1 == 0 && isNegativeNumber(values[0]))
+        {
+            LOGGER.info("We have a whole negative number");
+            textarea = new StringBuffer().append(convertToPositive(values[0]));
+            textarea = clearZeroesAtEnd(textarea.toString());
+            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+            values[0] = textarea.toString();
             dotButtonPressed = false;
             buttonDot.setEnabled(true);
         }
@@ -583,22 +587,26 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("subBool: " + subBool);
         LOGGER.info("mulBool: " + mulBool);
         LOGGER.info("divBool: " + divBool);
-        if (result % 1 == 0) {
-            //textArea.setText(temp[0]);
+        if (result % 1 == 0 && !isNegativeNumber(values[0]))
+        {
             textarea = new StringBuffer().append(Double.toString(result));
             textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
             values[0] = textarea.toString(); // update storing
             textArea.setText("\n" + values[0]);
-            if (Integer.parseInt(values[0]) < 0 ) {
-                //textarea = textArea.getText(); 
-                //System.out.printf("\n%s", textarea);
-                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
-                LOGGER.info("textarea: " + textarea);
-                textArea.setText("\n" + textarea.toString().replaceAll(" ", "") + "-".replaceAll(" ", "")); // update textArea
-                LOGGER.info("temp[0]: " + values[0]);
-            }
         }
-        else {// if double == double, keep decimal and number afterwards
+        else if (result % 1 == 0 && isNegativeNumber(values[0]))
+        {
+            LOGGER.info("We have a whole negative number");
+            textarea = new StringBuffer().append(convertToPositive(values[0]));
+            textarea = clearZeroesAtEnd(textarea.toString());
+            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+            values[0] = textarea.toString();
+            dotButtonPressed = false;
+            buttonDot.setEnabled(true);
+        }
+        else
+        {// if double == double, keep decimal and number afterwards
             if (Double.parseDouble(values[0]) < 0.0 ) {
                 values[0] = formatNumber(values[0]);
                 textarea = new StringBuffer().append(values[0]);
@@ -707,26 +715,36 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         LOGGER.info("subBool: " + subBool);
         LOGGER.info("mulBool: " + mulBool);
         LOGGER.info("divBool: " + divBool);
-        if (result % 1 == 0 && !values[0].contains("E")) {
+        if (result % 1 == 0 && !values[0].contains("E") && !isNegativeNumber(values[0]))
+        {
             textArea.setText(values[0]);
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
             values[0] = textarea.toString(); // update storing
             textArea.setText("\n" + values[0]);
-            if (Integer.parseInt(values[0]) < 0 ) {
-                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", "")); // temp[2]
-                LOGGER.info("textarea: " + textarea);
-                textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
-                LOGGER.info("textarea: " + textarea);
-                textArea.setText("\n" + textarea + "-"); // update textArea
-                LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
-            }
+        }
+        else if (result % 1 == 0 && isNegativeNumber(values[0]))
+        {
+            LOGGER.info("We have a whole negative number");
+            textarea = new StringBuffer().append(convertToPositive(values[0]));
+            textarea = clearZeroesAtEnd(textarea.toString());
+            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+            values[0] = textarea.toString();
+            dotButtonPressed = false;
+            buttonDot.setEnabled(true);
         }
         else if (values[0].contains("E"))
         {
             textArea.setText("\n" + values[0]);
             textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
             values[0] = textarea.toString(); // update storing
+        }
+        else if (isNegativeNumber(values[0]))
+        {
+            textarea = new StringBuffer().append(convertToPositive(values[0]));
+            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textarea = new StringBuffer().append(convertToNegative(values[0]));
         }
         else
         {// if double == double, keep decimal and number afterwards
@@ -837,7 +855,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             LOGGER.info("subBool: " + subBool);
             LOGGER.info("mulBool: " + mulBool);
             LOGGER.info("divBool: " + divBool);
-            if (Double.parseDouble(values[0]) % 1 == 0) {
+            if (Double.parseDouble(values[0]) % 1 == 0 && !isNegativeNumber(values[0]))
+            {
                 // if int == double, cut off decimal and zero
                 textArea.setText("\n" + values[0]);
                 textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
@@ -854,6 +873,17 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                     updateTextareaFromTextArea();
                     LOGGER.info("values["+valuesPosition+"]: " + values[valuesPosition]);
                 }
+            }
+            else if (Double.parseDouble(values[0]) % 1 == 0 && isNegativeNumber(values[0]))
+            {
+                LOGGER.info("We have a whole negative number");
+                textarea = new StringBuffer().append(convertToPositive(values[0]));
+                textarea = clearZeroesAtEnd(textarea.toString());
+                textArea.setText(addNewLineCharacters(1)+textarea+"-");
+                textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+                values[0] = textarea.toString();
+                dotButtonPressed = false;
+                buttonDot.setEnabled(true);
             }
             else {
                 // if double == double, keep decimal and number afterwards
@@ -960,7 +990,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
         values[1] = ""; // this is not done in addition, subtraction, multiplication, or division
         values[3] = "";
-        updateTextareaFromTextArea();
+        //updateTextareaFromTextArea();
         firstNumBool = true;
         dotButtonPressed = false;
         valuesPosition = 0;
