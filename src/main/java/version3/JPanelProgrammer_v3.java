@@ -822,11 +822,11 @@ public class JPanelProgrammer_v3 extends JPanel {
             calculator.firstNumBool = false;
             getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 //            getCalculator().textArea.setText("\n" + getCalculator().getValues()[getCalculator().getValuesPosition()] + " " + buttonChoice);
-            getCalculator().getTextArea().setText("\n" + getCalculator().getTextAreaWithoutNewLineCharacters() + buttonChoice + " "); // update textArea
+            getCalculator().getTextArea().setText("\n" + getCalculator().getTextAreaWithoutNewLineCharacters() + " " + buttonChoice); // update textArea
 //            getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1) +
 //                                                  buttonChoice + "C_" + getCalculator().getValues()[getCalculator().getValuesPosition()]);
             getLogger().debug("textArea: " + getCalculator().getTextAreaWithoutNewLineCharacters());
-            getCalculator().setTextarea(new StringBuffer().append("5 OR"));
+            getCalculator().setTextarea(new StringBuffer().append(getCalculator().getTextAreaWithoutNewLineCharacters()));
 
             calculator.valuesPosition++;
             calculator.confirm("Show values[0]");
@@ -998,7 +998,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         CalcType_v3 previousBase = getCalculator().getBase();
         getLogger().info("previous base: " + previousBase);
         getLogger().info("will set base to: " + CalcType_v3.BINARY);
-        String currentValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), calculator.values[calculator.valuesPosition-1])[0];
+        String currentValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), calculator.values[calculator.valuesPosition])[0];
         if (calculator.isButtonOctSet)
         {
             // logic for Octal to Binary
@@ -1010,8 +1010,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
         else if (getButtonBin().isSelected())
         {
-
-
             if (calculator.getTextArea().getText().equals("")) { return; }
             if (calculator.getTextArea().getText().length()==calculator.getBytes()) { return; }
 //            calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters());
@@ -1215,7 +1213,8 @@ public class JPanelProgrammer_v3 extends JPanel {
         //In order for this to work, we need to convert to most appropriate base
         //Check to make sure both are same length
         //
-        getCalculator().convertAllValuesToBinary();
+        if (getCalculator().getCalcType() != CalcType_v3.PROGRAMMER)
+            getCalculator().convertAllValuesToBinary();
 
         for (int i=0; i<calculator.values[0].length(); i++) {
             String letter = "0";

@@ -384,8 +384,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !textAreaContainsBadText())
             {
-                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+                textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
+                textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + textarea);
                 LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.debug("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
                 addBool = true; // sets logic for arithmetic
@@ -430,12 +430,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
                 LOGGER.error("already chose an operator. choose another number.");
             }
-            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters() + buttonChoice);
+            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters().replace("+","").strip());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             numberIsNegative = false;
 
-            performValuesConversion();
+            //performValuesConversion();
             confirm();
         }
     }
@@ -494,8 +494,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 //            convertFromTypeToType("Binary", "Decimal");
             // run add
             addition();
-            textarea = new StringBuffer().append(addNewLineCharacters(1)+
-                    convertFromTypeToTypeOnValues("Decimal", "Binary", String.valueOf(textarea))[0]);
+            textarea = new StringBuffer().append(convertFromTypeToTypeOnValues("Decimal", "Binary", String.valueOf(textarea))[0]);
             textArea.setText(addNewLineCharacters(1)+textarea);
         }
     }
@@ -934,10 +933,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         {
             if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected())
             {
+                values[0] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[0])[0];
                 values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonOct().isSelected())
             {
+                values[0] = convertFromTypeToTypeOnValues("Octal", "Decimal", values[0])[0];
                 values[1] = convertFromTypeToTypeOnValues("Octal", "Decimal", values[1])[0];
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
@@ -946,16 +947,18 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected())
             {
+                values[0] = convertFromTypeToTypeOnValues("Hexidecimal", "Decimal", values[0])[0];
                 values[1] = convertFromTypeToTypeOnValues("Hexidecimal", "Decimal", values[1])[0];
             }
-            else if (orButtonBool)
+
+            if (orButtonBool)
             {
                 ((JPanelProgrammer_v3)getCurrentPanel()).performOr();
                 getTextArea().setText(addNewLineCharacters(1) + values[0]);
                 performValuesConversion();
 
             }
-            else if (modButtonBool)
+            else if (isModButtonPressed())
             {
                 LOGGER.info("Modulus result");
                 ((JPanelProgrammer_v3)getCurrentPanel()).performModulus();
@@ -963,6 +966,23 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 performValuesConversion();
                 valuesPosition = 0;
                 modButtonBool = false;
+            }
+            // after converting to decimal, perform same logic
+            else if (addBool) {
+                addition(CalcType_v3.BASIC); // forced addition of Basic type
+                addBool = resetOperator(addBool);
+            }
+            else if (subBool){
+                subtract(CalcType_v3.BASIC);
+                subBool = resetOperator(subBool);
+            }
+            else if (mulBool){
+                multiply(CalcType_v3.BASIC);
+                mulBool = resetOperator(mulBool);
+            }
+            else if (divBool){
+                divide(CalcType_v3.BASIC);
+                divBool = resetOperator(divBool);
             }
         }
 

@@ -97,10 +97,12 @@ public class CalculatorMethodsTest {
     public void testDeleteButtonFunctionality()
     {
         c.getTextArea().setText("\n35");
+        c.setTextarea(new StringBuffer().append("35"));
+        c.values[0] = "35";
 //        Calculator_v3.DeleteButtonHandler handler = c.getDeleteButtonHandler();
         when(ae.getActionCommand()).thenReturn("DEL");
         c.performDeleteButtonActions(ae);
-        assertEquals("Text area does not equal 3", "\n3", c.getTextArea().getText());
+        assertEquals("TextArea does not equal 3", "\n3", c.getTextArea().getText());
     }
 
     @Test
@@ -135,8 +137,9 @@ public class CalculatorMethodsTest {
         c.setNumberIsNegative(true);
         c.setDotButtonPressed(true);
         c.performNumberButtonActions(ae);
+        c.setDotButtonPressed(true);
         assertEquals("Textarea is not as expected", "-5.2", c.textarea.toString());
-        assertEquals("TextArea is not as expected", "\n2.5-", c.getTextArea().getText());
+        assertEquals("TextArea is not as expected", "\n5.2-", c.getTextArea().getText());
         assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
     }
 
