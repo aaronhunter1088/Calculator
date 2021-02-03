@@ -158,7 +158,7 @@
 							<mainClass>version3.CalculatorMain_v3</mainClass>
 						</manifestEntries>
 					</archive>
-					<outputDirectory>${basedir}/dist</outputDirectory>
+					<outputDirectory>${basedir}/dist/version3</outputDirectory>
 				</configuration>
 			</plugin>
 			<!-- Builds filter.properties file -->
@@ -177,7 +177,8 @@
 								<tstamp>
 									<format property="last.updated" pattern="MM-dd-YYYY hh:mm:ss"/>
 								</tstamp>
-								<echo file="${basedir}/target/filter.properties" message="build.time=${last.updated}"/>
+								<!-- Places file inside dist/ -->
+								<echo file="${basedir}/dist/version3/filter.properties" message="build.time=${last.updated}"/>
 							</tasks>
 						</configuration>
 					</execution>
@@ -212,7 +213,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>${basedir}/dist</outputDirectory>
+					<outputDirectory>${basedir}/dist/version3</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
