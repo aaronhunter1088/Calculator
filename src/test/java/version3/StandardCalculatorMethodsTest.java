@@ -48,6 +48,7 @@ public class StandardCalculatorMethodsTest {
     public void testDivisionFunctionality() {
         c.values[0] = "15";
         c.values[1] = "5";
+        c.calcType = CalcType_v3.BASIC;
         c.divide();
         assertEquals("Did not get back expected result", "3", c.values[0]);
     }

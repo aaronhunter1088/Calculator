@@ -7,40 +7,62 @@
     <version>3.1.0</version>
     <packaging>jar</packaging>
     <name>MicrosoftCalculator</name>
-    
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<outputDirectory>${basedir}/dist</outputDirectory>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<apple.version>1.4</apple.version>
+		<commons.lang.version>3.9</commons.lang.version>
+		<junit.version>4.13.1</junit.version>
+		<log4j.version>2.13.2</log4j.version>
+		<maven.antrun.version>3.0.0</maven.antrun.version>
+		<maven.assembly.version>3.3.0</maven.assembly.version>
+		<maven.compiler.version>3.8.0</maven.compiler.version>
+		<maven.dependency.version>3.1.2</maven.dependency.version>
+		<maven.jar.version>3.1.0</maven.jar.version>
+		<maven.jar.plugin.version>3.1.0</maven.jar.plugin.version>
+		<mockito.version>3.0.0</mockito.version>
+		<properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
+	</properties>
+
 	<dependencies>
 
 		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
 		<dependency>
 			<groupId>com.apple</groupId>
 			<artifactId>AppleJavaExtensions</artifactId>
-			<version>1.4</version>
+			<version>${apple.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.9</version>
+			<version>${commons.lang.version}</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.13.2</version>
+			<version>${log4j.version}</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.0.0</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -62,55 +84,87 @@
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-dependency-plugin</artifactId>
-			<version>3.1.2</version>
+			<version>${maven.dependency.version}</version>
 		</dependency>
 
 	</dependencies>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<outputDirectory>${basedir}/dist</outputDirectory>
-		<finalName>${project.artifactId}-${project.version}</finalName>
-
-		<maven.antrun.version>3.0.0</maven.antrun.version>
-		<maven.assembly.version>3.3.0</maven.assembly.version>
-		<maven.compiler.version>3.8.0</maven.compiler.version>
-		<maven.jar.version>3.1.0</maven.jar.version>
-	</properties>
-
     <build>
-    	<sourceDirectory>src/main/java</sourceDirectory> <!-- Resetting this and testSourceDirectory can cause Maven errors -->
-    	
-    	<testSourceDirectory>src/test/java</testSourceDirectory>
-    	
-    	<plugins>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
+			</plugin>
 
-			<!-- used to compile the sources of your project -->
-			<!-- has two goals. automatically executed during their respective phases -->
-			<!-- compiler:compile is bound to the compile phase and
-			     is used to compile the main source files. -->
-            <!-- compiler:testCompile is bound to the test-compile
-                 phase and is used to compile the test source files. -->
-        	<plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>${properties.maven.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${basedir}/target/filter.properties</file>
+							</files>
+							<tasks>
+								<echo>BuildTime : ${build.time}</echo>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory -->
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-	        	<artifactId>maven-compiler-plugin</artifactId>
-	        	<version>${maven.compiler.version}</version>
-		        <configuration>
-		        	<source>11</source>
-		            <target>11</target>
-					<!--<source>11</source>
-					<target>11</target> -->
-		        </configuration>
-            </plugin>
-
-
-			<!-- provides the ability to run Ant tasks from within Maven -->
-			<!-- here we create a file, 'filter.properties' and place the time of build in it. -->
-			<!-- dependency required -->
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.plugin.version}</version>
+				<configuration>
+					<executions>
+						<execution>
+							<id>make-a-jar</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+					<includes>
+						<include>**/*.class</include>
+						<include>*.jpg</include>
+					</includes>
+					<excludes>
+						<exclude>**/*Test.class</exclude>
+					</excludes>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
+							<Creation-Time>${build.time}</Creation-Time>
+							<mainClass>version3.CalculatorMain_v3</mainClass>
+						</manifestEntries>
+					</archive>
+					<outputDirectory>${basedir}/dist</outputDirectory>
+				</configuration>
+			</plugin>
+			<!-- Builds filter.properties file -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>${maven.antrun.version}</version>
 				<executions>
 					<execution>
 						<phase>initialize</phase>
@@ -118,179 +172,50 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<target>
-								<mkdir dir="${basedir}/target"/>
+							<tasks>
+								<mkdir dir="${project.build.directory}"/>
 								<tstamp>
 									<format property="last.updated" pattern="MM-dd-YYYY hh:mm:ss"/>
 								</tstamp>
-								<!--suppress UnresolvedMavenProperty -->
-								<echo file="${basedir}/dist/filter.properties" message="last.updated=${last.updated}"/>
-							</target>
+								<echo file="${basedir}/target/filter.properties" message="build.time=${last.updated}"/>
+							</tasks>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
-
-			<!-- NOT USED -->
-			<!-- generate resources for inclusion in the package -->
-			<!-- the properties loaded from files or URLs can be used to filter
-			     resources differently for different environments -->
-            <plugin>
-            	<groupId>org.codehaus.mojo</groupId>
-            	<artifactId>properties-maven-plugin</artifactId>
-            	<version>1.0-alpha-2</version>
-            	<executions>
-            		<execution>
-            			<phase>initialize</phase>
-            			<goals>
-            				<goal>read-project-properties</goal>
-            			</goals>
-            			<configuration>
-						  <files>
-							<file>${basedir}/dist/filter.properties</file>
-						  </files>
-<!--							<tasks>-->
-<!--								<echo>BuildTime : ${build.time}</echo>-->
-<!--							</tasks>-->
-            			</configuration>
-            		</execution>
-            	</executions>
-            </plugin>
-
-
-			<!-- provides the capability to build jars -->
-			<!-- jar:jar create a jar file for your project classes inclusive resources.
-                 jar:test-jar create a jar file for your project test classes -->
-            <!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory -->
-            <plugin>
-		    	<groupId>org.apache.maven.plugins</groupId>
-		    	<artifactId>maven-jar-plugin</artifactId>
-		    	<version>${maven.jar.version}</version>
+			<!-- Can be triggered by Lifecycle: Package: Builds 'jar-with-dependencies' -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-a-jar</id>
-						<phase>compile</phase>
+						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-		    	   <includes>
-					   <include>**/*.class</include>
-					   <include>*.jpg</include>
-				   </includes>
-				   <archive>
-					   <index>true</index>
-					   <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-					   <manifest>
-						   <addClasspath>true</addClasspath>
-					   </manifest>
-					   <manifestEntries>
-						   <Implementation-Version>${project.version}</Implementation-Version>
-						   <Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
-						   <!--suppress UnresolvedMavenProperty -->
-						   <Creation-Time>${last.updated}</Creation-Time>
-						   <mainClass>version3.CalculatorMain_v3</mainClass>
-					   </manifestEntries>
-				   </archive>
-
-            	</configuration>
-		    </plugin>
-            
-            <!-- Reference to assembly.xml file -->
-            <!-- <plugin>
-            	<groupId>org.apache.amaven.plugins</groupId>
-            	<artifactId>maven-assembly-plugin</artifactId>
-            	<executions>
-            		<execution>
-            			<id>create-archive</id>
-            			<phase>package</phase>
-            			<goals>
-            				<goals>single</goal>
-            			</goals>
-            			<configuration>
-            				<descriptor>location of assembly.xml like src/assembly.xml </descriptor> 
-            				<finalName></finalName>
-            				<outputDirectory>${basedir}/dist/LOCATION</outputDirectory>
-            			</configuration>
-            		</execution>
-            	</executions>
-            </plugin>-->
-
-
-			<!-- enables developers to combine project output into a single
-			     distributable archive that also contains dependencies, modules,
-			     site documentation, and other files -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
+					<finalName>${project.artifactId}-${project.version}</finalName>
 					<archive>
+						<index>>true</index>
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<mainClass>version3.CalculatorMain_v3</mainClass>
-							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
+							<Creation-Time>${build.time}</Creation-Time>
+							<mainClass>version3.CalculatorMain_v3</mainClass>
+						</manifestEntries>
 					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<outputDirectory>${basedir}/dist</outputDirectory>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.1.2</version>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>
-								${project.build.directory}/dist/dependency-jars/
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-<!--            <plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-assembly-plugin</artifactId>-->
-<!--				<version>${maven.assembly.version}</version>-->
-<!--                <executions>-->
-<!--                     <execution>-->
-<!--						 <phase>package</phase>-->
-<!--						 <goals>-->
-<!--							 <goal>single</goal>-->
-<!--						 </goals>-->
-<!--					 </execution>-->
-<!--				</executions>-->
-<!--				<configuration>-->
-<!--					 &lt;!&ndash; ... &ndash;&gt;-->
-<!--					 <archive>-->
-<!--						 <index>true</index>-->
-<!--						 <manifest>-->
-<!--							 <addClasspath>true</addClasspath>-->
-<!--							 <mainClass>version3.CalculatorMain_v3</mainClass>-->
-<!--						 </manifest>-->
-<!--						 <manifestEntries>-->
-<!--							 <Implementation-Version>${project.version}</Implementation-Version>-->
-<!--							 <Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>-->
-<!--							 <Creation-Time>${last.updated}</Creation-Time>-->
-<!--							 <mainClass>version3.CalculatorMain_v3</mainClass>-->
-<!--						 </manifestEntries>-->
-<!--					 </archive>-->
-<!--					 <descriptorRefs>-->
-<!--						 <descriptorRef>jar-with-dependencies</descriptorRef>-->
-<!--					 </descriptorRefs>-->
-<!--					 <outputDirectory>${basedir}/dist</outputDirectory>-->
-<!--				</configuration>-->
-<!--            </plugin>-->
-
-        </plugins>
+		</plugins>
         
     </build>
     

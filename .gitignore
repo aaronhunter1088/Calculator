@@ -2,6 +2,6 @@ target/*
 .idea/
 .settings/
 logs/*
-/src/main/java/version3/logs/*
+calculatogitr/src/main/java/version3/logs/*
 .DS_Store
 MicrosoftCalculator.iml

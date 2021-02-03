@@ -1414,7 +1414,6 @@ public abstract class Calculator_v3 extends JFrame
     public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
     public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
     public void setBase(CalcType_v3 base) { this.base = base; }
-
 }
 
 
