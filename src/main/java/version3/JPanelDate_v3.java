@@ -1,6 +1,5 @@
 package version3;
 
-import net.sourceforge.jdatepicker.DateModel;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.*;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -49,8 +47,9 @@ public class JPanelDate_v3 extends JPanel
     private JPanel buttonGroupPanel, labelsGroupPanel, textFieldsGroupPanel;
     private JRadioButton addRadioButton, subtractRadioButton;
     private Calendar calendar;
-    private JTextField yearResultTextField, monthResultTextField, dayResultTextField,
+    private JTextField yearsDiffTextField, monthsDiffTextField, daysDiffTextField,
                        yearsTextField, monthsTextField, daysTextField;
+    private String defaultOptionFromOptionsBox = "Difference between dates";
 
     public JPanelDate_v3(StandardCalculator_v3 calculator) throws ParseException
     {
@@ -127,12 +126,12 @@ public class JPanelDate_v3 extends JPanel
         getDifferenceLabel().setHorizontalAlignment(SwingConstants.LEFT);
         getDifferenceLabel().setBorder(new LineBorder(Color.BLACK));
 
-        setYearTextField(new JTextField("Same year"));
-        getYearResultTextField().setBorder(new LineBorder(Color.BLACK));
-        setMonthResultTextField(new JTextField("Same month"));
-        getMonthResultTextField().setBorder(new LineBorder(Color.BLACK));
-        setDayResultTextField(new JTextField("Same date"));
-        getDayResultTextField().setBorder(new LineBorder(Color.BLACK));
+        setYearsDiffTextField(new JTextField("Same year"));
+        getYearsDiffTextField().setBorder(new LineBorder(Color.BLACK));
+        setMonthsDiffTextField(new JTextField("Same month"));
+        getMonthsDiffTextField().setBorder(new LineBorder(Color.BLACK));
+        setDaysDiffTextField(new JTextField("Same date"));
+        getDaysDiffTextField().setBorder(new LineBorder(Color.BLACK));
 
         setBlankLabel1(new JLabel(" "));
         getBlankLabel1().setHorizontalAlignment(SwingConstants.LEFT);
@@ -164,12 +163,17 @@ public class JPanelDate_v3 extends JPanel
                 int addYears = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
                 getLOGGER().debug("Year is {}", getCalendar().get(Calendar.YEAR));
                 getCalendar().add(Calendar.YEAR, addYears);
-                int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
-                getCalendar().add(Calendar.MONTH, addMonths);
-                int addDays = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
-                getCalendar().add(Calendar.DAY_OF_MONTH, addDays);
-                setCalendar(getCalendar());
                 getLOGGER().debug("Add: Year is now {}", getCalendar().get(Calendar.YEAR));
+                int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
+                getLOGGER().debug("Month is {}", getCalendar().get(Calendar.MONTH));
+                getCalendar().add(Calendar.MONTH, addMonths);
+                getLOGGER().debug("Add: Month is now {}", getCalendar().get(Calendar.MONTH));
+                int addDays = Integer.parseInt(StringUtils.isBlank(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
+                getLOGGER().debug("Date is {}", getCalendar().get(Calendar.DATE));
+                getCalendar().add(Calendar.DAY_OF_MONTH, addDays);
+                getLOGGER().debug("Add: Date is now {}", getCalendar().get(Calendar.DATE));
+                setCalendar(getCalendar());
+                getLOGGER().debug("Date is now {}", getCalendar().getTime());
                 updateResultsLabel();
             }
         });
@@ -184,12 +188,17 @@ public class JPanelDate_v3 extends JPanel
                 int addYears = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
                 getLOGGER().debug("Year is {}", getCalendar().get(Calendar.YEAR));
                 getCalendar().add(Calendar.YEAR, -addYears);
-                int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
-                getCalendar().add(Calendar.MONTH, -addMonths);
-                int addDays = Integer.parseInt(StringUtils.isBlank(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
-                getCalendar().add(Calendar.DAY_OF_MONTH, -addDays);
-                setCalendar(getCalendar());
                 getLOGGER().debug("Sub: Year is now {}", getCalendar().get(Calendar.YEAR));
+                int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
+                getLOGGER().debug("Month is {}", getCalendar().get(Calendar.MONTH));
+                getCalendar().add(Calendar.MONTH, -addMonths);
+                getLOGGER().debug("Sub: Month is now {}", getCalendar().get(Calendar.MONTH));
+                int addDays = Integer.parseInt(StringUtils.isBlank(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
+                getLOGGER().debug("Date is {}", getCalendar().get(Calendar.DATE));
+                getCalendar().add(Calendar.DAY_OF_MONTH, -addDays);
+                getLOGGER().debug("Sub: Date is now {}", getCalendar().get(Calendar.DATE));
+                setCalendar(getCalendar());
+                getLOGGER().debug("Date is now {}", getCalendar().getTime());
                 updateResultsLabel();
             }
         });
@@ -220,24 +229,10 @@ public class JPanelDate_v3 extends JPanel
         setMonthsTextField(new JTextField("", 5));
         getMonthsTextField().setEditable(true);
         getMonthsTextField().setHorizontalAlignment(SwingConstants.LEFT);
-        getMonthsTextField().addActionListener(action -> {
-            int addMonths = Integer.parseInt(getYearsTextField().getText());
-            getLOGGER().debug("Month is {}", getCalendar().get(Calendar.MONTH));
-            getCalendar().add(Calendar.MONTH, addMonths);
-            getLOGGER().debug("Month is now {}", getCalendar().get(Calendar.MONTH));
-            updateResultsLabel();
-        });
 
         setDaysTextField(new JTextField("", 5));
         getDaysTextField().setEditable(true);
         getDaysTextField().setHorizontalAlignment(SwingConstants.LEFT);
-        getDaysTextField().addActionListener(action -> {
-            int addDays = Integer.parseInt(getYearsTextField().getText());
-            getLOGGER().debug("Date is {}", getCalendar().get(Calendar.DATE));
-            getCalendar().add(Calendar.DATE, addDays);
-            getLOGGER().debug("Date is now {}", getCalendar().get(Calendar.DATE));
-            updateResultsLabel();
-        });
 
         setTextFieldsGroupPanel(new JPanel());
         getTextFieldsGroupPanel().setLayout(new GridLayout(1, 3, 60, 5));
@@ -285,9 +280,9 @@ public class JPanelDate_v3 extends JPanel
         addComponent(getToDatePicker(), 6,0,1,1, 0,1.0);
         addComponent(getBlankLabel3(), 7, 0, 1, 1,0,1.0); // representing a blank space
         addComponent(getDifferenceLabel(), 8, 0, 1, 1,0,1.0); // representing a blank space
-        addComponent(getYearResultTextField(), 9, 0, 1, 1, 0,1.0);
-        addComponent(getMonthResultTextField(), 10, 0, 1, 1, 0,1.0);
-        addComponent(getDayResultTextField(), 11, 0, 1, 1, 0, 1.0);
+        addComponent(getYearsDiffTextField(), 9, 0, 1, 1, 0,1.0);
+        addComponent(getMonthsDiffTextField(), 10, 0, 1, 1, 0,1.0);
+        addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0, 1.0);
         addComponent(getBlankLabel4(), 12, 0, 1, 1,1.0,1.0); // representing a blank space
         LOGGER.info("Finished addComponentsToJPanelDate_v3");
     }
@@ -309,15 +304,14 @@ public class JPanelDate_v3 extends JPanel
 
     private void showOptionalComponentsBasedOnComboBoxSelected()
     {
-        // TODO: Fix so choosing default option wont change view
         getOptionsBox().addActionListener(action -> {
             String chosenOption = getOptionsBox().getSelectedItem().toString();
-            String defaultOption = chosenOption.equals("Difference between dates") ? getOptionsBox().getItemAt(1).toString() : getOptionsBox().getItemAt(0).toString();
-            getLOGGER().debug("chosenOption: {} and defaultOption: {}", chosenOption, defaultOption);
-            if (!defaultOption.equals(chosenOption) && chosenOption.equals("Add or subtract days")) // TODO: if user accidentally chooses this option, it messes up the view
+            getLOGGER().debug("chosenOption: {} and defaultOption: {}", chosenOption, defaultOptionFromOptionsBox);
+            if (!defaultOptionFromOptionsBox.equals(chosenOption)
+                    && chosenOption.equals("Difference between dates"))
             {
                 getLOGGER().debug("Difference between dates selected");
-                getOptionsBox().setSelectedIndex(0);
+                defaultOptionFromOptionsBox = "Difference between dates selected";
                 // remove appropriate components first
                 remove(getButtonGroupPanel());
                 remove(getBlankLabel3());
@@ -332,26 +326,28 @@ public class JPanelDate_v3 extends JPanel
                 addComponent(getToDatePicker(), 6,0,1,1, 0,1.0);
                 addComponent(getBlankLabel3(), 7, 0, 1, 1,0,1.0); // representing a blank space
                 addComponent(getDifferenceLabel(), 8, 0, 1, 1,0,1.0); // representing a blank space
-                addComponent(getYearsTextField(), 9, 0, 1, 1, 0,1.0);
-                addComponent(getMonthsTextField(), 10, 0, 1, 1, 0,1.0);
-                addComponent(getDaysTextField(), 11, 0, 1, 1, 0,1.0);
+                addComponent(getYearsDiffTextField(), 9, 0, 1, 1, 0,1.0);
+                addComponent(getMonthsDiffTextField(), 10, 0, 1, 1, 0,1.0);
+                addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0,1.0);
                 addComponent(getBlankLabel4(), 12, 0, 1, 1,1.0,1.0); // representing a blank space
+                updateResultsTextBox();
                 repaint();
                 revalidate();
                 this.calculator.pack();
             }
-            else if (!defaultOption.equals(chosenOption) && chosenOption.equals("Difference between dates"))
+            else if (!defaultOptionFromOptionsBox.equals(chosenOption)
+                    && chosenOption.equals("Add or subtract days"))
             {
                 getLOGGER().debug("Add or subtract days selected");
-                getOptionsBox().setSelectedIndex(1);
+                defaultOptionFromOptionsBox = "Add or subtract days";
                 // remove appropriate components first
                 remove(getToDateLabel());
                 remove(getToDatePicker());
                 remove(getBlankLabel3());
                 remove(getDifferenceLabel());
-                remove(getYearResultTextField());
-                remove(getMonthResultTextField());
-                remove(getDayResultTextField());
+                remove(getYearsDiffTextField());
+                remove(getMonthsDiffTextField());
+                remove(getDaysDiffTextField());
                 remove(getBlankLabel4());
                 // add appropriate components
                 addComponent(getButtonGroupPanel(), 5, 0, 1,1, 0,1.0);
@@ -407,7 +403,6 @@ public class JPanelDate_v3 extends JPanel
             year += Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
         else
             year -= Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
-        getLOGGER().debug("Update: Year is {}", getCalendar().get(Calendar.YEAR));
         int monthInt = getFromDatePicker().getModel().getMonth();
         if (addRadioButton.isSelected())
             monthInt += Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
@@ -421,11 +416,14 @@ public class JPanelDate_v3 extends JPanel
         getCalendar().set(year, monthInt, date);
         getCalendar().setTime(getCalendar().getTime());
         setCalendar(getCalendar());
+        getLOGGER().debug("Date is now {}", getCalendar().getTime());
+        getFromDatePicker().getModel().setDate(year,monthInt, date);
         String dayOfWeek = getCalendar().getTime().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("en", "US"));
         String month = getCalendar().getTime().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getDisplayName(TextStyle.FULL, new Locale("en", "US"));
-        getFromDatePicker().getModel().setDate(year,monthInt, date);
+        date = getFromDatePicker().getModel().getDay();
+        year = getFromDatePicker().getModel().getYear();
         getResultsLabel().setText(dayOfWeek + ", " + month + " " + date + ", " + year);
     }
 
@@ -435,33 +433,44 @@ public class JPanelDate_v3 extends JPanel
         String wordYear = " years";
         String wordMonth = " months";
         String wordDay = " days";
-        if (numberOfYearsMonthsAndDays[0] == 1)
+        if (numberOfYearsMonthsAndDays[0] == 1 || numberOfYearsMonthsAndDays[0] == -1)
         {
             wordYear = " year";
         }
-        if (numberOfYearsMonthsAndDays[1] == 1)
+        if (numberOfYearsMonthsAndDays[1] == 1 || numberOfYearsMonthsAndDays[1] == -1)
         {
             wordMonth = " month";
         }
-        if (numberOfYearsMonthsAndDays[2] == 1)
+        if (numberOfYearsMonthsAndDays[2] == 1 || numberOfYearsMonthsAndDays[2] == -1)
         {
             wordDay = " day";
         }
+
         if((numberOfYearsMonthsAndDays[0] != 0 ||
             numberOfYearsMonthsAndDays[1] != 0 ||
             numberOfYearsMonthsAndDays[2] != 0)
                 && ((Calendar) getFromDatePicker().getModel().getValue()).getTime()
                 .before(((Calendar) getToDatePicker().getModel().getValue()).getTime()))
         {
-            getYearResultTextField().setText(numberOfYearsMonthsAndDays[0] + wordYear);
-            getMonthResultTextField().setText(numberOfYearsMonthsAndDays[1] + wordMonth);
-            getDayResultTextField().setText(numberOfYearsMonthsAndDays[2] + wordDay);
+            getYearsDiffTextField().setText(numberOfYearsMonthsAndDays[0] + wordYear);
+            getMonthsDiffTextField().setText(numberOfYearsMonthsAndDays[1] + wordMonth);
+            getDaysDiffTextField().setText(numberOfYearsMonthsAndDays[2] + wordDay);
+        }
+        else if((numberOfYearsMonthsAndDays[0] != 0 ||
+                numberOfYearsMonthsAndDays[1] != 0 ||
+                numberOfYearsMonthsAndDays[2] != 0)
+                && ((Calendar) getFromDatePicker().getModel().getValue()).getTime()
+                .after(((Calendar) getToDatePicker().getModel().getValue()).getTime()))
+        {
+            getYearsDiffTextField().setText((-1*numberOfYearsMonthsAndDays[0])+ wordYear);
+            getMonthsDiffTextField().setText((-1*numberOfYearsMonthsAndDays[1]) + wordMonth);
+            getDaysDiffTextField().setText((-1*numberOfYearsMonthsAndDays[2]) + wordDay);
         }
         else
         {
-            getYearResultTextField().setText("Same year");
-            getMonthResultTextField().setText("Same month");
-            getDayResultTextField().setText("Same date");
+            getYearsDiffTextField().setText("Same year");
+            getMonthsDiffTextField().setText("Same month");
+            getDaysDiffTextField().setText("Same date");
         }
     }
 
@@ -514,17 +523,17 @@ public class JPanelDate_v3 extends JPanel
     {
         return optionsBox;
     }
-    public JTextField getYearResultTextField()
+    public JTextField getYearsDiffTextField()
     {
-        return yearResultTextField;
+        return yearsDiffTextField;
     }
-    public JTextField getMonthResultTextField()
+    public JTextField getMonthsDiffTextField()
     {
-        return monthResultTextField;
+        return monthsDiffTextField;
     }
-    public JTextField getDayResultTextField()
+    public JTextField getDaysDiffTextField()
     {
-        return dayResultTextField;
+        return daysDiffTextField;
     }
     public JLabel getFromDateLabel()
     {
@@ -660,17 +669,17 @@ public class JPanelDate_v3 extends JPanel
     {
         this.optionsBox = optionsBox;
     }
-    private void setYearTextField(JTextField yearResultTextField)
+    private void setYearsDiffTextField(JTextField yearResultTextField)
     {
-        this.yearResultTextField = yearResultTextField;
+        this.yearsDiffTextField = yearResultTextField;
     }
-    private void setMonthResultTextField(JTextField monthResultTextField)
+    private void setMonthsDiffTextField(JTextField monthsDiffTextField)
     {
-        this.monthResultTextField = monthResultTextField;
+        this.monthsDiffTextField = monthsDiffTextField;
     }
-    private void setDayResultTextField(JTextField dayResultTextField)
+    private void setDaysDiffTextField(JTextField daysDiffTextField)
     {
-        this.dayResultTextField = dayResultTextField;
+        this.daysDiffTextField = daysDiffTextField;
     }
     private void setFromDateLabel(JLabel fromDateLabel)
     {
