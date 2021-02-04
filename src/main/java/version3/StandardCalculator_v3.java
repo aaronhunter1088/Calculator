@@ -9,6 +9,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Arrays;
 
 public class StandardCalculator_v3 extends Calculator_v3 {
@@ -103,7 +104,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         });
         JMenuItem windows = new JMenuItem("Windows");
-        system.addActionListener(action -> {
+        windows.addActionListener(action -> {
             try {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
@@ -113,7 +114,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         });
         JMenuItem motif = new JMenuItem("Motif");
-        system.addActionListener(action -> {
+        motif.addActionListener(action -> {
             try {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
@@ -124,7 +125,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
         });
         JMenuItem gtk = new JMenuItem("GTK");
-        system.addActionListener(action -> {
+        gtk.addActionListener(action -> {
             try {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
@@ -136,12 +137,12 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         });
 
         lookMenu.add(metal);
-        lookMenu.add(system);
         lookMenu.add(motif);
         String os = System.getProperty("os.name");
         if (!StringUtils.contains(os.toLowerCase(), "Mac".toLowerCase()))
         {
             lookMenu.add(windows);
+            lookMenu.add(system);
             lookMenu.add(gtk);
         }
         this.bar.add(lookMenu);
@@ -159,8 +160,23 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         programmer.setFont(this.font);
         viewMenu.add(programmer);
         programmer.addActionListener(action ->
-            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER));
+            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER)
+        );
         this.bar.add(viewMenu); // add viewMenu to menu bar
+        JMenuItem dates = new JMenuItem("Dates");
+        dates.setFont(this.font);
+        viewMenu.add(dates);
+        dates.addActionListener(action -> {
+            try
+            {
+                performTasksWhenChangingJPanels(new JPanelDate_v3(this), CalcType_v3.DATE);
+            }
+            catch (ParseException e)
+            {
+                LOGGER.error("Couldn't change to JPanelDate_v3 because {}", e.getMessage());
+            }
+        });
+
         // Edit Menu and Actions
         JMenu editMenu = new JMenu("Edit"); // create edit menu
         editMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
@@ -362,10 +378,27 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     {
 	    setTitle(calcType_v3.getName());
         JPanel oldPanel = updateJPanel(currentPanel);
+        String nameOfOldPanel = "";
+        switch (getCalcType())
+        {
+            case BASIC: nameOfOldPanel = CalcType_v3.BASIC.getName(); break;
+            case PROGRAMMER: nameOfOldPanel = CalcType_v3.PROGRAMMER.getName(); break;
+            case DATE: nameOfOldPanel = CalcType_v3.DATE.getName(); break;
+            default: LOGGER.error("Unknown calculator type");
+        }
         // don't switch calc_types here; later...
-        if (getCurrentPanel() instanceof JPanelBasic_v3) { ((JPanelBasic_v3)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel); }
-        if (getCurrentPanel() instanceof JPanelProgrammer_v3) { ((JPanelProgrammer_v3)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations(); }
-
+        if (getCurrentPanel() instanceof JPanelBasic_v3)
+        {
+            ((JPanelBasic_v3)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel);
+        }
+        else if (getCurrentPanel() instanceof JPanelProgrammer_v3)
+        {
+            ((JPanelProgrammer_v3)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations();
+        }
+        else if (getCurrentPanel() instanceof JPanelDate_v3)
+        {
+            LOGGER.debug("Switching to Date Calculator from {}", nameOfOldPanel);
+        }
         pack();
     }
 
@@ -1076,7 +1109,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     public JPanel updateJPanel(JPanel currentPanel)
     {
         JPanel oldPanel = getCurrentPanel();
-        remove(getCurrentPanel());
+        remove(oldPanel);
         setCurrentPanel(currentPanel);
         add(getCurrentPanel());
         return oldPanel;

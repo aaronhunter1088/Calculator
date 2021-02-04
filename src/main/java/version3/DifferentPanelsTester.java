@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,9 +22,11 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
-public class DifferentPanelsTester extends JFrame {
+public class DifferentPanelsTester extends JFrame
+{
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException
+	{
 		DifferentPanelsTester x = new DifferentPanelsTester();
 		x.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		x.setVisible(true);
@@ -37,32 +40,29 @@ public class DifferentPanelsTester extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel panel1 = new JPanelBasic_v3(new StandardCalculator_v3());
+	private JPanel panel2 = new JPanelDate_v3(new StandardCalculator_v3());
 	//private JTextField textField1 = new JTextField("Input text here");
 	//private JTextField textField2 = new JTextField("Input text here");
 	//private FlowLayout flowLayout = new FlowLayout();
 	
-	public DifferentPanelsTester() {
+	public DifferentPanelsTester() throws ParseException
+	{
 		super("Different Panels");
 		setupPanels();
-		//setupMenuBar();
+		setupMenuBar();
 	}
 	
 	/* This class shows that panels can be placed
 	 * on the frame and can have their own layouts,
 	 * and components different to each other.
 	*/
-	private void setupPanels() {
-		//panel1.setLayout(flowLayout);
-		//panel1.add(btn1);
-		//panel1.add(btn2);
-		add(panel1); // only need to add one panel right now
-		
-		//panel2.setLayout(flowLayout);
-		//panel2.add(textField1);
-		//panel2.add(textField2);
+	private void setupPanels()
+	{
+		add(panel2);
 	}
 	
-	private void setupMenuBar() {
+	private void setupMenuBar()
+	{
 		JMenuBar bar = new JMenuBar(); // create menu bar
         setJMenuBar(bar); // add menu bar to application
         
@@ -71,16 +71,16 @@ public class DifferentPanelsTester extends JFrame {
         switchMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
         bar.add(switchMenu); // add viewMenu to menu bar
         
-            JMenuItem panel1Item = new JMenuItem("Panel 1");
+            JMenuItem panel1Item = new JMenuItem("Basic Calc");
             panel1Item.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             panel1Item.addActionListener(action -> {
-            	//switchPanels(1);
+            	switchPanels(1);
             });
             
-            JMenuItem panel2Item = new JMenuItem("Panel 2");
+            JMenuItem panel2Item = new JMenuItem("Date Picker");
             panel2Item.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             panel2Item.addActionListener(action -> {
-            	//switchPanels(2);
+            	switchPanels(2);
             });
             
          switchMenu.add(panel1Item);
@@ -88,11 +88,14 @@ public class DifferentPanelsTester extends JFrame {
             
 	}
 	
-	private void switchPanels(int choice) {
+	private void switchPanels(int choice)
+	{
 		if (choice == 1) {
+			remove(panel2);
 			add(panel1);
 		} else if (choice == 2) {
 			remove(panel1);
+			add(panel2);
 		}
 		this.revalidate();
 		this.repaint();

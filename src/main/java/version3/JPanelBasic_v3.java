@@ -10,7 +10,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 // The face for a basic calculator
-public class JPanelBasic_v3 extends JPanel {
+public class JPanelBasic_v3 extends JPanel
+{
 
     protected final static Logger LOGGER;
     static

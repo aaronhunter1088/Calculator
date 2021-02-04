@@ -59,6 +59,7 @@ public abstract class Calculator_v3 extends JFrame
     final protected JButton buttonMemoryAddition = new JButton("M+");
     final protected JButton buttonMemorySubtraction = new JButton("M-");
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
+    final protected static Font font2 = new Font("Verdana", Font.BOLD, 20);
     protected String[] values = {"","","", ""}; // firstNum (total), secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
     protected int valuesPosition = 0;
     protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
