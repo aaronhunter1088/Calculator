@@ -150,7 +150,7 @@ public class JPanelProgrammer_v3 extends JPanel {
                 getCalculator().confirm();
                 return;
             }
-            else if (previousBase == CalcType_v3.BINARY2)
+            else if (previousBase == CalcType_v3.BINARY)
             {
                 //getCalculator().convertAllValuesToBinary();
                 //convertTextArea(previousBase);
@@ -184,19 +184,19 @@ public class JPanelProgrammer_v3 extends JPanel {
             // determine previous base
             CalcType_v3 previousBase = getCalculator().getBase();
             getLogger().info("previous base: " + previousBase);
-            getLogger().info("will set base to: " + CalcType_v3.BINARY2);
+            getLogger().info("will set base to: " + CalcType_v3.BINARY);
 
             // how should we convert the textarea. change number and keep possible operation
             String nameOfButton = determineIfProgrammerOperatorWasPushed(); // could be null
             if (nameOfButton == null)
             {
-                convertToBinary(CalcType_v3.BINARY2);
+                convertToBinary(CalcType_v3.BINARY);
                 getCalculator().confirm();
                 return;
             }
             else if (previousBase == CalcType_v3.DECIMAL)
             {
-                convertToBinary(CalcType_v3.BINARY2);
+                convertToBinary(CalcType_v3.BINARY);
             }
             else if (previousBase == CalcType_v3.HEXIDECIMAL)
             {
@@ -476,11 +476,11 @@ public class JPanelProgrammer_v3 extends JPanel {
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to binary
         getButtonBin().setSelected(true);
-        getCalculator().setBase(CalcType_v3.BINARY2);
-        convertToBinary(CalcType_v3.BINARY2);
+        getCalculator().setBase(CalcType_v3.BINARY);
+        convertToBinary(CalcType_v3.PROGRAMMER);
         // set CalcType now
         calculator.setCalcType(CalcType_v3.PROGRAMMER);
-        calculator.setBase(CalcType_v3.BINARY2);
+        calculator.setBase(CalcType_v3.BINARY);
         // setting up all the buttons
         setButtons2To9(false);
         calculator.buttonNegate.setEnabled(false);
@@ -923,17 +923,18 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     public void convertToBinary(CalcType_v3 newBase) {
-        CalcType_v3 previousBase = getCalculator().getBase();
-        getCalculator().setBase(newBase);
-        CalcType_v3 currentBase = getCalculator().getBase();
+        CalcType_v3 previousBase = getCalculator().getCalcType();
+        getCalculator().setCalcType(newBase);
+        CalcType_v3 currentBase = getCalculator().getCalcType();
         String nameOfButton = determineIfProgrammerOperatorWasPushed(); // could be null
-        if (previousBase == CalcType_v3.BINARY2 && currentBase == CalcType_v3.DECIMAL)
+        if (previousBase == CalcType_v3.PROGRAMMER && currentBase == CalcType_v3.DECIMAL)
         {
         }
-        else if (previousBase == CalcType_v3.DECIMAL && currentBase == CalcType_v3.BINARY2 ||
-                 getCalculator().getCalcType() == CalcType_v3.BASIC)
+        // TODO: should be from BASIC to PROGRAMMER
+        else if (previousBase == CalcType_v3.BASIC && currentBase == CalcType_v3.PROGRAMMER)
         {
-            calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), calculator.values);
+            LOGGER.debug("Going from BASIC to PROGRAMMER calculator");
+            calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY.getName(), calculator.values);
         }
 
         if (calculator.isButtonOctSet)
@@ -978,9 +979,12 @@ public class JPanelProgrammer_v3 extends JPanel {
             }
             else
             {
-//                calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+calculator.values[calculator.valuesPosition]);
-                getCalculator().getTextArea().setText("\n" + calculator.values[calculator.valuesPosition]); // update textArea
-                calculator.updateTextareaFromTextArea();
+                // after updating values, we update textArea and text area
+                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+calculator.values[calculator.valuesPosition]);
+                getCalculator().updateTextareaFromTextArea();
+                LOGGER.debug("TextArea: {} and textarea {}",getCalculator().getTextAreaWithoutNewLineCharacters(), getCalculator().getTextarea() );
+                // then reset values to decimal form so we can always see the decimal number for debugging
+                calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.BINARY.getName(), CalcType_v3.DECIMAL.getName(), calculator.values);
             }
 
         }
@@ -988,7 +992,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         {
             // logic for Hexadecimal to Binary
         }
-        calculator.values = calculator.convertFromTypeToTypeOnValues(CalcType_v3.BINARY2.getName(), CalcType_v3.DECIMAL.getName(), calculator.values);
+        //calculator.values = calculator.convertFromTypeToTypeOnValues(CalcType_v3.BINARY2.getName(), CalcType_v3.DECIMAL.getName(), calculator.values);
     }
 
     public void convertToBinary() {
@@ -998,7 +1002,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         CalcType_v3 previousBase = getCalculator().getBase();
         getLogger().info("previous base: " + previousBase);
         getLogger().info("will set base to: " + CalcType_v3.BINARY);
-        String currentValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), calculator.values[calculator.valuesPosition])[0];
+        String currentValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY.getName(), calculator.values[calculator.valuesPosition])[0];
         if (calculator.isButtonOctSet)
         {
             // logic for Octal to Binary
@@ -1071,12 +1075,12 @@ public class JPanelProgrammer_v3 extends JPanel {
         getLogger().info("previous base: " + previousBase);
         getLogger().info("current base: " + currentBase);
         String nameOfButton = determineIfProgrammerOperatorWasPushed(); // could be null
-        if (previousBase == CalcType_v3.DECIMAL && currentBase == CalcType_v3.BINARY2 ||
+        if (previousBase == CalcType_v3.DECIMAL && currentBase == CalcType_v3.BINARY ||
                 getCalculator().getCalcType() == CalcType_v3.BASIC)
         {
-            calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), calculator.values);
+            calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY.getName(), calculator.values);
         }
-        else if (previousBase == CalcType_v3.BINARY2 && currentBase == CalcType_v3.DECIMAL)
+        else if (previousBase == CalcType_v3.BINARY && currentBase == CalcType_v3.DECIMAL)
         {
         }
         else

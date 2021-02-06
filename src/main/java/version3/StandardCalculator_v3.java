@@ -419,8 +419,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             {
                 textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
                 textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + textarea);
-                LOGGER.debug("textArea: " + textArea.getText().replaceAll("\n", "")); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.debug("values["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -463,7 +462,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
                 LOGGER.error("already chose an operator. choose another number.");
             }
-            textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters().replace("+","").strip());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             numberIsNegative = false;
@@ -547,11 +545,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 //            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
                     !textArea.getText().equals("") && !textAreaContainsBadText()) {
-                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
-                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
+                textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
+                textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + values[valuesPosition]);
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -592,7 +587,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 LOGGER.info("already chose an operator. next number is negative...");
                 negatePressed = true;
             }
-            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             numberIsNegative = false;
@@ -676,11 +670,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                     divBool == false && !textArea.getText().equals("") &&
                     !textArea.getText().equals("Invalid textarea") &&
                     !textArea.getText().equals("Cannot divide by 0")) {
-                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
-                LOGGER.info("textArea: \\n" + textArea.getText().replaceAll("\n","")); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("values["+valuesPosition+"] is "+values[valuesPosition]+ " after buttonMultiply was pushed"); // confirming proper textarea before moving on
+                textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
+                textArea.setText("\n" + " " + buttonChoice + " " + values[valuesPosition]);
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -720,7 +711,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             else if (addBool == true || subBool == true || mulBool == true || divBool == true) {
                 LOGGER.info("already chose an operator. choose another number.");
             }
-            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
@@ -806,8 +796,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                     !textAreaContainsBadText())
             {
                 textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
-                textArea.setText("\n" + " " + buttonChoice + " " + textarea);
+                textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
+                textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + values[valuesPosition]);
                 LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
                 divBool = true; // sets logic for arithmetic
@@ -852,7 +842,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             {
                 LOGGER.info("already chose an operator. choose another number.");
             }
-            textarea = new StringBuffer().append(textArea.getText());
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
@@ -1157,7 +1146,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         int countOfStrings = 0;
         if (StringUtils.isEmpty(strings[0])) return new String[]{"", "", "", ""};
         else countOfStrings = 1;
-        if (type1.equals("Decimal") && type2.equals("Binary"))
+        if (type1.equals(CalcType_v3.DECIMAL.getName()) && type2.equals(CalcType_v3.BINARY.getName()))
         {
             for(String str : Arrays.asList(strings)) {
                 LOGGER.debug("Converting str("+str+") or "+countOfStrings+"/"+strings.length);
@@ -1196,7 +1185,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 countOfStrings++;
             }
         }
-        else if (type1.equals("Binary") && type2.equals("Decimal"))
+        else if (type1.equals(CalcType_v3.BINARY.getName()) && type2.equals(CalcType_v3.DECIMAL.getName()))
         {
             for(String str : Arrays.asList(strings)) {
                 LOGGER.debug("Converting str("+str+") or "+countOfStrings+"/"+strings.length);
@@ -1238,6 +1227,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 if (isDecimal(arrToReturn[countOfStrings-1]))
                 {
                     arrToReturn[countOfStrings-1] = String.valueOf(clearZeroesAtEnd(arrToReturn[countOfStrings-1]));
+                    textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
                 }
                 LOGGER.debug("arrToReturn["+(countOfStrings - 1)+"]: " + arrToReturn[countOfStrings-1]);
                 countOfStrings++;

@@ -347,9 +347,10 @@ public class JPanelBasic_v3 extends JPanel
         LOGGER.debug("appropriateLength: " + appropriateLength);
         String operator = null;
         boolean operatorIncluded = false;
-        boolean isNumberTrulyNegative = false;
-        if (Integer.valueOf(calculator.textarea.toString()) == 0 ||
-            calculator.textarea.toString().equals("") )
+        if (getCalculator().addBool || getCalculator().subBool ||
+            getCalculator().mulBool || getCalculator().divBool)
+            operatorIncluded = true;
+        if (!operatorIncluded && StringUtils.isBlank(calculator.textarea.toString()) )
         {
             calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+"0");
             calculator.updateTextareaFromTextArea();
@@ -426,7 +427,7 @@ public class JPanelBasic_v3 extends JPanel
     {
         //LOGGER.info("Converting TextArea");
         if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
-            LOGGER.info("Going from binary to decimal...");
+            LOGGER.info("Going from programmer to decimal...");
             calculator.performInitialChecks();
             if (!calculator.getTextAreaWithoutNewLineCharacters().equals("") &&
                 !((JPanelProgrammer_v3)oldPanel).getButtonDec().isSelected() ) {
