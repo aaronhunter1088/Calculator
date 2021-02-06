@@ -75,7 +75,7 @@ public class JPanelBasic_v3 extends JPanel
 
             calculator.button5.setFont(calculator.font);
             calculator.button5.setPreferredSize(new Dimension(35, 35) );
-            calculator. button5.setBorder(new LineBorder(Color.BLACK));
+            calculator.button5.setBorder(new LineBorder(Color.BLACK));
 
             calculator.button6.setFont(calculator.font);
             calculator.button6.setPreferredSize(new Dimension(35, 35) );
@@ -110,35 +110,6 @@ public class JPanelBasic_v3 extends JPanel
         buttonSqrt.setPreferredSize(new Dimension(35, 35) );
         buttonSqrt.setBorder(new LineBorder(Color.BLACK));
         buttonSqrt.setEnabled(true);
-        
-        calculator.buttonMemoryClear.setFont(Calculator_v3.font);
-        calculator.buttonMemoryClear.setPreferredSize(new Dimension(35, 35) );
-        calculator.buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
-        if (memoryValues[memoryPosition].equals("")) {
-            calculator.buttonMemoryClear.setEnabled(false);
-        }
-
-        calculator.buttonMemoryRecall.setFont(Calculator_v3.font);
-        calculator.buttonMemoryRecall.setPreferredSize(new Dimension(35, 35) );
-        calculator.buttonMemoryRecall.setBorder(new LineBorder(Color.BLACK));
-        if (memoryValues[memoryPosition].equals("")) {
-            calculator.buttonMemoryRecall.setEnabled(false);
-        }
-
-        calculator.buttonMemoryStore.setFont(Calculator_v3.font);
-        calculator.buttonMemoryStore.setPreferredSize(new Dimension(35, 35) );
-        calculator.buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
-        calculator.buttonMemoryStore.setEnabled(true);
-
-        calculator.buttonMemoryAddition.setFont(Calculator_v3.font);
-        calculator.buttonMemoryAddition.setPreferredSize(new Dimension(35, 35) );
-        calculator.buttonMemoryAddition.setBorder(new LineBorder(Color.BLACK));
-        calculator.buttonMemoryAddition.setEnabled(true);
-
-        calculator.buttonMemorySubtraction.setFont(Calculator_v3.font);
-        calculator.buttonMemorySubtraction.setPreferredSize(new Dimension(35, 35) );
-        calculator.buttonMemorySubtraction.setBorder(new LineBorder(Color.BLACK));
-        calculator.buttonMemorySubtraction.setEnabled(true);
         LOGGER.info("End setupPanel_v3()");
     }
     public void addComponentsToPanel_v3()
@@ -292,6 +263,7 @@ public class JPanelBasic_v3 extends JPanel
             }
         }
     }
+
     public void performPercentButtonActions(ActionEvent action)
     {
         LOGGER.info("PercentStoreButtonHandler class started");
@@ -341,6 +313,7 @@ public class JPanelBasic_v3 extends JPanel
             calculator.confirm();
         }
     }
+
     public void performFractionButtonActions(ActionEvent action)
     {
         LOGGER.info("FracStoreButtonHandler class started");
@@ -364,6 +337,7 @@ public class JPanelBasic_v3 extends JPanel
             calculator.confirm();
         }
     }
+
     public void convertToDecimal()
     {
         LOGGER.info("convertToDecimal started");
@@ -447,6 +421,7 @@ public class JPanelBasic_v3 extends JPanel
         LOGGER.info("convertToDecimal finished");
         calculator.confirm("");
     }
+
     public void convertTextArea(JPanel oldPanel)
     {
         //LOGGER.info("Converting TextArea");
@@ -464,6 +439,7 @@ public class JPanelBasic_v3 extends JPanel
         }
         //LOGGER.info("TextArea converted");
     }
+
     public void setAllNumberButtons(boolean isEnabled)
     {
         calculator.button0.setEnabled(isEnabled);

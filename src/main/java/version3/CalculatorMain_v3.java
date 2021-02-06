@@ -22,6 +22,7 @@ public class CalculatorMain_v3
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);
 		calculator.setResizable(false);
+        calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         calculator.confirm("Calculator started. Initial state");
     }
 }

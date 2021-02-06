@@ -66,7 +66,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         Application.getApplication().setDockIconImage(createImageIcon("src/main/resources/images/calculatorOriginal.jpg").getImage());
         setIconImage(calculatorImage1.getImage());
 		setMinimumSize(getCurrentPanel().getSize());
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
 		setVisible(true);
 	}
@@ -344,6 +343,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 calculator_v3Error.printStackTrace();
             }
         });
+        // TODO: does not work. fix
         buttonEquals.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -1072,6 +1072,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             confirm("");
         }
     }
+
+    // TODO: move/use method in Calculator
     public java.lang.String formatNumber(java.lang.String num)
     {
         DecimalFormat df = new DecimalFormat();
@@ -1114,6 +1116,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         add(getCurrentPanel());
         return oldPanel;
     }
+
     public void convertAllValuesToDecimal()
     {
         if (getCalcType().equals(CalcType_v3.PROGRAMMER))
@@ -1242,6 +1245,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         }
         return arrToReturn;
     }
+
     @Deprecated
     public void convertFromTypeToType(String type1, String type2)
     {

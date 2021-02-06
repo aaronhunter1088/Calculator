@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public abstract class Calculator_v3 extends JFrame
@@ -60,10 +61,11 @@ public abstract class Calculator_v3 extends JFrame
     final protected JButton buttonMemorySubtraction = new JButton("M-");
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
     final protected static Font font2 = new Font("Verdana", Font.BOLD, 20);
-    protected String[] values = {"","","", ""}; // firstNum (total), secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
+    protected String[] values = {"","","",""}; // firstNum (total), secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
     protected int valuesPosition = 0;
     protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
     protected int memoryPosition = 0;
+    protected int memoryRecallPosition = 0;
     protected JTextArea textArea = new JTextArea(2,5); // rows, columns
     protected StringBuffer textarea = new StringBuffer(); // String representing appropriate visual of number
     protected CalcType_v3 calcType = null;
@@ -112,6 +114,10 @@ public abstract class Calculator_v3 extends JFrame
     {
 		super(gc);
 	}
+    public Calculator_v3(String title, GraphicsConfiguration gc)
+    {
+        super(title, gc);
+    }
 	public Calculator_v3(String title) throws HeadlessException, IOException
     {
 		super(title);
@@ -121,10 +127,6 @@ public abstract class Calculator_v3 extends JFrame
 		setupCalculator_v3();
 		setMinimumSize(new Dimension(100,200));
     }
-	public Calculator_v3(String title, GraphicsConfiguration gc)
-    {
-		super(title, gc);
-	}
 
     /******************** Start of methods here **********************/
 
@@ -231,6 +233,37 @@ public abstract class Calculator_v3 extends JFrame
         buttonDot.setBorder(new LineBorder(Color.BLACK));
         buttonDot.setEnabled(true);
         buttonDot.addActionListener(this::performDotButtonActions);
+
+        buttonMemoryStore.setFont(Calculator_v3.font);
+        buttonMemoryStore.setPreferredSize(new Dimension(35, 35) );
+        buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
+        buttonMemoryStore.setEnabled(true);
+        buttonMemoryStore.addActionListener(this::performMemoryStoreActions);
+
+        buttonMemoryRecall.setFont(Calculator_v3.font);
+        buttonMemoryRecall.setPreferredSize(new Dimension(35, 35) );
+        buttonMemoryRecall.setBorder(new LineBorder(Color.BLACK));
+        buttonMemoryRecall.setEnabled(false);
+        buttonMemoryRecall.addActionListener(this::performMemoryRecallActions);
+
+        buttonMemoryClear.setFont(Calculator_v3.font);
+        buttonMemoryClear.setPreferredSize(new Dimension(35, 35) );
+        buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
+        buttonMemoryClear.setEnabled(false);
+        buttonMemoryClear.addActionListener(this::performMemoryClearActions);
+
+        buttonMemoryAddition.setFont(Calculator_v3.font);
+        buttonMemoryAddition.setPreferredSize(new Dimension(35, 35) );
+        buttonMemoryAddition.setBorder(new LineBorder(Color.BLACK));
+        buttonMemoryAddition.setEnabled(true);
+        buttonMemoryAddition.addActionListener(this::performMemoryAddActions);
+
+        buttonMemorySubtraction.setFont(Calculator_v3.font);
+        buttonMemorySubtraction.setPreferredSize(new Dimension(35, 35) );
+        buttonMemorySubtraction.setBorder(new LineBorder(Color.BLACK));
+        buttonMemorySubtraction.setEnabled(true);
+        buttonMemorySubtraction.addActionListener(this::performMemorySubtractionActions);
+
         LOGGER.info("Finished setupCalculator_v3()");
 	}
 
@@ -253,6 +286,136 @@ public abstract class Calculator_v3 extends JFrame
         add(c); // add component
     }
 
+    public void performMemoryStoreActions(ActionEvent action)
+    {
+        LOGGER.info("MemoryStoreButtonHandler started");
+        LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
+        if (StringUtils.isNotBlank(getTextAreaWithoutNewLineCharacters())) // if there is a number in the textArea
+        {
+            if (memoryPosition == 10) // reset to 0
+            {
+                memoryPosition = 0;
+            }
+            memoryValues[memoryPosition] = getTextAreaWithoutNewLineCharacters();
+            memoryPosition++;
+            buttonMemoryRecall.setEnabled(true);
+            buttonMemoryClear.setEnabled(true);
+            confirm(values[valuesPosition] + " is stored in memory at position: " + (memoryPosition-1));
+        }
+        confirm("No number added to memory. Blank entry");
+    }
+
+    public void performMemoryRecallActions(ActionEvent action)
+    {
+        LOGGER.info("MemoryRecallButtonHandler started");
+        LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
+        if (memoryRecallPosition == 10 || StringUtils.isBlank(memoryValues[memoryRecallPosition]))
+        {
+            memoryRecallPosition = 0;
+        }
+        textArea.setText(addNewLineCharacters(1) + memoryValues[memoryRecallPosition]);
+        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
+        values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
+        memoryRecallPosition++;
+        confirm("Recalling number in memory: " + memoryValues[(memoryRecallPosition-1)] + " at position: " + memoryRecallPosition);
+    }
+
+    public void performMemoryClearActions(ActionEvent action)
+    {
+        LOGGER.info("MemoryClearButtonHandler started");
+        LOGGER.info("button: " + action.getActionCommand());
+        if (memoryPosition == 10 || StringUtils.isBlank(memoryValues[memoryPosition]))
+        {
+            memoryPosition = 0;
+        }
+        if (!isMemoryValuesEmpty())
+        {
+            memoryValues[memoryPosition] = "";
+            memoryPosition++;
+            confirm("Reset memory at position: " + (memoryPosition-1) + ".");
+            // MemorySuite now could potentially be empty
+            if (isMemoryValuesEmpty())
+            {
+                {
+                    memoryPosition = 0;
+                    memoryRecallPosition = 0;
+                    buttonMemoryClear.setEnabled(false);
+                    buttonMemoryRecall.setEnabled(false);
+                    confirm("MemorySuite is blank");
+                }
+            }
+        }
+    }
+
+    public void performMemoryAddActions(ActionEvent action)
+    {
+        LOGGER.info("MemoryAddButtonHandler class started");
+        LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
+        // if there is a number in the textArea, and we have A number stored in memory, add the
+        // number in the textArea to the value in memory. value in memory should be the last number
+        // added to memory
+        if (isMemoryValuesEmpty())
+        {
+            confirm("No memories saved. Not adding.");
+        }
+        else if (StringUtils.isNotBlank(getTextAreaWithoutNewLineCharacters())
+                && StringUtils.isNotBlank(memoryValues[(memoryPosition-1)]))
+        {
+            LOGGER.info("textArea: '" + getTextAreaWithoutNewLineCharacters() + "'");
+            LOGGER.info("memoryValues["+(memoryPosition-1)+"]: '" + memoryValues[(memoryPosition-1)] + "'");
+            double result = Double.parseDouble(getTextAreaWithoutNewLineCharacters())
+                    + Double.parseDouble(memoryValues[(memoryPosition-1)]); // create result forced double
+            LOGGER.info(getTextAreaWithoutNewLineCharacters() + " + " + memoryValues[(memoryPosition-1)] + " = " + result);
+            memoryValues[(memoryPosition-1)] = Double.toString(result);
+            if (Double.parseDouble(memoryValues[(memoryPosition-1)]) % 1 == 0 && isPositiveNumber(memoryValues[(memoryPosition-1)]))
+            {
+                // whole positive number
+                memoryValues[(memoryPosition-1)] = clearZeroesAtEnd(memoryValues[(memoryPosition-1)]).toString();
+            }
+            else if (Double.parseDouble(memoryValues[(memoryPosition-1)]) % 1 == 0 && isNegativeNumber(memoryValues[(memoryPosition-1)]))
+            {
+                // whole negative number
+                memoryValues[(memoryPosition-1)] = convertToPositive(memoryValues[(memoryPosition-1)]);
+                memoryValues[(memoryPosition-1)] = clearZeroesAtEnd(memoryValues[(memoryPosition-1)]).toString();
+                memoryValues[(memoryPosition-1)] = convertToNegative(memoryValues[(memoryPosition-1)]);
+            }
+            confirm("The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
+        }
+    }
+
+    public void performMemorySubtractionActions(ActionEvent action)
+    {
+        LOGGER.info("MemorySubButtonHandler class started");
+        LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
+        if (isMemoryValuesEmpty())
+        {
+            confirm("No memories saved. Not adding.");
+        }
+        else if (StringUtils.isNotBlank(getTextAreaWithoutNewLineCharacters())
+                && StringUtils.isNotBlank(memoryValues[(memoryPosition-1)]))
+        {
+            LOGGER.info("textArea: '" + getTextAreaWithoutNewLineCharacters() + "'");
+            LOGGER.info("memoryValues["+(memoryPosition-1)+": '" + memoryValues[(memoryPosition-1)] + "'");
+            double result = Double.parseDouble(memoryValues[(memoryPosition-1)])
+                    - Double.parseDouble(getTextAreaWithoutNewLineCharacters()); // create result forced double
+            LOGGER.info(memoryValues[(memoryPosition-1)] + " - " + getTextAreaWithoutNewLineCharacters() + " = " + result);
+            memoryValues[(memoryPosition-1)] = Double.toString(result);
+            if (Double.parseDouble(memoryValues[(memoryPosition-1)]) % 1 == 0 && isPositiveNumber(memoryValues[(memoryPosition-1)]))
+            {
+                // whole positive number
+                memoryValues[(memoryPosition-1)] = clearZeroesAtEnd(memoryValues[(memoryPosition-1)]).toString();
+            }
+            else if (Double.parseDouble(memoryValues[(memoryPosition-1)]) % 1 == 0 && isNegativeNumber(memoryValues[(memoryPosition-1)]))
+            {
+                // whole negative number
+                memoryValues[(memoryPosition-1)] = convertToPositive(memoryValues[(memoryPosition-1)]);
+                memoryValues[(memoryPosition-1)] = clearZeroesAtEnd(memoryValues[(memoryPosition-1)]).toString();
+                memoryValues[(memoryPosition-1)] = convertToNegative(memoryValues[(memoryPosition-1)]);
+            }
+            confirm("The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
+        }
+    }
+
     public void performNumberButtonActions(ActionEvent action)
     {
         LOGGER.info("NumberButtonHandler_v2 started");
@@ -271,22 +434,37 @@ public abstract class Calculator_v3 extends JFrame
         confirm("NumberButtonHandler_v2() finishing");
     }
 
+    /**
+     * When the user clicks the Clear button, everything in the
+     * calculator returns to initial start mode.
+     * @param action
+     */
     public void performClearButtonActions(ActionEvent action)
     {
         LOGGER.info("ClearButtonHandler() started");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        for (int i=0; i < 3; i++) {
+        // clear values
+        for (int i=0; i < 3; i++)
+        {
             values[i] = "";
+        }
+        // clear memory
+        for(int i=0; i < 10; i++)
+        {
+            memoryValues[i] = "";
         }
         textArea.setText("\n0");
         textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
         resetOperators(false);
         valuesPosition = 0;
+        memoryPosition = 0;
         firstNumBool = true;
         dotButtonPressed = false;
         dotButtonPressed = false;
         numberIsNegative = false;
+        buttonMemoryRecall.setEnabled(false);
+        buttonMemoryClear.setEnabled(false);
         buttonDot.setEnabled(true);
         LOGGER.info("ClearButtonHandler() finished");
         confirm();
@@ -780,17 +958,17 @@ public abstract class Calculator_v3 extends JFrame
         LOGGER.info("---------------- ");
         LOGGER.info("textarea: '"+textarea.toString()+"'");
         LOGGER.info("textArea: '\\n"+textArea.getText().replaceAll("\n", "")+"'");
-        if (!memoryValues[memoryPosition].equals("")) {
-        	ArrayList<String> nonBlankValues = getNonBlankValues(memoryValues);
-        	int lengthOfNonBlankValues = nonBlankValues.size();
-        	int index = 0;
-    		for (String memory : nonBlankValues) {
-        		LOGGER.info("memoryValues["+index+"]: " + memory);
-        		if (index < lengthOfNonBlankValues) { index++; }
-        	}
-    	} else {
-    		LOGGER.info("no memories stored!");
-    	}
+        if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
+        {
+            LOGGER.info("no memories stored!");
+        }
+        else
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);
+            }
+        }
         LOGGER.info("addBool: '"+addBool+"'");
         LOGGER.info("subBool: '"+subBool+"'"); 
         LOGGER.info("mulBool: '"+mulBool+"'"); 
@@ -805,6 +983,7 @@ public abstract class Calculator_v3 extends JFrame
         LOGGER.info("values["+2+"]: '" + values[2] + "'");
         LOGGER.info("valuesPosition: '"+valuesPosition+"'"); 
         LOGGER.info("memoryPosition: '"+memoryPosition+"'");
+        LOGGER.info("memoryRecallPosition: '"+memoryRecallPosition+"'");
         // TODO: print out all values in memory
         LOGGER.info("firstNumBool: '"+firstNumBool+"'"); 
         LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
@@ -958,22 +1137,32 @@ public abstract class Calculator_v3 extends JFrame
     {
         return getTextArea().getText().replaceAll("\n", "");
     }
-    public void setMemoryValueAtPosition(String memoryValue, int memoryPosition) {
-        this.memoryValues[memoryPosition] = memoryValue;
-        LOGGER.info("memoryValue["+memoryPosition+"]: " + memoryValues[memoryPosition]);
-        setMemoryPosition(memoryPosition);
+
+    public boolean isMemoryValuesEmpty()
+    {
+        boolean result = false;
+        for(int i = 0; i < 10; i++)
+        {
+            if (StringUtils.isBlank(memoryValues[i]))
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
+
     @Deprecated
     public JPanel getCurrentPanelFromParentCalculator()
     {
         return this.currentPanel;
     }
 
-    protected void setCurrentPanelOnParentCalculator(JPanel panel )
-    {
-        currentPanel = panel;
-    }
-
+    // TODO: add in when number has E in it.
     /**
      * Tests whether the TextArea contains a String which shows a previous error
      *
@@ -987,7 +1176,8 @@ public abstract class Calculator_v3 extends JFrame
         if (getTextAreaWithoutNewLineCharacters().equals("Invalid textarea")   ||
             getTextAreaWithoutNewLineCharacters().equals("Cannot divide by 0") ||
             getTextAreaWithoutNewLineCharacters().equals("Not a Number")       ||
-            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers")) {
+            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers"))
+        {
             result = true;
         }
         return result;
@@ -1048,6 +1238,29 @@ public abstract class Calculator_v3 extends JFrame
         }
     }
 
+    public String formatNumber(String num)
+    {
+        DecimalFormat df = new DecimalFormat();
+        if (!numberIsNegative) {
+            if (num.length() == 2) df = new DecimalFormat("0.00");
+            if (num.length() == 3) df = new DecimalFormat("0.000");
+        } else {
+            if (num.length() == 3) df = new DecimalFormat("0.0");
+            if (num.length() == 4) df = new DecimalFormat("0.00");
+            if (num.length() == 5) df = new DecimalFormat("0.000");
+        }
+        double number = Double.parseDouble(num);
+        number = Double.valueOf(df.format(number));
+        java.lang.String numberAsStr = Double.toString(number);
+        num = df.format(number);
+        LOGGER.info("Formatted: " + num);
+        if (numberAsStr.charAt(numberAsStr.length()-3) == '.' && numberAsStr.substring(numberAsStr.length()-3).equals(".00") ) {
+            numberAsStr = numberAsStr.substring(0, numberAsStr.length()-3);
+            LOGGER.info("Formatted again: " + num);
+        }
+        return numberAsStr;
+    }
+
     /************************ Unsolid Methods ***************************/
 
     /**
@@ -1058,6 +1271,7 @@ public abstract class Calculator_v3 extends JFrame
      *
      * TODO: Test
      */
+    @Deprecated
     public ArrayList<String> getNonBlankValues(String[] someValues)
     {
     	ArrayList<String> listToReturn = new ArrayList<>();
@@ -1071,6 +1285,7 @@ public abstract class Calculator_v3 extends JFrame
     	}
     	return listToReturn;
     }
+
     public void setTextareaToValuesAtPosition(String buttonChoice)
     {
         textarea.append(values[valuesPosition]);
@@ -1082,6 +1297,7 @@ public abstract class Calculator_v3 extends JFrame
         LOGGER.debug("textArea: '" + textArea.getText() + "'");
         LOGGER.debug("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
     }
+
     public void setValuesToTextAreaValue()
     {
         getTextArea().setText(getTextAreaWithoutNewLineCharacters());
@@ -1089,213 +1305,6 @@ public abstract class Calculator_v3 extends JFrame
         values[valuesPosition] = textarea.toString(); // store textarea in values
         LOGGER.debug("textArea: '\\n" + textArea.getText() + "'");
         LOGGER.debug("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
-    }
-
-    // TODO: Implement new logic and move to Calculator
-    public class MemoryClearButtonHandler implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("MemoryClearButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            values[4] = "";
-            LOGGER.info("temp[4]: " + values[4]);
-            LOGGER.info("temp["+valuesPosition+"] is " + values[valuesPosition]);
-            buttonMemoryRecall.setEnabled(false);
-            buttonMemoryClear.setEnabled(false);
-            memAddBool = false;
-            memSubBool = false;
-            confirm();
-        }
-    }
-
-    // TODO: Implement new logic and move to Calculator
-    public class MemoryRecallButtonHandler implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("MemoryRecallButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            textarea = new StringBuffer().append(values[4]);
-            if (isNegativeNumber(textarea.toString())) {
-                textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
-            }
-            LOGGER.info("textarea: -" + textarea);
-            values[valuesPosition] = values[4];
-            getTextArea().setText("\n" + textarea + "-"); // update textArea
-            textarea = new StringBuffer().append(getTextArea().getText());
-            LOGGER.info("temp["+valuesPosition+"] is " + values[valuesPosition]);
-            confirm();
-        }
-    }
-
-    // TODO: Implement new logic and move to Calculator
-    public class MemoryStoreButtonHandler implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("MemoryStoreButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            if(!getTextArea().getText().equals("") && !values[valuesPosition].equals(""))
-            { // [valuesPosition-1]
-                // if text area has a number AND if storage has a number
-                values[4] = values[valuesPosition];
-                LOGGER.info("textArea: '\\n" + getTextArea().getText().replaceAll("\n", "") + "'");
-                LOGGER.info("temp[4]: " + values[4]);
-                buttonMemoryRecall.setEnabled(true);
-                buttonMemoryClear.setEnabled(true);
-            }
-            else if (!values[4].equals(""))
-            {
-                // if memory does not have a number
-                textarea = new StringBuffer().append(getTextArea().getText());
-                double result = Double.parseDouble(values[4]) + Double.parseDouble(getTextArea().getText());
-                LOGGER.info("result: " + result);
-                getTextArea().setText(Double.toString(result));
-                values[4] = Double.toHexString(result);
-            }
-            confirm();
-        }
-    }
-    // TODO: Implement new logic and move to Calculator
-    public class MemoryAddButtonHandler implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("MemoryAddButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            if(!getTextArea().getText().equalsIgnoreCase("") && !values[4].equals(""))
-            {
-                // if text area has a number and memory storage has a number
-                LOGGER.info("textArea: " +getTextArea().getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp[4]:(memory) is " + values[4]);
-                LOGGER.info("temp["+valuesPosition+"]:(add to) is " + values[valuesPosition]);
-                double result = Double.parseDouble(values[4]) + Double.parseDouble(values[valuesPosition]); // create result forced double
-                LOGGER.info(values[4] + " + " + values[valuesPosition] + " = " + result);
-                values[4] = Double.toString(result); // store result
-                LOGGER.info("temp[4]: " + values[4]);
-                if (result % 1 == 0) { // if int == double, cut off decimal and zero
-                    //textArea.setText(temp[4]);
-                    textarea = new StringBuffer().append(values[4]);
-                    textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
-                    values[4] = textarea.toString(); // update storing
-                    LOGGER.info("update storing: " + textarea);
-                    //textArea.setText(temp[2]);
-                    if (Integer.parseInt(values[4]) < 0 )
-                    { // if result is negative
-                        textarea = new StringBuffer().append(values[4]);
-                        LOGGER.info("textarea: " + textarea);
-                        textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
-                        LOGGER.info("textarea: " + textarea);
-                        LOGGER.info("temp[4] is " + values[4]);
-                    }
-                } //else {// if double == double, keep decimal and number afterwards
-                //textArea.setText(temp[2]);
-            }
-            else if (getTextArea().getText().equals(""))
-            {
-                getTextArea().setText("0");
-                values[valuesPosition] = "0";
-                values[4] = values[valuesPosition];
-            }
-            else if (!values[valuesPosition].equals(""))
-            { // valuesPosition-1 ???
-                values[4] = values[valuesPosition];
-            }
-            else {
-                values[4] = values[valuesPosition];
-            }
-            buttonMemoryRecall.setEnabled(true);
-            buttonMemoryClear.setEnabled(true);
-            LOGGER.info("temp[4]: is " + values[4] + " after memory+ pushed"); // confirming proper textarea before moving on
-            dotButtonPressed = false;
-            textarea = new StringBuffer().append(getTextArea().getText());
-            memAddBool = true;
-            confirm();
-        }
-    }
-    // TODO: Implement new logic and move to Calculator
-    public class MemorySubButtonHandler implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            LOGGER.info("MemorySubButtonHandler class started");
-            LOGGER.info("button: " + e.getActionCommand()); // print out button confirmation
-            //textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-            if(!getTextArea().getText().equalsIgnoreCase("") && !values[4].equals(""))
-            {
-                // if textArea has a number and memory storage has a number
-                LOGGER.info("textArea: " + getTextArea().getText()); // print out textArea has proper value confirmation; recall text area's orientation
-                LOGGER.info("temp[%d]:(memory) %s\n", 4, values[4]);
-                LOGGER.info("temp[%d]:(sub from) %s\n", valuesPosition, values[valuesPosition]);
-                double result = Double.parseDouble(values[4]) - Double.parseDouble(values[valuesPosition]); // create result forced double
-                LOGGER.info(values[4] + " - " + values[valuesPosition] + " = " + result);
-                values[4] = Double.toString(result); // store result
-                LOGGER.info("temp[4]: " + values[4]);
-                int intRep = (int)result;
-                if (intRep == result) { // if int == double, cut off decimal and zero
-                    textarea = new StringBuffer().append(values[4]);
-                    textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
-                    values[4] = textarea.toString(); // update storing
-                    LOGGER.info("update storing: " + textarea);
-                    if (Integer.parseInt(values[4]) < 0 ) { // if result is negative
-                        textarea = new StringBuffer().append(values[4]);
-                        LOGGER.info("textarea: " + textarea);
-                        textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
-                        LOGGER.info("textarea: " + textarea);
-                        LOGGER.info("temp[4]: " + values[4]);
-                    }
-                }
-            }
-            else if (getTextArea().getText().equals(""))
-            {
-                getTextArea().setText("0");
-                values[valuesPosition] = "0";
-                values[4] = values[valuesPosition];
-                LOGGER.info("textArea: " + getTextArea().getText());
-                LOGGER.info("temp[4]: " + values[4]);
-
-                double result = 0.0;
-                LOGGER.info("result: " + result);
-                int intRep = (int)result; // 9 = 9.0
-                if (intRep == result) { // if int == double, cut off decimal and zero
-                    getTextArea().setText(Double.toString(result));
-                    textarea = new StringBuffer().append(getTextArea().getText());
-                    LOGGER.info("textArea: " + getTextArea().getText());
-                    textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
-                    values[4] = textarea.toString(); // update storing
-                    getTextArea().setText(values[4]);
-                    if (Integer.parseInt(values[4]) < 0 ) {
-                        textarea = new StringBuffer().append(getTextArea().getText()); // temp[2]
-                        LOGGER.info("textarea: " + textarea);
-                        textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
-                        LOGGER.info("textarea: " + textarea);
-                        getTextArea().setText(textarea + "-"); // update textArea
-                        LOGGER.info("temp["+valuesPosition+"] is " + values[valuesPosition]);
-                    }
-                }
-            }
-            else if (!values[valuesPosition].equals(""))
-            {
-                values[4] = convertToNegative(values[valuesPosition]);
-                LOGGER.info("textArea: " + getTextArea().getText());
-                LOGGER.info("temp[4]: " + values[4]);
-            }
-            else {
-                values[4] = convertToNegative(values[valuesPosition]);
-                LOGGER.info("textArea: " + getTextArea().getText());
-                LOGGER.info("temp[4]: " + values[4]);
-            }
-            buttonMemoryRecall.setEnabled(true);
-            buttonMemoryClear.setEnabled(true);
-            LOGGER.info("temp[4]: " + values[4] + " after memory- pushed"); // confirming proper textarea before moving on
-            dotButtonPressed = false;
-            textarea = new StringBuffer().append(getTextArea().getText());
-            memSubBool = true;
-            confirm();
-        }
     }
 
     /************* All Getters and Setters ******************/
