@@ -40,7 +40,7 @@ public class DifferentPanelsTester extends JFrame
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel panel1 = new JPanelBasic_v3(new StandardCalculator_v3());
-	private JPanel panel2 = new JPanelDate_v3(new StandardCalculator_v3());
+	private JPanel panel2 = new JPanelDate_v3_withBorders(new StandardCalculator_v3());
 	//private JTextField textField1 = new JTextField("Input text here");
 	//private JTextField textField2 = new JTextField("Input text here");
 	//private FlowLayout flowLayout = new FlowLayout();
