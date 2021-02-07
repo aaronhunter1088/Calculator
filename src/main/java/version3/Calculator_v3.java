@@ -894,12 +894,13 @@ public abstract class Calculator_v3 extends JFrame
         {
             LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
             textArea.setText("");
+            textarea = new StringBuffer().append("");
             values[valuesPosition] = "";
             firstNumBool = true;
             dotButtonPressed = false;
             checkFound = true;
         }
-        else if (values[0].equals("") && !values[1].equals(""))
+        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
         {
             values[0] = values[1];
             values[1] = "";
@@ -957,7 +958,7 @@ public abstract class Calculator_v3 extends JFrame
         else { LOGGER.info("Confirm Results"); }
         LOGGER.info("---------------- ");
         LOGGER.info("textarea: '"+textarea.toString()+"'");
-        LOGGER.info("textArea: '\\n"+textArea.getText().replaceAll("\n", "")+"'");
+        LOGGER.info("textArea: '\\n"+getTextAreaWithoutNewLineCharacters()+"'");
         if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
         {
             LOGGER.info("no memories stored!");
@@ -1135,7 +1136,7 @@ public abstract class Calculator_v3 extends JFrame
 
     protected String getTextAreaWithoutNewLineCharacters()
     {
-        return getTextArea().getText().replaceAll("\n", "");
+        return getTextArea().getText().replaceAll("\n", "").strip();
     }
 
     public boolean isMemoryValuesEmpty()
@@ -1176,7 +1177,8 @@ public abstract class Calculator_v3 extends JFrame
         if (getTextAreaWithoutNewLineCharacters().equals("Invalid textarea")   ||
             getTextAreaWithoutNewLineCharacters().equals("Cannot divide by 0") ||
             getTextAreaWithoutNewLineCharacters().equals("Not a Number")       ||
-            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers"))
+            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers") ||
+            getTextAreaWithoutNewLineCharacters().contains("E") )
         {
             result = true;
         }
