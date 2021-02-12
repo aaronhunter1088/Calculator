@@ -39,8 +39,10 @@ public class DifferentPanelsTester extends JFrame
 	
 	
 	private static final long serialVersionUID = 1L;
-	private JPanel panel1 = new JPanelBasic_v3(new StandardCalculator_v3());
-	private JPanel panel2 = new JPanelDate_v3_withBorders(new StandardCalculator_v3());
+	private JPanel basic = new JPanelBasic_v3(new StandardCalculator_v3());
+	private JPanel date = new JPanelDate_v3_withBorders(new StandardCalculator_v3());
+	private JPanel programmer = new JPanelProgrammer_v3(new StandardCalculator_v3());
+	private JPanel currentPanel;
 	//private JTextField textField1 = new JTextField("Input text here");
 	//private JTextField textField2 = new JTextField("Input text here");
 	//private FlowLayout flowLayout = new FlowLayout();
@@ -58,7 +60,7 @@ public class DifferentPanelsTester extends JFrame
 	*/
 	private void setupPanels()
 	{
-		add(panel2);
+		add(programmer);
 	}
 	
 	private void setupMenuBar()
@@ -82,23 +84,49 @@ public class DifferentPanelsTester extends JFrame
             panel2Item.addActionListener(action -> {
             	switchPanels(2);
             });
+
+			JMenuItem panel3Item = new JMenuItem("Programmer");
+			panel2Item.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+			panel2Item.addActionListener(action -> {
+				switchPanels(3);
+			});
             
          switchMenu.add(panel1Item);
          switchMenu.add(panel2Item);
-            
+         switchMenu.add(panel3Item);
 	}
 	
 	private void switchPanels(int choice)
 	{
-		if (choice == 1) {
-			remove(panel2);
-			add(panel1);
-		} else if (choice == 2) {
-			remove(panel1);
-			add(panel2);
+		if (choice == 1)
+		{
+			remove(getCurrentPanel());
+			add(basic);
+			setCurrentPanel(basic);
+		} else if (choice == 2)
+		{
+			remove(getCurrentPanel());
+			add(date);
+			setCurrentPanel(date);
+		}
+		else if (choice == 3)
+		{
+			remove(getCurrentPanel());
+			add(programmer);
+			setCurrentPanel(programmer);
 		}
 		this.revalidate();
 		this.repaint();
+	}
+
+	public void setCurrentPanel(JPanel currentPanel)
+	{
+		this.currentPanel = currentPanel;
+	}
+
+	public JPanel getCurrentPanel()
+	{
+		return this.currentPanel;
 	}
 }
  

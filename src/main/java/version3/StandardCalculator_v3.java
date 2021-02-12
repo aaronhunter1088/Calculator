@@ -353,10 +353,11 @@ public class StandardCalculator_v3 extends Calculator_v3
         buttonEquals.setBorder(new LineBorder(Color.BLACK));
         buttonEquals.setEnabled(true);
         buttonEquals.addActionListener(action -> {
-            try {
-                LOGGER.info("Equals button pressed");
+            try
+            {
                 performButtonEqualsActions();
-            } catch (Exception calculator_v3Error) {
+            } catch (Exception calculator_v3Error)
+            {
                 calculator_v3Error.printStackTrace();
             }
         });
@@ -968,6 +969,7 @@ public class StandardCalculator_v3 extends Calculator_v3
                 divBool = resetOperator(divBool);
             }
         }
+        // TODO: is this necessary. values should always be in DECIMAL form
         else if (getCalcType() == CalcType_v3.PROGRAMMER)
         {
             if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected())
@@ -982,7 +984,7 @@ public class StandardCalculator_v3 extends Calculator_v3
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
             {
-                // DO NOTHING
+                getLOGGER().debug("Do nothing");
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected())
             {

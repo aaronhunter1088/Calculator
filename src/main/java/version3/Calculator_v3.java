@@ -106,10 +106,7 @@ public abstract class Calculator_v3 extends JFrame
     protected CalcType_v3 base = CalcType_v3.DECIMAL;
 
 
-	public Calculator_v3() throws HeadlessException
-    {
-		super();
-	}
+	public Calculator_v3() throws HeadlessException { super(); }
 	public Calculator_v3(GraphicsConfiguration gc)
     {
 		super(gc);
