@@ -340,7 +340,10 @@ public abstract class Calculator_v4 extends JFrame
                 memoryRecallPosition = 0;
                 buttonMemoryClear.setEnabled(false);
                 buttonMemoryRecall.setEnabled(false);
+                getTextArea().setText(addNewLineCharacters(1)+"0");
+                setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
                 confirm("MemorySuite is blank");
+                return;
             }
             // MemorySuite now could potentially have gaps in front
             // {"5", "7", "", ""...} ... {"", "7", "", ""...}
@@ -375,7 +378,7 @@ public abstract class Calculator_v4 extends JFrame
                     if (alpha == memoryValues.length) break;
                 }
                 setMemoryValues(newMemoryValues);
-                setMemoryPosition(alpha);
+                setMemoryPosition(alpha); // next blank spot
             }
         }
         confirm("Reset memory at position: " + (memoryPosition-1) + ".");
