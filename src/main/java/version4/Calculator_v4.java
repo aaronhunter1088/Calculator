@@ -1,24 +1,26 @@
-package version3;
+package version4;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
-public abstract class Calculator_v3 extends JFrame
+public abstract class Calculator_v4 extends JFrame
 {
     final static protected Logger LOGGER;
     static
     {
-        LOGGER = LogManager.getLogger(Calculator_v3.class);
+        LOGGER = LogManager.getLogger(Calculator_v4.class);
     }
 
     final static private long serialVersionUID = 1L;
@@ -68,7 +70,7 @@ public abstract class Calculator_v3 extends JFrame
     protected int memoryRecallPosition = 0;
     protected JTextArea textArea = new JTextArea(2,5); // rows, columns
     protected StringBuffer textarea = new StringBuffer(); // String representing appropriate visual of number
-    protected CalcType_v3 calcType = null;
+    protected CalcType_v4 calcType = null;
     protected JPanel currentPanel = null;
     protected ImageIcon calculatorImage1, calculator2, macLogo;
     protected JLabel iconLabel;
@@ -103,19 +105,19 @@ public abstract class Calculator_v3 extends JFrame
     protected boolean negateButtonBool = false;
     protected boolean notButtonBool = false;
     protected boolean andButtonBool = false;
-    protected CalcType_v3 base = CalcType_v3.DECIMAL;
+    protected CalcType_v4 base = CalcType_v4.DECIMAL;
 
 
-	public Calculator_v3() throws HeadlessException { super(); }
-	public Calculator_v3(GraphicsConfiguration gc)
+	public Calculator_v4() throws HeadlessException { super(); }
+	public Calculator_v4(GraphicsConfiguration gc)
     {
 		super(gc);
 	}
-    public Calculator_v3(String title, GraphicsConfiguration gc)
+    public Calculator_v4(String title, GraphicsConfiguration gc)
     {
         super(title, gc);
     }
-	public Calculator_v3(String title) throws HeadlessException, IOException
+	public Calculator_v4(String title) throws HeadlessException, IOException
     {
 		super(title);
 		layout = new GridBagLayout();
@@ -207,9 +209,9 @@ public abstract class Calculator_v3 extends JFrame
         buttonClear.setEnabled(true);
         buttonClear.addActionListener(action -> {
             performClearButtonActions(action);
-            if (getCalcType() == CalcType_v3.PROGRAMMER)
+            if (getCalcType() == CalcType_v4.PROGRAMMER)
             {
-                ((JPanelProgrammer_v3) getCurrentPanel()).resetProgrammerOperators();
+                ((JPanelProgrammer_v4) getCurrentPanel()).resetProgrammerOperators();
             }
         });
         
@@ -231,31 +233,31 @@ public abstract class Calculator_v3 extends JFrame
         buttonDot.setEnabled(true);
         buttonDot.addActionListener(this::performDotButtonActions);
 
-        buttonMemoryStore.setFont(Calculator_v3.font);
+        buttonMemoryStore.setFont(Calculator_v4.font);
         buttonMemoryStore.setPreferredSize(new Dimension(35, 35) );
         buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
         buttonMemoryStore.setEnabled(true);
         buttonMemoryStore.addActionListener(this::performMemoryStoreActions);
 
-        buttonMemoryRecall.setFont(Calculator_v3.font);
+        buttonMemoryRecall.setFont(Calculator_v4.font);
         buttonMemoryRecall.setPreferredSize(new Dimension(35, 35) );
         buttonMemoryRecall.setBorder(new LineBorder(Color.BLACK));
         buttonMemoryRecall.setEnabled(false);
         buttonMemoryRecall.addActionListener(this::performMemoryRecallActions);
 
-        buttonMemoryClear.setFont(Calculator_v3.font);
+        buttonMemoryClear.setFont(Calculator_v4.font);
         buttonMemoryClear.setPreferredSize(new Dimension(35, 35) );
         buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
         buttonMemoryClear.setEnabled(false);
         buttonMemoryClear.addActionListener(this::performMemoryClearActions);
 
-        buttonMemoryAddition.setFont(Calculator_v3.font);
+        buttonMemoryAddition.setFont(Calculator_v4.font);
         buttonMemoryAddition.setPreferredSize(new Dimension(35, 35) );
         buttonMemoryAddition.setBorder(new LineBorder(Color.BLACK));
         buttonMemoryAddition.setEnabled(true);
         buttonMemoryAddition.addActionListener(this::performMemoryAddActions);
 
-        buttonMemorySubtraction.setFont(Calculator_v3.font);
+        buttonMemorySubtraction.setFont(Calculator_v4.font);
         buttonMemorySubtraction.setPreferredSize(new Dimension(35, 35) );
         buttonMemorySubtraction.setBorder(new LineBorder(Color.BLACK));
         buttonMemorySubtraction.setEnabled(true);
@@ -331,19 +333,52 @@ public abstract class Calculator_v3 extends JFrame
         {
             memoryValues[memoryPosition] = "";
             memoryPosition++;
-            confirm("Reset memory at position: " + (memoryPosition-1) + ".");
             // MemorySuite now could potentially be empty
             if (isMemoryValuesEmpty())
             {
+                memoryPosition = 0;
+                memoryRecallPosition = 0;
+                buttonMemoryClear.setEnabled(false);
+                buttonMemoryRecall.setEnabled(false);
+                confirm("MemorySuite is blank");
+            }
+            // MemorySuite now could potentially have gaps in front
+            // {"5", "7", "", ""...} ... {"", "7", "", ""...}
+            // If the first is a gap, then we have 1 too many gaps
+            if(memoryValues[0].equals(""))
+            {
+                // Determine where the first number is that is not a gap
+                int alpha = 0;
+                for(int i = 0; i < 9; i++)
                 {
-                    memoryPosition = 0;
-                    memoryRecallPosition = 0;
-                    buttonMemoryClear.setEnabled(false);
-                    buttonMemoryRecall.setEnabled(false);
-                    confirm("MemorySuite is blank");
+                    if ( !memoryValues[i].equals("") )
+                    {
+                        alpha = i;
+                        getTextArea().setText(addNewLineCharacters(1)+memoryValues[alpha]);
+                    }
+                    else
+                    {
+                        getTextArea().setText(addNewLineCharacters(1)+"0");
+
+                    }
+                    setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
+                    break;
                 }
+                // Move the first found value to the first position
+                // and so on until the end
+                String[] newMemoryValues = new String[10];
+                for(int i = 0; i < alpha; i++)
+                {
+                    if (memoryValues[alpha].equals("")) break;
+                    newMemoryValues[i] = memoryValues[alpha];
+                    alpha++;
+                    if (alpha == memoryValues.length) break;
+                }
+                setMemoryValues(newMemoryValues);
+                setMemoryPosition(alpha);
             }
         }
+        confirm("Reset memory at position: " + (memoryPosition-1) + ".");
     }
 
     public void performMemoryAddActions(ActionEvent action)
@@ -420,10 +455,10 @@ public abstract class Calculator_v3 extends JFrame
         LOGGER.info("NumberButtonHandler_v2 started");
         String buttonChoice = action.getActionCommand();
         LOGGER.debug("button: " + buttonChoice);
-        if (getCalcType() == CalcType_v3.BASIC) {
+        if (getCalcType() == CalcType_v4.BASIC) {
             performBasicCalculatorNumberButtonActions(buttonChoice);
         }
-        else if (getCalcType() == CalcType_v3.PROGRAMMER)
+        else if (getCalcType() == CalcType_v4.PROGRAMMER)
         {
             performProgrammerCalculatorNumberButtonActions(buttonChoice);
         }
@@ -889,7 +924,7 @@ public abstract class Calculator_v3 extends JFrame
             numberIsNegative = false;
             checkFound = true;
         }
-        else if (textArea.getText().equals("\n0") && getCalcType().equals(CalcType_v3.BASIC))
+        else if (textArea.getText().equals("\n0") && getCalcType().equals(CalcType_v4.BASIC))
         {
             LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
             textArea.setText("");
@@ -1033,11 +1068,11 @@ public abstract class Calculator_v3 extends JFrame
         return new StringBuffer().append(String.valueOf(textarea));
     }
 
-    public CalcType_v3 determineCalcType()
+    public CalcType_v4 determineCalcType()
     {
-        if (currentPanel instanceof JPanelBasic_v3) { return CalcType_v3.BASIC; }
-        else if (currentPanel instanceof  JPanelProgrammer_v3) { return CalcType_v3.PROGRAMMER; }
-        return CalcType_v3.BASIC;
+        if (currentPanel instanceof JPanelBasic_v4) { return CalcType_v4.BASIC; }
+        else if (currentPanel instanceof JPanelProgrammer_v4) { return CalcType_v4.PROGRAMMER; }
+        return CalcType_v4.BASIC;
     }
 
     public int getBytes()
@@ -1254,7 +1289,7 @@ public abstract class Calculator_v3 extends JFrame
         }
         double number = Double.parseDouble(num);
         number = Double.valueOf(df.format(number));
-        java.lang.String numberAsStr = Double.toString(number);
+        String numberAsStr = Double.toString(number);
         num = df.format(number);
         LOGGER.info("Formatted: " + num);
         if (numberAsStr.charAt(numberAsStr.length()-3) == '.' && numberAsStr.substring(numberAsStr.length()-3).equals(".00") ) {
@@ -1343,7 +1378,7 @@ public abstract class Calculator_v3 extends JFrame
     public int getMemoryPosition() { return memoryPosition; }
     protected JTextArea getTextArea() { return this.textArea; }
     public StringBuffer getTextarea() { return textarea; }
-    public CalcType_v3 getCalcType() { return this.calcType; }
+    public CalcType_v4 getCalcType() { return this.calcType; }
     public JPanel getCurrentPanel() { return currentPanel; }
     public ImageIcon getCalculatorImage1() { return calculatorImage1; }
     public ImageIcon getCalculator2() { return calculator2; }
@@ -1371,7 +1406,7 @@ public abstract class Calculator_v3 extends JFrame
     public boolean isNegateButtonPressed() { return negateButtonBool; }
     public boolean isNotButtonPressed() { return notButtonBool; }
     public boolean isAndButtonPressed() { return andButtonBool; }
-    public CalcType_v3 getBase() { return base; }
+    public CalcType_v4 getBase() { return base; }
 
     public boolean isButtonBinSet() { return isButtonBinSet; }
     public boolean isButtonOctSet() { return isButtonOctSet; }
@@ -1390,7 +1425,7 @@ public abstract class Calculator_v3 extends JFrame
     public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
     public void setTextArea(JTextArea textArea) { this.textArea = textArea; }
     public void setTextarea(StringBuffer textarea) { this.textarea = textarea; }
-    public void setCalcType(CalcType_v3 calcType) { this.calcType = calcType; }
+    public void setCalcType(CalcType_v4 calcType) { this.calcType = calcType; }
 
     public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
     public void setCalculatorImage1(ImageIcon calculatorImage1) { this.calculatorImage1 = calculatorImage1; }
@@ -1426,7 +1461,7 @@ public abstract class Calculator_v3 extends JFrame
     public void setNegateButtonBool(boolean negateButtonBool) { this.negateButtonBool = negateButtonBool; }
     public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
     public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
-    public void setBase(CalcType_v3 base) { this.base = base; }
+    public void setBase(CalcType_v4 base) { this.base = base; }
 }
 
 

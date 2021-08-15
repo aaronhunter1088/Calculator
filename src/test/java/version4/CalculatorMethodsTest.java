@@ -1,4 +1,4 @@
-package version3;
+package version4;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import version3.CalcType_v3;
+import version3.Calculator_v3;
+import version3.StandardCalculator_v3;
 
 import java.awt.event.ActionEvent;
 
@@ -15,7 +18,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CalculatorMethodsTest {
 
-    private static Calculator_v3 c;
+    private static Calculator_v4 c;
     private String number;
     private boolean result;
 
@@ -26,7 +29,7 @@ public class CalculatorMethodsTest {
     public static void setup() throws Exception
     {
         System.setProperty("appName", "CalculatorMethodsTest");
-        c = new StandardCalculator_v3();
+        c = new StandardCalculator_v4();
     }
 
     @Test
@@ -99,7 +102,7 @@ public class CalculatorMethodsTest {
         c.getTextArea().setText("\n35");
         c.setTextarea(new StringBuffer().append("35"));
         c.values[0] = "35";
-//        Calculator_v3.DeleteButtonHandler handler = c.getDeleteButtonHandler();
+//        Calculator_v4.DeleteButtonHandler handler = c.getDeleteButtonHandler();
         when(ae.getActionCommand()).thenReturn("DEL");
         c.performDeleteButtonActions(ae);
         assertEquals("TextArea does not equal 3", "\n3", c.getTextArea().getText());
@@ -133,7 +136,7 @@ public class CalculatorMethodsTest {
         when(ae.getActionCommand()).thenReturn("2");
         c.getTextArea().setText("-5."); // should become -5.2
         c.values[0] = c.getTextAreaWithoutNewLineCharacters();
-        c.calcType = CalcType_v3.BASIC;
+        c.calcType = CalcType_v4.BASIC;
         c.setNumberIsNegative(true);
         c.setDotButtonPressed(true);
         c.performNumberButtonActions(ae);
@@ -178,7 +181,7 @@ public class CalculatorMethodsTest {
     public void pressingClearEntryClearsJustTheTextArea()
     {
         c.getTextArea().setText("1088");
-//        Calculator_v3.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
+//        Calculator_v4.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
         c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));
@@ -189,7 +192,7 @@ public class CalculatorMethodsTest {
     public void pressingClearEntryAfterPressingAnOperatorResetsTextAreaAndOperator()
     {
         c.getTextArea().setText("1088 +");
-//        Calculator_v3.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
+//        Calculator_v4.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
         c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));

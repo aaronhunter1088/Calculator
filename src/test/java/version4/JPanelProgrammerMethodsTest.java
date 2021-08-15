@@ -1,4 +1,4 @@
-package version3;
+package version4;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -6,6 +6,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import version3.CalcType_v3;
+import version3.Calculator_v3Error;
+import version3.JPanelProgrammer_v3;
+import version3.StandardCalculator_v3;
 
 import java.awt.event.ActionEvent;
 
@@ -16,11 +20,11 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelProgrammerMethodsTest {
 
-    private static StandardCalculator_v3 c;
+    private static StandardCalculator_v4 c;
     private String number;
     private boolean result;
 
-    private static JPanelProgrammer_v3 p;
+    private static JPanelProgrammer_v4 p;
 
     @Mock
     ActionEvent ae;
@@ -28,19 +32,19 @@ public class JPanelProgrammerMethodsTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelProgrammerMethodsTest");
-        c = new StandardCalculator_v3(CalcType_v3.PROGRAMMER.getName());
-        c.setCalcType(CalcType_v3.PROGRAMMER);
+        c = new StandardCalculator_v4(CalcType_v4.PROGRAMMER.getName());
+        c.setCalcType(CalcType_v4.PROGRAMMER);
         c.firstNumBool = true;
-        p = new JPanelProgrammer_v3(c);
+        p = new JPanelProgrammer_v4(c);
         c.setCurrentPanel(p);
     }
 
     @Before
     public void setupBefore() throws Exception {
-        c = new StandardCalculator_v3(CalcType_v3.PROGRAMMER.getName());
-        c.setCalcType(CalcType_v3.PROGRAMMER);
+        c = new StandardCalculator_v4(CalcType_v4.PROGRAMMER.getName());
+        c.setCalcType(CalcType_v4.PROGRAMMER);
         c.firstNumBool = true;
-        p = new JPanelProgrammer_v3(c);
+        p = new JPanelProgrammer_v4(c);
         c.setCurrentPanel(p);
     }
 
@@ -49,7 +53,7 @@ public class JPanelProgrammerMethodsTest {
         c.getTextArea().setText("4");
         c.textarea = new StringBuffer().append(c.getTextArea().getText());
         c.values[0] = "4";
-        JPanelProgrammer_v3 p = new JPanelProgrammer_v3(c);
+        JPanelProgrammer_v4 p = new JPanelProgrammer_v4(c);
         p.getButtonBin().setSelected(true);
         p.convertValues();
         assertEquals("Did not convert from Decimal to Binary", "00000100", c.getTextAreaWithoutNewLineCharacters());
@@ -79,7 +83,7 @@ public class JPanelProgrammerMethodsTest {
         //5. Textarea displays proper sum in 8 bit form
         c.getTextArea().setText("");
         c.setTextarea(new StringBuffer());
-        c.setCalcType(CalcType_v3.PROGRAMMER);
+        c.setCalcType(CalcType_v4.PROGRAMMER);
         p.getButtonBin().setSelected(true);
         c.setFirstNumBool(true);
         when(ae.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
@@ -106,8 +110,8 @@ public class JPanelProgrammerMethodsTest {
         assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(c.values[0]));
     }
 
-    @Test(expected = Calculator_v3Error.class)
-    public void testPushingButtonOrWithValuesAtZeroNotSet() throws Calculator_v3Error {
+    @Test(expected = CalculatorError_v4.class)
+    public void testPushingButtonOrWithValuesAtZeroNotSet() throws CalculatorError_v4 {
         when(ae.getActionCommand()).thenReturn("OR");
         c.values[0] = "";
         c.values[1] = "50";
@@ -127,7 +131,7 @@ public class JPanelProgrammerMethodsTest {
         try {
             p.performButtonOrActions(ae);
             c.updateTextareaFromTextArea();
-        } catch (Calculator_v3Error ce) {
+        } catch (CalculatorError_v4 ce) {
             ce.printStackTrace();
         }
 
@@ -137,7 +141,7 @@ public class JPanelProgrammerMethodsTest {
     }
 
     @Test
-    public void testPushingButtonOrWithBothValuesSetReturnsCorrectResult() throws Calculator_v3Error {
+    public void testPushingButtonOrWithBothValuesSetReturnsCorrectResult() throws CalculatorError_v4 {
         c.values[0] = "00000101";
         c.values[1] = "00000011";
 

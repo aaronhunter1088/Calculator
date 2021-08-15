@@ -1,4 +1,4 @@
-package version3;
+package version4;
 
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -20,15 +20,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static version3.Calculator_v3.font2;
+import static version4.Calculator_v4.font2;
 
-public class JPanelDate_v3 extends JPanel
+/**
+ * Tester class. Not in use
+ */
+public class JPanelDate_v4_withBorders extends JPanel
 {
     protected final static Logger LOGGER;
     static
     {
         System.setProperty("appName", "JPanelDate_v4");
-        LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
+        LOGGER = LogManager.getLogger(JPanelBasic_v4.class);
     }
 
     private static final long serialVersionUID = 1L;
@@ -38,7 +41,7 @@ public class JPanelDate_v3 extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator_v3 calculator;
+    private Calculator_v4 calculator;
     private JComboBox optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, daysLabel, resultsLabel;
@@ -72,9 +75,8 @@ public class JPanelDate_v3 extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructor ******************/
-    public JPanelDate_v3(StandardCalculator_v3 calculator) throws ParseException
+    public JPanelDate_v4_withBorders(StandardCalculator_v4 calculator) throws ParseException
     {
-
         setMinimumSize(new Dimension(100,400));
         setDateLayout(new GridBagLayout());
         setLayout(getDateLayout()); // set frame layout
@@ -85,18 +87,20 @@ public class JPanelDate_v3 extends JPanel
     }
 
     /************* Start of methods here ******************/
-    private void setupJPanelDate_v3(StandardCalculator_v3 calculator) throws ParseException
+    private void setupJPanelDate_v3(StandardCalculator_v4 calculator) throws ParseException
     {
         LOGGER.info("Starting setupPanel_v3");
         setCalculator(calculator);
         setCalendar(Calendar.getInstance());
 
         setOptionsBox(new JComboBox(new String[]{OPTIONS1, OPTIONS2}));
+        getOptionsBox().setBorder(new LineBorder(Color.BLACK));
         getOptionsBox().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
         setFromDateLabel(new JLabel(FROM_DATE));
         getFromDateLabel().setFont(font2);
         getFromDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
+        getFromDateLabel().setBorder(new LineBorder(Color.BLACK));
 
         setFromModel(new UtilCalendarModel());
         int year = getCalendar().get(Calendar.YEAR);
@@ -107,10 +111,12 @@ public class JPanelDate_v3 extends JPanel
         setFromDatePanel(new JDatePanelImpl(getFromModel()));
         setFromDatePicker(new JDatePickerImpl(getFromDatePanel()));
         getFromDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getFromDatePicker().setBorder(new LineBorder(Color.BLACK));
 
         setToDateLabel(new JLabel(TO_DATE));
         getToDateLabel().setFont(font2);
         getToDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
+        getToDateLabel().setBorder(new LineBorder(Color.BLACK));
 
         setToModel(new UtilCalendarModel());
         getToModel().setDate(year, monthInt, day); // defaults to today
@@ -118,29 +124,37 @@ public class JPanelDate_v3 extends JPanel
         setToDatePanel(new JDatePanelImpl(getToModel()));
         setToDatePicker(new JDatePickerImpl(getToDatePanel()));
         getToDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getToDatePicker().setBorder(new LineBorder(Color.BLACK));
 
         setToDatePicker(new JDatePickerImpl(getToDatePanel()));
         getToDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getToDatePicker().setBorder(new LineBorder(Color.BLACK));
 
         getFromDatePicker().addActionListener(action -> {
-            if (getOptionsBox().getSelectedItem().toString().equals(OPTIONS1))
+            if (getOptionsBox().getSelectedItem().toString().equals("Difference between dates"))
             {
                 updateResultsTextBox();
             }
-            else if (getOptionsBox().getSelectedItem().toString().equals(OPTIONS2))
+            else if (getOptionsBox().getSelectedItem().toString().equals("Add or subtract days"))
             {
                 updateResultsLabel();
             }
         });
-        getToDatePicker().addActionListener(action -> updateResultsTextBox());
+        getToDatePicker().addActionListener(action -> {
+            updateResultsTextBox();
+        });
 
         setDifferenceLabel(new JLabel(DIFFERENCE));
         getDifferenceLabel().setFont(font2);
         getDifferenceLabel().setHorizontalAlignment(SwingConstants.LEFT);
+        getDifferenceLabel().setBorder(new LineBorder(Color.BLACK));
 
         setYearsDiffTextField(new JTextField(SAME_YEAR));
+        getYearsDiffTextField().setBorder(new LineBorder(Color.BLACK));
         setMonthsDiffTextField(new JTextField(SAME_MONTH));
+        getMonthsDiffTextField().setBorder(new LineBorder(Color.BLACK));
         setDaysDiffTextField(new JTextField(SAME_DATE));
+        getDaysDiffTextField().setBorder(new LineBorder(Color.BLACK));
 
         setBlankLabel1(new JLabel(SPACE));
         getBlankLabel1().setHorizontalAlignment(SwingConstants.LEFT);
@@ -217,6 +231,7 @@ public class JPanelDate_v3 extends JPanel
         getButtonGroupPanel().setLayout(new GridLayout(1,2));
         getButtonGroupPanel().add(getAddRadioButton());
         getButtonGroupPanel().add(getSubtractRadioButton());
+        getButtonGroupPanel().setBorder(new LineBorder(Color.BLACK));
 
         setYearsLabel(new JLabel(YEAR + LOWER_CASE_S));
         getYearsLabel().setFont(font2);
@@ -243,20 +258,23 @@ public class JPanelDate_v3 extends JPanel
         getDaysTextField().setHorizontalAlignment(SwingConstants.LEFT);
 
         setTextFieldsGroupPanel(new JPanel());
-        getTextFieldsGroupPanel().setLayout(new GridLayout(1, 3, 50, 5));
+        getTextFieldsGroupPanel().setLayout(new GridLayout(1, 3, 60, 5));
         getTextFieldsGroupPanel().add(getYearsTextField());
         getTextFieldsGroupPanel().add(getMonthsTextField());
         getTextFieldsGroupPanel().add(getDaysTextField());
+        getTextFieldsGroupPanel().setBorder(new LineBorder(Color.BLACK));
 
         setLabelsGroupPanel(new JPanel());
-        getLabelsGroupPanel().setLayout(new GridLayout(1,3, 30, 5));
+        getLabelsGroupPanel().setLayout(new GridLayout(1,3, 50, 5));
         getLabelsGroupPanel().add(getYearsLabel());
         getLabelsGroupPanel().add(getMonthsLabel());
         getLabelsGroupPanel().add(getDaysLabel());
+        getLabelsGroupPanel().setBorder(new LineBorder(Color.BLACK));
 
         setDateLabel(new JLabel(DATE));
         getDateLabel().setFont(font2);
         getDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
+        getDateLabel().setBorder(new LineBorder(Color.BLACK));
 
         String dayOfWeek = getCalendar().getTime().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("en", "US"));
@@ -266,6 +284,7 @@ public class JPanelDate_v3 extends JPanel
         setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + date + ", " + year));
         getResultsLabel().setFont(font2);
         getResultsLabel().setHorizontalAlignment(SwingConstants.LEFT);
+        getResultsLabel().setBorder(new LineBorder(Color.BLACK));
         LOGGER.info("Finished setupPanel_v3");
     }
 
@@ -518,7 +537,7 @@ public class JPanelDate_v3 extends JPanel
     {
         return toDatePicker;
     }
-    public Calculator_v3 getCalculator()
+    public Calculator_v4 getCalculator()
     {
         return calculator;
     }
@@ -664,7 +683,7 @@ public class JPanelDate_v3 extends JPanel
     {
         this.toDatePicker = toDatePicker;
     }
-    private void setCalculator(StandardCalculator_v3 calculator)
+    private void setCalculator(StandardCalculator_v4 calculator)
     {
         this.calculator = calculator;
     }

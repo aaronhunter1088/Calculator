@@ -1,4 +1,4 @@
-package version3;
+package version4;
 
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.text.ParseException;
 import java.time.Duration;
@@ -20,15 +19,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static version3.Calculator_v3.font2;
+import static version4.Calculator_v4.font2;
 
-public class JPanelDate_v3 extends JPanel
+public class JPanelDate_v4 extends JPanel
 {
     protected final static Logger LOGGER;
     static
     {
         System.setProperty("appName", "JPanelDate_v4");
-        LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
+        LOGGER = LogManager.getLogger(JPanelBasic_v4.class);
     }
 
     private static final long serialVersionUID = 1L;
@@ -38,7 +37,7 @@ public class JPanelDate_v3 extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator_v3 calculator;
+    private Calculator_v4 calculator;
     private JComboBox optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, daysLabel, resultsLabel;
@@ -72,7 +71,7 @@ public class JPanelDate_v3 extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructor ******************/
-    public JPanelDate_v3(StandardCalculator_v3 calculator) throws ParseException
+    public JPanelDate_v4(StandardCalculator_v4 calculator) throws ParseException
     {
 
         setMinimumSize(new Dimension(100,400));
@@ -85,9 +84,9 @@ public class JPanelDate_v3 extends JPanel
     }
 
     /************* Start of methods here ******************/
-    private void setupJPanelDate_v3(StandardCalculator_v3 calculator) throws ParseException
+    private void setupJPanelDate_v3(StandardCalculator_v4 calculator) throws ParseException
     {
-        LOGGER.info("Starting setupPanel_v3");
+        LOGGER.info("Starting setupPanel_v4");
         setCalculator(calculator);
         setCalendar(Calendar.getInstance());
 
@@ -518,7 +517,7 @@ public class JPanelDate_v3 extends JPanel
     {
         return toDatePicker;
     }
-    public Calculator_v3 getCalculator()
+    public Calculator_v4 getCalculator()
     {
         return calculator;
     }
@@ -664,7 +663,7 @@ public class JPanelDate_v3 extends JPanel
     {
         this.toDatePicker = toDatePicker;
     }
-    private void setCalculator(StandardCalculator_v3 calculator)
+    private void setCalculator(StandardCalculator_v4 calculator)
     {
         this.calculator = calculator;
     }

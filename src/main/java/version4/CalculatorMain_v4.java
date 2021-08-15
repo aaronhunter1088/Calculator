@@ -1,23 +1,24 @@
-package version3;
+package version4;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 
-public class CalculatorMain_v3
+public class CalculatorMain_v4
 {
 
     private final static Logger LOGGER;
     static
     {
-        System.setProperty("appName", "Calculator");
-        LOGGER = LogManager.getLogger(CalculatorMain_v3.class);
+        System.setProperty("appName", "Calculator_v4");
+        LOGGER = LogManager.getLogger(CalculatorMain_v4.class);
     }
 
 	public static void main(String[] args) throws Exception
     {
 		LOGGER.info("Starting class CalculatorMain_v4");
-		Calculator_v3 calculator = new StandardCalculator_v3("Standard Calculator");
+		Calculator_v4 calculator = new StandardCalculator_v4("Standard Calculator");
         UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);
@@ -28,7 +29,7 @@ public class CalculatorMain_v3
 }
 /*
 a. PROGRAMMER: Michael Ball
-b. DATE:   Version 3: 2018
+b. DATE:   Version 4: 2021
 c. ENVIRONMENT: Mac Mohave 10.14
 d. FILES INCLUDED: TODO: Add file names
 e. PURPOSE: To enhance the functionality of this calculator tenfold. 
@@ -175,4 +176,9 @@ Version Three Started: October 26, 2017
             Calculator
             Standard | Scientific | Programmer | Date Calculation | Converter (has more subclasses; may be on top tier of its own)
                                                                     Currency | Volume | Length | Weight and Mass.....
+
+Version Four Started: August 14, 2021
+    Saturday, Aug 14, 2021:
+    I started the Converter version. It should be relatively easy to implement seeing as they all have a
+    common face. So build the face, allow for parameters and fill them in as a particular type is added.
 */
