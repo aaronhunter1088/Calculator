@@ -30,6 +30,10 @@ public class JPanelConverter_v4 extends JPanel
     private JTextArea bottomSpaceAboveNumbers;
     private Calculator_v4 calculator;
     private ConverterType_v4 converterType;
+    private JPanel numbersPanel;
+    // TODO: move up to Calculator class, remove from JPanelProgrammer_v4
+    private JButton buttonBlank;
+
 
     /************* Constructor ******************/
     public JPanelConverter_v4(StandardCalculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
@@ -69,30 +73,35 @@ public class JPanelConverter_v4 extends JPanel
     private void addStartupComponentsToJPanelConverter_v4()
     {
         LOGGER.info("Starting addStartupComponentsToJPanelConverter_v4");
-        // all of the following components are added no matter the option selected
+        // all the following components are added no matter the option selected
+
         addComponent(getConverterTypeName(), 0,0,1,1, 1.0,1.0);
-        addComponent(getOption1(), 1, 0, 2, 2,1.0,1.0);
+        addComponent(getOption1(), 1, 0, 0, 1,1.0,1.0);
         addComponent(getUnitOptions1(), 3, 0, 1,1, 1.0,1.0);
-        addComponent(getOption2(), 4, 0, 2, 2,1.0,1.0);
+        addComponent(getOption2(), 4, 0, 1, 1,1.0,1.0);
         addComponent(getUnitOptions2(), 6, 0, 1,1, 1.0,1.0);
         addComponent(getBottomSpaceAboveNumbers(), 7, 0, 1,1, 1.0,1.0);
-        // numbers
-        addComponent(getCalculator().getButtonClear(), 8, 0, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButtonClearEntry(), 8, 1, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButtonDelete(), 8, 2, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton7(), 9, 0, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton8(), 9, 1, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton9(), 9, 2, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton4(), 10, 0, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton5(), 10, 1, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton6(), 10, 2, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton1(), 11, 0, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton2(), 11, 1, 1, 1, 1.0, 1.0);
-        addComponent(getCalculator().getButton3(), 11, 2, 1, 1, 1.0, 1.0);
+        // numbers are added on top of a single panel
+        addComponent(getNumbersPanel(), 8, 0, 1, 1, 1.0, 1.0);
         LOGGER.info("Finished addStartupComponentsToJPanelConverter_v4");
     }
 
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
+    {
+        constraints.gridx = column;
+        constraints.gridy = row;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        constraints.weighty = weighty;
+        constraints.weightx = weightx;
+        constraints.insets = new Insets(0, 0, 0, 0);
+        getConverterLayout().setConstraints(c, getConstraints()); // set constraints
+        add(c); // add component
+    }
+
+    private void addComponentToNumbersPanel(Component c, int row, int column, int width, int height, double weighty, double weightx)
     {
         constraints.gridx = column;
         constraints.gridy = row;
@@ -103,13 +112,17 @@ public class JPanelConverter_v4 extends JPanel
         constraints.weighty = weighty;
         constraints.weightx = weightx;
         constraints.insets = new Insets(0, 0, 0, 0);
-        getConverterLayout().setConstraints(c, getConstraints()); // set constraints
-        add(c); // add component
+        GridBagLayout layout = (GridBagLayout) getNumbersPanel().getLayout();
+        layout.setConstraints(c, getConstraints()); // set constraints
+        getNumbersPanel().add(c);
     }
 
     private void setupAngleConverter()
     {
         setupConverter(ConverterType_v4.ANGLE.getName());
+        setUnitOptions1(new JComboBox<>(new String[]{"Square millimeters", "Square centimeters", "ADD OTHERS"}));
+        setUnitOptions2(new JComboBox<>(new String[]{"Square millimeters", "Square centimeters", "ADD OTHERS"}));
+        setBottomSpaceAboveNumbers(new JTextArea(1,10));
     }
 
     private void setupAreaConverter()
@@ -133,6 +146,29 @@ public class JPanelConverter_v4 extends JPanel
         setOption2(new JTextField());
         getOption2().setText("0");
         getOption2().setFont(font2);
+
+        setButtonBlank(new JButton());
+        getButtonBlank().setPreferredSize(new Dimension(35, 35));
+
+        setNumbersPanel(new JPanel());
+        getNumbersPanel().setLayout(new GridBagLayout());
+        addComponentToNumbersPanel(getCalculator().getButtonClear(), 0, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton7(), 1, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton8(), 1, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton9(), 1, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton4(), 2, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton5(), 2, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton6(), 2, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton1(), 3, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton2(), 3, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButton3(), 3, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getButtonBlank(), 4, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(getCalculator().getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
+        getCalculator().getButton0().setPreferredSize(new Dimension(35, 35));
+        addComponentToNumbersPanel(getCalculator().getButton0(), 4, 2, 1, 1, 1.0, 1.0);
+
     }
 
     /************* All Getters ******************/
@@ -154,6 +190,8 @@ public class JPanelConverter_v4 extends JPanel
     }
     public Calculator_v4 getCalculator() { return calculator; }
     public ConverterType_v4 getConverterType() { return converterType; }
+    public JPanel getNumbersPanel() { return numbersPanel; }
+    public JButton getButtonBlank() { return buttonBlank; }
 
     /************* All Setters ******************/
     public void setConverterLayout(GridBagLayout converterLayout) { this.converterLayout = converterLayout; }
@@ -168,5 +206,7 @@ public class JPanelConverter_v4 extends JPanel
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
     public void setCalculator(StandardCalculator_v4 calculator) { this.calculator = calculator; }
     public void setConverterType(ConverterType_v4 converterType) { this.converterType = converterType; }
+    public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
+    public void setButtonBlank(JButton buttonBlank) { this.buttonBlank = buttonBlank; }
 
 }
