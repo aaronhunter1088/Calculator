@@ -4,10 +4,7 @@ public enum ConverterType_v4
 {
     // Types
     ANGLE("Angle"),
-    AREA("Area"),
-
-
-    CONVERTER("Converter");
+    AREA("Area");
 
     // TODO: Add converter types
     private String name;

@@ -7,6 +7,8 @@ public enum CalcType_v4
 	SCIENTIFIC("Scientific"),
 	PROGRAMMER("Programmer"),
 	DATE("Date"),
+	// NEW
+	CONVERTER("Converter"),
 
 	// Bases for Programmer mode
 	BINARY("Binary"),

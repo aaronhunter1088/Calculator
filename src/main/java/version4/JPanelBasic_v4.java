@@ -33,12 +33,12 @@ public class JPanelBasic_v4 extends JPanel
 
     public JPanelBasic_v4(StandardCalculator_v4 calculator)
     {
+        setCalculator(calculator);
         setMinimumSize(new Dimension(100,200));
         basicLayout = new GridBagLayout();
         setLayout(basicLayout); // set frame layout
         constraints = new GridBagConstraints(); // instantiate constraints
         setupPanel_v3(calculator);
-        setCalculator(calculator);
         addComponentsToPanel_v3();
 //        performBasicCalculatorTypeSwitchOperations();
     }
@@ -49,52 +49,9 @@ public class JPanelBasic_v4 extends JPanel
     {
         LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        try
-        {
-            calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
-            setEnabledForAllNumberButtons(true);
-            calculator.button0.setFont(calculator.font);
-            calculator.button0.setPreferredSize(new Dimension(70, 35) );
-            calculator.button0.setBorder(new LineBorder(Color.BLACK));
+        calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
 
-            calculator.button1.setFont(calculator.font);
-            calculator.button1.setPreferredSize(new Dimension(35, 35) );
-            calculator.button1.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button2.setFont(calculator.font);
-            calculator.button2.setPreferredSize(new Dimension(35, 35) );
-            calculator.button2.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button3.setFont(calculator.font);
-            calculator.button3.setPreferredSize(new Dimension(35, 35) );
-            calculator.button3.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button4.setFont(calculator.font);
-            calculator.button4.setPreferredSize(new Dimension(35, 35) );
-            calculator.button4.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button5.setFont(calculator.font);
-            calculator.button5.setPreferredSize(new Dimension(35, 35) );
-            calculator.button5.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button6.setFont(calculator.font);
-            calculator.button6.setPreferredSize(new Dimension(35, 35) );
-            calculator.button6.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button7.setFont(calculator.font);
-            calculator.button7.setPreferredSize(new Dimension(35, 35) );
-            calculator.button7.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button8.setFont(calculator.font);
-            calculator.button8.setPreferredSize(new Dimension(35, 35) );
-            calculator.button8.setBorder(new LineBorder(Color.BLACK));
-
-            calculator.button9.setFont(calculator.font);
-            calculator.button9.setPreferredSize(new Dimension(35, 35) );
-            calculator.button9.setBorder(new LineBorder(Color.BLACK));
-        }
-        catch (NullPointerException e)
-        {}
+        getCalculator().setupNumberButtons(true);
 
         buttonFraction.setFont(Calculator_v4.font);
         buttonFraction.setPreferredSize(new Dimension(35, 35) );
@@ -233,7 +190,7 @@ public class JPanelBasic_v4 extends JPanel
         getCalculator().setBase(CalcType_v4.DECIMAL);
         getCalculator().setCalcType(CalcType_v4.BASIC);
         // setting up all the buttons
-        setEnabledForAllNumberButtons(true);
+        getCalculator().setEnabledForAllNumberButtons(true);
         calculator.buttonNegate.setEnabled(true);
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
     }
@@ -480,20 +437,6 @@ public class JPanelBasic_v4 extends JPanel
             }
         }
         // TODO: conversion from Scientific logic needed
-    }
-
-    public void setEnabledForAllNumberButtons(boolean isEnabled)
-    {
-        calculator.button0.setEnabled(isEnabled);
-        calculator.button1.setEnabled(isEnabled);
-        calculator.button2.setEnabled(isEnabled);
-        calculator.button3.setEnabled(isEnabled);
-        calculator.button4.setEnabled(isEnabled);
-        calculator.button5.setEnabled(isEnabled);
-        calculator.button6.setEnabled(isEnabled);
-        calculator.button7.setEnabled(isEnabled);
-        calculator.button8.setEnabled(isEnabled);
-        calculator.button9.setEnabled(isEnabled);
     }
 
     /************* All Getters and Setters ******************/

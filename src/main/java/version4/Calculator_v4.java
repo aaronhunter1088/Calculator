@@ -8,12 +8,16 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+
+import static version4.CalcType_v4.*;
 
 public abstract class Calculator_v4 extends JFrame
 {
@@ -55,7 +59,6 @@ public abstract class Calculator_v4 extends JFrame
     final protected JButton buttonClearEntry = new JButton("CE");
     final protected JButton buttonDelete = new JButton("\u2190"); //"<--"
     final protected JButton buttonDot = new JButton(".");
-    // TODO: Move MemorySuite logic into Calculator_v4
     final protected JButton buttonMemoryClear = new JButton("MC");
     final protected JButton buttonMemoryRecall = new JButton("MR");
     final protected JButton buttonMemoryStore = new JButton("MS");
@@ -266,6 +269,33 @@ public abstract class Calculator_v4 extends JFrame
         LOGGER.info("Finished setupCalculator_v3()");
 	}
 
+    /**
+     * Handles the logic for setting up the buttons numbered 0-9.
+     */
+    public void setupNumberButtons(boolean isEnabled) {
+        for(JButton button : getNumberButtons()) {
+            button.setFont(font);
+            button.setEnabled(isEnabled);
+            if (button.getText().equals("0")) { button.setPreferredSize(new Dimension(70, 35)); }
+            else { button.setPreferredSize(new Dimension(35, 35)); }
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.addActionListener(this::performNumberButtonActions);
+        }
+    }
+
+    public void clearNumberButtonFunctionalities() {
+        getNumberButtons().forEach(button -> {
+            for (ActionListener al : button.getActionListeners()) {
+                button.removeActionListener(al);
+            }
+        });
+    }
+
+    public void setEnabledForAllNumberButtons(boolean isEnabled)
+    {
+        for(JButton button : getNumberButtons()) { button.setEnabled(isEnabled); }
+    }
+    
 	/**
      * Adds the components to the container
      *
@@ -458,7 +488,7 @@ public abstract class Calculator_v4 extends JFrame
         LOGGER.info("NumberButtonHandler_v2 started");
         String buttonChoice = action.getActionCommand();
         LOGGER.debug("button: " + buttonChoice);
-        if (getCalcType() == CalcType_v4.BASIC) {
+        if (getCalcType() == BASIC) {
             performBasicCalculatorNumberButtonActions(buttonChoice);
         }
         else if (getCalcType() == CalcType_v4.PROGRAMMER)
@@ -927,7 +957,7 @@ public abstract class Calculator_v4 extends JFrame
             numberIsNegative = false;
             checkFound = true;
         }
-        else if (textArea.getText().equals("\n0") && getCalcType().equals(CalcType_v4.BASIC))
+        else if (textArea.getText().equals("\n0") && getCalcType().equals(BASIC))
         {
             LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
             textArea.setText("");
@@ -981,7 +1011,11 @@ public abstract class Calculator_v4 extends JFrame
      */
     public void confirm()
     {
-	    confirm("");
+	    confirm("", BASIC, getCurrentPanel());
+    }
+
+    public void confirm(String message) {
+        confirm(message, BASIC, getCurrentPanel());
     }
 
     /**
@@ -989,49 +1023,65 @@ public abstract class Calculator_v4 extends JFrame
      *
      * @param message a message to send into the confirm results view
      */
-    public void confirm(String message)
+    public void confirm(String message, CalcType_v4 calculatorType, JPanel currentPanel)
     {
-        if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
-        else { LOGGER.info("Confirm Results"); }
-        LOGGER.info("---------------- ");
-        LOGGER.info("textarea: '"+textarea.toString()+"'");
-        LOGGER.info("textArea: '\\n"+getTextAreaWithoutNewLineCharacters()+"'");
-        if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
-        {
-            LOGGER.info("no memories stored!");
-        }
-        else
-        {
-            for(int i = 0; i < 10; i++)
-            {
-                if (StringUtils.isNotBlank(memoryValues[i])) {
-                    LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);
+        switch (calculatorType) {
+            case BASIC : {
+                if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
+                else { LOGGER.info("Confirm Results"); }
+                LOGGER.info("---------------- ");
+                LOGGER.info("textarea: '"+textarea.toString()+"'");
+                LOGGER.info("textArea: '\\n"+getTextAreaWithoutNewLineCharacters()+"'");
+                if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
+                {
+                    LOGGER.info("no memories stored!");
                 }
+                else
+                {
+                    for(int i = 0; i < 10; i++)
+                    {
+                        if (StringUtils.isNotBlank(memoryValues[i])) {
+                            LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);
+                        }
+                    }
+                }
+                LOGGER.info("addBool: '"+addBool+"'");
+                LOGGER.info("subBool: '"+subBool+"'");
+                LOGGER.info("mulBool: '"+mulBool+"'");
+                LOGGER.info("divBool: '"+divBool+"'");
+                LOGGER.info("orButtonBool: '" +orButtonBool+"'");
+                LOGGER.info("modButtonBool: '" +modButtonBool+"'");
+                LOGGER.info("xorButtonBool: '" +xorButtonBool+"'");
+                LOGGER.info("notButtonBool: '" +notButtonBool+"'");
+                LOGGER.info("andButtonBool: '" +andButtonBool+"'");
+                LOGGER.info("values["+0+"]: '" + values[0] + "'");
+                LOGGER.info("values["+1+"]: '" + values[1] + "'");
+                LOGGER.info("values["+2+"]: '" + values[2] + "'");
+                LOGGER.info("valuesPosition: '"+valuesPosition+"'");
+                LOGGER.info("memoryPosition: '"+memoryPosition+"'");
+                LOGGER.info("memoryRecallPosition: '"+memoryRecallPosition+"'");
+                LOGGER.info("firstNumBool: '"+firstNumBool+"'");
+                LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
+                LOGGER.info("isNegative: '"+numberIsNegative+"'");
+                LOGGER.info("calcType: '" + calcType + "'");
+                LOGGER.info("calcBase: '" + base + "'");
+                LOGGER.info("-------- End Confirm Results --------\n");
+                break;
+            }
+            case DATE : { break; }
+            case CONVERTER:  {
+                if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
+                else { LOGGER.info("Confirm Results"); }
+                LOGGER.info("---------------- ");
+                LOGGER.info("Converter: '" + ((JPanelConverter_v4)currentPanel).getConverterNameAsString() + "'");
+                LOGGER.info("textField1: '" + ((JPanelConverter_v4)currentPanel).getTextField1().getText() + "'");
+                LOGGER.info("textField2: '" + ((JPanelConverter_v4)currentPanel).getTextField2().getText() + "'");
+                LOGGER.info("-------- End Confirm Results --------\n");
+                break;
             }
         }
-        LOGGER.info("addBool: '"+addBool+"'");
-        LOGGER.info("subBool: '"+subBool+"'"); 
-        LOGGER.info("mulBool: '"+mulBool+"'"); 
-        LOGGER.info("divBool: '"+divBool+"'");
-        LOGGER.info("orButtonBool: '" +orButtonBool+"'");
-        LOGGER.info("modButtonBool: '" +modButtonBool+"'");
-        LOGGER.info("xorButtonBool: '" +xorButtonBool+"'");
-        LOGGER.info("notButtonBool: '" +notButtonBool+"'");
-        LOGGER.info("andButtonBool: '" +andButtonBool+"'");
-        LOGGER.info("values["+0+"]: '" + values[0] + "'");
-        LOGGER.info("values["+1+"]: '" + values[1] + "'");
-        LOGGER.info("values["+2+"]: '" + values[2] + "'");
-        LOGGER.info("valuesPosition: '"+valuesPosition+"'"); 
-        LOGGER.info("memoryPosition: '"+memoryPosition+"'");
-        LOGGER.info("memoryRecallPosition: '"+memoryRecallPosition+"'");
-        // TODO: print out all values in memory
-        LOGGER.info("firstNumBool: '"+firstNumBool+"'"); 
-        LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
-        LOGGER.info("isNegative: '"+numberIsNegative+"'");
-        LOGGER.info("calcType: '" + calcType + "'");
-        LOGGER.info("calcBase: '" + base + "'");
-        LOGGER.info("-------- End Confirm Results --------\n");
     }
+
 
     /**
      * This method resets the 4 main operators to the boolean you pass in
@@ -1073,9 +1123,9 @@ public abstract class Calculator_v4 extends JFrame
 
     public CalcType_v4 determineCalcType()
     {
-        if (currentPanel instanceof JPanelBasic_v4) { return CalcType_v4.BASIC; }
+        if (currentPanel instanceof JPanelBasic_v4) { return BASIC; }
         else if (currentPanel instanceof JPanelProgrammer_v4) { return CalcType_v4.PROGRAMMER; }
-        return CalcType_v4.BASIC;
+        return BASIC;
     }
 
     public int getBytes()
@@ -1465,6 +1515,11 @@ public abstract class Calculator_v4 extends JFrame
     public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
     public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
     public void setBase(CalcType_v4 base) { this.base = base; }
+
+    public Collection<JButton> getNumberButtons() {
+        return Arrays.asList(getButton0(), getButton1(), getButton2(), getButton3(), getButton4(), getButton5(),
+                getButton6(), getButton7(), getButton8(), getButton9());
+    }
 }
 
 

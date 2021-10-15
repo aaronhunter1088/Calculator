@@ -15,6 +15,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
+import static version4.CalcType_v4.*;
+
 public class StandardCalculator_v4 extends Calculator_v4
 {
     private static Logger LOGGER;
@@ -157,8 +159,8 @@ public class StandardCalculator_v4 extends Calculator_v4
         basic.addActionListener(action -> {
             try
             {
-                performTasksWhenChangingJPanels(new JPanelBasic_v4(this), CalcType_v4.BASIC);
-                confirm();
+                JPanel panel = new JPanelBasic_v4(this);
+                performTasksWhenChangingJPanels(panel, BASIC);
             }
             catch (CalculatorError_v4 e)
             {
@@ -171,7 +173,8 @@ public class StandardCalculator_v4 extends Calculator_v4
         programmer.addActionListener(action -> {
             try
             {
-                performTasksWhenChangingJPanels(new JPanelProgrammer_v4(this), CalcType_v4.PROGRAMMER);
+                JPanel panel = new JPanelProgrammer_v4(this);
+                performTasksWhenChangingJPanels(panel, PROGRAMMER);
                 confirm("Finished performTasksWhenChangingJPanels");
             }
             catch (CalculatorError_v4 e)
@@ -186,9 +189,9 @@ public class StandardCalculator_v4 extends Calculator_v4
         dates.addActionListener(action -> {
             try
             {
-                performTasksWhenChangingJPanels(new JPanelDate_v4(this), CalcType_v4.DATE);
+                JPanel panel = new JPanelDate_v4(this);
+                performTasksWhenChangingJPanels(panel, DATE);
                 setCalcType(CalcType_v4.DATE);
-                confirm();
             }
             catch (ParseException | CalculatorError_v4 e)
             {
@@ -196,7 +199,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             }
         });
         // ADDING NEW OPTION: Converter
-        JMenu converterMenu = new JMenu(ConverterType_v4.CONVERTER.getName());
+        JMenu converterMenu = new JMenu(CONVERTER.getName());
         converterMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
         viewMenu.addSeparator();
         viewMenu.add(converterMenu);
@@ -206,7 +209,8 @@ public class StandardCalculator_v4 extends Calculator_v4
         angleConverter.addActionListener(action -> {
             try
             {
-                performTasksWhenChangingJPanels(new JPanelConverter_v4(this, ConverterType_v4.ANGLE));
+                JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.ANGLE);
+                performTasksWhenChangingJPanels(panel, CONVERTER);
             }
             catch (ParseException | CalculatorError_v4 e)
             {
@@ -219,7 +223,8 @@ public class StandardCalculator_v4 extends Calculator_v4
         areaConverter.addActionListener(action -> {
             try
             {
-                performTasksWhenChangingJPanels(new JPanelConverter_v4(this, ConverterType_v4.AREA));
+                JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.AREA);
+                performTasksWhenChangingJPanels(panel, CONVERTER);
             }
             catch (ParseException | CalculatorError_v4 e)
             {
@@ -433,23 +438,12 @@ public class StandardCalculator_v4 extends Calculator_v4
         add(getCurrentPanel());
 	}
 
-    public void performTasksWhenChangingJPanels(JPanel currentPanel) throws CalculatorError_v4
-    {
-        setTitle(ConverterType_v4.CONVERTER.getName());
-        updateJPanel(currentPanel);
-
-        //setCalcType(null);
-        repaint();
-        pack();
-        confirm();
-    }
-
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4) throws CalculatorError_v4
     {
 	    setTitle(calcType_v4.getName());
         JPanel oldPanel = updateJPanel(currentPanel);
-        String nameOfOldPanel = getNameOfPanel();
-        if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
+        //String nameOfOldPanel = getNameOfPanel();
+        //if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
         // don't switch calc_types here; later...
         if (getCurrentPanel() instanceof JPanelBasic_v4)
         {
@@ -461,8 +455,13 @@ public class StandardCalculator_v4 extends Calculator_v4
         }
         else if (getCurrentPanel() instanceof JPanelDate_v4)
         {
-            LOGGER.debug("Switching to Date Calculator from {}", nameOfOldPanel);
+
         }
+        else if (getCurrentPanel() instanceof JPanelConverter_v4)
+        {
+            ((JPanelConverter_v4)currentPanel).getTextField1().requestFocusInWindow();
+        }
+        repaint();
         pack();
     }
 
