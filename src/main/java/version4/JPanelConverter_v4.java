@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static version4.Calculator_v4.font2;
@@ -126,12 +127,12 @@ public class JPanelConverter_v4 extends JPanel
 
     private void setupButtonFunctionalities()
     {
-        // Execute button functionality
-        getButtonStartConversion().addActionListener(action -> {
-            LOGGER.debug("Testing Start Conversion button");
-        });
+        // Clear the buttons I will use of their functionality (other than numbers)
+        getCalculator().clearVariableNumberOfButtonsFunctionalities(Arrays.asList(getCalculator().getButtonClearEntry(), getCalculator().getButtonDelete(), getCalculator().getButtonDot()));
         // Clear Entry button functionality
         getCalculator().getButtonClearEntry().addActionListener(action -> {
+            LOGGER.info("ClearEntryButtonHandler() started for Converter");
+            LOGGER.info("button: " + action.getActionCommand());
             if (isTextField1Selected) {
                 switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
                     case DEGREES :
@@ -153,9 +154,13 @@ public class JPanelConverter_v4 extends JPanel
                     default : { LOGGER.error("Unknown unit"); break; }
                 }
             }
+            LOGGER.info("ClearEntryButtonHandler() finished for Converter");
+            getCalculator().confirm("ClearEntryButton pushed");
         });
         // Delete button functionality
         getCalculator().getButtonDelete().addActionListener(action -> {
+            LOGGER.info("DeleteButtonHandler() started for Converter");
+            LOGGER.info("button: " + action.getActionCommand());
             if (isTextField1Selected) {
                 if (getTextField1().getText().length() == 1) getTextField1().setText("0");
                 else getTextField1().setText(getTextField1().getText().substring(0, getTextField1().getText().length()-1));
@@ -164,6 +169,21 @@ public class JPanelConverter_v4 extends JPanel
                 if (getTextField2().getText().length() == 1) getTextField2().setText("0");
                 else getTextField2().setText(getTextField2().getText().substring(0, getTextField2().getText().length()-1));
             }
+            LOGGER.info("DeleteButtonHandler() finished for Converter");
+            getCalculator().confirm("DeleteButton pushed");
+        });
+        // Set up decimal button
+        getCalculator().getButtonDot().addActionListener(action -> {
+            LOGGER.info("DotButtonHandler() started for Converter");
+            LOGGER.info("button: " + action.getActionCommand());
+            if (isTextField1Selected) {
+                getTextField1().setText(getTextField1().getText() + ".");
+            }
+            else {
+                getTextField2().setText(getTextField2().getText() + ".");
+            }
+            LOGGER.info("DotButtonHandler() finished for Converter");
+            getCalculator().confirm("DotButton pushed");
         });
         // Number button functionalities
         // First clear all functionality assigned to them
@@ -213,10 +233,11 @@ public class JPanelConverter_v4 extends JPanel
                     default : { LOGGER.error("Unknown unit"); break; }
                 }
             }
-            getCalculator().confirm("Pressed 0", CONVERTER, this);
+            getCalculator().confirm("Pressed 0", CONVERTER);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton1().addActionListener(action -> {
-            // check if we are in textfield1 or textfield2
+            // check if we are in textField1 or textField2
             // check to see what converter we are using
             // check to see what unit we are using
             // grab the number, add next number, add symbol
@@ -246,12 +267,32 @@ public class JPanelConverter_v4 extends JPanel
         getCalculator().getButton9().addActionListener(action -> {
             executeButtonFunction(9);
         });
-        // Set up decimal button
         // End button functionalities
+    }
+
+    private void convertAndUpdatePanel()
+    {
+        if (isTextField1Selected) {
+            LOGGER.info("Performing automatic conversion after each number button");
+            LOGGER.debug(getTextField1().getText() + " will convert to <SomeValue>");
+            // convert values
+            LOGGER.info("Conversion done");
+            repaint();
+            getCalculator().confirm("Automatic conversion performed", CONVERTER);
+        } else {
+            LOGGER.info("Performing automatic conversion after each number button");
+            LOGGER.debug(getTextField2().getText() + " will convert to <SomeValue>");
+            // convert values
+            LOGGER.info("Conversion done");
+            repaint();
+            getCalculator().confirm("Automatic conversion performed", CONVERTER);
+        }
     }
 
     private void executeButtonFunction(int numberOfButton)
     {
+        LOGGER.info("NumberButtonHandler() started for Converter");
+        LOGGER.info("button: " + numberOfButton);
         if (isTextField1Selected) {
             switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
                 case DEGREES :
@@ -300,7 +341,9 @@ public class JPanelConverter_v4 extends JPanel
                 default : {}
             }
         }
-        getCalculator().confirm("Pressed " + numberOfButton, CONVERTER, this);
+        LOGGER.info("NumberButtonHandler() finished for Converter");
+        getCalculator().confirm("Pressed " + numberOfButton, CONVERTER);
+        convertAndUpdatePanel();
     }
 
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
@@ -354,7 +397,11 @@ public class JPanelConverter_v4 extends JPanel
         setUnitOptions2(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
         getBottomSpaceAboveNumbers().setEnabled(false);
+        getUnitOptions1().addActionListener(this::performAreaUnitsSwitch);
+        getUnitOptions2().addActionListener(this::performAreaUnitsSwitch);
     }
+
+
 
     private void setupConverter(String nameOfConverter)
     {
@@ -420,8 +467,17 @@ public class JPanelConverter_v4 extends JPanel
     }
 
     private void performAngleUnitsSwitch(ActionEvent action) {
-        LOGGER.debug("I just changed the unit");
+        LOGGER.info("Start performing Angle units switch");
+        // do any converting
+        LOGGER.info("Finished performing Angle units switch");
+        getCalculator().confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
+    }
 
+    private void performAreaUnitsSwitch(ActionEvent actionEvent) {
+        LOGGER.info("Start performing Area units switch");
+        // do any converting
+        LOGGER.info("Finished performing Area units switch");
+        getCalculator().confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
     }
 
     /************* All Getters ******************/

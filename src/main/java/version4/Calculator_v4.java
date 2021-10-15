@@ -9,6 +9,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -1011,11 +1012,11 @@ public abstract class Calculator_v4 extends JFrame
      */
     public void confirm()
     {
-	    confirm("", BASIC, getCurrentPanel());
+	    confirm("", BASIC);
     }
 
     public void confirm(String message) {
-        confirm(message, BASIC, getCurrentPanel());
+        confirm(message, BASIC);
     }
 
     /**
@@ -1023,7 +1024,7 @@ public abstract class Calculator_v4 extends JFrame
      *
      * @param message a message to send into the confirm results view
      */
-    public void confirm(String message, CalcType_v4 calculatorType, JPanel currentPanel)
+    public void confirm(String message, CalcType_v4 calculatorType)
     {
         switch (calculatorType) {
             case BASIC : {
@@ -1073,9 +1074,11 @@ public abstract class Calculator_v4 extends JFrame
                 if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
                 else { LOGGER.info("Confirm Results"); }
                 LOGGER.info("---------------- ");
-                LOGGER.info("Converter: '" + ((JPanelConverter_v4)currentPanel).getConverterNameAsString() + "'");
-                LOGGER.info("textField1: '" + ((JPanelConverter_v4)currentPanel).getTextField1().getText() + "'");
-                LOGGER.info("textField2: '" + ((JPanelConverter_v4)currentPanel).getTextField2().getText() + "'");
+                LOGGER.info("Converter: '" + ((JPanelConverter_v4)getCurrentPanel()).getConverterNameAsString() + "'");
+                LOGGER.info("textField1: '" + ((JPanelConverter_v4)getCurrentPanel()).getTextField1().getText() + " "
+                        + ((JPanelConverter_v4)getCurrentPanel()).getUnitOptions1().getSelectedItem() + "'");
+                LOGGER.info("textField2: '" + ((JPanelConverter_v4)getCurrentPanel()).getTextField2().getText() + " "
+                        + ((JPanelConverter_v4)getCurrentPanel()).getUnitOptions2().getSelectedItem() + "'");
                 LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
@@ -1519,6 +1522,17 @@ public abstract class Calculator_v4 extends JFrame
     public Collection<JButton> getNumberButtons() {
         return Arrays.asList(getButton0(), getButton1(), getButton2(), getButton3(), getButton4(), getButton5(),
                 getButton6(), getButton7(), getButton8(), getButton9());
+    }
+
+    public void clearVariableNumberOfButtonsFunctionalities(Collection<JButton> buttonsToClearOfTheirFunctionality)
+    {
+        for(JButton button : buttonsToClearOfTheirFunctionality)
+        {
+            // Remove action listeners
+            for(ActionListener al : button.getActionListeners()) { button.removeActionListener(al); }
+            // Remove key listeners
+            for (KeyListener kl : button.getKeyListeners()) { button.removeKeyListener(kl); }
+        }
     }
 }
 
