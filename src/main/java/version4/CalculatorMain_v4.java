@@ -18,7 +18,7 @@ public class CalculatorMain_v4
 	public static void main(String[] args) throws Exception
     {
 		LOGGER.info("Starting class CalculatorMain_v4");
-		Calculator_v4 calculator = new StandardCalculator_v4("Standard Calculator");
+		StandardCalculator_v4 calculator = new StandardCalculator_v4("Standard Calculator");
         UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);

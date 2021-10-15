@@ -37,7 +37,7 @@ public class DifferentPanelsTester extends JFrame
 	//private JButton btn2 = new JButton("Button 2");
 	//private GridLayout gridLayout = new GridLayout(2,0);
 	
-	
+
 	private static final long serialVersionUID = 1L;
 	private JPanel basic = new JPanelBasic_v3(new StandardCalculator_v3());
 	private JPanel date = new JPanelDate_v3_withBorders(new StandardCalculator_v3());
@@ -52,6 +52,7 @@ public class DifferentPanelsTester extends JFrame
 		super("Different Panels");
 		setupPanels();
 		setupMenuBar();
+		setCurrentPanel(basic);
 	}
 	
 	/* This class shows that panels can be placed
