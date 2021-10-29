@@ -7,9 +7,10 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -51,25 +52,17 @@ public class JPanelConverter_v4 extends JPanel
     private final String DEGREES = "Degrees";
     private final String RADIANS = "Radians";
     private final String GRADIANS = "Gradians";
+    private final String PI = "\u03C0";
     // Area measurements
     private final String SQUARE_MILLIMETERS = "Square Millimeters";
-    //private final String SQ_MM = "sq_mm";
     private final String SQUARE_CENTIMETERS = "Square Centimeters";
-    //private final String SQ_CM = "sq_cm";
     private final String SQUARE_METERS = "Square Meters";
-    //private final String SQ_M = "sq_m";
     private final String HECTARES = "Hectares";
-    //private final String HEC = "hec";
     private final String SQUARE_KILOMETERS = "Square Kilometers";
-    //private final String SQ_KI = "sq_ki";
     private final String SQUARE_INCHES = "Square Inches";
-    //private final String SQ_IN = "sq_in";
     private final String SQUARE_FEET = "Square Feet";
-    //private final String SQ_FT = "sq_ft";
     private final String SQUARE_YARD_ACRES = "Square Yard Acres";
-    //private final String SQ_YA = "sq_ya";
     private final String SQUARE_MILES = "Square Miles";
-    //private final String SQ_MI = "sq_mi";
 
     /************* Constructor ******************/
     public JPanelConverter_v4(StandardCalculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
@@ -155,7 +148,7 @@ public class JPanelConverter_v4 extends JPanel
                 }
             }
             LOGGER.info("ClearEntryButtonHandler() finished for Converter");
-            getCalculator().confirm("ClearEntryButton pushed");
+            getCalculator().confirm("ClearEntryButton pushed", CONVERTER);
         });
         // Delete button functionality
         getCalculator().getButtonDelete().addActionListener(action -> {
@@ -170,7 +163,7 @@ public class JPanelConverter_v4 extends JPanel
                 else getTextField2().setText(getTextField2().getText().substring(0, getTextField2().getText().length()-1));
             }
             LOGGER.info("DeleteButtonHandler() finished for Converter");
-            getCalculator().confirm("DeleteButton pushed");
+            getCalculator().confirm("DeleteButton pushed", CONVERTER);
         });
         // Set up decimal button
         getCalculator().getButtonDot().addActionListener(action -> {
@@ -183,110 +176,252 @@ public class JPanelConverter_v4 extends JPanel
                 getTextField2().setText(getTextField2().getText() + ".");
             }
             LOGGER.info("DotButtonHandler() finished for Converter");
-            getCalculator().confirm("DotButton pushed");
+            getCalculator().confirm("DotButton pushed", CONVERTER);
         });
         // Number button functionalities
         // First clear all functionality assigned to them
         getCalculator().clearNumberButtonFunctionalities();
         // Next, set up each number button. 0 is a bit different from the rest.
-        getCalculator().getButton0().addActionListener(action -> {
-            if (isTextField1Selected) {
-                switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
-                    case DEGREES :
-                    case RADIANS :
-                    case GRADIANS:
-                    case SQUARE_MILLIMETERS :
-                    case SQUARE_CENTIMETERS :
-                    case SQUARE_METERS :
-                    case HECTARES :
-                    case SQUARE_KILOMETERS :
-                    case SQUARE_INCHES :
-                    case SQUARE_FEET :
-                    case SQUARE_YARD_ACRES :
-                    case SQUARE_MILES : {
-                        if (!getTextField1().getText().equals("0")) {
-                            getTextField1().setText(getTextField1().getText() + "0");
-                        }
-                        break;
-                    }
-                    default : { LOGGER.error("Unknown unit"); break; }
-                }
-            } else {
-                switch ((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem())) {
-                    case DEGREES :
-                    case RADIANS :
-                    case GRADIANS:
-                    case SQUARE_MILLIMETERS :
-                    case SQUARE_CENTIMETERS :
-                    case SQUARE_METERS :
-                    case HECTARES :
-                    case SQUARE_KILOMETERS :
-                    case SQUARE_INCHES :
-                    case SQUARE_FEET :
-                    case SQUARE_YARD_ACRES :
-                    case SQUARE_MILES : {
-                        if (!getTextField2().getText().equals("0")) {
-                            getTextField2().setText(getTextField2().getText() + "0");
-                        }
-                        break;
-                    }
-                    default : { LOGGER.error("Unknown unit"); break; }
-                }
-            }
-            getCalculator().confirm("Pressed 0", CONVERTER);
-            convertAndUpdatePanel();
-        });
+        getCalculator().getButton0().addActionListener(this::performNumberButtonFunctionality);
         getCalculator().getButton1().addActionListener(action -> {
             // check if we are in textField1 or textField2
             // check to see what converter we are using
             // check to see what unit we are using
             // grab the number, add next number, add symbol
             executeButtonFunction(1);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton2().addActionListener(action -> {
             executeButtonFunction(2);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton3().addActionListener(action -> {
             executeButtonFunction(3);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton4().addActionListener(action -> {
             executeButtonFunction(4);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton5().addActionListener(action -> {
             executeButtonFunction(5);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton6().addActionListener(action -> {
             executeButtonFunction(6);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton7().addActionListener(action -> {
             executeButtonFunction(7);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton8().addActionListener(action -> {
             executeButtonFunction(8);
+            convertAndUpdatePanel();
         });
         getCalculator().getButton9().addActionListener(action -> {
             executeButtonFunction(9);
+            convertAndUpdatePanel();
         });
         // End button functionalities
     }
 
+    private void performNumberButtonFunctionality(ActionEvent ae)
+    {
+        String buttonValue = ae.getActionCommand();
+        if (isTextField1Selected) {
+            switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
+                case DEGREES :
+                case RADIANS :
+                case GRADIANS:
+                case SQUARE_MILLIMETERS :
+                case SQUARE_CENTIMETERS :
+                case SQUARE_METERS :
+                case HECTARES :
+                case SQUARE_KILOMETERS :
+                case SQUARE_INCHES :
+                case SQUARE_FEET :
+                case SQUARE_YARD_ACRES :
+                case SQUARE_MILES : {
+                    if (!getTextField1().getText().equals("0")) {
+                        getTextField1().setText(getTextField1().getText() + buttonValue);
+                    } else {
+                        if (getTextField1().getText().equals("0")) {
+                            getTextField1().setText(buttonValue);
+                        }
+                        else {
+                            getTextField1().setText(getTextField1().getText() + buttonValue);
+                        }
+                    }
+                    break;
+                }
+                default : { LOGGER.error("Unknown unit"); break; }
+            }
+        }
+        else {
+            switch ((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem())) {
+                case DEGREES :
+                case RADIANS :
+                case GRADIANS:
+                case SQUARE_MILLIMETERS :
+                case SQUARE_CENTIMETERS :
+                case SQUARE_METERS :
+                case HECTARES :
+                case SQUARE_KILOMETERS :
+                case SQUARE_INCHES :
+                case SQUARE_FEET :
+                case SQUARE_YARD_ACRES :
+                case SQUARE_MILES : {
+                    if (!getTextField2().getText().equals("0")) {
+                        getTextField2().setText(getTextField2().getText() + buttonValue);
+                    } else {
+                        if (getTextField2().getText().equals("0")) {
+                            getTextField2().setText(buttonValue);
+                        }
+                        else {
+                            getTextField2().setText(getTextField2().getText() + buttonValue);
+                        }
+                    }
+                    break;
+                }
+                default : { LOGGER.error("Unknown unit"); break; }
+            }
+        }
+        getCalculator().confirm("Pressed " + buttonValue, CONVERTER);
+        convertAndUpdatePanel();
+    }
+
     private void convertAndUpdatePanel()
     {
-        if (isTextField1Selected) {
-            LOGGER.info("Performing automatic conversion after each number button");
-            LOGGER.debug(getTextField1().getText() + " will convert to <SomeValue>");
-            // convert values
-            LOGGER.info("Conversion done");
-            repaint();
-            getCalculator().confirm("Automatic conversion performed", CONVERTER);
-        } else {
-            LOGGER.info("Performing automatic conversion after each number button");
-            LOGGER.debug(getTextField2().getText() + " will convert to <SomeValue>");
-            // convert values
-            LOGGER.info("Conversion done");
-            repaint();
-            getCalculator().confirm("Automatic conversion performed", CONVERTER);
+        LOGGER.info("Performing automatic conversion after each number button");
+        convertValues();
+        LOGGER.info("Conversion done");
+        repaint();
+    }
+
+    private ConverterUnits convertStringUnitToConverterUnits(String unit)
+    {
+        ConverterUnits thisUnit = null;
+        switch (unit) {
+            case DEGREES : {
+                thisUnit = ConverterUnits.DEGREES;
+                break;
+            }
+            case RADIANS : {
+                thisUnit = ConverterUnits.RADIANS;
+                break;
+            }
+            case GRADIANS : {
+                thisUnit = ConverterUnits.GRADIANS;
+                break;
+            }
         }
+        return thisUnit;
+    }
+
+    private void convertValues()
+    {
+        ConverterUnits unit1 = convertStringUnitToConverterUnits((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem()));
+        ConverterUnits unit2 = convertStringUnitToConverterUnits((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem()));
+        if (unit1 == ConverterUnits.DEGREES) {
+            if (unit2 == ConverterUnits.DEGREES) {
+                // best case scenario. get to copy one to the other
+                if(isTextField1Selected) {
+                    getTextField1().setText(getTextField1().getText());
+                } else {
+                    getTextField2().setText(getTextField1().getText());
+                }
+            } else if (unit2 == ConverterUnits.RADIANS) {
+                double number = convertingDegreesToRadians();
+                LOGGER.debug("number: " + number);
+                if (String.valueOf(number).endsWith(".0")) {
+                    LOGGER.debug(".0 is true");
+                    if(isTextField1Selected) {
+                        getTextField1().setText(String.valueOf((int) number));
+                    } else {
+                        getTextField2().setText(String.valueOf((int) number));
+                    }
+                } else {
+                    LOGGER.debug(".0 is false");
+                    if(isTextField1Selected) {
+                        getTextField1().setText(String.valueOf(number));
+                    } else {
+                        getTextField2().setText(String.valueOf(number));
+                    }
+                }
+            } else { // unit2 is ConverterUnits.GRADIANS
+
+            }
+
+        }
+        else if (unit1 == ConverterUnits.RADIANS) {
+            if (unit2 == ConverterUnits.DEGREES) {
+                double number = convertingDegreesToRadians();
+                LOGGER.debug("number: " + number);
+                if (String.valueOf(number).endsWith(".0")) {
+                    LOGGER.debug(".0 is true");
+                    if(isTextField1Selected) {
+                        getTextField1().setText(String.valueOf((int) number));
+                    } else {
+                        getTextField2().setText(String.valueOf((int) number));
+                    }
+                } else {
+                    LOGGER.debug(".0 is false");
+                    if(isTextField1Selected) {
+                        getTextField1().setText(String.valueOf(number));
+                    } else {
+                        getTextField2().setText(String.valueOf(number));
+                    }
+                }
+            }
+            else if (unit2 == ConverterUnits.RADIANS) {
+
+            } else { // unit2 is ConverterUnits.GRADIANS
+
+            }
+
+        }
+        else { // unit1 is ConverterUnits.GRADIANS
+            if (unit2 == ConverterUnits.DEGREES) {
+
+            } else if (unit2 == ConverterUnits.RADIANS) {
+
+            } else { // unit2 is ConverterUnits.GRADIANS
+
+            }
+        }
+    }
+
+    private double convertingDegreesToRadians()
+    {
+        BigDecimal degrees;
+        if (isTextField1Selected) {
+            degrees = BigDecimal.valueOf(Double.parseDouble(getTextField2().getText()));
+        } else {
+            degrees = BigDecimal.valueOf(Double.parseDouble(getTextField1().getText()));
+        }
+        LOGGER.debug("Degrees to Radians");
+        BigDecimal radians = BigDecimal.valueOf(Math.toRadians(degrees.doubleValue()));
+        LOGGER.debug("radians: "+radians);
+        double x = radians.setScale(4, RoundingMode.UP).doubleValue();
+        LOGGER.debug("before return: " + x);
+        return x;
+    }
+
+    private double convertingRadiansToDegrees()
+    {
+        BigDecimal radians;
+        if (isTextField1Selected) {
+            radians = BigDecimal.valueOf(Double.parseDouble(getTextField2().getText()));
+        } else {
+            radians = BigDecimal.valueOf(Double.parseDouble(getTextField1().getText()));
+        }
+        LOGGER.debug("Degrees to Radians");
+        BigDecimal degrees = BigDecimal.valueOf(Math.toDegrees(radians.doubleValue()));
+        LOGGER.debug("degrees: "+degrees);
+        double x = degrees.setScale(4, RoundingMode.UP).doubleValue();
+        LOGGER.debug("before return: " + x);
+        return x;
     }
 
     private void executeButtonFunction(int numberOfButton)
@@ -309,7 +444,8 @@ public class JPanelConverter_v4 extends JPanel
                 case SQUARE_MILES : {
                     if (getTextField1().getText().equals("0")) {
                         getTextField1().setText(Integer.toString(numberOfButton));
-                    } else {
+                    }
+                    else {
                         getTextField1().setText(getTextField1().getText() + numberOfButton);
                     }
                     break;
@@ -333,7 +469,8 @@ public class JPanelConverter_v4 extends JPanel
                 case SQUARE_MILES : {
                     if (getTextField2().getText().equals("0")) {
                         getTextField2().setText(Integer.toString(numberOfButton));
-                    } else {
+                    }
+                    else {
                         getTextField2().setText(getTextField2().getText() + numberOfButton);
                     }
                     break;
@@ -343,7 +480,6 @@ public class JPanelConverter_v4 extends JPanel
         }
         LOGGER.info("NumberButtonHandler() finished for Converter");
         getCalculator().confirm("Pressed " + numberOfButton, CONVERTER);
-        convertAndUpdatePanel();
     }
 
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
@@ -379,6 +515,7 @@ public class JPanelConverter_v4 extends JPanel
 
     private void setupAngleConverter()
     {
+        LOGGER.info("Starting Angle specific setup");
         setupConverter(ANGLE.getName());
         setConverterTypeNameAsString(ANGLE.getName());
         setUnitOptions1(new JComboBox<>(new String[]{DEGREES, RADIANS, GRADIANS}));
@@ -387,10 +524,12 @@ public class JPanelConverter_v4 extends JPanel
         getBottomSpaceAboveNumbers().setEnabled(false);
         getUnitOptions1().addActionListener(this::performAngleUnitsSwitch);
         getUnitOptions2().addActionListener(this::performAngleUnitsSwitch);
+        LOGGER.info("Ending Angle specific setup");
     }
 
     private void setupAreaConverter()
     {
+        LOGGER.info("Starting Area specific setup");
         setupConverter(AREA.getName());
         setConverterTypeNameAsString(AREA.getName());
         setUnitOptions1(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
@@ -399,9 +538,8 @@ public class JPanelConverter_v4 extends JPanel
         getBottomSpaceAboveNumbers().setEnabled(false);
         getUnitOptions1().addActionListener(this::performAreaUnitsSwitch);
         getUnitOptions2().addActionListener(this::performAreaUnitsSwitch);
+        LOGGER.info("Ending Area specific setup");
     }
-
-
 
     private void setupConverter(String nameOfConverter)
     {
@@ -418,8 +556,7 @@ public class JPanelConverter_v4 extends JPanel
                 isTextField1Selected = true;
             }
             @Override
-            public void focusLost(FocusEvent e) {
-            }
+            public void focusLost(FocusEvent e) {}
         });
 
         setTextField2(new JTextField());
@@ -463,14 +600,21 @@ public class JPanelConverter_v4 extends JPanel
         addComponentToNumbersPanel(getCalculator().getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
         getCalculator().getButton0().setPreferredSize(new Dimension(35, 35));
         addComponentToNumbersPanel(getCalculator().getButton0(), 4, 2, 1, 1, 1.0, 1.0);
-
+        LOGGER.info("Ending " + nameOfConverter + " Converter setup");
     }
 
     private void performAngleUnitsSwitch(ActionEvent action) {
         LOGGER.info("Start performing Angle units switch");
-        // do any converting
-        LOGGER.info("Finished performing Angle units switch");
-        getCalculator().confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
+        if (getUnitOptions1().hasFocus())
+        {
+            LOGGER.info("UnitOptions1 selected");
+            isTextField1Selected = true;
+        } else {
+            LOGGER.info("UnitOptions2 selected");
+            isTextField1Selected = false;
+        }
+        convertAndUpdatePanel();
+        getCalculator().confirm("Finished performing Angle units switch", CONVERTER);
     }
 
     private void performAreaUnitsSwitch(ActionEvent actionEvent) {

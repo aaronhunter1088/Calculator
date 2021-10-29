@@ -22,30 +22,27 @@ public class JPanelBasic_v4 extends JPanel
 
     private static final long serialVersionUID = 1L;
 
-    private GridBagLayout basicLayout; // layout of the calculator
+    private GridBagLayout panelLayout; // layout of the calculator
     private GridBagConstraints constraints; // layout's constraints
     final private JButton buttonFraction = new JButton("1/x");
     final private JButton buttonPercent = new JButton("%");
     final private JButton buttonSqrt = new JButton("\u221A");
-    final private int memoryPosition = 0;
-    final private String[] memoryValues = {"", "", "", "", ""}; // holds last 5 operations
     private StandardCalculator_v4 calculator;
 
     public JPanelBasic_v4(StandardCalculator_v4 calculator)
     {
         setCalculator(calculator);
         setMinimumSize(new Dimension(100,200));
-        basicLayout = new GridBagLayout();
-        setLayout(basicLayout); // set frame layout
-        constraints = new GridBagConstraints(); // instantiate constraints
-        setupPanel_v3(calculator);
-        addComponentsToPanel_v3();
-//        performBasicCalculatorTypeSwitchOperations();
+        setPanelLayout(new GridBagLayout());
+        setLayout(getPanelLayout()); // set frame layout
+        setConstraints(new GridBagConstraints()); // instantiate constraints
+        setupPanel(calculator);
+        addComponentsToPanel();
     }
 
     /************* Start of methods here ******************/
 
-    public void setupPanel_v3(StandardCalculator_v4 calculator)
+    public void setupPanel(StandardCalculator_v4 calculator)
     {
         LOGGER.info("Starting setupPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
@@ -69,36 +66,30 @@ public class JPanelBasic_v4 extends JPanel
         buttonSqrt.setEnabled(true);
         LOGGER.info("End setupPanel_v3()");
     }
-    public void addComponentsToPanel_v3()
+    public void addComponentsToPanel()
     {
-        LOGGER.info("Starting addComponentsToPanel_v3");
-        constraints.fill = GridBagConstraints.BOTH;
-        calculator.getTextArea().setBorder(new LineBorder(Color.BLACK));
-        addComponent(calculator.getTextArea(), 0, 0, 5, 2);
-        constraints.insets = new Insets(5,5,5,5);
+        LOGGER.info("Starting addComponentsToPanel");
+        getConstraints().fill = GridBagConstraints.BOTH;
+        getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
+        addComponent(getCalculator().getTextArea(), 0, 0, 5, 2);
+        getConstraints().insets = new Insets(5,5,5,5);
         // Also add the action listener for each button
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMemoryClear, 2, 0, 1, 1);
-//        calculator.buttonMC.addActionListener(memoryClearButtonHandler);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMemoryRecall, 2, 1, 1, 1);
-//        calculator.buttonMR.addActionListener(memoryRecallButtonHandler);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMemoryStore, 2, 2, 1, 1);
-//        calculator.buttonMS.addActionListener(memoryStoreButtonHandler);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMemoryAddition, 2, 3, 1, 1);
-//        calculator.buttonMA.addActionListener(memoryAddButtonHandler);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMemorySubtraction, 2, 4, 1, 1);
-//        calculator.buttonMSub.addActionListener(memorySubButtonHandler);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button0, 7, 0, 2, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonDot, 7, 2, 1, 1);
-//        calculator.buttonDot.addActionListener(calculator.performDotButtonActions(););
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonAdd, 7, 3, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonMemoryClear(), 2, 0, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonMemoryRecall(), 2, 1, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonMemoryStore(), 2, 2, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonMemoryAddition(), 2, 3, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonMemorySubtraction(), 2, 4, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton0(), 7, 0, 2, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonDot(), 7, 2, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonAdd(), 7, 3, 1, 1);
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         addComponent(calculator.button1, 6, 0, 1, 1);
@@ -158,7 +149,7 @@ public class JPanelBasic_v4 extends JPanel
         buttonSqrt.addActionListener(action -> {
             performSquareRootButtonActions(action);
         });
-        LOGGER.info("Finished addComponentsToPanel_v3");
+        LOGGER.info("Finished addComponentsToPanel");
     }
     public void addComponent(Component c, int row, int column, int width, int height)
     {
@@ -166,13 +157,8 @@ public class JPanelBasic_v4 extends JPanel
         constraints.gridy = row;
         constraints.gridwidth = width;
         constraints.gridheight = height;
-        basicLayout.setConstraints(c, constraints); // set constraints
+        panelLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
-    }
-
-    private String sayHi()
-    {
-        return "Hi";
     }
 
     /**
@@ -443,15 +429,14 @@ public class JPanelBasic_v4 extends JPanel
 
     public static Logger getLOGGER() { return LOGGER; }
     public static long getSerialVersionUID() { return serialVersionUID; }
-    public GridBagLayout getBasicLayout() { return basicLayout; }
+    public GridBagLayout getPanelLayout() { return panelLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
     public JButton getButtonFraction() { return buttonFraction; }
     public JButton getButtonPercent() { return buttonPercent; }
     public JButton getButtonSqrt() { return buttonSqrt; }
-    public int getMemoryPosition() { return memoryPosition; }
     public StandardCalculator_v4 getCalculator() { return calculator; }
 
-    public void setBasicLayout(GridBagLayout basicLayout) { this.basicLayout = basicLayout; }
+    public void setPanelLayout(GridBagLayout panelLayout) { this.panelLayout = panelLayout; }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setCalculator(StandardCalculator_v4 calculator) { this.calculator = calculator; }
 }
