@@ -44,7 +44,7 @@ public class JPanelBasic_v4 extends JPanel
 
     public void setupPanel(StandardCalculator_v4 calculator)
     {
-        LOGGER.info("Starting setupPanel_v3");
+        LOGGER.info("Starting setupPanel");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
         calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
 
@@ -64,7 +64,7 @@ public class JPanelBasic_v4 extends JPanel
         buttonSqrt.setPreferredSize(new Dimension(35, 35) );
         buttonSqrt.setBorder(new LineBorder(Color.BLACK));
         buttonSqrt.setEnabled(true);
-        LOGGER.info("End setupPanel_v3()");
+        LOGGER.info("End setupPanel()");
     }
     public void addComponentsToPanel()
     {
@@ -177,6 +177,8 @@ public class JPanelBasic_v4 extends JPanel
         getCalculator().setCalcType(CalcType_v4.BASIC);
         // setting up all the buttons
         getCalculator().setEnabledForAllNumberButtons(true);
+        getCalculator().setBar(new JMenuBar());
+        getCalculator().setupMenuBar(); // needed now because we are changing the help menu
         calculator.buttonNegate.setEnabled(true);
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
     }

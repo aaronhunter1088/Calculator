@@ -16,7 +16,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import static version4.CalcType_v4.*;
 
@@ -76,7 +75,7 @@ public abstract class Calculator_v4 extends JFrame
     protected StringBuffer textarea = new StringBuffer(); // String representing appropriate visual of number
     protected CalcType_v4 calcType = null;
     protected JPanel currentPanel = null;
-    protected ImageIcon calculatorImage1, calculator2, macLogo;
+    protected ImageIcon calculatorImage1, calculator2, macLogo, blankImage;
     protected JLabel iconLabel;
     protected JLabel textLabel;
 
@@ -127,7 +126,7 @@ public abstract class Calculator_v4 extends JFrame
 		layout = new GridBagLayout();
         setLayout(layout);
         constraints = new GridBagConstraints();
-		setupCalculator_v3();
+		setupCalculator();
 		setMinimumSize(new Dimension(100,200));
     }
 
@@ -138,9 +137,9 @@ public abstract class Calculator_v4 extends JFrame
      * run once. Anything that needs to be reset, should be reset
      * where appropriate.
      */
-	public void setupCalculator_v3()
+	public void setupCalculator()
     {
-		LOGGER.info("Inside setupCalculator_v3()");
+		LOGGER.info("Inside setupCalculator()");
 		textArea.getCaret().isSelectionVisible();
 		textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         textArea.setFont(font);
@@ -267,7 +266,7 @@ public abstract class Calculator_v4 extends JFrame
         buttonMemorySubtraction.setEnabled(true);
         buttonMemorySubtraction.addActionListener(this::performMemorySubtractionActions);
 
-        LOGGER.info("Finished setupCalculator_v3()");
+        LOGGER.info("Finished setupCalculator()");
 	}
 
     /**
@@ -1325,6 +1324,7 @@ public abstract class Calculator_v4 extends JFrame
             calculatorImage1 = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
             calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
             macLogo = createImageIcon("src/main/resources/images/maclogo.jpg");
+            setBlankImage(new ImageIcon());
         }
         catch (Exception e)
         {
@@ -1439,6 +1439,7 @@ public abstract class Calculator_v4 extends JFrame
     public ImageIcon getCalculatorImage1() { return calculatorImage1; }
     public ImageIcon getCalculator2() { return calculator2; }
     public ImageIcon getMacLogo() { return macLogo; }
+    public ImageIcon getBlankImage() { return blankImage; }
     public JLabel getIconLabel() { return iconLabel; }
     public JLabel getTextLabel() { return textLabel; }
 
@@ -1487,6 +1488,7 @@ public abstract class Calculator_v4 extends JFrame
     public void setCalculatorImage1(ImageIcon calculatorImage1) { this.calculatorImage1 = calculatorImage1; }
     public void setCalculator2(ImageIcon calculator2) { this.calculator2 = calculator2; }
     public void setMacLogo(ImageIcon macLogo) { this.macLogo = macLogo; }
+    public void setBlankImage(ImageIcon blankImage) { this.blankImage = blankImage; }
     public void setIconLabel(JLabel iconLabel) { this.iconLabel = iconLabel; }
     public void setTextLabel(JLabel textLabel) { this.textLabel = textLabel; }
     public void setFirstNumBool(boolean firstNumBool) { this.firstNumBool = firstNumBool; }

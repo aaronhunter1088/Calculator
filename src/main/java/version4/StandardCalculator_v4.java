@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
@@ -37,7 +38,7 @@ public class StandardCalculator_v4 extends Calculator_v4
     * equals button
     * negate button
     */
-    final protected JMenuBar bar = new JMenuBar();
+    protected JMenuBar bar;
 	final protected JButton buttonAdd = new JButton("+");
 	final protected JButton buttonSubtract = new JButton("-");
     final protected JButton buttonMultiply = new JButton("*");
@@ -62,7 +63,7 @@ public class StandardCalculator_v4 extends Calculator_v4
     {
 		super(StringUtils.isBlank(title) ? title : CalcType_v4.BASIC.getName()); // default title is Basic
 		setCurrentPanel(new JPanelBasic_v4(this));
-		setupStandardCalculator_v3();
+		setupStandardCalculator();
 		setupMenuBar();
         setCalcType(determineCalcType());
 		setImageIcons();
@@ -78,264 +79,320 @@ public class StandardCalculator_v4 extends Calculator_v4
 	public void setupMenuBar()
     {
         LOGGER.info("Inside setupMenuBar()");
-        // Menu Bar and Options
-        setJMenuBar(bar); // add menu bar to application
+        // Menu Bar and Menu Choices and each menu options
+        setBar(new JMenuBar());
+        setJMenuBar(getBar()); // add menu bar to application
 
+        // Start 4 Menu Choices
         JMenu lookMenu = new JMenu("Look");
-        lookMenu.setFont(this.font);
-        // Look options
-        JMenuItem metal = new JMenuItem("Metal");
-        metal.addActionListener(action -> {
-            try {
-                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(this);
-                super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                    IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
-        JMenuItem system = new JMenuItem("System");
-        system.addActionListener(action -> {
-            try {
-                UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(this);
-                super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                    IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
-        JMenuItem windows = new JMenuItem("Windows");
-        windows.addActionListener(action -> {
-            try {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(this);
-            } catch (ClassNotFoundException | InstantiationException |
-                    IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
-        JMenuItem motif = new JMenuItem("Motif");
-        motif.addActionListener(action -> {
-            try {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(this);
-                super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                    IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
-        JMenuItem gtk = new JMenuItem("GTK");
-        gtk.addActionListener(action -> {
-            try {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(this);
-                super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                    IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
-
-        lookMenu.add(metal);
-        lookMenu.add(motif);
-        String os = System.getProperty("os.name");
-        if (!StringUtils.contains(os.toLowerCase(), "Mac".toLowerCase()))
-        {
-            lookMenu.add(windows);
-            lookMenu.add(system);
-            lookMenu.add(gtk);
-        }
-        this.bar.add(lookMenu);
-
         JMenu viewMenu = new JMenu("View");
-        viewMenu.setFont(this.font);
-        // View options
-        JMenuItem basic = new JMenuItem(CalcType_v4.BASIC.getName());
-        basic.setFont(this.font);
-        viewMenu.add(basic);
-        basic.addActionListener(action -> {
-            try
+        JMenu editMenu = new JMenu("Edit");
+        JMenu helpMenu = new JMenu("Help");
+
+        // commonalities
+        lookMenu.setFont(font);
+        lookMenu.setName("Look");
+        viewMenu.setFont(font);
+        viewMenu.setName("View");
+        editMenu.setFont(font);
+        editMenu.setName("Edit");
+        helpMenu.setFont(font);
+        helpMenu.setName("Help");
+
+        // Look menu options
+            JMenuItem metal = new JMenuItem("Metal");
+            JMenuItem system = new JMenuItem("System");
+            JMenuItem windows = new JMenuItem("Windows");
+            JMenuItem motif = new JMenuItem("Motif");
+            JMenuItem gtk = new JMenuItem("GTK");
+
+            // functions
+            metal.addActionListener(action -> {
+                try {
+                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(this);
+                    super.pack();
+                } catch (ClassNotFoundException | InstantiationException |
+                        IllegalAccessException | UnsupportedLookAndFeelException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            });
+            system.addActionListener(action -> {
+                try {
+                    UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(this);
+                    super.pack();
+                } catch (ClassNotFoundException | InstantiationException |
+                        IllegalAccessException | UnsupportedLookAndFeelException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            });
+            windows.addActionListener(action -> {
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(this);
+                } catch (ClassNotFoundException | InstantiationException |
+                        IllegalAccessException | UnsupportedLookAndFeelException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            });
+            motif.addActionListener(action -> {
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(this);
+                    super.pack();
+                } catch (ClassNotFoundException | InstantiationException |
+                        IllegalAccessException | UnsupportedLookAndFeelException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            });
+            gtk.addActionListener(action -> {
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(this);
+                    super.pack();
+                } catch (ClassNotFoundException | InstantiationException |
+                        IllegalAccessException | UnsupportedLookAndFeelException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            });
+
+            // add options to Look menu
+            lookMenu.add(metal);
+            lookMenu.add(motif);
+            String os = System.getProperty("os.name");
+            if (!StringUtils.contains(os.toLowerCase(), "Mac".toLowerCase()))
             {
-                JPanel panel = new JPanelBasic_v4(this);
-                performTasksWhenChangingJPanels(panel, BASIC);
+                lookMenu.add(windows);
+                lookMenu.add(system);
+                lookMenu.add(gtk);
             }
-            catch (CalculatorError_v4 e)
-            {
-                LOGGER.error("Couldn't change to JPanelBasic_v4 because {}", e.getMessage());
+        getBar().add(lookMenu);
+
+        // View menu options
+            JMenuItem basic = new JMenuItem(CalcType_v4.BASIC.getName());
+            JMenuItem programmer = new JMenuItem(CalcType_v4.PROGRAMMER.getName());
+            JMenuItem dates = new JMenuItem(CalcType_v4.DATE.getName());
+            JMenu converterMenu = new JMenu(CONVERTER.getName());
+
+            // commonalities
+            basic.setFont(font);
+            basic.setName(BASIC.getName());
+            programmer.setFont(font);
+            programmer.setName(PROGRAMMER.getName());
+            dates.setFont(font);
+            dates.setName(DATE.getName());
+            converterMenu.setFont(font);
+            converterMenu.setName(CONVERTER.getName());
+
+            // functions
+            basic.addActionListener(action -> {
+                try
+                {
+                    JPanel panel = new JPanelBasic_v4(this);
+                    performTasksWhenChangingJPanels(panel, BASIC);
+                }
+                catch (CalculatorError_v4 e)
+                {
+                    LOGGER.error("Couldn't change to JPanelBasic_v4 because {}", e.getMessage());
+                }
+            });
+            programmer.addActionListener(action -> {
+                try
+                {
+                    JPanel panel = new JPanelProgrammer_v4(this);
+                    performTasksWhenChangingJPanels(panel, PROGRAMMER);
+                    confirm("Finished performTasksWhenChangingJPanels");
+                }
+                catch (CalculatorError_v4 e)
+                {
+                    LOGGER.error("Couldn't change to JPanelProgrammer_v4 because {}", e.getMessage());
+                }
+            });
+            dates.addActionListener(action -> {
+                try
+                {
+                    JPanel panel = new JPanelDate_v4(this);
+                    performTasksWhenChangingJPanels(panel, DATE);
+                    setCalcType(CalcType_v4.DATE);
+                }
+                catch (ParseException | CalculatorError_v4 e)
+                {
+                    LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                }
+            });
+
+            // add view options to viewMenu
+            viewMenu.add(basic);
+            viewMenu.add(programmer);
+            viewMenu.add(dates);
+                viewMenu.addSeparator();
+            viewMenu.add(converterMenu);
+
+            // options for converterMenu
+            JMenuItem angleConverter = new JMenuItem(ConverterType_v4.ANGLE.getName());
+            JMenuItem areaConverter = new JMenuItem(ConverterType_v4.AREA.getName());
+
+            // commonalities
+            angleConverter.setFont(font);
+            areaConverter.setFont(font);
+
+            // functions
+            angleConverter.addActionListener(action -> {
+                try
+                {
+                    JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.ANGLE);
+                    performTasksWhenChangingJPanels(panel, CONVERTER);
+                }
+                catch (ParseException | CalculatorError_v4 e)
+                {
+                    LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                }
+            });
+            areaConverter.addActionListener(action -> {
+                try
+                {
+                    JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.AREA);
+                    performTasksWhenChangingJPanels(panel, CONVERTER);
+                }
+                catch (ParseException | CalculatorError_v4 e)
+                {
+                    LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                }
+            });
+
+            // add JMenuItems to converterMenu
+            converterMenu.add(angleConverter);
+            converterMenu.add(areaConverter);
+            // END NEW OPTION: Converter
+        getBar().add(viewMenu); // add viewMenu to menu bar
+
+        // Edit Menu options
+            JMenuItem copyItem = new JMenuItem("Copy");
+            JMenuItem pasteItem = new JMenuItem("Paste");
+            JMenu historyMenu = new JMenu("History");
+            JMenuItem copyHistoryItem = new JMenuItem("Copy History");
+            JMenuItem editItem = new JMenuItem("Edit");
+            JMenuItem cancelEditItem = new JMenuItem("Cancel Edit");
+            JMenuItem clearItem = new JMenuItem("Clear");
+
+            // commonalities
+            copyItem.setAccelerator(KeyStroke.getKeyStroke(
+                    KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+            copyItem.setFont(font);
+            copyItem.setName("Copy");
+            copyItem.addActionListener(action -> {
+                values[3] = textArea.getText(); // to copy
+                textarea = new StringBuffer().append(textArea.getText());
+                confirm();
+            });
+
+            pasteItem.setAccelerator(KeyStroke.getKeyStroke(
+                    KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+            pasteItem.setFont(font);
+            pasteItem.setName("Paste");
+            pasteItem.addActionListener(action -> {
+                if (values[3].equals(""))
+                    LOGGER.info("Temp[3] is null");
+                else
+                    LOGGER.info("temp[3]: " + values[3]);
+                textArea.setText(values[3]); // to paste
+                values[valuesPosition] = textArea.getText();
+                textarea = new StringBuffer().append(textArea.getText());
+                confirm();
+            });
+
+            //historyMenu.setMneonic(null);
+            historyMenu.setFont(font);
+            historyMenu.setName("History");
+            historyMenu.addActionListener(null);
+            // second menu starts here
+            copyHistoryItem.setFont(font);
+            copyHistoryItem.setName("Copy History");
+            editItem.setFont(font);
+            editItem.setName("Edit");
+            cancelEditItem.setFont(font);
+            cancelEditItem.setName("Cancel Edit");
+            clearItem.setFont(font);
+            clearItem.setName("Clear");
+
+            // add
+            historyMenu.add(copyHistoryItem);
+            historyMenu.add(editItem);
+            historyMenu.add(cancelEditItem);
+            historyMenu.add(clearItem);
+            editMenu.add(copyItem);
+            editMenu.add(pasteItem);
+            editMenu.addSeparator();
+            editMenu.add(historyMenu);
+        getBar().add(editMenu); // add editMenu to menu bar
+
+        // Help Options
+            JMenuItem viewHelpItem = new JMenuItem("View Help");
+            JMenuItem aboutCalculatorItem = new JMenuItem("About Calculator");
+
+            // commonalities
+            viewHelpItem.setName("viewHelpItem");
+            viewHelpItem.setFont(font);
+            aboutCalculatorItem.setName("about");
+            aboutCalculatorItem.setFont(font);
+
+            // add
+            helpMenu.add(viewHelpItem);
+            helpMenu.addSeparator();
+            helpMenu.add(aboutCalculatorItem);
+            getBar().add(helpMenu); // add helpMenu to menu bar
+            // functionality
+            // NEW HELP MENU HERE
+            LOGGER.debug("Menu Choices count: " + getBar().getMenuCount());
+            for(int i=0; i < getBar().getMenuCount(); i++) {
+                JMenu menuOption = getBar().getMenu(i);
+                JMenuItem valueForThisMenuOption = null;
+                if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
+                    // get the options. remove viewHelpItem
+                    for(int j=0; j<menuOption.getItemCount(); j++) {
+                        LOGGER.debug("Number of options in Menu: " + menuOption.getItemCount());
+                        valueForThisMenuOption = menuOption.getItem(j);
+                        if (valueForThisMenuOption != null) {
+                            if (valueForThisMenuOption.getName() != null && valueForThisMenuOption.getName().equals("viewHelpItem")) {
+                                break;
+                            }
+                        }
+                    }
+                    // remove old option
+                    menuOption.remove(valueForThisMenuOption);
+                    // set up new viewHelpItem option
+                    helpMenu.add(viewHelpItem,0);
+                    viewHelpItem.addActionListener(action -> {
+                        String COPYRIGHT = "\u00a9";
+                        iconLabel = new JLabel();
+                        JPanel iconPanel = new JPanel(new GridBagLayout());
+                        iconPanel.add(iconLabel);
+                        textLabel = new JLabel("<html>Apple MacBook Air "
+                                + "Version 3.0.1<br>"
+                                + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
+                                + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
+                                + "pending or existing intellectual property right in the United States and other<br>"
+                                + "countries/regions."
+                                + "<br><br><br>"
+                                + "This product is licensed under the License Terms to:<br>"
+                                + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+                        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+                        JPanel mainPanel = new JPanel();
+                        mainPanel.setBackground(Color.white);
+                        mainPanel.add(iconLabel);
+                        mainPanel.add(textLabel);
+                        JOptionPane.showMessageDialog(StandardCalculator_v4.this,
+                                mainPanel, "Help", JOptionPane.PLAIN_MESSAGE);
+                    });
+                    //break; //?? for just changing one option could be ok. issue maybe if changing other options
+                }
             }
-        });
-        JMenuItem programmer = new JMenuItem(CalcType_v4.PROGRAMMER.getName());
-        programmer.setFont(this.font);
-        viewMenu.add(programmer);
-        programmer.addActionListener(action -> {
-            try
-            {
-                JPanel panel = new JPanelProgrammer_v4(this);
-                performTasksWhenChangingJPanels(panel, PROGRAMMER);
-                confirm("Finished performTasksWhenChangingJPanels");
-            }
-            catch (CalculatorError_v4 e)
-            {
-                LOGGER.error("Couldn't change to JPanelProgrammer_v4 because {}", e.getMessage());
-            }
-        });
-        this.bar.add(viewMenu); // add viewMenu to menu bar
-        JMenuItem dates = new JMenuItem(CalcType_v4.DATE.getName());
-        dates.setFont(this.font);
-        viewMenu.add(dates);
-        dates.addActionListener(action -> {
-            try
-            {
-                JPanel panel = new JPanelDate_v4(this);
-                performTasksWhenChangingJPanels(panel, DATE);
-                setCalcType(CalcType_v4.DATE);
-            }
-            catch (ParseException | CalculatorError_v4 e)
-            {
-                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
-            }
-        });
-        // ADDING NEW OPTION: Converter
-        JMenu converterMenu = new JMenu(CONVERTER.getName());
-        converterMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        viewMenu.addSeparator();
-        viewMenu.add(converterMenu);
+            // END NEW HELP MENU HERE
 
-        JMenuItem angleConverter = new JMenuItem(ConverterType_v4.ANGLE.getName());
-        angleConverter.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        angleConverter.addActionListener(action -> {
-            try
-            {
-                JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.ANGLE);
-                performTasksWhenChangingJPanels(panel, CONVERTER);
-            }
-            catch (ParseException | CalculatorError_v4 e)
-            {
-                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
-            }
-        });
-
-        JMenuItem areaConverter = new JMenuItem(ConverterType_v4.AREA.getName());
-        areaConverter.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        areaConverter.addActionListener(action -> {
-            try
-            {
-                JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.AREA);
-                performTasksWhenChangingJPanels(panel, CONVERTER);
-            }
-            catch (ParseException | CalculatorError_v4 e)
-            {
-                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
-            }
-        });
-
-        // add JMenuItems to converterMenu
-        converterMenu.add(angleConverter);
-        converterMenu.add(areaConverter);
-        // END NEW OPTION: Converter
-
-        // Edit Menu and Actions
-        JMenu editMenu = new JMenu("Edit"); // create edit menu
-        editMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        bar.add(editMenu); // add editMenu to menu bar
-        // Edit options
-        JMenuItem copyItem = new JMenuItem("Copy");
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_C, Event.CTRL_MASK));
-        copyItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        editMenu.add(copyItem);
-        copyItem.addActionListener(action -> {
-            values[3] = textArea.getText(); // to copy
-            textarea = new StringBuffer().append(textArea.getText());
-            confirm();
-        });
-
-        // create first item in editMenu
-        JMenuItem pasteItem = new JMenuItem("Paste");
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_V, Event.CTRL_MASK));
-        pasteItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        editMenu.add(pasteItem);
-        pasteItem.addActionListener(action -> {
-            if (values[3].equals(""))
-                LOGGER.info("Temp[3] is null");
-            else
-                LOGGER.info("temp[3]: " + values[3]);
-            textArea.setText(values[3]); // to paste
-            values[valuesPosition] = textArea.getText();
-            textarea = new StringBuffer().append(textArea.getText());
-            confirm();
-        });
-
-        // create second item in editMenu
-        JMenu historyMenu = new JMenu("History");
-        historyMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        editMenu.addSeparator();
-        editMenu.add(historyMenu);
-
-        JMenuItem copyHistoryItem = new JMenuItem("Copy History");
-        copyHistoryItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        // create first item in historyMenu
-        JMenuItem editItem = new JMenuItem("Edit");
-        editItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        // create second item in historyMenu
-        JMenuItem cancelEditItem = new JMenuItem("Cancel Edit");
-        cancelEditItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        // create third item in historyMenu
-        JMenuItem clearItem = new JMenuItem("Clear");
-        clearItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        // create fourth item in historyMenu
-
-        // add JMenuItems to historyMenu
-        historyMenu.add(copyHistoryItem);
-        historyMenu.add(editItem);
-        historyMenu.add(cancelEditItem);
-        historyMenu.add(clearItem);
-
-        // Help  Menu and Actions
-        JMenu helpMenu = new JMenu("Help"); // create help menu
-        helpMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        bar.add(helpMenu); // add helpMenu to menu bar
-
-        JMenuItem viewHelpItem = new JMenuItem("View Help");
-        viewHelpItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-
-        JMenuItem aboutCalculatorItem = new JMenuItem("About Calculator");
-        aboutCalculatorItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-        // create second item in helpMenu
-
-        // add JMenuItems to helpMenu
-        helpMenu.add(viewHelpItem);
-        viewHelpItem.addActionListener(action -> {
-            String COPYRIGHT = "\u00a9";
-            iconLabel = new JLabel();
-            JPanel iconPanel = new JPanel(new GridBagLayout());
-            iconPanel.add(iconLabel);
-            textLabel = new JLabel("<html>Apple MacBook Air "
-                   + "Version 3.0.1<br>"
-                   + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                   + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
-                   + "pending or existing intellectual property right in the United States and other<br>"
-                   + "countries/regions."
-                   + "<br><br><br>"
-                   + "This product is licensed under the License Terms to:<br>"
-                   + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
-            textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-            textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-            JPanel mainPanel = new JPanel();
-            mainPanel.setBackground(Color.white);
-            mainPanel.add(iconLabel);
-            mainPanel.add(textLabel);
-            JOptionPane.showMessageDialog(StandardCalculator_v4.this,
-                   mainPanel, "Help", JOptionPane.PLAIN_MESSAGE);
-        });
-        helpMenu.addSeparator();
-        helpMenu.add(aboutCalculatorItem);
-        aboutCalculatorItem.addActionListener(action -> {
+            aboutCalculatorItem.addActionListener(action -> {
                 String COPYRIGHT = "\u00a9";
                 JPanel iconPanel = new JPanel(new GridBagLayout() );
                 iconPanel.add(iconLabel);
@@ -357,47 +414,49 @@ public class StandardCalculator_v4 extends Calculator_v4
                 JOptionPane.showMessageDialog(StandardCalculator_v4.this, mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
 
             });
+
+        // End All Menu Choices
         LOGGER.info("Finished. Leaving setupMenuBar()");
     } // end public setMenuBar
-	public void setupStandardCalculator_v3()
+	public void setupStandardCalculator()
     {
-		buttonAdd.setFont(font);
-        buttonAdd.setPreferredSize(new Dimension(35, 35) );
-        buttonAdd.setBorder(new LineBorder(Color.BLACK));
-        buttonAdd.setEnabled(true);
-        buttonAdd.addActionListener(action -> {
+        getButtonAdd().setFont(font);
+        getButtonAdd().setPreferredSize(new Dimension(35, 35) );
+        getButtonAdd().setBorder(new LineBorder(Color.BLACK));
+        getButtonAdd().setEnabled(true);
+        getButtonAdd().addActionListener(action -> {
             performAdditionButtonActions(action);
         });
         
-        buttonSubtract.setFont(font);
-        buttonSubtract.setPreferredSize(new Dimension(35, 35) );
-        buttonSubtract.setBorder(new LineBorder(Color.BLACK));
-        buttonSubtract.setEnabled(true);
-        buttonSubtract.addActionListener(action -> {
+        getButtonSubtract().setFont(font);
+        getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
+        getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
+        getButtonSubtract().setEnabled(true);
+        getButtonSubtract().addActionListener(action -> {
             performSubtractionButtonActions(action);
         });
 
-        buttonMultiply.setFont(font);
-        buttonMultiply.setPreferredSize(new Dimension(35, 35) );
-        buttonMultiply.setBorder(new LineBorder(Color.BLACK));
-        buttonMultiply.setEnabled(true);
-        buttonMultiply.addActionListener(action -> {
+        getButtonMultiply().setFont(font);
+        getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
+        getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
+        getButtonMultiply().setEnabled(true);
+        getButtonMultiply().addActionListener(action -> {
             performMultiplicationActions(action);
         });
         
-        buttonDivide.setFont(font);
-        buttonDivide.setPreferredSize(new Dimension(35, 35) );
-        buttonDivide.setBorder(new LineBorder(Color.BLACK));
-        buttonDivide.setEnabled(true);
-        buttonDivide.addActionListener(action -> {
+        getButtonDivide().setFont(font);
+        getButtonDivide().setPreferredSize(new Dimension(35, 35) );
+        getButtonDivide().setBorder(new LineBorder(Color.BLACK));
+        getButtonDivide().setEnabled(true);
+        getButtonDivide().addActionListener(action -> {
             performDivideButtonActions(action);
         });
         
-        buttonEquals.setFont(font);
-        buttonEquals.setPreferredSize(new Dimension(35, 70) );
-        buttonEquals.setBorder(new LineBorder(Color.BLACK));
-        buttonEquals.setEnabled(true);
-        buttonEquals.addActionListener(action -> {
+        getButtonEquals().setFont(font);
+        getButtonEquals().setPreferredSize(new Dimension(35, 70) );
+        getButtonEquals().setBorder(new LineBorder(Color.BLACK));
+        getButtonEquals().setEnabled(true);
+        getButtonEquals().addActionListener(action -> {
             try
             {
                 performButtonEqualsActions();
@@ -407,7 +466,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             }
         });
         // TODO: does not work. fix
-        buttonEquals.addKeyListener(new KeyAdapter() {
+        getButtonEquals().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 try {
@@ -426,11 +485,12 @@ public class StandardCalculator_v4 extends Calculator_v4
             @Override
             public void keyReleased(KeyEvent e) {}
         });
-        buttonNegate.setFont(font);
-        buttonNegate.setPreferredSize(new Dimension(35, 35) );
-        buttonNegate.setBorder(new LineBorder(Color.BLACK));
-        buttonNegate.setEnabled(true);
-        buttonNegate.addActionListener(action -> {
+
+        getButtonNegate().setFont(font);
+        getButtonNegate().setPreferredSize(new Dimension(35, 35) );
+        getButtonNegate().setBorder(new LineBorder(Color.BLACK));
+        getButtonNegate().setEnabled(true);
+        getButtonNegate().addActionListener(action -> {
             performNegateButtonActions(action);
         });
         setCalcType(CalcType_v4.BASIC);
@@ -1456,6 +1516,7 @@ public class StandardCalculator_v4 extends Calculator_v4
 
     /************* All Getters and Setters ******************/
 
+
     public JMenuBar getBar() { return bar; }
     public JButton getButtonAdd() { return buttonAdd; }
     public JButton getButtonSubtract() { return buttonSubtract; }
@@ -1468,6 +1529,7 @@ public class StandardCalculator_v4 extends Calculator_v4
     public static Logger getLOGGER() { return LOGGER; }
     public static long getSerialVersionUID() { return serialVersionUID; }
 
+    public void setBar(JMenuBar bar) { this.bar = bar; }
     private static void setLOGGER(Logger LOGGER) { StandardCalculator_v4.LOGGER = LOGGER; }
     public void setCurrentPanel(JPanel currentPanel) { super.setCurrentPanel(currentPanel);}
 
