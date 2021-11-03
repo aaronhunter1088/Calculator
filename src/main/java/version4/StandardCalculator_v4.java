@@ -4,6 +4,7 @@ import com.apple.eawt.Application;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.velocity.runtime.directive.Parse;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -12,11 +13,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
 import static version4.CalcType_v4.*;
+import static version4.ConverterType_v4.*;
 
 public class StandardCalculator_v4 extends Calculator_v4
 {
@@ -46,34 +49,39 @@ public class StandardCalculator_v4 extends Calculator_v4
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
 
-    public StandardCalculator_v4() throws HeadlessException
-    {}
-	public StandardCalculator_v4(GraphicsConfiguration gc)
+    public StandardCalculator_v4() throws Exception
     {
-		super(gc);
-		// TODO Auto-generated constructor stub
-	}
-    public StandardCalculator_v4(String title, GraphicsConfiguration gc)
-    {
-        super(title, gc);
-        // TODO Auto-generated constructor stub
+        this(BASIC);
     }
-	//TODO: Implement first
-	public StandardCalculator_v4(String title) throws Exception
+
+    /**
+     * This constructor is used to create a calculator with a specific panel
+     * @param calcType the type of calculator to create. sets the title
+     */
+    public StandardCalculator_v4(CalcType_v4 calcType) throws Exception
     {
-		super(StringUtils.isBlank(title) ? title : CalcType_v4.BASIC.getName()); // default title is Basic
-		setCurrentPanel(new JPanelBasic_v4(this));
-		setupStandardCalculator();
-		setupMenuBar();
-        setCalcType(determineCalcType());
-		setImageIcons();
+        this(calcType, ANGLE);
+    }
+
+    /**
+     * This constructor is used to create a calculator with a specific converter panel
+     * @param calcType the type of calculator to create. sets the title
+     */
+    public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType) throws Exception
+    {
+        super(StringUtils.isBlank(calcType.getName()) ? CalcType_v4.BASIC.getName() : calcType.getName()); // default title is Basic
+        setupMenuBar();
+        setCurrentPanel(determinePanelType(calcType, converterType));
+        setupStandardCalculator();
+        setCalcType(calcType);
+        setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(createImageIcon("src/main/resources/images/calculatorOriginal.jpg").getImage());
         setIconImage(calculatorImage1.getImage());
-		setMinimumSize(getCurrentPanel().getSize());
-		pack();
-		setVisible(true);
-	}
+        setMinimumSize(getCurrentPanel().getSize());
+        pack();
+        setVisible(true);
+    }
 
     /************* Start of methods here ******************/
 	public void setupMenuBar()
@@ -230,7 +238,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             viewMenu.add(converterMenu);
 
             // options for converterMenu
-            JMenuItem angleConverter = new JMenuItem(ConverterType_v4.ANGLE.getName());
+            JMenuItem angleConverter = new JMenuItem(ANGLE.getName());
             JMenuItem areaConverter = new JMenuItem(ConverterType_v4.AREA.getName());
 
             // commonalities
@@ -241,7 +249,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             angleConverter.addActionListener(action -> {
                 try
                 {
-                    JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.ANGLE);
+                    JPanel panel = new JPanelConverter_v4(this, ANGLE);
                     performTasksWhenChangingJPanels(panel, CONVERTER);
                 }
                 catch (ParseException | CalculatorError_v4 e)
@@ -391,7 +399,6 @@ public class StandardCalculator_v4 extends Calculator_v4
                 }
             }
             // END NEW HELP MENU HERE
-
             aboutCalculatorItem.addActionListener(action -> {
                 String COPYRIGHT = "\u00a9";
                 JPanel iconPanel = new JPanel(new GridBagLayout() );
@@ -497,6 +504,36 @@ public class StandardCalculator_v4 extends Calculator_v4
 
         add(getCurrentPanel());
 	}
+
+    public JPanel determinePanelType(CalcType_v4 calcType, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
+    {
+        if (calcType == null) {
+            calcType = getCalcType();
+            LOGGER.debug("Reset calcType from: null to: " + calcType);
+        }
+        if (calcType == BASIC) {
+            return new JPanelBasic_v4(this);
+        } else if (calcType == PROGRAMMER) {
+            return new JPanelProgrammer_v4(this);
+        } else if (calcType == SCIENTIFIC) {
+            return new JPanelScientific_v4();
+        } else if (calcType == DATE) {
+            return new JPanelDate_v4(this);
+        } else if (calcType == CONVERTER) {
+            if (converterType == ANGLE) {
+                return new JPanelConverter_v4(this, ANGLE);
+            }
+            else if (converterType == AREA) {
+                return new JPanelConverter_v4(this, AREA);
+            } else {
+                LOGGER.error("Add the specific converter panel now");
+                throw new CalculatorError_v4("Add the specific converter panel now");
+            }
+        } else {
+            LOGGER.error("Unknown calcType: " + calcType);
+            throw new CalculatorError_v4("Unknown calcType: " + calcType);
+        }
+    }
 
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4) throws CalculatorError_v4
     {

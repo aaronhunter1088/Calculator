@@ -128,6 +128,8 @@ public class JPanelConverter_v4 extends JPanel
             LOGGER.info("button: " + action.getActionCommand());
             getTextField1().setText("0");
             getTextField2().setText("0");
+            getTextField1().requestFocusInWindow();
+            isTextField1Selected = true;
             LOGGER.info("ClearEntryButtonHandler() finished for Converter");
             getCalculator().confirm("ClearEntryButton pushed", CONVERTER);
         });
@@ -184,6 +186,7 @@ public class JPanelConverter_v4 extends JPanel
     private void performNumberButtonFunctionality(ActionEvent ae)
     {
         String buttonValue = ae.getActionCommand();
+        LOGGER.info("Pressed " + buttonValue);
         if (isTextField1Selected) {
             switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
                 case DEGREES :
@@ -242,15 +245,15 @@ public class JPanelConverter_v4 extends JPanel
                 default : { LOGGER.error("Unknown unit"); break; }
             }
         }
-        getCalculator().confirm("Pressed " + buttonValue, CONVERTER);
+        LOGGER.info("Finished numberButtonFunctionality");
         convertAndUpdatePanel();
     }
 
     private void convertAndUpdatePanel()
     {
         LOGGER.info("Performing automatic conversion after each number button");
-        convertValues();
-        LOGGER.info("Conversion done");
+        convertValues(true);
+        getCalculator().confirm("Conversion done", CONVERTER);
         repaint();
     }
 
@@ -274,78 +277,148 @@ public class JPanelConverter_v4 extends JPanel
         return thisUnit;
     }
 
-    private void convertValues()
+    private void convertValues(boolean performConversion)
     {
+        if (!performConversion) return;
+        LOGGER.debug("starting conversion");
         ConverterUnits unit1 = convertStringUnitToConverterUnits((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem()));
         ConverterUnits unit2 = convertStringUnitToConverterUnits((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem()));
-        if (unit1 == ConverterUnits.DEGREES) {
-            if (unit2 == ConverterUnits.DEGREES) {
-                // best case scenario. get to copy one to the other
-                if(isTextField1Selected) {
-                    getTextField1().setText(getTextField1().getText());
-                } else {
+        double number;
+        if (isTextField1Selected)
+        {
+            if (unit1 == ConverterUnits.DEGREES) {
+                if (unit2 == ConverterUnits.DEGREES) {
+                    // best case scenario. get to copy one to the other
+                    getTextField1().setText(getTextField2().getText());
+                }
+                else if (unit2 == ConverterUnits.RADIANS) {
+                    number = convertingDegreesToRadians();
+                    LOGGER.debug("number: " + number);
+                    if (String.valueOf(number).endsWith(".0")) {
+                        LOGGER.debug(".0 is true");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf((int) number));
+                        } else {
+                            getTextField1().setText(String.valueOf((int) number));
+                        }
+                    } else {
+                        LOGGER.debug(".0 is false");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf(number));
+                        } else {
+                            getTextField1().setText(String.valueOf(number));
+                        }
+                    }
+                }
+                else { // unit2 is ConverterUnits.GRADIANS
+
+                }
+
+            }
+            else if (unit1 == ConverterUnits.RADIANS) {
+                if (unit2 == ConverterUnits.DEGREES) {
+                    number = convertingDegreesToRadians();
+                    LOGGER.debug("number: " + number);
+                    if (String.valueOf(number).endsWith(".0")) {
+                        LOGGER.debug(".0 is true");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf((int) number));
+                        } else {
+                            getTextField1().setText(String.valueOf((int) number));
+                        }
+                    }
+                    else {
+                        LOGGER.debug(".0 is false");
+                        if(isTextField1Selected) {
+                            getTextField1().setText(String.valueOf(number));
+                        } else {
+                            getTextField2().setText(String.valueOf(number));
+                        }
+                    }
+                }
+                else if (unit2 == ConverterUnits.RADIANS) {
+                    getTextField2().setText(getTextField1().getText());
+                } else { // unit2 is ConverterUnits.GRADIANS
+
+                }
+
+            }
+            else { // unit1 is ConverterUnits.GRADIANS
+                if (unit2 == ConverterUnits.DEGREES) {
+
+                } else if (unit2 == ConverterUnits.RADIANS) {
+
+                } else { // unit2 is ConverterUnits.GRADIANS
                     getTextField2().setText(getTextField1().getText());
                 }
             }
-            else if (unit2 == ConverterUnits.RADIANS) {
-                double number = convertingDegreesToRadians();
-                LOGGER.debug("number: " + number);
-                if (String.valueOf(number).endsWith(".0")) {
-                    LOGGER.debug(".0 is true");
-                    if(isTextField1Selected) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf((int) number));
-                    }
-                } else {
-                    LOGGER.debug(".0 is false");
-                    if(isTextField1Selected) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-            }
-            else { // unit2 is ConverterUnits.GRADIANS
-
-            }
-
         }
-        else if (unit1 == ConverterUnits.RADIANS) {
-            if (unit2 == ConverterUnits.DEGREES) {
-                double number = convertingDegreesToRadians();
-                LOGGER.debug("number: " + number);
-                if (String.valueOf(number).endsWith(".0")) {
-                    LOGGER.debug(".0 is true");
-                    if(isTextField1Selected) {
-                        getTextField2().setText(String.valueOf((int) number));
+        else // going from unit2 to unit1
+        {
+            if (unit1 == ConverterUnits.DEGREES) {
+                if (unit2 == ConverterUnits.DEGREES) {
+                    // best case scenario. get to copy one to the other
+                    getTextField2().setText(getTextField1().getText());
+                }
+                else if (unit2 == ConverterUnits.RADIANS) {
+                    number = convertingRadiansToDegrees();
+                    if (String.valueOf(number).endsWith(".0")) {
+                        LOGGER.debug(".0 is true");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf((int) number));
+                        } else {
+                            getTextField1().setText(String.valueOf((int) number));
+                        }
                     } else {
-                        getTextField1().setText(String.valueOf((int) number));
+                        LOGGER.debug(".0 is false");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf(number));
+                        } else {
+                            getTextField1().setText(String.valueOf(number));
+                        }
                     }
                 }
-                else {
-                    LOGGER.debug(".0 is false");
-                    if(isTextField1Selected) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
+                else { // unit2 is ConverterUnits.GRADIANS
+
+                }
+
+            }
+            else if (unit1 == ConverterUnits.RADIANS) {
+                if (unit2 == ConverterUnits.DEGREES) {
+                    number = convertingDegreesToRadians();
+                    LOGGER.debug("number: " + number);
+                    if (String.valueOf(number).endsWith(".0")) {
+                        LOGGER.debug(".0 is true");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf((int) number));
+                        } else {
+                            getTextField1().setText(String.valueOf((int) number));
+                        }
+                    }
+                    else {
+                        LOGGER.debug(".0 is false");
+                        if(isTextField1Selected) {
+                            getTextField2().setText(String.valueOf(number));
+                        } else {
+                            getTextField1().setText(String.valueOf(number));
+                        }
                     }
                 }
+                else if (unit2 == ConverterUnits.RADIANS) {
+                    getTextField1().setText(getTextField2().getText());
+                } else { // unit2 is ConverterUnits.GRADIANS
+
+                }
+
             }
-            else if (unit2 == ConverterUnits.RADIANS) {
+            else { // unit1 is ConverterUnits.GRADIANS
+                if (unit2 == ConverterUnits.DEGREES) {
 
-            } else { // unit2 is ConverterUnits.GRADIANS
+                } else if (unit2 == ConverterUnits.RADIANS) {
 
-            }
-
-        }
-        else { // unit1 is ConverterUnits.GRADIANS
-            if (unit2 == ConverterUnits.DEGREES) {
-
-            } else if (unit2 == ConverterUnits.RADIANS) {
-
-            } else { // unit2 is ConverterUnits.GRADIANS
-
+                } else { // unit2 is ConverterUnits.GRADIANS
+                    getTextField2().setText(getTextField1().getText());
+                }
             }
         }
     }
@@ -358,11 +431,10 @@ public class JPanelConverter_v4 extends JPanel
         } else {
             degrees = BigDecimal.valueOf(Double.parseDouble(getTextField2().getText()));
         }
-        LOGGER.debug("Degrees to Radians");
+        LOGGER.info("Degrees to Radians");
         BigDecimal radians = BigDecimal.valueOf(Math.toRadians(degrees.doubleValue()));
-        LOGGER.debug("radians: "+radians);
         double x = radians.setScale(4, RoundingMode.UP).doubleValue();
-        LOGGER.debug("before return: " + x);
+        LOGGER.info("radians: " + x);
         return x;
     }
 
@@ -370,15 +442,14 @@ public class JPanelConverter_v4 extends JPanel
     {
         BigDecimal radians;
         if (isTextField1Selected) {
-            radians = BigDecimal.valueOf(Double.parseDouble(getTextField2().getText()));
-        } else {
             radians = BigDecimal.valueOf(Double.parseDouble(getTextField1().getText()));
+        } else {
+            radians = BigDecimal.valueOf(Double.parseDouble(getTextField2().getText()));
         }
-        LOGGER.debug("Degrees to Radians");
+        LOGGER.info("Radians to Degrees");
         BigDecimal degrees = BigDecimal.valueOf(Math.toDegrees(radians.doubleValue()));
-        LOGGER.debug("degrees: "+degrees);
         double x = degrees.setScale(4, RoundingMode.UP).doubleValue();
-        LOGGER.debug("before return: " + x);
+        LOGGER.info("degrees: " + x);
         return x;
     }
 
@@ -478,7 +549,8 @@ public class JPanelConverter_v4 extends JPanel
         switch (converterType)
         {
             case ANGLE : {
-                LOGGER.debug("Size of MenuBar: " + getCalculator().getBar().getMenuCount());
+                //LOGGER.debug("Size of MenuBar: " + getCalculator().getBar().getMenuCount());
+                // which is the number of menu choices
                 for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
                     JMenu menuOption = getCalculator().getBar().getMenu(i);
                     JMenuItem valueForThisMenuOption = null;
@@ -615,6 +687,7 @@ public class JPanelConverter_v4 extends JPanel
 
     private void performAngleUnitsSwitch(ActionEvent action) {
         LOGGER.info("Start performing Angle units switch");
+        LOGGER.debug("action: " + action.getActionCommand());
         if (getUnitOptions1().hasFocus())
         {
             LOGGER.info("UnitOptions1 selected");
@@ -623,7 +696,8 @@ public class JPanelConverter_v4 extends JPanel
             LOGGER.info("UnitOptions2 selected");
             isTextField1Selected = false;
         }
-        convertAndUpdatePanel();
+        convertValues(true);
+        isTextField1Selected = !isTextField1Selected;
         getCalculator().confirm("Finished performing Angle units switch", CONVERTER);
     }
 

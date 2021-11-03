@@ -4,6 +4,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import java.text.ParseException;
+
+import static version4.CalcType_v4.*;
+import static version4.ConverterType_v4.*;
 
 public class CalculatorMain_v4
 {
@@ -18,13 +22,13 @@ public class CalculatorMain_v4
 	public static void main(String[] args) throws Exception
     {
 		LOGGER.info("Starting class CalculatorMain_v4");
-		StandardCalculator_v4 calculator = new StandardCalculator_v4("Standard Calculator");
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(CONVERTER, ANGLE);
         UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);
 		calculator.setResizable(false);
         calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        calculator.confirm("Calculator started. Initial state");
+        calculator.confirm("Calculator started. Initial state", CONVERTER);
     }
 }
 /*

@@ -7,7 +7,7 @@ import java.text.ParseException;
 public class DifferentPanelsTester extends JFrame
 {
 
-	public static void main(String[] args) throws ParseException
+	public static void main(String[] args) throws Exception
 	{
 		DifferentPanelsTester x = new DifferentPanelsTester();
 		x.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,7 +29,7 @@ public class DifferentPanelsTester extends JFrame
 	//private JTextField textField2 = new JTextField("Input text here");
 	//private FlowLayout flowLayout = new FlowLayout();
 	
-	public DifferentPanelsTester() throws ParseException
+	public DifferentPanelsTester() throws Exception
 	{
 		super("Different Panels");
 		setupPanels();

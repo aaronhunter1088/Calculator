@@ -1018,6 +1018,10 @@ public abstract class Calculator_v4 extends JFrame
         confirm(message, BASIC);
     }
 
+    public void confirm(CalcType_v4 calcType) {
+        confirm("", calcType);
+    }
+
     /**
      *  Returns the results of the last action with a specific message to display
      *
@@ -1126,7 +1130,11 @@ public abstract class Calculator_v4 extends JFrame
     public CalcType_v4 determineCalcType()
     {
         if (currentPanel instanceof JPanelBasic_v4) { return BASIC; }
-        else if (currentPanel instanceof JPanelProgrammer_v4) { return CalcType_v4.PROGRAMMER; }
+        else if (currentPanel instanceof JPanelProgrammer_v4) { return PROGRAMMER; }
+        else if (currentPanel instanceof JPanelScientific_v4) { return SCIENTIFIC; }
+        else if (currentPanel instanceof JPanelDate_v4) { return DATE; }
+        else if (currentPanel instanceof JPanelConverter_v4) { return CONVERTER; }
+        else LOGGER.error("Unknown currentPanel: " + getCurrentPanel() +  ". Defaulting to BASIC.");
         return BASIC;
     }
 

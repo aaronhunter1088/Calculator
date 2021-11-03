@@ -32,7 +32,7 @@ public class JPanelProgrammerMethodsTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelProgrammerMethodsTest");
-        c = new StandardCalculator_v4(CalcType_v4.PROGRAMMER.getName());
+        c = new StandardCalculator_v4(CalcType_v4.PROGRAMMER);
         c.setCalcType(CalcType_v4.PROGRAMMER);
         c.firstNumBool = true;
         p = new JPanelProgrammer_v4(c);
@@ -41,7 +41,7 @@ public class JPanelProgrammerMethodsTest {
 
     @Before
     public void setupBefore() throws Exception {
-        c = new StandardCalculator_v4(CalcType_v4.PROGRAMMER.getName());
+        c = new StandardCalculator_v4(CalcType_v4.PROGRAMMER);
         c.setCalcType(CalcType_v4.PROGRAMMER);
         c.firstNumBool = true;
         p = new JPanelProgrammer_v4(c);
