@@ -32,10 +32,9 @@ public class JPanelProgrammer_v3 extends JPanel {
     private final JPanel buttonGroup1ButtonPanel = new JPanel(); // contains the first button group
     private final JPanel buttonGroup2ButtonPanel = new JPanel(); // contains the second button group
 
-    protected JTextArea textArea1 = new JTextArea(1,5); // rows, columns for first 8 bits
-    protected JTextArea textArea2 = new JTextArea(1,5); // rows, columns for second 8 bits
-    protected JTextArea textArea3 = new JTextArea(1,5); // rows, columns for 32 bits
-    final private String TEXTAREA3_SPACE = "     ";
+    protected JTextArea textArea1 = new JTextArea(1,5); // rows, columns
+    protected JTextArea textArea2 = new JTextArea(1,5); // rows, columns
+    protected JTextArea textArea3 = new JTextArea(1,5); // rows, columns
 
     final private JButton button = new JButton(" ");
     final private JButton buttonMod = new JButton("MOD");
@@ -70,33 +69,38 @@ public class JPanelProgrammer_v3 extends JPanel {
     protected StringBuffer conversion = new StringBuffer();
     protected StandardCalculator_v3 calculator;
 
-    public JPanelProgrammer_v3(StandardCalculator_v3 calculator)
-    {
+    public JPanelProgrammer_v3(StandardCalculator_v3 calculator) {
         setMinimumSize(new Dimension(600,400));
         programmerLayout = new GridBagLayout();
         setLayout(programmerLayout); // set frame layout
         constraints = new GridBagConstraints(); // instantiate constraints
-        setCalculator(calculator);
         try {
             setupPanel_v3(calculator);
         } catch (Calculator_v3Error ce) {
             LOGGER.error(ce.getMessage());
         }
+        setCalculator(calculator);
         addComponentsToPanel_v3(calculator);
+        //performCalculatorTypeSwitchOperations();
     }
-    public JPanelProgrammer_v3()
-    {}
+    public JPanelProgrammer_v3() {}
 
     /************* Start of methods here ******************/
 
-    public void setupPanel_v3(StandardCalculator_v3 calculator) throws Calculator_v3Error
-    {
+    public void setupPanel_v3(StandardCalculator_v3 calculator) throws Calculator_v3Error {
         LOGGER.info("Starting setupProgrammerPanel_v3");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        setButtons2To9(false);
-        setButtonsAToF(false);
-        calculator.buttonNegate.setEnabled(false);
 
+        try {
+            setButtons2To9(false);
+            calculator.buttonNegate.setEnabled(false);
+        } catch (NullPointerException e) {}
+        buttonA.setEnabled(false);
+        buttonB.setEnabled(false);
+        buttonC.setEnabled(false);
+        buttonD.setEnabled(false);
+        buttonE.setEnabled(false);
+        buttonF.setEnabled(false);
         buttonSqrt.setEnabled(false);
         buttonPercent.setEnabled(false);
         buttonFraction.setEnabled(false);
@@ -127,7 +131,12 @@ public class JPanelProgrammer_v3 extends JPanel {
             //TODO: reset other options to selected, false
             getButtonDec().setSelected(true);
             setButtons2To9(true);
-            setButtonsAToF(false);
+            getButtonA().setEnabled(false);
+            getButtonB().setEnabled(false);
+            getButtonC().setEnabled(false);
+            getButtonD().setEnabled(false);
+            getButtonE().setEnabled(false);
+            getButtonF().setEnabled(false);
             // determine previous base
             CalcType_v3 previousBase = getCalculator().getBase();
             getLogger().info("previous base: " + previousBase);
@@ -181,13 +190,13 @@ public class JPanelProgrammer_v3 extends JPanel {
             String nameOfButton = determineIfProgrammerOperatorWasPushed(); // could be null
             if (nameOfButton == null)
             {
-                convertValues(CalcType_v3.BINARY);
+                convertToBinary(CalcType_v3.BINARY);
                 getCalculator().confirm();
                 return;
             }
             else if (previousBase == CalcType_v3.DECIMAL)
             {
-                convertValues(CalcType_v3.BINARY);
+                convertToBinary(CalcType_v3.BINARY);
             }
             else if (previousBase == CalcType_v3.HEXIDECIMAL)
             {
@@ -293,45 +302,38 @@ public class JPanelProgrammer_v3 extends JPanel {
         buttonF.setPreferredSize(new Dimension(35, 35));
         buttonF.setBorder(new LineBorder(Color.BLACK));
 
-        getTextArea1().getCaret().isSelectionVisible();
-        getTextArea1().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        getTextArea1().setFont(Calculator_v3.font);
-        //getTextArea1().setPreferredSize(new Dimension(35, 35));
-        getTextArea1().setEditable(false);
-        getTextArea1().setBorder(new LineBorder(Color.BLACK));
+        // memory
+        calculator.buttonMemoryClear.setFont(this.calculator.font);
+        calculator.buttonMemoryClear.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryClear.setBorder(new LineBorder(Color.BLACK));
 
-        getTextArea2().getCaret().isSelectionVisible();
-        getTextArea2().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        getTextArea2().setFont(Calculator_v3.font);
-        //getTextArea2().setPreferredSize(new Dimension(35, 35));
-        getTextArea2().setEditable(false);
-        getTextArea2().setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryRecall.setFont(this.calculator.font);
+        calculator.buttonMemoryRecall.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryRecall.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryRecall.setSize(new Dimension(5, 5) );
 
-        getTextArea3().getCaret().isSelectionVisible();
-        getTextArea3().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        getTextArea3().setFont(Calculator_v3.font);
-        //getTextArea3().setPreferredSize(new Dimension(35, 35));
-        getTextArea3().setEditable(false);
-        getTextArea3().setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonMemoryStore.setFont(this.calculator.font);
+        calculator.buttonMemoryStore.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
 
-        textArea1.setText("00000000");
-        textArea2.setText("00000000");
-        textArea3.setText("00000000" + TEXTAREA3_SPACE + "00000000");
+        calculator.buttonMemoryAddition.setFont(this.calculator.font);
+        calculator.buttonMemoryAddition.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemoryAddition.setBorder(new LineBorder(Color.BLACK));
+
+        calculator.buttonMemorySubtraction.setFont(this.calculator.font);
+        calculator.buttonMemorySubtraction.setPreferredSize(new Dimension(35, 35) );
+        calculator.buttonMemorySubtraction.setBorder(new LineBorder(Color.BLACK));
+
         LOGGER.info("End setupProgrammerPanel_v3() ");
     }
-
-    public void addComponentsToPanel_v3(StandardCalculator_v3 calculator)
-    {
+    public void addComponentsToPanel_v3(StandardCalculator_v3 calculator) {
         LOGGER.info("Starting addComponentsToProgrammerPanel_v3");
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.insets = new Insets(5,5,5,5); //9905
+        constraints.insets = new Insets(9,9,0,5);
         calculator.getTextArea().setBorder(new LineBorder(Color.BLACK));
-        //getConstraints().insets = new Insets(1,1,0,0);
-        addComponent(getTextArea3(), 0,0, 6, 1);
-        addComponent(calculator.getTextArea(), 0, 5, 2, 2);
-        addComponent(getTextArea2(), 1, 0, 4, 1);
-        addComponent(getTextArea1(), 1, 1, 4, 1);
-        getConstraints().insets = new Insets(5,5,5,5);
+        addComponent(calculator.getTextArea(), 0, 0, 8, 2);
+        constraints.insets = new Insets(5,5,5,5);
 
         buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
         // add buttons to panel
@@ -469,22 +471,20 @@ public class JPanelProgrammer_v3 extends JPanel {
         addComponent(allOtherButtonsPanel, 5, 1, 6, 8, programmerLayout);
         LOGGER.info("Finished addComponentsToProgrammerPanel_v3");
     }
-
-    public void performProgrammerCalculatorTypeSwitchOperations()
-    {
+    public void performProgrammerCalculatorTypeSwitchOperations() {
         LOGGER.info("Starting to performProgrammerCalculatorTypeSwitchOperations");
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to binary
         getButtonBin().setSelected(true);
         getCalculator().setBase(CalcType_v3.BINARY);
-        convertTextArea();
+        convertToBinary(CalcType_v3.PROGRAMMER);
         // set CalcType now
         calculator.setCalcType(CalcType_v3.PROGRAMMER);
         calculator.setBase(CalcType_v3.BINARY);
         // setting up all the buttons
         setButtons2To9(false);
         calculator.buttonNegate.setEnabled(false);
-        LOGGER.info("Finished performProgrammerCalculatorTypeSwitchOperations");
+        calculator.confirm("Finished performProgrammerCalculatorTypeSwitchOperations");
     }
 
     // method to set constraints on
@@ -540,7 +540,7 @@ public class JPanelProgrammer_v3 extends JPanel {
 //            setButtonGroup2Mode();
             // only convert number if textArea has text
             if (!calculator.getTextArea().getText().equals(""))
-                convertValues();
+                convertToBinary();
         }
     }
     public class ButtonOctHandler implements ActionListener {
@@ -765,8 +765,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     }
 
     // TODO: Broken
-    public void performButtonNotActions(ActionEvent action)
-    {
+    public void performButtonNotActions(ActionEvent action) {
         LOGGER.info("performing not operation...");
         String buttonChoice = action.getActionCommand();
         getLogger().info("button: " + buttonChoice);
@@ -785,9 +784,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         calculator.getTextArea().setText("\n"+calculator.textarea.toString());
         LOGGER.info("not operation completed.");
     }
-
-    public void performButtonXorActions(ActionEvent action)
-    {
+    public void performButtonXorActions(ActionEvent action) {
         getLogger().info("performing XOR button actions");
         String buttonChoice = action.getActionCommand();
         getLogger().info("button: " + buttonChoice);
@@ -808,39 +805,41 @@ public class JPanelProgrammer_v3 extends JPanel {
             getCalculator().performValuesConversion();
         }
     }
-
-    public void performButtonOrActions(ActionEvent action) throws Calculator_v3Error
-    {
-        LOGGER.info("performOrLogic starts here");
+    public void performButtonOrActions(ActionEvent action) throws Calculator_v3Error {
+        LOGGER.debug("performOrLogic starts here");
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice);
         calculator.setOrButtonBool(true);
         getButtonOr().setEnabled(false);
-        if (StringUtils.isEmpty(calculator.values[0]) && StringUtils.isNotEmpty(calculator.values[1]))
+        if (StringUtils.isEmpty(calculator.values[0]) && !StringUtils.isEmpty(calculator.values[1]))
         {
             String msg = "calculator.values[1] is set and not calculator.values[0]. This is not allowed.";
             throw new Calculator_v3Error(msg);
         }
-        else if (StringUtils.isNotEmpty(calculator.values[0]) && StringUtils.isEmpty(calculator.values[1]))
+        else if (!StringUtils.isEmpty(calculator.values[0]) && StringUtils.isEmpty(calculator.values[1]))
         {
-            getLogger().debug("values[0] is set, but not values[1]");
+            getLogger().info("values[0] is set, but not values[1]");
             calculator.firstNumBool = false;
-            getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                                  + buttonChoice + " " + getCalculator().getValues()[0]);
-            getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0] + " " + buttonChoice));
+            getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+//            getCalculator().textArea.setText("\n" + getCalculator().getValues()[getCalculator().getValuesPosition()] + " " + buttonChoice);
+            getCalculator().getTextArea().setText("\n" + getCalculator().getTextAreaWithoutNewLineCharacters() + " " + buttonChoice); // update textArea
+//            getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1) +
+//                                                  buttonChoice + "C_" + getCalculator().getValues()[getCalculator().getValuesPosition()]);
+            getLogger().debug("textArea: " + getCalculator().getTextAreaWithoutNewLineCharacters());
+            getCalculator().setTextarea(new StringBuffer().append(getCalculator().getTextAreaWithoutNewLineCharacters()));
+
             calculator.valuesPosition++;
-            calculator.confirm("OR complete");
+            calculator.confirm("Show values[0]");
         }
         else if (StringUtils.isEmpty(calculator.values[0]) && StringUtils.isEmpty(calculator.values[1]))
         {
             calculator.orButtonBool = false;
             calculator.firstNumBool = true;
-            calculator.confirm("Pressed OR. Doing nothing");
+            calculator.confirm("Do nothing");
         }
         else if (!StringUtils.isEmpty(calculator.values[0]) && !StringUtils.isEmpty(calculator.values[1]))
         {
-            String sb = performOr(); // 2 OR 3 OR button presses
-            //TODO: need to convert sb to DECIMAL form before storing in values
+            String sb = performOr();
             calculator.values[0] = sb;
             calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+calculator.values[0]);
             calculator.orButtonBool = false;
@@ -923,25 +922,18 @@ public class JPanelProgrammer_v3 extends JPanel {
         return null;
     }
 
-    // TODO: fix logic
-    public void convertValues(CalcType_v3 newBase)
-    {
-        CalcType_v3 previousBase = getCalculator().getBase();
+    public void convertToBinary(CalcType_v3 newBase) {
+        CalcType_v3 previousBase = getCalculator().getCalcType();
         getCalculator().setCalcType(newBase);
         CalcType_v3 currentBase = getCalculator().getCalcType();
         String nameOfButton = determineIfProgrammerOperatorWasPushed(); // could be null
-        if (previousBase == CalcType_v3.BASIC && currentBase == CalcType_v3.PROGRAMMER)
+        if (previousBase == CalcType_v3.PROGRAMMER && currentBase == CalcType_v3.DECIMAL)
+        {
+        }
+        // TODO: should be from BASIC to PROGRAMMER
+        else if (previousBase == CalcType_v3.BASIC && currentBase == CalcType_v3.PROGRAMMER)
         {
             LOGGER.debug("Going from BASIC to PROGRAMMER calculator");
-            calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY.getName(), calculator.values);
-        }
-        else if (previousBase == CalcType_v3.PROGRAMMER && currentBase == CalcType_v3.BASIC)
-        {
-            LOGGER.debug("Going from PROGRAMMER to BASIC calculator");
-            calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.BINARY.getName(), CalcType_v3.DECIMAL.getName(), calculator.values);
-        }
-        else if (previousBase == CalcType_v3.DECIMAL && currentBase == CalcType_v3.BINARY)
-        {
             calculator.values = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY.getName(), calculator.values);
         }
 
@@ -1003,7 +995,7 @@ public class JPanelProgrammer_v3 extends JPanel {
         //calculator.values = calculator.convertFromTypeToTypeOnValues(CalcType_v3.BINARY2.getName(), CalcType_v3.DECIMAL.getName(), calculator.values);
     }
 
-    public void convertValues() {
+    public void convertToBinary() {
         LOGGER.info("convertToBinary started");
         LOGGER.info("textarea: " + calculator.textarea);
         // determine previous base
@@ -1150,60 +1142,65 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
     }
 
-    /**
-     * This method resets textArea & text area
-     */
-    public void convertTextArea()
+    @Deprecated
+    public void convertTextArea(CalcType_v3 previousBase)
     {
+        getCalculator().setTextarea(new StringBuffer().append(getCalculator().getTextAreaWithoutNewLineCharacters().strip()) );
         if (getCalculator().getCalcType() == CalcType_v3.BASIC)
         {
-            getLogger().debug("Going from Basic to Programmer");
-            calculator.performInitialChecks();
-            boolean operatorWasPushed = getCalculator().determineIfMainOperatorWasPushed();
-            String convertedValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.BASIC.getName(), CalcType_v3.PROGRAMMER.getName(), getCalculator().getValues()[0])[0];
-            if (StringUtils.isNotBlank(getCalculator().getTextAreaWithoutNewLineCharacters()))
+            // decimal to binary
+            getLogger().info("Going from decimal to binary...");
+            if (getCalculator().isDecimal(String.valueOf(getCalculator().getTextarea())))
             {
-                if (operatorWasPushed) // check all appropriate operators from Programmer calculator that are applicable for Basic Calculator
-                {
-                    if (getCalculator().addBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " + " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " +"));
-                    }
-                    else if (getCalculator().subBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " - " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " -"));
-                    }
-                    else if (getCalculator().mulBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " * " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " *"));
-                    }
-                    else if (getCalculator().divBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " / " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " /"));
-                    }
-                    // while coming from PROGRAMMER, some operators we don't care about coming from that CalcType
-                }
-                else // operator not pushed but textArea has some value
-                {
-                    getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                            + convertedValue);
-                    getCalculator().setTextarea(new StringBuffer().append(convertedValue));
-                }
+                getLogger().error("Need to implement logic");
+            }
+            else if (getCalculator().isNumberNegative())
+            {
+                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+"Only positive numbers");
+                getCalculator().updateTextareaFromTextArea();
+                getCalculator().getValues()[getCalculator().getValuesPosition()] = "0";
+                getLogger().warn("values[valuesPosition] is being set to 0. Change when negative numbers are implemented in binary");
+            }
+            else if (getCalculator().getTextarea().length() == 0)
+            {
+                getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)+"");
+                getCalculator().updateTextareaFromTextArea();
+                getCalculator().getValues()[getCalculator().getValuesPosition()] = "";
+            }
+            else
+            {
+                convertToBinary();
             }
         }
-        // TODO: add logic for Scientific
+        else if (getCalculator().getCalcType() == CalcType_v3.PROGRAMMER)
+        {
+            if (previousBase == CalcType_v3.DECIMAL &&
+                getCalculator().getBase() == CalcType_v3.BINARY)
+            {
+                convertToBinary();
+            }
+            else if (previousBase == CalcType_v3.HEXIDECIMAL &&
+                    getCalculator().getBase() == CalcType_v3.BINARY)
+            {
+
+            }
+            else if (previousBase == CalcType_v3.OCTAL &&
+                  getCalculator().getBase() == CalcType_v3.BINARY)
+            {
+
+            }
+        }
+        else {
+            getLogger().debug("Current CalcType is: " + getCalculator().getCalcType());
+        }
+    }
+    @Deprecated
+    public void convertTextArea()
+    {
+        convertTextArea(null);
     }
 
-    public void performModulus()
-    {
+    public void performModulus() {
         // some value mod another value returns result:  4 mod 3 == 1; 1 * 3 = 3; 4 - 3 = 1 == result
         int firstResult = Integer.parseInt(getCalculator().getValues()[0]) / Integer.parseInt(getCalculator().getValues()[1]); // create result forced double
         getLogger().debug("firstResult: " + firstResult);
@@ -1213,17 +1210,17 @@ public class JPanelProgrammer_v3 extends JPanel {
         getLogger().debug("modulus: " + finalResult);
         getCalculator().getValues()[0] = String.valueOf(finalResult);
     }
-
-    public String performOr()
-    {
+    public String performOr() {
         getLogger().debug("performing Or");
         StringBuffer sb = new StringBuffer();
         //TODO: if values[0] and values[1] in decimal and difference length, this will fail.
         //In order for this to work, we need to convert to most appropriate base
         //Check to make sure both are same length
+        //
+        if (getCalculator().getCalcType() != CalcType_v3.PROGRAMMER)
+            getCalculator().convertAllValuesToBinary();
 
-        for (int i=0; i<calculator.values[0].length(); i++)
-        {
+        for (int i=0; i<calculator.values[0].length(); i++) {
             String letter = "0";
             if (String.valueOf(calculator.values[0].charAt(i)).equals("0") &&
                 String.valueOf(calculator.values[1].charAt(i)).equals("0") )
@@ -1239,7 +1236,7 @@ public class JPanelProgrammer_v3 extends JPanel {
             LOGGER.info(calculator.values[0].charAt(i)+" OR "+calculator.values[1].charAt(i)+" = "+ letter);
         }
         getCalculator().getValues()[3] = sb.toString();
-        //getCalculator().convertAllValuesToDecimal();
+        getCalculator().convertAllValuesToDecimal();
         LOGGER.info(calculator.values[0]+" OR "+calculator.values[1]+" = "+ calculator.values[3]);
         getCalculator().getValues()[0] = getCalculator().getValues()[3];
         getButtonOr().setEnabled(true);
@@ -1266,8 +1263,6 @@ public class JPanelProgrammer_v3 extends JPanel {
         }
         return String.valueOf(sb);
     }
-
-
 
     /************* All Getters and Setters ******************/
 
@@ -1316,8 +1311,7 @@ public class JPanelProgrammer_v3 extends JPanel {
     public StringBuffer getConversion() { return conversion; }
     public StandardCalculator_v3 getCalculator() { return calculator; }
 
-    public void setButtons2To9(boolean isEnabled)
-    {
+    public void setButtons2To9(boolean isEnabled) {
         calculator.button2.setEnabled(isEnabled);
         calculator.button3.setEnabled(isEnabled);
         calculator.button4.setEnabled(isEnabled);
@@ -1327,16 +1321,5 @@ public class JPanelProgrammer_v3 extends JPanel {
         calculator.button8.setEnabled(isEnabled);
         calculator.button9.setEnabled(isEnabled);
     }
-
-    public void setButtonsAToF(boolean isEnabled)
-    {
-        buttonA.setEnabled(isEnabled);
-        buttonB.setEnabled(isEnabled);
-        buttonC.setEnabled(isEnabled);
-        buttonD.setEnabled(isEnabled);
-        buttonE.setEnabled(isEnabled);
-        buttonF.setEnabled(isEnabled);
-    }
-
     private void setCalculator(StandardCalculator_v3 calculator) { this.calculator = calculator; }
 }

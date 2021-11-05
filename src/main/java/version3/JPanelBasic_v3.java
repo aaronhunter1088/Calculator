@@ -52,7 +52,7 @@ public class JPanelBasic_v3 extends JPanel
         try
         {
             calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
-            setEnabledForAllNumberButtons(true);
+            setAllNumberButtons(true);
             calculator.button0.setFont(calculator.font);
             calculator.button0.setPreferredSize(new Dimension(70, 35) );
             calculator.button0.setBorder(new LineBorder(Color.BLACK));
@@ -212,7 +212,6 @@ public class JPanelBasic_v3 extends JPanel
         basicLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
-
     /**
      * This method handles the logic when we switch from any type of calculator
      * to the Programmer type
@@ -222,15 +221,16 @@ public class JPanelBasic_v3 extends JPanel
     public void performBasicCalculatorTypeSwitchOperations(JPanel oldPanel)
     {
         LOGGER.info("Starting to performBasicCalculatorTypeSwitchOperations");
-        convertTextArea();
-        if (!getCalculator().isMemoryValuesEmpty()) getCalculator().convertMemoryValues();
+        // possible conversion of the value in the textarea from
+        // whatever mode it was in before to decimal
+        convertTextArea(oldPanel);
         // set CalcType now
         getCalculator().setBase(CalcType_v3.DECIMAL);
-        getCalculator().setCalcType(CalcType_v3.BASIC);
+        calculator.setCalcType(CalcType_v3.BASIC);
         // setting up all the buttons
-        setEnabledForAllNumberButtons(true);
+        setAllNumberButtons(true);
         calculator.buttonNegate.setEnabled(true);
-        LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
+        LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations\n");
     }
 
     public void performSquareRootButtonActions(ActionEvent action)
@@ -338,11 +338,10 @@ public class JPanelBasic_v3 extends JPanel
         }
     }
 
-    @Deprecated
     public void convertToDecimal()
     {
         LOGGER.info("convertToDecimal started");
-        calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters());
+        calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters().strip());
         int appropriateLength = calculator.getBytes();
         LOGGER.debug("textarea: " + calculator.textarea);
         LOGGER.debug("appropriateLength: " + appropriateLength);
@@ -424,60 +423,25 @@ public class JPanelBasic_v3 extends JPanel
         calculator.confirm("");
     }
 
-    /**
-     * This method converts the textArea from a CalcType to CalcType.DECIMAL
-     * Since values should always be in DECIMAL form, converting should be easy as pie.
-     */
-    public void convertTextArea()
+    public void convertTextArea(JPanel oldPanel)
     {
-        if (calculator.getCalcType() == CalcType_v3.PROGRAMMER)
-        {
-            LOGGER.debug("Going from programmer to decimal...");
+        //LOGGER.info("Converting TextArea");
+        if (calculator.getCalcType() == CalcType_v3.PROGRAMMER) {
+            LOGGER.info("Going from programmer to decimal...");
             calculator.performInitialChecks();
-            boolean operatorWasPushed = getCalculator().determineIfMainOperatorWasPushed();
-            //String convertedValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.PROGRAMMER.getName(), CalcType_v3.BASIC.getName(), getCalculator().getTextAreaWithoutNewLineCharacters())[0];
-            if (StringUtils.isNotBlank(getCalculator().getTextAreaWithoutNewLineCharacters()))
-            {
-                if (operatorWasPushed) // check all appropriate operators from Programmer calculator that are applicable for Basic Calculator
-                {
-                    if (getCalculator().addBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                            + " + " + getCalculator().getValues()[0]);
-                        getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0] + " +"));
-                    }
-                    else if (getCalculator().subBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " - " + getCalculator().getValues()[0]);
-                        getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0] + " -"));
-                    }
-                    else if (getCalculator().mulBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " * " + getCalculator().getValues()[0]);
-                        getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0] + " *"));
-                    }
-                    else if (getCalculator().divBool)
-                    {
-                        getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
-                                + " / " + getCalculator().getValues()[0]);
-                        getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0] + " /"));
-                    }
-                    // while coming from PROGRAMMER, some operators we don't care about coming from that CalcType
-                }
-                else // operator not pushed but textArea has some value
-                {
-                    getCalculator().getTextArea().setText(
-                        getCalculator().addNewLineCharacters(1) + getCalculator().getValues()[0]);
-                    getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0]));
-                }
+            if (!calculator.getTextAreaWithoutNewLineCharacters().equals("") &&
+                !((JPanelProgrammer_v3)oldPanel).getButtonDec().isSelected() ) {
+                convertToDecimal();
             }
         }
-        // TODO: conversion from Scientific logic needed
+        else
+        {
+            LOGGER.info("Current CalcType is: " + calculator.getCalcType());
+        }
+        //LOGGER.info("TextArea converted");
     }
 
-    public void setEnabledForAllNumberButtons(boolean isEnabled)
+    public void setAllNumberButtons(boolean isEnabled)
     {
         calculator.button0.setEnabled(isEnabled);
         calculator.button1.setEnabled(isEnabled);
@@ -501,6 +465,7 @@ public class JPanelBasic_v3 extends JPanel
     public JButton getButtonPercent() { return buttonPercent; }
     public JButton getButtonSqrt() { return buttonSqrt; }
     public int getMemoryPosition() { return memoryPosition; }
+    public String[] getMemoryValues() { return memoryValues; }
     public StandardCalculator_v3 getCalculator() { return calculator; }
 
     public void setBasicLayout(GridBagLayout basicLayout) { this.basicLayout = basicLayout; }

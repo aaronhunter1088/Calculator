@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>Calculator</groupId>
     <artifactId>Calculator</artifactId>
-    <version>4.0</version>
+    <version>3.2.1</version>
     <packaging>jar</packaging>
     <name>Calculator</name>
 
@@ -33,7 +33,7 @@
 		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
 		<dependency>
 			<groupId>com.apple</groupId>
-			<artifactId>applejavaextensions</artifactId>
+			<artifactId>AppleJavaExtensions</artifactId>
 			<version>${apple.version}</version>
 		</dependency>
 
@@ -163,10 +163,10 @@
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
 							<Creation-Time>${build.time}</Creation-Time>
-							<mainClass>version4.CalculatorMain_v4</mainClass>
+							<mainClass>version3.CalculatorMain_v3</mainClass>
 						</manifestEntries>
 					</archive>
-					<outputDirectory>${basedir}/dist/version4</outputDirectory>
+					<outputDirectory>${basedir}/dist/version3</outputDirectory>
 				</configuration>
 			</plugin>
 			<!-- Builds filter.properties file -->
@@ -186,14 +186,13 @@
 									<format property="last.updated" pattern="MM-dd-YYYY hh:mm:ss"/>
 								</tstamp>
 								<!-- Places file inside dist/ -->
-								<echo file="${basedir}/dist/version4/filter.properties" message="build.time=${last.updated}"/>
+								<echo file="${basedir}/dist/version3/filter.properties" message="build.time=${last.updated}"/>
 							</tasks>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Can be triggered by Lifecycle: Package: Builds 'jar-with-dependencies' (possible sure-fire test failures)
-			     or by: Plugins: Assembly: assembly:single -->
+			<!-- Can be triggered by Lifecycle: Package: Builds 'jar-with-dependencies' -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
@@ -210,19 +209,19 @@
 						<index>>true</index>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>version4.CalculatorMain_v4</mainClass>
+							<mainClass>version3.CalculatorMain_v3</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
 							<Creation-Time>${build.time}</Creation-Time>
-							<mainClass>version4.CalculatorMain_v4</mainClass>
+							<mainClass>version3.CalculatorMain_v3</mainClass>
 						</manifestEntries>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>${basedir}/dist/version4</outputDirectory>
+					<outputDirectory>${basedir}/dist/version3</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

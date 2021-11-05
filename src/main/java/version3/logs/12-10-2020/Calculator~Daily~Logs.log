@@ -1,0 +1,507 @@
+[INFO ] 12-10-2020 00:09:34.761 [Method:main] version3.CalculatorMain_v3:18 - Starting class CalculatorMain_v3
+[INFO ] 12-10-2020 00:09:35.876 [Method:setupCalculator_v3] version3.Calculator_v3:141 - Inside setupCalculator_v3()
+[INFO ] 12-10-2020 00:09:35.900 [Method:setupCalculator_v3] version3.Calculator_v3:263 - Finished. Leaving setupCalculator_v3()
+[INFO ] 12-10-2020 00:09:35.919 [Method:setupPanel_v3] version3.JPanelBasic_v3:46 - Starting setupPanel_v3
+[INFO ] 12-10-2020 00:09:35.921 [Method:setupPanel_v3] version3.JPanelBasic_v3:135 - End setupPanel_v3()
+[INFO ] 12-10-2020 00:09:35.923 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:138 - Starting addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:09:35.930 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - Finished addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:09:35.943 [Method:setupMenuBar] version3.StandardCalculator_v3:87 - Inside setupMenuBar()
+[INFO ] 12-10-2020 00:09:35.987 [Method:setupMenuBar] version3.StandardCalculator_v3:263 - Finished. Leaving setupMenuBar()
+[INFO ] 12-10-2020 00:09:37.097 [Method:initLookAndFeel] version3.CalculatorMain_v3:49 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 12-10-2020 00:09:37.221 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: Calculator started. Initial state
+[INFO ] 12-10-2020 00:09:37.223 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:09:37.231 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:09:37.240 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:09:37.241 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:09:37.261 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:09:37.262 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:09:37.264 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:09:37.265 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:09:37.266 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:37.267 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:37.269 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:37.270 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:37.273 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:37.274 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:09:37.276 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:09:37.277 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:09:37.279 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:09:37.280 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:09:37.282 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:09:37.283 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:09:37.284 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:09:37.285 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:09:37.286 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:09:37.287 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:09:38.651 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:812 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:09:38.653 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:814 - button: =
+[INFO ] 12-10-2020 00:09:38.655 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:09:38.655 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:09:38.656 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:09:38.657 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:09:38.657 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:09:38.658 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:09:38.659 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:09:38.660 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:09:38.660 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:09:38.661 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:38.661 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:38.662 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:38.662 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:38.663 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:09:38.663 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:09:38.664 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:09:38.665 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:09:38.666 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:09:38.666 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:09:38.667 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:09:38.667 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:09:38.668 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:09:38.669 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:09:38.669 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:09:38.670 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:10:19.437 [Method:printEventInfo] version3.StandardCalculator_v3:323 - Key Pressed
+[INFO ] 12-10-2020 00:10:19.438 [Method:printEventInfo] version3.StandardCalculator_v3:325 -    Code: ⏎
+[INFO ] 12-10-2020 00:10:19.440 [Method:printEventInfo] version3.StandardCalculator_v3:326 -    Char: 
+
+[INFO ] 12-10-2020 00:10:19.441 [Method:printEventInfo] version3.StandardCalculator_v3:328 -     Mods: 
+[INFO ] 12-10-2020 00:10:19.442 [Method:printEventInfo] version3.StandardCalculator_v3:330 -     Action? false
+[INFO ] 12-10-2020 00:10:19.444 [Method:printEventInfo] version3.StandardCalculator_v3:323 - Key Typed
+[INFO ] 12-10-2020 00:10:19.445 [Method:printEventInfo] version3.StandardCalculator_v3:325 -    Code: Unknown keyCode: 0x0
+[INFO ] 12-10-2020 00:10:19.446 [Method:printEventInfo] version3.StandardCalculator_v3:326 -    Char: 
+
+[INFO ] 12-10-2020 00:10:19.447 [Method:printEventInfo] version3.StandardCalculator_v3:328 -     Mods: 
+[INFO ] 12-10-2020 00:10:19.447 [Method:printEventInfo] version3.StandardCalculator_v3:330 -     Action? false
+[INFO ] 12-10-2020 00:10:19.472 [Method:printEventInfo] version3.StandardCalculator_v3:323 - Key Released
+[INFO ] 12-10-2020 00:10:19.473 [Method:printEventInfo] version3.StandardCalculator_v3:325 -    Code: ⏎
+[INFO ] 12-10-2020 00:10:19.474 [Method:printEventInfo] version3.StandardCalculator_v3:326 -    Char: 
+
+[INFO ] 12-10-2020 00:10:19.475 [Method:printEventInfo] version3.StandardCalculator_v3:328 -     Mods: 
+[INFO ] 12-10-2020 00:10:19.475 [Method:printEventInfo] version3.StandardCalculator_v3:330 -     Action? false
+[INFO ] 12-10-2020 00:29:08.484 [Method:main] version3.CalculatorMain_v3:18 - Starting class CalculatorMain_v3
+[INFO ] 12-10-2020 00:29:09.283 [Method:setupCalculator_v3] version3.Calculator_v3:141 - Inside setupCalculator_v3()
+[INFO ] 12-10-2020 00:29:09.291 [Method:setupCalculator_v3] version3.Calculator_v3:263 - Finished. Leaving setupCalculator_v3()
+[INFO ] 12-10-2020 00:29:09.299 [Method:setupPanel_v3] version3.JPanelBasic_v3:46 - Starting setupPanel_v3
+[INFO ] 12-10-2020 00:29:09.301 [Method:setupPanel_v3] version3.JPanelBasic_v3:135 - End setupPanel_v3()
+[INFO ] 12-10-2020 00:29:09.303 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:138 - Starting addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:29:09.313 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - Finished addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:29:09.334 [Method:setupMenuBar] version3.StandardCalculator_v3:87 - Inside setupMenuBar()
+[INFO ] 12-10-2020 00:29:09.370 [Method:setupMenuBar] version3.StandardCalculator_v3:263 - Finished. Leaving setupMenuBar()
+[INFO ] 12-10-2020 00:29:10.019 [Method:initLookAndFeel] version3.CalculatorMain_v3:49 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 12-10-2020 00:29:10.174 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: Calculator started. Initial state
+[INFO ] 12-10-2020 00:29:10.175 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:29:10.178 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:29:10.180 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:29:10.181 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:29:10.182 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:29:10.183 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:29:10.185 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:29:10.187 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:29:10.188 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:10.190 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:10.191 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:10.192 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:10.193 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:10.194 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:29:10.196 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:29:10.199 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:29:10.200 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:29:10.202 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:29:10.203 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:29:10.204 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:29:10.205 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:29:10.207 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:29:10.208 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:29:10.210 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:29:26.632 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:816 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:29:26.635 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:818 - button: =
+[INFO ] 12-10-2020 00:29:26.636 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:29:26.637 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:29:26.637 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:29:26.638 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:29:26.638 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:29:26.639 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:29:26.640 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:29:26.640 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:29:26.641 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:29:26.642 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:26.642 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:26.643 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:26.643 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:26.644 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:29:26.644 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:29:26.645 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:29:26.645 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:29:26.646 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:29:26.646 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:29:26.647 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:29:26.647 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:29:26.648 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:29:26.648 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:29:26.649 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:29:26.650 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:30:17.613 [Method:performNumberButtonActions] version3.Calculator_v3:284 - NumberButtonHandler_v2 started
+[DEBUG] 12-10-2020 00:30:17.614 [Method:performNumberButtonActions] version3.Calculator_v3:286 - button: 5
+[INFO ] 12-10-2020 00:30:17.616 [Method:performBasicCalculatorNumberButtonActions] version3.Calculator_v3:592 - Starting basic calculator number button actions
+[INFO ] 12-10-2020 00:30:17.617 [Method:performInitialChecks] version3.Calculator_v3:701 - Performing initial checks.... results: false
+[INFO ] 12-10-2020 00:30:17.618 [Method:performNumberButtonActions] version3.Calculator_v3:562 - Performing basic actions...
+[INFO ] 12-10-2020 00:30:17.619 [Method:performNumberButtonActions] version3.Calculator_v3:565 - firstNumBool = true | positive number = true & dotButtonPressed = false
+[DEBUG] 12-10-2020 00:30:17.620 [Method:performNumberButtonActions] version3.Calculator_v3:566 - before: 
+[DEBUG] 12-10-2020 00:30:17.681 [Method:setValuesToTextAreaValue] version3.Calculator_v3:1019 - textArea: '\n5'
+[DEBUG] 12-10-2020 00:30:17.692 [Method:setValuesToTextAreaValue] version3.Calculator_v3:1020 - values[0]: '5'
+[INFO ] 12-10-2020 00:30:17.697 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: NumberButtonHandler_v2() finishing
+[INFO ] 12-10-2020 00:30:17.698 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:30:17.698 [Method:confirm] version3.Calculator_v3:752 - textarea: '5'
+[INFO ] 12-10-2020 00:30:17.699 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n5'
+[INFO ] 12-10-2020 00:30:17.699 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:30:17.700 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:30:17.701 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:30:17.702 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:30:17.702 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:30:17.703 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:17.703 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:17.704 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:17.704 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:17.705 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:17.705 [Method:confirm] version3.Calculator_v3:774 - values[0]: '5'
+[INFO ] 12-10-2020 00:30:17.706 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:30:17.706 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:30:17.707 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:30:17.707 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:30:17.708 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:30:17.709 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:30:17.709 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:30:17.710 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:30:17.710 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:30:17.711 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:30:18.200 [Method:performMultiplicationActions] version3.StandardCalculator_v3:587 - performMultiplicationActions started
+[INFO ] 12-10-2020 00:30:18.201 [Method:performMultiplicationActions] version3.StandardCalculator_v3:589 - button: *
+[INFO ] 12-10-2020 00:30:18.215 [Method:performMultiplicationActions] version3.StandardCalculator_v3:598 - textArea: \n * 5
+[INFO ] 12-10-2020 00:30:18.216 [Method:performMultiplicationActions] version3.StandardCalculator_v3:599 - values[0] is 5 after buttonMultiply was pushed
+[INFO ] 12-10-2020 00:30:18.217 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:30:18.217 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:30:18.218 [Method:confirm] version3.Calculator_v3:752 - textarea: '
+ * 5'
+[INFO ] 12-10-2020 00:30:18.219 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n * 5'
+[INFO ] 12-10-2020 00:30:18.219 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:30:18.220 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:30:18.220 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:30:18.221 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'true'
+[INFO ] 12-10-2020 00:30:18.221 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:30:18.222 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.222 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.223 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.224 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.224 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.225 [Method:confirm] version3.Calculator_v3:774 - values[0]: '5'
+[INFO ] 12-10-2020 00:30:18.225 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:30:18.225 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:30:18.226 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '1'
+[INFO ] 12-10-2020 00:30:18.226 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:30:18.227 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'false'
+[INFO ] 12-10-2020 00:30:18.227 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:30:18.228 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:30:18.229 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:30:18.229 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:30:18.230 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:30:18.690 [Method:performNumberButtonActions] version3.Calculator_v3:284 - NumberButtonHandler_v2 started
+[DEBUG] 12-10-2020 00:30:18.691 [Method:performNumberButtonActions] version3.Calculator_v3:286 - button: 6
+[INFO ] 12-10-2020 00:30:18.693 [Method:performBasicCalculatorNumberButtonActions] version3.Calculator_v3:592 - Starting basic calculator number button actions
+[INFO ] 12-10-2020 00:30:18.695 [Method:performInitialChecks] version3.Calculator_v3:701 - Performing initial checks.... results: false
+[INFO ] 12-10-2020 00:30:18.696 [Method:performNumberButtonActions] version3.Calculator_v3:562 - Performing basic actions...
+[INFO ] 12-10-2020 00:30:18.696 [Method:performNumberButtonActions] version3.Calculator_v3:565 - firstNumBool = true | positive number = true & dotButtonPressed = false
+[DEBUG] 12-10-2020 00:30:18.697 [Method:performNumberButtonActions] version3.Calculator_v3:566 - before: 
+[DEBUG] 12-10-2020 00:30:18.702 [Method:setValuesToTextAreaValue] version3.Calculator_v3:1019 - textArea: '\n6'
+[DEBUG] 12-10-2020 00:30:18.703 [Method:setValuesToTextAreaValue] version3.Calculator_v3:1020 - values[1]: '6'
+[INFO ] 12-10-2020 00:30:18.708 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: NumberButtonHandler_v2() finishing
+[INFO ] 12-10-2020 00:30:18.708 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:30:18.709 [Method:confirm] version3.Calculator_v3:752 - textarea: '6'
+[INFO ] 12-10-2020 00:30:18.710 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n6'
+[INFO ] 12-10-2020 00:30:18.710 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:30:18.711 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:30:18.712 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:30:18.712 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'true'
+[INFO ] 12-10-2020 00:30:18.713 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:30:18.713 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.714 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.714 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.715 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.715 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:30:18.716 [Method:confirm] version3.Calculator_v3:774 - values[0]: '5'
+[INFO ] 12-10-2020 00:30:18.716 [Method:confirm] version3.Calculator_v3:775 - values[1]: '6'
+[INFO ] 12-10-2020 00:30:18.716 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:30:18.717 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '1'
+[INFO ] 12-10-2020 00:30:18.717 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:30:18.718 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:30:18.722 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:30:18.723 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:30:18.724 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:30:18.724 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:30:18.725 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:31:49.309 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:816 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:31:49.310 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:818 - button: =
+[INFO ] 12-10-2020 00:31:49.311 [Method:multiply] version3.StandardCalculator_v3:647 - value[0]: '5'
+[INFO ] 12-10-2020 00:31:49.312 [Method:multiply] version3.StandardCalculator_v3:648 - value[1]: '6'
+[INFO ] 12-10-2020 00:31:49.316 [Method:multiply] version3.StandardCalculator_v3:650 - 5 * 6 = 30.0
+[INFO ] 12-10-2020 00:31:49.317 [Method:multiply] version3.StandardCalculator_v3:652 - addBool: false
+[INFO ] 12-10-2020 00:31:49.319 [Method:multiply] version3.StandardCalculator_v3:653 - subBool: false
+[INFO ] 12-10-2020 00:31:49.319 [Method:multiply] version3.StandardCalculator_v3:654 - mulBool: true
+[INFO ] 12-10-2020 00:31:49.320 [Method:multiply] version3.StandardCalculator_v3:655 - divBool: false
+[INFO ] 12-10-2020 00:31:49.332 [Method:resetOperator] version3.Calculator_v3:714 - operatorBool: true
+[INFO ] 12-10-2020 00:31:49.333 [Method:resetOperator] version3.Calculator_v3:716 - values[0]: '30'
+[INFO ] 12-10-2020 00:31:49.333 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:31:49.334 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:31:49.334 [Method:confirm] version3.Calculator_v3:752 - textarea: '30'
+[INFO ] 12-10-2020 00:31:49.335 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n30'
+[INFO ] 12-10-2020 00:31:49.335 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:31:49.336 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:31:49.336 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:31:49.337 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:31:49.338 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:31:49.339 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:49.339 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:49.340 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:49.341 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:49.341 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:49.342 [Method:confirm] version3.Calculator_v3:774 - values[0]: '30'
+[INFO ] 12-10-2020 00:31:49.342 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:31:49.343 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:31:49.343 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:31:49.344 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:31:49.346 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:31:49.347 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:31:49.348 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:31:49.348 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:31:49.349 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:31:49.351 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:31:55.217 [Method:keyPressed] version3.StandardCalculator_v3:313 - Key Pressed
+[INFO ] 12-10-2020 00:31:55.218 [Method:keyPressed] version3.StandardCalculator_v3:315 -    Code: ⏎
+[INFO ] 12-10-2020 00:31:55.218 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:816 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:31:55.219 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:818 - button: performButtonEqualsActions
+[INFO ] 12-10-2020 00:31:55.219 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:31:55.220 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:31:55.220 [Method:confirm] version3.Calculator_v3:752 - textarea: '30'
+[INFO ] 12-10-2020 00:31:55.220 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n30'
+[INFO ] 12-10-2020 00:31:55.221 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:31:55.221 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:31:55.221 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:31:55.222 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:31:55.222 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:31:55.222 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:55.223 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:55.223 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:55.223 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:55.224 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:31:55.224 [Method:confirm] version3.Calculator_v3:774 - values[0]: '30'
+[INFO ] 12-10-2020 00:31:55.225 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:31:55.225 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:31:55.226 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:31:55.226 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:31:55.226 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:31:55.227 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:31:55.227 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:31:55.235 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:31:55.236 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:31:55.236 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:34:20.434 [Method:main] version3.CalculatorMain_v3:18 - Starting class CalculatorMain_v3
+[INFO ] 12-10-2020 00:34:21.059 [Method:setupCalculator_v3] version3.Calculator_v3:141 - Inside setupCalculator_v3()
+[INFO ] 12-10-2020 00:34:21.068 [Method:setupCalculator_v3] version3.Calculator_v3:263 - Finished. Leaving setupCalculator_v3()
+[INFO ] 12-10-2020 00:34:21.074 [Method:setupPanel_v3] version3.JPanelBasic_v3:46 - Starting setupPanel_v3
+[INFO ] 12-10-2020 00:34:21.076 [Method:setupPanel_v3] version3.JPanelBasic_v3:135 - End setupPanel_v3()
+[INFO ] 12-10-2020 00:34:21.077 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:138 - Starting addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:34:21.082 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - Finished addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:34:21.090 [Method:setupMenuBar] version3.StandardCalculator_v3:87 - Inside setupMenuBar()
+[INFO ] 12-10-2020 00:34:21.126 [Method:setupMenuBar] version3.StandardCalculator_v3:263 - Finished. Leaving setupMenuBar()
+[INFO ] 12-10-2020 00:34:21.848 [Method:initLookAndFeel] version3.CalculatorMain_v3:49 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 12-10-2020 00:34:22.014 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: Calculator started. Initial state
+[INFO ] 12-10-2020 00:34:22.016 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:34:22.018 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:34:22.020 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:34:22.021 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:34:22.023 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:34:22.024 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:34:22.025 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:34:22.027 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:34:22.028 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:22.030 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:22.031 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:22.033 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:22.034 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:22.035 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:34:22.037 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:34:22.040 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:34:22.041 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:34:22.042 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:34:22.043 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:34:22.044 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:34:22.045 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:34:22.047 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:34:22.048 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:34:22.049 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:34:43.830 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:801 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:34:43.833 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:803 - button: =
+[INFO ] 12-10-2020 00:34:43.835 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:34:43.835 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:34:43.836 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:34:43.837 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:34:43.838 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:34:43.839 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:34:43.840 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:34:43.841 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:34:43.842 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:34:43.843 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:43.843 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:43.844 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:43.845 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:43.847 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:34:43.847 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:34:43.848 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:34:43.849 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:34:43.850 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:34:43.851 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:34:43.852 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:34:43.852 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:34:43.853 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:34:43.854 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:34:43.854 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:34:43.855 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:45:26.936 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:801 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:45:26.941 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:803 - button: =
+[INFO ] 12-10-2020 00:45:26.942 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:45:26.943 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:45:26.944 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:45:26.944 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:45:26.945 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:45:26.970 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:45:26.971 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:45:26.971 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:45:26.972 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:45:26.973 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:45:26.973 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:45:26.974 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:45:26.975 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:45:26.976 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:45:26.976 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:45:26.977 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:45:26.978 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:45:26.979 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:45:26.980 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:45:26.980 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:45:26.981 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:45:26.986 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:45:26.987 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:45:26.993 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:45:27.016 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:48:12.161 [Method:main] version3.CalculatorMain_v3:18 - Starting class CalculatorMain_v3
+[INFO ] 12-10-2020 00:48:12.835 [Method:setupCalculator_v3] version3.Calculator_v3:141 - Inside setupCalculator_v3()
+[INFO ] 12-10-2020 00:48:12.841 [Method:setupCalculator_v3] version3.Calculator_v3:263 - Finished. Leaving setupCalculator_v3()
+[INFO ] 12-10-2020 00:48:12.849 [Method:setupPanel_v3] version3.JPanelBasic_v3:46 - Starting setupPanel_v3
+[INFO ] 12-10-2020 00:48:12.851 [Method:setupPanel_v3] version3.JPanelBasic_v3:135 - End setupPanel_v3()
+[INFO ] 12-10-2020 00:48:12.852 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:138 - Starting addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:48:12.858 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - Finished addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:48:12.867 [Method:setupMenuBar] version3.StandardCalculator_v3:87 - Inside setupMenuBar()
+[INFO ] 12-10-2020 00:48:12.907 [Method:setupMenuBar] version3.StandardCalculator_v3:263 - Finished. Leaving setupMenuBar()
+[INFO ] 12-10-2020 00:48:13.568 [Method:initLookAndFeel] version3.CalculatorMain_v3:49 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 12-10-2020 00:48:13.678 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: Calculator started. Initial state
+[INFO ] 12-10-2020 00:48:13.680 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:48:13.682 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:48:13.685 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:48:13.686 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:48:13.693 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:48:13.695 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:48:13.698 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:48:13.708 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:48:13.710 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:48:13.713 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:48:13.715 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:48:13.716 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:48:13.717 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:48:13.718 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:48:13.720 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:48:13.721 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:48:13.723 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:48:13.725 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:48:13.726 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:48:13.727 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:48:13.728 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:48:13.730 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:48:13.731 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:48:13.732 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:51:06.276 [Method:main] version3.CalculatorMain_v3:18 - Starting class CalculatorMain_v3
+[INFO ] 12-10-2020 00:51:06.967 [Method:setupCalculator_v3] version3.Calculator_v3:141 - Inside setupCalculator_v3()
+[INFO ] 12-10-2020 00:51:06.983 [Method:setupCalculator_v3] version3.Calculator_v3:263 - Finished. Leaving setupCalculator_v3()
+[INFO ] 12-10-2020 00:51:06.990 [Method:setupPanel_v3] version3.JPanelBasic_v3:46 - Starting setupPanel_v3
+[INFO ] 12-10-2020 00:51:06.995 [Method:setupPanel_v3] version3.JPanelBasic_v3:135 - End setupPanel_v3()
+[INFO ] 12-10-2020 00:51:06.998 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:138 - Starting addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:51:07.009 [Method:addComponentsToPanel_v3] version3.JPanelBasic_v3:225 - Finished addComponentsToPanel_v3
+[INFO ] 12-10-2020 00:51:07.021 [Method:setupMenuBar] version3.StandardCalculator_v3:84 - Inside setupMenuBar()
+[INFO ] 12-10-2020 00:51:07.069 [Method:setupMenuBar] version3.StandardCalculator_v3:260 - Finished. Leaving setupMenuBar()
+[INFO ] 12-10-2020 00:51:07.801 [Method:initLookAndFeel] version3.CalculatorMain_v3:49 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 12-10-2020 00:51:07.924 [Method:confirm] version3.Calculator_v3:749 - Confirm Results: Calculator started. Initial state
+[INFO ] 12-10-2020 00:51:07.925 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:51:07.926 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:51:07.929 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:51:07.930 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:51:07.931 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:51:07.934 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:51:07.935 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:51:07.936 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:51:07.937 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:07.939 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:07.941 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:07.941 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:07.942 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:07.943 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:51:07.945 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:51:07.946 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:51:07.947 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:51:07.948 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:51:07.949 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:51:07.950 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:51:07.951 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:51:07.953 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:51:07.954 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:51:07.954 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+
+[INFO ] 12-10-2020 00:51:22.939 [Method:lambda$setupStandardCalculator_v3$6] version3.StandardCalculator_v3:301 - Equals button pressed
+[INFO ] 12-10-2020 00:51:22.942 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:805 - performButtonEqualsActions
+[INFO ] 12-10-2020 00:51:22.944 [Method:performButtonEqualsActions] version3.StandardCalculator_v3:807 - button: =
+[INFO ] 12-10-2020 00:51:22.945 [Method:confirm] version3.Calculator_v3:750 - Confirm Results
+[INFO ] 12-10-2020 00:51:22.945 [Method:confirm] version3.Calculator_v3:751 - ---------------- 
+[INFO ] 12-10-2020 00:51:22.946 [Method:confirm] version3.Calculator_v3:752 - textarea: ''
+[INFO ] 12-10-2020 00:51:22.946 [Method:confirm] version3.Calculator_v3:753 - textArea: '\n'
+[INFO ] 12-10-2020 00:51:22.947 [Method:confirm] version3.Calculator_v3:763 - no memories stored!
+[INFO ] 12-10-2020 00:51:22.947 [Method:confirm] version3.Calculator_v3:765 - addBool: 'false'
+[INFO ] 12-10-2020 00:51:22.948 [Method:confirm] version3.Calculator_v3:766 - subBool: 'false'
+[INFO ] 12-10-2020 00:51:22.949 [Method:confirm] version3.Calculator_v3:767 - mulBool: 'false'
+[INFO ] 12-10-2020 00:51:22.950 [Method:confirm] version3.Calculator_v3:768 - divBool: 'false'
+[INFO ] 12-10-2020 00:51:22.951 [Method:confirm] version3.Calculator_v3:769 - orButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:22.952 [Method:confirm] version3.Calculator_v3:770 - modButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:22.955 [Method:confirm] version3.Calculator_v3:771 - xorButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:22.955 [Method:confirm] version3.Calculator_v3:772 - notButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:22.956 [Method:confirm] version3.Calculator_v3:773 - andButtonBool: 'false'
+[INFO ] 12-10-2020 00:51:22.957 [Method:confirm] version3.Calculator_v3:774 - values[0]: ''
+[INFO ] 12-10-2020 00:51:22.958 [Method:confirm] version3.Calculator_v3:775 - values[1]: ''
+[INFO ] 12-10-2020 00:51:22.959 [Method:confirm] version3.Calculator_v3:776 - values[2]: ''
+[INFO ] 12-10-2020 00:51:22.960 [Method:confirm] version3.Calculator_v3:777 - valuesPosition: '0'
+[INFO ] 12-10-2020 00:51:22.960 [Method:confirm] version3.Calculator_v3:778 - memoryPosition: '0'
+[INFO ] 12-10-2020 00:51:22.961 [Method:confirm] version3.Calculator_v3:780 - firstNumBool: 'true'
+[INFO ] 12-10-2020 00:51:22.962 [Method:confirm] version3.Calculator_v3:781 - dotButtonPressed: 'false'
+[INFO ] 12-10-2020 00:51:22.962 [Method:confirm] version3.Calculator_v3:782 - isNegative: 'false'
+[INFO ] 12-10-2020 00:51:22.963 [Method:confirm] version3.Calculator_v3:783 - calcType: 'BASIC'
+[INFO ] 12-10-2020 00:51:22.963 [Method:confirm] version3.Calculator_v3:784 - calcBase: 'null'
+[INFO ] 12-10-2020 00:51:22.964 [Method:confirm] version3.Calculator_v3:785 - -------- End Confirm Results --------
+

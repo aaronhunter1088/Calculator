@@ -53,7 +53,7 @@ public abstract class Calculator_v3 extends JFrame
     final protected JButton buttonClearEntry = new JButton("CE");
     final protected JButton buttonDelete = new JButton("\u2190"); //"<--"
     final protected JButton buttonDot = new JButton(".");
-    // TODO: Move MemorySuite logic into Calculator_v4
+    // TODO: Move MemorySuite logic into Calculator_v3
     final protected JButton buttonMemoryClear = new JButton("MC");
     final protected JButton buttonMemoryRecall = new JButton("MR");
     final protected JButton buttonMemoryStore = new JButton("MS");
@@ -106,7 +106,10 @@ public abstract class Calculator_v3 extends JFrame
     protected CalcType_v3 base = CalcType_v3.DECIMAL;
 
 
-	public Calculator_v3() throws HeadlessException { super(); }
+	public Calculator_v3() throws HeadlessException
+    {
+		super();
+	}
 	public Calculator_v3(GraphicsConfiguration gc)
     {
 		super(gc);
@@ -128,7 +131,7 @@ public abstract class Calculator_v3 extends JFrame
     /******************** Start of methods here **********************/
 
     /**
-     * Handles the logic for setting up a Calculator_v4. Should
+     * Handles the logic for setting up a Calculator_v3. Should
      * run once. Anything that needs to be reset, should be reset
      * where appropriate.
      */
@@ -299,9 +302,7 @@ public abstract class Calculator_v3 extends JFrame
             buttonMemoryClear.setEnabled(true);
             confirm(values[valuesPosition] + " is stored in memory at position: " + (memoryPosition-1));
         }
-        else {
-            confirm("No number added to memory. Blank entry");
-        }
+        confirm("No number added to memory. Blank entry");
     }
 
     public void performMemoryRecallActions(ActionEvent action)
@@ -316,7 +317,7 @@ public abstract class Calculator_v3 extends JFrame
         textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
         values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
         memoryRecallPosition++;
-        confirm("Recalling number in memory: " + memoryValues[(memoryRecallPosition-1)] + " at position: " + (memoryRecallPosition-1));
+        confirm("Recalling number in memory: " + memoryValues[(memoryRecallPosition-1)] + " at position: " + memoryRecallPosition);
     }
 
     public void performMemoryClearActions(ActionEvent action)
@@ -893,13 +894,12 @@ public abstract class Calculator_v3 extends JFrame
         {
             LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
             textArea.setText("");
-            textarea = new StringBuffer().append("");
             values[valuesPosition] = "";
             firstNumBool = true;
             dotButtonPressed = false;
             checkFound = true;
         }
-        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
+        else if (values[0].equals("") && !values[1].equals(""))
         {
             values[0] = values[1];
             values[1] = "";
@@ -957,7 +957,7 @@ public abstract class Calculator_v3 extends JFrame
         else { LOGGER.info("Confirm Results"); }
         LOGGER.info("---------------- ");
         LOGGER.info("textarea: '"+textarea.toString()+"'");
-        LOGGER.info("textArea: '\\n"+getTextAreaWithoutNewLineCharacters()+"'");
+        LOGGER.info("textArea: '\\n"+textArea.getText().replaceAll("\n", "")+"'");
         if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
         {
             LOGGER.info("no memories stored!");
@@ -966,9 +966,7 @@ public abstract class Calculator_v3 extends JFrame
         {
             for(int i = 0; i < 10; i++)
             {
-                if (StringUtils.isNotBlank(memoryValues[i])) {
-                    LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);
-                }
+                LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);
             }
         }
         LOGGER.info("addBool: '"+addBool+"'");
@@ -1137,7 +1135,7 @@ public abstract class Calculator_v3 extends JFrame
 
     protected String getTextAreaWithoutNewLineCharacters()
     {
-        return getTextArea().getText().replaceAll("\n", "").strip();
+        return getTextArea().getText().replaceAll("\n", "");
     }
 
     public boolean isMemoryValuesEmpty()
@@ -1178,8 +1176,7 @@ public abstract class Calculator_v3 extends JFrame
         if (getTextAreaWithoutNewLineCharacters().equals("Invalid textarea")   ||
             getTextAreaWithoutNewLineCharacters().equals("Cannot divide by 0") ||
             getTextAreaWithoutNewLineCharacters().equals("Not a Number")       ||
-            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers") ||
-            getTextAreaWithoutNewLineCharacters().contains("E") )
+            getTextAreaWithoutNewLineCharacters().equals("Only positive numbers"))
         {
             result = true;
         }
