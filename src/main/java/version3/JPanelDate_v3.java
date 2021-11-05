@@ -27,7 +27,7 @@ public class JPanelDate_v3 extends JPanel
     protected final static Logger LOGGER;
     static
     {
-        System.setProperty("appName", "JPanelDate_v3");
+        System.setProperty("appName", "JPanelDate_v4");
         LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
     }
 
@@ -74,6 +74,7 @@ public class JPanelDate_v3 extends JPanel
     /************* Constructor ******************/
     public JPanelDate_v3(StandardCalculator_v3 calculator) throws ParseException
     {
+
         setMinimumSize(new Dimension(100,400));
         setDateLayout(new GridBagLayout());
         setLayout(getDateLayout()); // set frame layout

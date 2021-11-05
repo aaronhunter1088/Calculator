@@ -12,8 +12,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class StandardCalculator_v3 extends Calculator_v3 {
-
+public class StandardCalculator_v3 extends Calculator_v3
+{
     private static Logger LOGGER;
     static
     {
@@ -39,7 +39,6 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     final protected JButton buttonDivide = new JButton("/");
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
-    //TODO: Think about it... move class specific booleans here
 
     public StandardCalculator_v3() throws HeadlessException
     {}
@@ -149,30 +148,48 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         JMenu viewMenu = new JMenu("View");
         viewMenu.setFont(this.font);
         // View options
-        JMenuItem basic = new JMenuItem("Basic");
+        JMenuItem basic = new JMenuItem(CalcType_v3.BASIC.getName());
         basic.setFont(this.font);
         viewMenu.add(basic);
-        basic.addActionListener(action ->
-            performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC)
-        );
-        JMenuItem programmer = new JMenuItem("Programmer");
+        basic.addActionListener(action -> {
+            try
+            {
+                performTasksWhenChangingJPanels(new JPanelBasic_v3(this), CalcType_v3.BASIC);
+                confirm();
+            }
+            catch (Calculator_v3Error e)
+            {
+                LOGGER.error("Couldn't change to JPanelBasic_v4 because {}", e.getMessage());
+            }
+        });
+        JMenuItem programmer = new JMenuItem(CalcType_v3.PROGRAMMER.getName());
         programmer.setFont(this.font);
         viewMenu.add(programmer);
-        programmer.addActionListener(action ->
-            performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER)
-        );
+        programmer.addActionListener(action -> {
+            try
+            {
+                performTasksWhenChangingJPanels(new JPanelProgrammer_v3(this), CalcType_v3.PROGRAMMER);
+                confirm("Finished performTasksWhenChangingJPanels");
+            }
+            catch (Calculator_v3Error e)
+            {
+                LOGGER.error("Couldn't change to JPanelProgrammer_v4 because {}", e.getMessage());
+            }
+        });
         this.bar.add(viewMenu); // add viewMenu to menu bar
-        JMenuItem dates = new JMenuItem("Dates");
+        JMenuItem dates = new JMenuItem(CalcType_v3.DATE.getName());
         dates.setFont(this.font);
         viewMenu.add(dates);
         dates.addActionListener(action -> {
             try
             {
                 performTasksWhenChangingJPanels(new JPanelDate_v3(this), CalcType_v3.DATE);
+                setCalcType(CalcType_v3.DATE);
+                confirm();
             }
-            catch (ParseException e)
+            catch (ParseException | Calculator_v3Error e)
             {
-                LOGGER.error("Couldn't change to JPanelDate_v3 because {}", e.getMessage());
+                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
             }
         });
 
@@ -336,10 +353,11 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         buttonEquals.setBorder(new LineBorder(Color.BLACK));
         buttonEquals.setEnabled(true);
         buttonEquals.addActionListener(action -> {
-            try {
-                LOGGER.info("Equals button pressed");
+            try
+            {
                 performButtonEqualsActions();
-            } catch (Exception calculator_v3Error) {
+            } catch (Exception calculator_v3Error)
+            {
                 calculator_v3Error.printStackTrace();
             }
         });
@@ -374,18 +392,13 @@ public class StandardCalculator_v3 extends Calculator_v3 {
 
         add(getCurrentPanel());
 	}
-    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v3 calcType_v3)
+
+	public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v3 calcType_v3) throws Calculator_v3Error
     {
 	    setTitle(calcType_v3.getName());
         JPanel oldPanel = updateJPanel(currentPanel);
-        String nameOfOldPanel = "";
-        switch (getCalcType())
-        {
-            case BASIC: nameOfOldPanel = CalcType_v3.BASIC.getName(); break;
-            case PROGRAMMER: nameOfOldPanel = CalcType_v3.PROGRAMMER.getName(); break;
-            case DATE: nameOfOldPanel = CalcType_v3.DATE.getName(); break;
-            default: LOGGER.error("Unknown calculator type");
-        }
+        String nameOfOldPanel = getNameOfPanel();
+        if (StringUtils.isBlank(nameOfOldPanel)) throw new Calculator_v3Error("Name of OldPanel not found when switching Panels");
         // don't switch calc_types here; later...
         if (getCurrentPanel() instanceof JPanelBasic_v3)
         {
@@ -470,6 +483,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             confirm();
         }
     }
+
     public void addition()
     {
     	LOGGER.info("value[0]: '" + values[0] + "'");
@@ -500,7 +514,8 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         else
         { // if double == double, keep decimal and number afterwards
         	LOGGER.info("We have a decimal");
-            if (Double.parseDouble(values[0]) < 0.0 ) {
+            if (Double.parseDouble(values[0]) < 0.0 )
+            {
                 values[0] = formatNumber(values[0]);
                 LOGGER.info("textarea: '" + textarea + "'");
                 textarea = new StringBuffer().append(values[0]);
@@ -509,12 +524,15 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 LOGGER.info("textarea: '" + textarea + "'");
                 textArea.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"] '" + values[valuesPosition] + "'");
-            } else {
+            }
+            else
+            {
                 textArea.setText("\n" + formatNumber(values[0]));
                 values[0] = formatNumber(values[0]);
             }
         }
     }
+
     public void addition(CalcType_v3 calcType_v3)
     {
         if (getCalcType().equals(CalcType_v3.BASIC)) {
@@ -951,6 +969,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 divBool = resetOperator(divBool);
             }
         }
+        // TODO: is this necessary. values should always be in DECIMAL form
         else if (getCalcType() == CalcType_v3.PROGRAMMER)
         {
             if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonBin().isSelected())
@@ -965,7 +984,7 @@ public class StandardCalculator_v3 extends Calculator_v3 {
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonDec().isSelected())
             {
-                // DO NOTHING
+                getLOGGER().debug("Do nothing");
             }
             else if (((JPanelProgrammer_v3)getCurrentPanel()).getButtonHex().isSelected())
             {
@@ -1097,34 +1116,50 @@ public class StandardCalculator_v3 extends Calculator_v3 {
      *        perform setup tasks based on mode
      */
 
-    public JPanel updateJPanel(JPanel currentPanel)
+    /**
+     * This method returns the name of the Panel based on the current set CalcType
+     * @return String the name of the Panel based on the CalcType
+     */
+    public String getNameOfPanel()
+    {
+        String nameOfPanel = new String();
+        switch (getCalcType())
+        {
+            case BASIC: nameOfPanel = CalcType_v3.BASIC.getName(); break;
+            case PROGRAMMER: nameOfPanel = CalcType_v3.PROGRAMMER.getName(); break;
+            case SCIENTIFIC: nameOfPanel = CalcType_v3.SCIENTIFIC.getName(); break;
+            case DATE: nameOfPanel = CalcType_v3.DATE.getName(); break;
+            default: LOGGER.error("Unknown calculator type");
+        }
+        return nameOfPanel;
+    }
+
+    /**
+     * This method updates the JPanel to the one sent in
+     * and returns the oldPanel
+     * @param newPanel
+     * @return
+     */
+    public JPanel updateJPanel(JPanel newPanel)
     {
         JPanel oldPanel = getCurrentPanel();
         remove(oldPanel);
-        setCurrentPanel(currentPanel);
+        setCurrentPanel(newPanel);
         add(getCurrentPanel());
         return oldPanel;
     }
 
+    @Deprecated
     public void convertAllValuesToDecimal()
     {
         if (getCalcType().equals(CalcType_v3.PROGRAMMER))
         {
             values = convertFromTypeToTypeOnValues("Binary", "Decimal", values);
-//            values[1] = convertFromTypeToTypeOnValues("Binary", "Decimal", values[1])[0];
-//            values[3] = convertFromTypeToTypeOnValues(CalcType_v3.BINARY2.getName(), CalcType_v3.DECIMAL.getName(), values[3])[0];
         }
         // TODO: Add more CalcType_v3's here
     }
 
-    /**
-     * IMPORTANT! You must convert values back to decimal within the same method this
-     * method is called. It is an error to not convert the numbers back.
-     *
-     * This method exists to quickly convert the values to binary, for whatever
-     * the purpose may be. Once the logic for needing the numbers to be in binary
-     * mode, you must convert the values back to decimal!
-     */
+    @Deprecated
     public void convertAllValuesToBinary()
     {
         values = convertFromTypeToTypeOnValues("Decimal", "Binary", values);
@@ -1133,7 +1168,40 @@ public class StandardCalculator_v3 extends Calculator_v3 {
     }
 
     /**
-     * IMPORTANT: Remember that this method returns a String array!!
+     * This method returns true or false depending on if an operator was pushed or not
+     * @return
+     */
+    public boolean determineIfMainOperatorWasPushed()
+    {
+        boolean result = false;
+        if (isAddBool() || isSubBool() ||
+            isMulBool() || isDivBool())
+        {
+            result = true;
+        }
+        return result;
+    }
+
+    /**
+     * This method converts the memory values
+     */
+    public void convertMemoryValues()
+    {
+        String[] newMemoryValues = new String[10];
+        int i = 0;
+        if (getCalcType() == CalcType_v3.PROGRAMMER)
+        {
+            for(String numberInMemory : getMemoryValues())
+            {
+                newMemoryValues[i] = convertFromTypeToTypeOnValues(CalcType_v3.PROGRAMMER.getName(), CalcType_v3.BASIC.getName(), numberInMemory)[0];
+                getLOGGER().debug("new number in memory is: " + newMemoryValues[i]);
+                i++;
+            }
+        }
+    }
+
+    /**
+     * This method takes CalcType Types, NOT BASES!
      * @param type1
      * @param type2
      * @param strings
@@ -1146,9 +1214,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
         int countOfStrings = 0;
         if (StringUtils.isEmpty(strings[0])) return new String[]{"", "", "", ""};
         else countOfStrings = 1;
-        if (type1.equals(CalcType_v3.DECIMAL.getName()) && type2.equals(CalcType_v3.BINARY.getName()))
+        if (type1.equals(CalcType_v3.BASIC.getName()) && type2.equals(CalcType_v3.PROGRAMMER.getName()))
         {
-            for(String str : Arrays.asList(strings)) {
+            for(String str : Arrays.asList(strings))
+            {
                 LOGGER.debug("Converting str("+str+") or "+countOfStrings+"/"+strings.length);
                 StringBuffer sb = new StringBuffer();
                 int number = 0;
@@ -1185,9 +1254,10 @@ public class StandardCalculator_v3 extends Calculator_v3 {
                 countOfStrings++;
             }
         }
-        else if (type1.equals(CalcType_v3.BINARY.getName()) && type2.equals(CalcType_v3.DECIMAL.getName()))
+        else if (type1.equals(CalcType_v3.PROGRAMMER.getName()) && type2.equals(CalcType_v3.BASIC.getName()))
         {
-            for(String str : Arrays.asList(strings)) {
+            for(String str : Arrays.asList(strings))
+            {
                 LOGGER.debug("Converting str("+str+") or "+countOfStrings+"/"+strings.length);
                 StringBuffer sb = new StringBuffer();
                 sb.append(str);

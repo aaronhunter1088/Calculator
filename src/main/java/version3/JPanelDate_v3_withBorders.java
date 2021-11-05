@@ -27,7 +27,7 @@ public class JPanelDate_v3_withBorders extends JPanel
     protected final static Logger LOGGER;
     static
     {
-        System.setProperty("appName", "JPanelDate_v3");
+        System.setProperty("appName", "JPanelDate_v4");
         LOGGER = LogManager.getLogger(JPanelBasic_v3.class);
     }
 

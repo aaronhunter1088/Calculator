@@ -1,12 +1,14 @@
 package version3;
 
-public enum CalcType_v3 {
+public enum CalcType_v3
+{
+	// Types
 	BASIC("Basic"),
-	SCIENTIFIC("Scientific Calculator"),
-	PROGRAMMER("Programmer Calculator"),
-	DATE("Date Calculator"),
+	SCIENTIFIC("Scientific"),
+	PROGRAMMER("Programmer"),
+	DATE("Date"),
 
-	//Bases for Programmer mode
+	// Bases for Programmer mode
 	BINARY("Binary"),
 	OCTAL("Octal"),
 	DECIMAL("Decimal"),

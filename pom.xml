@@ -33,7 +33,7 @@
 		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
 		<dependency>
 			<groupId>com.apple</groupId>
-			<artifactId>AppleJavaExtensions</artifactId>
+			<artifactId>applejavaextensions</artifactId>
 			<version>${apple.version}</version>
 		</dependency>
 
