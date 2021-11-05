@@ -1,0 +1,2030 @@
+[INFO ] 05-01-2019 22:02:36.965 [Method:main] version3.CalculatorMain:14 - Inside main(). Starting class CalculatorMain
+[INFO ] 05-01-2019 22:02:37.438 [Method:<init>] version3.Calculator:97 - Inside Calculator constructor.
+[INFO ] 05-01-2019 22:02:37.439 [Method:setImageIcons] version3.Calculator:1936 - Inside setImageIcons()
+[INFO ] 05-01-2019 22:02:37.439 [Method:createImageIcon] version3.Calculator:1922 - Inside createImageIcon()
+[INFO ] 05-01-2019 22:02:37.440 [Method:createImageIcon] version3.Calculator:1926 - the path 'src/main/resources/images/calculatorOriginalCopy.jpg' created an image! the imageicon is being returned...
+[INFO ] 05-01-2019 22:02:37.440 [Method:createImageIcon] version3.Calculator:1927 - End createImageIcon()
+[ERROR] 05-01-2019 22:02:37.449 [Method:setImageIcons] version3.Calculator:1942 - Can't read input file!
+[INFO ] 05-01-2019 22:02:37.449 [Method:setImageIcons] version3.Calculator:1944 - End setImageIcons()
+[INFO ] 05-01-2019 22:02:37.450 [Method:setInitialStartMode] version3.Calculator:326 - Inside setInitalStartMode()
+[INFO ] 05-01-2019 22:02:37.458 [Method:setInitialStartMode] version3.Calculator:347 - 28 button handlers created...
+[WARN ] 05-01-2019 22:02:37.460 [Method:setInitialStartMode] version3.Calculator:451 - buttonMC.getEnabled() = false
+[WARN ] 05-01-2019 22:02:37.461 [Method:setInitialStartMode] version3.Calculator:458 - buttonMR.getEnabled() = false
+[INFO ] 05-01-2019 22:02:37.461 [Method:setInitialStartMode] version3.Calculator:473 - All buttons font set, size set, and border set.
+[INFO ] 05-01-2019 22:02:37.463 [Method:setInitialStartMode] version3.Calculator:563 - All buttons added to the frame.
+[INFO ] 05-01-2019 22:02:37.463 [Method:setInitialStartMode] version3.Calculator:564 - End setInitialStartMode()
+[INFO ] 05-01-2019 22:02:37.464 [Method:<init>] version3.Calculator:107 - End Calculator constructor.
+[INFO ] 05-01-2019 22:02:37.464 [Method:initLookAndFeel] version3.CalculatorMain:48 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 05-01-2019 22:02:37.469 [Method:setCalculatorUp] version3.CalculatorMain:53 - Setting up the calculator...
+[INFO ] 05-01-2019 22:02:37.470 [Method:setCalculatorUp] version3.CalculatorMain:55 - Setting up a calculator
+[INFO ] 05-01-2019 22:02:37.470 [Method:setMenuBar] version3.Calculator:126 - Inside setMenuBar()
+[INFO ] 05-01-2019 22:02:39.362 [Method:setCalculatorUp] version3.CalculatorMain:76 - End setCalculatorUp()
+[INFO ] 05-01-2019 22:02:39.461 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:02:39.461 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:02:39.462 [Method:confirm] version3.Calculator:1891 - temp[0]: ''
+[INFO ] 05-01-2019 22:02:39.462 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:02:39.463 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:02:39.463 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:02:39.463 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:02:39.464 [Method:confirm] version3.Calculator:1892 - textarea: '\n'
+[INFO ] 05-01-2019 22:02:39.464 [Method:confirm] version3.Calculator:1893 - textArea: '\n'
+[INFO ] 05-01-2019 22:02:39.465 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:02:39.465 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:02:39.467 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:02:39.468 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:02:39.468 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:02:39.470 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:02:39.471 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:02:39.471 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:02:39.472 [Method:main] version3.CalculatorMain:23 - End main()
+
+[INFO ] 05-01-2019 22:03:38.475 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:03:38.476 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:03:38.477 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:03:38.477 [Method:actionPerformed] version3.Calculator:680 - before: 
+[INFO ] 05-01-2019 22:03:38.542 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n2'
+[INFO ] 05-01-2019 22:03:38.543 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '2'
+[INFO ] 05-01-2019 22:03:38.543 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:38.544 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:38.544 [Method:confirm] version3.Calculator:1891 - temp[0]: '2'
+[INFO ] 05-01-2019 22:03:38.545 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:38.545 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:38.546 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:38.546 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:38.547 [Method:confirm] version3.Calculator:1892 - textarea: '\n2'
+[INFO ] 05-01-2019 22:03:38.547 [Method:confirm] version3.Calculator:1893 - textArea: '\n2'
+[INFO ] 05-01-2019 22:03:38.548 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:38.548 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:38.549 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:38.549 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:38.550 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:38.552 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:38.552 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:38.554 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:39.033 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:03:39.033 [Method:actionPerformed] version3.Calculator:656 - button: 8
+[INFO ] 05-01-2019 22:03:39.034 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:03:39.035 [Method:actionPerformed] version3.Calculator:680 - before: 2
+[INFO ] 05-01-2019 22:03:39.039 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n28'
+[INFO ] 05-01-2019 22:03:39.039 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '28'
+[INFO ] 05-01-2019 22:03:39.039 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:39.040 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:39.040 [Method:confirm] version3.Calculator:1891 - temp[0]: '28'
+[INFO ] 05-01-2019 22:03:39.040 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:39.047 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:39.048 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:39.048 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:39.049 [Method:confirm] version3.Calculator:1892 - textarea: '\n28'
+[INFO ] 05-01-2019 22:03:39.049 [Method:confirm] version3.Calculator:1893 - textArea: '\n28'
+[INFO ] 05-01-2019 22:03:39.050 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:39.050 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:39.051 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:39.051 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:39.052 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:39.052 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:39.053 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:39.053 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:40.124 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:03:40.125 [Method:actionPerformed] version3.Calculator:656 - button: 6
+[INFO ] 05-01-2019 22:03:40.125 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:03:40.126 [Method:actionPerformed] version3.Calculator:680 - before: 28
+[INFO ] 05-01-2019 22:03:40.129 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n286'
+[INFO ] 05-01-2019 22:03:40.130 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '286'
+[INFO ] 05-01-2019 22:03:40.130 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:40.130 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:40.131 [Method:confirm] version3.Calculator:1891 - temp[0]: '286'
+[INFO ] 05-01-2019 22:03:40.131 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:40.147 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:40.148 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:40.148 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:40.149 [Method:confirm] version3.Calculator:1892 - textarea: '\n286'
+[INFO ] 05-01-2019 22:03:40.150 [Method:confirm] version3.Calculator:1893 - textArea: '\n286'
+[INFO ] 05-01-2019 22:03:40.151 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:40.151 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:40.152 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:40.152 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:40.153 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:40.154 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:40.154 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:40.155 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:41.206 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:03:41.207 [Method:actionPerformed] version3.Calculator:656 - button: 8
+[INFO ] 05-01-2019 22:03:41.208 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:03:41.208 [Method:actionPerformed] version3.Calculator:680 - before: 286
+[INFO ] 05-01-2019 22:03:41.211 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n2868'
+[INFO ] 05-01-2019 22:03:41.212 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '2868'
+[INFO ] 05-01-2019 22:03:41.212 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:41.212 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:41.213 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868'
+[INFO ] 05-01-2019 22:03:41.213 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:41.213 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:41.214 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:41.214 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:41.215 [Method:confirm] version3.Calculator:1892 - textarea: '\n2868'
+[INFO ] 05-01-2019 22:03:41.215 [Method:confirm] version3.Calculator:1893 - textArea: '\n2868'
+[INFO ] 05-01-2019 22:03:41.247 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:41.249 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:41.250 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:41.251 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:41.253 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:41.255 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:41.255 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:41.256 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:42.119 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 05-01-2019 22:03:42.120 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 05-01-2019 22:03:42.120 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 05-01-2019 22:03:42.121 [Method:actionPerformed] version3.Calculator:1438 - temp[0] is 2868 before appending dot
+[INFO ] 05-01-2019 22:03:42.125 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.2868
+[INFO ] 05-01-2019 22:03:42.127 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:42.127 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:42.128 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868'
+[INFO ] 05-01-2019 22:03:42.128 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:42.128 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:42.147 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:42.148 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:42.149 [Method:confirm] version3.Calculator:1892 - textarea: '\n.2868'
+[INFO ] 05-01-2019 22:03:42.150 [Method:confirm] version3.Calculator:1893 - textArea: '\n.2868'
+[INFO ] 05-01-2019 22:03:42.151 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:42.152 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:42.152 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:42.153 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:42.154 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:42.154 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:42.155 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 05-01-2019 22:03:42.155 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:43.548 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:03:43.549 [Method:actionPerformed] version3.Calculator:656 - button: 3
+[INFO ] 05-01-2019 22:03:43.549 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 05-01-2019 22:03:43.553 [Method:actionPerformed] version3.Calculator:701 - textarea: 2868.3
+[INFO ] 05-01-2019 22:03:43.553 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:43.553 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:43.554 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.3'
+[INFO ] 05-01-2019 22:03:43.554 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:43.554 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:43.555 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:43.555 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:43.556 [Method:confirm] version3.Calculator:1892 - textarea: '\n2868.3'
+[INFO ] 05-01-2019 22:03:43.556 [Method:confirm] version3.Calculator:1893 - textArea: '\n2868.3'
+[INFO ] 05-01-2019 22:03:43.556 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:43.557 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:43.557 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:43.557 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:43.558 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:43.558 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:43.559 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:43.559 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:44.163 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:03:44.163 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:03:44.164 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:03:44.164 [Method:actionPerformed] version3.Calculator:680 - before: 2868.3
+[INFO ] 05-01-2019 22:03:44.168 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n2868.35'
+[INFO ] 05-01-2019 22:03:44.168 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:03:44.168 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:44.169 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:44.169 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:03:44.169 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:44.197 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:44.197 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:44.198 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:44.198 [Method:confirm] version3.Calculator:1892 - textarea: '\n2868.35'
+[INFO ] 05-01-2019 22:03:44.198 [Method:confirm] version3.Calculator:1893 - textArea: '\n2868.35'
+[INFO ] 05-01-2019 22:03:44.199 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:03:44.199 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:44.200 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:44.200 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:44.201 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:03:44.201 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:03:44.201 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:44.202 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:03:45.246 [Method:actionPerformed] version3.Calculator:802 - AddButtonHandler started
+[INFO ] 05-01-2019 22:03:45.247 [Method:actionPerformed] version3.Calculator:803 - button: +
+[INFO ] 05-01-2019 22:03:45.251 [Method:actionPerformed] version3.Calculator:808 - textArea: 
+ + 2868.35
+[INFO ] 05-01-2019 22:03:45.252 [Method:actionPerformed] version3.Calculator:809 - temp[0] is 2868.35 after addButton pushed
+[INFO ] 05-01-2019 22:03:45.252 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:03:45.253 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:03:45.253 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:03:45.254 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:03:45.254 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:03:45.254 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:03:45.254 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:03:45.255 [Method:confirm] version3.Calculator:1892 - textarea: '\n + 2868.35'
+[INFO ] 05-01-2019 22:03:45.256 [Method:confirm] version3.Calculator:1893 - textArea: '\n + 2868.35'
+[INFO ] 05-01-2019 22:03:45.256 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:03:45.256 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:03:45.257 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:03:45.257 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:03:45.257 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:03:45.258 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:03:45.258 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:03:45.258 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:18.341 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:18.341 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:04:18.342 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:04:18.345 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n5'
+[INFO ] 05-01-2019 22:04:18.346 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '5'
+[INFO ] 05-01-2019 22:04:18.346 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:18.346 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:18.346 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:18.347 [Method:confirm] version3.Calculator:1891 - temp[1]: '5'
+[INFO ] 05-01-2019 22:04:18.347 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:18.347 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:18.347 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:18.348 [Method:confirm] version3.Calculator:1892 - textarea: '\n5'
+[INFO ] 05-01-2019 22:04:18.348 [Method:confirm] version3.Calculator:1893 - textArea: '\n5'
+[INFO ] 05-01-2019 22:04:18.349 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:18.349 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:18.350 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:18.351 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:18.351 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:18.351 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:18.351 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:18.352 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:18.994 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:18.995 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 05-01-2019 22:04:18.996 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:18.996 [Method:actionPerformed] version3.Calculator:680 - before: 5
+[INFO ] 05-01-2019 22:04:18.999 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n51'
+[INFO ] 05-01-2019 22:04:18.999 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '51'
+[INFO ] 05-01-2019 22:04:19.000 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:19.000 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:19.000 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:19.001 [Method:confirm] version3.Calculator:1891 - temp[1]: '51'
+[INFO ] 05-01-2019 22:04:19.001 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:19.001 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:19.001 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:19.002 [Method:confirm] version3.Calculator:1892 - textarea: '\n51'
+[INFO ] 05-01-2019 22:04:19.002 [Method:confirm] version3.Calculator:1893 - textArea: '\n51'
+[INFO ] 05-01-2019 22:04:19.003 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:19.003 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:19.003 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:19.004 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:19.004 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:19.004 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:19.005 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:19.005 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:19.645 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:19.646 [Method:actionPerformed] version3.Calculator:656 - button: 4
+[INFO ] 05-01-2019 22:04:19.647 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:19.648 [Method:actionPerformed] version3.Calculator:680 - before: 51
+[INFO ] 05-01-2019 22:04:19.653 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n514'
+[INFO ] 05-01-2019 22:04:19.654 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '514'
+[INFO ] 05-01-2019 22:04:19.654 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:19.655 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:19.655 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:19.656 [Method:confirm] version3.Calculator:1891 - temp[1]: '514'
+[INFO ] 05-01-2019 22:04:19.656 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:19.656 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:19.657 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:19.657 [Method:confirm] version3.Calculator:1892 - textarea: '\n514'
+[INFO ] 05-01-2019 22:04:19.657 [Method:confirm] version3.Calculator:1893 - textArea: '\n514'
+[INFO ] 05-01-2019 22:04:19.658 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:19.658 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:19.658 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:19.659 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:19.659 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:19.659 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:19.660 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:19.660 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:20.425 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 05-01-2019 22:04:20.425 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 05-01-2019 22:04:20.426 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 05-01-2019 22:04:20.426 [Method:actionPerformed] version3.Calculator:1438 - temp[1] is 514 before appending dot
+[INFO ] 05-01-2019 22:04:20.430 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.514
+[INFO ] 05-01-2019 22:04:20.431 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:20.431 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:20.432 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:20.432 [Method:confirm] version3.Calculator:1891 - temp[1]: '514'
+[INFO ] 05-01-2019 22:04:20.432 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:20.433 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:20.433 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:20.433 [Method:confirm] version3.Calculator:1892 - textarea: '\n.514'
+[INFO ] 05-01-2019 22:04:20.433 [Method:confirm] version3.Calculator:1893 - textArea: '\n.514'
+[INFO ] 05-01-2019 22:04:20.434 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:20.434 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:20.434 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:20.435 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:20.435 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:20.435 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:20.435 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 05-01-2019 22:04:20.435 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:21.050 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:21.051 [Method:actionPerformed] version3.Calculator:656 - button: 8
+[INFO ] 05-01-2019 22:04:21.053 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 05-01-2019 22:04:21.057 [Method:actionPerformed] version3.Calculator:701 - textarea: 514.8
+[INFO ] 05-01-2019 22:04:21.057 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:21.058 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:21.058 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:21.059 [Method:confirm] version3.Calculator:1891 - temp[1]: '514.8'
+[INFO ] 05-01-2019 22:04:21.059 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:21.059 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:21.060 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:21.060 [Method:confirm] version3.Calculator:1892 - textarea: '\n514.8'
+[INFO ] 05-01-2019 22:04:21.061 [Method:confirm] version3.Calculator:1893 - textArea: '\n514.8'
+[INFO ] 05-01-2019 22:04:21.061 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:21.061 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:21.061 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:21.062 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:21.062 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:21.062 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:21.063 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:21.063 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:21.741 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:21.741 [Method:actionPerformed] version3.Calculator:656 - button: 4
+[INFO ] 05-01-2019 22:04:21.742 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:21.742 [Method:actionPerformed] version3.Calculator:680 - before: 514.8
+[INFO ] 05-01-2019 22:04:21.745 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n514.84'
+[INFO ] 05-01-2019 22:04:21.746 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '514.84'
+[INFO ] 05-01-2019 22:04:21.746 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:21.747 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:21.747 [Method:confirm] version3.Calculator:1891 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:21.747 [Method:confirm] version3.Calculator:1891 - temp[1]: '514.84'
+[INFO ] 05-01-2019 22:04:21.748 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:21.748 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:21.748 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:21.749 [Method:confirm] version3.Calculator:1892 - textarea: '\n514.84'
+[INFO ] 05-01-2019 22:04:21.749 [Method:confirm] version3.Calculator:1893 - textArea: '\n514.84'
+[INFO ] 05-01-2019 22:04:21.749 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:21.750 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:21.750 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:21.750 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:21.750 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:21.751 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:21.751 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:21.751 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:22.485 [Method:actionPerformed] version3.Calculator:802 - AddButtonHandler started
+[INFO ] 05-01-2019 22:04:22.486 [Method:actionPerformed] version3.Calculator:803 - button: +
+[INFO ] 05-01-2019 22:04:22.486 [Method:actionPerformed] version3.Calculator:815 - Performing previous addition calculation
+[INFO ] 05-01-2019 22:04:22.487 [Method:addition] version3.Calculator:1702 - temp[0]: '2868.35'
+[INFO ] 05-01-2019 22:04:22.488 [Method:addition] version3.Calculator:1703 - temp[1]: '514.84'
+[INFO ] 05-01-2019 22:04:22.489 [Method:addition] version3.Calculator:1705 - 2868.35 + 514.84 = 3383.19
+[INFO ] 05-01-2019 22:04:22.489 [Method:addition] version3.Calculator:1707 - addBool: true
+[INFO ] 05-01-2019 22:04:22.490 [Method:addition] version3.Calculator:1708 - subBool: false
+[INFO ] 05-01-2019 22:04:22.490 [Method:addition] version3.Calculator:1709 - mulBool: false
+[INFO ] 05-01-2019 22:04:22.491 [Method:addition] version3.Calculator:1710 - divBool: false
+[INFO ] 05-01-2019 22:04:22.491 [Method:addition] version3.Calculator:1726 - We have a decimal
+[INFO ] 05-01-2019 22:04:22.492 [Method:formatNumber] version3.Calculator:1873 - Formatted: 3383.19
+[INFO ] 05-01-2019 22:04:22.495 [Method:formatNumber] version3.Calculator:1873 - Formatted: 3383.19
+[INFO ] 05-01-2019 22:04:22.495 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:04:22.496 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:22.496 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:22.496 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:22.497 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:22.497 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:04:22.497 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:22.498 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:22.498 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:22.498 [Method:confirm] version3.Calculator:1892 - textarea: '\n3383.19'
+[INFO ] 05-01-2019 22:04:22.499 [Method:confirm] version3.Calculator:1893 - textArea: '\n3383.19'
+[INFO ] 05-01-2019 22:04:22.499 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:22.499 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:22.500 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:22.500 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:22.500 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:22.501 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:04:22.501 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:22.501 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:25.328 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:25.328 [Method:actionPerformed] version3.Calculator:656 - button: 4
+[INFO ] 05-01-2019 22:04:25.329 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:04:25.332 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n4'
+[INFO ] 05-01-2019 22:04:25.333 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '4'
+[INFO ] 05-01-2019 22:04:25.333 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:25.333 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:25.334 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:25.334 [Method:confirm] version3.Calculator:1891 - temp[1]: '4'
+[INFO ] 05-01-2019 22:04:25.334 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:25.335 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:25.335 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:25.335 [Method:confirm] version3.Calculator:1892 - textarea: '\n4'
+[INFO ] 05-01-2019 22:04:25.335 [Method:confirm] version3.Calculator:1893 - textArea: '\n4'
+[INFO ] 05-01-2019 22:04:25.335 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:25.336 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:25.336 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:25.336 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:25.336 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:25.337 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:25.337 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:25.337 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:26.120 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:26.121 [Method:actionPerformed] version3.Calculator:656 - button: 4
+[INFO ] 05-01-2019 22:04:26.121 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:26.122 [Method:actionPerformed] version3.Calculator:680 - before: 4
+[INFO ] 05-01-2019 22:04:26.125 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n44'
+[INFO ] 05-01-2019 22:04:26.126 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '44'
+[INFO ] 05-01-2019 22:04:26.126 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:26.126 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:26.127 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:26.127 [Method:confirm] version3.Calculator:1891 - temp[1]: '44'
+[INFO ] 05-01-2019 22:04:26.127 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:26.127 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:26.127 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:26.128 [Method:confirm] version3.Calculator:1892 - textarea: '\n44'
+[INFO ] 05-01-2019 22:04:26.128 [Method:confirm] version3.Calculator:1893 - textArea: '\n44'
+[INFO ] 05-01-2019 22:04:26.128 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:26.129 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:26.129 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:26.129 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:26.129 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:26.129 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:26.130 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:26.130 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:26.848 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:26.849 [Method:actionPerformed] version3.Calculator:656 - button: 6
+[INFO ] 05-01-2019 22:04:26.849 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:26.850 [Method:actionPerformed] version3.Calculator:680 - before: 44
+[INFO ] 05-01-2019 22:04:26.854 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n446'
+[INFO ] 05-01-2019 22:04:26.854 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '446'
+[INFO ] 05-01-2019 22:04:26.854 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:26.855 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:26.855 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:26.855 [Method:confirm] version3.Calculator:1891 - temp[1]: '446'
+[INFO ] 05-01-2019 22:04:26.856 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:26.856 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:26.856 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:26.856 [Method:confirm] version3.Calculator:1892 - textarea: '\n446'
+[INFO ] 05-01-2019 22:04:26.857 [Method:confirm] version3.Calculator:1893 - textArea: '\n446'
+[INFO ] 05-01-2019 22:04:26.857 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:26.857 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:26.858 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:26.858 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:26.858 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:26.859 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:26.859 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:26.859 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:27.736 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 05-01-2019 22:04:27.736 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 05-01-2019 22:04:27.736 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 05-01-2019 22:04:27.737 [Method:actionPerformed] version3.Calculator:1438 - temp[1] is 446 before appending dot
+[INFO ] 05-01-2019 22:04:27.739 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.446
+[INFO ] 05-01-2019 22:04:27.740 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:27.740 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:27.741 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:27.741 [Method:confirm] version3.Calculator:1891 - temp[1]: '446'
+[INFO ] 05-01-2019 22:04:27.742 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:27.742 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:27.742 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:27.743 [Method:confirm] version3.Calculator:1892 - textarea: '\n.446'
+[INFO ] 05-01-2019 22:04:27.743 [Method:confirm] version3.Calculator:1893 - textArea: '\n.446'
+[INFO ] 05-01-2019 22:04:27.743 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:27.744 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:27.744 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:27.744 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:27.745 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:27.745 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:27.745 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 05-01-2019 22:04:27.745 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:28.463 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:28.464 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 05-01-2019 22:04:28.464 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 05-01-2019 22:04:28.468 [Method:actionPerformed] version3.Calculator:701 - textarea: 446.1
+[INFO ] 05-01-2019 22:04:28.468 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:28.469 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:28.469 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:28.470 [Method:confirm] version3.Calculator:1891 - temp[1]: '446.1'
+[INFO ] 05-01-2019 22:04:28.470 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:28.470 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:28.471 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:28.472 [Method:confirm] version3.Calculator:1892 - textarea: '\n446.1'
+[INFO ] 05-01-2019 22:04:28.472 [Method:confirm] version3.Calculator:1893 - textArea: '\n446.1'
+[INFO ] 05-01-2019 22:04:28.473 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:28.473 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:28.474 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:28.474 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:28.474 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:28.474 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:28.475 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:28.475 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:29.142 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:29.142 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:04:29.143 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:29.143 [Method:actionPerformed] version3.Calculator:680 - before: 446.1
+[INFO ] 05-01-2019 22:04:29.146 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n446.15'
+[INFO ] 05-01-2019 22:04:29.146 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '446.15'
+[INFO ] 05-01-2019 22:04:29.147 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:29.147 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:29.147 [Method:confirm] version3.Calculator:1891 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:29.147 [Method:confirm] version3.Calculator:1891 - temp[1]: '446.15'
+[INFO ] 05-01-2019 22:04:29.148 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:29.148 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:29.148 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:29.149 [Method:confirm] version3.Calculator:1892 - textarea: '\n446.15'
+[INFO ] 05-01-2019 22:04:29.150 [Method:confirm] version3.Calculator:1893 - textArea: '\n446.15'
+[INFO ] 05-01-2019 22:04:29.150 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:29.150 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:29.151 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:29.152 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:29.152 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:29.154 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:29.154 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:29.154 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:30.781 [Method:actionPerformed] version3.Calculator:802 - AddButtonHandler started
+[INFO ] 05-01-2019 22:04:30.782 [Method:actionPerformed] version3.Calculator:803 - button: +
+[INFO ] 05-01-2019 22:04:30.782 [Method:actionPerformed] version3.Calculator:815 - Performing previous addition calculation
+[INFO ] 05-01-2019 22:04:30.783 [Method:addition] version3.Calculator:1702 - temp[0]: '3383.19'
+[INFO ] 05-01-2019 22:04:30.783 [Method:addition] version3.Calculator:1703 - temp[1]: '446.15'
+[INFO ] 05-01-2019 22:04:30.783 [Method:addition] version3.Calculator:1705 - 3383.19 + 446.15 = 3829.34
+[INFO ] 05-01-2019 22:04:30.783 [Method:addition] version3.Calculator:1707 - addBool: true
+[INFO ] 05-01-2019 22:04:30.784 [Method:addition] version3.Calculator:1708 - subBool: false
+[INFO ] 05-01-2019 22:04:30.784 [Method:addition] version3.Calculator:1709 - mulBool: false
+[INFO ] 05-01-2019 22:04:30.784 [Method:addition] version3.Calculator:1710 - divBool: false
+[INFO ] 05-01-2019 22:04:30.784 [Method:addition] version3.Calculator:1726 - We have a decimal
+[INFO ] 05-01-2019 22:04:30.785 [Method:formatNumber] version3.Calculator:1873 - Formatted: 3829.34
+[INFO ] 05-01-2019 22:04:30.787 [Method:formatNumber] version3.Calculator:1873 - Formatted: 3829.34
+[INFO ] 05-01-2019 22:04:30.788 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:04:30.788 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:30.788 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:30.788 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:30.789 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:30.789 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:04:30.789 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:30.789 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:30.790 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:30.790 [Method:confirm] version3.Calculator:1892 - textarea: '\n3829.34'
+[INFO ] 05-01-2019 22:04:30.790 [Method:confirm] version3.Calculator:1893 - textArea: '\n3829.34'
+[INFO ] 05-01-2019 22:04:30.791 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:30.791 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:30.791 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:30.791 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:30.791 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:30.792 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:04:30.792 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:30.792 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:33.238 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:33.238 [Method:actionPerformed] version3.Calculator:656 - button: 6
+[INFO ] 05-01-2019 22:04:33.239 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:04:33.242 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n6'
+[INFO ] 05-01-2019 22:04:33.243 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '6'
+[INFO ] 05-01-2019 22:04:33.243 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:33.243 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:33.243 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:33.243 [Method:confirm] version3.Calculator:1891 - temp[1]: '6'
+[INFO ] 05-01-2019 22:04:33.244 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:33.244 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:33.244 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:33.244 [Method:confirm] version3.Calculator:1892 - textarea: '\n6'
+[INFO ] 05-01-2019 22:04:33.244 [Method:confirm] version3.Calculator:1893 - textArea: '\n6'
+[INFO ] 05-01-2019 22:04:33.244 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:33.245 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:33.245 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:33.245 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:33.245 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:33.245 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:33.245 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:33.246 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:33.514 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:33.515 [Method:actionPerformed] version3.Calculator:656 - button: 6
+[INFO ] 05-01-2019 22:04:33.515 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:33.516 [Method:actionPerformed] version3.Calculator:680 - before: 6
+[INFO ] 05-01-2019 22:04:33.518 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n66'
+[INFO ] 05-01-2019 22:04:33.519 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '66'
+[INFO ] 05-01-2019 22:04:33.519 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:33.519 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:33.519 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:33.520 [Method:confirm] version3.Calculator:1891 - temp[1]: '66'
+[INFO ] 05-01-2019 22:04:33.520 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:33.520 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:33.521 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:33.521 [Method:confirm] version3.Calculator:1892 - textarea: '\n66'
+[INFO ] 05-01-2019 22:04:33.521 [Method:confirm] version3.Calculator:1893 - textArea: '\n66'
+[INFO ] 05-01-2019 22:04:33.521 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:33.522 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:33.522 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:33.522 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:33.523 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:33.523 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:33.523 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:33.523 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:34.360 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:34.360 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:04:34.361 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:34.361 [Method:actionPerformed] version3.Calculator:680 - before: 66
+[INFO ] 05-01-2019 22:04:34.363 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n662'
+[INFO ] 05-01-2019 22:04:34.363 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '662'
+[INFO ] 05-01-2019 22:04:34.363 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:34.364 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:34.364 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:34.364 [Method:confirm] version3.Calculator:1891 - temp[1]: '662'
+[INFO ] 05-01-2019 22:04:34.364 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:34.365 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:34.365 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:34.365 [Method:confirm] version3.Calculator:1892 - textarea: '\n662'
+[INFO ] 05-01-2019 22:04:34.365 [Method:confirm] version3.Calculator:1893 - textArea: '\n662'
+[INFO ] 05-01-2019 22:04:34.366 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:34.366 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:34.366 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:34.366 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:34.367 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:34.367 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:34.367 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:34.367 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:34.967 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 05-01-2019 22:04:34.968 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 05-01-2019 22:04:34.968 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 05-01-2019 22:04:34.968 [Method:actionPerformed] version3.Calculator:1438 - temp[1] is 662 before appending dot
+[INFO ] 05-01-2019 22:04:34.971 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.662
+[INFO ] 05-01-2019 22:04:34.972 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:34.972 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:34.972 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:34.972 [Method:confirm] version3.Calculator:1891 - temp[1]: '662'
+[INFO ] 05-01-2019 22:04:34.973 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:34.973 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:34.973 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:34.973 [Method:confirm] version3.Calculator:1892 - textarea: '\n.662'
+[INFO ] 05-01-2019 22:04:34.974 [Method:confirm] version3.Calculator:1893 - textArea: '\n.662'
+[INFO ] 05-01-2019 22:04:34.974 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:34.974 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:34.975 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:34.975 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:34.975 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:34.976 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:34.976 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 05-01-2019 22:04:34.976 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:35.661 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:35.662 [Method:actionPerformed] version3.Calculator:656 - button: 9
+[INFO ] 05-01-2019 22:04:35.662 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 05-01-2019 22:04:35.664 [Method:actionPerformed] version3.Calculator:701 - textarea: 662.9
+[INFO ] 05-01-2019 22:04:35.664 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:35.665 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:35.665 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:35.666 [Method:confirm] version3.Calculator:1891 - temp[1]: '662.9'
+[INFO ] 05-01-2019 22:04:35.666 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:35.666 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:35.667 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:35.667 [Method:confirm] version3.Calculator:1892 - textarea: '\n662.9'
+[INFO ] 05-01-2019 22:04:35.667 [Method:confirm] version3.Calculator:1893 - textArea: '\n662.9'
+[INFO ] 05-01-2019 22:04:35.668 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:35.668 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:35.668 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:35.668 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:35.669 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:35.669 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:35.669 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:35.669 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:36.367 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:04:36.368 [Method:actionPerformed] version3.Calculator:656 - button: 8
+[INFO ] 05-01-2019 22:04:36.369 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:04:36.370 [Method:actionPerformed] version3.Calculator:680 - before: 662.9
+[INFO ] 05-01-2019 22:04:36.373 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n662.98'
+[INFO ] 05-01-2019 22:04:36.373 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '662.98'
+[INFO ] 05-01-2019 22:04:36.374 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:36.374 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:36.374 [Method:confirm] version3.Calculator:1891 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:36.374 [Method:confirm] version3.Calculator:1891 - temp[1]: '662.98'
+[INFO ] 05-01-2019 22:04:36.375 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:36.375 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:36.375 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:36.375 [Method:confirm] version3.Calculator:1892 - textarea: '\n662.98'
+[INFO ] 05-01-2019 22:04:36.376 [Method:confirm] version3.Calculator:1893 - textArea: '\n662.98'
+[INFO ] 05-01-2019 22:04:36.376 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:04:36.376 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:36.376 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:36.377 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:36.377 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:04:36.377 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:36.377 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:36.378 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:04:37.601 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 05-01-2019 22:04:37.601 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 05-01-2019 22:04:37.602 [Method:addition] version3.Calculator:1702 - temp[0]: '3829.34'
+[INFO ] 05-01-2019 22:04:37.602 [Method:addition] version3.Calculator:1703 - temp[1]: '662.98'
+[INFO ] 05-01-2019 22:04:37.602 [Method:addition] version3.Calculator:1705 - 3829.34 + 662.98 = 4492.32
+[INFO ] 05-01-2019 22:04:37.603 [Method:addition] version3.Calculator:1707 - addBool: true
+[INFO ] 05-01-2019 22:04:37.603 [Method:addition] version3.Calculator:1708 - subBool: false
+[INFO ] 05-01-2019 22:04:37.603 [Method:addition] version3.Calculator:1709 - mulBool: false
+[INFO ] 05-01-2019 22:04:37.603 [Method:addition] version3.Calculator:1710 - divBool: false
+[INFO ] 05-01-2019 22:04:37.603 [Method:addition] version3.Calculator:1726 - We have a decimal
+[INFO ] 05-01-2019 22:04:37.604 [Method:formatNumber] version3.Calculator:1873 - Formatted: 4492.32
+[INFO ] 05-01-2019 22:04:37.608 [Method:formatNumber] version3.Calculator:1873 - Formatted: 4492.32
+[INFO ] 05-01-2019 22:04:37.609 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:04:37.609 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:04:37.609 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:04:37.609 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:04:37.610 [Method:confirm] version3.Calculator:1891 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:04:37.610 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:04:37.611 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:04:37.611 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:04:37.611 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:04:37.612 [Method:confirm] version3.Calculator:1892 - textarea: '\n4492.32'
+[INFO ] 05-01-2019 22:04:37.612 [Method:confirm] version3.Calculator:1893 - textArea: '\n4492.32'
+[INFO ] 05-01-2019 22:04:37.613 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:04:37.613 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:04:37.614 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:04:37.614 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:04:37.614 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:04:37.614 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:04:37.615 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:04:37.615 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:06.802 [Method:actionPerformed] version3.Calculator:802 - AddButtonHandler started
+[INFO ] 05-01-2019 22:05:06.803 [Method:actionPerformed] version3.Calculator:803 - button: +
+[INFO ] 05-01-2019 22:05:06.806 [Method:actionPerformed] version3.Calculator:808 - textArea: 
+ + 4492.32
+[INFO ] 05-01-2019 22:05:06.807 [Method:actionPerformed] version3.Calculator:809 - temp[0] is 4492.32 after addButton pushed
+[INFO ] 05-01-2019 22:05:06.807 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:06.807 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:06.808 [Method:confirm] version3.Calculator:1891 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:05:06.808 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:05:06.808 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:06.809 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:06.809 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:06.810 [Method:confirm] version3.Calculator:1892 - textarea: '\n + 4492.32'
+[INFO ] 05-01-2019 22:05:06.810 [Method:confirm] version3.Calculator:1893 - textArea: '\n + 4492.32'
+[INFO ] 05-01-2019 22:05:06.810 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:06.810 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:06.811 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:06.811 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:06.812 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:06.812 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:05:06.812 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:06.812 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:07.997 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:07.998 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:05:07.999 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:05:08.002 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n5'
+[INFO ] 05-01-2019 22:05:08.002 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '5'
+[INFO ] 05-01-2019 22:05:08.003 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:08.003 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:08.003 [Method:confirm] version3.Calculator:1891 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:05:08.004 [Method:confirm] version3.Calculator:1891 - temp[1]: '5'
+[INFO ] 05-01-2019 22:05:08.004 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:08.004 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:08.005 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:08.005 [Method:confirm] version3.Calculator:1892 - textarea: '\n5'
+[INFO ] 05-01-2019 22:05:08.005 [Method:confirm] version3.Calculator:1893 - textArea: '\n5'
+[INFO ] 05-01-2019 22:05:08.005 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:08.006 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:08.006 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:08.006 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:08.006 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:08.007 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:08.007 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:08.008 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:08.522 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:08.522 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:05:08.522 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:05:08.523 [Method:actionPerformed] version3.Calculator:680 - before: 5
+[INFO ] 05-01-2019 22:05:08.525 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n52'
+[INFO ] 05-01-2019 22:05:08.526 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '52'
+[INFO ] 05-01-2019 22:05:08.526 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:08.527 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:08.527 [Method:confirm] version3.Calculator:1891 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:05:08.527 [Method:confirm] version3.Calculator:1891 - temp[1]: '52'
+[INFO ] 05-01-2019 22:05:08.528 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:08.528 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:08.528 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:08.528 [Method:confirm] version3.Calculator:1892 - textarea: '\n52'
+[INFO ] 05-01-2019 22:05:08.529 [Method:confirm] version3.Calculator:1893 - textArea: '\n52'
+[INFO ] 05-01-2019 22:05:08.529 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:08.529 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:08.529 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:08.530 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:08.530 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:08.530 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:08.530 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:08.531 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:09.152 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:09.152 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:05:09.153 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:05:09.153 [Method:actionPerformed] version3.Calculator:680 - before: 52
+[INFO ] 05-01-2019 22:05:09.155 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n525'
+[INFO ] 05-01-2019 22:05:09.155 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '525'
+[INFO ] 05-01-2019 22:05:09.156 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:09.156 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:09.156 [Method:confirm] version3.Calculator:1891 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:05:09.156 [Method:confirm] version3.Calculator:1891 - temp[1]: '525'
+[INFO ] 05-01-2019 22:05:09.157 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:09.157 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:09.157 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:09.158 [Method:confirm] version3.Calculator:1892 - textarea: '\n525'
+[INFO ] 05-01-2019 22:05:09.158 [Method:confirm] version3.Calculator:1893 - textArea: '\n525'
+[INFO ] 05-01-2019 22:05:09.158 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:09.158 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:09.159 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:09.159 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:09.159 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:09.159 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:09.160 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:09.160 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:10.057 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 05-01-2019 22:05:10.057 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 05-01-2019 22:05:10.057 [Method:addition] version3.Calculator:1702 - temp[0]: '4492.32'
+[INFO ] 05-01-2019 22:05:10.058 [Method:addition] version3.Calculator:1703 - temp[1]: '525'
+[INFO ] 05-01-2019 22:05:10.058 [Method:addition] version3.Calculator:1705 - 4492.32 + 525 = 5017.32
+[INFO ] 05-01-2019 22:05:10.058 [Method:addition] version3.Calculator:1707 - addBool: true
+[INFO ] 05-01-2019 22:05:10.058 [Method:addition] version3.Calculator:1708 - subBool: false
+[INFO ] 05-01-2019 22:05:10.059 [Method:addition] version3.Calculator:1709 - mulBool: false
+[INFO ] 05-01-2019 22:05:10.059 [Method:addition] version3.Calculator:1710 - divBool: false
+[INFO ] 05-01-2019 22:05:10.059 [Method:addition] version3.Calculator:1726 - We have a decimal
+[INFO ] 05-01-2019 22:05:10.059 [Method:formatNumber] version3.Calculator:1873 - Formatted: 5017.32
+[INFO ] 05-01-2019 22:05:10.062 [Method:formatNumber] version3.Calculator:1873 - Formatted: 5017.32
+[INFO ] 05-01-2019 22:05:10.062 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:05:10.062 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:10.063 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:10.063 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:10.063 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:10.063 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:05:10.063 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:10.063 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:10.064 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:10.064 [Method:confirm] version3.Calculator:1892 - textarea: '\n5017.32'
+[INFO ] 05-01-2019 22:05:10.064 [Method:confirm] version3.Calculator:1893 - textArea: '\n5017.32'
+[INFO ] 05-01-2019 22:05:10.064 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:05:10.064 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:10.064 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:10.065 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:10.065 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:05:10.065 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:10.065 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:10.065 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:55.749 [Method:actionPerformed] version3.Calculator:802 - AddButtonHandler started
+[INFO ] 05-01-2019 22:05:55.750 [Method:actionPerformed] version3.Calculator:803 - button: +
+[INFO ] 05-01-2019 22:05:55.753 [Method:actionPerformed] version3.Calculator:808 - textArea: 
+ + 5017.32
+[INFO ] 05-01-2019 22:05:55.753 [Method:actionPerformed] version3.Calculator:809 - temp[0] is 5017.32 after addButton pushed
+[INFO ] 05-01-2019 22:05:55.753 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:55.754 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:55.754 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:55.754 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:05:55.754 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:55.754 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:55.754 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:55.755 [Method:confirm] version3.Calculator:1892 - textarea: '\n + 5017.32'
+[INFO ] 05-01-2019 22:05:55.755 [Method:confirm] version3.Calculator:1893 - textArea: '\n + 5017.32'
+[INFO ] 05-01-2019 22:05:55.755 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:55.755 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:55.755 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:55.756 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:55.756 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:55.756 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:05:55.756 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:55.756 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:56.476 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:56.477 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 05-01-2019 22:05:56.477 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:05:56.479 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n1'
+[INFO ] 05-01-2019 22:05:56.479 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '1'
+[INFO ] 05-01-2019 22:05:56.479 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:56.479 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:56.479 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:56.480 [Method:confirm] version3.Calculator:1891 - temp[1]: '1'
+[INFO ] 05-01-2019 22:05:56.480 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:56.501 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:56.502 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:56.502 [Method:confirm] version3.Calculator:1892 - textarea: '\n1'
+[INFO ] 05-01-2019 22:05:56.503 [Method:confirm] version3.Calculator:1893 - textArea: '\n1'
+[INFO ] 05-01-2019 22:05:56.503 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:56.504 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:56.504 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:56.505 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:56.505 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:56.505 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:56.506 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:56.506 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:57.003 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:57.003 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:05:57.004 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:05:57.005 [Method:actionPerformed] version3.Calculator:680 - before: 1
+[INFO ] 05-01-2019 22:05:57.008 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n12'
+[INFO ] 05-01-2019 22:05:57.008 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '12'
+[INFO ] 05-01-2019 22:05:57.009 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:57.009 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:57.009 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:57.009 [Method:confirm] version3.Calculator:1891 - temp[1]: '12'
+[INFO ] 05-01-2019 22:05:57.009 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:57.010 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:57.010 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:57.010 [Method:confirm] version3.Calculator:1892 - textarea: '\n12'
+[INFO ] 05-01-2019 22:05:57.011 [Method:confirm] version3.Calculator:1893 - textArea: '\n12'
+[INFO ] 05-01-2019 22:05:57.011 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:57.011 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:57.011 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:57.011 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:57.012 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:57.012 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:57.012 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:57.012 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:57.414 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:57.414 [Method:actionPerformed] version3.Calculator:656 - button: 0
+[INFO ] 05-01-2019 22:05:57.415 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:05:57.415 [Method:actionPerformed] version3.Calculator:680 - before: 12
+[INFO ] 05-01-2019 22:05:57.417 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n120'
+[INFO ] 05-01-2019 22:05:57.418 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '120'
+[INFO ] 05-01-2019 22:05:57.418 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:57.418 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:57.418 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:57.419 [Method:confirm] version3.Calculator:1891 - temp[1]: '120'
+[INFO ] 05-01-2019 22:05:57.451 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:57.451 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:57.452 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:57.452 [Method:confirm] version3.Calculator:1892 - textarea: '\n120'
+[INFO ] 05-01-2019 22:05:57.452 [Method:confirm] version3.Calculator:1893 - textArea: '\n120'
+[INFO ] 05-01-2019 22:05:57.453 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:57.453 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:57.453 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:57.454 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:57.454 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:57.454 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:57.454 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:57.455 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:57.618 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:57.619 [Method:actionPerformed] version3.Calculator:656 - button: 0
+[INFO ] 05-01-2019 22:05:57.619 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:05:57.620 [Method:actionPerformed] version3.Calculator:680 - before: 120
+[INFO ] 05-01-2019 22:05:57.622 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n1200'
+[INFO ] 05-01-2019 22:05:57.623 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '1200'
+[INFO ] 05-01-2019 22:05:57.623 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:57.623 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:57.623 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:57.623 [Method:confirm] version3.Calculator:1891 - temp[1]: '1200'
+[INFO ] 05-01-2019 22:05:57.651 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:57.651 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:57.652 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:57.652 [Method:confirm] version3.Calculator:1892 - textarea: '\n1200'
+[INFO ] 05-01-2019 22:05:57.653 [Method:confirm] version3.Calculator:1893 - textArea: '\n1200'
+[INFO ] 05-01-2019 22:05:57.653 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:57.653 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:57.653 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:57.654 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:57.654 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:57.654 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:57.654 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:57.655 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:57.811 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:05:57.811 [Method:actionPerformed] version3.Calculator:656 - button: 0
+[INFO ] 05-01-2019 22:05:57.811 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:05:57.811 [Method:actionPerformed] version3.Calculator:680 - before: 1200
+[INFO ] 05-01-2019 22:05:57.813 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n12000'
+[INFO ] 05-01-2019 22:05:57.814 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '12000'
+[INFO ] 05-01-2019 22:05:57.815 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:57.815 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:57.815 [Method:confirm] version3.Calculator:1891 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:57.815 [Method:confirm] version3.Calculator:1891 - temp[1]: '12000'
+[INFO ] 05-01-2019 22:05:57.816 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:57.816 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:57.816 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:57.816 [Method:confirm] version3.Calculator:1892 - textarea: '\n12000'
+[INFO ] 05-01-2019 22:05:57.817 [Method:confirm] version3.Calculator:1893 - textArea: '\n12000'
+[INFO ] 05-01-2019 22:05:57.851 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 05-01-2019 22:05:57.852 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:57.852 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:57.853 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:57.853 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:05:57.853 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:57.854 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:57.854 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:05:58.595 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 05-01-2019 22:05:58.595 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 05-01-2019 22:05:58.595 [Method:addition] version3.Calculator:1702 - temp[0]: '5017.32'
+[INFO ] 05-01-2019 22:05:58.595 [Method:addition] version3.Calculator:1703 - temp[1]: '12000'
+[INFO ] 05-01-2019 22:05:58.596 [Method:addition] version3.Calculator:1705 - 5017.32 + 12000 = 17017.32
+[INFO ] 05-01-2019 22:05:58.596 [Method:addition] version3.Calculator:1707 - addBool: true
+[INFO ] 05-01-2019 22:05:58.596 [Method:addition] version3.Calculator:1708 - subBool: false
+[INFO ] 05-01-2019 22:05:58.596 [Method:addition] version3.Calculator:1709 - mulBool: false
+[INFO ] 05-01-2019 22:05:58.597 [Method:addition] version3.Calculator:1710 - divBool: false
+[INFO ] 05-01-2019 22:05:58.597 [Method:addition] version3.Calculator:1726 - We have a decimal
+[INFO ] 05-01-2019 22:05:58.601 [Method:formatNumber] version3.Calculator:1873 - Formatted: 17017.32
+[INFO ] 05-01-2019 22:05:58.605 [Method:formatNumber] version3.Calculator:1873 - Formatted: 17017.32
+[INFO ] 05-01-2019 22:05:58.605 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:05:58.606 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:05:58.606 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:05:58.606 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:05:58.606 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:05:58.607 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:05:58.607 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:05:58.607 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:05:58.607 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:05:58.608 [Method:confirm] version3.Calculator:1892 - textarea: '\n17017.32'
+[INFO ] 05-01-2019 22:05:58.608 [Method:confirm] version3.Calculator:1893 - textArea: '\n17017.32'
+[INFO ] 05-01-2019 22:05:58.608 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:05:58.608 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:05:58.608 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:05:58.608 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:05:58.609 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:05:58.609 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:05:58.609 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:05:58.609 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:19:58.785 [Method:actionPerformed] version3.Calculator:853 - SubtractButtonHandler class started
+[INFO ] 05-01-2019 22:19:58.785 [Method:actionPerformed] version3.Calculator:854 - button: -
+[INFO ] 05-01-2019 22:19:58.789 [Method:actionPerformed] version3.Calculator:859 - textArea: 
+ - 17017.32
+[INFO ] 05-01-2019 22:19:58.789 [Method:actionPerformed] version3.Calculator:860 - temp[0] is 17017.32 after addButton pushed
+[INFO ] 05-01-2019 22:19:58.789 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:19:58.789 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:19:58.790 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:19:58.790 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:19:58.790 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:19:58.790 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:19:58.819 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:19:58.819 [Method:confirm] version3.Calculator:1892 - textarea: '\n - 17017.32'
+[INFO ] 05-01-2019 22:19:58.820 [Method:confirm] version3.Calculator:1893 - textArea: '\n - 17017.32'
+[INFO ] 05-01-2019 22:19:58.820 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:19:58.820 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:19:58.820 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:19:58.820 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:19:58.820 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:19:58.821 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:19:58.821 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:19:58.821 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:03.846 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:03.847 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 05-01-2019 22:20:03.847 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:20:03.850 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n1'
+[INFO ] 05-01-2019 22:20:03.850 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '1'
+[INFO ] 05-01-2019 22:20:03.851 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:03.851 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:03.851 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:20:03.851 [Method:confirm] version3.Calculator:1891 - temp[1]: '1'
+[INFO ] 05-01-2019 22:20:03.851 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:03.869 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:03.870 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:03.870 [Method:confirm] version3.Calculator:1892 - textarea: '\n1'
+[INFO ] 05-01-2019 22:20:03.870 [Method:confirm] version3.Calculator:1893 - textArea: '\n1'
+[INFO ] 05-01-2019 22:20:03.870 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:03.870 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:03.871 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:03.871 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:03.871 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:03.871 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:03.871 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:03.872 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:05.018 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:05.018 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:20:05.018 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:05.019 [Method:actionPerformed] version3.Calculator:680 - before: 1
+[INFO ] 05-01-2019 22:20:05.021 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n15'
+[INFO ] 05-01-2019 22:20:05.021 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '15'
+[INFO ] 05-01-2019 22:20:05.022 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:05.022 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:05.022 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:20:05.022 [Method:confirm] version3.Calculator:1891 - temp[1]: '15'
+[INFO ] 05-01-2019 22:20:05.022 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:05.023 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:05.023 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:05.023 [Method:confirm] version3.Calculator:1892 - textarea: '\n15'
+[INFO ] 05-01-2019 22:20:05.023 [Method:confirm] version3.Calculator:1893 - textArea: '\n15'
+[INFO ] 05-01-2019 22:20:05.023 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:05.024 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:05.024 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:05.024 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:05.024 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:05.024 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:05.024 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:05.025 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:05.533 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:05.533 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:20:05.534 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:05.534 [Method:actionPerformed] version3.Calculator:680 - before: 15
+[INFO ] 05-01-2019 22:20:05.537 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n155'
+[INFO ] 05-01-2019 22:20:05.538 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '155'
+[INFO ] 05-01-2019 22:20:05.538 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:05.538 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:05.538 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:20:05.539 [Method:confirm] version3.Calculator:1891 - temp[1]: '155'
+[INFO ] 05-01-2019 22:20:05.569 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:05.570 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:05.570 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:05.570 [Method:confirm] version3.Calculator:1892 - textarea: '\n155'
+[INFO ] 05-01-2019 22:20:05.570 [Method:confirm] version3.Calculator:1893 - textArea: '\n155'
+[INFO ] 05-01-2019 22:20:05.570 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:05.571 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:05.769 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:05.769 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:20:05.770 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:05.770 [Method:actionPerformed] version3.Calculator:680 - before: 155
+[INFO ] 05-01-2019 22:20:05.772 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n1555'
+[INFO ] 05-01-2019 22:20:05.772 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '1555'
+[INFO ] 05-01-2019 22:20:05.772 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:05.772 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:05.772 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:20:05.772 [Method:confirm] version3.Calculator:1891 - temp[1]: '1555'
+[INFO ] 05-01-2019 22:20:05.773 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:05.773 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:05.773 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:05.774 [Method:confirm] version3.Calculator:1892 - textarea: '\n1555'
+[INFO ] 05-01-2019 22:20:05.774 [Method:confirm] version3.Calculator:1893 - textArea: '\n1555'
+[INFO ] 05-01-2019 22:20:05.774 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:05.774 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:05.775 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:05.775 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:05.775 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:05.775 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:05.775 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:05.775 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:06.361 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:06.361 [Method:actionPerformed] version3.Calculator:656 - button: 4
+[INFO ] 05-01-2019 22:20:06.362 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:06.362 [Method:actionPerformed] version3.Calculator:680 - before: 1555
+[INFO ] 05-01-2019 22:20:06.364 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n15554'
+[INFO ] 05-01-2019 22:20:06.365 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '15554'
+[INFO ] 05-01-2019 22:20:06.365 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:06.365 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:06.365 [Method:confirm] version3.Calculator:1891 - temp[0]: '17017.32'
+[INFO ] 05-01-2019 22:20:06.365 [Method:confirm] version3.Calculator:1891 - temp[1]: '15554'
+[INFO ] 05-01-2019 22:20:06.369 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:06.370 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:06.370 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:06.370 [Method:confirm] version3.Calculator:1892 - textarea: '\n15554'
+[INFO ] 05-01-2019 22:20:06.370 [Method:confirm] version3.Calculator:1893 - textArea: '\n15554'
+[INFO ] 05-01-2019 22:20:06.371 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:06.371 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:06.371 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:06.371 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:06.371 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:06.372 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:06.372 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:06.372 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:07.328 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 05-01-2019 22:20:07.328 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 05-01-2019 22:20:07.328 [Method:subtract] version3.Calculator:1745 - 17017.32 - 15554 = 1463.3199999999997
+[INFO ] 05-01-2019 22:20:07.329 [Method:subtract] version3.Calculator:1747 - addBool: false
+[INFO ] 05-01-2019 22:20:07.329 [Method:subtract] version3.Calculator:1748 - subBool: true
+[INFO ] 05-01-2019 22:20:07.329 [Method:subtract] version3.Calculator:1749 - mulBool: false
+[INFO ] 05-01-2019 22:20:07.329 [Method:subtract] version3.Calculator:1750 - divBool: false
+[INFO ] 05-01-2019 22:20:07.329 [Method:formatNumber] version3.Calculator:1873 - Formatted: 1463.32
+[INFO ] 05-01-2019 22:20:07.331 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:20:07.331 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:07.331 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:07.331 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:07.332 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:07.332 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:20:07.332 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:07.332 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:07.332 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:07.333 [Method:confirm] version3.Calculator:1892 - textarea: '\n1463.32'
+[INFO ] 05-01-2019 22:20:07.333 [Method:confirm] version3.Calculator:1893 - textArea: '\n1463.32'
+[INFO ] 05-01-2019 22:20:07.333 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:07.333 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:20:07.333 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:07.333 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:07.369 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:20:07.370 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:07.370 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:07.370 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:10.834 [Method:actionPerformed] version3.Calculator:853 - SubtractButtonHandler class started
+[INFO ] 05-01-2019 22:20:10.834 [Method:actionPerformed] version3.Calculator:854 - button: -
+[INFO ] 05-01-2019 22:20:10.837 [Method:actionPerformed] version3.Calculator:859 - textArea: 
+ - 1463.32
+[INFO ] 05-01-2019 22:20:10.837 [Method:actionPerformed] version3.Calculator:860 - temp[0] is 1463.3199999999997 after addButton pushed
+[INFO ] 05-01-2019 22:20:10.837 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:10.838 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:10.838 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:10.839 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:20:10.839 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:10.839 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:10.839 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:10.840 [Method:confirm] version3.Calculator:1892 - textarea: '\n - 1463.32'
+[INFO ] 05-01-2019 22:20:10.840 [Method:confirm] version3.Calculator:1893 - textArea: '\n - 1463.32'
+[INFO ] 05-01-2019 22:20:10.840 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:10.840 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:10.841 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:10.841 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:10.841 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:10.841 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 05-01-2019 22:20:10.842 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:10.842 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:12.109 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:12.110 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:20:12.110 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 05-01-2019 22:20:12.112 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n2'
+[INFO ] 05-01-2019 22:20:12.112 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '2'
+[INFO ] 05-01-2019 22:20:12.112 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:12.112 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:12.113 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:12.113 [Method:confirm] version3.Calculator:1891 - temp[1]: '2'
+[INFO ] 05-01-2019 22:20:12.113 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:12.114 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:12.114 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:12.114 [Method:confirm] version3.Calculator:1892 - textarea: '\n2'
+[INFO ] 05-01-2019 22:20:12.114 [Method:confirm] version3.Calculator:1893 - textArea: '\n2'
+[INFO ] 05-01-2019 22:20:12.115 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:12.115 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:12.115 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:12.115 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:12.115 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:12.115 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:12.116 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:12.116 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:12.352 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:12.352 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:20:12.353 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:12.353 [Method:actionPerformed] version3.Calculator:680 - before: 2
+[INFO ] 05-01-2019 22:20:12.355 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n22'
+[INFO ] 05-01-2019 22:20:12.355 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '22'
+[INFO ] 05-01-2019 22:20:12.355 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:12.355 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:12.355 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:12.356 [Method:confirm] version3.Calculator:1891 - temp[1]: '22'
+[INFO ] 05-01-2019 22:20:12.356 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:12.356 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:12.357 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:12.357 [Method:confirm] version3.Calculator:1892 - textarea: '\n22'
+[INFO ] 05-01-2019 22:20:12.357 [Method:confirm] version3.Calculator:1893 - textArea: '\n22'
+[INFO ] 05-01-2019 22:20:12.357 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:12.358 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:12.358 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:12.358 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:12.359 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:12.359 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:12.359 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:12.359 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:12.845 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:12.845 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:20:12.845 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:12.846 [Method:actionPerformed] version3.Calculator:680 - before: 22
+[INFO ] 05-01-2019 22:20:12.849 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n225'
+[INFO ] 05-01-2019 22:20:12.849 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '225'
+[INFO ] 05-01-2019 22:20:12.850 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:12.850 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:12.850 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:12.850 [Method:confirm] version3.Calculator:1891 - temp[1]: '225'
+[INFO ] 05-01-2019 22:20:12.851 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:12.851 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:12.851 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:12.851 [Method:confirm] version3.Calculator:1892 - textarea: '\n225'
+[INFO ] 05-01-2019 22:20:12.852 [Method:confirm] version3.Calculator:1893 - textArea: '\n225'
+[INFO ] 05-01-2019 22:20:12.852 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:12.852 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:12.852 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:12.853 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:12.853 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:12.853 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:12.853 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:12.853 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:13.653 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:13.654 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 05-01-2019 22:20:13.654 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:13.654 [Method:actionPerformed] version3.Calculator:680 - before: 225
+[INFO ] 05-01-2019 22:20:13.656 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n2251'
+[INFO ] 05-01-2019 22:20:13.656 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '2251'
+[INFO ] 05-01-2019 22:20:13.657 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:13.657 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:13.657 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:13.657 [Method:confirm] version3.Calculator:1891 - temp[1]: '2251'
+[INFO ] 05-01-2019 22:20:13.658 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:13.658 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:13.659 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:13.660 [Method:confirm] version3.Calculator:1892 - textarea: '\n2251'
+[INFO ] 05-01-2019 22:20:13.661 [Method:confirm] version3.Calculator:1893 - textArea: '\n2251'
+[INFO ] 05-01-2019 22:20:13.661 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:13.661 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:13.661 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:13.661 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:13.661 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:13.662 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:13.662 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:13.662 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:15.195 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 05-01-2019 22:20:15.195 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 05-01-2019 22:20:15.196 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 05-01-2019 22:20:15.196 [Method:actionPerformed] version3.Calculator:1438 - temp[1] is 2251 before appending dot
+[INFO ] 05-01-2019 22:20:15.198 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.2251
+[INFO ] 05-01-2019 22:20:15.199 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:15.199 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:15.200 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:15.200 [Method:confirm] version3.Calculator:1891 - temp[1]: '2251'
+[INFO ] 05-01-2019 22:20:15.200 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:15.201 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:15.201 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:15.201 [Method:confirm] version3.Calculator:1892 - textarea: '\n.2251'
+[INFO ] 05-01-2019 22:20:15.201 [Method:confirm] version3.Calculator:1893 - textArea: '\n.2251'
+[INFO ] 05-01-2019 22:20:15.201 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:15.202 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:15.202 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:15.202 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:15.202 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:15.202 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:15.203 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 05-01-2019 22:20:15.203 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:15.687 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:15.688 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 05-01-2019 22:20:15.688 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 05-01-2019 22:20:15.689 [Method:actionPerformed] version3.Calculator:701 - textarea: 2251.2
+[INFO ] 05-01-2019 22:20:15.690 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:15.690 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:15.690 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:15.690 [Method:confirm] version3.Calculator:1891 - temp[1]: '2251.2'
+[INFO ] 05-01-2019 22:20:15.691 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:15.691 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:15.691 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:15.692 [Method:confirm] version3.Calculator:1892 - textarea: '\n2251.2'
+[INFO ] 05-01-2019 22:20:15.692 [Method:confirm] version3.Calculator:1893 - textArea: '\n2251.2'
+[INFO ] 05-01-2019 22:20:15.692 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:15.692 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:15.693 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:15.693 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:15.693 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:15.693 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:15.694 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:15.694 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:16.116 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 05-01-2019 22:20:16.116 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 05-01-2019 22:20:16.117 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 05-01-2019 22:20:16.117 [Method:actionPerformed] version3.Calculator:680 - before: 2251.2
+[INFO ] 05-01-2019 22:20:16.119 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n2251.25'
+[INFO ] 05-01-2019 22:20:16.119 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '2251.25'
+[INFO ] 05-01-2019 22:20:16.120 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:16.121 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:16.121 [Method:confirm] version3.Calculator:1891 - temp[0]: '1463.3199999999997'
+[INFO ] 05-01-2019 22:20:16.121 [Method:confirm] version3.Calculator:1891 - temp[1]: '2251.25'
+[INFO ] 05-01-2019 22:20:16.121 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:16.122 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:16.122 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:16.122 [Method:confirm] version3.Calculator:1892 - textarea: '\n2251.25'
+[INFO ] 05-01-2019 22:20:16.122 [Method:confirm] version3.Calculator:1893 - textArea: '\n2251.25'
+[INFO ] 05-01-2019 22:20:16.122 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:16.123 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 05-01-2019 22:20:16.123 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:16.123 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:16.123 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 05-01-2019 22:20:16.123 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:16.123 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:16.124 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 05-01-2019 22:20:16.878 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 05-01-2019 22:20:16.879 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 05-01-2019 22:20:16.879 [Method:subtract] version3.Calculator:1745 - 1463.3199999999997 - 2251.25 = -787.9300000000003
+[INFO ] 05-01-2019 22:20:16.880 [Method:subtract] version3.Calculator:1747 - addBool: false
+[INFO ] 05-01-2019 22:20:16.881 [Method:subtract] version3.Calculator:1748 - subBool: true
+[INFO ] 05-01-2019 22:20:16.881 [Method:subtract] version3.Calculator:1749 - mulBool: false
+[INFO ] 05-01-2019 22:20:16.881 [Method:subtract] version3.Calculator:1750 - divBool: false
+[INFO ] 05-01-2019 22:20:16.882 [Method:formatNumber] version3.Calculator:1873 - Formatted: -787.93
+[INFO ] 05-01-2019 22:20:16.883 [Method:subtract] version3.Calculator:1769 - textarea: -787.93
+[INFO ] 05-01-2019 22:20:16.883 [Method:subtract] version3.Calculator:1771 - textarea: 787.93
+[INFO ] 05-01-2019 22:20:16.885 [Method:subtract] version3.Calculator:1773 - temp[1]: 2251.25
+[INFO ] 05-01-2019 22:20:16.885 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 05-01-2019 22:20:16.886 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '-787.93'
+[INFO ] 05-01-2019 22:20:16.886 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 05-01-2019 22:20:16.886 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 05-01-2019 22:20:16.886 [Method:confirm] version3.Calculator:1891 - temp[0]: '-787.93'
+[INFO ] 05-01-2019 22:20:16.887 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 05-01-2019 22:20:16.887 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 05-01-2019 22:20:16.887 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 05-01-2019 22:20:16.887 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 05-01-2019 22:20:16.888 [Method:confirm] version3.Calculator:1892 - textarea: '\n787.93-'
+[INFO ] 05-01-2019 22:20:16.888 [Method:confirm] version3.Calculator:1893 - textArea: '\n787.93-'
+[INFO ] 05-01-2019 22:20:16.888 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 05-01-2019 22:20:16.888 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 05-01-2019 22:20:16.889 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 05-01-2019 22:20:16.889 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 05-01-2019 22:20:16.889 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 05-01-2019 22:20:16.889 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 05-01-2019 22:20:16.890 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 05-01-2019 22:20:16.890 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 11-29-2020 15:48:03.069 [Method:main] version3.CalculatorMain:14 - Inside main(). Starting class CalculatorMain
+[INFO ] 11-29-2020 15:48:03.533 [Method:<init>] version3.Calculator:97 - Inside Calculator constructor.
+[INFO ] 11-29-2020 15:48:03.534 [Method:setImageIcons] version3.Calculator:1936 - Inside setImageIcons()
+[INFO ] 11-29-2020 15:48:03.538 [Method:createImageIcon] version3.Calculator:1922 - Inside createImageIcon()
+[INFO ] 11-29-2020 15:48:03.538 [Method:createImageIcon] version3.Calculator:1926 - the path 'src/main/resources/images/calculatorOriginalCopy.jpg' created an image! the imageicon is being returned...
+[INFO ] 11-29-2020 15:48:03.539 [Method:createImageIcon] version3.Calculator:1927 - End createImageIcon()
+[ERROR] 11-29-2020 15:48:03.549 [Method:setImageIcons] version3.Calculator:1942 - Can't read input file!
+[INFO ] 11-29-2020 15:48:03.550 [Method:setImageIcons] version3.Calculator:1944 - End setImageIcons()
+[INFO ] 11-29-2020 15:48:03.550 [Method:setInitialStartMode] version3.Calculator:326 - Inside setInitalStartMode()
+[INFO ] 11-29-2020 15:48:03.564 [Method:setInitialStartMode] version3.Calculator:347 - 28 button handlers created...
+[WARN ] 11-29-2020 15:48:03.566 [Method:setInitialStartMode] version3.Calculator:451 - buttonMC.getEnabled() = false
+[WARN ] 11-29-2020 15:48:03.567 [Method:setInitialStartMode] version3.Calculator:458 - buttonMR.getEnabled() = false
+[INFO ] 11-29-2020 15:48:03.567 [Method:setInitialStartMode] version3.Calculator:473 - All buttons font set, size set, and border set.
+[INFO ] 11-29-2020 15:48:03.572 [Method:setInitialStartMode] version3.Calculator:563 - All buttons added to the frame.
+[INFO ] 11-29-2020 15:48:03.572 [Method:setInitialStartMode] version3.Calculator:564 - End setInitialStartMode()
+[INFO ] 11-29-2020 15:48:03.573 [Method:<init>] version3.Calculator:107 - End Calculator constructor.
+[INFO ] 11-29-2020 15:48:03.574 [Method:initLookAndFeel] version3.CalculatorMain:48 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 11-29-2020 15:48:03.591 [Method:setCalculatorUp] version3.CalculatorMain:53 - Setting up the calculator...
+[INFO ] 11-29-2020 15:48:03.592 [Method:setCalculatorUp] version3.CalculatorMain:55 - Setting up a calculator
+[INFO ] 11-29-2020 15:48:03.592 [Method:setMenuBar] version3.Calculator:126 - Inside setMenuBar()
+[INFO ] 11-29-2020 15:48:04.304 [Method:setCalculatorUp] version3.CalculatorMain:76 - End setCalculatorUp()
+[INFO ] 11-29-2020 15:48:04.399 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 11-29-2020 15:48:04.400 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 11-29-2020 15:48:04.400 [Method:confirm] version3.Calculator:1891 - temp[0]: ''
+[INFO ] 11-29-2020 15:48:04.401 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 11-29-2020 15:48:04.402 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 11-29-2020 15:48:04.402 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 11-29-2020 15:48:04.403 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 11-29-2020 15:48:04.403 [Method:confirm] version3.Calculator:1892 - textarea: '\n'
+[INFO ] 11-29-2020 15:48:04.404 [Method:confirm] version3.Calculator:1893 - textArea: '\n'
+[INFO ] 11-29-2020 15:48:04.405 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 11-29-2020 15:48:04.405 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 11-29-2020 15:48:04.406 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 11-29-2020 15:48:04.407 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 11-29-2020 15:48:04.407 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 11-29-2020 15:48:04.407 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 11-29-2020 15:48:04.408 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 11-29-2020 15:48:04.408 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 11-29-2020 15:48:04.409 [Method:main] version3.CalculatorMain:23 - End main()
+
+[INFO ] 12-02-2020 21:29:35.002 [Method:main] version3.CalculatorMain:14 - Inside main(). Starting class CalculatorMain
+[INFO ] 12-02-2020 21:29:35.730 [Method:<init>] version3.Calculator:97 - Inside Calculator constructor.
+[INFO ] 12-02-2020 21:29:35.731 [Method:setImageIcons] version3.Calculator:1936 - Inside setImageIcons()
+[INFO ] 12-02-2020 21:29:35.732 [Method:createImageIcon] version3.Calculator:1922 - Inside createImageIcon()
+[INFO ] 12-02-2020 21:29:35.732 [Method:createImageIcon] version3.Calculator:1926 - the path 'src/main/resources/images/calculatorOriginalCopy.jpg' created an image! the imageicon is being returned...
+[INFO ] 12-02-2020 21:29:35.733 [Method:createImageIcon] version3.Calculator:1927 - End createImageIcon()
+[ERROR] 12-02-2020 21:29:35.753 [Method:setImageIcons] version3.Calculator:1942 - Can't read input file!
+[INFO ] 12-02-2020 21:29:35.754 [Method:setImageIcons] version3.Calculator:1944 - End setImageIcons()
+[INFO ] 12-02-2020 21:29:35.754 [Method:setInitialStartMode] version3.Calculator:326 - Inside setInitalStartMode()
+[INFO ] 12-02-2020 21:29:35.764 [Method:setInitialStartMode] version3.Calculator:347 - 28 button handlers created...
+[WARN ] 12-02-2020 21:29:35.766 [Method:setInitialStartMode] version3.Calculator:451 - buttonMC.getEnabled() = false
+[WARN ] 12-02-2020 21:29:35.768 [Method:setInitialStartMode] version3.Calculator:458 - buttonMR.getEnabled() = false
+[INFO ] 12-02-2020 21:29:35.768 [Method:setInitialStartMode] version3.Calculator:473 - All buttons font set, size set, and border set.
+[INFO ] 12-02-2020 21:29:35.775 [Method:setInitialStartMode] version3.Calculator:563 - All buttons added to the frame.
+[INFO ] 12-02-2020 21:29:35.775 [Method:setInitialStartMode] version3.Calculator:564 - End setInitialStartMode()
+[INFO ] 12-02-2020 21:29:35.776 [Method:<init>] version3.Calculator:107 - End Calculator constructor.
+[INFO ] 12-02-2020 21:29:35.776 [Method:initLookAndFeel] version3.CalculatorMain:48 - Setting the look and feel to : javax.swing.plaf.metal.MetalLookAndFeel
+[INFO ] 12-02-2020 21:29:35.795 [Method:setCalculatorUp] version3.CalculatorMain:53 - Setting up the calculator...
+[INFO ] 12-02-2020 21:29:35.796 [Method:setCalculatorUp] version3.CalculatorMain:55 - Setting up a calculator
+[INFO ] 12-02-2020 21:29:35.796 [Method:setMenuBar] version3.Calculator:126 - Inside setMenuBar()
+[INFO ] 12-02-2020 21:29:37.535 [Method:setCalculatorUp] version3.CalculatorMain:76 - End setCalculatorUp()
+[INFO ] 12-02-2020 21:29:37.646 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:29:37.647 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:29:37.648 [Method:confirm] version3.Calculator:1891 - temp[0]: ''
+[INFO ] 12-02-2020 21:29:37.648 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:29:37.649 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:29:37.650 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:29:37.650 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:29:37.651 [Method:confirm] version3.Calculator:1892 - textarea: '\n'
+[INFO ] 12-02-2020 21:29:37.651 [Method:confirm] version3.Calculator:1893 - textArea: '\n'
+[INFO ] 12-02-2020 21:29:37.652 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:29:37.653 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:29:37.653 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:29:37.654 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:29:37.655 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:29:37.655 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:29:37.656 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:29:37.656 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:29:37.657 [Method:main] version3.CalculatorMain:23 - End main()
+
+[INFO ] 12-02-2020 21:30:02.505 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:02.508 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 12-02-2020 21:30:02.509 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:02.510 [Method:actionPerformed] version3.Calculator:680 - before: 
+[INFO ] 12-02-2020 21:30:02.617 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n1'
+[INFO ] 12-02-2020 21:30:02.617 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '1'
+[INFO ] 12-02-2020 21:30:02.618 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:02.618 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:02.619 [Method:confirm] version3.Calculator:1891 - temp[0]: '1'
+[INFO ] 12-02-2020 21:30:02.619 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:02.620 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:02.620 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:02.620 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:02.621 [Method:confirm] version3.Calculator:1892 - textarea: '\n1'
+[INFO ] 12-02-2020 21:30:02.621 [Method:confirm] version3.Calculator:1893 - textArea: '\n1'
+[INFO ] 12-02-2020 21:30:02.621 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:02.622 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:02.622 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:02.623 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:02.623 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:02.624 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:02.624 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:02.625 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:04.822 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:04.823 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 12-02-2020 21:30:04.824 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:04.825 [Method:actionPerformed] version3.Calculator:680 - before: 1
+[INFO ] 12-02-2020 21:30:04.829 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n12'
+[INFO ] 12-02-2020 21:30:04.829 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '12'
+[INFO ] 12-02-2020 21:30:04.830 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:04.830 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:04.830 [Method:confirm] version3.Calculator:1891 - temp[0]: '12'
+[INFO ] 12-02-2020 21:30:04.831 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:04.831 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:04.831 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:04.832 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:04.832 [Method:confirm] version3.Calculator:1892 - textarea: '\n12'
+[INFO ] 12-02-2020 21:30:04.833 [Method:confirm] version3.Calculator:1893 - textArea: '\n12'
+[INFO ] 12-02-2020 21:30:04.833 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:04.834 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:04.835 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:04.835 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:04.836 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:04.836 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:04.836 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:04.837 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:05.605 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:05.606 [Method:actionPerformed] version3.Calculator:656 - button: 9
+[INFO ] 12-02-2020 21:30:05.607 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:05.608 [Method:actionPerformed] version3.Calculator:680 - before: 12
+[INFO ] 12-02-2020 21:30:05.612 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n129'
+[INFO ] 12-02-2020 21:30:05.613 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '129'
+[INFO ] 12-02-2020 21:30:05.613 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:05.613 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:05.614 [Method:confirm] version3.Calculator:1891 - temp[0]: '129'
+[INFO ] 12-02-2020 21:30:05.614 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:05.615 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:05.615 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:05.616 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:05.617 [Method:confirm] version3.Calculator:1892 - textarea: '\n129'
+[INFO ] 12-02-2020 21:30:05.617 [Method:confirm] version3.Calculator:1893 - textArea: '\n129'
+[INFO ] 12-02-2020 21:30:05.618 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:05.618 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:05.619 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:05.619 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:05.619 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:05.620 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:05.620 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:05.621 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:06.096 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:06.097 [Method:actionPerformed] version3.Calculator:656 - button: 3
+[INFO ] 12-02-2020 21:30:06.098 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:06.099 [Method:actionPerformed] version3.Calculator:680 - before: 129
+[INFO ] 12-02-2020 21:30:06.102 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n1293'
+[INFO ] 12-02-2020 21:30:06.103 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '1293'
+[INFO ] 12-02-2020 21:30:06.103 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:06.104 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:06.104 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293'
+[INFO ] 12-02-2020 21:30:06.104 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:06.105 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:06.105 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:06.106 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:06.106 [Method:confirm] version3.Calculator:1892 - textarea: '\n1293'
+[INFO ] 12-02-2020 21:30:06.107 [Method:confirm] version3.Calculator:1893 - textArea: '\n1293'
+[INFO ] 12-02-2020 21:30:06.107 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:06.107 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:06.108 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:06.108 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:06.109 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:06.109 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:06.110 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:06.110 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:06.598 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 12-02-2020 21:30:06.599 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 12-02-2020 21:30:06.601 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 12-02-2020 21:30:06.601 [Method:actionPerformed] version3.Calculator:1438 - temp[0] is 1293 before appending dot
+[INFO ] 12-02-2020 21:30:06.606 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.1293
+[INFO ] 12-02-2020 21:30:06.607 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:06.608 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:06.608 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293'
+[INFO ] 12-02-2020 21:30:06.608 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:06.609 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:06.609 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:06.609 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:06.610 [Method:confirm] version3.Calculator:1892 - textarea: '\n.1293'
+[INFO ] 12-02-2020 21:30:06.610 [Method:confirm] version3.Calculator:1893 - textArea: '\n.1293'
+[INFO ] 12-02-2020 21:30:06.611 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:06.611 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:06.611 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:06.612 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:06.612 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:06.613 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:06.613 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 12-02-2020 21:30:06.613 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:08.321 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:08.322 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 12-02-2020 21:30:08.322 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 12-02-2020 21:30:08.326 [Method:actionPerformed] version3.Calculator:701 - textarea: 1293.1
+[INFO ] 12-02-2020 21:30:08.327 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:08.327 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:08.327 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.1'
+[INFO ] 12-02-2020 21:30:08.328 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:08.328 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:08.328 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:08.328 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:08.328 [Method:confirm] version3.Calculator:1892 - textarea: '\n1293.1'
+[INFO ] 12-02-2020 21:30:08.329 [Method:confirm] version3.Calculator:1893 - textArea: '\n1293.1'
+[INFO ] 12-02-2020 21:30:08.329 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:08.330 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:08.330 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:08.330 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:08.330 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:08.331 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:08.331 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:08.331 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:08.797 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:08.798 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 12-02-2020 21:30:08.798 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:08.799 [Method:actionPerformed] version3.Calculator:680 - before: 1293.1
+[INFO ] 12-02-2020 21:30:08.803 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n1293.12'
+[INFO ] 12-02-2020 21:30:08.804 [Method:actionPerformed] version3.Calculator:684 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:08.804 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:08.804 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:08.805 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:08.805 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:08.805 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:08.805 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:08.806 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:08.806 [Method:confirm] version3.Calculator:1892 - textarea: '\n1293.12'
+[INFO ] 12-02-2020 21:30:08.807 [Method:confirm] version3.Calculator:1893 - textArea: '\n1293.12'
+[INFO ] 12-02-2020 21:30:08.807 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:08.807 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:08.807 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:08.808 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:08.808 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:08.808 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:08.809 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:08.809 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:10.900 [Method:actionPerformed] version3.Calculator:802 - AddButtonHandler started
+[INFO ] 12-02-2020 21:30:10.902 [Method:actionPerformed] version3.Calculator:803 - button: +
+[INFO ] 12-02-2020 21:30:10.906 [Method:actionPerformed] version3.Calculator:808 - textArea: 
+ + 1293.12
+[INFO ] 12-02-2020 21:30:10.907 [Method:actionPerformed] version3.Calculator:809 - temp[0] is 1293.12 after addButton pushed
+[INFO ] 12-02-2020 21:30:10.907 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:10.908 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:10.908 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:10.908 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:10.909 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:10.909 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:10.909 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:10.909 [Method:confirm] version3.Calculator:1892 - textarea: '\n + 1293.12'
+[INFO ] 12-02-2020 21:30:10.910 [Method:confirm] version3.Calculator:1893 - textArea: '\n + 1293.12'
+[INFO ] 12-02-2020 21:30:10.910 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 12-02-2020 21:30:10.910 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:10.911 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:10.911 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:10.911 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:10.912 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 12-02-2020 21:30:10.912 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:10.912 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:11.568 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:11.568 [Method:actionPerformed] version3.Calculator:656 - button: 3
+[INFO ] 12-02-2020 21:30:11.569 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 12-02-2020 21:30:11.573 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n3'
+[INFO ] 12-02-2020 21:30:11.573 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '3'
+[INFO ] 12-02-2020 21:30:11.573 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:11.574 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:11.574 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:11.575 [Method:confirm] version3.Calculator:1891 - temp[1]: '3'
+[INFO ] 12-02-2020 21:30:11.575 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:11.575 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:11.576 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:11.576 [Method:confirm] version3.Calculator:1892 - textarea: '\n3'
+[INFO ] 12-02-2020 21:30:11.577 [Method:confirm] version3.Calculator:1893 - textArea: '\n3'
+[INFO ] 12-02-2020 21:30:11.577 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 12-02-2020 21:30:11.578 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:11.578 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:11.578 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:11.578 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:11.579 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:11.579 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:11.579 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:12.766 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:12.767 [Method:actionPerformed] version3.Calculator:656 - button: 8
+[INFO ] 12-02-2020 21:30:12.768 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:12.768 [Method:actionPerformed] version3.Calculator:680 - before: 3
+[INFO ] 12-02-2020 21:30:12.772 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n38'
+[INFO ] 12-02-2020 21:30:12.772 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '38'
+[INFO ] 12-02-2020 21:30:12.773 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:12.773 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:12.773 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:12.774 [Method:confirm] version3.Calculator:1891 - temp[1]: '38'
+[INFO ] 12-02-2020 21:30:12.774 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:12.774 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:12.775 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:12.775 [Method:confirm] version3.Calculator:1892 - textarea: '\n38'
+[INFO ] 12-02-2020 21:30:12.776 [Method:confirm] version3.Calculator:1893 - textArea: '\n38'
+[INFO ] 12-02-2020 21:30:12.776 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 12-02-2020 21:30:12.777 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:12.777 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:12.778 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:12.778 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:12.778 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:12.779 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:12.779 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:13.363 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:13.363 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 12-02-2020 21:30:13.366 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:13.367 [Method:actionPerformed] version3.Calculator:680 - before: 38
+[INFO ] 12-02-2020 21:30:13.370 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n382'
+[INFO ] 12-02-2020 21:30:13.371 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '382'
+[INFO ] 12-02-2020 21:30:13.371 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:13.371 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:13.372 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:13.372 [Method:confirm] version3.Calculator:1891 - temp[1]: '382'
+[INFO ] 12-02-2020 21:30:13.372 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:13.372 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:13.373 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:13.373 [Method:confirm] version3.Calculator:1892 - textarea: '\n382'
+[INFO ] 12-02-2020 21:30:13.374 [Method:confirm] version3.Calculator:1893 - textArea: '\n382'
+[INFO ] 12-02-2020 21:30:13.374 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 12-02-2020 21:30:13.374 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:13.374 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:13.375 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:13.375 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:13.375 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:13.376 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:13.376 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:14.150 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:14.150 [Method:actionPerformed] version3.Calculator:656 - button: 5
+[INFO ] 12-02-2020 21:30:14.151 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:14.151 [Method:actionPerformed] version3.Calculator:680 - before: 382
+[INFO ] 12-02-2020 21:30:14.155 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n3825'
+[INFO ] 12-02-2020 21:30:14.155 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '3825'
+[INFO ] 12-02-2020 21:30:14.155 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:14.156 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:14.156 [Method:confirm] version3.Calculator:1891 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:14.156 [Method:confirm] version3.Calculator:1891 - temp[1]: '3825'
+[INFO ] 12-02-2020 21:30:14.156 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:14.156 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:14.157 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:14.157 [Method:confirm] version3.Calculator:1892 - textarea: '\n3825'
+[INFO ] 12-02-2020 21:30:14.157 [Method:confirm] version3.Calculator:1893 - textArea: '\n3825'
+[INFO ] 12-02-2020 21:30:14.157 [Method:confirm] version3.Calculator:1894 - addBool: 'true'
+[INFO ] 12-02-2020 21:30:14.157 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:14.158 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:14.158 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:14.159 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:14.159 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:14.159 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:14.159 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:14.788 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 12-02-2020 21:30:14.788 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 12-02-2020 21:30:14.788 [Method:addition] version3.Calculator:1702 - temp[0]: '1293.12'
+[INFO ] 12-02-2020 21:30:14.788 [Method:addition] version3.Calculator:1703 - temp[1]: '3825'
+[INFO ] 12-02-2020 21:30:14.790 [Method:addition] version3.Calculator:1705 - 1293.12 + 3825 = 5118.12
+[INFO ] 12-02-2020 21:30:14.790 [Method:addition] version3.Calculator:1707 - addBool: true
+[INFO ] 12-02-2020 21:30:14.790 [Method:addition] version3.Calculator:1708 - subBool: false
+[INFO ] 12-02-2020 21:30:14.791 [Method:addition] version3.Calculator:1709 - mulBool: false
+[INFO ] 12-02-2020 21:30:14.791 [Method:addition] version3.Calculator:1710 - divBool: false
+[INFO ] 12-02-2020 21:30:14.791 [Method:addition] version3.Calculator:1726 - We have a decimal
+[INFO ] 12-02-2020 21:30:14.792 [Method:formatNumber] version3.Calculator:1873 - Formatted: 5118.12
+[INFO ] 12-02-2020 21:30:14.795 [Method:formatNumber] version3.Calculator:1873 - Formatted: 5118.12
+[INFO ] 12-02-2020 21:30:14.795 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 12-02-2020 21:30:14.796 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:14.796 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:14.797 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:14.797 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:14.797 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:14.797 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:14.798 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:14.798 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:14.798 [Method:confirm] version3.Calculator:1892 - textarea: '\n5118.12'
+[INFO ] 12-02-2020 21:30:14.799 [Method:confirm] version3.Calculator:1893 - textArea: '\n5118.12'
+[INFO ] 12-02-2020 21:30:14.799 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:14.799 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:14.799 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:14.800 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:14.800 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:14.800 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:14.800 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:14.801 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:16.237 [Method:actionPerformed] version3.Calculator:853 - SubtractButtonHandler class started
+[INFO ] 12-02-2020 21:30:16.238 [Method:actionPerformed] version3.Calculator:854 - button: -
+[INFO ] 12-02-2020 21:30:16.244 [Method:actionPerformed] version3.Calculator:859 - textArea: 
+ - 5118.12
+[INFO ] 12-02-2020 21:30:16.244 [Method:actionPerformed] version3.Calculator:860 - temp[0] is 5118.12 after addButton pushed
+[INFO ] 12-02-2020 21:30:16.244 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:16.245 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:16.245 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:16.245 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:16.245 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:16.246 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:16.246 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:16.246 [Method:confirm] version3.Calculator:1892 - textarea: '\n - 5118.12'
+[INFO ] 12-02-2020 21:30:16.246 [Method:confirm] version3.Calculator:1893 - textArea: '\n - 5118.12'
+[INFO ] 12-02-2020 21:30:16.247 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:16.247 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:16.247 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:16.247 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:16.247 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:16.248 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'false'
+[INFO ] 12-02-2020 21:30:16.248 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:16.248 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:19.070 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:19.072 [Method:actionPerformed] version3.Calculator:656 - button: 2
+[INFO ] 12-02-2020 21:30:19.073 [Method:actionPerformed] version3.Calculator:749 - Resetting textArea
+[INFO ] 12-02-2020 21:30:19.076 [Method:actionPerformed] version3.Calculator:789 - textArea: '\n2'
+[INFO ] 12-02-2020 21:30:19.077 [Method:actionPerformed] version3.Calculator:790 - temp[1]: '2'
+[INFO ] 12-02-2020 21:30:19.077 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:19.077 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:19.078 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:19.078 [Method:confirm] version3.Calculator:1891 - temp[1]: '2'
+[INFO ] 12-02-2020 21:30:19.078 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:19.079 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:19.079 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:19.079 [Method:confirm] version3.Calculator:1892 - textarea: '\n2'
+[INFO ] 12-02-2020 21:30:19.080 [Method:confirm] version3.Calculator:1893 - textArea: '\n2'
+[INFO ] 12-02-2020 21:30:19.080 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:19.080 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:19.080 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:19.081 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:19.081 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:19.081 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:19.082 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:19.083 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:19.769 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:19.770 [Method:actionPerformed] version3.Calculator:656 - button: 1
+[INFO ] 12-02-2020 21:30:19.771 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:19.771 [Method:actionPerformed] version3.Calculator:680 - before: 2
+[INFO ] 12-02-2020 21:30:19.774 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n21'
+[INFO ] 12-02-2020 21:30:19.775 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '21'
+[INFO ] 12-02-2020 21:30:19.775 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:19.775 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:19.776 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:19.776 [Method:confirm] version3.Calculator:1891 - temp[1]: '21'
+[INFO ] 12-02-2020 21:30:19.776 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:19.776 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:19.776 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:19.777 [Method:confirm] version3.Calculator:1892 - textarea: '\n21'
+[INFO ] 12-02-2020 21:30:19.777 [Method:confirm] version3.Calculator:1893 - textArea: '\n21'
+[INFO ] 12-02-2020 21:30:19.777 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:19.777 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:19.777 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:19.778 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:19.778 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:19.778 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:19.778 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:19.778 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:21.006 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:21.007 [Method:actionPerformed] version3.Calculator:656 - button: 9
+[INFO ] 12-02-2020 21:30:21.007 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:21.007 [Method:actionPerformed] version3.Calculator:680 - before: 21
+[INFO ] 12-02-2020 21:30:21.010 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n219'
+[INFO ] 12-02-2020 21:30:21.011 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '219'
+[INFO ] 12-02-2020 21:30:21.011 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:21.011 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:21.011 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:21.012 [Method:confirm] version3.Calculator:1891 - temp[1]: '219'
+[INFO ] 12-02-2020 21:30:21.012 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:21.012 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:21.012 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:21.013 [Method:confirm] version3.Calculator:1892 - textarea: '\n219'
+[INFO ] 12-02-2020 21:30:21.013 [Method:confirm] version3.Calculator:1893 - textArea: '\n219'
+[INFO ] 12-02-2020 21:30:21.013 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:21.013 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:21.013 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:21.013 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:21.014 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:21.014 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:21.014 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:21.014 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:21.573 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:21.573 [Method:actionPerformed] version3.Calculator:656 - button: 7
+[INFO ] 12-02-2020 21:30:21.575 [Method:actionPerformed] version3.Calculator:679 - firstNumBool = true | dotButtonPressed = false
+[INFO ] 12-02-2020 21:30:21.575 [Method:actionPerformed] version3.Calculator:680 - before: 219
+[INFO ] 12-02-2020 21:30:21.578 [Method:actionPerformed] version3.Calculator:683 - textArea:'\n2197'
+[INFO ] 12-02-2020 21:30:21.579 [Method:actionPerformed] version3.Calculator:684 - temp[1]: '2197'
+[INFO ] 12-02-2020 21:30:21.579 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:21.579 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:21.579 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:21.580 [Method:confirm] version3.Calculator:1891 - temp[1]: '2197'
+[INFO ] 12-02-2020 21:30:21.580 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:21.580 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:21.580 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:21.580 [Method:confirm] version3.Calculator:1892 - textarea: '\n2197'
+[INFO ] 12-02-2020 21:30:21.581 [Method:confirm] version3.Calculator:1893 - textArea: '\n2197'
+[INFO ] 12-02-2020 21:30:21.581 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:21.582 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:21.582 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:21.582 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:21.583 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:21.583 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:21.583 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:21.584 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:22.283 [Method:actionPerformed] version3.Calculator:1434 - DotButtonHandler class started
+[INFO ] 12-02-2020 21:30:22.284 [Method:actionPerformed] version3.Calculator:1435 - button: .
+[INFO ] 12-02-2020 21:30:22.285 [Method:actionPerformed] version3.Calculator:1437 - dotButtonPressed: false | dotActive: false
+[INFO ] 12-02-2020 21:30:22.286 [Method:actionPerformed] version3.Calculator:1438 - temp[1] is 2197 before appending dot
+[INFO ] 12-02-2020 21:30:22.291 [Method:actionPerformed] version3.Calculator:1441 - textArea: 
+.2197
+[INFO ] 12-02-2020 21:30:22.292 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:22.292 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:22.293 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:22.293 [Method:confirm] version3.Calculator:1891 - temp[1]: '2197'
+[INFO ] 12-02-2020 21:30:22.293 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:22.293 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:22.294 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:22.294 [Method:confirm] version3.Calculator:1892 - textarea: '\n.2197'
+[INFO ] 12-02-2020 21:30:22.294 [Method:confirm] version3.Calculator:1893 - textArea: '\n.2197'
+[INFO ] 12-02-2020 21:30:22.295 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:22.295 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:22.295 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:22.295 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:22.296 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:22.296 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:22.296 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'true'
+[INFO ] 12-02-2020 21:30:22.297 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:23.653 [Method:actionPerformed] version3.Calculator:655 - NumberButtonHandler() started
+[INFO ] 12-02-2020 21:30:23.654 [Method:actionPerformed] version3.Calculator:656 - button: 8
+[INFO ] 12-02-2020 21:30:23.654 [Method:actionPerformed] version3.Calculator:697 - firstNumBool = true | dotButtonPressed = true
+[INFO ] 12-02-2020 21:30:23.657 [Method:actionPerformed] version3.Calculator:701 - textarea: 2197.8
+[INFO ] 12-02-2020 21:30:23.658 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:23.658 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:23.658 [Method:confirm] version3.Calculator:1891 - temp[0]: '5118.12'
+[INFO ] 12-02-2020 21:30:23.658 [Method:confirm] version3.Calculator:1891 - temp[1]: '2197.8'
+[INFO ] 12-02-2020 21:30:23.658 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:23.658 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:23.659 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:23.659 [Method:confirm] version3.Calculator:1892 - textarea: '\n2197.8'
+[INFO ] 12-02-2020 21:30:23.659 [Method:confirm] version3.Calculator:1893 - textArea: '\n2197.8'
+[INFO ] 12-02-2020 21:30:23.659 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:23.660 [Method:confirm] version3.Calculator:1895 - subBool: 'true'
+[INFO ] 12-02-2020 21:30:23.660 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:23.660 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:23.660 [Method:confirm] version3.Calculator:1898 - position: '1'
+[INFO ] 12-02-2020 21:30:23.661 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:23.661 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:23.661 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+
+[INFO ] 12-02-2020 21:30:24.552 [Method:actionPerformed] version3.Calculator:1000 - EqualsButtonHandler class started
+[INFO ] 12-02-2020 21:30:24.553 [Method:actionPerformed] version3.Calculator:1001 - button: =
+[INFO ] 12-02-2020 21:30:24.554 [Method:subtract] version3.Calculator:1745 - 5118.12 - 2197.8 = 2920.3199999999997
+[INFO ] 12-02-2020 21:30:24.554 [Method:subtract] version3.Calculator:1747 - addBool: false
+[INFO ] 12-02-2020 21:30:24.555 [Method:subtract] version3.Calculator:1748 - subBool: true
+[INFO ] 12-02-2020 21:30:24.555 [Method:subtract] version3.Calculator:1749 - mulBool: false
+[INFO ] 12-02-2020 21:30:24.555 [Method:subtract] version3.Calculator:1750 - divBool: false
+[INFO ] 12-02-2020 21:30:24.556 [Method:formatNumber] version3.Calculator:1873 - Formatted: 2920.32
+[INFO ] 12-02-2020 21:30:24.560 [Method:resetOperator] version3.Calculator:1847 - operatorBool: true
+[INFO ] 12-02-2020 21:30:24.561 [Method:resetOperator] version3.Calculator:1849 - temp[0]: '2920.3199999999997'
+[INFO ] 12-02-2020 21:30:24.561 [Method:confirm] version3.Calculator:1888 - Confirm Results: 
+[INFO ] 12-02-2020 21:30:24.561 [Method:confirm] version3.Calculator:1889 - ---------------- 
+[INFO ] 12-02-2020 21:30:24.562 [Method:confirm] version3.Calculator:1891 - temp[0]: '2920.3199999999997'
+[INFO ] 12-02-2020 21:30:24.562 [Method:confirm] version3.Calculator:1891 - temp[1]: ''
+[INFO ] 12-02-2020 21:30:24.562 [Method:confirm] version3.Calculator:1891 - temp[2]: ''
+[INFO ] 12-02-2020 21:30:24.563 [Method:confirm] version3.Calculator:1891 - temp[3]: ''
+[INFO ] 12-02-2020 21:30:24.563 [Method:confirm] version3.Calculator:1891 - temp[4]: ''
+[INFO ] 12-02-2020 21:30:24.563 [Method:confirm] version3.Calculator:1892 - textarea: '\n2920.32'
+[INFO ] 12-02-2020 21:30:24.564 [Method:confirm] version3.Calculator:1893 - textArea: '\n2920.32'
+[INFO ] 12-02-2020 21:30:24.564 [Method:confirm] version3.Calculator:1894 - addBool: 'false'
+[INFO ] 12-02-2020 21:30:24.565 [Method:confirm] version3.Calculator:1895 - subBool: 'false'
+[INFO ] 12-02-2020 21:30:24.566 [Method:confirm] version3.Calculator:1896 - mulBool: 'false'
+[INFO ] 12-02-2020 21:30:24.566 [Method:confirm] version3.Calculator:1897 - divBool: 'false'
+[INFO ] 12-02-2020 21:30:24.566 [Method:confirm] version3.Calculator:1898 - position: '0'
+[INFO ] 12-02-2020 21:30:24.566 [Method:confirm] version3.Calculator:1899 - firstNumBool: 'true'
+[INFO ] 12-02-2020 21:30:24.567 [Method:confirm] version3.Calculator:1900 - dotButtonPressed: 'false'
+[INFO ] 12-02-2020 21:30:24.567 [Method:confirm] version3.Calculator:1901 - -------- End Confirm Results --------
+

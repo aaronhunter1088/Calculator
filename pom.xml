@@ -1,0 +1,232 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>Calculator</groupId>
+    <artifactId>Calculator</artifactId>
+    <version>4.0</version>
+    <packaging>jar</packaging>
+    <name>Calculator</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<outputDirectory>${basedir}/dist</outputDirectory>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<apple.version>1.4</apple.version>
+		<commons.lang.version>3.9</commons.lang.version>
+		<date.picker.version>1.3.2</date.picker.version>
+		<junit.version>4.13.1</junit.version>
+		<log4j.version>2.13.2</log4j.version>
+		<maven.antrun.version>3.0.0</maven.antrun.version>
+		<maven.assembly.version>3.3.0</maven.assembly.version>
+		<maven.compiler.version>3.8.0</maven.compiler.version>
+		<maven.dependency.version>3.1.2</maven.dependency.version>
+		<maven.jar.version>3.1.0</maven.jar.version>
+		<maven.jar.plugin.version>3.1.0</maven.jar.plugin.version>
+		<mockito.version>3.0.0</mockito.version>
+		<properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
+	</properties>
+
+	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
+		<dependency>
+			<groupId>com.apple</groupId>
+			<artifactId>applejavaextensions</artifactId>
+			<version>${apple.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons.lang.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-antrun-plugin</artifactId>
+			<version>${maven.antrun.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-assembly-plugin</artifactId>
+			<version>${maven.assembly.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-dependency-plugin</artifactId>
+			<version>${maven.dependency.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
+		<dependency>
+			<groupId>net.sourceforge.jdatepicker</groupId>
+			<artifactId>jdatepicker</artifactId>
+			<version>${date.picker.version}</version>
+		</dependency>
+
+	</dependencies>
+
+    <build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>${properties.maven.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${basedir}/target/filter.properties</file>
+							</files>
+							<tasks>
+								<echo>BuildTime : ${build.time}</echo>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.plugin.version}</version>
+				<configuration>
+					<executions>
+						<execution>
+							<id>make-a-jar</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+					<includes>
+						<include>**/*.class</include>
+						<include>*.jpg</include>
+					</includes>
+					<excludes>
+						<exclude>**/*Test.class</exclude>
+					</excludes>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
+							<Creation-Time>${build.time}</Creation-Time>
+							<mainClass>version4.CalculatorMain_v4</mainClass>
+						</manifestEntries>
+					</archive>
+					<outputDirectory>${basedir}/dist/version4</outputDirectory>
+				</configuration>
+			</plugin>
+			<!-- Builds filter.properties file -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<mkdir dir="${project.build.directory}"/>
+								<tstamp>
+									<format property="last.updated" pattern="MM-dd-YYYY hh:mm:ss"/>
+								</tstamp>
+								<!-- Places file inside dist/ -->
+								<echo file="${basedir}/dist/version4/filter.properties" message="build.time=${last.updated}"/>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Can be triggered by Lifecycle: Package: Builds 'jar-with-dependencies' (possible sure-fire test failures)
+			     or by: Plugins: Assembly: assembly:single -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+					<archive>
+						<index>>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>version4.CalculatorMain_v4</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
+							<Creation-Time>${build.time}</Creation-Time>
+							<mainClass>version4.CalculatorMain_v4</mainClass>
+						</manifestEntries>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<outputDirectory>${basedir}/dist/version4</outputDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+        
+    </build>
+    
+</project>
