@@ -51,7 +51,7 @@ public class StandardCalculator_v4 extends Calculator_v4
 
     public StandardCalculator_v4() throws Exception
     {
-        this(BASIC);
+        this(BASIC, null);
     }
 
     /**
@@ -60,7 +60,7 @@ public class StandardCalculator_v4 extends Calculator_v4
      */
     public StandardCalculator_v4(CalcType_v4 calcType) throws Exception
     {
-        this(calcType, ANGLE);
+        this(calcType, null);
     }
 
     /**

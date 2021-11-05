@@ -22,7 +22,7 @@ public class CalculatorMain_v4
 	public static void main(String[] args) throws Exception
     {
 		LOGGER.info("Starting class CalculatorMain_v4");
-        StandardCalculator_v4 calculator = new StandardCalculator_v4(CONVERTER, ANGLE);
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
         UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         SwingUtilities.updateComponentTreeUI(calculator);
 		calculator.setLocation(750, 250);
