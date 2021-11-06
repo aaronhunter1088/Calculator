@@ -4,4 +4,4 @@ target/*
 logs/*
 calculatogitr/src/main/java/version3/logs/*
 .DS_Store
-MicrosoftCalculator.iml
+Calculator.iml
