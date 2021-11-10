@@ -81,6 +81,12 @@ public class JPanelConverter_v4 extends JPanel
     }
 
     /************* Start of methods here ******************/
+    public void performConverterCalculatorTypeSwitchOperations()
+    {
+        getTextField1().requestFocusInWindow();
+        SwingUtilities.updateComponentTreeUI(this);
+    }
+
     private void setupJPanelConverter_v4() throws ParseException, CalculatorError_v4
     {
         LOGGER.info("Starting setupJPanelConverter_v4");
@@ -167,10 +173,6 @@ public class JPanelConverter_v4 extends JPanel
         // Next, set up each number button. 0 is a bit different from the rest.
         getCalculator().getButton0().addActionListener(this::performNumberButtonFunctionality);
         getCalculator().getButton1().addActionListener(
-            // check if we are in textField1 or textField2
-            // check to see what converter we are using
-            // check to see what unit we are using
-            // grab the number, add next number, add symbol
             this::performNumberButtonFunctionality);
         getCalculator().getButton2().addActionListener(this::performNumberButtonFunctionality);
         getCalculator().getButton3().addActionListener(this::performNumberButtonFunctionality);
@@ -185,6 +187,10 @@ public class JPanelConverter_v4 extends JPanel
 
     private void performNumberButtonFunctionality(ActionEvent ae)
     {
+        // check if we are in textField1 or textField2
+        // check to see what converter we are using
+        // check to see what unit we are using
+        // grab the number, add next number, add symbol
         String buttonValue = ae.getActionCommand();
         LOGGER.info("Pressed " + buttonValue);
         if (isTextField1Selected) {

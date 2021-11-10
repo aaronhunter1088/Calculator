@@ -146,7 +146,14 @@ public abstract class Calculator_v4 extends JFrame
         getTextArea().setEditable(false);
 
         setupNumberButtons(true);
-        
+        setupMemoryButtons();
+        setupOtherCalculatorButtons();
+
+        LOGGER.info("Finished setupCalculator()");
+	}
+
+	public void setupOtherCalculatorButtons()
+    {
         getButtonClear().setFont(font);
         getButtonClear().setPreferredSize(new Dimension(35, 35));
         getButtonClear().setBorder(new LineBorder(Color.BLACK));
@@ -158,25 +165,28 @@ public abstract class Calculator_v4 extends JFrame
                 ((JPanelProgrammer_v4) getCurrentPanel()).resetProgrammerOperators();
             }
         });
-        
+
         getButtonClearEntry().setFont(font);
         getButtonClearEntry().setPreferredSize(new Dimension(35, 35));
         getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
         getButtonClearEntry().setEnabled(true);
         getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
-        
+
         getButtonDelete().setFont(font);
         getButtonDelete().setPreferredSize(new Dimension(35, 35));
         getButtonDelete().setBorder(new LineBorder(Color.BLACK));
         getButtonDelete().setEnabled(true);
         getButtonDelete().addActionListener(this::performDeleteButtonActions);
-        
+
         getButtonDot().setFont(font);
         getButtonDot().setPreferredSize(new Dimension(35, 35));
         getButtonDot().setBorder(new LineBorder(Color.BLACK));
         getButtonDot().setEnabled(true);
         getButtonDot().addActionListener(this::performDotButtonActions);
+    }
 
+	public void setupMemoryButtons()
+    {
         getButtonMemoryStore().setFont(Calculator_v4.font);
         getButtonMemoryStore().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryStore().setBorder(new LineBorder(Color.BLACK));
@@ -207,8 +217,7 @@ public abstract class Calculator_v4 extends JFrame
         getButtonMemorySubtraction().setEnabled(true);
         getButtonMemorySubtraction().addActionListener(this::performMemorySubtractionActions);
 
-        LOGGER.info("Finished setupCalculator()");
-	}
+    }
 
     /**
      * Handles the logic for setting up the buttons numbered 0-9.

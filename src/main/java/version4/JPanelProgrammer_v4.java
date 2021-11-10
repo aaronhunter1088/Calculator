@@ -484,6 +484,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         // setting up all the buttons
         setButtons2To9(false);
         calculator.buttonNegate.setEnabled(false);
+        SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished performProgrammerCalculatorTypeSwitchOperations");
     }
 

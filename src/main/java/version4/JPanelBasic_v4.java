@@ -36,13 +36,13 @@ public class JPanelBasic_v4 extends JPanel
         setPanelLayout(new GridBagLayout());
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupPanel(calculator);
+        setupBasicPanel(calculator);
         addComponentsToPanel();
     }
 
     /************* Start of methods here ******************/
 
-    public void setupPanel(StandardCalculator_v4 calculator)
+    public void setupBasicPanel(StandardCalculator_v4 calculator)
     {
         LOGGER.info("Starting setupPanel");
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
@@ -175,11 +175,21 @@ public class JPanelBasic_v4 extends JPanel
         // set CalcType now
         getCalculator().setBase(CalcType_v4.DECIMAL);
         getCalculator().setCalcType(CalcType_v4.BASIC);
+        getCalculator().clearNumberButtonFunctionalities();
+        getCalculator().clearAllBasicOperationButtons();
+        getCalculator().clearAllOtherBasicCalculatorButtons();
+        getCalculator().setCurrentPanel(this);
         // setting up all the buttons
         getCalculator().setEnabledForAllNumberButtons(true);
+        setupBasicPanel(getCalculator());
         getCalculator().setBar(new JMenuBar());
         getCalculator().setupMenuBar(); // needed now because we are changing the help menu
-        calculator.buttonNegate.setEnabled(true);
+        getCalculator().setupBasicCalculatorButtons();
+        getCalculator().setupOtherBasicCalculatorButtons();
+        getCalculator().setupNumberButtons(true);
+        getCalculator().setupMemoryButtons();
+        getCalculator().setupOtherCalculatorButtons();
+        SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
     }
 

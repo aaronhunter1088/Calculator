@@ -4,7 +4,6 @@ import com.apple.eawt.Application;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.velocity.runtime.directive.Parse;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -13,10 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static version4.CalcType_v4.*;
 import static version4.ConverterType_v4.*;
@@ -420,79 +419,9 @@ public class StandardCalculator_v4 extends Calculator_v4
     } // end public setMenuBar
 	public void setupStandardCalculator()
     {
-        getButtonAdd().setFont(font);
-        getButtonAdd().setPreferredSize(new Dimension(35, 35) );
-        getButtonAdd().setBorder(new LineBorder(Color.BLACK));
-        getButtonAdd().setEnabled(true);
-        getButtonAdd().addActionListener(action -> {
-            performAdditionButtonActions(action);
-        });
-        
-        getButtonSubtract().setFont(font);
-        getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
-        getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
-        getButtonSubtract().setEnabled(true);
-        getButtonSubtract().addActionListener(action -> {
-            performSubtractionButtonActions(action);
-        });
+        setupBasicCalculatorButtons();
+        setupOtherCalculatorButtons();
 
-        getButtonMultiply().setFont(font);
-        getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
-        getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
-        getButtonMultiply().setEnabled(true);
-        getButtonMultiply().addActionListener(action -> {
-            performMultiplicationActions(action);
-        });
-        
-        getButtonDivide().setFont(font);
-        getButtonDivide().setPreferredSize(new Dimension(35, 35) );
-        getButtonDivide().setBorder(new LineBorder(Color.BLACK));
-        getButtonDivide().setEnabled(true);
-        getButtonDivide().addActionListener(action -> {
-            performDivideButtonActions(action);
-        });
-        
-        getButtonEquals().setFont(font);
-        getButtonEquals().setPreferredSize(new Dimension(35, 70) );
-        getButtonEquals().setBorder(new LineBorder(Color.BLACK));
-        getButtonEquals().setEnabled(true);
-        getButtonEquals().addActionListener(action -> {
-            try
-            {
-                performButtonEqualsActions();
-            } catch (Exception calculator_v3Error)
-            {
-                calculator_v3Error.printStackTrace();
-            }
-        });
-        // TODO: does not work. fix
-        getButtonEquals().addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                try {
-                    LOGGER.info("Return button Pressed");
-                    int code = e.getKeyCode();
-                    LOGGER.info("   Code: " + KeyEvent.getKeyText(code));
-                    performButtonEqualsActions();
-                } catch (Exception calculator_v3Error) {
-                    calculator_v3Error.printStackTrace();
-                }
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {}
-
-            @Override
-            public void keyReleased(KeyEvent e) {}
-        });
-
-        getButtonNegate().setFont(font);
-        getButtonNegate().setPreferredSize(new Dimension(35, 35) );
-        getButtonNegate().setBorder(new LineBorder(Color.BLACK));
-        getButtonNegate().setEnabled(true);
-        getButtonNegate().addActionListener(action -> {
-            performNegateButtonActions(action);
-        });
         setCalcType(CalcType_v4.BASIC);
 
         add(getCurrentPanel());
@@ -549,10 +478,93 @@ public class StandardCalculator_v4 extends Calculator_v4
         }
         else if (getCurrentPanel() instanceof JPanelConverter_v4)
         {
-            ((JPanelConverter_v4)currentPanel).getTextField1().requestFocusInWindow();
+            ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations();
         }
-        repaint();
+        //repaint();
         pack();
+    }
+
+    public Collection<JButton> getBasicOperationButtons()
+    {
+        return Arrays.asList(getButtonAdd(), getButtonSubtract(), getButtonMultiply(), getButtonDivide());
+    }
+
+    public void clearAllBasicOperationButtons()
+    {
+        getBasicOperationButtons().forEach(button -> {
+            Arrays.stream(button.getActionListeners()).forEach(al -> button.removeActionListener(al));
+        });
+    }
+
+    public void setupBasicCalculatorButtons()
+    {
+        getButtonAdd().setFont(font);
+        getButtonAdd().setPreferredSize(new Dimension(35, 35) );
+        getButtonAdd().setBorder(new LineBorder(Color.BLACK));
+        getButtonAdd().setEnabled(true);
+        getButtonAdd().addActionListener(this::performAdditionButtonActions);
+
+        getButtonSubtract().setFont(font);
+        getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
+        getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
+        getButtonSubtract().setEnabled(true);
+        getButtonSubtract().addActionListener(action -> {
+            performSubtractionButtonActions(action);
+        });
+
+        getButtonMultiply().setFont(font);
+        getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
+        getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
+        getButtonMultiply().setEnabled(true);
+        getButtonMultiply().addActionListener(action -> {
+            performMultiplicationActions(action);
+        });
+
+        getButtonDivide().setFont(font);
+        getButtonDivide().setPreferredSize(new Dimension(35, 35) );
+        getButtonDivide().setBorder(new LineBorder(Color.BLACK));
+        getButtonDivide().setEnabled(true);
+        getButtonDivide().addActionListener(action -> {
+            performDivideButtonActions(action);
+        });
+    }
+
+    public Collection<JButton> getAllOtherBasicCalculatorButtons()
+    {
+        return Arrays.asList(getButtonEquals(), getButtonNegate(), getButtonClear(), getButtonClearEntry(),
+                getButtonDelete(), getButtonDot());
+    }
+
+    public void clearAllOtherBasicCalculatorButtons()
+    {
+        getAllOtherBasicCalculatorButtons().forEach(button -> {
+            Arrays.stream(button.getActionListeners()).forEach(al -> button.removeActionListener(al) );
+        });
+    }
+
+    public void setupOtherBasicCalculatorButtons()
+    {
+        getButtonEquals().setFont(font);
+        getButtonEquals().setPreferredSize(new Dimension(35, 70) );
+        getButtonEquals().setBorder(new LineBorder(Color.BLACK));
+        getButtonEquals().setEnabled(true);
+        getButtonEquals().addActionListener(action -> {
+            try
+            {
+                performButtonEqualsActions();
+            } catch (Exception calculator_v3Error)
+            {
+                calculator_v3Error.printStackTrace();
+            }
+        });
+
+        getButtonNegate().setFont(font);
+        getButtonNegate().setPreferredSize(new Dimension(35, 35) );
+        getButtonNegate().setBorder(new LineBorder(Color.BLACK));
+        getButtonNegate().setEnabled(true);
+        getButtonNegate().addActionListener(action -> {
+            performNegateButtonActions(action);
+        });
     }
 
     public void performAdditionButtonActions(ActionEvent action)
