@@ -2,36 +2,33 @@ package version4;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import version3.Calculator_v3;
-import version3.StandardCalculator_v3;
 
 import javax.swing.*;
-import java.text.ParseException;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static version4.CalcType_v4.*;
 import static version4.ConverterType_v4.*;
 
-public class CalculatorMain_v4
+public class CalculatorMain
 {
 
     private final static Logger LOGGER;
     static
     {
         System.setProperty("appName", "Calculator_v4");
-        LOGGER = LogManager.getLogger(CalculatorMain_v4.class);
+        LOGGER = LogManager.getLogger(CalculatorMain.class);
     }
 
 	public static void main(String[] args) throws Exception
     {
-        LOGGER.info("Starting class CalculatorMain_v4");
-        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
-        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        SwingUtilities.updateComponentTreeUI(calculator);
+        LOGGER.info("Starting class CalculatorMain");
+        Calculator_v4 calculator = new StandardCalculator_v4(CONVERTER, ANGLE);
+        UIManager.setLookAndFeel(new MetalLookAndFeel());
+        SwingUtilities.invokeLater(() -> {SwingUtilities.updateComponentTreeUI(calculator);});
         calculator.setLocation(750, 250);
         calculator.setResizable(false);
         calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         calculator.confirm("Calculator started. Initial state", calculator.getCalcType());
-        LOGGER.info("Finished main. Calculator started");
     }
 }
 /*

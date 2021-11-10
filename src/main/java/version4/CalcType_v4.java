@@ -16,7 +16,6 @@ public enum CalcType_v4
 	DECIMAL("Decimal"),
 	HEXIDECIMAL("Hexidecimal");
 
-	// TODO: Add converter types
 	private String name;
 	CalcType_v4(String s1) {
 		setName(s1);

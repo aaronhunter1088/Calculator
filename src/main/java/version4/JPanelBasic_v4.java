@@ -48,7 +48,7 @@ public class JPanelBasic_v4 extends JPanel
         constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
         calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
 
-        getCalculator().setupNumberButtons(true);
+        //getCalculator().setupNumberButtons(true);
 
         buttonFraction.setFont(Calculator_v4.font);
         buttonFraction.setPreferredSize(new Dimension(35, 35) );

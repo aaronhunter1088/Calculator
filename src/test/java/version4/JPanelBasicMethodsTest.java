@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 public class JPanelBasicMethodsTest {
 
     private static StandardCalculator_v4 c;
+    private static JPanelBasic_v4 testTheBasicPanel;
     private String number;
     private boolean result;
 
@@ -28,6 +29,7 @@ public class JPanelBasicMethodsTest {
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelBasicMethodsTest");
         c = new StandardCalculator_v4();
+        testTheBasicPanel = new JPanelBasic_v4(c);
     }
 
 
@@ -35,8 +37,8 @@ public class JPanelBasicMethodsTest {
     @Test
     public void switchingFromProgrammerToBasicConvertsTextArea() {
         c.getTextArea().setText("00000100");
-        JPanelBasic_v4 p = new JPanelBasic_v4(c);
-        p.convertToDecimal();
+
+        testTheBasicPanel.convertToDecimal();
         assertEquals("Did not convert from Binary to Decimal", "4", c.getTextArea().getText().replaceAll("\n", ""));
     }
 

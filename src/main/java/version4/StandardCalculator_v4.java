@@ -49,20 +49,12 @@ public class StandardCalculator_v4 extends Calculator_v4
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
 
-    public StandardCalculator_v4() throws Exception
-    {
-        this(BASIC, null);
-    }
-
+    public StandardCalculator_v4() throws Exception { this(BASIC, null); }
     /**
      * This constructor is used to create a calculator with a specific panel
      * @param calcType the type of calculator to create. sets the title
      */
-    public StandardCalculator_v4(CalcType_v4 calcType) throws Exception
-    {
-        this(calcType, null);
-    }
-
+    public StandardCalculator_v4(CalcType_v4 calcType) throws Exception { this(calcType, null); }
     /**
      * This constructor is used to create a calculator with a specific converter panel
      * @param calcType the type of calculator to create. sets the title
@@ -76,11 +68,7 @@ public class StandardCalculator_v4 extends Calculator_v4
         setCalcType(calcType);
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
-        try {
-            Application.getApplication().setDockIconImage(getCalculator2().getImage());
-        } catch (Exception e) {
-            logStandardException(e);
-        }
+        Application.getApplication().setDockIconImage(getCalculator2().getImage());
         setIconImage(calculator2.getImage());
         setMinimumSize(getCurrentPanel().getSize());
         pack();
@@ -381,14 +369,14 @@ public class StandardCalculator_v4 extends Calculator_v4
                         JPanel iconPanel = new JPanel(new GridBagLayout());
                         iconPanel.add(iconLabel);
                         textLabel = new JLabel("<html>Apple MacBook Air "
-                                + "Version 3.0.1<br>"
+                                + "Version 4br>"
                                 + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
                                 + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
                                 + "pending or existing intellectual property right in the United States and other<br>"
                                 + "countries/regions."
                                 + "<br><br><br>"
                                 + "This product is licensed under the License Terms to:<br>"
-                                + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+                                + "Michael Ball</html>", macLogo, SwingConstants.LEADING);
                         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -397,7 +385,7 @@ public class StandardCalculator_v4 extends Calculator_v4
                         mainPanel.add(iconLabel);
                         mainPanel.add(textLabel);
                         JOptionPane.showMessageDialog(StandardCalculator_v4.this,
-                                mainPanel, "Help", JOptionPane.PLAIN_MESSAGE);
+                                mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
                     });
                     //break; //?? for just changing one option could be ok. issue maybe if changing other options
                 }
@@ -406,6 +394,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             aboutCalculatorItem.addActionListener(action -> {
                 String COPYRIGHT = "\u00a9";
                 JPanel iconPanel = new JPanel(new GridBagLayout() );
+                iconLabel = new JLabel();
                 iconPanel.add(iconLabel);
                 textLabel = new JLabel("<html>Apple MacBook Air"
                         + "Version 3.0.1 (Build 1)<br>"
