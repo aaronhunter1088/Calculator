@@ -2,6 +2,7 @@ target/*
 .idea/
 .settings/
 logs/*
-calculatogitr/src/main/java/version3/logs/*
+src/.DS_Store
+src/main/DS_Store
 .DS_Store
 Calculator.iml

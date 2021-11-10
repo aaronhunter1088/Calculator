@@ -2,6 +2,8 @@ package version4;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import version3.Calculator_v3;
+import version3.StandardCalculator_v3;
 
 import javax.swing.*;
 import java.text.ParseException;
@@ -21,18 +23,15 @@ public class CalculatorMain_v4
 
 	public static void main(String[] args) throws Exception
     {
-		LOGGER.info("Starting class CalculatorMain_v4");
+        LOGGER.info("Starting class CalculatorMain_v4");
         StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
         UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        try {
-            SwingUtilities.updateComponentTreeUI(calculator);
-        } catch (Exception e) {
-            calculator.logStandardException(e);
-        }
-		calculator.setLocation(750, 250);
-		calculator.setResizable(false);
+        SwingUtilities.updateComponentTreeUI(calculator);
+        calculator.setLocation(750, 250);
+        calculator.setResizable(false);
         calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         calculator.confirm("Calculator started. Initial state", calculator.getCalcType());
+        LOGGER.info("Finished main. Calculator started");
     }
 }
 /*
