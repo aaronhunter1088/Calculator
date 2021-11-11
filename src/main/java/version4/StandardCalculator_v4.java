@@ -10,7 +10,6 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -1136,7 +1135,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             }
             else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonDec().isSelected())
             {
-                getLOGGER().debug("Do nothing");
+                getLogger().debug("Do nothing");
             }
             else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonHex().isSelected())
             {
@@ -1346,7 +1345,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             for(String numberInMemory : getMemoryValues())
             {
                 newMemoryValues[i] = convertFromTypeToTypeOnValues(CalcType_v4.PROGRAMMER.getName(), CalcType_v4.BASIC.getName(), numberInMemory)[0];
-                getLOGGER().debug("new number in memory is: " + newMemoryValues[i]);
+                getLogger().debug("new number in memory is: " + newMemoryValues[i]);
                 i++;
             }
         }
@@ -1568,11 +1567,11 @@ public class StandardCalculator_v4 extends Calculator_v4
     public JButton getButtonNegate() { return buttonNegate; }
     // 4 types of Standard Calculators: create getters and setters
     public JPanel getCurrentPanel() { return super.getCurrentPanel(); }
-    public static Logger getLOGGER() { return LOGGER; }
-    public static long getSerialVersionUID() { return serialVersionUID; }
+    public Logger getLogger() { return LOGGER; }
+    public long getSerialVersionUID() { return serialVersionUID; }
 
     public void setBar(JMenuBar bar) { this.bar = bar; }
-    private static void setLOGGER(Logger LOGGER) { StandardCalculator_v4.LOGGER = LOGGER; }
+    public void setLogger(Logger LOGGER) { this.LOGGER = LOGGER; }
     public void setCurrentPanel(JPanel currentPanel) { super.setCurrentPanel(currentPanel);}
 
 }

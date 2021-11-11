@@ -1344,8 +1344,8 @@ public abstract class Calculator_v4 extends JFrame
 
     /************* All Getters and Setters ******************/
 
-    public static Logger getLOGGER() { return LOGGER; }
-    public static long getSerialVersionUID() { return serialVersionUID; }
+    public Logger getLogger() { return LOGGER; }
+    public long getSerialVersionUID() { return serialVersionUID; }
     @Override
     public GridBagLayout getLayout() { return layout; }
     public GridBagConstraints getConstraints() { return constraints; }

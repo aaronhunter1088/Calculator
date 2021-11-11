@@ -24,6 +24,7 @@ public class JPanelConverter_v4Test {
         System.setProperty("appName", "JPanelBasicMethodsTest");
         testCalculator = new StandardCalculator_v4();
         testTheConverterPanel = new JPanelConverter_v4(testCalculator, AREA);
+        testCalculator.setCurrentPanel(testTheConverterPanel);
     }
     @Before
     public void setUp() throws Exception {
@@ -37,7 +38,7 @@ public class JPanelConverter_v4Test {
         testTheConverterPanel.setIsTextField1Selected(true);
         testTheConverterPanel.setTextField1(new JTextField("90"));
         testTheConverterPanel.setTextField2(new JTextField("0"));
-        assertEquals(100, testTheConverterPanel.convertingDegreesToGradians(), 1);
+        assertEquals(100, AngleMethods.convertingDegreesToGradians(testCalculator), 1);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class JPanelConverter_v4Test {
         testTheConverterPanel.setIsTextField1Selected(true);
         testTheConverterPanel.setTextField1(new JTextField("100"));
         testTheConverterPanel.setTextField2(new JTextField("0"));
-        assertEquals(90, testTheConverterPanel.convertingGradiansToDegrees(), 1);
+        assertEquals(90, AngleMethods.convertingGradiansToDegrees(testCalculator), 1);
     }
 
     @Test
@@ -58,7 +59,7 @@ public class JPanelConverter_v4Test {
         testTheConverterPanel.setIsTextField1Selected(true);
         testTheConverterPanel.setTextField1(new JTextField("636.62"));
         testTheConverterPanel.setTextField2(new JTextField("0"));
-        assertEquals(10, testTheConverterPanel.convertingGradiansToRadians(), 1);
+        assertEquals(10, AngleMethods.convertingGradiansToRadians(testCalculator), 1);
     }
 
     @Test
@@ -68,6 +69,6 @@ public class JPanelConverter_v4Test {
         testTheConverterPanel.setIsTextField1Selected(true);
         testTheConverterPanel.setTextField1(new JTextField("10"));
         testTheConverterPanel.setTextField2(new JTextField("0"));
-        assertEquals(636.62, testTheConverterPanel.convertingRadiansToGradians(), 1);
+        assertEquals(636.62, AngleMethods.convertingRadiansToGradians(testCalculator), 1);
     }
 }
