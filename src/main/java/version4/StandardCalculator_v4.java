@@ -280,9 +280,9 @@ public class StandardCalculator_v4 extends Calculator_v4
             copyItem.setFont(font);
             copyItem.setName("Copy");
             copyItem.addActionListener(action -> {
-                values[3] = textArea.getText(); // to copy
-                textarea = new StringBuffer().append(textArea.getText());
-                confirm();
+                values[2] = getTextAreaWithoutNewLineCharacters();
+                textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
+                confirm("Pressed Copy");
             });
 
             pasteItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -290,14 +290,14 @@ public class StandardCalculator_v4 extends Calculator_v4
             pasteItem.setFont(font);
             pasteItem.setName("Paste");
             pasteItem.addActionListener(action -> {
-                if (values[3].equals(""))
-                    LOGGER.info("Temp[3] is null");
+                if (StringUtils.isEmpty(values[2]) && StringUtils.isBlank(values[2]))
+                    LOGGER.info("Values[2] is empty and blank");
                 else
-                    LOGGER.info("temp[3]: " + values[3]);
-                textArea.setText(values[3]); // to paste
-                values[valuesPosition] = textArea.getText();
-                textarea = new StringBuffer().append(textArea.getText());
-                confirm();
+                    LOGGER.info("Values[2]: " + values[2]);
+                textArea.setText(addNewLineCharacters(1) + values[2]); // to paste
+                values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
+                textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
+                confirm("Pressed Paste");
             });
 
             //historyMenu.setMneonic(null);
@@ -531,7 +531,8 @@ public class StandardCalculator_v4 extends Calculator_v4
     public Collection<JButton> getAllOtherBasicCalculatorButtons()
     {
         return Arrays.asList(getButtonEquals(), getButtonNegate(), getButtonClear(), getButtonClearEntry(),
-                getButtonDelete(), getButtonDot());
+                getButtonDelete(), getButtonDot(), getButtonMemoryAddition(), getButtonMemorySubtraction(),
+                getButtonMemoryStore(), getButtonMemoryClear(), getButtonMemoryRecall());
     }
 
     public void clearAllOtherBasicCalculatorButtons()

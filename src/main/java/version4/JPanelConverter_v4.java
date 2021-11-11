@@ -6,18 +6,16 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.awt.event.*;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static version4.Calculator_v4.font2;
+import static version4.Calculator_v4.*;
 import static version4.ConverterType_v4.*;
 import static version4.CalcType_v4.*;
+import static version4.AngleMethods.*;
+import static version4.AreaMethods.*;
 
 public class JPanelConverter_v4 extends JPanel
 {
@@ -50,16 +48,7 @@ public class JPanelConverter_v4 extends JPanel
     //private final String gradianSymbol = "grad";
     // Angle measurements
     private final String PI = "\u03C0";
-    // Area measurements
-    private final String SQUARE_MILLIMETERS = "Square Millimeters";
-    private final String SQUARE_CENTIMETERS = "Square Centimeters";
-    private final String SQUARE_METERS = "Square Meters";
-    private final String HECTARES = "Hectares";
-    private final String SQUARE_KILOMETERS = "Square Kilometers";
-    private final String SQUARE_INCHES = "Square Inches";
-    private final String SQUARE_FEET = "Square Feet";
-    private final String SQUARE_YARD_ACRES = "Square Yard Acres";
-    private final String SQUARE_MILES = "Square Miles";
+
 
     /************* Constructor ******************/
     public JPanelConverter_v4(StandardCalculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
@@ -72,7 +61,7 @@ public class JPanelConverter_v4 extends JPanel
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setLayout(getConverterLayout());
         setupJPanelConverter_v4();
-        setupButtonFunctionalities();
+        setupAllConverterButtonsFunctionalities();
         addStartupComponentsToJPanelConverter_v4();
         LOGGER.info("Finished with JPanelConverter_v4 constructor\n");
     }
@@ -81,6 +70,10 @@ public class JPanelConverter_v4 extends JPanel
     public void performConverterCalculatorTypeSwitchOperations()
     {
         getTextField1().requestFocusInWindow();
+        // if coming from programmer calculator, make sure these things are set
+        getCalculator().getNumberButtons().forEach(button -> button.setEnabled(true));
+        setupAllConverterButtonsFunctionalities();
+        // end coming from programmer calculator, make sure to do these things
         SwingUtilities.updateComponentTreeUI(this);
     }
 
@@ -109,22 +102,25 @@ public class JPanelConverter_v4 extends JPanel
     {
         LOGGER.info("Starting addStartupComponentsToJPanelConverter_v4");
         // all the following components are added no matter the option selected
-
+        getConstraints().fill = GridBagConstraints.BOTH;
+        getConstraints().anchor = GridBagConstraints.CENTER;
         addComponent(getConverterTypeName(), 0,0,1,1, 1.0,1.0);
         addComponent(getTextField1(), 1, 0, 0, 1,1.0,1.0);
-        addComponent(getUnitOptions1(), 3, 0, 1,1, 1.0,1.0);
-        addComponent(getTextField2(), 4, 0, 1, 1,1.0,1.0);
-        addComponent(getUnitOptions2(), 6, 0, 1,1, 1.0,1.0);
+        addComponent(getUnitOptions1(), 3, 0, 0,1, 1.0,1.0);
+        addComponent(getTextField2(), 4, 0, 0, 1,1.0,1.0);
+        addComponent(getUnitOptions2(), 6, 0, 0,1, 1.0,1.0);
         addComponent(getBottomSpaceAboveNumbers(), 7, 0, 1,1, 1.0,1.0);
         // numbers are added on top of a single panel
-        addComponent(getNumbersPanel(), 8, 0, 1, 1, 1.0, 1.0);
+        getConstraints().anchor = GridBagConstraints.PAGE_START;
+        addComponent(getNumbersPanel(), 8, 0, 0, 1, 1.0, 1.0);
         LOGGER.info("Finished addStartupComponentsToJPanelConverter_v4");
     }
 
-    private void setupButtonFunctionalities()
+    private void setupAllConverterButtonsFunctionalities()
     {
         // Clear the buttons I will use of their functionality (other than numbers)
-        getCalculator().clearVariableNumberOfButtonsFunctionalities(Arrays.asList(getCalculator().getButtonClearEntry(), getCalculator().getButtonDelete(), getCalculator().getButtonDot()));
+        getCalculator().clearVariableNumberOfButtonsFunctionalities(Arrays.asList(
+                getCalculator().getButtonClearEntry(), getCalculator().getButtonDelete(), getCalculator().getButtonDot()));
         // Clear Entry button functionality
         getCalculator().getButtonClearEntry().addActionListener(action -> {
             LOGGER.info("ClearEntryButtonHandler() started for Converter");
@@ -191,9 +187,9 @@ public class JPanelConverter_v4 extends JPanel
         LOGGER.info("Pressed " + buttonValue);
         if (isTextField1Selected) {
             switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
-                case AngleMethods.DEGREES :
-                case AngleMethods.RADIANS :
-                case AngleMethods.GRADIANS:
+                case DEGREES :
+                case RADIANS :
+                case GRADIANS:
                 case SQUARE_MILLIMETERS :
                 case SQUARE_CENTIMETERS :
                 case SQUARE_METERS :
@@ -220,9 +216,9 @@ public class JPanelConverter_v4 extends JPanel
         }
         else {
             switch ((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem())) {
-                case AngleMethods.DEGREES :
-                case AngleMethods.RADIANS :
-                case AngleMethods.GRADIANS:
+                case DEGREES :
+                case RADIANS :
+                case GRADIANS:
                 case SQUARE_MILLIMETERS :
                 case SQUARE_CENTIMETERS :
                 case SQUARE_METERS :
@@ -254,12 +250,12 @@ public class JPanelConverter_v4 extends JPanel
     private void convertAndUpdatePanel()
     {
         LOGGER.info("Performing automatic conversion after each number button");
-        convertValues(true);
+        AngleMethods.convertValues(getCalculator());
         getCalculator().confirm("Conversion done", CONVERTER);
         repaint();
     }
 
-    private ConverterUnits convertStringUnitToConverterUnits(String unit)
+    public ConverterUnits convertStringUnitToConverterUnits(String unit)
     {
         ConverterUnits thisUnit = null;
         switch (unit) {
@@ -279,214 +275,6 @@ public class JPanelConverter_v4 extends JPanel
         return thisUnit;
     }
 
-    private void convertValues(boolean performConversion)
-    {
-        if (!performConversion) return;
-        LOGGER.debug("starting conversion");
-        ConverterUnits unit1 = convertStringUnitToConverterUnits((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem()));
-        ConverterUnits unit2 = convertStringUnitToConverterUnits((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem()));
-        double number;
-        if (isTextField1Selected)
-        {
-            if (unit1 == ConverterUnits.DEGREES) {
-                if (unit2 == ConverterUnits.DEGREES) {
-                    getTextField2().setText(getTextField1().getText());
-                } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
-                    number = AngleMethods.convertingDegreesToRadians(getCalculator());
-                    //number = convertingDegreesToRadians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
-                    number = AngleMethods.convertingDegreesToGradians(getCalculator());
-                    //number = convertingDegreesToGradians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-            }
-            else if (unit1 == ConverterUnits.RADIANS) {
-                if (unit2 == ConverterUnits.DEGREES) {
-                    number = AngleMethods.convertingRadiansToDegrees(getCalculator());
-                    //number = convertingRadiansToDegrees();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    }
-                    else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    }
-                    else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    }
-                    else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
-                    getTextField2().setText(getTextField1().getText());
-                } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
-                    number = AngleMethods.convertingRadiansToGradians(getCalculator());
-                    //number = convertingRadiansToGradians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    }
-                    else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    }
-                    else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    }
-                    else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-            }
-            else { // unit1 is ConverterUnits.GRADIANS
-                if (unit2 == ConverterUnits.DEGREES) {
-                    number = AngleMethods.convertingGradiansToDegrees(getCalculator());
-                    //number = convertingGradiansToDegrees();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-                else if (unit2 == ConverterUnits.RADIANS) {
-                    number = AngleMethods.convertingGradiansToRadians(getCalculator());
-                    //number = convertingGradiansToRadians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-                else { // unit2 is ConverterUnits.GRADIANS
-                    getTextField2().setText(getTextField1().getText());
-                }
-            }
-        }
-        else // going from unit2 to unit1
-        {
-            if (unit1 == ConverterUnits.DEGREES) {
-                if (unit2 == ConverterUnits.DEGREES) {
-                    // best case scenario. get to copy one to the other
-                    getTextField1().setText(getTextField2().getText());
-                } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
-                    number = AngleMethods.convertingRadiansToDegrees(getCalculator());
-                    //number = convertingRadiansToDegrees();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
-                    number = AngleMethods.convertingGradiansToDegrees(getCalculator());
-                    //number = convertingGradiansToDegrees();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-            }
-            else if (unit1 == ConverterUnits.RADIANS) {
-                if (unit2 == ConverterUnits.DEGREES) {
-                    number = AngleMethods.convertingDegreesToRadians(getCalculator());
-                    //number = convertingDegreesToRadians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
-                    getTextField1().setText(getTextField2().getText());
-                } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
-                    number = AngleMethods.convertingRadiansToGradians(getCalculator());
-                    //number = convertingRadiansToGradians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-            }
-            else { // unit1 is ConverterUnits.GRADIANS
-                if (unit2 == ConverterUnits.DEGREES) {
-                    number = AngleMethods.convertingGradiansToDegrees(getCalculator());
-                    //number = convertingGradiansToDegrees();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-                else if (unit2 == ConverterUnits.RADIANS) {
-                    number = AngleMethods.convertingGradiansToRadians(getCalculator());
-                    //number = convertingGradiansToRadians();
-                    if (isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf((int) number));
-                    } else if (isTextField1Selected && !String.valueOf(number).endsWith(".0")) {
-                        getTextField2().setText(String.valueOf(number));
-                    } else if (!isTextField1Selected && String.valueOf(number).endsWith(".0")) {
-                        getTextField1().setText(String.valueOf((int) number));
-                    } else {
-                        getTextField1().setText(String.valueOf(number));
-                    }
-                }
-                else { // unit2 is ConverterUnits.GRADIANS
-                    getTextField2().setText(getTextField1().getText());
-                }
-            }
-        }
-    }
-
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
     {
         constraints.gridx = column;
@@ -504,20 +292,58 @@ public class JPanelConverter_v4 extends JPanel
 
     private void addComponentToNumbersPanel(Component c, int row, int column, int width, int height, double weighty, double weightx)
     {
-        constraints.gridx = column;
-        constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = GridBagConstraints.VERTICAL;
-        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
-        constraints.weighty = weighty;
-        constraints.weightx = weightx;
-        constraints.insets = new Insets(0, 0, 0, 0);
+        getConstraints().gridx = column;
+        getConstraints().gridy = row;
+        getConstraints().gridwidth = width;
+        getConstraints().gridheight = height;
+        getConstraints().fill = GridBagConstraints.BOTH;
+        getConstraints().anchor = GridBagConstraints.CENTER;
+        getConstraints().weighty = weighty;
+        getConstraints().weightx = weightx;
+        getConstraints().insets = new Insets(0, 0, 0, 0);
         GridBagLayout layout = (GridBagLayout) getNumbersPanel().getLayout();
         layout.setConstraints(c, getConstraints()); // set constraints
         getNumbersPanel().add(c);
     }
 
+    private void createHelpMenu(String helpString)
+    {
+        for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
+            JMenu menuOption = getCalculator().getBar().getMenu(i);
+            JMenuItem valueForThisMenuOption = null;
+            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
+                // get the options. remove viewHelpItem
+                for(int j=0; j<menuOption.getItemCount(); j++) {
+                    valueForThisMenuOption = menuOption.getItem(j);
+                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("viewHelpItem")) {
+                        LOGGER.debug("Found the current View Help option");
+                        break;
+                    }
+                }
+                // remove old option
+                menuOption.remove(valueForThisMenuOption);
+                // set up new viewHelpItem option
+                JMenuItem viewHelpItem = new JMenuItem("View Help");
+                viewHelpItem.setFont(font);
+                viewHelpItem.setName("viewHelpItem");
+                menuOption.add(viewHelpItem, 0);
+                viewHelpItem.addActionListener(action -> {
+                    JLabel textLabel = new JLabel(helpString,
+                            getCalculator().getBlankImage(), SwingConstants.CENTER);
+                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+                    JPanel mainPanel = new JPanel();
+                    mainPanel.setBackground(Color.white);
+                    mainPanel.add(textLabel);
+                    JOptionPane.showMessageDialog(this,
+                            mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+                });
+                //break; //?? for just changing one option could be ok. issue maybe if changing other options
+            }
+        }
+    }
     // To set up the help menu in the menu bar for each converter
     private void setupHelpMenu(ConverterType_v4 converterType)
     {
@@ -526,47 +352,59 @@ public class JPanelConverter_v4 extends JPanel
             case ANGLE : {
                 //LOGGER.debug("Size of MenuBar: " + getCalculator().getBar().getMenuCount());
                 // which is the number of menu choices
-                for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
-                    JMenu menuOption = getCalculator().getBar().getMenu(i);
-                    JMenuItem valueForThisMenuOption = null;
-                    if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
-                        // get the options. remove viewHelpItem
-                        for(int j=0; j<menuOption.getItemCount(); j++) {
-                            valueForThisMenuOption = menuOption.getItem(j);
-                            if (valueForThisMenuOption.getName().equals("viewHelpItem")) {
-                                break;
-                            }
-                        }
-                        // remove old option
-                        menuOption.remove(valueForThisMenuOption);
-                        // set up new viewHelpItem option
-                        JMenuItem viewHelpItem = new JMenuItem("View Help");
-                        viewHelpItem.setFont(new Font("Segoe UI", Font.PLAIN, 12) );
-                        menuOption.add(viewHelpItem, 0);
-                        viewHelpItem.addActionListener(action -> {
-                            JLabel textLabel = new JLabel("<html>How to use the " + ANGLE.getName() + " Converter<br><br>" +
-                                    "Step 1. Select the unit for each conversion first.<br>" +
-                                    "Step 2. Enter a number into either text field.<br>" +
-                                    "Step 3. Observe the changed unit upon each entry.</html>",
-                                    getCalculator().getBlankImage(), SwingConstants.CENTER);
-                            textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                            textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-                            JPanel mainPanel = new JPanel();
-                            mainPanel.setBackground(Color.white);
-                            mainPanel.add(textLabel);
-                            JOptionPane.showMessageDialog(this,
-                                    mainPanel, "Help", JOptionPane.PLAIN_MESSAGE);
-                        });
-                        //break; //?? for just changing one option could be ok. issue maybe if changing other options
-                    }
-                }
+                String helpString = "<html>How to use the " + ANGLE.getName() + " Converter<br><br>" +
+                        "Step 1. Select the unit for each conversion first.<br>" +
+                        "Step 2. Enter a number into either text field.<br>" +
+                        "Step 3. Observe the changed unit upon each entry.</html>";
+                createHelpMenu(helpString);
+                break;
+            }
+            case AREA : {
+                String helpString = "<html>How to use the " + AREA.getName() + " Converter<br><br>" +
+                        "Step 1. Select the unit for each conversion first.<br>" +
+                        "Step 2. Enter a number into either text field.<br>" +
+                        "Step 3. Observe the changed unit upon each entry.</html>";
+                createHelpMenu(helpString);
                 break;
             }
             default : {
 
             }
         }
+    }
+
+    private void setupEditMenu()
+    {
+        for(int i = 0; i < calculator.getBar().getMenuCount(); i++) {
+            JMenu menuOption = calculator.getBar().getMenu(i);
+            JMenuItem valueForThisMenuOption = null;
+            if (menuOption.getName() != null && menuOption.getName().equals("Edit")) {
+                System.out.println("Found the edit option");
+                for(int j=0; j<menuOption.getItemCount(); j++) {
+                    valueForThisMenuOption = menuOption.getItem(j);
+                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("Copy")) {
+                        System.out.println("Found copy");
+                        break;
+                    }
+                }
+                // remove old option
+                menuOption.remove(valueForThisMenuOption);
+                // create new copy here
+                JMenuItem copyItem = new JMenuItem("Copy");
+                copyItem.setAccelerator(KeyStroke.getKeyStroke(
+                        KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+                copyItem.setFont(font);
+                copyItem.setName("Copy");
+                copyItem.addActionListener(this::createCopyFunctionalityForConverter);
+                menuOption.add(copyItem, 0);
+            }
+        }
+    }
+
+    private void createCopyFunctionalityForConverter(ActionEvent ae)
+    {
+        getLogger().debug("Functionality CREATED");
     }
 
     private void setupAngleConverter()
@@ -588,6 +426,7 @@ public class JPanelConverter_v4 extends JPanel
     {
         LOGGER.info("Starting Area specific setup");
         setupConverter(AREA.getName());
+        setupHelpMenu(AREA);
         setConverterTypeNameAsString(AREA.getName());
         setUnitOptions1(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
         setUnitOptions2(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
@@ -603,6 +442,8 @@ public class JPanelConverter_v4 extends JPanel
         LOGGER.info("Starting " + nameOfConverter + " Converter setup");
         setConverterTypeName(new JLabel(nameOfConverter));
         getConverterTypeName().setFont(font2);
+
+        setupEditMenu();
 
         setTextField1(new JTextField());
         getTextField1().setText("0");
@@ -641,6 +482,7 @@ public class JPanelConverter_v4 extends JPanel
 
         setNumbersPanel(new JPanel());
         getNumbersPanel().setLayout(new GridBagLayout());
+        getNumbersPanel().setBackground(Color.BLACK);
         addComponentToNumbersPanel(getButtonStartConversion(), 0, 0, 1, 1, 1.0, 1.0);
         addComponentToNumbersPanel(getCalculator().getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
         addComponentToNumbersPanel(getCalculator().getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
@@ -667,11 +509,13 @@ public class JPanelConverter_v4 extends JPanel
         {
             LOGGER.info("UnitOptions1 selected");
             isTextField1Selected = true;
-        } else {
+        }
+        else
+        {
             LOGGER.info("UnitOptions2 selected");
             isTextField1Selected = false;
         }
-        convertValues(true);
+        convertValues(getCalculator());
         isTextField1Selected = !isTextField1Selected;
         getCalculator().confirm("Finished performing Angle units switch", CONVERTER);
     }
@@ -693,7 +537,7 @@ public class JPanelConverter_v4 extends JPanel
     public JComboBox<String> getUnitOptions1() { return unitOptions1; }
     public JComboBox<String> getUnitOptions2() { return unitOptions2; }
     public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
-    public static Logger getLOGGER()
+    public static Logger getLogger()
     {
         return LOGGER;
     }

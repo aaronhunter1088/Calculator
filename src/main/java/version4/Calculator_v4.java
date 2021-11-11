@@ -67,7 +67,7 @@ public abstract class Calculator_v4 extends JFrame
     final protected JButton buttonMemorySubtraction = new JButton("M-");
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
     final protected static Font font2 = new Font("Verdana", Font.BOLD, 20);
-    protected String[] values = {"","","",""}; // firstNum (total), secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
+    protected String[] values = {"","","",""}; // firstNum or total, secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
     protected int valuesPosition = 0;
     protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
     protected int memoryPosition = 0;
@@ -950,8 +950,8 @@ public abstract class Calculator_v4 extends JFrame
                 if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
                 else { LOGGER.info("Confirm Results"); }
                 LOGGER.info("---------------- ");
-                LOGGER.info("textarea: '"+textarea.toString()+"'");
-                LOGGER.info("textArea: '\\n"+getTextAreaWithoutNewLineCharacters()+"'");
+                LOGGER.info("textarea: '\\n"+getTextareaWithoutNewLineCharacters()+"'");
+                LOGGER.info("textArea: '"+getTextAreaWithoutNewLineCharacters()+"'");
                 if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
                 {
                     LOGGER.info("no memories stored!");
@@ -1169,6 +1169,11 @@ public abstract class Calculator_v4 extends JFrame
     protected String getTextAreaWithoutNewLineCharacters()
     {
         return getTextArea().getText().replaceAll("\n", "").strip();
+    }
+
+    protected String getTextareaWithoutNewLineCharacters()
+    {
+        return getTextarea().toString().replaceAll("\n", "").strip();
     }
 
     public boolean isMemoryValuesEmpty()
