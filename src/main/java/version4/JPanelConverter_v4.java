@@ -61,8 +61,8 @@ public class JPanelConverter_v4 extends JPanel
         setConverterLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setLayout(getConverterLayout());
+        //setupAllConverterButtonsFunctionalities();
         setupJPanelConverter_v4();
-        setupAllConverterButtonsFunctionalities();
         addStartupComponentsToJPanelConverter_v4();
         getCalculator().pack();
         LOGGER.info("Finished with JPanelConverter_v4 constructor\n");
@@ -119,50 +119,23 @@ public class JPanelConverter_v4 extends JPanel
         LOGGER.info("Finished addStartupComponentsToJPanelConverter_v4");
     }
 
-    private void setupAllConverterButtonsFunctionalities()
+    public void setupAllConverterButtonsFunctionalities()
     {
+        getLogger().info("Starting to setup all converter button functions");
         // Clear the buttons I will use of their functionality (other than numbers)
-        getCalculator().clearVariableNumberOfButtonsFunctionalities(Arrays.asList(
-                getCalculator().getButtonClearEntry(), getCalculator().getButtonDelete(), getCalculator().getButtonDot()));
+        getCalculator().clearVariableNumberOfButtonsFunctionalities();
         // Clear Entry button functionality
-        getCalculator().getButtonClearEntry().addActionListener(action -> {
-            LOGGER.info("ClearEntryButtonHandler() started for Converter");
-            LOGGER.info("button: " + action.getActionCommand());
-            getTextField1().setText("0");
-            getTextField2().setText("0");
-            getTextField1().requestFocusInWindow();
-            isTextField1Selected = true;
-            LOGGER.info("ClearEntryButtonHandler() finished for Converter");
-            getCalculator().confirm("ClearEntryButton pushed", CONVERTER);
-        });
+        getLogger().debug("BEFORE Number of ActionListeners of Button:CE:: " + getCalculator().getButtonClearEntry().getActionListeners().length);
+        getCalculator().getButtonClearEntry().addActionListener(this::performClearEntryButtonFunctionality);
+        getLogger().debug("AFTER Number of ActionListeners of Button:CE:: " + getCalculator().getButtonClearEntry().getActionListeners().length);
         // Delete button functionality
-        getCalculator().getButtonDelete().addActionListener(action -> {
-            LOGGER.info("DeleteButtonHandler() started for Converter");
-            LOGGER.info("button: " + action.getActionCommand());
-            if (isTextField1Selected) {
-                if (getTextField1().getText().length() == 1) getTextField1().setText("0");
-                else getTextField1().setText(getTextField1().getText().substring(0, getTextField1().getText().length()-1));
-            }
-            else {
-                if (getTextField2().getText().length() == 1) getTextField2().setText("0");
-                else getTextField2().setText(getTextField2().getText().substring(0, getTextField2().getText().length()-1));
-            }
-            LOGGER.info("DeleteButtonHandler() finished for Converter");
-            getCalculator().confirm("DeleteButton pushed", CONVERTER);
-        });
+        getLogger().debug("Number of ActionListeners of Button:Delete:: " + getCalculator().getButtonDelete().getActionListeners().length);
+        getCalculator().getButtonDelete().addActionListener(this::performDeleteButtonFunctionality);
+        getLogger().debug("Number of ActionListeners of Button:Delete:: " + getCalculator().getButtonDelete().getActionListeners().length);
         // Set up decimal button
-        getCalculator().getButtonDot().addActionListener(action -> {
-            LOGGER.info("DotButtonHandler() started for Converter");
-            LOGGER.info("button: " + action.getActionCommand());
-            if (isTextField1Selected) {
-                getTextField1().setText(getTextField1().getText() + ".");
-            }
-            else {
-                getTextField2().setText(getTextField2().getText() + ".");
-            }
-            LOGGER.info("DotButtonHandler() finished for Converter");
-            getCalculator().confirm("DotButton pushed", CONVERTER);
-        });
+        getLogger().debug("Number of ActionListeners of Button:Dot:: " + getCalculator().getButtonDot().getActionListeners().length);
+        getCalculator().getButtonDot().addActionListener(this::performDotButtonFunctionality);
+        getLogger().debug("Number of ActionListeners of Button:Dot:: " + getCalculator().getButtonDot().getActionListeners().length);
         // Number button functionalities
         // First clear all functionality assigned to them
         getCalculator().clearNumberButtonFunctionalities();
@@ -178,6 +151,49 @@ public class JPanelConverter_v4 extends JPanel
         getCalculator().getButton8().addActionListener(this::performNumberButtonFunctionality);
         getCalculator().getButton9().addActionListener(this::performNumberButtonFunctionality);
         // End button functionalities
+        getLogger().info("Finished setting up all converter button functions");
+    }
+
+    private void performClearEntryButtonFunctionality(ActionEvent ae)
+    {
+        LOGGER.info("ClearEntryButtonHandler() started for Converter");
+        LOGGER.info("button: " + ae.getActionCommand());
+        getTextField1().setText("0");
+        getTextField2().setText("0");
+        getTextField1().requestFocusInWindow();
+        isTextField1Selected = true;
+        LOGGER.info("ClearEntryButtonHandler() finished for Converter");
+        getCalculator().confirm("ClearEntryButton pushed", CONVERTER);
+    }
+
+    private void performDeleteButtonFunctionality(ActionEvent ae)
+    {
+        LOGGER.info("DeleteButtonHandler() started for Converter");
+        LOGGER.info("button: " + ae.getActionCommand());
+        if (isTextField1Selected) {
+            if (getTextField1().getText().length() == 1) getTextField1().setText("0");
+            else getTextField1().setText(getTextField1().getText().substring(0, getTextField1().getText().length()-1));
+        }
+        else {
+            if (getTextField2().getText().length() == 1) getTextField2().setText("0");
+            else getTextField2().setText(getTextField2().getText().substring(0, getTextField2().getText().length()-1));
+        }
+        LOGGER.info("DeleteButtonHandler() finished for Converter");
+        getCalculator().confirm("DeleteButton pushed", CONVERTER);
+    }
+
+    public void performDotButtonFunctionality(ActionEvent ae)
+    {
+        LOGGER.info("DotButtonHandler() started for Converter");
+        LOGGER.info("button: " + ae.getActionCommand());
+        if (isTextField1Selected) {
+            getTextField1().setText(getTextField1().getText() + ".");
+        }
+        else {
+            getTextField2().setText(getTextField2().getText() + ".");
+        }
+        LOGGER.info("DotButtonHandler() finished for Converter");
+        getCalculator().confirm("DotButton pushed", CONVERTER);
     }
 
     private void performNumberButtonFunctionality(ActionEvent ae)
@@ -512,7 +528,7 @@ public class JPanelConverter_v4 extends JPanel
 
         setButtonStartConversion(new JButton(""));
         getButtonStartConversion().setPreferredSize(new Dimension(35, 35));
-        getButtonStartConversion().setFont(getCalculator().font);
+        getButtonStartConversion().setFont(font);
         getButtonStartConversion().setBorder(new LineBorder(Color.BLACK));
 
         setNumbersPanel(new JPanel());
@@ -537,7 +553,8 @@ public class JPanelConverter_v4 extends JPanel
         LOGGER.info("Ending " + nameOfConverter + " Converter setup");
     }
 
-    private void performAngleUnitsSwitch(ActionEvent action) {
+    private void performAngleUnitsSwitch(ActionEvent action)
+    {
         LOGGER.info("Start performing Angle units switch");
         LOGGER.debug("action: " + action.getActionCommand());
         if (getUnitOptions1().hasFocus())
@@ -555,7 +572,8 @@ public class JPanelConverter_v4 extends JPanel
         getCalculator().confirm("Finished performing Angle units switch", CONVERTER);
     }
 
-    private void performAreaUnitsSwitch(ActionEvent actionEvent) {
+    private void performAreaUnitsSwitch(ActionEvent actionEvent)
+    {
         LOGGER.info("Start performing Area units switch");
         // do any converting
         LOGGER.info("Finished performing Area units switch");

@@ -60,10 +60,10 @@ public class StandardCalculator_v4 extends Calculator_v4
     public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType) throws Exception
     {
         super(StringUtils.isBlank(calcType.getName()) ? CalcType_v4.BASIC.getName() : calcType.getName()); // default title is Basic
+        setCalcType(calcType);
         setupMenuBar();
         setCurrentPanel(determinePanelType(calcType, converterType));
         setupStandardCalculator();
-        setCalcType(calcType);
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(getCalculator2().getImage());
@@ -418,10 +418,16 @@ public class StandardCalculator_v4 extends Calculator_v4
     } // end public setMenuBar
 	public void setupStandardCalculator()
     {
-        setupBasicCalculatorButtons();
-        setupOtherCalculatorButtons();
+        if (getCalcType() == BASIC ||
+            getCalcType() == PROGRAMMER)
+        {
+            setupBasicCalculatorButtons();
+            setupOtherCalculatorButtons();
+        } else if (getCalcType() == CONVERTER) {
+            ((JPanelConverter_v4)getCurrentPanel()).setupAllConverterButtonsFunctionalities();
+        }
 
-        setCalcType(CalcType_v4.BASIC);
+
 
         add(getCurrentPanel());
 	}

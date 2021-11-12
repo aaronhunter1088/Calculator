@@ -16,6 +16,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static version4.CalcType_v4.*;
@@ -147,7 +149,7 @@ public abstract class Calculator_v4 extends JFrame
 
         setupNumberButtons(true);
         setupMemoryButtons();
-        setupOtherCalculatorButtons();
+        //setupOtherCalculatorButtons();
 
         LOGGER.info("Finished setupCalculator()");
 	}
@@ -158,6 +160,7 @@ public abstract class Calculator_v4 extends JFrame
         getButtonClear().setPreferredSize(new Dimension(35, 35));
         getButtonClear().setBorder(new LineBorder(Color.BLACK));
         getButtonClear().setEnabled(true);
+        getButtonClear().setName("C");
         getButtonClear().addActionListener(action -> {
             performClearButtonActions(action);
             if (getCalcType() == CalcType_v4.PROGRAMMER)
@@ -170,18 +173,21 @@ public abstract class Calculator_v4 extends JFrame
         getButtonClearEntry().setPreferredSize(new Dimension(35, 35));
         getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
         getButtonClearEntry().setEnabled(true);
+        getButtonClearEntry().setName("CE");
         getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
 
         getButtonDelete().setFont(font);
         getButtonDelete().setPreferredSize(new Dimension(35, 35));
         getButtonDelete().setBorder(new LineBorder(Color.BLACK));
         getButtonDelete().setEnabled(true);
+        getButtonDelete().setName("\u2190");
         getButtonDelete().addActionListener(this::performDeleteButtonActions);
 
         getButtonDot().setFont(font);
         getButtonDot().setPreferredSize(new Dimension(35, 35));
         getButtonDot().setBorder(new LineBorder(Color.BLACK));
         getButtonDot().setEnabled(true);
+        getButtonDot().setName(".");
         getButtonDot().addActionListener(this::performDotButtonActions);
     }
 
@@ -191,30 +197,35 @@ public abstract class Calculator_v4 extends JFrame
         getButtonMemoryStore().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryStore().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryStore().setEnabled(true);
+        getButtonMemoryStore().setName("MS");
         getButtonMemoryStore().addActionListener(this::performMemoryStoreActions);
 
         getButtonMemoryRecall().setFont(Calculator_v4.font);
         getButtonMemoryRecall().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryRecall().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryRecall().setEnabled(false);
+        getButtonMemoryRecall().setName("MR");
         getButtonMemoryRecall().addActionListener(this::performMemoryRecallActions);
 
         getButtonMemoryClear().setFont(Calculator_v4.font);
         getButtonMemoryClear().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryClear().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryClear().setEnabled(false);
+        getButtonMemoryClear().setName("MC");
         getButtonMemoryClear().addActionListener(this::performMemoryClearActions);
 
         getButtonMemoryAddition().setFont(Calculator_v4.font);
         getButtonMemoryAddition().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryAddition().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryAddition().setEnabled(true);
+        getButtonMemoryAddition().setName("M+");
         getButtonMemoryAddition().addActionListener(this::performMemoryAddActions);
 
         getButtonMemorySubtraction().setFont(Calculator_v4.font);
         getButtonMemorySubtraction().setPreferredSize(new Dimension(35, 35));
         getButtonMemorySubtraction().setBorder(new LineBorder(Color.BLACK));
         getButtonMemorySubtraction().setEnabled(true);
+        getButtonMemorySubtraction().setName("M-");
         getButtonMemorySubtraction().addActionListener(this::performMemorySubtractionActions);
 
     }
@@ -224,19 +235,16 @@ public abstract class Calculator_v4 extends JFrame
      */
     public void setupNumberButtons(boolean isEnabled)
     {
+        AtomicInteger i = new AtomicInteger(0);
         getNumberButtons().forEach(button -> {
             button.setFont(font);
             button.setEnabled(isEnabled);
             if (button.getText().equals("0")) { button.setPreferredSize(new Dimension(70, 35)); }
             else { button.setPreferredSize(new Dimension(35, 35)); }
             button.setBorder(new LineBorder(Color.BLACK));
+            button.setName(String.valueOf(i.getAndAdd(1)));
             button.addActionListener(this::performNumberButtonActions);
         });
-    }
-
-    public void clearNumberButtonFunctionalities()
-    {
-        getNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(button::removeActionListener));
     }
 
     public void setEnabledForAllNumberButtons(boolean isEnabled)
@@ -749,6 +757,34 @@ public abstract class Calculator_v4 extends JFrame
         }
     }
 
+    public void performLogicForDotButtonPressed(String buttonChoice)
+    {
+        if (!textarea.equals("") && isDotButtonPressed() && isNumberNegative())
+        {
+            textarea = new StringBuffer().append(convertToPositive(values[valuesPosition]));
+            getTextArea().setText(addNewLineCharacters(1)+textarea+buttonChoice+"-");
+            LOGGER.info("TextArea: " + getTextArea().getText());
+            textarea.append(buttonChoice);
+            textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
+            values[valuesPosition] = textarea.toString();
+            dotButtonPressed = false;
+        }
+        else if (!textarea.equals("") && isDotButtonPressed() && !isNumberNegative())
+        {
+            textarea = new StringBuffer().append(values[valuesPosition] + buttonChoice);
+            textArea.setText(addNewLineCharacters(1)+textarea.toString() );
+            LOGGER.info("textarea: " + textarea);
+            values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
+        }
+        else if (!textarea.equals("") && !isDotButtonPressed())
+        {
+            textarea.append(values[valuesPosition] + buttonChoice);
+            textArea.setText("\n" + textarea );
+            LOGGER.info("textarea: " + textarea);
+            values[valuesPosition] = textArea.getText().replaceAll("\n", "");
+        }
+    }
+
     public void performNumberButtonActions(String buttonChoice)
     {
         performInitialChecks();
@@ -806,6 +842,7 @@ public abstract class Calculator_v4 extends JFrame
         }
         performNumberButtonActions(buttonChoice);
     }
+
     public void performProgrammerNumberButtonActions(String buttonChoice)
     {
 	    performInitialChecks();
@@ -825,6 +862,7 @@ public abstract class Calculator_v4 extends JFrame
         updateTextareaFromTextArea();
         values[valuesPosition] = textarea.toString(); // store textarea in values
     }
+
     public void performProgrammerCalculatorNumberButtonActions(String buttonChoice)
     {
         LOGGER.info("Starting programmer calculator number button actions");
@@ -839,33 +877,6 @@ public abstract class Calculator_v4 extends JFrame
             textarea = new StringBuffer();
             valuesPosition = 1;
             performProgrammerNumberButtonActions(buttonChoice);
-        }
-    }
-    public void performLogicForDotButtonPressed(String buttonChoice)
-    {
-        if (!textarea.equals("") && isDotButtonPressed() && isNumberNegative())
-        {
-            textarea = new StringBuffer().append(convertToPositive(values[valuesPosition]));
-            getTextArea().setText(addNewLineCharacters(1)+textarea+buttonChoice+"-");
-            LOGGER.info("TextArea: " + getTextArea().getText());
-            textarea.append(buttonChoice);
-            textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
-            values[valuesPosition] = textarea.toString();
-            dotButtonPressed = false;
-        }
-        else if (!textarea.equals("") && isDotButtonPressed() && !isNumberNegative())
-        {
-            textarea = new StringBuffer().append(values[valuesPosition] + buttonChoice);
-            textArea.setText(addNewLineCharacters(1)+textarea.toString() );
-            LOGGER.info("textarea: " + textarea);
-            values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
-        }
-        else if (!textarea.equals("") && !isDotButtonPressed())
-        {
-            textarea.append(values[valuesPosition] + buttonChoice);
-            textArea.setText("\n" + textarea );
-            LOGGER.info("textarea: " + textarea);
-            values[valuesPosition] = textArea.getText().replaceAll("\n", "");
         }
     }
 
@@ -1473,16 +1484,30 @@ public abstract class Calculator_v4 extends JFrame
         return Arrays.asList(getButton0(), getButton1(), getButton2(), getButton3(), getButton4(), getButton5(),
                 getButton6(), getButton7(), getButton8(), getButton9());
     }
-
-    public void clearVariableNumberOfButtonsFunctionalities(Collection<JButton> buttonsToClearOfTheirFunctionality)
+    public Collection<JButton> getButtonClearEntryAndButtonDeleteAndButtonDot()
     {
-        for(JButton button : buttonsToClearOfTheirFunctionality)
-        {
-            // Remove action listeners
-            for(ActionListener al : button.getActionListeners()) { button.removeActionListener(al); }
-            // Remove key listeners
-            for (KeyListener kl : button.getKeyListeners()) { button.removeKeyListener(kl); }
-        }
+        return Arrays.asList(getButtonClearEntry(), getButtonDelete(), getButtonDot());
+    }
+
+    public void clearVariableNumberOfButtonsFunctionalities()
+    {
+        getLogger().debug("Clear VariableNumber of Buttons");
+        getButtonClearEntryAndButtonDeleteAndButtonDot().forEach(button -> {
+            getLogger().debug("Removing action listener from button: " + button.getName());
+            Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(al -> {
+                button.removeActionListener(al);
+            });
+        });
+        getButtonClearEntryAndButtonDeleteAndButtonDot().forEach(button -> Arrays.stream(button.getKeyListeners()).collect(Collectors.toList()).forEach(button::removeKeyListener));
+    }
+
+    public void clearNumberButtonFunctionalities()
+    {
+        getLogger().debug("Number buttons cleared of action listeners");
+        getNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(al -> {
+            getLogger().debug("Removing action listener from button: " + button.getName());
+            button.removeActionListener(al);
+        }));
     }
 
     public void logStandardException(Exception e)
