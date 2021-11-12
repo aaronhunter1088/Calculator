@@ -250,7 +250,7 @@ public class StandardCalculator_v4 extends Calculator_v4
             areaConverter.addActionListener(action -> {
                 try
                 {
-                    JPanel panel = new JPanelConverter_v4(this, ConverterType_v4.AREA);
+                    JPanel panel = new JPanelConverter_v4(this, AREA);
                     performTasksWhenChangingJPanels(panel, CONVERTER);
                 }
                 catch (ParseException | CalculatorError_v4 e)
@@ -479,7 +479,6 @@ public class StandardCalculator_v4 extends Calculator_v4
         {
             ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations();
         }
-        //repaint();
         pack();
     }
 

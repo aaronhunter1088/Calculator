@@ -1,5 +1,6 @@
 package version4;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,6 +64,7 @@ public class JPanelConverter_v4 extends JPanel
         setupJPanelConverter_v4();
         setupAllConverterButtonsFunctionalities();
         addStartupComponentsToJPanelConverter_v4();
+        getCalculator().pack();
         LOGGER.info("Finished with JPanelConverter_v4 constructor\n");
     }
 
@@ -75,6 +77,7 @@ public class JPanelConverter_v4 extends JPanel
         setupAllConverterButtonsFunctionalities();
         // end coming from programmer calculator, make sure to do these things
         SwingUtilities.updateComponentTreeUI(this);
+        getCalculator().pack(); // just in case
     }
 
     private void setupJPanelConverter_v4() throws CalculatorError_v4
@@ -379,32 +382,64 @@ public class JPanelConverter_v4 extends JPanel
             JMenu menuOption = calculator.getBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Edit")) {
-                System.out.println("Found the edit option");
+                getLogger().info("Found the edit option");
                 for(int j=0; j<menuOption.getItemCount(); j++) {
                     valueForThisMenuOption = menuOption.getItem(j);
                     if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("Copy")) {
-                        System.out.println("Found copy");
-                        break;
+                            valueForThisMenuOption.getName().equals("Copy"))
+                    {
+                        getLogger().info("Found copy");
+                        // remove old option
+                        menuOption.remove(valueForThisMenuOption);
+                        // create new copy here
+                        JMenuItem copyItem = new JMenuItem("CopyC");
+                        copyItem.setAccelerator(KeyStroke.getKeyStroke(
+                                KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+                        copyItem.setFont(font);
+                        copyItem.setName("Copy");
+                        copyItem.addActionListener(this::createCopyFunctionalityForConverter);
+                        menuOption.add(copyItem, 0);
+                        continue;
+                    }
+                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("Paste"))
+                    {
+                        getLogger().info("Found paste");
+                        // remove old option
+                        menuOption.remove(valueForThisMenuOption);
+                        // create new copy here
+                        JMenuItem pasteItem = new JMenuItem("PasteC");
+                        pasteItem.setAccelerator(KeyStroke.getKeyStroke(
+                                KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+                        pasteItem.setFont(font);
+                        pasteItem.setName("Paste");
+                        pasteItem.addActionListener(this::createPasteFunctionalityForConverter);
+                        menuOption.add(pasteItem, 1);
+                        continue;
                     }
                 }
-                // remove old option
-                menuOption.remove(valueForThisMenuOption);
-                // create new copy here
-                JMenuItem copyItem = new JMenuItem("Copy");
-                copyItem.setAccelerator(KeyStroke.getKeyStroke(
-                        KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-                copyItem.setFont(font);
-                copyItem.setName("Copy");
-                copyItem.addActionListener(this::createCopyFunctionalityForConverter);
-                menuOption.add(copyItem, 0);
             }
         }
     }
 
     private void createCopyFunctionalityForConverter(ActionEvent ae)
     {
-        getLogger().debug("Functionality CREATED");
+        if (isTextField1Selected()) {
+            getCalculator().getValues()[2] = getTextField1().getText();
+        } else {
+            getCalculator().getValues()[2] = getTextField2().getText();
+        }
+        getCalculator().confirm("Copied " + getCalculator().getValues()[2], CONVERTER);
+    }
+
+    private void createPasteFunctionalityForConverter(ActionEvent ae)
+    {
+        if (isTextField1Selected()) {
+            getTextField1().setText(getCalculator().getValues()[2]);
+        } else {
+            getTextField2().setText(getCalculator().getValues()[2]);
+        }
+        getCalculator().confirm("Pasted " + getCalculator().getValues()[2], CONVERTER);
     }
 
     private void setupAngleConverter()
@@ -424,7 +459,7 @@ public class JPanelConverter_v4 extends JPanel
 
     private void setupAreaConverter()
     {
-        LOGGER.info("Starting Area specific setup");
+        LOGGER.info("Starting setup");
         setupConverter(AREA.getName());
         setupHelpMenu(AREA);
         setConverterTypeNameAsString(AREA.getName());
