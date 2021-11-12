@@ -69,12 +69,14 @@ public class JPanelConverter_v4 extends JPanel
     }
 
     /************* Start of methods here ******************/
-    public void performConverterCalculatorTypeSwitchOperations()
+    public void performConverterCalculatorTypeSwitchOperations(ConverterType_v4 converterType)
     {
         getTextField1().requestFocusInWindow();
         // if coming from programmer calculator, make sure these things are set
         getCalculator().getNumberButtons().forEach(button -> button.setEnabled(true));
         setupAllConverterButtonsFunctionalities();
+        setupEditMenu();
+        setupHelpMenu(converterType);
         // end coming from programmer calculator, make sure to do these things
         SwingUtilities.updateComponentTreeUI(this);
         getCalculator().pack(); // just in case
@@ -121,21 +123,15 @@ public class JPanelConverter_v4 extends JPanel
 
     public void setupAllConverterButtonsFunctionalities()
     {
-        getLogger().info("Starting to setup all converter button functions");
+        LOGGER.info("Starting to setup all converter button functions");
         // Clear the buttons I will use of their functionality (other than numbers)
         getCalculator().clearVariableNumberOfButtonsFunctionalities();
         // Clear Entry button functionality
-        getLogger().debug("BEFORE Number of ActionListeners of Button:CE:: " + getCalculator().getButtonClearEntry().getActionListeners().length);
         getCalculator().getButtonClearEntry().addActionListener(this::performClearEntryButtonFunctionality);
-        getLogger().debug("AFTER Number of ActionListeners of Button:CE:: " + getCalculator().getButtonClearEntry().getActionListeners().length);
         // Delete button functionality
-        getLogger().debug("Number of ActionListeners of Button:Delete:: " + getCalculator().getButtonDelete().getActionListeners().length);
         getCalculator().getButtonDelete().addActionListener(this::performDeleteButtonFunctionality);
-        getLogger().debug("Number of ActionListeners of Button:Delete:: " + getCalculator().getButtonDelete().getActionListeners().length);
         // Set up decimal button
-        getLogger().debug("Number of ActionListeners of Button:Dot:: " + getCalculator().getButtonDot().getActionListeners().length);
         getCalculator().getButtonDot().addActionListener(this::performDotButtonFunctionality);
-        getLogger().debug("Number of ActionListeners of Button:Dot:: " + getCalculator().getButtonDot().getActionListeners().length);
         // Number button functionalities
         // First clear all functionality assigned to them
         getCalculator().clearNumberButtonFunctionalities();
@@ -151,7 +147,7 @@ public class JPanelConverter_v4 extends JPanel
         getCalculator().getButton8().addActionListener(this::performNumberButtonFunctionality);
         getCalculator().getButton9().addActionListener(this::performNumberButtonFunctionality);
         // End button functionalities
-        getLogger().info("Finished setting up all converter button functions");
+        LOGGER.info("Finished setting up all converter button functions");
     }
 
     private void performClearEntryButtonFunctionality(ActionEvent ae)
@@ -325,7 +321,7 @@ public class JPanelConverter_v4 extends JPanel
         getNumbersPanel().add(c);
     }
 
-    private void createHelpMenu(String helpString)
+    public void createViewHelpMenu(String helpString)
     {
         for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
             JMenu menuOption = getCalculator().getBar().getMenu(i);
@@ -335,7 +331,7 @@ public class JPanelConverter_v4 extends JPanel
                 for(int j=0; j<menuOption.getItemCount(); j++) {
                     valueForThisMenuOption = menuOption.getItem(j);
                     if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("viewHelpItem")) {
+                            valueForThisMenuOption.getName().equals("View Help")) {
                         LOGGER.debug("Found the current View Help option");
                         break;
                     }
@@ -345,7 +341,7 @@ public class JPanelConverter_v4 extends JPanel
                 // set up new viewHelpItem option
                 JMenuItem viewHelpItem = new JMenuItem("View Help");
                 viewHelpItem.setFont(font);
-                viewHelpItem.setName("viewHelpItem");
+                viewHelpItem.setName("View Help");
                 menuOption.add(viewHelpItem, 0);
                 viewHelpItem.addActionListener(action -> {
                     JLabel textLabel = new JLabel(helpString,
@@ -375,7 +371,7 @@ public class JPanelConverter_v4 extends JPanel
                         "Step 1. Select the unit for each conversion first.<br>" +
                         "Step 2. Enter a number into either text field.<br>" +
                         "Step 3. Observe the changed unit upon each entry.</html>";
-                createHelpMenu(helpString);
+                createViewHelpMenu(helpString);
                 break;
             }
             case AREA : {
@@ -383,7 +379,7 @@ public class JPanelConverter_v4 extends JPanel
                         "Step 1. Select the unit for each conversion first.<br>" +
                         "Step 2. Enter a number into either text field.<br>" +
                         "Step 3. Observe the changed unit upon each entry.</html>";
-                createHelpMenu(helpString);
+                createViewHelpMenu(helpString);
                 break;
             }
             default : {
@@ -495,6 +491,7 @@ public class JPanelConverter_v4 extends JPanel
         getConverterTypeName().setFont(font2);
 
         setupEditMenu();
+        setupHelpMenu(getConverterType());
 
         setTextField1(new JTextField());
         getTextField1().setText("0");

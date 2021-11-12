@@ -158,16 +158,15 @@ public class StandardCalculator_v4 extends Calculator_v4
             // add options to Look menu
             lookMenu.add(metal);
             lookMenu.add(motif);
-            String os = System.getProperty("os.name");
-            if (!StringUtils.contains(os.toLowerCase(), "Mac".toLowerCase()))
+            if (!StringUtils.contains(System.getProperty("os.name").toLowerCase(), "Mac".toLowerCase()))
             {
                 lookMenu.add(windows);
                 lookMenu.add(system);
                 lookMenu.add(gtk);
-            }
+            } // add morer options if using Windows
         getBar().add(lookMenu);
 
-        // View menu options
+        // View menu options, the converterMenu is an option which is a menu of more choices
             JMenuItem basic = new JMenuItem(CalcType_v4.BASIC.getName());
             JMenuItem programmer = new JMenuItem(CalcType_v4.PROGRAMMER.getName());
             JMenuItem dates = new JMenuItem(CalcType_v4.DATE.getName());
@@ -176,246 +175,145 @@ public class StandardCalculator_v4 extends Calculator_v4
             // commonalities
             basic.setFont(font);
             basic.setName(BASIC.getName());
+            basic.addActionListener(action -> {
+            try
+            {
+                JPanel panel = new JPanelBasic_v4(this);
+                performTasksWhenChangingJPanels(panel, BASIC);
+            }
+            catch (CalculatorError_v4 e)
+            {
+                LOGGER.error("Couldn't change to JPanelBasic_v4 because {}", e.getMessage());
+            }
+        });
+
             programmer.setFont(font);
             programmer.setName(PROGRAMMER.getName());
+            programmer.addActionListener(action -> {
+            try
+            {
+                JPanel panel = new JPanelProgrammer_v4(this);
+                performTasksWhenChangingJPanels(panel, PROGRAMMER);
+                confirm("Finished performTasksWhenChangingJPanels");
+            }
+            catch (CalculatorError_v4 e)
+            {
+                LOGGER.error("Couldn't change to JPanelProgrammer_v4 because {}", e.getMessage());
+            }
+        });
+
             dates.setFont(font);
             dates.setName(DATE.getName());
+            dates.addActionListener(action -> {
+            try
+            {
+                JPanel panel = new JPanelDate_v4(this);
+                performTasksWhenChangingJPanels(panel, DATE);
+                setCalcType(CalcType_v4.DATE);
+            }
+            catch (ParseException | CalculatorError_v4 e)
+            {
+                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+            }
+        });
+
             converterMenu.setFont(font);
             converterMenu.setName(CONVERTER.getName());
+                // options for converterMenu
+                JMenuItem angleConverter = new JMenuItem(ANGLE.getName());
+                JMenuItem areaConverter = new JMenuItem(ConverterType_v4.AREA.getName());
 
-            // functions
-            basic.addActionListener(action -> {
-                try
-                {
-                    JPanel panel = new JPanelBasic_v4(this);
-                    performTasksWhenChangingJPanels(panel, BASIC);
-                }
-                catch (CalculatorError_v4 e)
-                {
-                    LOGGER.error("Couldn't change to JPanelBasic_v4 because {}", e.getMessage());
-                }
-            });
-            programmer.addActionListener(action -> {
-                try
-                {
-                    JPanel panel = new JPanelProgrammer_v4(this);
-                    performTasksWhenChangingJPanels(panel, PROGRAMMER);
-                    confirm("Finished performTasksWhenChangingJPanels");
-                }
-                catch (CalculatorError_v4 e)
-                {
-                    LOGGER.error("Couldn't change to JPanelProgrammer_v4 because {}", e.getMessage());
-                }
-            });
-            dates.addActionListener(action -> {
-                try
-                {
-                    JPanel panel = new JPanelDate_v4(this);
-                    performTasksWhenChangingJPanels(panel, DATE);
-                    setCalcType(CalcType_v4.DATE);
-                }
-                catch (ParseException | CalculatorError_v4 e)
-                {
-                    LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
-                }
-            });
+                // commonalities
+                angleConverter.setFont(font);
+                areaConverter.setFont(font);
+
+                // functions
+                angleConverter.addActionListener(action -> {
+                    try
+                    {
+                        JPanel panel = new JPanelConverter_v4(this, ANGLE);
+                        performTasksWhenChangingJPanels(panel, CONVERTER, ANGLE);
+                    }
+                    catch (ParseException | CalculatorError_v4 e)
+                    {
+                        LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                    }
+                });
+                areaConverter.addActionListener(action -> {
+                    try
+                    {
+                        JPanel panel = new JPanelConverter_v4(this, AREA);
+                        performTasksWhenChangingJPanels(panel, CONVERTER, AREA);
+                    }
+                    catch (ParseException | CalculatorError_v4 e)
+                    {
+                        LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                    }
+                });
+
+            // add JMenuItems to converterMenu
+            converterMenu.add(angleConverter);
+            converterMenu.add(areaConverter);
 
             // add view options to viewMenu
             viewMenu.add(basic);
             viewMenu.add(programmer);
             viewMenu.add(dates);
-                viewMenu.addSeparator();
+            viewMenu.addSeparator();
             viewMenu.add(converterMenu);
-
-            // options for converterMenu
-            JMenuItem angleConverter = new JMenuItem(ANGLE.getName());
-            JMenuItem areaConverter = new JMenuItem(ConverterType_v4.AREA.getName());
-
-            // commonalities
-            angleConverter.setFont(font);
-            areaConverter.setFont(font);
-
-            // functions
-            angleConverter.addActionListener(action -> {
-                try
-                {
-                    JPanel panel = new JPanelConverter_v4(this, ANGLE);
-                    performTasksWhenChangingJPanels(panel, CONVERTER);
-                }
-                catch (ParseException | CalculatorError_v4 e)
-                {
-                    LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
-                }
-            });
-            areaConverter.addActionListener(action -> {
-                try
-                {
-                    JPanel panel = new JPanelConverter_v4(this, AREA);
-                    performTasksWhenChangingJPanels(panel, CONVERTER);
-                }
-                catch (ParseException | CalculatorError_v4 e)
-                {
-                    LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
-                }
-            });
-
-            // add JMenuItems to converterMenu
-            converterMenu.add(angleConverter);
-            converterMenu.add(areaConverter);
             // END NEW OPTION: Converter
         getBar().add(viewMenu); // add viewMenu to menu bar
 
         // Edit Menu options
             JMenuItem copyItem = new JMenuItem("Copy");
             JMenuItem pasteItem = new JMenuItem("Paste");
-            JMenu historyMenu = new JMenu("History");
-            JMenuItem copyHistoryItem = new JMenuItem("Copy History");
-            JMenuItem editItem = new JMenuItem("Edit");
-            JMenuItem cancelEditItem = new JMenuItem("Cancel Edit");
-            JMenuItem clearItem = new JMenuItem("Clear");
 
             // commonalities
             copyItem.setAccelerator(KeyStroke.getKeyStroke(
                     KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
             copyItem.setFont(font);
             copyItem.setName("Copy");
-            copyItem.addActionListener(action -> {
-                values[2] = getTextAreaWithoutNewLineCharacters();
-                textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
-                confirm("Pressed Copy");
-            });
+            copyItem.addActionListener(this::performCopyFunctionality);
 
             pasteItem.setAccelerator(KeyStroke.getKeyStroke(
                     KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
             pasteItem.setFont(font);
             pasteItem.setName("Paste");
-            pasteItem.addActionListener(action -> {
-                if (StringUtils.isEmpty(values[2]) && StringUtils.isBlank(values[2]))
-                    LOGGER.info("Values[2] is empty and blank");
-                else
-                    LOGGER.info("Values[2]: " + values[2]);
-                textArea.setText(addNewLineCharacters(1) + values[2]); // to paste
-                values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
-                textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
-                confirm("Pressed Paste");
-            });
+            pasteItem.addActionListener(this::performPasteFunctionality);
 
-            //historyMenu.setMneonic(null);
-            historyMenu.setFont(font);
-            historyMenu.setName("History");
-            historyMenu.addActionListener(null);
-            // second menu starts here
-            copyHistoryItem.setFont(font);
-            copyHistoryItem.setName("Copy History");
-            editItem.setFont(font);
-            editItem.setName("Edit");
-            cancelEditItem.setFont(font);
-            cancelEditItem.setName("Cancel Edit");
-            clearItem.setFont(font);
-            clearItem.setName("Clear");
-
-            // add
-            historyMenu.add(copyHistoryItem);
-            historyMenu.add(editItem);
-            historyMenu.add(cancelEditItem);
-            historyMenu.add(clearItem);
             editMenu.add(copyItem);
             editMenu.add(pasteItem);
-            editMenu.addSeparator();
-            editMenu.add(historyMenu);
         getBar().add(editMenu); // add editMenu to menu bar
 
         // Help Options
-            JMenuItem viewHelpItem = new JMenuItem("View Help");
-            JMenuItem aboutCalculatorItem = new JMenuItem("About Calculator");
+            JMenuItem viewHelpItem = createViewHelpJMenuItem();
+            JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
 
-            // commonalities
-            viewHelpItem.setName("viewHelpItem");
-            viewHelpItem.setFont(font);
-            aboutCalculatorItem.setName("about");
-            aboutCalculatorItem.setFont(font);
-
-            // add
-            helpMenu.add(viewHelpItem);
-            helpMenu.addSeparator();
-            helpMenu.add(aboutCalculatorItem);
+            helpMenu.add(viewHelpItem, 0);
+            helpMenu.add(aboutCalculatorItem, 1);
             getBar().add(helpMenu); // add helpMenu to menu bar
-            // functionality
-            // NEW HELP MENU HERE
-            LOGGER.debug("Menu Choices count: " + getBar().getMenuCount());
-            for(int i=0; i < getBar().getMenuCount(); i++) {
-                JMenu menuOption = getBar().getMenu(i);
-                JMenuItem valueForThisMenuOption = null;
-                if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
-                    // get the options. remove viewHelpItem
-                    for(int j=0; j<menuOption.getItemCount(); j++) {
-                        LOGGER.debug("Number of options in Menu: " + menuOption.getItemCount());
-                        valueForThisMenuOption = menuOption.getItem(j);
-                        if (valueForThisMenuOption != null) {
-                            if (valueForThisMenuOption.getName() != null && valueForThisMenuOption.getName().equals("viewHelpItem")) {
-                                break;
-                            }
-                        }
-                    }
-                    // remove old option
-                    menuOption.remove(valueForThisMenuOption);
-                    // set up new viewHelpItem option
-                    helpMenu.add(viewHelpItem,0);
-                    viewHelpItem.addActionListener(action -> {
-                        String COPYRIGHT = "\u00a9";
-                        iconLabel = new JLabel();
-                        JPanel iconPanel = new JPanel(new GridBagLayout());
-                        iconPanel.add(iconLabel);
-                        textLabel = new JLabel("<html>Apple MacBook Air "
-                                + "Version 4br>"
-                                + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                                + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
-                                + "pending or existing intellectual property right in the United States and other<br>"
-                                + "countries/regions."
-                                + "<br><br><br>"
-                                + "This product is licensed under the License Terms to:<br>"
-                                + "Michael Ball</html>", macLogo, SwingConstants.LEADING);
-                        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-                        JPanel mainPanel = new JPanel();
-                        mainPanel.setBackground(Color.white);
-                        mainPanel.add(iconLabel);
-                        mainPanel.add(textLabel);
-                        JOptionPane.showMessageDialog(StandardCalculator_v4.this,
-                                mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
-                    });
-                    //break; //?? for just changing one option could be ok. issue maybe if changing other options
-                }
-            }
-            // END NEW HELP MENU HERE
-            aboutCalculatorItem.addActionListener(action -> {
-                String COPYRIGHT = "\u00a9";
-                JPanel iconPanel = new JPanel(new GridBagLayout() );
-                iconLabel = new JLabel();
-                iconPanel.add(iconLabel);
-                textLabel = new JLabel("<html>Apple MacBook Air"
-                        + "Version 3.0.1 (Build 1)<br>"
-                        + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                        + "Mac OS mojave and its user interface are<br>"
-                        + "protected by trademark and all other pending or existing intellectual property<br>"
-                        + "right in the United States and other countries/regions."
-                        + "<br><br><br>"
-                        + "This product is licensed under the License Terms to:<br>"
-                        + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
-                textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-                JPanel mainPanel = new JPanel();
-                mainPanel.add(iconLabel);
-                mainPanel.add(textLabel);
-                JOptionPane.showMessageDialog(StandardCalculator_v4.this, mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
-
-            });
-
         // End All Menu Choices
         LOGGER.info("Finished. Leaving setupMenuBar()");
     } // end public setMenuBar
+
+    public JMenuItem createViewHelpJMenuItem()
+    {
+        JMenuItem viewHelpItem = new JMenuItem("View Help");
+        viewHelpItem.setName("View Help");
+        viewHelpItem.setFont(font);
+        viewHelpItem.addActionListener(this::performViewHelpFunctionality);
+        return viewHelpItem;
+    }
+
+    public JMenuItem createAboutCalculatorJMenuItem()
+    {
+        JMenuItem aboutCalculatorItem = new JMenuItem("About Calculator");
+        aboutCalculatorItem.setName("About Calculator");
+        aboutCalculatorItem.setFont(font);
+        aboutCalculatorItem.addActionListener(this::performAboutCalculatorFunctionality);
+        return aboutCalculatorItem;
+    }
+
 	public void setupStandardCalculator()
     {
         if (getCalcType() == BASIC ||
@@ -462,30 +360,44 @@ public class StandardCalculator_v4 extends Calculator_v4
         }
     }
 
+    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4, ConverterType_v4 converterType_v4)
+    {
+        if (converterType_v4 == null)
+        {
+            setTitle(calcType_v4.getName());
+            JPanel oldPanel = updateJPanel(currentPanel);
+            //String nameOfOldPanel = getNameOfPanel();
+            //if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
+            // don't switch calc_types here; later...
+            if (getCurrentPanel() instanceof JPanelBasic_v4)
+            {
+                ((JPanelBasic_v4)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel);
+            }
+            else if (getCurrentPanel() instanceof JPanelProgrammer_v4)
+            {
+                ((JPanelProgrammer_v4)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations();
+            }
+            else //if (getCurrentPanel() instanceof JPanelDate_v4)
+            {
+
+            }
+            pack();
+        }
+        else
+        {
+            setTitle(calcType_v4.getName());
+            JPanel oldPanel = updateJPanel(currentPanel);
+            if (getCurrentPanel() instanceof JPanelConverter_v4)
+            {
+                ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations(converterType_v4);
+            }
+            pack();
+        }
+    }
+
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4) throws CalculatorError_v4
     {
-	    setTitle(calcType_v4.getName());
-        JPanel oldPanel = updateJPanel(currentPanel);
-        //String nameOfOldPanel = getNameOfPanel();
-        //if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
-        // don't switch calc_types here; later...
-        if (getCurrentPanel() instanceof JPanelBasic_v4)
-        {
-            ((JPanelBasic_v4)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel);
-        }
-        else if (getCurrentPanel() instanceof JPanelProgrammer_v4)
-        {
-            ((JPanelProgrammer_v4)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations();
-        }
-        else if (getCurrentPanel() instanceof JPanelDate_v4)
-        {
-
-        }
-        else if (getCurrentPanel() instanceof JPanelConverter_v4)
-        {
-            ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations();
-        }
-        pack();
+	    performTasksWhenChangingJPanels(currentPanel, calcType_v4, null);
     }
 
     public Collection<JButton> getBasicOperationButtons()
@@ -1559,6 +1471,83 @@ public class StandardCalculator_v4 extends Calculator_v4
         getTextArea().setText(addNewLineCharacters(1)+values[0]);
         orButtonBool = false;
         valuesPosition = 0;
+    }
+
+    public void performCopyFunctionality(ActionEvent ae)
+    {
+        values[2] = getTextAreaWithoutNewLineCharacters();
+        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
+        confirm("Pressed Copy");
+    }
+
+    public void performPasteFunctionality(ActionEvent ae)
+    {
+        if (StringUtils.isEmpty(values[2]) && StringUtils.isBlank(values[2]))
+            LOGGER.info("Values[2] is empty and blank");
+        else
+            LOGGER.info("Values[2]: " + values[2]);
+        textArea.setText(addNewLineCharacters(1) + values[2]); // to paste
+        values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
+        textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
+        confirm("Pressed Paste");
+    }
+
+    public String getHelpString()
+    {
+        String COPYRIGHT = "\u00a9";
+        return "<html>Apple MacBook Air "
+                + "Version 4br>"
+                + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
+                + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
+                + "pending or existing intellectual property right in the United States and other<br>"
+                + "countries/regions."
+                + "<br><br><br>"
+                + "This product is licensed under the License Terms to:<br>"
+                + "Michael Ball</html>";
+    }
+
+    public void performViewHelpFunctionality(ActionEvent ae)
+    {
+        JPanel iconPanel = new JPanel(new GridBagLayout());
+        iconLabel = new JLabel();
+        iconPanel.add(iconLabel);
+        textLabel = new JLabel(getHelpString(),
+                macLogo, SwingConstants.LEADING);
+        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(Color.white);
+        mainPanel.add(iconLabel);
+        mainPanel.add(textLabel);
+        JOptionPane.showMessageDialog(StandardCalculator_v4.this,
+                mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    public void performAboutCalculatorFunctionality(ActionEvent ae)
+    {
+        String COPYRIGHT = "\u00a9";
+        JPanel iconPanel = new JPanel(new GridBagLayout() );
+        iconLabel = new JLabel();
+        iconPanel.add(iconLabel);
+        textLabel = new JLabel("<html>Apple MacBook Air"
+                + "Version 3.0.1 (Build 1)<br>"
+                + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
+                + "Mac OS mojave and its user interface are<br>"
+                + "protected by trademark and all other pending or existing intellectual property<br>"
+                + "right in the United States and other countries/regions."
+                + "<br><br><br>"
+                + "This product is licensed under the License Terms to:<br>"
+                + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.add(iconLabel);
+        mainPanel.add(textLabel);
+        JOptionPane.showMessageDialog(StandardCalculator_v4.this,
+                mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
+
     }
 
     /************* All Getters and Setters ******************/
