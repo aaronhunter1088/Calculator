@@ -6,20 +6,22 @@ import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.util.DateUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.text.ParseException;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static version4.Calculator_v4.font;
 import static version4.Calculator_v4.font2;
+import static version4.ConverterType_v4.ANGLE;
 
 public class JPanelDate_v4 extends JPanel
 {
@@ -37,7 +39,7 @@ public class JPanelDate_v4 extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator_v4 calculator;
+    private StandardCalculator_v4 calculator;
     private JComboBox optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, daysLabel, resultsLabel;
@@ -51,8 +53,8 @@ public class JPanelDate_v4 extends JPanel
 
     private String defaultOptionFromOptionsBox = "Difference between dates";
     private final String DIFFERENCE = "Difference";
-    private final String OPTIONS1 = DIFFERENCE + " between dates";
-    private final String OPTIONS2 = "Add or subtract days";
+    public static final String OPTIONS1 = "Difference between dates";
+    public static final String OPTIONS2 = "Add or subtract days";
     private final String FROM_DATE = "From Date";
     private final String TO_DATE = "To Date";
     private final String SPACE = " ";
@@ -73,27 +75,100 @@ public class JPanelDate_v4 extends JPanel
     /************* Constructor ******************/
     public JPanelDate_v4(StandardCalculator_v4 calculator) throws ParseException
     {
+        this(calculator, null);
+    }
 
+    public JPanelDate_v4(StandardCalculator_v4 calculator, String chosenOption) throws ParseException
+    {
+        setCalculator(calculator);
         setMinimumSize(new Dimension(100,400));
         setDateLayout(new GridBagLayout());
         setLayout(getDateLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        // TODO: Implement
-        //setupHelpMenu();
-        setupJPanelDate(calculator);
-        addStartupComponentsToJPanelDate_v3();
-        showOptionalComponentsBasedOnComboBoxSelected();
+        setupJPanelDate(chosenOption);
+        updateThisPanel();
     }
 
     /************* Start of methods here ******************/
-    private void setupJPanelDate(StandardCalculator_v4 calculator) throws ParseException
+    public void performDateCalculatorTypeSwitchOperations()
+    {
+        getLogger().info("Performing tasks associated to switching to the Date panel");
+        getLogger().info("Nothing happens. The new Panel is created, and put on the Calculator");
+        //setupEditMenu();
+        createViewHelpMenu();
+        SwingUtilities.updateComponentTreeUI(this);
+    }
+
+    public void createViewHelpMenu()
+    {
+        String helpString = "<html>How to use the " + DATE + " Calculator<br><br>" +
+                "Difference Between Dates:<br>" +
+                "Enter a date into either field, From or To.<br>" +
+                "Only 1 date is required to change to show a difference.<br>" +
+                "See the difference between the two dates below.<br><br>" +
+                "Add or Subtract Days: <br>" +
+                "Select a date from the drop down option.<br>" +
+                "Enter values in the choices: Years, Months, or Days.<br>" +
+                "Click Add or Subtract to execute that action using your values and date.</html>";
+        // 4 menu options: loop through to find the Help option
+        for(int i=0; i < getCalculator().getBar().getMenuCount(); i++)
+        {
+            JMenu menuOption = getCalculator().getBar().getMenu(i);
+            JMenuItem valueForThisMenuOption = null;
+            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
+                // get the options. remove viewHelpItem
+                for(int j=0; j<menuOption.getItemCount(); j++) {
+                    valueForThisMenuOption = menuOption.getItem(j);
+                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("View Help"))
+                    {
+                        LOGGER.debug("Found the current View Help option");
+                        break;
+                    }
+                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("About"))
+                    {
+                        // do nothing at this moment
+                    }
+                }
+                // remove old option
+                menuOption.remove(valueForThisMenuOption);
+                // set up new viewHelpItem option
+                JMenuItem viewHelpItem = new JMenuItem("View Help");
+                viewHelpItem.setFont(font);
+                viewHelpItem.setName("View Help");
+                viewHelpItem.addActionListener(action -> {
+                    JLabel textLabel = new JLabel(helpString,
+                            getCalculator().getBlankImage(), SwingConstants.CENTER);
+                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+                    JPanel mainPanel = new JPanel();
+                    mainPanel.setBackground(Color.white);
+                    mainPanel.add(textLabel);
+                    JOptionPane.showMessageDialog(this,
+                            mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+                });
+                menuOption.add(viewHelpItem, 0);
+                //menuOption.add(new JPopupMenu.Separator(), 1);
+                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
+                //break; //?? for just changing one option could be ok. issue maybe if changing other options
+            }
+        }
+    }
+
+    private void setupJPanelDate(String chosenOption)
     {
         LOGGER.info("Starting setupPanel");
-        setCalculator(calculator);
         setCalendar(Calendar.getInstance());
+        // TODO: Implement
+        //createEditMenu();
+        createViewHelpMenu();
 
         setOptionsBox(new JComboBox(new String[]{OPTIONS1, OPTIONS2}));
+        getOptionsBox().setSelectedItem(chosenOption == null ? OPTIONS1 : OPTIONS2);
         getOptionsBox().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getOptionsBox().addActionListener(this::performOptionsBoxFunctionality);
 
         setFromDateLabel(new JLabel(FROM_DATE));
         getFromDateLabel().setFont(font2);
@@ -165,53 +240,13 @@ public class JPanelDate_v4 extends JPanel
 
         setAddRadioButton(new JRadioButton(ADD));
         getAddRadioButton().setSelected(true);
-        getAddRadioButton().addActionListener(action -> {
-            getAddRadioButton().setSelected(true);
-            getSubtractRadioButton().setSelected(false);
-            if (addRadioButton.isSelected())
-            {
-                int addYears = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
-                getLOGGER().debug("Year is {}", getCalendar().get(Calendar.YEAR));
-                getCalendar().add(Calendar.YEAR, addYears);
-                getLOGGER().debug("Add: Year is now {}", getCalendar().get(Calendar.YEAR));
-                int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
-                getLOGGER().debug("Month is {}", getCalendar().get(Calendar.MONTH));
-                getCalendar().add(Calendar.MONTH, addMonths);
-                getLOGGER().debug("Add: Month is now {}", getCalendar().get(Calendar.MONTH));
-                int addDays = Integer.parseInt(StringUtils.isBlank(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
-                getLOGGER().debug("Date is {}", getCalendar().get(Calendar.DATE));
-                getCalendar().add(Calendar.DAY_OF_MONTH, addDays);
-                getLOGGER().debug("Add: Date is now {}", getCalendar().get(Calendar.DATE));
-                setCalendar(getCalendar());
-                getLOGGER().debug("Date is now {}", getCalendar().getTime());
-                updateResultsLabel();
-            }
-        });
+        getAddRadioButton().setName(ADD);
+        getAddRadioButton().addActionListener(this::performAddRadioButtonFunctionality);
 
         setSubtractRadioButton(new JRadioButton(SUBTRACT));
         getSubtractRadioButton().setSelected(false);
-        getSubtractRadioButton().addActionListener(action -> {
-            getSubtractRadioButton().setSelected(true);
-            getAddRadioButton().setSelected(false);
-            if (subtractRadioButton.isSelected())
-            {
-                int addYears = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
-                getLOGGER().debug("Year is {}", getCalendar().get(Calendar.YEAR));
-                getCalendar().add(Calendar.YEAR, -addYears);
-                getLOGGER().debug("Sub: Year is now {}", getCalendar().get(Calendar.YEAR));
-                int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
-                getLOGGER().debug("Month is {}", getCalendar().get(Calendar.MONTH));
-                getCalendar().add(Calendar.MONTH, -addMonths);
-                getLOGGER().debug("Sub: Month is now {}", getCalendar().get(Calendar.MONTH));
-                int addDays = Integer.parseInt(StringUtils.isBlank(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
-                getLOGGER().debug("Date is {}", getCalendar().get(Calendar.DATE));
-                getCalendar().add(Calendar.DAY_OF_MONTH, -addDays);
-                getLOGGER().debug("Sub: Date is now {}", getCalendar().get(Calendar.DATE));
-                setCalendar(getCalendar());
-                getLOGGER().debug("Date is now {}", getCalendar().getTime());
-                updateResultsLabel();
-            }
-        });
+        getSubtractRadioButton().setName(SUBTRACT);
+        getSubtractRadioButton().addActionListener(this::performSubtractRadioButtonFunctionality);
 
         setButtonGroup(new ButtonGroup());
         setButtonGroupPanel(new JPanel());
@@ -267,28 +302,221 @@ public class JPanelDate_v4 extends JPanel
         setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + date + ", " + year));
         getResultsLabel().setFont(font2);
         getResultsLabel().setHorizontalAlignment(SwingConstants.LEFT);
+
+        if (chosenOption == null) {
+            addStartupComponentsToJPanelDate(OPTIONS1);
+        }
+        else {
+            addStartupComponentsToJPanelDate(chosenOption);
+        }
+//        if (chosenOption == null) getOptionsBox().setSelectedIndex(0);
+//        else getOptionsBox().setSelectedIndex(1);
+        getOptionsBox().repaint();
         LOGGER.info("Finished setupPanel");
     }
 
-    private void addStartupComponentsToJPanelDate_v3()
+    public void updateThisPanel()
     {
-        LOGGER.info("Starting addComponentsToJPanelDate_v3");
-        // all of the following components are added no matter the option selected
-        addComponent(getOptionsBox(), 0,0,1,1, 0,1.0);
-        addComponent(getBlankLabel1(), 1, 0, 1, 1,0,1.0); // representing a blank space
-        addComponent(getFromDateLabel(), 2, 0, 1,1, 0,1.0);
-        addComponent(getFromDatePicker(), 3,0,1,1, 0,1.0);
-        addComponent(getBlankLabel2(), 4, 0, 1, 1,0,1.0); // representing a blank space
-        // these components are specific for date differences, but we start with these added first
+        this.repaint();
+        this.revalidate();
+        getCalculator().pack();
+    }
+
+    public void switchComponentsForDateDifference()
+    {
+        getLogger().debug("Difference between dates selected");
+        //defaultOptionFromOptionsBox = OPTIONS1 + SPACE + SELECTED;
+        // remove appropriate components first
+        remove(getButtonGroupPanel());
+        remove(getBlankLabel3());
+        remove(getLabelsGroupPanel());
+        remove(getTextFieldsGroupPanel());
+        remove(getBlankLabel4());
+        remove(getDateLabel());
+        remove(getResultsLabel());
+        remove(getBlankLabel5());
+        // update combobox
+        //getOptionsBox().setSelectedIndex(0);
+        // add appropriate components
         addComponent(getToDateLabel(), 5, 0, 1,1, 0,1.0);
         addComponent(getToDatePicker(), 6,0,1,1, 0,1.0);
         addComponent(getBlankLabel3(), 7, 0, 1, 1,0,1.0); // representing a blank space
         addComponent(getDifferenceLabel(), 8, 0, 1, 1,0,1.0); // representing a blank space
         addComponent(getYearsDiffTextField(), 9, 0, 1, 1, 0,1.0);
         addComponent(getMonthsDiffTextField(), 10, 0, 1, 1, 0,1.0);
-        addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0, 1.0);
+        addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0,1.0);
         addComponent(getBlankLabel4(), 12, 0, 1, 1,1.0,1.0); // representing a blank space
-        LOGGER.info("Finished addComponentsToJPanelDate_v3");
+        updateResultsTextBox();
+    }
+
+    public void switchComponentsForAddSubDate()
+    {
+        getLogger().debug("Add or subtract days selected");
+        //defaultOptionFromOptionsBox = OPTIONS2 + SPACE + SELECTED;
+        // remove appropriate components first
+        remove(getToDateLabel());
+        remove(getToDatePicker());
+        remove(getBlankLabel3());
+        remove(getDifferenceLabel());
+        remove(getYearsDiffTextField());
+        remove(getMonthsDiffTextField());
+        remove(getDaysDiffTextField());
+        remove(getBlankLabel4());
+        // update combo box
+        //getOptionsBox().setSelectedIndex(1);
+        // add appropriate components
+        addComponent(getButtonGroupPanel(), 5, 0, 1,1, 0,1.0);
+        addComponent(getBlankLabel3(), 6, 0, 1, 1,0, 1.0); // representing a blank space
+        addComponent(getLabelsGroupPanel(), 7, 0, 1, 1,0,1.0);
+        addComponent(getTextFieldsGroupPanel(), 8, 0, 1, 1, 0, 1.0);
+        addComponent(getBlankLabel4(), 9, 0, 1, 1, 0.0, 1.0);
+        addComponent(getDateLabel(), 10, 0, 1, 1, 0, 1.0);
+        addComponent(getResultsLabel(), 11, 0, 1, 1, 0, 1.0);
+        addComponent(getBlankLabel5(), 12, 0, 1, 1, 1.0, 1.0);
+    }
+
+    private void performOptionsBoxFunctionality(ActionEvent actionEvent)
+    {
+        getLogger().debug("chosenOption: {}", getOptionsBox().getSelectedItem());
+        getLogger().debug("actionCommand: " + actionEvent.getActionCommand());
+        if (getOptionsBox().getSelectedItem().equals(OPTIONS1))
+        {
+            switchComponentsForDateDifference();
+        }
+        else if (getOptionsBox().getSelectedItem().equals(OPTIONS2))
+        {
+            switchComponentsForAddSubDate();
+        }
+        updateThisPanel();
+    }
+
+    public void performRadioButtonFunctionality(ActionEvent actionEvent)
+    {
+        int year = getFromDatePicker().getModel().getYear();
+        int month = getFromDatePicker().getModel().getMonth();
+        int dayOfMonth = getFromDatePicker().getModel().getDay();
+        LocalDateTime localDateTime = LocalDateTime.of(LocalDate.of(year, month, dayOfMonth), LocalTime.now());
+        if (getAddRadioButton().isSelected())
+        {
+            getLogger().info("Adding values to selected date");
+            int addYears = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
+            int addMonths = Integer.parseInt(StringUtils.isEmpty(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
+            int addDays = Integer.parseInt(StringUtils.isEmpty(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
+
+            getLogger().debug("Years is {}", addYears);
+            getLogger().debug("Months is {}", addMonths);
+            getLogger().debug("Days is {}", addDays);
+            getLogger().debug("Date is {}", LocalDate.now());
+
+            localDateTime.plusDays(addDays);
+            localDateTime.plusMonths(addMonths);
+            localDateTime.plusYears(addYears);
+            //setCalendar(Calendar.getInstance().setTime());
+        }
+        else
+        {
+            int years = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
+            int months = Integer.parseInt(StringUtils.isEmpty(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
+            int days = Integer.parseInt(StringUtils.isEmpty(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
+
+            getLogger().debug("Years is {}", years);
+            getLogger().debug("Months is {}", months);
+            getLogger().debug("Days is {}", days);
+            getLogger().debug("Date is {}", LocalDate.now());
+
+            localDateTime.minusYears(years);
+            localDateTime.minusMonths(months);
+            localDateTime.minusDays(days);
+            //setCalendar(Calendar.getInstance().setTime());
+        }
+        getLogger().debug("Date is now {}", localDateTime.toLocalDate());
+        updateResultsLabel();
+    }
+
+    public void performAddRadioButtonFunctionality(ActionEvent actionEvent)
+    {
+        getAddRadioButton().setSelected(true);
+        getSubtractRadioButton().setSelected(false);
+        performRadioButtonFunctionality(actionEvent);
+//        getAddRadioButton().setSelected(true);
+//        getSubtractRadioButton().setSelected(false);
+//        int addYears = Integer.parseInt(StringUtils.isEmpty(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
+//        getLogger().debug("Year is {}", getCalendar().get(Calendar.YEAR));
+//        getCalendar().add(Calendar.YEAR, addYears);
+//        getLogger().debug("Add: Year is now {}", getCalendar().get(Calendar.YEAR));
+//        int addMonths = Integer.parseInt(StringUtils.isEmpty(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
+//        getLogger().debug("Month is {}", getCalendar().get(Calendar.MONTH));
+//        getCalendar().add(Calendar.MONTH, addMonths);
+//        getLogger().debug("Add: Month is now {}", getCalendar().get(Calendar.MONTH));
+//        int addDays = Integer.parseInt(StringUtils.isEmpty(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
+//        getLogger().debug("Date is {}", LocalDate.now());
+//        getCalendar().add(Calendar.DAY_OF_MONTH, addDays);
+//        getLogger().debug("Add: Date is now {}", getCalendar().get(Calendar.DATE));
+//        setCalendar(getCalendar());
+//        getLogger().debug("Date is now {}", getCalendar().getTime());
+//        updateResultsLabel();
+    }
+
+    public void performSubtractRadioButtonFunctionality(ActionEvent actionEvent)
+    {
+        getSubtractRadioButton().setSelected(true);
+        getAddRadioButton().setSelected(false);
+        performRadioButtonFunctionality(actionEvent);
+//        int addYears = Integer.parseInt(StringUtils.isBlank(getYearsTextField().getText()) == true ? "0" : getYearsTextField().getText());
+//        getLogger().debug("Year is {}", getCalendar().get(Calendar.YEAR));
+//        getCalendar().add(Calendar.YEAR, -addYears);
+//        getLogger().debug("Sub: Year is now {}", getCalendar().get(Calendar.YEAR));
+//        int addMonths = Integer.parseInt(StringUtils.isBlank(getMonthsTextField().getText()) == true ? "0" : getMonthsTextField().getText());
+//        getLogger().debug("Month is {}", getCalendar().get(Calendar.MONTH));
+//        getCalendar().add(Calendar.MONTH, -addMonths);
+//        getLogger().debug("Sub: Month is now {}", getCalendar().get(Calendar.MONTH));
+//        int addDays = Integer.parseInt(StringUtils.isBlank(getDaysTextField().getText()) == true ? "0" : getDaysTextField().getText());
+//        getLogger().debug("Date is {}", getCalendar().get(Calendar.DATE));
+//        getCalendar().add(Calendar.DAY_OF_MONTH, -addDays);
+//        getLogger().debug("Sub: Date is now {}", getCalendar().get(Calendar.DATE));
+//        setCalendar(getCalendar());
+//        getLogger().debug("Date is now {}", getCalendar().getTime());
+//        updateResultsLabel();
+    }
+
+    private void addStartupComponentsToJPanelDate(String chosenOption)
+    {
+        LOGGER.info("Starting addComponentsToJPanelDate");
+        if (chosenOption.equals(OPTIONS1))
+        {
+            addComponent(getOptionsBox(), 0,0,1,1, 0,1.0);
+            addComponent(getBlankLabel1(), 1, 0, 1, 1,0,1.0); // representing a blank space
+            addComponent(getFromDateLabel(), 2, 0, 1,1, 0,1.0);
+            addComponent(getFromDatePicker(), 3,0,1,1, 0,1.0);
+            addComponent(getBlankLabel2(), 4, 0, 1, 1,0,1.0); // representing a blank space
+
+            addComponent(getToDateLabel(), 5, 0, 1,1, 0,1.0);
+            addComponent(getToDatePicker(), 6,0,1,1, 0,1.0);
+            addComponent(getBlankLabel3(), 7, 0, 1, 1,0,1.0); // representing a blank space
+            addComponent(getDifferenceLabel(), 8, 0, 1, 1,0,1.0); // representing a blank space
+            addComponent(getYearsDiffTextField(), 9, 0, 1, 1, 0,1.0);
+            addComponent(getMonthsDiffTextField(), 10, 0, 1, 1, 0,1.0);
+            addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0,1.0);
+            addComponent(getBlankLabel4(), 12, 0, 1, 1,1.0,1.0); // representing a blank space
+            updateResultsTextBox();
+        }
+        else {
+            addComponent(getOptionsBox(), 0,0,1,1, 0,1.0);
+            addComponent(getBlankLabel1(), 1, 0, 1, 1,0,1.0); // representing a blank space
+            addComponent(getFromDateLabel(), 2, 0, 1,1, 0,1.0);
+            addComponent(getFromDatePicker(), 3,0,1,1, 0,1.0);
+            addComponent(getBlankLabel2(), 4, 0, 1, 1,0,1.0); // representing a blank space
+            // add appropriate components
+            addComponent(getButtonGroupPanel(), 5, 0, 1,1, 0,1.0);
+            addComponent(getBlankLabel3(), 6, 0, 1, 1,0, 1.0); // representing a blank space
+            addComponent(getLabelsGroupPanel(), 7, 0, 1, 1,0,1.0);
+            addComponent(getTextFieldsGroupPanel(), 8, 0, 1, 1, 0, 1.0);
+            addComponent(getBlankLabel4(), 9, 0, 1, 1, 0.0, 1.0);
+            addComponent(getDateLabel(), 10, 0, 1, 1, 0, 1.0);
+            addComponent(getResultsLabel(), 11, 0, 1, 1, 0, 1.0);
+            addComponent(getBlankLabel5(), 12, 0, 1, 1, 1.0, 1.0);
+        }
+        LOGGER.info("Finished addComponentsToJPanelDate");
     }
 
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
@@ -306,67 +534,61 @@ public class JPanelDate_v4 extends JPanel
         add(c); // add component
     }
 
-    private void showOptionalComponentsBasedOnComboBoxSelected()
+    public void performOptionsBoxFunctionality(String option)
     {
-        getOptionsBox().addActionListener(action -> {
-            String chosenOption = getOptionsBox().getSelectedItem().toString();
-            getLOGGER().debug("chosenOption: {} and defaultOption: {}", chosenOption, defaultOptionFromOptionsBox);
-            if (!defaultOptionFromOptionsBox.equals(chosenOption)
-                    && chosenOption.equals(OPTIONS1))
-            {
-                getLOGGER().debug("Difference between dates selected");
-                defaultOptionFromOptionsBox = OPTIONS1 + SPACE + SELECTED;
-                // remove appropriate components first
-                remove(getButtonGroupPanel());
-                remove(getBlankLabel3());
-                remove(getLabelsGroupPanel());
-                remove(getTextFieldsGroupPanel());
-                remove(getBlankLabel4());
-                remove(getDateLabel());
-                remove(getResultsLabel());
-                remove(getBlankLabel5());
-                // add appropriate components
-                addComponent(getToDateLabel(), 5, 0, 1,1, 0,1.0);
-                addComponent(getToDatePicker(), 6,0,1,1, 0,1.0);
-                addComponent(getBlankLabel3(), 7, 0, 1, 1,0,1.0); // representing a blank space
-                addComponent(getDifferenceLabel(), 8, 0, 1, 1,0,1.0); // representing a blank space
-                addComponent(getYearsDiffTextField(), 9, 0, 1, 1, 0,1.0);
-                addComponent(getMonthsDiffTextField(), 10, 0, 1, 1, 0,1.0);
-                addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0,1.0);
-                addComponent(getBlankLabel4(), 12, 0, 1, 1,1.0,1.0); // representing a blank space
-                updateResultsTextBox();
-                repaint();
-                revalidate();
-                this.calculator.pack();
-            }
-            else if (!defaultOptionFromOptionsBox.equals(chosenOption)
-                    && chosenOption.equals(OPTIONS2))
-            {
-                getLOGGER().debug("Add or subtract days selected");
-                defaultOptionFromOptionsBox = OPTIONS2 + SPACE + SELECTED;
-                // remove appropriate components first
-                remove(getToDateLabel());
-                remove(getToDatePicker());
-                remove(getBlankLabel3());
-                remove(getDifferenceLabel());
-                remove(getYearsDiffTextField());
-                remove(getMonthsDiffTextField());
-                remove(getDaysDiffTextField());
-                remove(getBlankLabel4());
-                // add appropriate components
-                addComponent(getButtonGroupPanel(), 5, 0, 1,1, 0,1.0);
-                addComponent(getBlankLabel3(), 6, 0, 1, 1,0, 1.0); // representing a blank space
-                addComponent(getLabelsGroupPanel(), 7, 0, 1, 1,0,1.0);
-                addComponent(getTextFieldsGroupPanel(), 8, 0, 1, 1, 0, 1.0);
-                addComponent(getBlankLabel4(), 9, 0, 1, 1, 0.0, 1.0);
-                addComponent(getDateLabel(), 10, 0, 1, 1, 0, 1.0);
-                addComponent(getResultsLabel(), 11, 0, 1, 1, 0, 1.0);
-                addComponent(getBlankLabel5(), 12, 0, 1, 1, 1.0, 1.0);
-                repaint();
-                revalidate();
-                this.calculator.pack();
-            }
-        });
+        getLogger().debug("chosenOption: {}", option);
+        if (option.equals(OPTIONS1))
+        {
+            getLogger().debug("Difference between dates selected");
+            //defaultOptionFromOptionsBox = OPTIONS1 + SPACE + SELECTED;
+            // remove appropriate components first
+            remove(getButtonGroupPanel());
+            remove(getBlankLabel3());
+            remove(getLabelsGroupPanel());
+            remove(getTextFieldsGroupPanel());
+            remove(getBlankLabel4());
+            remove(getDateLabel());
+            remove(getResultsLabel());
+            remove(getBlankLabel5());
+            // udpate combobox
+            getOptionsBox().setSelectedIndex(0);
+            // add appropriate components
+            addComponent(getToDateLabel(), 5, 0, 1,1, 0,1.0);
+            addComponent(getToDatePicker(), 6,0,1,1, 0,1.0);
+            addComponent(getBlankLabel3(), 7, 0, 1, 1,0,1.0); // representing a blank space
+            addComponent(getDifferenceLabel(), 8, 0, 1, 1,0,1.0); // representing a blank space
+            addComponent(getYearsDiffTextField(), 9, 0, 1, 1, 0,1.0);
+            addComponent(getMonthsDiffTextField(), 10, 0, 1, 1, 0,1.0);
+            addComponent(getDaysDiffTextField(), 11, 0, 1, 1, 0,1.0);
+            addComponent(getBlankLabel4(), 12, 0, 1, 1,1.0,1.0); // representing a blank space
+            updateResultsTextBox();
+        }
+        else if (option.equals(OPTIONS2))
+        {
+            getLogger().debug("Add or subtract days selected");
+            //defaultOptionFromOptionsBox = OPTIONS2 + SPACE + SELECTED;
+            // remove appropriate components first
+            remove(getToDateLabel());
+            remove(getToDatePicker());
+            remove(getBlankLabel3());
+            remove(getDifferenceLabel());
+            remove(getYearsDiffTextField());
+            remove(getMonthsDiffTextField());
+            remove(getDaysDiffTextField());
+            remove(getBlankLabel4());
+            // update combo box
+            getOptionsBox().setSelectedIndex(1);
+            // add appropriate components
+            addComponent(getButtonGroupPanel(), 5, 0, 1,1, 0,1.0);
+            addComponent(getBlankLabel3(), 6, 0, 1, 1,0, 1.0); // representing a blank space
+            addComponent(getLabelsGroupPanel(), 7, 0, 1, 1,0,1.0);
+            addComponent(getTextFieldsGroupPanel(), 8, 0, 1, 1, 0, 1.0);
+            addComponent(getBlankLabel4(), 9, 0, 1, 1, 0.0, 1.0);
+            addComponent(getDateLabel(), 10, 0, 1, 1, 0, 1.0);
+            addComponent(getResultsLabel(), 11, 0, 1, 1, 0, 1.0);
+            addComponent(getBlankLabel5(), 12, 0, 1, 1, 1.0, 1.0);
+        }
+        updateThisPanel();
     }
 
     private long[] calculateDifferenceBetweenDates()
@@ -420,7 +642,7 @@ public class JPanelDate_v4 extends JPanel
         getCalendar().set(year, monthInt, date);
         getCalendar().setTime(getCalendar().getTime());
         setCalendar(getCalendar());
-        getLOGGER().debug("Date is now {}", getCalendar().getTime());
+        getLogger().debug("Date is now {}", getCalendar().getTime());
         getFromDatePicker().getModel().setDate(year,monthInt, date);
         String dayOfWeek = getCalendar().getTime().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("en", "US"));
@@ -479,7 +701,7 @@ public class JPanelDate_v4 extends JPanel
     }
 
     /************* All Getters ******************/
-    public static Logger getLOGGER()
+    public static Logger getLogger()
     {
         return LOGGER;
     }
@@ -519,7 +741,7 @@ public class JPanelDate_v4 extends JPanel
     {
         return toDatePicker;
     }
-    public Calculator_v4 getCalculator()
+    public StandardCalculator_v4 getCalculator()
     {
         return calculator;
     }

@@ -79,7 +79,6 @@ public class JPanelConverter_v4 extends JPanel
         setupHelpMenu(converterType);
         // end coming from programmer calculator, make sure to do these things
         SwingUtilities.updateComponentTreeUI(this);
-        getCalculator().pack(); // just in case
     }
 
     private void setupJPanelConverter_v4() throws CalculatorError_v4
@@ -105,7 +104,7 @@ public class JPanelConverter_v4 extends JPanel
 
     private void addStartupComponentsToJPanelConverter_v4()
     {
-        LOGGER.info("Starting addStartupComponentsToJPanelConverter_v4");
+        LOGGER.info("Starting addStartupComponentsToJPanelConverter");
         // all the following components are added no matter the option selected
         getConstraints().fill = GridBagConstraints.BOTH;
         getConstraints().anchor = GridBagConstraints.CENTER;
@@ -118,7 +117,7 @@ public class JPanelConverter_v4 extends JPanel
         // numbers are added on top of a single panel
         getConstraints().anchor = GridBagConstraints.PAGE_START;
         addComponent(getNumbersPanel(), 8, 0, 0, 1, 1.0, 1.0);
-        LOGGER.info("Finished addStartupComponentsToJPanelConverter_v4");
+        LOGGER.info("Finished addStartupComponentsToJPanelConverter");
     }
 
     public void setupAllConverterButtonsFunctionalities()
@@ -323,6 +322,7 @@ public class JPanelConverter_v4 extends JPanel
 
     public void createViewHelpMenu(String helpString)
     {
+        // 4 menu options: loop through to find the Help option
         for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
             JMenu menuOption = getCalculator().getBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
@@ -331,9 +331,15 @@ public class JPanelConverter_v4 extends JPanel
                 for(int j=0; j<menuOption.getItemCount(); j++) {
                     valueForThisMenuOption = menuOption.getItem(j);
                     if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("View Help")) {
+                        valueForThisMenuOption.getName().equals("View Help"))
+                    {
                         LOGGER.debug("Found the current View Help option");
                         break;
+                    }
+                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("About"))
+                    {
+                        // do nothing at this moment
                     }
                 }
                 // remove old option
@@ -342,7 +348,6 @@ public class JPanelConverter_v4 extends JPanel
                 JMenuItem viewHelpItem = new JMenuItem("View Help");
                 viewHelpItem.setFont(font);
                 viewHelpItem.setName("View Help");
-                menuOption.add(viewHelpItem, 0);
                 viewHelpItem.addActionListener(action -> {
                     JLabel textLabel = new JLabel(helpString,
                             getCalculator().getBlankImage(), SwingConstants.CENTER);
@@ -355,6 +360,9 @@ public class JPanelConverter_v4 extends JPanel
                     JOptionPane.showMessageDialog(this,
                             mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
                 });
+                menuOption.add(viewHelpItem, 0);
+                //menuOption.add(new JPopupMenu.Separator(), 1);
+                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
                 //break; //?? for just changing one option could be ok. issue maybe if changing other options
             }
         }

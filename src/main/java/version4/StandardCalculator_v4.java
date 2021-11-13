@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -47,22 +48,40 @@ public class StandardCalculator_v4 extends Calculator_v4
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
 
-    public StandardCalculator_v4() throws Exception { this(BASIC, null); }
+    public StandardCalculator_v4() throws Exception { this(BASIC, null, null); }
     /**
      * This constructor is used to create a calculator with a specific panel
      * @param calcType the type of calculator to create. sets the title
      */
-    public StandardCalculator_v4(CalcType_v4 calcType) throws Exception { this(calcType, null); }
+    public StandardCalculator_v4(CalcType_v4 calcType) throws Exception { this(calcType, null, null); }
     /**
      * This constructor is used to create a calculator with a specific converter panel
      * @param calcType the type of calculator to create. sets the title
      */
-    public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType) throws Exception
+
+    public StandardCalculator_v4(CalcType_v4 calcType, String chosenOption) throws Exception { this(calcType, null, chosenOption); }
+    /**
+     *
+     * @param calcType
+     * @param converterType
+     * @throws Exception
+     */
+    public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType) throws Exception { this(calcType, converterType, null); }
+
+    /**
+     * MAIN CONSTRUCTOR USED
+     * @param calcType
+     * @param converterType
+     * @param chosenOption
+     */
+    public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws CalculatorError_v4, ParseException, IOException
     {
         super(StringUtils.isBlank(calcType.getName()) ? CalcType_v4.BASIC.getName() : calcType.getName()); // default title is Basic
         setCalcType(calcType);
         setupMenuBar();
-        setCurrentPanel(determinePanelType(calcType, converterType));
+        if (converterType == null && chosenOption == null) setCurrentPanel(determinePanelType(calcType));
+        else if (converterType != null) setCurrentPanel(determinePanelType(calcType, converterType, null));
+        else if (chosenOption != null)  setCurrentPanel(determinePanelType(calcType, null, chosenOption));
         setupStandardCalculator();
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
@@ -290,12 +309,17 @@ public class StandardCalculator_v4 extends Calculator_v4
             JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
 
             helpMenu.add(viewHelpItem, 0);
-            helpMenu.add(aboutCalculatorItem, 1);
+            helpMenu.addSeparator();
+            helpMenu.add(aboutCalculatorItem, 2);
             getBar().add(helpMenu); // add helpMenu to menu bar
         // End All Menu Choices
         LOGGER.info("Finished. Leaving setupMenuBar()");
     } // end public setMenuBar
 
+    /**
+     * This method creates the View Help menu option under Help
+     * It also sets the functionality
+     */
     public JMenuItem createViewHelpJMenuItem()
     {
         JMenuItem viewHelpItem = new JMenuItem("View Help");
@@ -314,13 +338,13 @@ public class StandardCalculator_v4 extends Calculator_v4
         return aboutCalculatorItem;
     }
 
-	public void setupStandardCalculator()
-    {
+	public void setupStandardCalculator() {
         if (getCalcType() == BASIC ||
-            getCalcType() == PROGRAMMER)
-        {
+                getCalcType() == PROGRAMMER) {
             setupBasicCalculatorButtons();
             setupOtherCalculatorButtons();
+        } else if (getCalcType() == DATE) {
+            getLogger().debug("IMPLEMENT");
         } else if (getCalcType() == CONVERTER) {
             ((JPanelConverter_v4)getCurrentPanel()).setupAllConverterButtonsFunctionalities();
         }
@@ -330,7 +354,12 @@ public class StandardCalculator_v4 extends Calculator_v4
         add(getCurrentPanel());
 	}
 
-    public JPanel determinePanelType(CalcType_v4 calcType, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
+	public JPanel determinePanelType(CalcType_v4 calcType) throws ParseException, CalculatorError_v4
+    {
+        return determinePanelType(calcType, null, null);
+    }
+
+    public JPanel determinePanelType(CalcType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws ParseException, CalculatorError_v4
     {
         if (calcType == null) {
             calcType = getCalcType();
@@ -343,7 +372,7 @@ public class StandardCalculator_v4 extends Calculator_v4
         } else if (calcType == SCIENTIFIC) {
             return new JPanelScientific_v4();
         } else if (calcType == DATE) {
-            return new JPanelDate_v4(this);
+            return new JPanelDate_v4(this, chosenOption);
         } else if (calcType == CONVERTER) {
             if (converterType == ANGLE) {
                 return new JPanelConverter_v4(this, ANGLE);
@@ -362,10 +391,13 @@ public class StandardCalculator_v4 extends Calculator_v4
 
     public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4, ConverterType_v4 converterType_v4)
     {
+        getLogger().info("Starting performTasksWhenChangingJPanels");
         if (converterType_v4 == null)
         {
             setTitle(calcType_v4.getName());
             JPanel oldPanel = updateJPanel(currentPanel);
+            getLogger().debug("oldPanel: " + oldPanel);
+            getLogger().debug("newPanel: " + getCurrentPanel());
             //String nameOfOldPanel = getNameOfPanel();
             //if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
             // don't switch calc_types here; later...
@@ -379,9 +411,8 @@ public class StandardCalculator_v4 extends Calculator_v4
             }
             else //if (getCurrentPanel() instanceof JPanelDate_v4)
             {
-
+                ((JPanelDate_v4)getCurrentPanel()).performDateCalculatorTypeSwitchOperations();
             }
-            pack();
         }
         else
         {
@@ -391,8 +422,8 @@ public class StandardCalculator_v4 extends Calculator_v4
             {
                 ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations(converterType_v4);
             }
-            pack();
         }
+        super.pack();
     }
 
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4) throws CalculatorError_v4

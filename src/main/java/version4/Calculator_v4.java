@@ -999,7 +999,15 @@ public abstract class Calculator_v4 extends JFrame
                 LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
-            case DATE : { break; }
+            case DATE : {
+                if (StringUtils.isNotEmpty(message)) {
+                    LOGGER.info("Confirm Results: " + message);
+                } else {
+                    LOGGER.info("Confirm Results");
+                }
+                LOGGER.info("---------------- ");
+                break;
+            }
             case CONVERTER:  {
                 if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
                 else { LOGGER.info("Confirm Results"); }
@@ -1281,7 +1289,7 @@ public abstract class Calculator_v4 extends JFrame
             calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
             macLogo = createImageIcon("src/main/resources/images/maclogo.jpg");
             setWindowsLogo(createImageIcon("src/main/resources/images/windows11.jpg"));
-            setBlankImage(new ImageIcon());
+            setBlankImage(null); // new ImageIcon()
         }
         catch (Exception e)
         {

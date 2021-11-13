@@ -8,6 +8,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static version4.CalcType_v4.*;
 import static version4.ConverterType_v4.*;
+import static version4.JPanelDate_v4.*;
 
 public class CalculatorMain
 {
@@ -21,8 +22,11 @@ public class CalculatorMain
 
 	public static void main(String[] args) throws Exception
     {
-        LOGGER.info("Starting class CalculatorMain");
-        Calculator_v4 calculator = new StandardCalculator_v4(CONVERTER, ANGLE);
+        LOGGER.info("Starting here...");
+        //Start a date calculator with options1 selected
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
+        //Start a date calculator with options2 selected
+        //Calculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {SwingUtilities.updateComponentTreeUI(calculator);});
         calculator.setLocation(750, 250);
