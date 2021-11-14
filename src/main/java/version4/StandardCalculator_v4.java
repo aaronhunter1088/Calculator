@@ -78,7 +78,7 @@ public class StandardCalculator_v4 extends Calculator_v4
     {
         super(StringUtils.isBlank(calcType.getName()) ? CalcType_v4.BASIC.getName() : calcType.getName()); // default title is Basic
         setCalcType(calcType);
-        setupMenuBar();
+        setupMenuBar(); // setup here for all types
         if (converterType == null && chosenOption == null) setCurrentPanel(determinePanelType(calcType));
         else if (converterType != null) setCurrentPanel(determinePanelType(calcType, converterType, null));
         else if (chosenOption != null)  setCurrentPanel(determinePanelType(calcType, null, chosenOption));
@@ -226,9 +226,8 @@ public class StandardCalculator_v4 extends Calculator_v4
             dates.addActionListener(action -> {
             try
             {
-                JPanel panel = new JPanelDate_v4(this);
+                JPanel panel = new  JPanelDate_v4(this);
                 performTasksWhenChangingJPanels(panel, DATE);
-                setCalcType(CalcType_v4.DATE);
             }
             catch (ParseException | CalculatorError_v4 e)
             {
@@ -339,18 +338,7 @@ public class StandardCalculator_v4 extends Calculator_v4
     }
 
 	public void setupStandardCalculator() {
-        if (getCalcType() == BASIC ||
-                getCalcType() == PROGRAMMER) {
-            setupBasicCalculatorButtons();
-            setupOtherCalculatorButtons();
-        } else if (getCalcType() == DATE) {
-            getLogger().debug("IMPLEMENT");
-        } else if (getCalcType() == CONVERTER) {
-            ((JPanelConverter_v4)getCurrentPanel()).setupAllConverterButtonsFunctionalities();
-        }
-
-
-
+        getLogger().debug("Take care of these specific features in the panel...");
         add(getCurrentPanel());
 	}
 
@@ -362,8 +350,8 @@ public class StandardCalculator_v4 extends Calculator_v4
     public JPanel determinePanelType(CalcType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws ParseException, CalculatorError_v4
     {
         if (calcType == null) {
-            calcType = getCalcType();
-            LOGGER.debug("Reset calcType from: null to: " + calcType);
+            getLogger().error("CalcType cannot be null");
+            throw new CalculatorError_v4("CalcType cannot be null");
         }
         if (calcType == BASIC) {
             return new JPanelBasic_v4(this);
@@ -389,15 +377,14 @@ public class StandardCalculator_v4 extends Calculator_v4
         }
     }
 
-    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4, ConverterType_v4 converterType_v4)
-    {
+    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4, ConverterType_v4 converterType_v4) throws CalculatorError_v4 {
         getLogger().info("Starting performTasksWhenChangingJPanels");
         if (converterType_v4 == null)
         {
             setTitle(calcType_v4.getName());
             JPanel oldPanel = updateJPanel(currentPanel);
-            getLogger().debug("oldPanel: " + oldPanel);
-            getLogger().debug("newPanel: " + getCurrentPanel());
+            getLogger().debug("oldPanel: " + oldPanel.getClass().getName());
+            getLogger().debug("newPanel: " + getCurrentPanel().getClass().getName());
             //String nameOfOldPanel = getNameOfPanel();
             //if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
             // don't switch calc_types here; later...
@@ -424,6 +411,18 @@ public class StandardCalculator_v4 extends Calculator_v4
             }
         }
         super.pack();
+        getLogger().info("Finished performTasksWhenChangingJPanels");
+        confirm("Switched Calculator Types", determineCalcTypeBasedOnCurrentPanel());
+    }
+
+    public CalcType_v4 determineCalcTypeBasedOnCurrentPanel() throws CalculatorError_v4
+    {
+        if (getCurrentPanel() instanceof JPanelBasic_v4) return BASIC;
+        else if (getCurrentPanel() instanceof JPanelProgrammer_v4) return PROGRAMMER;
+        else if (getCurrentPanel() instanceof JPanelScientific_v4) return SCIENTIFIC;
+        else if (getCurrentPanel() instanceof JPanelDate_v4) return DATE;
+        else if (getCurrentPanel() instanceof JPanelConverter_v4) return CONVERTER;
+        else throw new CalculatorError_v4("Unknown Panel type: " + getCurrentPanel());
     }
 
 	public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4) throws CalculatorError_v4
@@ -1592,12 +1591,10 @@ public class StandardCalculator_v4 extends Calculator_v4
     public JButton getButtonEquals() { return buttonEquals; }
     public JButton getButtonNegate() { return buttonNegate; }
     // 4 types of Standard Calculators: create getters and setters
-    public JPanel getCurrentPanel() { return super.getCurrentPanel(); }
     public Logger getLogger() { return LOGGER; }
     public long getSerialVersionUID() { return serialVersionUID; }
 
     public void setBar(JMenuBar bar) { this.bar = bar; }
     public void setLogger(Logger LOGGER) { this.LOGGER = LOGGER; }
-    public void setCurrentPanel(JPanel currentPanel) { super.setCurrentPanel(currentPanel);}
 
 }

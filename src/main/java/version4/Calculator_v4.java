@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static version4.CalcType_v4.*;
+import static version4.JPanelDate_v4.OPTIONS1;
 
 public abstract class Calculator_v4 extends JFrame
 {
@@ -147,8 +148,8 @@ public abstract class Calculator_v4 extends JFrame
         getTextArea().setPreferredSize(new Dimension(70, 35));
         getTextArea().setEditable(false);
 
-        setupNumberButtons(true);
-        setupMemoryButtons();
+        //setupNumberButtons(true);
+        //setupMemoryButtons();
         //setupOtherCalculatorButtons();
 
         LOGGER.info("Finished setupCalculator()");
@@ -964,18 +965,11 @@ public abstract class Calculator_v4 extends JFrame
                 LOGGER.info("textarea: '\\n"+getTextareaWithoutNewLineCharacters()+"'");
                 LOGGER.info("textArea: '"+getTextAreaWithoutNewLineCharacters()+"'");
                 if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
-                {
-                    LOGGER.info("no memories stored!");
-                }
+                { LOGGER.info("no memories stored!"); }
                 else
-                {
-                    for(int i = 0; i < 10; i++)
-                    {
-                        if (StringUtils.isNotBlank(memoryValues[i])) {
-                            LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);
-                        }
-                    }
-                }
+                {for(int i = 0; i < 10; i++)
+                    {if (StringUtils.isNotBlank(memoryValues[i])) {
+                            LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);}}}
                 LOGGER.info("addBool: '"+addBool+"'");
                 LOGGER.info("subBool: '"+subBool+"'");
                 LOGGER.info("mulBool: '"+mulBool+"'");
@@ -1000,12 +994,34 @@ public abstract class Calculator_v4 extends JFrame
                 break;
             }
             case DATE : {
-                if (StringUtils.isNotEmpty(message)) {
-                    LOGGER.info("Confirm Results: " + message);
+                if (StringUtils.isNotEmpty(message))
+                {LOGGER.info("Confirm Results: " + message);}
+                else
+                {LOGGER.info("Confirm Results");}
+                if (((JPanelDate_v4)getCurrentPanel()).getOptionsBox().getSelectedItem() == OPTIONS1)
+                {
+                    int year = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getYear();
+                    int month = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getMonth();
+                    int day = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getDay();
+                    LOGGER.info("FromDate(mm-dd-yy): " +month+"-"+day+"-"+year);
+                    year = ((JPanelDate_v4)getCurrentPanel()).getToDatePicker().getModel().getYear();
+                    month = ((JPanelDate_v4)getCurrentPanel()).getToDatePicker().getModel().getMonth();
+                    day = ((JPanelDate_v4)getCurrentPanel()).getToDatePicker().getModel().getDay();
+                    LOGGER.info("ToDate(mm-dd-yy): " +month+"-"+day+"-"+year);
+                    LOGGER.info("Difference");
+                    LOGGER.info("Year: " + ((JPanelDate_v4)getCurrentPanel()).getYearsDiffTextField().getText());
+                    LOGGER.info("Month: " + ((JPanelDate_v4)getCurrentPanel()).getMonthsDiffTextField().getText());
+                    LOGGER.info("Days: " + ((JPanelDate_v4)getCurrentPanel()).getDaysDiffTextField().getText());
                 } else {
-                    LOGGER.info("Confirm Results");
+                    int year = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getYear();
+                    int month = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getMonth();
+                    int day = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getDay();
+                    LOGGER.info("FromDate(mm-dd-yy): " +month+"-"+day+"-"+year);
+                    boolean isAddSelected = ((JPanelDate_v4)getCurrentPanel()).getAddRadioButton().isSelected();
+                    LOGGER.info("Add or Subtract Selection: " + (isAddSelected ? "Add" : "Subtract") );
+                    LOGGER.info("New Date: " + ((JPanelDate_v4)getCurrentPanel()).getResultsLabel().getText());
                 }
-                LOGGER.info("---------------- ");
+                LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
             case CONVERTER:  {

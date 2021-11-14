@@ -87,20 +87,22 @@ public class JPanelDate_v4 extends JPanel
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setupJPanelDate(chosenOption);
         updateThisPanel();
+        getLogger().info("Finished constructing Date panel");
     }
 
     /************* Start of methods here ******************/
     public void performDateCalculatorTypeSwitchOperations()
     {
         getLogger().info("Performing tasks associated to switching to the Date panel");
-        getLogger().info("Nothing happens. The new Panel is created, and put on the Calculator");
         //setupEditMenu();
         createViewHelpMenu();
         SwingUtilities.updateComponentTreeUI(this);
+        getLogger().info("Finished tasks associated to switching to the Date panel");
     }
 
     public void createViewHelpMenu()
     {
+        getLogger().info("creating the view help menu for date panel");
         String helpString = "<html>How to use the " + DATE + " Calculator<br><br>" +
                 "Difference Between Dates:<br>" +
                 "Enter a date into either field, From or To.<br>" +
@@ -122,13 +124,12 @@ public class JPanelDate_v4 extends JPanel
                     if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("View Help"))
                     {
-                        LOGGER.debug("Found the current View Help option");
-                        break;
+                        break; // do nothing at this moment
                     }
                     else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("About"))
                     {
-                        // do nothing at this moment
+                        break; // do nothing at this moment
                     }
                 }
                 // remove old option
@@ -150,9 +151,6 @@ public class JPanelDate_v4 extends JPanel
                             mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
-                //menuOption.add(new JPopupMenu.Separator(), 1);
-                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
-                //break; //?? for just changing one option could be ok. issue maybe if changing other options
             }
         }
     }
@@ -317,6 +315,7 @@ public class JPanelDate_v4 extends JPanel
 
     public void updateThisPanel()
     {
+        getLogger().info("Panel updated");
         this.repaint();
         this.revalidate();
         getCalculator().pack();
@@ -377,8 +376,7 @@ public class JPanelDate_v4 extends JPanel
 
     private void performOptionsBoxFunctionality(ActionEvent actionEvent)
     {
-        getLogger().debug("chosenOption: {}", getOptionsBox().getSelectedItem());
-        getLogger().debug("actionCommand: " + actionEvent.getActionCommand());
+        getLogger().info("performing optionsBoxFunctionality");
         if (getOptionsBox().getSelectedItem().equals(OPTIONS1))
         {
             switchComponentsForDateDifference();
@@ -388,6 +386,7 @@ public class JPanelDate_v4 extends JPanel
             switchComponentsForAddSubDate();
         }
         updateThisPanel();
+        getCalculator().confirm("Options changed", CalcType_v4.DATE);
     }
 
     public void performRadioButtonFunctionality(ActionEvent actionEvent)
@@ -615,7 +614,7 @@ public class JPanelDate_v4 extends JPanel
         int months = period.getMonths();
         LOGGER.debug("number of months is {}", months);
         numberOfDays = period.getDays();
-        LOGGER.debug("remaining number of days is {}\n", numberOfDays);
+        LOGGER.debug("remaining number of days is {}", numberOfDays);
         numberOfYearsMonthsAndDays[0] = years;
         numberOfYearsMonthsAndDays[1] = months;
         numberOfYearsMonthsAndDays[2] = numberOfDays;

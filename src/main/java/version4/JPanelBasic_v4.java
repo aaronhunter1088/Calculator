@@ -9,6 +9,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+import static version4.CalcType_v4.BASIC;
+
 // The face for a basic calculator
 public class JPanelBasic_v4 extends JPanel
 {
@@ -37,38 +39,42 @@ public class JPanelBasic_v4 extends JPanel
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setupBasicPanel(calculator);
-        addComponentsToPanel();
+        SwingUtilities.updateComponentTreeUI(this);
+        getCalculator().confirm("Finished setting up basic panel", BASIC);
     }
 
     /************* Start of methods here ******************/
 
     public void setupBasicPanel(StandardCalculator_v4 calculator)
     {
-        LOGGER.info("Starting setupPanel");
-        constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        calculator.getTextArea().setPreferredSize(new Dimension(70, 35));
-
-        //getCalculator().setupNumberButtons(true);
-
-        buttonFraction.setFont(Calculator_v4.font);
-        buttonFraction.setPreferredSize(new Dimension(35, 35) );
-        buttonFraction.setBorder(new LineBorder(Color.BLACK));
-        buttonFraction.setEnabled(true);
+        LOGGER.info("Starting setupBasicPanel");
+        getButtonFraction().setFont(Calculator_v4.font);
+        getButtonFraction().setPreferredSize(new Dimension(35, 35) );
+        getButtonFraction().setBorder(new LineBorder(Color.BLACK));
+        getButtonFraction().setEnabled(true);
         
-        buttonPercent.setFont(Calculator_v4.font);
-        buttonPercent.setPreferredSize(new Dimension(35, 35) );
-        buttonPercent.setBorder(new LineBorder(Color.BLACK));
-        buttonPercent.setEnabled(true);
+        getButtonPercent().setFont(Calculator_v4.font);
+        getButtonPercent().setPreferredSize(new Dimension(35, 35) );
+        getButtonPercent().setBorder(new LineBorder(Color.BLACK));
+        getButtonPercent().setEnabled(true);
         
-        buttonSqrt.setFont(Calculator_v4.font);
-        buttonSqrt.setPreferredSize(new Dimension(35, 35) );
-        buttonSqrt.setBorder(new LineBorder(Color.BLACK));
-        buttonSqrt.setEnabled(true);
+        getButtonSqrt().setFont(Calculator_v4.font);
+        getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
+        getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
+        getButtonSqrt().setEnabled(true);
+
+        getCalculator().setupNumberButtons(true);
+        getCalculator().setupBasicCalculatorButtons(); // Add, Sub, Multiply, Divide
+        getCalculator().setupOtherBasicCalculatorButtons(); // =, Negate
+        getCalculator().setupMemoryButtons(); // MC, MR, MS, M+, M-
+        getCalculator().setupOtherCalculatorButtons(); // C, CE, Delete, Dot
+
+        addComponentsToPanel();
         LOGGER.info("End setupPanel()");
     }
     public void addComponentsToPanel()
     {
-        LOGGER.info("Starting addComponentsToPanel");
+        LOGGER.info("Starting addComponentsToBasicPanel");
         getConstraints().fill = GridBagConstraints.BOTH;
         getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
         addComponent(getCalculator().getTextArea(), 0, 0, 5, 2);
@@ -149,7 +155,7 @@ public class JPanelBasic_v4 extends JPanel
         buttonSqrt.addActionListener(action -> {
             performSquareRootButtonActions(action);
         });
-        LOGGER.info("Finished addComponentsToPanel");
+        LOGGER.info("Finished addComponentsToBasicPanel");
     }
     public void addComponent(Component c, int row, int column, int width, int height)
     {
@@ -174,15 +180,13 @@ public class JPanelBasic_v4 extends JPanel
         if (!getCalculator().isMemoryValuesEmpty()) getCalculator().convertMemoryValues();
         // set CalcType now
         getCalculator().setBase(CalcType_v4.DECIMAL);
-        getCalculator().setCalcType(CalcType_v4.BASIC);
+        getCalculator().setCalcType(BASIC);
         getCalculator().clearNumberButtonFunctionalities();
         getCalculator().clearAllBasicOperationButtons();
         getCalculator().clearAllOtherBasicCalculatorButtons();
         getCalculator().setCurrentPanel(this);
         // setting up all the buttons
         getCalculator().setEnabledForAllNumberButtons(true);
-        setupBasicPanel(getCalculator());
-        getCalculator().setBar(new JMenuBar());
         getCalculator().setupMenuBar(); // needed now because we are changing the help menu
         getCalculator().setupBasicCalculatorButtons();
         getCalculator().setupOtherBasicCalculatorButtons();
@@ -191,6 +195,7 @@ public class JPanelBasic_v4 extends JPanel
         getCalculator().setupOtherCalculatorButtons();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
+        getCalculator().confirm("Finished perform basic calculator switch operations", BASIC);
     }
 
     public void performSquareRootButtonActions(ActionEvent action)

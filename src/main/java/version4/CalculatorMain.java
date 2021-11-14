@@ -23,14 +23,17 @@ public class CalculatorMain
 	public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting here...");
+        //Start a basic calculator
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
         //Start a date calculator with options1 selected
-        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
+        //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
         //Start a date calculator with options2 selected
-        //Calculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
+        //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
         UIManager.setLookAndFeel(new MetalLookAndFeel());
-        SwingUtilities.invokeLater(() -> {SwingUtilities.updateComponentTreeUI(calculator);});
+        SwingUtilities.invokeLater(() -> SwingUtilities.updateComponentTreeUI(calculator));
         calculator.setLocation(750, 250);
         calculator.setResizable(false);
+        calculator.pack();
         calculator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         calculator.confirm("Calculator started. Initial state", calculator.getCalcType());
     }

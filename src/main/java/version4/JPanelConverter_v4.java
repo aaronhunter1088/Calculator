@@ -54,18 +54,17 @@ public class JPanelConverter_v4 extends JPanel
     /************* Constructor ******************/
     public JPanelConverter_v4(StandardCalculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
     {
-        LOGGER.info("Inside JPanelConverter_v4 constructor");
         setCalculator(calculator);
         setConverterType(converterType);
         setMinimumSize(new Dimension(300,400));
         setConverterLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setLayout(getConverterLayout());
-        //setupAllConverterButtonsFunctionalities();
+        setupAllConverterButtonsFunctionalities();
         setupJPanelConverter_v4();
         addStartupComponentsToJPanelConverter_v4();
         getCalculator().pack();
-        LOGGER.info("Finished with JPanelConverter_v4 constructor\n");
+        getCalculator().confirm("Finished setting up converter panel", CONVERTER);
     }
 
     /************* Start of methods here ******************/
