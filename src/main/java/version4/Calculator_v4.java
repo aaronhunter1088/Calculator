@@ -69,6 +69,7 @@ public abstract class Calculator_v4 extends JFrame
     final protected JButton buttonMemoryAddition = new JButton("M+");
     final protected JButton buttonMemorySubtraction = new JButton("M-");
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
+    final protected static Font font_Bold = new Font("Segoe UI", Font.BOLD, 12);
     final protected static Font font2 = new Font("Verdana", Font.BOLD, 20);
     protected String[] values = {"","","",""}; // firstNum or total, secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
     protected int valuesPosition = 0;
@@ -937,14 +938,15 @@ public abstract class Calculator_v4 extends JFrame
      */
     public void confirm()
     {
-	    confirm("", BASIC);
+	    confirm("", getCalcType());
     }
 
     public void confirm(String message)
     {
-        confirm(message, BASIC);
+        confirm(message, getCalcType());
     }
 
+    @Deprecated
     public void confirm(CalcType_v4 calcType)
     {
         confirm("", calcType);
@@ -1000,13 +1002,13 @@ public abstract class Calculator_v4 extends JFrame
                 {LOGGER.info("Confirm Results");}
                 if (((JPanelDate_v4)getCurrentPanel()).getOptionsBox().getSelectedItem() == OPTIONS1)
                 {
-                    int year = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getYear();
-                    int month = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getMonth();
-                    int day = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getDay();
+                    int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
+                    int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
+                    int day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
                     LOGGER.info("FromDate(mm-dd-yy): " +month+"-"+day+"-"+year);
-                    year = ((JPanelDate_v4)getCurrentPanel()).getToDatePicker().getModel().getYear();
-                    month = ((JPanelDate_v4)getCurrentPanel()).getToDatePicker().getModel().getMonth();
-                    day = ((JPanelDate_v4)getCurrentPanel()).getToDatePicker().getModel().getDay();
+                    year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheToDatePicker();
+                    month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheToDatePicker();
+                    day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheToDatePicker();
                     LOGGER.info("ToDate(mm-dd-yy): " +month+"-"+day+"-"+year);
                     LOGGER.info("Difference");
                     LOGGER.info("Year: " + ((JPanelDate_v4)getCurrentPanel()).getYearsDiffTextField().getText());

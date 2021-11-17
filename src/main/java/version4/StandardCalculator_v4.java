@@ -123,6 +123,12 @@ public class StandardCalculator_v4 extends Calculator_v4
             JMenuItem motif = new JMenuItem("Motif");
             JMenuItem gtk = new JMenuItem("GTK");
 
+            metal.setFont(font);
+            system.setFont(font);
+            windows.setFont(font);
+            motif.setFont(font);
+            gtk.setFont(font);
+
             // functions
             metal.addActionListener(action -> {
                 try {

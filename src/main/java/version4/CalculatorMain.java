@@ -24,9 +24,9 @@ public class CalculatorMain
     {
         LOGGER.info("Starting here...");
         //Start a basic calculator
-        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
+        //StandardCalculator_v4 calculator = new StandardCalculator_v4(BASIC);
         //Start a date calculator with options1 selected
-        //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
         //Start a date calculator with options2 selected
         //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
         UIManager.setLookAndFeel(new MetalLookAndFeel());
