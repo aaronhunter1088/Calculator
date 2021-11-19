@@ -10,9 +10,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -142,7 +144,7 @@ public abstract class Calculator_v4 extends JFrame
      */
 	public void setupCalculator()
     {
-		LOGGER.info("Inside setupCalculator()");
+		LOGGER.info("Starting to set up the calculator");
 		//textArea.getCaret().isSelectionVisible();
 		getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         getTextArea().setFont(font);
@@ -152,8 +154,6 @@ public abstract class Calculator_v4 extends JFrame
         //setupNumberButtons(true);
         //setupMemoryButtons();
         //setupOtherCalculatorButtons();
-
-        LOGGER.info("Finished setupCalculator()");
 	}
 
 	public void setupOtherCalculatorButtons()
@@ -995,30 +995,35 @@ public abstract class Calculator_v4 extends JFrame
                 LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
+            case PROGRAMMER : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
+            case SCIENTIFIC : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
             case DATE : {
                 if (StringUtils.isNotEmpty(message))
                 {LOGGER.info("Confirm Results: " + message);}
                 else
                 {LOGGER.info("Confirm Results");}
-                if (((JPanelDate_v4)getCurrentPanel()).getOptionsBox().getSelectedItem() == OPTIONS1)
+                if (((JPanelDate_v4)getCurrentPanel()).getSelectedOption().equals(OPTIONS1))
                 {
                     int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
                     int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
                     int day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
-                    LOGGER.info("FromDate(mm-dd-yy): " +month+"-"+day+"-"+year);
+                    LocalDate date = LocalDate.of(year, month, day);
+                    LOGGER.info("FromDate(yyyy-mm-dd): " +date);
                     year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheToDatePicker();
                     month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheToDatePicker();
                     day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheToDatePicker();
-                    LOGGER.info("ToDate(mm-dd-yy): " +month+"-"+day+"-"+year);
+                    date = LocalDate.of(year, month, day);
+                    LOGGER.info("ToDate(yyyy-mm-dd): " + date);
                     LOGGER.info("Difference");
                     LOGGER.info("Year: " + ((JPanelDate_v4)getCurrentPanel()).getYearsDiffTextField().getText());
                     LOGGER.info("Month: " + ((JPanelDate_v4)getCurrentPanel()).getMonthsDiffTextField().getText());
                     LOGGER.info("Days: " + ((JPanelDate_v4)getCurrentPanel()).getDaysDiffTextField().getText());
                 } else {
-                    int year = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getYear();
-                    int month = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getMonth();
-                    int day = ((JPanelDate_v4)getCurrentPanel()).getFromDatePicker().getModel().getDay();
-                    LOGGER.info("FromDate(mm-dd-yy): " +month+"-"+day+"-"+year);
+                    int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
+                    int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
+                    int day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
+                    LocalDate date = LocalDate.of(year, month, day);
+                    LOGGER.info("FromDate(yyyy-mm-dd): " + date);
                     boolean isAddSelected = ((JPanelDate_v4)getCurrentPanel()).getAddRadioButton().isSelected();
                     LOGGER.info("Add or Subtract Selection: " + (isAddSelected ? "Add" : "Subtract") );
                     LOGGER.info("New Date: " + ((JPanelDate_v4)getCurrentPanel()).getResultsLabel().getText());
@@ -1261,9 +1266,9 @@ public abstract class Calculator_v4 extends JFrame
     /**
      * Calls createImageIcon(String path, String description
      *
-     * @throws Exception
+     * @throws FileNotFoundException
      */
-    public ImageIcon createImageIcon(String path) throws Exception
+    public ImageIcon createImageIcon(String path) throws FileNotFoundException
     {
         return createImageIcon(path, "No description given.");
     }
@@ -1272,26 +1277,27 @@ public abstract class Calculator_v4 extends JFrame
      * @param path the path of the image
      * @param description a description of the image being set
      */
-    protected ImageIcon createImageIcon(String path, String description)
+    protected ImageIcon createImageIcon(String path, String description) throws FileNotFoundException
     {
-        LOGGER.info("Inside createImageIcon(): creating image for " + description);
+        //LOGGER.info("Inside createImageIcon(): creating image for " + description);
         ImageIcon retImageIcon = null;
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL resource = classLoader.getResource(path.substring(19));
         if (resource != null) {
             retImageIcon = new ImageIcon(resource);
-            LOGGER.info("the path '" + path + "' created the '"+description+"'! the ImageIcon is being returned...");
-            LOGGER.info("End createImageIcon()");
+            //LOGGER.info("the path '" + path + "' created the '"+description+"'! the ImageIcon is being returned...");
+            //LOGGER.info("End createImageIcon()");
         }
         else {
-            LOGGER.debug("The path '" + path + "' could not find an image there!. Trying again by removing 'src/main/resources/' from path!");
+            //LOGGER.debug("The path '" + path + "' could not find an image there!. Trying again by removing 'src/main/resources/' from path!");
             resource = classLoader.getResource(path.substring(19));
             if (resource != null) {
                 retImageIcon = new ImageIcon(resource);
-                LOGGER.info("the path '" + path + "' created an image after removing 'src/main/resources/'! the ImageIcon is being returned...");
-                LOGGER.info("End createImageIcon()");
+                //LOGGER.info("the path '" + path + "' created an image after removing 'src/main/resources/'! the ImageIcon is being returned...");
+                //LOGGER.info("End createImageIcon()");
             } else {
-                LOGGER.error("The path '" + path + "' could not find an image there after removing src/main/resources/!. Returning null!");
+                getLogger().error("The path '" + path + "' could not find an image there after removing src/main/resources/!. Returning null!");
+                throw new FileNotFoundException("The resource you are attempting to use cannot be found at: " + path);
             }
 
         }
@@ -1303,15 +1309,15 @@ public abstract class Calculator_v4 extends JFrame
     {
         try
         {
-            calculatorImage1 = createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg");
-            calculator2 = createImageIcon("src/main/resources/images/calculatorOriginal.jpg");
-            macLogo = createImageIcon("src/main/resources/images/maclogo.jpg");
+            setCalculatorImage1(createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg"));
+            setCalculator2(createImageIcon("src/main/resources/images/calculatorOriginal.jpg"));
+            setMacLogo(createImageIcon("src/main/resources/images/maclogo.jpg"));
             setWindowsLogo(createImageIcon("src/main/resources/images/windows11.jpg"));
             setBlankImage(null); // new ImageIcon()
         }
-        catch (Exception e)
+        catch (FileNotFoundException e)
         {
-            LOGGER.error(e.getMessage() + " ");
+            getLogger().error(e.getMessage());
         }
     }
 

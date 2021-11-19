@@ -480,7 +480,6 @@ public class JPanelProgrammer_v4 extends JPanel {
         convertTextArea();
         // set CalcType now
         calculator.setCalcType(CalcType_v4.PROGRAMMER);
-        calculator.setBase(CalcType_v4.BINARY);
         // setting up all the buttons
         setButtons2To9(false);
         calculator.buttonNegate.setEnabled(false);

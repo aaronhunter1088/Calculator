@@ -94,7 +94,7 @@ public class JPanelDate_v4 extends JPanel
 
     public void createViewHelpMenu()
     {
-        getLogger().info("creating the view help menu for date panel");
+        getLogger().info("Creating the view help menu for date panel");
         String helpString = "<html>How to use the " + DATE + " Calculator<br><br>" +
                 "Difference Between Dates:<br>" +
                 "Enter a date into either field, From or To.<br>" +
@@ -145,52 +145,53 @@ public class JPanelDate_v4 extends JPanel
                 menuOption.add(viewHelpItem, 0);
             }
         }
+        getLogger().info("Finished creating the view help menu");
+    }
+
+    public void reset()
+    {
+        reset(getSelectedOption());
+    }
+
+    public void reset(String chosenOption)
+    {
+        // for either option
+        setSelectedOption(chosenOption);
+        setupFromDate();
+        // if option1 was chosen
+        setupToDate();
+        getYearsDiffTextField().setText("");
+        getMonthsDiffTextField().setText("");
+        getDaysDiffTextField().setText("");
+        getResultsLabel().setText("");
+        // if option2 was chosen
+        getAddRadioButton().setSelected(true);
+        getYearsTextField().setText("");
+        getMonthsTextField().setText("");
+        getDaysTextField().setText("");
+        getCalculator().confirm(getClass().getName() + " was reset!");
     }
 
     private void setupJPanelDate(String chosenOption)
     {
-        LOGGER.info("Starting setupPanel");
+        LOGGER.info("Starting to construct " + getClass().getName());
         getLogger().warn("Edit Menu not set up for " + getCalculator().getCalcType());
         //createEditMenu();
         createViewHelpMenu();
 
-        setOptionsBox(new JComboBox(new String[]{OPTIONS1, OPTIONS2}));
-        getOptionsBox().setSelectedItem(chosenOption == null ? OPTIONS1 : OPTIONS2);
-        setSelectedOption(chosenOption);
-        getOptionsBox().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        getOptionsBox().addActionListener(this::performOptionsBoxFunctionality);
+        setupOptionsSelection(chosenOption);
 
         setFromDateLabel(new JLabel(FROM_DATE));
         getFromDateLabel().setFont(font2);
         getFromDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
 
-        setFromModel(new UtilCalendarModel());
-        LocalDate todaysDate = LocalDate.now();
-        int year = todaysDate.getYear();
-        int monthInt = todaysDate.getMonthValue()-1;
-        int day = todaysDate.getDayOfMonth();
-        getFromModel().setDate(year, monthInt, day);
-        getFromModel().setSelected(true);
-        setFromDatePanel(new JDatePanelImpl(getFromModel()));
-        setFromDatePicker(new JDatePickerImpl(getFromDatePanel()));
-        getFromDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        setupFromDate();
 
         setToDateLabel(new JLabel(TO_DATE));
         getToDateLabel().setFont(font2);
         getToDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
 
-        setToModel(new UtilCalendarModel());
-        getToModel().setDate(year, monthInt, day); // defaults to today
-        getToModel().setSelected(true);
-        setToDatePanel(new JDatePanelImpl(getToModel()));
-        setToDatePicker(new JDatePickerImpl(getToDatePanel()));
-        getToDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-
-        setToDatePicker(new JDatePickerImpl(getToDatePanel()));
-        getToDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-
-        getFromDatePicker().addActionListener(this::performDatePickerFunctionality);
-        getToDatePicker().addActionListener(this::performDatePickerFunctionality); //action -> updateResultsTextBox());
+        setupToDate();
 
         setDifferenceLabel(new JLabel(DIFFERENCE));
         getDifferenceLabel().setFont(font2);
@@ -276,11 +277,7 @@ public class JPanelDate_v4 extends JPanel
         getDateLabel().setFont(font2);
         getDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
 
-        DayOfWeek dayOfWeek = todaysDate.getDayOfWeek();
-        Month month = todaysDate.getMonth();
-        setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + day + ", " + year));
-        getResultsLabel().setFont(font_Bold);
-        getResultsLabel().setHorizontalAlignment(SwingConstants.LEFT);
+        setupResultsLabel();
 
         if (chosenOption == null) {
             addStartupComponentsToJPanelDate(OPTIONS1);
@@ -291,12 +288,61 @@ public class JPanelDate_v4 extends JPanel
             setSelectedOption(OPTIONS2);
         }
         getOptionsBox().repaint();
-        LOGGER.info("Finished setupPanel");
+        LOGGER.info("Finished setting up " + getClass().getName());
+    }
+
+    public void setupOptionsSelection(String chosenOption)
+    {
+        setOptionsBox(new JComboBox(new String[]{OPTIONS1, OPTIONS2}));
+        getOptionsBox().setSelectedItem(chosenOption == null ? OPTIONS1 : chosenOption);
+        setSelectedOption(chosenOption);
+        getOptionsBox().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getOptionsBox().addActionListener(this::performOptionsBoxFunctionality);
+    }
+
+    public void setupFromDate()
+    {
+        setFromModel(new UtilCalendarModel());
+        LocalDate todaysDate = LocalDate.now();
+        int year = todaysDate.getYear();
+        int monthInt = todaysDate.getMonthValue()-1;
+        int day = todaysDate.getDayOfMonth();
+        getFromModel().setDate(year, monthInt, day);
+        getFromModel().setSelected(true);
+        setFromDatePanel(new JDatePanelImpl(getFromModel()));
+        setFromDatePicker(new JDatePickerImpl(getFromDatePanel()));
+        getFromDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getFromDatePicker().addActionListener(this::performDatePickerFunctionality);
+    }
+
+    public void setupToDate()
+    {
+        setToModel(new UtilCalendarModel());
+        LocalDate todaysDate = LocalDate.now();
+        int year = todaysDate.getYear();
+        int monthInt = todaysDate.getMonthValue()-1;
+        int day = todaysDate.getDayOfMonth();
+        getToModel().setDate(year, monthInt, day); // defaults to today
+        getToModel().setSelected(true);
+        setToDatePanel(new JDatePanelImpl(getToModel()));
+        setToDatePicker(new JDatePickerImpl(getToDatePanel()));
+        getToDatePicker().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getToDatePicker().addActionListener(this::performDatePickerFunctionality); //action -> updateResultsTextBox());
+    }
+
+    public void setupResultsLabel()
+    {
+        LocalDate todaysDate = LocalDate.now();
+        DayOfWeek dayOfWeek = todaysDate.getDayOfWeek();
+        Month month = todaysDate.getMonth();
+        setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + todaysDate.getDayOfMonth() + ", " + todaysDate.getYear()));
+        getResultsLabel().setFont(font_Bold);
+        getResultsLabel().setHorizontalAlignment(SwingConstants.LEFT);
     }
 
     public void performDatePickerFunctionality(ActionEvent ae)
     {
-        getLogger().info("performing date picker logic");
+        getLogger().info("Performing date picker functionality");
         if (getOptionsBox().getSelectedItem().toString().equals(OPTIONS1))
         {
             updateResultsTextBox();
@@ -310,7 +356,7 @@ public class JPanelDate_v4 extends JPanel
             getLogger().debug("new date selected: " + localDateTime.toLocalDate());
             updateResultsLabel(localDateTime);
         }
-        getLogger().info("finished performing date picker logic");
+        getLogger().info("finished performing date picker logic\n");
         getCalculator().confirm("New date, FROM DATE chosen");
     }
 
@@ -404,7 +450,7 @@ public class JPanelDate_v4 extends JPanel
 
     public void performRadioButtonFunctionality(ActionEvent actionEvent)
     {
-        getLogger().info("performing radiobutton function");
+        getLogger().info("Performing radiobutton function");
         int year = getFromDatePicker().getModel().getYear();
         int month = getFromDatePicker().getModel().getMonth()+1;
         int dayOfMonth = getFromDatePicker().getModel().getDay();
@@ -422,7 +468,8 @@ public class JPanelDate_v4 extends JPanel
         if (getAddRadioButton().isSelected())
         {
             getLogger().info("Adding values to the date");
-            localDateTime = localDateTime.plusDays(years);
+            localDateTime = localDateTime.plusDays(days);
+            localDateTime = localDateTime.plusWeeks(0);
             localDateTime = localDateTime.plusMonths(months);
             localDateTime = localDateTime.plusYears(years);
         }
@@ -430,16 +477,18 @@ public class JPanelDate_v4 extends JPanel
         {
             getLogger().info("Subtracting values from the date");
             localDateTime = localDateTime.minusYears(years);
+            localDateTime = localDateTime.minusWeeks(0);
             localDateTime = localDateTime.minusMonths(months);
             localDateTime = localDateTime.minusDays(days);
         }
         getLogger().debug("Date is now {}", localDateTime.toLocalDate());
+        updateFromDate(localDateTime);
         updateResultsLabel(localDateTime);
     }
 
     public void performAddRadioButtonFunctionality(ActionEvent actionEvent)
     {
-        getLogger().info("performing add button functionality");
+        getLogger().info("Performing add button functionality");
         getAddRadioButton().setSelected(true);
         getSubtractRadioButton().setSelected(false);
         performRadioButtonFunctionality(actionEvent);
@@ -447,7 +496,7 @@ public class JPanelDate_v4 extends JPanel
 
     public void performSubtractRadioButtonFunctionality(ActionEvent actionEvent)
     {
-        getLogger().info("performing subtract button functionality");
+        getLogger().info("Performing subtract button functionality");
         getSubtractRadioButton().setSelected(true);
         getAddRadioButton().setSelected(false);
         performRadioButtonFunctionality(actionEvent);
@@ -455,7 +504,7 @@ public class JPanelDate_v4 extends JPanel
 
     private void addStartupComponentsToJPanelDate(String chosenOption)
     {
-        LOGGER.info("Starting addComponentsToJPanelDate");
+        LOGGER.info("Adding components to date panel, using " + chosenOption);
         if (chosenOption.equals(OPTIONS1))
         {
             addComponent(getOptionsBox(), 0,0,1,1, 0,1.0);
@@ -490,7 +539,7 @@ public class JPanelDate_v4 extends JPanel
             addComponent(getResultsLabel(), 11, 0, 1, 1, 0, 1.0);
             addComponent(getBlankLabel5(), 12, 0, 1, 1, 1.0, 1.0);
         }
-        LOGGER.info("Finished addComponentsToJPanelDate");
+        LOGGER.info("Finished adding components to date panel");
     }
 
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
@@ -589,27 +638,38 @@ public class JPanelDate_v4 extends JPanel
         Period period = Period.between(localFromDate, localToDate);
 
         int years = period.getYears();
-        LOGGER.debug("numbers of years is {}", years);
+        //LOGGER.debug("numbers of years is {}", years);
         int months = period.getMonths();
-        LOGGER.debug("number of months is {}", months);
+        //LOGGER.debug("number of months is {}", months);
         int numberOfDays = period.getDays();
-        LOGGER.debug("remaining number of days is {}", numberOfDays);
+        //LOGGER.debug("remaining number of days is {}", numberOfDays);
         numberOfYearsMonthsAndDays[0] = years;
         numberOfYearsMonthsAndDays[1] = months;
         numberOfYearsMonthsAndDays[2] = numberOfDays;
         return numberOfYearsMonthsAndDays;
     }
 
+    public void updateFromDate(LocalDateTime ldt)
+    {
+        getFromDatePicker().getModel().setYear(ldt.getYear());
+        getFromDatePicker().getModel().setMonth(ldt.getMonthValue()-1);
+        getFromDatePicker().getModel().setDay(ldt.getDayOfMonth());
+    }
+
+    public void updateToDate(LocalDateTime ldt)
+    {
+        getToDatePicker().getModel().setYear(ldt.getYear());
+        getToDatePicker().getModel().setMonth(ldt.getMonthValue()-1);
+        getToDatePicker().getModel().setDay(ldt.getDayOfMonth());
+    }
+
     private void updateResultsLabel(LocalDateTime ldt)
     {
-        getLogger().info("updating the result label with a new date...");
+        getLogger().info("updating the result label with a new date: " + ldt);
         //getCalendar().set(year, monthInt, date);
         //getCalendar().setTime(getCalendar().getTime());
         //setCalendar(getCalendar());
         //getLogger().debug("Date is now {}", getCalendar().getTime());
-        getFromDatePicker().getModel().setYear(ldt.getYear());
-        getFromDatePicker().getModel().setMonth(ldt.getMonthValue()-1);
-        getFromDatePicker().getModel().setDay(ldt.getDayOfMonth());
 
         DayOfWeek dayOfWeek = ldt.getDayOfWeek();
         //String dayOfWeek = getCalendar().getTime().toInstant()
@@ -644,44 +704,42 @@ public class JPanelDate_v4 extends JPanel
         int month = getTheMonthFromTheFromDatePicker();
         int day = getTheDayOfTheMonthFromTheFromDatePicker();
         LocalDate fromDate = LocalDate.of(year, month, day);
-        Instant fromInstance = fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        //Instant fromInstance = fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         year = getTheYearFromTheToDatePicker();
         month = getTheMonthFromTheToDatePicker();
         day = getTheDayOfTheMonthFromTheToDatePicker();
         LocalDate toDate = LocalDate.of(year, month, day);
-        Instant toInstance = toDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        LocalDate localFromDate = fromInstance
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        LocalDate localToDate = toInstance
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        Period period = Period.between(localFromDate, localToDate);
-        if((numberOfYearsMonthsAndDays[0] != 0 ||
-            numberOfYearsMonthsAndDays[1] != 0 ||
-            numberOfYearsMonthsAndDays[2] != 0)
-                && fromDate.isBefore(toDate))
+        //Instant toInstance = toDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        //LocalDate localFromDate = fromInstance
+        //        .atZone(ZoneId.systemDefault())
+        //        .toLocalDate();
+        //LocalDate localToDate = toInstance
+        //        .atZone(ZoneId.systemDefault())
+        //        .toLocalDate();
+        //Period period = Period.between(localFromDate, localToDate);
+        if(fromDate.isBefore(toDate))
         {
+            getLogger().info(fromDate + " is before " + toDate);
             getYearsDiffTextField().setText(numberOfYearsMonthsAndDays[0] + SPACE + wordYear);
             getMonthsDiffTextField().setText(numberOfYearsMonthsAndDays[1] + SPACE + wordMonth);
             getDaysDiffTextField().setText(numberOfYearsMonthsAndDays[2] + SPACE + wordDay);
         }
-        else if((numberOfYearsMonthsAndDays[0] != 0 ||
-                numberOfYearsMonthsAndDays[1] != 0 ||
-                numberOfYearsMonthsAndDays[2] != 0)
-                && fromDate.isAfter(toDate))
+        else if(fromDate.isAfter(toDate))
         {
+            getLogger().info(fromDate + " is after " + toDate);
             getYearsDiffTextField().setText((-1*numberOfYearsMonthsAndDays[0]) + SPACE +  wordYear);
             getMonthsDiffTextField().setText((-1*numberOfYearsMonthsAndDays[1]) + SPACE +  wordMonth);
             getDaysDiffTextField().setText((-1*numberOfYearsMonthsAndDays[2]) + SPACE +  wordDay);
         }
         else
         {
+            getLogger().info(fromDate + " is the same as " + toDate);
             getYearsDiffTextField().setText(SAME + SPACE + YEAR);
             getMonthsDiffTextField().setText(SAME + SPACE + MONTH);
             getDaysDiffTextField().setText(SAME + SPACE + DATE);
         }
+        getLogger().info("Difference Results updated");
     }
 
     /************* All Getters ******************/
