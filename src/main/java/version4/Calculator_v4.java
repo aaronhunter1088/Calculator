@@ -1015,9 +1015,9 @@ public abstract class Calculator_v4 extends JFrame
                     date = LocalDate.of(year, month, day);
                     LOGGER.info("ToDate(yyyy-mm-dd): " + date);
                     LOGGER.info("Difference");
-                    LOGGER.info("Year: " + ((JPanelDate_v4)getCurrentPanel()).getYearsDiffTextField().getText());
-                    LOGGER.info("Month: " + ((JPanelDate_v4)getCurrentPanel()).getMonthsDiffTextField().getText());
-                    LOGGER.info("Days: " + ((JPanelDate_v4)getCurrentPanel()).getDaysDiffTextField().getText());
+                    LOGGER.info("Year: " + ((JPanelDate_v4)getCurrentPanel()).getYearsDifferenceLabel().getText());
+                    LOGGER.info("Month: " + ((JPanelDate_v4)getCurrentPanel()).getMonthsDifferenceLabel().getText());
+                    LOGGER.info("Days: " + ((JPanelDate_v4)getCurrentPanel()).getDaysDifferenceLabel().getText());
                 } else {
                     int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
                     int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();

@@ -63,7 +63,7 @@ public class JPanelDate_v4Test {
     }
 
     @Test
-    public void testSubtractThenAddBackButtonWorksWithLocalDate()
+    public void testSubtractThenAddBackButtonWorksWithLocalDate() throws Exception
     {
         LocalDate todaysDate = LocalDate.now();
 

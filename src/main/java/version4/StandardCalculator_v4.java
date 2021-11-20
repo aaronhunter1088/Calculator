@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -74,8 +75,7 @@ public class StandardCalculator_v4 extends Calculator_v4
      * @param converterType
      * @param chosenOption
      */
-    public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws CalculatorError_v4, ParseException, IOException
-    {
+    public StandardCalculator_v4(CalcType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws CalculatorError_v4, ParseException, IOException, UnsupportedLookAndFeelException {
         super(calcType.getName()); // default title is Basic
         setCalcType(calcType);
         setupMenuBar(); // setup here for all types
