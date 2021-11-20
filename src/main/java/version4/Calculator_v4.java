@@ -1004,6 +1004,7 @@ public abstract class Calculator_v4 extends JFrame
                 {LOGGER.info("Confirm Results");}
                 if (((JPanelDate_v4)getCurrentPanel()).getSelectedOption().equals(OPTIONS1))
                 {
+                    LOGGER.info("OPTIONS Selected: " +((JPanelDate_v4)getCurrentPanel()).OPTIONS1);
                     int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
                     int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
                     int day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
@@ -1017,8 +1018,10 @@ public abstract class Calculator_v4 extends JFrame
                     LOGGER.info("Difference");
                     LOGGER.info("Year: " + ((JPanelDate_v4)getCurrentPanel()).getYearsDifferenceLabel().getText());
                     LOGGER.info("Month: " + ((JPanelDate_v4)getCurrentPanel()).getMonthsDifferenceLabel().getText());
+                    LOGGER.info("Weeks: " + ((JPanelDate_v4)getCurrentPanel()).getWeeksDifferenceLabel().getText());
                     LOGGER.info("Days: " + ((JPanelDate_v4)getCurrentPanel()).getDaysDifferenceLabel().getText());
                 } else {
+                    LOGGER.info("OPTIONS Selected: " +((JPanelDate_v4)getCurrentPanel()).OPTIONS2);
                     int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
                     int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
                     int day = ((JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();

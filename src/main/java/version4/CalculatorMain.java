@@ -26,9 +26,9 @@ public class CalculatorMain
         //Start a basic calculator
         //StandardCalculator_v4 calculator = new StandardCalculator_v4(BASIC);
         //Start a date calculator with options1 selected
-        //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE);
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
-        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
+        //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
 
         // All other options here
         UIManager.setLookAndFeel(new MetalLookAndFeel());
