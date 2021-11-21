@@ -53,7 +53,6 @@ public class JPanelProgrammerMethodsTest {
         c.getTextArea().setText("4");
         c.textarea = new StringBuffer().append(c.getTextArea().getText());
         c.values[0] = "4";
-        JPanelProgrammer_v4 p = new JPanelProgrammer_v4(c);
         p.getButtonBin().setSelected(true);
         p.convertValues();
         assertEquals("Did not convert from Decimal to Binary", "00000100", c.getTextAreaWithoutNewLineCharacters());

@@ -43,6 +43,8 @@ public class JPanelBasic_v4 extends JPanel
         getCalculator().confirm("Finished setting up basic panel", BASIC);
     }
 
+    public JPanelBasic_v4() {}
+
     /************* Start of methods here ******************/
 
     public void setupBasicPanel(StandardCalculator_v4 calculator)
@@ -64,7 +66,7 @@ public class JPanelBasic_v4 extends JPanel
         getButtonSqrt().setEnabled(true);
 
         getCalculator().setupNumberButtons(true);
-        getCalculator().setupBasicCalculatorButtons(); // Add, Sub, Multiply, Divide
+        getCalculator().setupBasicCalculatorOperationButtons(); // Add, Sub, Multiply, Divide
         getCalculator().setupOtherBasicCalculatorButtons(); // =, Negate
         getCalculator().setupMemoryButtons(); // MC, MR, MS, M+, M-
         getCalculator().setupOtherCalculatorButtons(); // C, CE, Delete, Dot
@@ -188,14 +190,13 @@ public class JPanelBasic_v4 extends JPanel
         // setting up all the buttons
         getCalculator().setEnabledForAllNumberButtons(true);
         getCalculator().setupMenuBar(); // needed now because we are changing the help menu
-        getCalculator().setupBasicCalculatorButtons();
+        getCalculator().setupBasicCalculatorOperationButtons();
         getCalculator().setupOtherBasicCalculatorButtons();
         getCalculator().setupNumberButtons(true);
         getCalculator().setupMemoryButtons();
         getCalculator().setupOtherCalculatorButtons();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
-        getCalculator().confirm("Finished perform basic calculator switch operations", BASIC);
     }
 
     public void performSquareRootButtonActions(ActionEvent action)

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static version4.CalcType_v4.*;
 import static version4.JPanelDate_v4.OPTIONS1;
 
-public abstract class Calculator_v4 extends JFrame
+public class Calculator_v4 extends JFrame
 {
     final static protected Logger LOGGER;
     static
@@ -70,6 +70,13 @@ public abstract class Calculator_v4 extends JFrame
     final protected JButton buttonMemoryStore = new JButton("MS");
     final protected JButton buttonMemoryAddition = new JButton("M+");
     final protected JButton buttonMemorySubtraction = new JButton("M-");
+    final protected JButton buttonAdd = new JButton("+");
+    final protected JButton buttonSubtract = new JButton("-");
+    final protected JButton buttonMultiply = new JButton("*");
+    final protected JButton buttonDivide = new JButton("/");
+    final protected JButton buttonEquals = new JButton("=");
+    final protected JButton buttonNegate = new JButton("\u00B1");
+
     final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
     final protected static Font font_Bold = new Font("Segoe UI", Font.BOLD, 12);
     final protected static Font font2 = new Font("Verdana", Font.BOLD, 20);
@@ -85,6 +92,7 @@ public abstract class Calculator_v4 extends JFrame
     protected ImageIcon calculatorImage1, calculator2, macLogo, windowsLogo, blankImage;
     protected JLabel iconLabel;
     protected JLabel textLabel;
+    protected JMenuBar bar;
 
     protected boolean firstNumBool = true;
     protected boolean numberOneNegative = false;
@@ -130,9 +138,9 @@ public abstract class Calculator_v4 extends JFrame
 	public Calculator_v4(String title) throws HeadlessException, IOException
     {
 		super(title);
-		setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints());
-		setupCalculator();
+        setupCalculator();
     }
 
     /******************** Start of methods here **********************/
@@ -995,7 +1003,14 @@ public abstract class Calculator_v4 extends JFrame
                 LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
-            case PROGRAMMER : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
+            case PROGRAMMER : {
+                if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
+                else { LOGGER.info("Confirm Results"); }
+                LOGGER.info("---------------- ");
+                LOGGER.info("Add programmer info here");
+                LOGGER.info("-------- End Confirm Results --------\n");
+                break;
+            }
             case SCIENTIFIC : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
             case DATE : {
                 if (StringUtils.isNotEmpty(message))
@@ -1020,7 +1035,8 @@ public abstract class Calculator_v4 extends JFrame
                     LOGGER.info("Month: " + ((JPanelDate_v4)getCurrentPanel()).getMonthsDifferenceLabel().getText());
                     LOGGER.info("Weeks: " + ((JPanelDate_v4)getCurrentPanel()).getWeeksDifferenceLabel().getText());
                     LOGGER.info("Days: " + ((JPanelDate_v4)getCurrentPanel()).getDaysDifferenceLabel().getText());
-                } else {
+                }
+                else {
                     LOGGER.info("OPTIONS Selected: " +((JPanelDate_v4)getCurrentPanel()).OPTIONS2);
                     int year = ((JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
                     int month = ((JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();

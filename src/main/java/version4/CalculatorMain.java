@@ -24,11 +24,13 @@ public class CalculatorMain
     {
         LOGGER.info("Starting here...");
         //Start a basic calculator
-        //StandardCalculator_v4 calculator = new StandardCalculator_v4(BASIC);
+        //Calculator_v4 calculator = new Calculator_v4(BASIC);
+        //Start a programmer calculator
+        StandardCalculator_v4 calculator = new StandardCalculator_v4(PROGRAMMER);
         //Start a date calculator with options1 selected
-        StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS1); //(DATE);
+        //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
-        //StandardCalculator_v4 calculator = new StandardCalculator_v4(DATE, OPTIONS2);
+        //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS2);
 
         // All other options here
         UIManager.setLookAndFeel(new MetalLookAndFeel());

@@ -22,7 +22,7 @@ public class JPanelProgrammer_v4 extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private GridBagLayout programmerLayout; // layout of the calculator
+    private GridBagLayout panelLayout; // layout of the calculator
     private GridBagLayout otherButtonLayout = new GridBagLayout();
     private JPanel allOtherButtonsPanel = new JPanel(otherButtonLayout);
     private GridBagConstraints constraints; // layout's constraints
@@ -70,54 +70,45 @@ public class JPanelProgrammer_v4 extends JPanel {
     protected StringBuffer conversion = new StringBuffer();
     protected StandardCalculator_v4 calculator;
 
-    public JPanelProgrammer_v4(StandardCalculator_v4 calculator)
+    public JPanelProgrammer_v4(StandardCalculator_v4 calculator) throws CalculatorError_v4
     {
-        setMinimumSize(new Dimension(600,400));
-        programmerLayout = new GridBagLayout();
-        setLayout(programmerLayout); // set frame layout
-        constraints = new GridBagConstraints(); // instantiate constraints
         setCalculator(calculator);
-        try {
-            setupPanel_v3(calculator);
-        } catch (CalculatorError_v4 ce) {
-            LOGGER.error(ce.getMessage());
-        }
-        addComponentsToPanel_v3(calculator);
+        setMinimumSize(new Dimension(600,400));
+        setPanelLayout(new GridBagLayout());
+        setLayout(getPanelLayout()); // set frame layout
+        setConstraints(new GridBagConstraints()); // instantiate constraints
+        setupProgrammerPanel(calculator);
+        SwingUtilities.updateComponentTreeUI(this);
+        getCalculator().confirm("Finished setting up basic panel");
     }
-    public JPanelProgrammer_v4()
-    {}
+
+    public JPanelProgrammer_v4() {}
 
     /************* Start of methods here ******************/
 
-    public void setupPanel_v3(StandardCalculator_v4 calculator) throws CalculatorError_v4
+    public void setupProgrammerPanel(StandardCalculator_v4 calculator) throws CalculatorError_v4
     {
-        LOGGER.info("Starting setupProgrammerPanel_v3");
-        constraints.insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        setButtons2To9(false);
-        setButtonsAToF(false);
-        calculator.buttonNegate.setEnabled(false);
+        LOGGER.info("Starting setupProgrammerPanel");
+        getConstraints().insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE\
+        getCalculator().getButtonNegate().setEnabled(false);
+        // Radio button default selections
+        getButtonByte().setSelected(true);
+        getButtonBin().setSelected(true);
 
-        buttonSqrt.setEnabled(false);
-        buttonPercent.setEnabled(false);
-        buttonFraction.setEnabled(false);
+        getButtonSqrt().setFont(Calculator_v4.font);
+        getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
+        getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
+        getButtonSqrt().setEnabled(false);
 
-        buttonByte.setSelected(true);
-        buttonBin.setSelected(true);
+        getButtonPercent().setFont(Calculator_v4.font);
+        getButtonPercent().setPreferredSize(new Dimension(35, 35) );
+        getButtonPercent().setBorder(new LineBorder(Color.BLACK));
+        getButtonPercent().setEnabled(false);
 
-        buttonSqrt.setEnabled(false);
-        buttonSqrt.setFont(this.calculator.font);
-        buttonSqrt.setPreferredSize(new Dimension(35, 35) );
-        buttonSqrt.setBorder(new LineBorder(Color.BLACK));
-
-        buttonPercent.setEnabled(false);
-        buttonPercent.setFont(this.calculator.font);
-        buttonPercent.setPreferredSize(new Dimension(35, 35) );
-        buttonPercent.setBorder(new LineBorder(Color.BLACK));
-
-        buttonFraction.setEnabled(false);
-        buttonFraction.setFont(this.calculator.font);
-        buttonFraction.setPreferredSize(new Dimension(35, 35));
-        buttonFraction.setBorder(new LineBorder(Color.BLACK));
+        getButtonFraction().setFont(Calculator_v4.font);
+        getButtonFraction().setPreferredSize(new Dimension(35, 35) );
+        getButtonFraction().setBorder(new LineBorder(Color.BLACK));
+        getButtonFraction().setEnabled(false);
         // add buttons to buttonGroupOne
         getButtonHex().addActionListener(action -> {});
         getButtonDec().addActionListener(action -> {
@@ -317,12 +308,22 @@ public class JPanelProgrammer_v4 extends JPanel {
         textArea1.setText("00000000");
         textArea2.setText("00000000");
         textArea3.setText("00000000" + TEXTAREA3_SPACE + "00000000");
-        LOGGER.info("End setupProgrammerPanel_v3() ");
+
+        getCalculator().setupMemoryButtons(); // MR MC MS M+ M-
+        getCalculator().setupBasicCalculatorOperationButtons(); // + - * /
+        getCalculator().setupOtherBasicCalculatorButtons(); // = Negate
+        getCalculator().setupOtherCalculatorButtons(); // C CE DEL Dot
+        getCalculator().setupNumberButtons(true);
+        setButtons2To9(false);
+        setButtonsAToF(false);
+
+        addComponentsToPanel(calculator);
+        LOGGER.info("End setupProgrammerPanel");
     }
 
-    public void addComponentsToPanel_v3(StandardCalculator_v4 calculator)
+    public void addComponentsToPanel(StandardCalculator_v4 calculator)
     {
-        LOGGER.info("Starting addComponentsToProgrammerPanel_v3");
+        LOGGER.info("Starting addComponentsToProgrammerPanel");
         constraints.fill = GridBagConstraints.BOTH;
         constraints.insets = new Insets(5,5,5,5); //9905
         calculator.getTextArea().setBorder(new LineBorder(Color.BLACK));
@@ -466,13 +467,13 @@ public class JPanelProgrammer_v4 extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonAdd);
         // add allOtherButtonsPanel to gui
         constraints.insets = new Insets(0, 0, 5, 0);
-        addComponent(allOtherButtonsPanel, 5, 1, 6, 8, programmerLayout);
-        LOGGER.info("Finished addComponentsToProgrammerPanel_v3");
+        addComponent(allOtherButtonsPanel, 5, 1, 6, 8, panelLayout);
+        LOGGER.info("Finished addComponentsToProgrammerPanel");
     }
 
     public void performProgrammerCalculatorTypeSwitchOperations()
     {
-        LOGGER.info("Starting to performProgrammerCalculatorTypeSwitchOperations");
+        LOGGER.info("Performing ProgrammerCalculatorTypeSwitchOperations");
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to binary
         getButtonBin().setSelected(true);
@@ -482,6 +483,11 @@ public class JPanelProgrammer_v4 extends JPanel {
         calculator.setCalcType(CalcType_v4.PROGRAMMER);
         // setting up all the buttons
         setButtons2To9(false);
+        getCalculator().setupMemoryButtons(); // MR MC MS M+ M-
+        getCalculator().setupBasicCalculatorOperationButtons(); // + - * /
+        getCalculator().setupOtherBasicCalculatorButtons(); // = Negate
+        getCalculator().setupOtherCalculatorButtons(); // C CE DEL DOT
+
         calculator.buttonNegate.setEnabled(false);
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished performProgrammerCalculatorTypeSwitchOperations");
@@ -493,7 +499,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         constraints.gridy = row;
         constraints.gridwidth = gwidth;
         constraints.gridheight = gheight;
-        programmerLayout.setConstraints(c, constraints); // set constraints
+        panelLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
     public void addComponent(Component c, int row, int column, int gwidth, int gheight, GridBagLayout layout) {
@@ -1273,7 +1279,7 @@ public class JPanelProgrammer_v4 extends JPanel {
 
     public static Logger getLogger() { return LOGGER; }
     public static long getSerialVersionUID() { return serialVersionUID; }
-    public GridBagLayout getProgrammerLayout() { return programmerLayout; }
+    public GridBagLayout getPanelLayout() { return panelLayout; }
     public GridBagLayout getOtherButtonLayout() { return otherButtonLayout; }
     public JPanel getAllOtherButtonsPanel() { return allOtherButtonsPanel; }
     public GridBagConstraints getConstraints() { return constraints; }
@@ -1338,5 +1344,10 @@ public class JPanelProgrammer_v4 extends JPanel {
         buttonF.setEnabled(isEnabled);
     }
 
+
     private void setCalculator(StandardCalculator_v4 calculator) { this.calculator = calculator; }
+    public void setPanelLayout(GridBagLayout panelLayout) { this.panelLayout = panelLayout; }
+    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
+
+
 }

@@ -30,7 +30,7 @@ public class StandardCalculator_v4 extends Calculator_v4
     }
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/*
 	* All standard calculators have the same:
     * menu bar
@@ -217,7 +217,6 @@ public class StandardCalculator_v4 extends Calculator_v4
             {
                 JPanel panel = new JPanelProgrammer_v4(this);
                 performTasksWhenChangingJPanels(panel, PROGRAMMER);
-                confirm("Finished performTasksWhenChangingJPanels");
             }
             catch (CalculatorError_v4 e)
             {
@@ -373,7 +372,9 @@ public class StandardCalculator_v4 extends Calculator_v4
             return new JPanelScientific_v4();
         } else if (calcType == DATE) {
             return new JPanelDate_v4(this, chosenOption);
-        } else if (calcType == CONVERTER) {
+        }
+        else //if (calcType == CONVERTER) {
+        {
             if (converterType == ANGLE) {
                 return new JPanelConverter_v4(this, ANGLE);
             }
@@ -383,9 +384,6 @@ public class StandardCalculator_v4 extends Calculator_v4
                 LOGGER.error("Add the specific converter panel now");
                 throw new CalculatorError_v4("Add the specific converter panel now");
             }
-        } else {
-            LOGGER.error("Unknown calcType: " + calcType);
-            throw new CalculatorError_v4("Unknown calcType: " + calcType);
         }
     }
 
@@ -456,7 +454,7 @@ public class StandardCalculator_v4 extends Calculator_v4
         });
     }
 
-    public void setupBasicCalculatorButtons()
+    public void setupBasicCalculatorOperationButtons()
     {
         getButtonAdd().setFont(font);
         getButtonAdd().setPreferredSize(new Dimension(35, 35) );
@@ -503,6 +501,7 @@ public class StandardCalculator_v4 extends Calculator_v4
         });
     }
 
+    @Deprecated(since = "Needs to make more obvious")
     public void setupOtherBasicCalculatorButtons()
     {
         getButtonEquals().setFont(font);
