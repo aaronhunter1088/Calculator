@@ -13,7 +13,7 @@ import static version4.ConverterType_v4.*;
 
 public class JPanelConverter_v4Test {
 
-    private static StandardCalculator_v4 testCalculator;
+    private static Calculator_v4 testCalculator;
     private static JPanelConverter_v4 testTheConverterPanel;
 
     @Mock
@@ -22,7 +22,7 @@ public class JPanelConverter_v4Test {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelBasicMethodsTest");
-        testCalculator = new StandardCalculator_v4();
+        testCalculator = new Calculator_v4();
         testTheConverterPanel = new JPanelConverter_v4(testCalculator, AREA);
         testCalculator.setCurrentPanel(testTheConverterPanel);
     }

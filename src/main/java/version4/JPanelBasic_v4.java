@@ -29,16 +29,16 @@ public class JPanelBasic_v4 extends JPanel
     final private JButton buttonFraction = new JButton("1/x");
     final private JButton buttonPercent = new JButton("%");
     final private JButton buttonSqrt = new JButton("\u221A");
-    private StandardCalculator_v4 calculator;
+    private Calculator_v4 calculator;
 
-    public JPanelBasic_v4(StandardCalculator_v4 calculator)
+    public JPanelBasic_v4(Calculator_v4 calculator)
     {
         setCalculator(calculator);
         setMinimumSize(new Dimension(100,200));
         setPanelLayout(new GridBagLayout());
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupBasicPanel(calculator);
+        setupBasicPanel();
         SwingUtilities.updateComponentTreeUI(this);
         getCalculator().confirm("Finished setting up basic panel", BASIC);
     }
@@ -47,9 +47,14 @@ public class JPanelBasic_v4 extends JPanel
 
     /************* Start of methods here ******************/
 
-    public void setupBasicPanel(StandardCalculator_v4 calculator)
+    public void setupBasicPanel()
     {
         LOGGER.info("Starting setupBasicPanel");
+        getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        getCalculator().getTextArea().setFont(Calculator_v4.font);
+        getCalculator().getTextArea().setPreferredSize(new Dimension(70, 35));
+        getCalculator().getTextArea().setEditable(false);
+
         getButtonFraction().setFont(Calculator_v4.font);
         getButtonFraction().setPreferredSize(new Dimension(35, 35) );
         getButtonFraction().setBorder(new LineBorder(Color.BLACK));
@@ -452,9 +457,9 @@ public class JPanelBasic_v4 extends JPanel
     public JButton getButtonFraction() { return buttonFraction; }
     public JButton getButtonPercent() { return buttonPercent; }
     public JButton getButtonSqrt() { return buttonSqrt; }
-    public StandardCalculator_v4 getCalculator() { return calculator; }
+    public Calculator_v4 getCalculator() { return calculator; }
 
     public void setPanelLayout(GridBagLayout panelLayout) { this.panelLayout = panelLayout; }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setCalculator(StandardCalculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
 }

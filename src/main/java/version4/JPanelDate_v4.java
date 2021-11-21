@@ -34,7 +34,7 @@ public class JPanelDate_v4 extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private StandardCalculator_v4 calculator;
+    private Calculator_v4 calculator;
     private JComboBox optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, weeksLabel, daysLabel, resultsLabel,
@@ -71,12 +71,12 @@ public class JPanelDate_v4 extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructor ******************/
-    public JPanelDate_v4(StandardCalculator_v4 calculator) throws ParseException
+    public JPanelDate_v4(Calculator_v4 calculator) throws ParseException
     {
         this(calculator, null);
     }
 
-    public JPanelDate_v4(StandardCalculator_v4 calculator, String chosenOption) throws ParseException
+    public JPanelDate_v4(Calculator_v4 calculator, String chosenOption) throws ParseException
     {
         setCalculator(calculator);
         setMinimumSize(new Dimension(100,400));
@@ -877,7 +877,7 @@ public class JPanelDate_v4 extends JPanel
     public JDatePanelImpl getToDatePanel()  { return toDatePanel; }
     public JDatePickerImpl getFromDatePicker() { return fromDatePicker; }
     public JDatePickerImpl getToDatePicker() { return toDatePicker; }
-    public StandardCalculator_v4 getCalculator() { return calculator; }
+    public Calculator_v4 getCalculator() { return calculator; }
     public JComboBox getOptionsBox() { return optionsBox; }
 
     public JLabel getYearsDifferenceLabel() { return this.yearsDifferenceLabel; }
@@ -922,7 +922,7 @@ public class JPanelDate_v4 extends JPanel
     public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; }
     public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; }
     public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; }
-    private void setCalculator(StandardCalculator_v4 calculator) { this.calculator = calculator; }
+    private void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
     private void setOptionsBox(JComboBox optionsBox) { this.optionsBox = optionsBox; }
     private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; }
     private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; }

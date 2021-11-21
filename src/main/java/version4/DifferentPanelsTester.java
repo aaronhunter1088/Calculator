@@ -19,7 +19,7 @@ public class DifferentPanelsTester extends JFrame
 	//private JButton btn2 = new JButton("Button 2");
 	//private GridLayout gridLayout = new GridLayout(2,0);
 	
-	private StandardCalculator_v4 calculator_v4 = new StandardCalculator_v4();
+	private Calculator_v4 calculator_v4 = new Calculator_v4();
 	private static final long serialVersionUID = 1L;
 	private JPanel basic = new JPanelBasic_v4(calculator_v4);
 	private JPanel date = new JPanelDate_v4_withBorders(calculator_v4);

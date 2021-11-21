@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelBasicMethodsTest {
 
-    private static StandardCalculator_v4 c;
+    private static Calculator_v4 c;
     private static JPanelBasic_v4 testTheBasicPanel;
     private String number;
     private boolean result;
@@ -28,7 +28,7 @@ public class JPanelBasicMethodsTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelBasicMethodsTest");
-        c = new StandardCalculator_v4();
+        c = new Calculator_v4();
         testTheBasicPanel = new JPanelBasic_v4(c);
     }
 

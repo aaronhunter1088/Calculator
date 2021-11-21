@@ -75,7 +75,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructor ******************/
-    public JPanelDate_v4_withBorders(StandardCalculator_v4 calculator) throws ParseException
+    public JPanelDate_v4_withBorders(Calculator_v4 calculator) throws ParseException
     {
         setMinimumSize(new Dimension(100,400));
         setDateLayout(new GridBagLayout());
@@ -87,7 +87,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     }
 
     /************* Start of methods here ******************/
-    private void setupJPanelDate_v3(StandardCalculator_v4 calculator) throws ParseException
+    private void setupJPanelDate_v3(Calculator_v4 calculator) throws ParseException
     {
         LOGGER.info("Starting setupPanel_v3");
         setCalculator(calculator);
@@ -683,7 +683,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     {
         this.toDatePicker = toDatePicker;
     }
-    private void setCalculator(StandardCalculator_v4 calculator)
+    private void setCalculator(Calculator_v4 calculator)
     {
         this.calculator = calculator;
     }

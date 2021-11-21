@@ -38,7 +38,7 @@ public class JPanelConverter_v4 extends JPanel
     private JComboBox<String> unitOptions1;
     private JComboBox<String> unitOptions2;
     private JTextArea bottomSpaceAboveNumbers;
-    private StandardCalculator_v4 calculator;
+    private Calculator_v4 calculator;
     private ConverterType_v4 converterType;
     private JPanel numbersPanel;
     private JButton buttonBlank;
@@ -52,7 +52,7 @@ public class JPanelConverter_v4 extends JPanel
 
 
     /************* Constructor ******************/
-    public JPanelConverter_v4(StandardCalculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
+    public JPanelConverter_v4(Calculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
     {
         setCalculator(calculator);
         setConverterType(converterType);
@@ -64,8 +64,10 @@ public class JPanelConverter_v4 extends JPanel
         setupJPanelConverter_v4();
         addStartupComponentsToJPanelConverter_v4();
         getCalculator().pack();
-        getCalculator().confirm("Finished setting up converter panel", CONVERTER);
+        getLogger().info("Finished setting up converter panel");
     }
+
+    public JPanelConverter_v4() {}
 
     /************* Start of methods here ******************/
     public void performConverterCalculatorTypeSwitchOperations(ConverterType_v4 converterType)
@@ -602,7 +604,7 @@ public class JPanelConverter_v4 extends JPanel
     {
         return serialVersionUID;
     }
-    public StandardCalculator_v4 getCalculator() { return calculator; }
+    public Calculator_v4 getCalculator() { return calculator; }
     public ConverterType_v4 getConverterType() { return converterType; }
     public JPanel getNumbersPanel() { return numbersPanel; }
     public JButton getButtonBlank() { return buttonBlank; }
@@ -621,7 +623,7 @@ public class JPanelConverter_v4 extends JPanel
     public void setUnitOptions1(JComboBox<String> unitOptions1) { this.unitOptions1 = unitOptions1; }
     public void setUnitOptions2(JComboBox<String> unitOptions2) { this.unitOptions2 = unitOptions2; }
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
-    public void setCalculator(StandardCalculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
     public void setConverterType(ConverterType_v4 converterType) { this.converterType = converterType; }
     public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
     public void setButtonBlank(JButton buttonBlank) { this.buttonBlank = buttonBlank; }

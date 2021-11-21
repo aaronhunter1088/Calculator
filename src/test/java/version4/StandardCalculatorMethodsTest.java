@@ -5,21 +5,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import version4.CalcType_v4;
-import version4.StandardCalculator_v4;
+import version4.Calculator_v4;
 
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardCalculatorMethodsTest {
 
-    private static StandardCalculator_v4 c;
+    private static Calculator_v4 c;
     private String number;
     private boolean result;
 
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "StandardCalculatorMethodsTest");
-        c = new StandardCalculator_v4();
+        c = new Calculator_v4();
     }
 
     @Test

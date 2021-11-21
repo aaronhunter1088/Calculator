@@ -27,7 +27,7 @@ import static version4.JPanelDate_v4.OPTIONS2;
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelDate_v4Test {
 
-    private static StandardCalculator_v4 c;
+    private static Calculator_v4 c;
     private static JPanelDate_v4 testTheDatePanel;
 
     @Mock
@@ -36,7 +36,7 @@ public class JPanelDate_v4Test {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelDateTest");
-        c = new StandardCalculator_v4(DATE, OPTIONS2);
+        c = new Calculator_v4(DATE, OPTIONS2);
         testTheDatePanel = (JPanelDate_v4) c.getCurrentPanel();
     }
 

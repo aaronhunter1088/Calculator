@@ -31,7 +31,7 @@ public class CalculatorMethodsTest {
     public static void setup() throws Exception
     {
         System.setProperty("appName", "CalculatorMethodsTest");
-        c = new StandardCalculator_v4();
+        c = new Calculator_v4();
     }
 
     @Test
