@@ -76,8 +76,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setupProgrammerPanel();
+        addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
-        getCalculator().confirm("Finished setting up basic panel");
+        getLogger().info("Finished setting up basic panel");
     }
 
     public JPanelProgrammer_v4() {}
@@ -87,6 +88,7 @@ public class JPanelProgrammer_v4 extends JPanel {
     public void setupProgrammerPanel() throws CalculatorError_v4
     {
         LOGGER.info("Starting setupProgrammerPanel");
+        getConstraints().insets = new Insets(5,5,5,0); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE\
         getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         getCalculator().getTextArea().setFont(Calculator_v4.font);
         getCalculator().getTextArea().setPreferredSize(new Dimension(70, 35));
@@ -301,23 +303,18 @@ public class JPanelProgrammer_v4 extends JPanel {
         setButtons2To9(false);
         setButtonsAToF(false);
 
-        addComponentsToPanel();
         LOGGER.info("End setupProgrammerPanel");
     }
 
     public void addComponentsToPanel()
     {
         LOGGER.info("Starting addComponentsToProgrammerPanel");
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.insets = new Insets(5,5,5,5); //9905
-        getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
-        //getConstraints().insets = new Insets(1,1,0,0);
         addComponent(getTopBytesLabel(), 0,0, 6, 1);
+        getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
+        constraints.insets = new Insets(5,5,5,0); //9905
         addComponent(getCalculator().getTextArea(), 0, 5, 2, 2);
+        constraints.insets = new Insets(5,5,5,5);
         addComponent(getBottomBytesLabel(), 1, 0, 4, 1);
-        //addComponent(getTextArea1(), 1, 1, 4, 1);
-        getConstraints().insets = new Insets(5,5,5,5);
-
         buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
         // add buttons to panel
         buttonGroup1ButtonPanel.add(buttonHex);
@@ -455,34 +452,28 @@ public class JPanelProgrammer_v4 extends JPanel {
         LOGGER.info("Finished addComponentsToProgrammerPanel");
     }
 
-    public void performProgrammerCalculatorTypeSwitchOperations()
+    public void performProgrammerCalculatorTypeSwitchOperations() throws CalculatorError_v4
     {
         LOGGER.info("Performing ProgrammerCalculatorTypeSwitchOperations");
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to binary
-        getButtonBin().setSelected(true);
-        getCalculator().setBase(CalcType_v4.BINARY);
-        convertTextArea();
-        // set CalcType now
-        calculator.setCalcType(CalcType_v4.PROGRAMMER);
-        // setting up all the buttons
-        setButtons2To9(false);
-        getCalculator().setupMemoryButtons(); // MR MC MS M+ M-
-        getCalculator().setupBasicCalculatorOperationButtons(); // + - * /
-        getCalculator().setupOtherBasicCalculatorButtons(); // = Negate
-        getCalculator().setupOtherCalculatorButtons(); // C CE DEL DOT
-
-        calculator.buttonNegate.setEnabled(false);
-        SwingUtilities.updateComponentTreeUI(this);
+        setupProgrammerPanel();
         LOGGER.info("Finished performProgrammerCalculatorTypeSwitchOperations");
     }
 
     // method to set constraints on
-    public void addComponent(Component c, int row, int column, int gwidth, int gheight) {
+    public void addComponent(Component c, int row, int column, int width, int height)
+    {
         constraints.gridx = column;
         constraints.gridy = row;
-        constraints.gridwidth = gwidth;
-        constraints.gridheight = gheight;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+
         panelLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }

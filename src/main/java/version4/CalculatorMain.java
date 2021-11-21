@@ -34,7 +34,7 @@ public class CalculatorMain
 
         // All other options here
         UIManager.setLookAndFeel(new MetalLookAndFeel());
-        SwingUtilities.invokeLater(() -> SwingUtilities.updateComponentTreeUI(calculator));
+        SwingUtilities.updateComponentTreeUI(calculator);
         calculator.setLocation(750, 250);
         calculator.setResizable(false);
         calculator.pack();

@@ -40,7 +40,7 @@ public class JPanelBasic_v4 extends JPanel
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setupBasicPanel();
         SwingUtilities.updateComponentTreeUI(this);
-        getCalculator().confirm("Finished setting up basic panel", BASIC);
+        getLogger().info("Finished setting up basic panel");
     }
 
     public JPanelBasic_v4() {}
@@ -450,7 +450,7 @@ public class JPanelBasic_v4 extends JPanel
 
     /************* All Getters and Setters ******************/
 
-    public static Logger getLOGGER() { return LOGGER; }
+    public static Logger getLogger() { return LOGGER; }
     public static long getSerialVersionUID() { return serialVersionUID; }
     public GridBagLayout getPanelLayout() { return panelLayout; }
     public GridBagConstraints getConstraints() { return constraints; }

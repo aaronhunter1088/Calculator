@@ -167,7 +167,6 @@ public class Calculator_v4 extends JFrame
         pack();
         setVisible(true);
         getLogger().info("Finished constructing the calculator\n");
-        confirm("Calculator started using CalcType: " + calcType);
     }
 
 
@@ -184,13 +183,13 @@ public class Calculator_v4 extends JFrame
     {
         getLogger().debug("Take care of these specific features in the panel...");
         getLogger().debug("The StandardCalculator may have the buttons but the panel ultimately defines their functionality");
-        add(getCurrentPanel());
-        getLogger().info("Panel added to calculator");
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(getCalculator2().getImage());
         setIconImage(calculator2.getImage());
         getLogger().info("All images set for Calculator");
+        add(getCurrentPanel());
+        getLogger().info("Panel added to calculator");
     }
 
     public void setupBasicCalculatorOperationButtons()
@@ -263,7 +262,6 @@ public class Calculator_v4 extends JFrame
             }
         }
     }
-
 
     @Deprecated(since = "Needs to make more obvious")
     public void setupOtherBasicCalculatorButtons()
@@ -1948,41 +1946,45 @@ public class Calculator_v4 extends JFrame
     public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4, ConverterType_v4 converterType_v4) throws CalculatorError_v4
     {
         getLogger().info("Starting performTasksWhenChangingJPanels");
+        boolean changedPanels = false;
+        JPanel oldPanel = updateJPanel(currentPanel);
         if (converterType_v4 == null)
         {
             setTitle(calcType_v4.getName());
-            JPanel oldPanel = updateJPanel(currentPanel);
             getLogger().debug("oldPanel: " + oldPanel.getClass().getName());
             getLogger().debug("newPanel: " + getCurrentPanel().getClass().getName());
-            //String nameOfOldPanel = getNameOfPanel();
-            //if (StringUtils.isBlank(nameOfOldPanel)) throw new CalculatorError_v4("Name of OldPanel not found when switching Panels");
-            // don't switch calc_types here; later...
-            if (getCurrentPanel() instanceof JPanelBasic_v4)
+            // if oldPanel is same as newPanel, don't change
+            if (oldPanel.getClass().getName().equals(getCurrentPanel().getClass().getName())) {}
+            else if (getCurrentPanel() instanceof JPanelBasic_v4)
             {
                 ((JPanelBasic_v4)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel);
+                changedPanels = true;
             }
             else if (getCurrentPanel() instanceof JPanelProgrammer_v4)
             {
                 ((JPanelProgrammer_v4)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations();
+                changedPanels = true;
             }
             else //if (getCurrentPanel() instanceof JPanelDate_v4)
             {
                 ((JPanelDate_v4)getCurrentPanel()).performDateCalculatorTypeSwitchOperations();
+                changedPanels = true;
             }
         }
         else
         {
             setTitle(calcType_v4.getName());
-            JPanel oldPanel = updateJPanel(currentPanel);
             if (getCurrentPanel() instanceof JPanelConverter_v4)
             {
                 ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations(converterType_v4);
+                changedPanels = true;
             }
         }
         setCurrentPanel(currentPanel);
         super.pack();
-        getLogger().info("Finished performTasksWhenChangingJPanels");
-        confirm("Switched Calculator Types", getCalcType());
+        getLogger().info("Finished performTasksWhenChangingJPanels\n");
+        if (changedPanels) confirm("Switched Calculator Types", getCalcType());
+        else confirm("Not changing panels when oldPanel("+oldPanel.getClass().getName()+") == newPanel("+getCurrentPanel().getClass().getName()+")", getCalcType());
     }
 
     public void performTasksWhenChangingJPanels(JPanel currentPanel, CalcType_v4 calcType_v4) throws CalculatorError_v4
