@@ -32,8 +32,8 @@ public class JPanelProgrammer_v4 extends JPanel {
     private final JPanel buttonGroup1ButtonPanel = new JPanel(); // contains the first button group
     private final JPanel buttonGroup2ButtonPanel = new JPanel(); // contains the second button group
 
-    protected JLabel topBytesLabel, bottomBytesLabel;
-    final private String TEXTAREA3_SPACE = "     ";
+    protected JLabel topLeftBytesLabel, topRightBytesLabel, bottomLeftBytesLabel, bottomRightBytesLabel;
+    final private String TEXTAREA3_SPACE = "\t";
 
     final private JButton button = new JButton(" ");
     final private JButton buttonMod = new JButton("MOD");
@@ -88,13 +88,12 @@ public class JPanelProgrammer_v4 extends JPanel {
     public void setupProgrammerPanel() throws CalculatorError_v4
     {
         LOGGER.info("Starting setupProgrammerPanel");
-        getConstraints().insets = new Insets(5,5,5,0); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE\
         getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         getCalculator().getTextArea().setFont(Calculator_v4.font);
-        getCalculator().getTextArea().setPreferredSize(new Dimension(70, 35));
+        getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
+        getCalculator().getTextArea().setPreferredSize(new Dimension(105, 60)); //70, 35
         getCalculator().getTextArea().setEditable(false);
 
-        getConstraints().insets = new Insets(5,5,5,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE\
         getCalculator().getButtonNegate().setEnabled(false);
         // Radio button default selections
         getButtonByte().setSelected(true);
@@ -289,11 +288,11 @@ public class JPanelProgrammer_v4 extends JPanel {
         buttonF.setPreferredSize(new Dimension(35, 35));
         buttonF.setBorder(new LineBorder(Color.BLACK));
 
-        setTopBytesLabel(new JLabel());
-        setBottomBytesLabel(new JLabel());
-        getTopBytesLabel().setText("00000000" + TEXTAREA3_SPACE + "00000000");
-        getBottomBytesLabel().setText("00000000" + TEXTAREA3_SPACE + "00000000");
-        getTopBytesLabel().setEnabled(false);
+        //setTopLeftBytesLabel(new JLabel());
+        //setBottomLeftBytesLabel(new JLabel());
+        //getTopLeftBytesLabel().setText("00000000" + TEXTAREA3_SPACE + "00000000" + TEXTAREA3_SPACE + "00000000" + TEXTAREA3_SPACE + "00000000");
+        //getBottomLeftBytesLabel().setText("00000000" + TEXTAREA3_SPACE + "00000000" + TEXTAREA3_SPACE + "00000000" + TEXTAREA3_SPACE + "00000000");
+        //getTopLeftBytesLabel().setEnabled(false);
 
         getCalculator().setupMemoryButtons(); // MR MC MS M+ M-
         getCalculator().setupBasicCalculatorOperationButtons(); // + - * /
@@ -309,12 +308,14 @@ public class JPanelProgrammer_v4 extends JPanel {
     public void addComponentsToPanel()
     {
         LOGGER.info("Starting addComponentsToProgrammerPanel");
-        addComponent(getTopBytesLabel(), 0,0, 6, 1);
-        getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
-        constraints.insets = new Insets(5,5,5,0); //9905
-        addComponent(getCalculator().getTextArea(), 0, 5, 2, 2);
+        //constraints.insets = new Insets(5,5,5,5);
+        //addComponent(getTopLeftBytesLabel(), 0,0, 0, 1);
+        //addComponent(getTopRightBytesLabel(), 0, 5, 0, 1);
+        constraints.insets = new Insets(5,0,5,0); //9905
+        addComponent(getCalculator().getTextArea(), 0, 0, 9, 2);
         constraints.insets = new Insets(5,5,5,5);
-        addComponent(getBottomBytesLabel(), 1, 0, 4, 1);
+        //addComponent(getBottomLeftBytesLabel(), 1, 0, 0, 1);
+        //addComponent(getBottomRightBytesLabel(), 1, 5, 0, 1);
         buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
         // add buttons to panel
         buttonGroup1ButtonPanel.add(buttonHex);
@@ -328,7 +329,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         Border border = buttonGroup1ButtonPanel.getBorder();
         Border margin = new TitledBorder("Base");
         buttonGroup1ButtonPanel.setBorder(new CompoundBorder(border, margin));
-        addComponent(buttonGroup1ButtonPanel, 4, 0, 1, 4);
+        addComponent(buttonGroup1ButtonPanel, 4, 0, 1, 4, GridBagConstraints.HORIZONTAL);
 
         buttonGroup2ButtonPanel.setLayout(new GridLayout(4,1)); //rows and columns
         // add buttons to panel
@@ -436,14 +437,14 @@ public class JPanelProgrammer_v4 extends JPanel {
         setComponent(buttonNot, 5, 0, 1, 1, otherButtonLayout);
         setComponent(buttonAnd, 5, 1, 1, 1, otherButtonLayout);
         setComponent(buttonF, 5, 2, 1, 1, otherButtonLayout);
-        setComponent(getCalculator().button0, 5, 3, 2, 1, otherButtonLayout);
+        setComponent(getCalculator().getButton0(), 5, 3, 2, 1, otherButtonLayout);
         setComponent(getCalculator().buttonDot, 5, 5, 1, 1, otherButtonLayout);
         setComponent(getCalculator().buttonAdd, 5, 6, 1, 2, otherButtonLayout);
 
         allOtherButtonsPanel.add(buttonNot);
         allOtherButtonsPanel.add(buttonAnd);
         allOtherButtonsPanel.add(buttonF);
-        allOtherButtonsPanel.add(getCalculator().button0);
+        allOtherButtonsPanel.add(getCalculator().getButton0());
         allOtherButtonsPanel.add(getCalculator().buttonDot);
         allOtherButtonsPanel.add(getCalculator().buttonAdd);
         // add allOtherButtonsPanel to gui
@@ -458,7 +459,25 @@ public class JPanelProgrammer_v4 extends JPanel {
         // possible conversion of the value in the textarea from
         // whatever mode it was in before to binary
         setupProgrammerPanel();
+        convertValues();
+        addBytesToTextArea();
         LOGGER.info("Finished performProgrammerCalculatorTypeSwitchOperations");
+    }
+
+    public void addComponent(Component c, int row, int column, int width, int height, int fill)
+    {
+        constraints.gridx = column;
+        constraints.gridy = row;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+
+        constraints.fill = fill;
+        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+
+        panelLayout.setConstraints(c, constraints); // set constraints
+        add(c); // add component
     }
 
     // method to set constraints on
@@ -470,7 +489,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         constraints.gridheight = height;
 
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        //constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
         constraints.weighty = 0;
         constraints.weightx = 0;
 
@@ -485,7 +504,8 @@ public class JPanelProgrammer_v4 extends JPanel {
         layout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
-    public void setComponent(Component c, int row, int column, int gwidth, int gheight, GridBagLayout layout) {
+    public void setComponent(Component c, int row, int column, int gwidth, int gheight, GridBagLayout layout)
+    {
         constraints.gridx = column;
         constraints.gridy = row;
         constraints.gridwidth = gwidth;
@@ -904,6 +924,37 @@ public class JPanelProgrammer_v4 extends JPanel {
         return null;
     }
 
+    public void addBytesToTextArea()
+    {
+        // the first two rows in the programmer calculator are reserved for bytes
+        if (getButtonByte().isSelected())
+        {
+            getCalculator().getTextArea().setText(
+                    "00000000\t00000000\t00000000\t00000000" +
+                    getCalculator().addNewLineCharacters(1) +
+                    getCalculator().getValues()[3]+"\t00000000\t00000000\t00000000" +
+                    getCalculator().addNewLineCharacters(2) +
+                    getCalculator().getTextAreaWithoutNewLineCharacters());
+        }
+        else if (getButtonWord().isSelected())
+        {
+            getCalculator().getTextArea().setText(
+                    "00000000\t00000000\t00000000\t00000000" +
+                    getCalculator().addNewLineCharacters(1) +
+                    "00000000\t00000000\t"+getCalculator().getValues()[3].substring(0,8)+"\t"+getCalculator().getValues()[3].substring(8) +
+                    getCalculator().addNewLineCharacters(2) +
+                    getCalculator().getTextAreaWithoutNewLineCharacters());
+        }
+        else if (getButtonDWord().isSelected())
+        {
+            getLogger().warn("Need to add logic");
+        }
+        else if (getButtonQWord().isSelected())
+        {
+            getLogger().warn("Need to add logic");
+        }
+    }
+
     // TODO: fix logic
     public void convertValues(CalcType_v4 newBase)
     {
@@ -984,14 +1035,19 @@ public class JPanelProgrammer_v4 extends JPanel {
         //calculator.values = calculator.convertFromTypeToTypeOnValues(CalcType_v3.BINARY2.getName(), CalcType_v3.DECIMAL.getName(), calculator.values);
     }
 
-    public void convertValues() {
+    /**
+     * Converts the current value into binary and stores in values[3]
+     */
+    public void convertValues()
+    {
         LOGGER.info("convertToBinary started");
         LOGGER.info("textarea: " + calculator.textarea);
         // determine previous base
         CalcType_v4 previousBase = getCalculator().getBase();
         getLogger().info("previous base: " + previousBase);
         getLogger().info("will set base to: " + CalcType_v4.BINARY);
-        String currentValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v4.DECIMAL.getName(), CalcType_v4.BINARY.getName(), calculator.values[calculator.valuesPosition])[0];
+        String convertedValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v4.DECIMAL.getName(), CalcType_v4.BINARY.getName(), calculator.values[calculator.valuesPosition])[0];
+        getCalculator().getValues()[3] = convertedValue;
         if (calculator.isButtonOctSet)
         {
             // logic for Octal to Binary
@@ -1023,29 +1079,28 @@ public class JPanelProgrammer_v4 extends JPanel {
                 case "XOR" : operatorIncluded = true; LOGGER.debug("operator: " + operator); operator = "XOR"; break;
                 case "NOT" : operatorIncluded = true; LOGGER.debug("operator: " + operator); operator = "NOT"; break;
                 case "AND" : operatorIncluded = true; LOGGER.debug("operator: " + operator); operator = "AND"; break;
-                case "" : operatorIncluded = false; LOGGER.debug("operator not set"); break;
+                case "" : operatorIncluded = false; LOGGER.debug("no operator pushed"); break;
                 default : getLogger().error("Add operator or fix unknown option: " + operator);
             }
 
             if (operatorIncluded)
             {
-
-                calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+operator+" "+currentValue);
-                calculator.updateTextareaFromTextArea();
+                calculator.getTextArea().setText(calculator.addNewLineCharacters(4)+operator+" "+convertedValue);
             }
             else
             {
                 // KEEP CALCULATOR.VALUES ALWAYS REGULAR NUMBER
-                calculator.getTextArea().setText(calculator.addNewLineCharacters(1)+currentValue);
-                calculator.updateTextareaFromTextArea();
+                calculator.getTextArea().setText(calculator.addNewLineCharacters(4)+convertedValue);
             }
+            calculator.updateTextareaFromTextArea();
         }
         else if (calculator.isButtonHexSet == true)
         {
             // logic for Hexadecimal to Binary
         }
-        getCalculator().confirm("convertToBinary finished");
+        getLogger().info("convertToBinary finished");
     }
+
     public void convertToOctal() {
         if (calculator.isButtonBinSet == true) {
             // logic for Binary to Octal
@@ -1293,8 +1348,10 @@ public class JPanelProgrammer_v4 extends JPanel {
     public JButton getButtonSqrt() { return buttonSqrt; }
     public StringBuffer getConversion() { return conversion; }
     public Calculator_v4 getCalculator() { return calculator; }
-    public JLabel getTopBytesLabel() { return topBytesLabel; }
-    public JLabel getBottomBytesLabel() { return bottomBytesLabel; }
+    public JLabel getTopLeftBytesLabel() { return topLeftBytesLabel; }
+    public JLabel getTopRightBytesLabel() { return topRightBytesLabel; }
+    public JLabel getBottomLeftBytesLabel() { return bottomLeftBytesLabel; }
+    public JLabel getBottomRightBytesLabel() { return bottomRightBytesLabel; }
 
     public void setButtons2To9(boolean isEnabled)
     {
@@ -1322,7 +1379,9 @@ public class JPanelProgrammer_v4 extends JPanel {
     public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
     public void setPanelLayout(GridBagLayout panelLayout) { this.panelLayout = panelLayout; }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setTopBytesLabel(JLabel topBytesLabel) { this.topBytesLabel = topBytesLabel; }
-    public void setBottomBytesLabel(JLabel bottomBytesLabel) { this.bottomBytesLabel = bottomBytesLabel; }
+    public void setTopLeftBytesLabel(JLabel topLeftBytesLabel) { this.topLeftBytesLabel = topLeftBytesLabel; }
+    public void setTopRightBytesLabel(JLabel topRightBytesLabel) { this.topRightBytesLabel = topRightBytesLabel; }
+    public void setBottomLeftBytesLabel(JLabel bottomLeftBytesLabel) { this.bottomLeftBytesLabel = bottomLeftBytesLabel; }
+    public void setBottomRightBytesLabel(JLabel bottomRightBytesLabel) { this.bottomRightBytesLabel = bottomRightBytesLabel; }
 
 }

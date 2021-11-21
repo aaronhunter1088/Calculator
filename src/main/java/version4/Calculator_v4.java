@@ -35,7 +35,9 @@ public class Calculator_v4 extends JFrame
     }
 
     final static private long serialVersionUID = 1L;
-
+    final static Font font = new Font("Segoe UI", Font.PLAIN, 12);
+    final static Font font_Bold = new Font("Segoe UI", Font.BOLD, 12);
+    final static Font font2 = new Font("Verdana", Font.BOLD, 20);
     /*
      * All calculators have the same:
      * layout and constraints
@@ -50,9 +52,9 @@ public class Calculator_v4 extends JFrame
      * memory addition button
      * memory subtract button
      */
-    protected GridBagLayout layout; // layout of the calculator
-    protected GridBagConstraints constraints; // layout's constraints
-    final protected JButton button0 = new JButton("0");
+    private GridBagLayout layout; // layout of the calculator
+    private GridBagConstraints constraints; // layout's constraints
+    final private JButton button0 = new JButton("0");
     final protected JButton button1 = new JButton("1");
     final protected JButton button2 = new JButton("2");
     final protected JButton button3 = new JButton("3");
@@ -78,9 +80,6 @@ public class Calculator_v4 extends JFrame
     final protected JButton buttonEquals = new JButton("=");
     final protected JButton buttonNegate = new JButton("\u00B1");
 
-    final protected static Font font = new Font("Segoe UI", Font.PLAIN, 12);
-    final protected static Font font_Bold = new Font("Segoe UI", Font.BOLD, 12);
-    final protected static Font font2 = new Font("Verdana", Font.BOLD, 20);
     protected String[] values = {"","","",""}; // firstNum or total, secondNum, copy/paste, temporary storage. memory values now in MemorySuite.getMemoryValues()
     protected int valuesPosition = 0;
     protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
@@ -1923,7 +1922,7 @@ public class Calculator_v4 extends JFrame
         }));
     }
 
-    public void logStandardException(Exception e)
+    public void logException(Exception e)
     {
         LOGGER.error(e.getCause().getClass().getName() + ": " + e.getMessage());
     }
@@ -2805,19 +2804,19 @@ public class Calculator_v4 extends JFrame
 
     /**
      * This method takes CalcType Types, NOT BASES!
-     * @param type1
-     * @param type2
+     * @param fromType
+     * @param toType
      * @param strings
      * @return
      */
-    public String[] convertFromTypeToTypeOnValues(String type1, String type2, String... strings)
+    public String[] convertFromTypeToTypeOnValues(String fromType, String toType, String... strings)
     {
-        LOGGER.debug("convertFromTypeToTypeOnValues(from: '"+type1+"', "+ "to: '"+type2+"' + " + Arrays.toString(strings));
+        LOGGER.debug("convertFromTypeToTypeOnValues(from: '"+fromType+"', "+ "to: '"+toType+"' + " + Arrays.toString(strings));
         String[] arrToReturn = new String[strings.length];
         int countOfStrings = 0;
         if (StringUtils.isEmpty(strings[0])) return new String[]{"", "", "", ""};
         else countOfStrings = 1;
-        if (type1.equals(CalcType_v4.BASIC.getName()) && type2.equals(CalcType_v4.PROGRAMMER.getName()))
+        if (fromType.equals(CalcType_v4.DECIMAL.getName()) && toType.equals(CalcType_v4.BINARY.getName()))
         {
             for(String str : Arrays.asList(strings))
             {
@@ -2852,12 +2851,12 @@ public class Calculator_v4 extends JFrame
                 } catch (NumberFormatException nfe) { LOGGER.error(nfe.getMessage()); }
                 sb = sb.reverse();
                 String strToReturn = sb.toString();
-                LOGGER.debug("convertFrom("+type1+")To("+type2+") = "+ sb);
+                LOGGER.debug("convertFrom("+fromType+")To("+toType+") = "+ sb);
                 arrToReturn[countOfStrings-1] = strToReturn;
                 countOfStrings++;
             }
         }
-        else if (type1.equals(CalcType_v4.PROGRAMMER.getName()) && type2.equals(CalcType_v4.BASIC.getName()))
+        else if (fromType.equals(CalcType_v4.BINARY.getName()) && toType.equals(DECIMAL.getName()))
         {
             for(String str : Arrays.asList(strings))
             {

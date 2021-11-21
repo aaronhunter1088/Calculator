@@ -9,7 +9,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-import static version4.CalcType_v4.BASIC;
+import static version4.CalcType_v4.*;
 
 // The face for a basic calculator
 public class JPanelBasic_v4 extends JPanel
@@ -39,6 +39,7 @@ public class JPanelBasic_v4 extends JPanel
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setupBasicPanel();
+        addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         getLogger().info("Finished setting up basic panel");
     }
@@ -52,7 +53,7 @@ public class JPanelBasic_v4 extends JPanel
         LOGGER.info("Starting setupBasicPanel");
         getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         getCalculator().getTextArea().setFont(Calculator_v4.font);
-        getCalculator().getTextArea().setPreferredSize(new Dimension(70, 35));
+        getCalculator().getTextArea().setPreferredSize(new Dimension(70, 30));
         getCalculator().getTextArea().setEditable(false);
 
         getButtonFraction().setFont(Calculator_v4.font);
@@ -76,7 +77,6 @@ public class JPanelBasic_v4 extends JPanel
         getCalculator().setupMemoryButtons(); // MC, MR, MS, M+, M-
         getCalculator().setupOtherCalculatorButtons(); // C, CE, Delete, Dot
 
-        addComponentsToPanel();
         LOGGER.info("End setupPanel()");
     }
     public void addComponentsToPanel()
@@ -184,9 +184,10 @@ public class JPanelBasic_v4 extends JPanel
     {
         LOGGER.info("Starting to performBasicCalculatorTypeSwitchOperations");
         convertTextArea();
+        //getCalculator().convertFromTypeToTypeOnValues(BINARY.getName(), DECIMAL.getName(), getCalculator().getValues());
         if (!getCalculator().isMemoryValuesEmpty()) getCalculator().convertMemoryValues();
         // set CalcType now
-        getCalculator().setBase(CalcType_v4.DECIMAL);
+        getCalculator().setBase(DECIMAL);
         getCalculator().setCalcType(BASIC);
         getCalculator().clearNumberButtonFunctionalities();
         getCalculator().clearAllBasicOperationButtons();
@@ -401,9 +402,7 @@ public class JPanelBasic_v4 extends JPanel
      */
     public void convertTextArea()
     {
-        if (calculator.getCalcType() == CalcType_v4.PROGRAMMER)
-        {
-            LOGGER.debug("Going from programmer to decimal...");
+        LOGGER.debug("Going from programmer to decimal...");
             calculator.performInitialChecks();
             boolean operatorWasPushed = getCalculator().determineIfMainOperatorWasPushed();
             //String convertedValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.PROGRAMMER.getName(), CalcType_v3.BASIC.getName(), getCalculator().getTextAreaWithoutNewLineCharacters())[0];
@@ -444,7 +443,6 @@ public class JPanelBasic_v4 extends JPanel
                     getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0]));
                 }
             }
-        }
         // TODO: conversion from Scientific logic needed
     }
 
