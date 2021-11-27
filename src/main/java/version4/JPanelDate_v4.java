@@ -143,9 +143,8 @@ public class JPanelDate_v4 extends JPanel
                     textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
                     JPanel mainPanel = new JPanel();
-                    mainPanel.setBackground(Color.white);
                     mainPanel.add(textLabel);
-                    JOptionPane.showMessageDialog(this,
+                    JOptionPane.showMessageDialog(getCalculator(),
                             mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);

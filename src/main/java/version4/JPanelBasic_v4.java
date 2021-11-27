@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.View;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -39,6 +41,7 @@ public class JPanelBasic_v4 extends JPanel
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setupBasicPanel();
+        setupHelpMenu();
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         getLogger().info("Finished setting up basic panel");
@@ -47,52 +50,164 @@ public class JPanelBasic_v4 extends JPanel
     public JPanelBasic_v4() {}
 
     /************* Start of methods here ******************/
+    // To set up the help menu in the menu bar for each converter
+    private void setupHelpMenu()
+    {
+        String helpString = "<html>" +
+                "How to use the " + BASIC.getName() + " Calculator<br><br>" +
+                "For basic usage: <br>" +
+                "Step 1.<br> Enter your first number followed by<br> an operator. Both will be visible in<br>" +
+                "the text area.<br>" +
+                "Step 2.<br> Enter the second number.<br>Entering the second number clears<br> the text area. <br>" +
+                "Step 3.<br> Push the Equals button to see the<br> result. <br><br>" +
+                "See button specific info below. <br>" +
+                "The Dot Button: <br>" +
+                "Pressing the dot button adds a<br> decimal to the number.<br> The button will become inactive<br>" +
+                "until the next number is ready for<br> entry or the text area is cleared. <br><br>" +
+                "The 1/x Button: <br>" +
+                "This is the fraction button. It is<br> specific to say that when pushed,<br> it will take the number in the<br>" +
+                "text area, rewrite it as 1 over the<br> number, and return the result.<br> For example, with 4 " +
+                "in the text area,<br> pushing the fraction button<br> would return 0.25. <br><br>" +
+                "The Percent button: <br>"+
+                "The percent button takes the<br> number in the text area and returns<br> the percentage equivalent. " +
+                "For example, with 10 in the text area, pushing the percent button would return 0.1. <br><br>" +
+                "The Delete Button: <br>"+
+                "The delete button removes the last<br> digit from the right until the entire<br> number is removed. <br><br>" +
+                "The CE Button: <br>"+
+                "The clear entry button clears the<br> text area. It does not clear what is<br> copied. <br><br>"+
+                "The C Button: <br>"+
+                "The clear button clears the text area,<br> and what is saved in copy. <br><br>"+
+                "The Negate Button <br>"+
+                "The negate button makes a positive number<br> a negative and a negative number a<br> positive one. <br><br>"+
+                "The Square Root Button: <br>"+
+                "The square root button will take<br> the number in the text area and<br> return the square root of it. <br><br>"+
+                "Memory Suite: <br>"+
+                "The MC Button: <br>"+
+                "The memory clear button clears the<br> first number saved in memory,<br> until all numbers are erased. <br><br>"+
+                "The MR Button: <br>"+
+                "The memory recall button recalls<br> the the last number saved in<br> memory, looping through them<br>"+
+                "all, and starts over. <br><br>"+
+                "The MS Button: <br>"+
+                "The memory store button saved the<br> current number in the text area into<br> memory. You can"+
+                "save up to 10<br> different numbers. <br><br>"+
+                "The Memory Add Button: <br>"+
+                "The memory add button will add<br> the number in the text area to the<br> last saved value in memory."+
+                "The text<br> area will update to show the result. <br><br>"+
+                "The Memory Subtract Button: <br>"+
+                "The memory subtract button will<br> subtract the number in the text area<br> to the last saved value "+
+                "in memory.<br> The text area will update to show<br> the result. <br><br>"+
+
+                "</html>";
+        createViewHelpMenu(helpString);
+    }
+
+    public void createViewHelpMenu(String helpString)
+    {
+        // 4 menu options: loop through to find the Help option
+        for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
+            JMenu menuOption = getCalculator().getBar().getMenu(i);
+            JMenuItem valueForThisMenuOption = null;
+            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
+                // get the options. remove viewHelpItem
+                for(int j=0; j<menuOption.getItemCount(); j++) {
+                    valueForThisMenuOption = menuOption.getItem(j);
+                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("View Help"))
+                    {
+                        LOGGER.debug("Found the current View Help option");
+                        break;
+                    }
+                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("About"))
+                    {
+                        // do nothing at this moment
+                    }
+                }
+                // remove old option
+                menuOption.remove(valueForThisMenuOption);
+                // set up new viewHelpItem option
+                JMenuItem viewHelpItem = new JMenuItem("View Help");
+                viewHelpItem.setFont(Calculator_v4.font);
+                viewHelpItem.setName("View Help");
+                viewHelpItem.addActionListener(action -> {
+                    JLabel text = new JLabel(helpString);
+
+                    JScrollPane scrollPane = new JScrollPane(text);
+                    scrollPane.setPreferredSize(new Dimension(150, 200));
+                    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                    JOptionPane.showMessageDialog(getCalculator(),
+                            scrollPane, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+                });
+                menuOption.add(viewHelpItem, 0);
+                //menuOption.add(new JPopupMenu.Separator(), 1);
+                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
+                //break; //?? for just changing one option could be ok. issue maybe if changing other options
+            }
+        }
+    }
 
     public void setupBasicPanel()
     {
-        LOGGER.info("Starting setupBasicPanel");
+        LOGGER.info("Configuring the components for the basic view");
         getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         getCalculator().getTextArea().setFont(Calculator_v4.font);
         getCalculator().getTextArea().setPreferredSize(new Dimension(70, 30));
         getCalculator().getTextArea().setEditable(false);
-
+        LOGGER.info("Text Area configured");
         getButtonFraction().setFont(Calculator_v4.font);
         getButtonFraction().setPreferredSize(new Dimension(35, 35) );
         getButtonFraction().setBorder(new LineBorder(Color.BLACK));
         getButtonFraction().setEnabled(true);
-        
+        getButtonFraction().addActionListener(action -> {
+            performFractionButtonActions(action);
+        });
+        LOGGER.info("Fraction button configured");
         getButtonPercent().setFont(Calculator_v4.font);
         getButtonPercent().setPreferredSize(new Dimension(35, 35) );
         getButtonPercent().setBorder(new LineBorder(Color.BLACK));
         getButtonPercent().setEnabled(true);
-        
+        getButtonPercent().addActionListener(action -> {
+            performPercentButtonActions(action);
+        });
+        LOGGER.info("Percent button configured");
         getButtonSqrt().setFont(Calculator_v4.font);
         getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
         getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
         getButtonSqrt().setEnabled(true);
-
+        getButtonSqrt().addActionListener(action -> {performSquareRootButtonActions(action);});
+        LOGGER.info("Square Root button configured");
         getCalculator().setupNumberButtons(true);
+        LOGGER.info("Number buttons configured");
         getCalculator().setupBasicCalculatorOperationButtons(); // Add, Sub, Multiply, Divide
+        LOGGER.info("Basic Operators (+ - * /) configured");
         getCalculator().setupOtherBasicCalculatorButtons(); // =, Negate
-        getCalculator().setupMemoryButtons(); // MC, MR, MS, M+, M-
+        LOGGER.info("Equals button configured");
+        LOGGER.info("Negate button configured");
+        getCalculator().setupMemoryButtons(); // MS, MC, MR, M+, M-
+        LOGGER.info("Memory Operators (MC MR MS M+ M-) configured");
         getCalculator().setupOtherCalculatorButtons(); // C, CE, Delete, Dot
-
-        LOGGER.info("End setupPanel()");
+        LOGGER.info("C button configured");
+        LOGGER.info("CE button configured");
+        LOGGER.info("Delete button configured");
+        LOGGER.info("Dot button configured");
+        LOGGER.info("Finished configuring the buttons");
     }
+
     public void addComponentsToPanel()
     {
-        LOGGER.info("Starting addComponentsToBasicPanel");
         getConstraints().fill = GridBagConstraints.BOTH;
         getCalculator().getTextArea().setBorder(new LineBorder(Color.BLACK));
+        getConstraints().insets = new Insets(5,0,5,0);
         addComponent(getCalculator().getTextArea(), 0, 0, 5, 2);
         getConstraints().insets = new Insets(5,5,5,5);
         // Also add the action listener for each button
         getConstraints().fill = GridBagConstraints.HORIZONTAL;
-        addComponent(getCalculator().getButtonMemoryClear(), 2, 0, 1, 1);
+        addComponent(getCalculator().getButtonMemoryStore(), 2, 0, 1, 1);
         getConstraints().fill = GridBagConstraints.HORIZONTAL;
-        addComponent(getCalculator().getButtonMemoryRecall(), 2, 1, 1, 1);
+        addComponent(getCalculator().getButtonMemoryClear(), 2, 1, 1, 1);
         getConstraints().fill = GridBagConstraints.HORIZONTAL;
-        addComponent(getCalculator().getButtonMemoryStore(), 2, 2, 1, 1);
+        addComponent(getCalculator().getButtonMemoryRecall(), 2, 2, 1, 1);
         getConstraints().fill = GridBagConstraints.HORIZONTAL;
         addComponent(getCalculator().getButtonMemoryAddition(), 2, 3, 1, 1);
         getConstraints().fill = GridBagConstraints.HORIZONTAL;
@@ -104,66 +219,58 @@ public class JPanelBasic_v4 extends JPanel
         getConstraints().fill = GridBagConstraints.HORIZONTAL;
         addComponent(getCalculator().getButtonAdd(), 7, 3, 1, 1);
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button1, 6, 0, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button2, 6, 1, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button3, 6, 2, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonSubtract, 6, 3, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton1(), 6, 0, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton2(), 6, 1, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton3(), 6, 2, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonSubtract(), 6, 3, 1, 1);
 
-        constraints.fill = GridBagConstraints.BOTH;
-        addComponent(calculator.buttonEquals, 6, 4, 1, 2); // idk why its size is not showing on the application; leave a comment for me on why this is
+        getConstraints().fill = GridBagConstraints.BOTH;
+        addComponent(getCalculator().getButtonEquals(), 6, 4, 1, 2);
         
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button4, 5, 0, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button5, 5, 1, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button6, 5, 2, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonMultiply, 5, 3, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton4(), 5, 0, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton5(), 5, 1, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton6(), 5, 2, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonMultiply(), 5, 3, 1, 1);
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(buttonFraction, 5, 4, 1, 1);
-        buttonFraction.addActionListener(action -> {
-            performFractionButtonActions(action);
-        });
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getButtonFraction(), 5, 4, 1, 1);
         
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button7, 4, 0, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button8, 4, 1, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.button9, 4, 2, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonDivide, 4, 3, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton7(), 4, 0, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton8(), 4, 1, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButton9(), 4, 2, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonDivide(), 4, 3, 1, 1);
         
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(buttonPercent, 4, 4, 1, 1);
-        buttonPercent.addActionListener(action -> {
-            performPercentButtonActions(action);
-        });
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getButtonPercent(), 4, 4, 1, 1);
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonDelete, 3, 0, 1, 1);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonClearEntry, 3, 1, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonDelete(), 3, 0, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonClearEntry(), 3, 1, 1, 1);
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonClear, 3, 2, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonClear(), 3, 2, 1, 1);
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.buttonNegate, 3, 3, 1, 1);
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getCalculator().getButtonNegate(), 3, 3, 1, 1);
 
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(buttonSqrt, 3, 4, 1, 1);
-        buttonSqrt.addActionListener(action -> {
-            performSquareRootButtonActions(action);
-        });
-        LOGGER.info("Finished addComponentsToBasicPanel");
+        getConstraints().fill = GridBagConstraints.HORIZONTAL;
+        addComponent(getButtonSqrt(), 3, 4, 1, 1);
+        LOGGER.info("Buttons added to panel");
     }
+
     public void addComponent(Component c, int row, int column, int width, int height)
     {
         constraints.gridx = column;
@@ -201,6 +308,7 @@ public class JPanelBasic_v4 extends JPanel
         getCalculator().setupNumberButtons(true);
         getCalculator().setupMemoryButtons();
         getCalculator().setupOtherCalculatorButtons();
+        setupHelpMenu();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
     }

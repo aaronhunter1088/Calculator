@@ -52,6 +52,12 @@ public class JPanelConverter_v4 extends JPanel
 
 
     /************* Constructor ******************/
+    public JPanelConverter_v4() {}
+    /**
+     * MAIN CONSTRUCTOR USED
+     * @param calculator
+     * @param converterType
+     */
     public JPanelConverter_v4(Calculator_v4 calculator, ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
     {
         setCalculator(calculator);
@@ -63,11 +69,9 @@ public class JPanelConverter_v4 extends JPanel
         setupAllConverterButtonsFunctionalities();
         setupJPanelConverter_v4();
         addStartupComponentsToJPanelConverter_v4();
-        getCalculator().pack();
+        //getCalculator().pack();
         getLogger().info("Finished setting up converter panel");
     }
-
-    public JPanelConverter_v4() {}
 
     /************* Start of methods here ******************/
     public void performConverterCalculatorTypeSwitchOperations(ConverterType_v4 converterType)
@@ -321,53 +325,6 @@ public class JPanelConverter_v4 extends JPanel
         getNumbersPanel().add(c);
     }
 
-    public void createViewHelpMenu(String helpString)
-    {
-        // 4 menu options: loop through to find the Help option
-        for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
-            JMenu menuOption = getCalculator().getBar().getMenu(i);
-            JMenuItem valueForThisMenuOption = null;
-            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
-                // get the options. remove viewHelpItem
-                for(int j=0; j<menuOption.getItemCount(); j++) {
-                    valueForThisMenuOption = menuOption.getItem(j);
-                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                        valueForThisMenuOption.getName().equals("View Help"))
-                    {
-                        LOGGER.debug("Found the current View Help option");
-                        break;
-                    }
-                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("About"))
-                    {
-                        // do nothing at this moment
-                    }
-                }
-                // remove old option
-                menuOption.remove(valueForThisMenuOption);
-                // set up new viewHelpItem option
-                JMenuItem viewHelpItem = new JMenuItem("View Help");
-                viewHelpItem.setFont(font);
-                viewHelpItem.setName("View Help");
-                viewHelpItem.addActionListener(action -> {
-                    JLabel textLabel = new JLabel(helpString,
-                            getCalculator().getBlankImage(), SwingConstants.CENTER);
-                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-                    JPanel mainPanel = new JPanel();
-                    mainPanel.setBackground(Color.white);
-                    mainPanel.add(textLabel);
-                    JOptionPane.showMessageDialog(this,
-                            mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
-                });
-                menuOption.add(viewHelpItem, 0);
-                //menuOption.add(new JPopupMenu.Separator(), 1);
-                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
-                //break; //?? for just changing one option could be ok. issue maybe if changing other options
-            }
-        }
-    }
     // To set up the help menu in the menu bar for each converter
     private void setupHelpMenu(ConverterType_v4 converterType)
     {
@@ -393,6 +350,53 @@ public class JPanelConverter_v4 extends JPanel
             }
             default : {
 
+            }
+        }
+    }
+
+    public void createViewHelpMenu(String helpString)
+    {
+        // 4 menu options: loop through to find the Help option
+        for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
+            JMenu menuOption = getCalculator().getBar().getMenu(i);
+            JMenuItem valueForThisMenuOption = null;
+            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
+                // get the options. remove viewHelpItem
+                for(int j=0; j<menuOption.getItemCount(); j++) {
+                    valueForThisMenuOption = menuOption.getItem(j);
+                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("View Help"))
+                    {
+                        LOGGER.debug("Found the current View Help option");
+                        break;
+                    }
+                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
+                            valueForThisMenuOption.getName().equals("About"))
+                    {
+                        // do nothing at this moment
+                    }
+                }
+                // remove old option
+                menuOption.remove(valueForThisMenuOption);
+                // set up new viewHelpItem option
+                JMenuItem viewHelpItem = new JMenuItem("View Help");
+                viewHelpItem.setFont(font);
+                viewHelpItem.setName("View Help");
+                viewHelpItem.addActionListener(action -> {
+                    JLabel textLabel = new JLabel(helpString,
+                            getCalculator().getBlankImage(), SwingConstants.CENTER);
+                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+                    JPanel mainPanel = new JPanel();
+                    mainPanel.add(textLabel);
+                    JOptionPane.showMessageDialog(this,
+                            mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+                });
+                menuOption.add(viewHelpItem, 0);
+                //menuOption.add(new JPopupMenu.Separator(), 1);
+                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
+                //break; //?? for just changing one option could be ok. issue maybe if changing other options
             }
         }
     }

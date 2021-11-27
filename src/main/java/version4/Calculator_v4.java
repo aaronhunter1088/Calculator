@@ -158,13 +158,18 @@ public class Calculator_v4 extends JFrame
         setConstraints(new GridBagConstraints());
         setCalcType(calcType);
         setupMenuBar(); // setup here for all types
+        setupCalculatorImages();
         if (converterType == null && chosenOption == null) setCurrentPanel(determinePanelType(calcType));
         else if (converterType != null) setCurrentPanel(determinePanelType(calcType, converterType, null));
         else if (chosenOption != null)  setCurrentPanel(determinePanelType(calcType, null, chosenOption));
-        setupCalculator();
-        setMinimumSize(getCurrentPanel().getSize());
+        add(getCurrentPanel());
+        getLogger().info("Panel added to calculator");
+        setMaximumSize(getCurrentPanel().getSize());
         pack();
         setVisible(true);
+        setResizable(false);
+        setLocation(750, 250);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getLogger().info("Finished constructing the calculator\n");
     }
 
@@ -178,17 +183,13 @@ public class Calculator_v4 extends JFrame
      * run once. Anything that needs to be reset, should be reset
      * where appropriate.
      */
-    public void setupCalculator()
+    public void setupCalculatorImages()
     {
-        getLogger().debug("Take care of these specific features in the panel...");
-        getLogger().debug("The StandardCalculator may have the buttons but the panel ultimately defines their functionality");
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(getCalculator2().getImage());
-        setIconImage(calculator2.getImage());
+        setIconImage(getCalculator2().getImage());
         getLogger().info("All images set for Calculator");
-        add(getCurrentPanel());
-        getLogger().info("Panel added to calculator");
     }
 
     public void setupBasicCalculatorOperationButtons()
@@ -527,10 +528,11 @@ public class Calculator_v4 extends JFrame
         JMenuItem viewHelpItem = new JMenuItem("View Help");
         viewHelpItem.setName("View Help");
         viewHelpItem.setFont(font);
-        viewHelpItem.addActionListener(this::performViewHelpFunctionality);
+        //viewHelpItem.addActionListener(this::performViewHelpFunctionality); performed by panel
         return viewHelpItem;
     }
 
+    /** This method creates the About Calculator menu option under Help */
     public JMenuItem createAboutCalculatorJMenuItem()
     {
         JMenuItem aboutCalculatorItem = new JMenuItem("About Calculator");
@@ -586,13 +588,6 @@ public class Calculator_v4 extends JFrame
         getButtonMemoryStore().setName("MS");
         getButtonMemoryStore().addActionListener(this::performMemoryStoreActions);
 
-        getButtonMemoryRecall().setFont(Calculator_v4.font);
-        getButtonMemoryRecall().setPreferredSize(new Dimension(35, 35));
-        getButtonMemoryRecall().setBorder(new LineBorder(Color.BLACK));
-        getButtonMemoryRecall().setEnabled(false);
-        getButtonMemoryRecall().setName("MR");
-        getButtonMemoryRecall().addActionListener(this::performMemoryRecallActions);
-
         getButtonMemoryClear().setFont(Calculator_v4.font);
         getButtonMemoryClear().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryClear().setBorder(new LineBorder(Color.BLACK));
@@ -600,17 +595,24 @@ public class Calculator_v4 extends JFrame
         getButtonMemoryClear().setName("MC");
         getButtonMemoryClear().addActionListener(this::performMemoryClearActions);
 
+        getButtonMemoryRecall().setFont(Calculator_v4.font);
+        getButtonMemoryRecall().setPreferredSize(new Dimension(35, 35));
+        getButtonMemoryRecall().setBorder(new LineBorder(Color.BLACK));
+        getButtonMemoryRecall().setEnabled(false);
+        getButtonMemoryRecall().setName("MR");
+        getButtonMemoryRecall().addActionListener(this::performMemoryRecallActions);
+
         getButtonMemoryAddition().setFont(Calculator_v4.font);
         getButtonMemoryAddition().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryAddition().setBorder(new LineBorder(Color.BLACK));
-        getButtonMemoryAddition().setEnabled(true);
+        getButtonMemoryAddition().setEnabled(false);
         getButtonMemoryAddition().setName("M+");
         getButtonMemoryAddition().addActionListener(this::performMemoryAddActions);
 
         getButtonMemorySubtraction().setFont(Calculator_v4.font);
         getButtonMemorySubtraction().setPreferredSize(new Dimension(35, 35));
         getButtonMemorySubtraction().setBorder(new LineBorder(Color.BLACK));
-        getButtonMemorySubtraction().setEnabled(true);
+        getButtonMemorySubtraction().setEnabled(false);
         getButtonMemorySubtraction().setName("M-");
         getButtonMemorySubtraction().addActionListener(this::performMemorySubtractionActions);
 
@@ -671,6 +673,8 @@ public class Calculator_v4 extends JFrame
             memoryPosition++;
             buttonMemoryRecall.setEnabled(true);
             buttonMemoryClear.setEnabled(true);
+            getButtonMemoryAddition().setEnabled(true);
+            getButtonMemorySubtraction().setEnabled(true);
             confirm(values[valuesPosition] + " is stored in memory at position: " + (memoryPosition-1));
         }
         else {
@@ -699,10 +703,12 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("button: " + action.getActionCommand());
         if (memoryPosition == 10 || StringUtils.isBlank(memoryValues[memoryPosition]))
         {
+            getLogger().debug("Resetting memoryPosition to 0");
             memoryPosition = 0;
         }
         if (!isMemoryValuesEmpty())
         {
+            getLogger().info("Clearing memoryValue["+memoryPosition+"] = " + getMemoryValues()[getMemoryPosition()]);
             memoryValues[memoryPosition] = "";
             memoryPosition++;
             // MemorySuite now could potentially be empty
@@ -712,6 +718,8 @@ public class Calculator_v4 extends JFrame
                 memoryRecallPosition = 0;
                 buttonMemoryClear.setEnabled(false);
                 buttonMemoryRecall.setEnabled(false);
+                getButtonMemoryAddition().setEnabled(false);
+                getButtonMemorySubtraction().setEnabled(false);
                 getTextArea().setText(addNewLineCharacters(1)+"0");
                 setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
                 confirm("MemorySuite is blank");
@@ -720,6 +728,7 @@ public class Calculator_v4 extends JFrame
             // MemorySuite now could potentially have gaps in front
             // {"5", "7", "", ""...} ... {"", "7", "", ""...}
             // If the first is a gap, then we have 1 too many gaps
+            // TODO: fix for gap being in the middle of the memory values
             if(memoryValues[0].equals(""))
             {
                 // Determine where the first number is that is not a gap
@@ -788,6 +797,9 @@ public class Calculator_v4 extends JFrame
                 memoryValues[(memoryPosition-1)] = clearZeroesAtEnd(memoryValues[(memoryPosition-1)]).toString();
                 memoryValues[(memoryPosition-1)] = convertToNegative(memoryValues[(memoryPosition-1)]);
             }
+            // update result in text area
+            getTextArea().setText(addNewLineCharacters(1)+memoryValues[(memoryPosition-1)]);
+            setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
             confirm("The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
         }
     }
@@ -821,6 +833,9 @@ public class Calculator_v4 extends JFrame
                 memoryValues[(memoryPosition-1)] = clearZeroesAtEnd(memoryValues[(memoryPosition-1)]).toString();
                 memoryValues[(memoryPosition-1)] = convertToNegative(memoryValues[(memoryPosition-1)]);
             }
+            // update result in text area
+            getTextArea().setText(addNewLineCharacters(1)+memoryValues[(memoryPosition-1)]);
+            setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
             confirm("The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
         }
     }
@@ -3029,7 +3044,7 @@ public class Calculator_v4 extends JFrame
     {
         String COPYRIGHT = "\u00a9";
         return "<html>Apple MacBook Air "
-                + "Version 4br>"
+                + "Version 4<br>"
                 + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
                 + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
                 + "pending or existing intellectual property right in the United States and other<br>"
@@ -3045,12 +3060,11 @@ public class Calculator_v4 extends JFrame
         iconLabel = new JLabel();
         iconPanel.add(iconLabel);
         textLabel = new JLabel(getHelpString(),
-                macLogo, SwingConstants.LEADING);
+                macLogo, SwingConstants.LEFT);
         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(Color.white);
         mainPanel.add(iconLabel);
         mainPanel.add(textLabel);
         JOptionPane.showMessageDialog(Calculator_v4.this,
@@ -3059,19 +3073,11 @@ public class Calculator_v4 extends JFrame
 
     public void performAboutCalculatorFunctionality(ActionEvent ae)
     {
-        String COPYRIGHT = "\u00a9";
-        JPanel iconPanel = new JPanel(new GridBagLayout() );
+        JPanel iconPanel = new JPanel(new GridBagLayout());
         iconLabel = new JLabel();
         iconPanel.add(iconLabel);
-        textLabel = new JLabel("<html>Apple MacBook Air"
-                + "Version 3.0.1 (Build 1)<br>"
-                + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                + "Mac OS mojave and its user interface are<br>"
-                + "protected by trademark and all other pending or existing intellectual property<br>"
-                + "right in the United States and other countries/regions."
-                + "<br><br><br>"
-                + "This product is licensed under the License Terms to:<br>"
-                + "Michael Ball</html>", macLogo, SwingConstants.LEFT);
+        textLabel = new JLabel(getHelpString(),
+                macLogo, SwingConstants.LEFT);
         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
