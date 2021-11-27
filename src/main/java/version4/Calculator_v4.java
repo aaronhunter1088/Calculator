@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static version4.CalcType_v4.*;
@@ -85,7 +84,8 @@ public class Calculator_v4 extends JFrame
     protected String[] memoryValues = new String[]{"","","","","","","","","",""}; // stores memory values; rolls over after 10 entries
     protected int memoryPosition = 0;
     protected int memoryRecallPosition = 0;
-    protected JTextArea textArea = new JTextArea(2,5); // rows, columns
+    protected JTextArea textArea1 = new JTextArea(2,5); // rows, columns
+    protected JTextArea textArea2 = new JTextArea(2,5); // rows, columns
     protected StringBuffer textarea = new StringBuffer(); // String representing appropriate visual of number
     protected CalcType_v4 calcType = null;
     protected JPanel currentPanel = null;
@@ -618,21 +618,42 @@ public class Calculator_v4 extends JFrame
 
     }
 
-    /**
-     * Handles the logic for setting up the buttons numbered 0-9.
-     */
-    public void setupNumberButtons(boolean isEnabled)
+    public void performInitialChecks()
     {
-        AtomicInteger i = new AtomicInteger(0);
-        getNumberButtons().forEach(button -> {
-            button.setFont(font);
-            button.setEnabled(isEnabled);
-            if (button.getText().equals("0")) { button.setPreferredSize(new Dimension(70, 35)); }
-            else { button.setPreferredSize(new Dimension(35, 35)); }
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setName(String.valueOf(i.getAndAdd(1)));
-            button.addActionListener(this::performNumberButtonActions);
-        });
+        boolean checkFound = false;
+        if (memAddBool || memSubBool)
+        {
+            if (getCalcType() == CalcType_v4.BASIC) textArea1.setText("");
+            else if (getCalcType() == PROGRAMMER) textArea2.setText("");
+            checkFound = true;
+        }
+        else if (textArea1ContainsBadText())
+        {
+            textArea1.setText(addNewLineCharacters(1)+"0");
+            valuesPosition = 0;
+            firstNumBool = true;
+            dotButtonPressed = false;
+            numberIsNegative = false;
+            checkFound = true;
+        }
+        else if (textArea1.getText().equals("\n0") && getCalcType().equals(BASIC))
+        {
+            LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
+            textArea1.setText("");
+            textarea = new StringBuffer().append("");
+            values[valuesPosition] = "";
+            firstNumBool = true;
+            dotButtonPressed = false;
+            checkFound = true;
+        }
+        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
+        {
+            values[0] = values[1];
+            values[1] = "";
+            valuesPosition = 0;
+            checkFound = true;
+        }
+        LOGGER.info("Performing initial checks.... results: " + checkFound);
     }
 
     public void setEnabledForAllNumberButtons(boolean isEnabled)
@@ -690,7 +711,7 @@ public class Calculator_v4 extends JFrame
         {
             memoryRecallPosition = 0;
         }
-        textArea.setText(addNewLineCharacters(1) + memoryValues[memoryRecallPosition]);
+        textArea1.setText(addNewLineCharacters(1) + memoryValues[memoryRecallPosition]);
         textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
         values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
         memoryRecallPosition++;
@@ -720,7 +741,7 @@ public class Calculator_v4 extends JFrame
                 buttonMemoryRecall.setEnabled(false);
                 getButtonMemoryAddition().setEnabled(false);
                 getButtonMemorySubtraction().setEnabled(false);
-                getTextArea().setText(addNewLineCharacters(1)+"0");
+                getTextArea1().setText(addNewLineCharacters(1)+"0");
                 setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
                 confirm("MemorySuite is blank");
                 return;
@@ -738,11 +759,11 @@ public class Calculator_v4 extends JFrame
                     if ( !memoryValues[i].equals("") )
                     {
                         alpha = i;
-                        getTextArea().setText(addNewLineCharacters(1)+memoryValues[alpha]);
+                        getTextArea1().setText(addNewLineCharacters(1)+memoryValues[alpha]);
                     }
                     else
                     {
-                        getTextArea().setText(addNewLineCharacters(1)+"0");
+                        getTextArea1().setText(addNewLineCharacters(1)+"0");
 
                     }
                     setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
@@ -798,7 +819,7 @@ public class Calculator_v4 extends JFrame
                 memoryValues[(memoryPosition-1)] = convertToNegative(memoryValues[(memoryPosition-1)]);
             }
             // update result in text area
-            getTextArea().setText(addNewLineCharacters(1)+memoryValues[(memoryPosition-1)]);
+            getTextArea1().setText(addNewLineCharacters(1)+memoryValues[(memoryPosition-1)]);
             setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
             confirm("The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
         }
@@ -834,28 +855,28 @@ public class Calculator_v4 extends JFrame
                 memoryValues[(memoryPosition-1)] = convertToNegative(memoryValues[(memoryPosition-1)]);
             }
             // update result in text area
-            getTextArea().setText(addNewLineCharacters(1)+memoryValues[(memoryPosition-1)]);
+            getTextArea1().setText(addNewLineCharacters(1)+memoryValues[(memoryPosition-1)]);
             setTextarea(new StringBuffer(getTextAreaWithoutNewLineCharacters()));
             confirm("The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
         }
     }
 
-    public void performNumberButtonActions(ActionEvent action)
-    {
-        LOGGER.info("NumberButtonHandler_v2 started");
-        String buttonChoice = action.getActionCommand();
-        LOGGER.debug("button: " + buttonChoice);
-        if (getCalcType() == BASIC) {
-            performBasicCalculatorNumberButtonActions(buttonChoice);
-        }
-        else if (getCalcType() == CalcType_v4.PROGRAMMER)
-        {
-            performProgrammerCalculatorNumberButtonActions(buttonChoice);
-        }
-        //TODO: add more types here
-        textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        confirm("NumberButtonHandler_v2() finishing");
-    }
+//    public void performNumberButtonActions(ActionEvent action)
+//    {
+//        LOGGER.info("NumberButtonHandler_v2 started");
+//        String buttonChoice = action.getActionCommand();
+//        LOGGER.debug("button: " + buttonChoice);
+//        if (getCalcType() == BASIC) {
+//            performBasicCalculatorNumberButtonActions(buttonChoice);
+//        }
+//        else if (getCalcType() == CalcType_v4.PROGRAMMER)
+//        {
+//            performProgrammerCalculatorNumberButtonActions(buttonChoice);
+//        }
+//        //TODO: add more types here
+//        textArea1.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+//        confirm("NumberButtonHandler_v2() finishing");
+//    }
 
     /**
      * When the user clicks the Clear button, everything in the
@@ -877,7 +898,7 @@ public class Calculator_v4 extends JFrame
         {
             memoryValues[i] = "";
         }
-        textArea.setText("\n0");
+        textArea1.setText("\n0");
         textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
         resetOperators(false);
         valuesPosition = 0;
@@ -898,7 +919,7 @@ public class Calculator_v4 extends JFrame
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         textarea = new StringBuffer();
-        textArea.setText("");
+        textArea1.setText("");
         if (values[1].equals("")) { // if temp[1] is empty, we know we are at temp[0]
             values[0] = "";
             addBool = false;
@@ -912,7 +933,7 @@ public class Calculator_v4 extends JFrame
             values[1] = "";
         }
         buttonDot.setEnabled(true);
-        textarea.append(textArea.getText());
+        textarea.append(textArea1.getText());
         LOGGER.info("ClearEntryButtonHandler() finished");
         confirm();
     }
@@ -935,7 +956,7 @@ public class Calculator_v4 extends JFrame
         numberIsNegative = isNegativeNumber(values[valuesPosition]);
         // this check has to happen
         dotButtonPressed = isDecimal(textarea.toString());
-        getTextArea().setText(getTextAreaWithoutNewLineCharacters());
+        getTextArea1().setText(getTextAreaWithoutNewLineCharacters());
         updateTextareaFromTextArea();
         if (addBool == false && subBool == false && mulBool == false && divBool == false)
         {
@@ -946,14 +967,14 @@ public class Calculator_v4 extends JFrame
                 {
                     if (textarea.length() == 1)
                     { // ex: 5
-                        getTextArea().setText("");
+                        getTextArea1().setText("");
                         textarea = new StringBuffer().append(" ");
                         values[valuesPosition] = "";
                     }
                     else if (textarea.length() >= 2)
                     { // ex: 56 or 2346
                         textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-1));
-                        getTextArea().setText(addNewLineCharacters(1)+String.valueOf(textarea));
+                        getTextArea1().setText(addNewLineCharacters(1)+String.valueOf(textarea));
                         values[valuesPosition] = textarea.toString();
                     }
                     LOGGER.debug("result: '" + textarea.toString().replaceAll("\n","") + "'");
@@ -983,7 +1004,7 @@ public class Calculator_v4 extends JFrame
                             textarea = textarea.substring(1,1);
                         } */
                     //textarea = clearZeroesAtEnd(textarea);
-                    textArea.setText("\n" + textarea);
+                    textArea1.setText("\n" + textarea);
                     values[valuesPosition] = textarea.toString();
                 }
             }
@@ -992,13 +1013,13 @@ public class Calculator_v4 extends JFrame
                 if (dotButtonPressed == false) {
                     if (textarea.length() == 2) { // ex: -3
                         textarea = new StringBuffer();
-                        textArea.setText(textarea.toString());
+                        textArea1.setText(textarea.toString());
                         values[valuesPosition] = "";
                     }
                     else if (textarea.length() >= 3) { // ex: -32 or + 6-
                         textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
                         textarea = new StringBuffer().append(textarea.substring(0, textarea.length()));
-                        textArea.setText(textarea + "-");
+                        textArea1.setText(textarea + "-");
                         values[valuesPosition] = "-" + textarea;
                     }
                     LOGGER.info("output: " + textarea);
@@ -1009,13 +1030,13 @@ public class Calculator_v4 extends JFrame
                         textarea = new StringBuffer().append(convertToPositive(textarea.toString())); // 3.2
                         textarea = new StringBuffer().append(textarea.substring(0, 1)); // 3
                         dotButtonPressed = false;
-                        textArea.setText(textarea + "-");
+                        textArea1.setText(textarea + "-");
                         values[valuesPosition] = "-" + textarea;
                     } else if (textarea.length() > 4) { // ex: -3.25 or -0.00
                         textarea.append(convertToPositive(textarea.toString())); // 3.00 or 0.00
                         textarea.append(textarea.substring(0, textarea.length())); // 3.0 or 0.0
                         textarea.append(clearZeroesAtEnd(textarea.toString())); // 3 or 0
-                        textArea.setText(textarea + "-");
+                        textArea1.setText(textarea + "-");
                         values[valuesPosition] = "-" + textarea;
                     }
                     LOGGER.info("output: " + textarea);
@@ -1044,7 +1065,7 @@ public class Calculator_v4 extends JFrame
                         }
                     }
                     LOGGER.info("output: " + textarea);
-                    textArea.setText("\n" + textarea);
+                    textArea1.setText("\n" + textarea);
                     values[valuesPosition] = textarea.toString();
                     confirm();
                 }
@@ -1065,7 +1086,7 @@ public class Calculator_v4 extends JFrame
                         }
                     }
                     LOGGER.info("output: " + textarea);
-                    textArea.setText("\n"+textarea);
+                    textArea1.setText("\n"+textarea);
                     values[valuesPosition] = textarea.toString();
                     confirm();
                 }
@@ -1074,7 +1095,7 @@ public class Calculator_v4 extends JFrame
                 if (dotButtonPressed == false) {
                     if (textarea.length() == 2) { // ex: -3
                         textarea = new StringBuffer();
-                        textArea.setText(textarea.toString());
+                        textArea1.setText(textarea.toString());
                         values[valuesPosition] = "";
                     } else if (textarea.length() >= 3) { // ex: -32 or + 6-
                         if (addBool == true || subBool == true || mulBool == true || divBool == true) {
@@ -1082,7 +1103,7 @@ public class Calculator_v4 extends JFrame
                         }
                         textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
                         textarea = new StringBuffer().append(textarea.substring(0, textarea.length()));
-                        textArea.setText("\n" + textarea + "-");
+                        textArea1.setText("\n" + textarea + "-");
                         values[valuesPosition] = "-" + textarea;
                     }
                     LOGGER.info("textarea: " + textarea);
@@ -1095,7 +1116,7 @@ public class Calculator_v4 extends JFrame
                         textarea = new StringBuffer().append(textarea.substring(0, 1)); // 3 or 0
                         dotButtonPressed = false;
                         dotButtonPressed = false;
-                        textArea.setText(textarea + "-"); // 3- or 0-
+                        textArea1.setText(textarea + "-"); // 3- or 0-
                         values[valuesPosition] = "-" + textarea; // -3 or -0
                     } else if (textarea.length() > 4) { // ex: -3.25  or -0.00
                         textarea = new StringBuffer().append(convertToPositive(textarea.toString())); // 3.25 or 0.00
@@ -1103,10 +1124,10 @@ public class Calculator_v4 extends JFrame
                         textarea = clearZeroesAtEnd(textarea.toString());
                         LOGGER.info("textarea: " + textarea);
                         if (textarea.equals("0")) {
-                            textArea.setText(textarea.toString());
+                            textArea1.setText(textarea.toString());
                             values[valuesPosition] = textarea.toString();
                         } else {
-                            textArea.setText(textarea + "-");
+                            textArea1.setText(textarea + "-");
                             values[valuesPosition] = "-" + textarea;
                         }
                     }
@@ -1134,19 +1155,19 @@ public class Calculator_v4 extends JFrame
             if (StringUtils.isBlank(getTextAreaWithoutNewLineCharacters().strip()))
             {
                 textarea.append("0"+buttonChoice);
-                getTextArea().setText(addNewLineCharacters(1)+buttonChoice+"0");
+                getTextArea1().setText(addNewLineCharacters(1)+buttonChoice+"0");
             }
             else if (!isNegativeNumber(values[valuesPosition]))
             {
-                getTextArea().setText(addNewLineCharacters(1)+buttonChoice+getTextAreaWithoutNewLineCharacters());
+                getTextArea1().setText(addNewLineCharacters(1)+buttonChoice+getTextAreaWithoutNewLineCharacters());
                 textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters().replace(".","")
                         + buttonChoice);
             }
             else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
             {
                 textarea = new StringBuffer().append(convertToPositive(values[valuesPosition]));
-                getTextArea().setText(addNewLineCharacters(1)+buttonChoice+textarea+"-");
-                LOGGER.info("TextArea: " + getTextArea().getText());
+                getTextArea1().setText(addNewLineCharacters(1)+buttonChoice+textarea+"-");
+                LOGGER.info("TextArea: " + getTextArea1().getText());
                 textarea.append(".");
                 textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
             }
@@ -1163,8 +1184,8 @@ public class Calculator_v4 extends JFrame
         if (!textarea.equals("") && isDotButtonPressed() && isNumberNegative())
         {
             textarea = new StringBuffer().append(convertToPositive(values[valuesPosition]));
-            getTextArea().setText(addNewLineCharacters(1)+textarea+buttonChoice+"-");
-            LOGGER.info("TextArea: " + getTextArea().getText());
+            getTextArea1().setText(addNewLineCharacters(1)+textarea+buttonChoice+"-");
+            LOGGER.info("TextArea: " + getTextArea1().getText());
             textarea.append(buttonChoice);
             textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
             values[valuesPosition] = textarea.toString();
@@ -1173,111 +1194,16 @@ public class Calculator_v4 extends JFrame
         else if (!textarea.equals("") && isDotButtonPressed() && !isNumberNegative())
         {
             textarea = new StringBuffer().append(values[valuesPosition] + buttonChoice);
-            textArea.setText(addNewLineCharacters(1)+textarea.toString() );
+            textArea1.setText(addNewLineCharacters(1)+textarea.toString() );
             LOGGER.info("textarea: " + textarea);
             values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
         }
         else if (!textarea.equals("") && !isDotButtonPressed())
         {
             textarea.append(values[valuesPosition] + buttonChoice);
-            textArea.setText("\n" + textarea );
+            textArea1.setText("\n" + textarea );
             LOGGER.info("textarea: " + textarea);
-            values[valuesPosition] = textArea.getText().replaceAll("\n", "");
-        }
-    }
-
-    public void performNumberButtonActions(String buttonChoice)
-    {
-        performInitialChecks();
-        //getTextArea().setText(getTextAreaWithoutNewLineCharacters());
-        //updateTextareaFromTextArea();
-        LOGGER.info("Performing basic actions...");
-        if (!numberIsNegative && !isDotButtonPressed())
-        {
-            LOGGER.info("firstNumBool = true | positive number = true & dotButtonPressed = false");
-            LOGGER.debug("before: " + getTextAreaWithoutNewLineCharacters());
-            if (StringUtils.isBlank(textArea.getText()))
-            {
-                textArea.setText("\n" + buttonChoice);
-            }
-            else
-            {
-                textArea.setText("\n" + textArea.getText() + buttonChoice); // update textArea
-            }
-            setValuesToTextAreaValue();
-            getTextArea().setText(addNewLineCharacters(1) + textArea.getText());
-        }
-        else if (numberIsNegative && !isDotButtonPressed())
-        { // logic for negative numbers
-            LOGGER.info("firstNumBool = true | negative number = true & dotButtonPressed = false");
-            setTextareaToValuesAtPosition(buttonChoice);
-        }
-        else if (!numberIsNegative && isDotButtonPressed())
-        {
-            LOGGER.info("firstNumBool = true | negative number = false & dotButtonPressed = true");
-            performLogicForDotButtonPressed(buttonChoice);
-        }
-        else
-        {
-            LOGGER.info("firstNumBool = true & dotButtonPressed = true");
-            performLogicForDotButtonPressed(buttonChoice);
-        }
-    }
-
-    public void performBasicCalculatorNumberButtonActions(String buttonChoice)
-    {
-        LOGGER.info("Starting basic calculator number button actions");
-        if (!isFirstNumBool()) // do for second number
-        {
-            if (!isDotButtonPressed())
-            {
-                getTextArea().setText("");
-                setTextarea(new StringBuffer().append(getTextArea().getText()));
-                if (!isFirstNumBool()) {
-                    setFirstNumBool(true);
-                    setNumberIsNegative(false);
-                } else
-                    setDotButtonPressed(true);
-                buttonDot.setEnabled(true);
-            }
-        }
-        performNumberButtonActions(buttonChoice);
-    }
-
-    public void performProgrammerNumberButtonActions(String buttonChoice)
-    {
-	    performInitialChecks();
-	    LOGGER.info("Performing programmer actions...");
-	    if (getTextArea().getText().length() > getBytes())
-	    {
-	        return; // don't allow length to get any longer
-        }
-        if (textArea.getText().equals(""))
-        {
-            textArea.setText(addNewLineCharacters(1) + buttonChoice);
-        }
-        else
-        {
-            textArea.setText(addNewLineCharacters(1) + getTextAreaWithoutNewLineCharacters() + buttonChoice); // update textArea
-        }
-        updateTextareaFromTextArea();
-        values[valuesPosition] = textarea.toString(); // store textarea in values
-    }
-
-    public void performProgrammerCalculatorNumberButtonActions(String buttonChoice)
-    {
-        LOGGER.info("Starting programmer calculator number button actions");
-        if (firstNumBool)
-        {
-            performProgrammerNumberButtonActions(buttonChoice);
-        }
-        else
-        {
-            firstNumBool = true;
-            textArea.setText("");
-            textarea = new StringBuffer();
-            valuesPosition = 1;
-            performProgrammerNumberButtonActions(buttonChoice);
+            values[valuesPosition] = textArea1.getText().replaceAll("\n", "");
         }
     }
 
@@ -1293,43 +1219,6 @@ public class Calculator_v4 extends JFrame
     public void updateTextareaFromTextArea()
     {
         setTextarea(new StringBuffer().append(getTextAreaWithoutNewLineCharacters()));
-    }
-
-    public void performInitialChecks()
-    {
-	    boolean checkFound = false;
-        if (memAddBool || memSubBool)
-        {
-            textArea.setText("");
-            checkFound = true;
-        }
-	    else if (textAreaContainsBadText())
-	    {
-            textArea.setText(addNewLineCharacters(1)+"0");
-            valuesPosition = 0;
-            firstNumBool = true;
-            dotButtonPressed = false;
-            numberIsNegative = false;
-            checkFound = true;
-        }
-        else if (textArea.getText().equals("\n0") && getCalcType().equals(BASIC))
-        {
-            LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
-            textArea.setText("");
-            textarea = new StringBuffer().append("");
-            values[valuesPosition] = "";
-            firstNumBool = true;
-            dotButtonPressed = false;
-            checkFound = true;
-        }
-        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
-        {
-            values[0] = values[1];
-            values[1] = "";
-            valuesPosition = 0;
-            checkFound = true;
-        }
-        LOGGER.info("Performing initial checks.... results: " + checkFound);
     }
 
     /**
@@ -1620,7 +1509,7 @@ public class Calculator_v4 extends JFrame
 
     protected String getTextAreaWithoutNewLineCharacters()
     {
-        return getTextArea().getText().replaceAll("\n", "").strip();
+        return getTextArea1().getText().replaceAll("\n", "").strip();
     }
 
     protected String getTextareaWithoutNewLineCharacters()
@@ -1659,7 +1548,7 @@ public class Calculator_v4 extends JFrame
      *
      * TODO: Test
      */
-    public boolean textAreaContainsBadText()
+    public boolean textArea1ContainsBadText()
     {
         boolean result = false;
         if (getTextAreaWithoutNewLineCharacters().equals("Invalid textarea")   ||
@@ -1763,17 +1652,17 @@ public class Calculator_v4 extends JFrame
         textarea.append(textarea + buttonChoice); // update textArea
         LOGGER.debug("textarea: '" + textarea + "'");
         values[valuesPosition] = textarea.toString(); // store textarea
-        textArea.setText("\n" + convertToPositive(textarea.toString()) + "-");
-        LOGGER.debug("textArea: '" + textArea.getText() + "'");
+        textArea1.setText("\n" + convertToPositive(textarea.toString()) + "-");
+        LOGGER.debug("textArea: '" + textArea1.getText() + "'");
         LOGGER.debug("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
     }
 
     public void setValuesToTextAreaValue()
     {
-        getTextArea().setText(getTextAreaWithoutNewLineCharacters());
+        getTextArea1().setText(getTextAreaWithoutNewLineCharacters());
         updateTextareaFromTextArea();
         values[valuesPosition] = textarea.toString(); // store textarea in values
-        LOGGER.debug("textArea: '\\n" + textArea.getText() + "'");
+        LOGGER.debug("textArea: '\\n" + textArea1.getText() + "'");
         LOGGER.debug("values["+valuesPosition+"]: '" + values[valuesPosition] + "'");
     }
 
@@ -1814,7 +1703,8 @@ public class Calculator_v4 extends JFrame
     public String[] getMemoryValues() { return memoryValues; }
     public int getValuesPosition() { return valuesPosition; }
     public int getMemoryPosition() { return memoryPosition; }
-    protected JTextArea getTextArea() { return this.textArea; }
+    protected JTextArea getTextArea1() { return this.textArea1; }
+    protected JTextArea getTextArea2() { return this.textArea2; }
     public StringBuffer getTextarea() { return textarea; }
     public CalcType_v4 getCalcType() { return this.calcType; }
     public JPanel getCurrentPanel() { return currentPanel; }
@@ -1864,7 +1754,8 @@ public class Calculator_v4 extends JFrame
     public void setValuesPosition(int valuesPosition) { this.valuesPosition = valuesPosition; }
     public void setMemoryValues(String[] memoryValues) { this.memoryValues = memoryValues; }
     public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
-    public void setTextArea(JTextArea textArea) { this.textArea = textArea; }
+    public void setTextArea1(JTextArea textArea1) { this.textArea1 = textArea1; }
+    public void setTextArea2(JTextArea textArea2) { this.textArea2 = textArea2; }
     public void setTextarea(StringBuffer textarea) { this.textarea = textarea; }
     public void setCalcType(CalcType_v4 calcType) { this.calcType = calcType; }
 
@@ -2045,10 +1936,10 @@ public class Calculator_v4 extends JFrame
         {
             LOGGER.info("button: " + buttonChoice); // print out button confirmation
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                    !textArea.getText().equals("") && !textAreaContainsBadText())
+                    !textArea1.getText().equals("") && !textArea1ContainsBadText())
             {
                 textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
-                textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + textarea);
+                textArea1.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + textarea);
                 textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -2062,28 +1953,28 @@ public class Calculator_v4 extends JFrame
                 addition(getCalcType());
                 addBool = resetOperator(addBool); // sets addBool to false
                 addBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (subBool == true && !values[1].equals("")) {
                 subtract(getCalcType());
                 subBool = resetOperator(subBool);
                 addBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (mulBool == true && !values[1].equals("")) {
                 multiply(getCalcType());
                 mulBool = resetOperator(mulBool);
                 addBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (divBool == true && !values[1].equals("")) {
                 divide(getCalcType());
                 divBool = resetOperator(divBool);
                 addBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
-            else if (textAreaContainsBadText()) {
-                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            else if (textArea1ContainsBadText()) {
+                textArea1.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
                 addBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -2113,7 +2004,7 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("We have a whole positive number");
             textarea = clearZeroesAtEnd(String.valueOf(result));
             values[0] = textarea.toString(); // textarea changed to whole number, or int
-            textArea.setText("\n" + textarea.toString());
+            textArea1.setText("\n" + textarea.toString());
             dotButtonPressed = false;
             buttonDot.setEnabled(true);
         }
@@ -2122,7 +2013,7 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("We have a whole negative number");
             textarea = new StringBuffer().append(convertToPositive(values[0]));
             textarea = clearZeroesAtEnd(textarea.toString());
-            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textArea1.setText(addNewLineCharacters(1)+textarea+"-");
             textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
             values[0] = textarea.toString();
             dotButtonPressed = false;
@@ -2139,12 +2030,12 @@ public class Calculator_v4 extends JFrame
                 LOGGER.info("textarea: '" + textarea + "'");
                 textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: '" + textarea + "'");
-                textArea.setText("\n" + textarea + "-"); // update textArea
+                textArea1.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"] '" + values[valuesPosition] + "'");
             }
             else
             {
-                textArea.setText("\n" + formatNumber(values[0]));
+                textArea1.setText("\n" + formatNumber(values[0]));
                 values[0] = formatNumber(values[0]);
             }
         }
@@ -2161,7 +2052,7 @@ public class Calculator_v4 extends JFrame
             // run add
             addition();
             textarea = new StringBuffer().append(convertFromTypeToTypeOnValues("Decimal", "Binary", String.valueOf(textarea))[0]);
-            textArea.setText(addNewLineCharacters(1)+textarea);
+            textArea1.setText(addNewLineCharacters(1)+textarea);
         }
     }
 
@@ -2179,9 +2070,9 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("button: " + buttonChoice); // print out button confirmation
 //            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                    !textArea.getText().equals("") && !textAreaContainsBadText()) {
+                    !textArea1.getText().equals("") && !textArea1ContainsBadText()) {
                 textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
-                textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + values[valuesPosition]);
+                textArea1.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + values[valuesPosition]);
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -2191,28 +2082,28 @@ public class Calculator_v4 extends JFrame
                 addition(getCalcType());
                 addBool = resetOperator(addBool);
                 subBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (subBool == true && !values[1].equals("")) {
                 subtract(getCalcType());
                 subBool = resetOperator(subBool);
                 subBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (mulBool == true && !values[1].equals("")) {
                 multiply(getCalcType());
                 mulBool = resetOperator(mulBool);
                 subBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (divBool == true && !values[1].equals("")) {
                 divide(getCalcType());
                 divBool = resetOperator(divBool);
                 subBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
-            else if (textAreaContainsBadText()) {
-                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            else if (textArea1ContainsBadText()) {
+                textArea1.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
                 subBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -2245,14 +2136,14 @@ public class Calculator_v4 extends JFrame
             textarea = new StringBuffer().append(Double.toString(result));
             textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
             values[0] = textarea.toString(); // update storing
-            textArea.setText("\n" + values[0]);
+            textArea1.setText("\n" + values[0]);
         }
         else if (result % 1 == 0 && isNegativeNumber(values[0]))
         {
             LOGGER.info("We have a whole negative number");
             textarea = new StringBuffer().append(convertToPositive(values[0]));
             textarea = clearZeroesAtEnd(textarea.toString());
-            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textArea1.setText(addNewLineCharacters(1)+textarea+"-");
             textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
             values[0] = textarea.toString();
             dotButtonPressed = false;
@@ -2266,11 +2157,11 @@ public class Calculator_v4 extends JFrame
                 LOGGER.info("textarea: " + textarea);
                 textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                 LOGGER.info("textarea: " + textarea);
-                textArea.setText("\n" + textarea + "-"); // update textArea
+                textArea1.setText("\n" + textarea + "-"); // update textArea
                 LOGGER.info("temp["+valuesPosition+"]: " + values[valuesPosition]);
             }
             else {
-                textArea.setText("\n" + formatNumber(values[0]));
+                textArea1.setText("\n" + formatNumber(values[0]));
             }
         }
     }
@@ -2283,7 +2174,7 @@ public class Calculator_v4 extends JFrame
 //            convertFromTypeToType("Binary", "Decimal");
             subtract();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
-            textArea.setText("\n" + values[0]);
+            textArea1.setText("\n" + values[0]);
             updateTextareaFromTextArea();
         }
     }
@@ -2302,11 +2193,11 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("button: " + action.getActionCommand()); // print out button confirmation
 //            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false &&
-                    divBool == false && !textArea.getText().equals("") &&
-                    !textArea.getText().equals("Invalid textarea") &&
-                    !textArea.getText().equals("Cannot divide by 0")) {
+                    divBool == false && !textArea1.getText().equals("") &&
+                    !textArea1.getText().equals("Invalid textarea") &&
+                    !textArea1.getText().equals("Cannot divide by 0")) {
                 textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
-                textArea.setText("\n" + " " + buttonChoice + " " + values[valuesPosition]);
+                textArea1.setText("\n" + " " + buttonChoice + " " + values[valuesPosition]);
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -2316,28 +2207,28 @@ public class Calculator_v4 extends JFrame
                 addition(getCalcType());
                 addBool = resetOperator(addBool);
                 mulBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (subBool == true && !values[1].equals("")) {
                 subtract(getCalcType());
                 subBool = resetOperator(subBool);
                 mulBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (mulBool == true && !values[1].equals("")) {
                 multiply(getCalcType());
                 mulBool = resetOperator(mulBool);
                 mulBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (divBool == true && !values[1].equals("")) {
                 divide(getCalcType());
                 divBool = resetOperator(divBool);
                 mulBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
-            else if (textAreaContainsBadText()) {
-                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            else if (textArea1ContainsBadText()) {
+                textArea1.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
                 mulBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -2366,18 +2257,18 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("divBool: " + divBool);
         if (result % 1 == 0 && !values[0].contains("E") && !isNegativeNumber(values[0]))
         {
-            textArea.setText(values[0]);
-            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textArea1.setText(values[0]);
+            textarea = new StringBuffer().append(textArea1.getText().replaceAll("\\n", ""));
             textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
             values[0] = textarea.toString(); // update storing
-            textArea.setText("\n" + values[0]);
+            textArea1.setText("\n" + values[0]);
         }
         else if (result % 1 == 0 && isNegativeNumber(values[0]))
         {
             LOGGER.info("We have a whole negative number");
             textarea = new StringBuffer().append(convertToPositive(values[0]));
             textarea = clearZeroesAtEnd(textarea.toString());
-            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textArea1.setText(addNewLineCharacters(1)+textarea+"-");
             textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
             values[0] = textarea.toString();
             dotButtonPressed = false;
@@ -2385,19 +2276,19 @@ public class Calculator_v4 extends JFrame
         }
         else if (values[0].contains("E"))
         {
-            textArea.setText("\n" + values[0]);
-            textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+            textArea1.setText("\n" + values[0]);
+            textarea = new StringBuffer().append(textArea1.getText().replaceAll("\\n", ""));
             values[0] = textarea.toString(); // update storing
         }
         else if (isNegativeNumber(values[0]))
         {
             textarea = new StringBuffer().append(convertToPositive(values[0]));
-            textArea.setText(addNewLineCharacters(1)+textarea+"-");
+            textArea1.setText(addNewLineCharacters(1)+textarea+"-");
             textarea = new StringBuffer().append(convertToNegative(values[0]));
         }
         else
         {// if double == double, keep decimal and number afterwards
-            textArea.setText("\n" + formatNumber(values[0]));
+            textArea1.setText("\n" + formatNumber(values[0]));
         }
     }
     public void multiply(CalcType_v4 calcType_v4)
@@ -2409,7 +2300,7 @@ public class Calculator_v4 extends JFrame
             //convertFromTypeToType("Binary", "Decimal");
             multiply();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
-            textArea.setText("\n" + values[0]);
+            textArea1.setText("\n" + values[0]);
             updateTextareaFromTextArea();
         }
     }
@@ -2428,12 +2319,12 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("button: " + buttonChoice); // print out button confirmation
 //            convertAllValuesToDecimal();
             if (addBool == false && subBool == false && mulBool == false && divBool == false &&
-                    !textAreaContainsBadText())
+                    !textArea1ContainsBadText())
             {
-                textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                textArea1.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
                 textarea = new StringBuffer().append(values[valuesPosition] + " " + buttonChoice);
-                textArea.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + values[valuesPosition]);
-                LOGGER.info("textArea: " + textArea.getText()); // print out textArea has proper value confirmation; recall text area's orientation
+                textArea1.setText(addNewLineCharacters(1) + " " + buttonChoice + " " + values[valuesPosition]);
+                LOGGER.info("textArea: " + textArea1.getText()); // print out textArea has proper value confirmation; recall text area's orientation
                 LOGGER.info("temp["+valuesPosition+"] is "+values[valuesPosition]+ " after addButton pushed"); // confirming proper textarea before moving on
                 divBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
@@ -2445,29 +2336,29 @@ public class Calculator_v4 extends JFrame
                 addition(getCalcType());
                 addBool = resetOperator(addBool); // sets addBool to false
                 divBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (subBool == true && !values[1].equals("")) {
                 subtract(getCalcType());
                 subBool = resetOperator(subBool);
                 divBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (mulBool == true && !values[1].equals("")) {
                 multiply(getCalcType());
                 mulBool = resetOperator(mulBool);
                 divBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
             else if (divBool == true && !values[1].equals("") & !values[1].equals("0"))
             {
                 divide(getCalcType());
                 divBool = resetOperator(divBool);
                 divBool = true;
-                textArea.setText("\n" + buttonChoice + " " + textarea);
+                textArea1.setText("\n" + buttonChoice + " " + textarea);
             }
-            else if (textAreaContainsBadText())  {
-                textArea.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
+            else if (textArea1ContainsBadText())  {
+                textArea1.setText(buttonChoice + " " +  values[0]); // "userInput +" // temp[valuesPosition]
                 divBool = true; // sets logic for arithmetic
                 firstNumBool = false; // sets logic to perform operations when collecting second number
                 dotButtonPressed = false;
@@ -2506,18 +2397,18 @@ public class Calculator_v4 extends JFrame
             if (Double.parseDouble(values[0]) % 1 == 0 && !isNegativeNumber(values[0]))
             {
                 // if int == double, cut off decimal and zero
-                textArea.setText("\n" + values[0]);
-                textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", ""));
+                textArea1.setText("\n" + values[0]);
+                textarea = new StringBuffer().append(textArea1.getText().replaceAll("\\n", ""));
                 textarea = new StringBuffer().append(textarea.substring(0, textarea.length()-2)); // textarea changed to whole number, or int
                 values[0] = textarea.toString(); // update storing
-                textArea.setText("\n" + values[0]);
+                textArea1.setText("\n" + values[0]);
                 updateTextareaFromTextArea();
                 if (Integer.parseInt(values[0]) < 0 ) {
-                    textarea = new StringBuffer().append(textArea.getText().replaceAll("\\n", "")); // temp[2]
+                    textarea = new StringBuffer().append(textArea1.getText().replaceAll("\\n", "")); // temp[2]
                     LOGGER.info("textarea: " + textarea);
                     textarea = new StringBuffer().append(textarea.substring(1, textarea.length()));
                     LOGGER.info("textarea: " + textarea);
-                    textArea.setText("\n" + textarea + "-"); // update textArea
+                    textArea1.setText("\n" + textarea + "-"); // update textArea
                     updateTextareaFromTextArea();
                     LOGGER.info("values["+valuesPosition+"]: " + values[valuesPosition]);
                 }
@@ -2527,7 +2418,7 @@ public class Calculator_v4 extends JFrame
                 LOGGER.info("We have a whole negative number");
                 textarea = new StringBuffer().append(convertToPositive(values[0]));
                 textarea = clearZeroesAtEnd(textarea.toString());
-                textArea.setText(addNewLineCharacters(1)+textarea+"-");
+                textArea1.setText(addNewLineCharacters(1)+textarea+"-");
                 textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
                 values[0] = textarea.toString();
                 dotButtonPressed = false;
@@ -2535,7 +2426,7 @@ public class Calculator_v4 extends JFrame
             }
             else {
                 // if double == double, keep decimal and number afterwards
-                textArea.setText("\n" + formatNumber(values[0]));
+                textArea1.setText("\n" + formatNumber(values[0]));
             }
 
 
@@ -2543,7 +2434,7 @@ public class Calculator_v4 extends JFrame
         else if (values[1].equals("0")) {
             String result = "0";
             LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
-            textArea.setText("\nCannot divide by 0");
+            textArea1.setText("\nCannot divide by 0");
             values[0] = result;
             firstNumBool = true;
         }
@@ -2558,7 +2449,7 @@ public class Calculator_v4 extends JFrame
 //            convertFromTypeToType("Binary", "Decimal");
             divide();
             values[0] = convertFromTypeToTypeOnValues("Decimal","Binary", values[0])[0];
-            textArea.setText("\n" + values[0]);
+            textArea1.setText("\n" + values[0]);
         }
     }
 
@@ -2612,7 +2503,7 @@ public class Calculator_v4 extends JFrame
             if (orButtonBool)
             {
                 ((JPanelProgrammer_v4)getCurrentPanel()).performOr();
-                getTextArea().setText(addNewLineCharacters(1) + values[0]);
+                getTextArea1().setText(addNewLineCharacters(1) + values[0]);
                 performValuesConversion();
 
             }
@@ -2651,9 +2542,9 @@ public class Calculator_v4 extends JFrame
             // if temp[0] and temp[1] do not have a number
             valuesPosition = 0;
         }
-        else if (textAreaContainsBadText())
+        else if (textArea1ContainsBadText())
         {
-            textArea.setText("=" + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
+            textArea1.setText("=" + " " +  values[valuesPosition]); // "userInput +" // temp[valuesPosition]
             valuesPosition = 1;
             firstNumBool = true;
         }
@@ -2678,17 +2569,17 @@ public class Calculator_v4 extends JFrame
         else
         {
             LOGGER.info("button: " + buttonChoice); // print out button confirmation
-            getTextArea().setText(getTextAreaWithoutNewLineCharacters());
+            getTextArea1().setText(getTextAreaWithoutNewLineCharacters());
             updateTextareaFromTextArea();
             if (!textarea.equals("")) {
                 if (numberIsNegative) {
                     textarea = new StringBuffer().append(convertToPositive(textarea.toString()));
                     LOGGER.debug("textarea: " + textarea);
-                    getTextArea().setText("\n"+textarea);
+                    getTextArea1().setText("\n"+textarea);
 
                 }
                 else {
-                    getTextArea().setText("\n"+textarea+"-");
+                    getTextArea1().setText("\n"+textarea+"-");
                     textarea = new StringBuffer().append(convertToNegative(textarea.toString()));
                     LOGGER.debug("textarea: " + textarea);
                 }
@@ -2980,7 +2871,7 @@ public class Calculator_v4 extends JFrame
             else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonBin().isSelected())
             {
                 LOGGER.debug("Programmer mode buttonBin selected");
-                getTextArea().setText(addNewLineCharacters(1)+
+                getTextArea1().setText(addNewLineCharacters(1)+
                         convertFromTypeToTypeOnValues("Decimal", "Binary", getValues()[0])[0]);
                 updateTextareaFromTextArea();
             }
@@ -3016,7 +2907,7 @@ public class Calculator_v4 extends JFrame
                     " = "+ letter);
         }
         values[0] = String.valueOf(sb);
-        getTextArea().setText(addNewLineCharacters(1)+values[0]);
+        getTextArea1().setText(addNewLineCharacters(1)+values[0]);
         orButtonBool = false;
         valuesPosition = 0;
     }
@@ -3034,7 +2925,7 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("Values[2] is empty and blank");
         else
             LOGGER.info("Values[2]: " + values[2]);
-        textArea.setText(addNewLineCharacters(1) + values[2]); // to paste
+        textArea1.setText(addNewLineCharacters(1) + values[2]); // to paste
         values[valuesPosition] = getTextAreaWithoutNewLineCharacters();
         textarea = new StringBuffer().append(getTextAreaWithoutNewLineCharacters());
         confirm("Pressed Paste");

@@ -70,12 +70,14 @@ public class JPanelDate_v4 extends JPanel
     private final String SELECTED = "Selected";
     private final String EMPTY_STRING = "";
 
-    /************* Constructor ******************/
-    public JPanelDate_v4(Calculator_v4 calculator) throws ParseException
-    {
-        this(calculator, null);
-    }
+    /************* Constructors ******************/
+    public JPanelDate_v4(Calculator_v4 calculator) throws ParseException { this(calculator, null); }
 
+    /**
+     * MAIN CONSTRUCTOR USED
+     * @param calculator
+     * @param chosenOption
+     */
     public JPanelDate_v4(Calculator_v4 calculator, String chosenOption) throws ParseException
     {
         setCalculator(calculator);

@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import version3.CalcType_v3;
 import version3.Calculator_v3Error;
-import version3.JPanelProgrammer_v3;
-import version3.StandardCalculator_v3;
 
 import java.awt.event.ActionEvent;
 
@@ -50,8 +47,8 @@ public class JPanelProgrammerMethodsTest {
 
     @Test
     public void switchingFromBasicToProgrammerConvertsTextArea() {
-        c.getTextArea().setText("4");
-        c.textarea = new StringBuffer().append(c.getTextArea().getText());
+        c.getTextArea1().setText("4");
+        c.textarea = new StringBuffer().append(c.getTextArea1().getText());
         c.values[0] = "4";
         p.getButtonBin().setSelected(true);
         p.convertValues();
@@ -66,10 +63,10 @@ public class JPanelProgrammerMethodsTest {
         //Assuming in Bytes form to begin with
         String expected = "11110100";
 
-        c.getTextArea().setText("00001011");
+        c.getTextArea1().setText("00001011");
         p.performButtonNotActions(ae);
         //assertEquals("topQWord not as expected", ""); // lots of 1's
-        assertEquals("textarea not as expected", expected, c.getTextArea().getText().replaceAll("\n", ""));
+        assertEquals("textarea not as expected", expected, c.getTextArea1().getText().replaceAll("\n", ""));
     }
 
     @Test
@@ -80,7 +77,7 @@ public class JPanelProgrammerMethodsTest {
         //3. Input another single, 8 bit number
         //4. Press equals.
         //5. Textarea displays proper sum in 8 bit form
-        c.getTextArea().setText("");
+        c.getTextArea1().setText("");
         c.setTextarea(new StringBuffer());
         c.setCalcType(CalcType_v4.PROGRAMMER);
         p.getButtonBin().setSelected(true);
@@ -92,15 +89,15 @@ public class JPanelProgrammerMethodsTest {
                                    .thenReturn("0").thenReturn("0").thenReturn("1").thenReturn("1") //3
                                    .thenReturn("=");
         c.valuesPosition = 0;
-        for(int i=1; i<=8; i++) { c.performNumberButtonActions(ae); }
+        for(int i=1; i<=8; i++) { p.performProgrammerCalculatorNumberButtonActions(ae); }
 
         assertEquals("textArea not as expected", "00000101", c.getTextAreaWithoutNewLineCharacters());
 
         c.performAdditionButtonActions(ae);
-        assertTrue("Values[0] should not match "+c.getTextArea(), !(String.valueOf(c.values[0]).equals(c.getTextAreaWithoutNewLineCharacters())));
-        assertEquals("plus operator not appended", "\n + 00000101", c.getTextArea().getText());
+        assertTrue("Values[0] should not match "+c.getTextArea1(), !(String.valueOf(c.values[0]).equals(c.getTextAreaWithoutNewLineCharacters())));
+        assertEquals("plus operator not appended", "\n + 00000101", c.getTextArea1().getText());
 
-        for(int i=1; i<=8; i++) { c.performNumberButtonActions(ae); }
+        for(int i=1; i<=8; i++) { p.performProgrammerCalculatorNumberButtonActions(ae); }
         assertEquals("textArea not as expected", "00000011", c.getTextAreaWithoutNewLineCharacters());
 
         c.performButtonEqualsActions();
@@ -123,7 +120,7 @@ public class JPanelProgrammerMethodsTest {
         final String buttonChoice = "OR";
         when(ae.getActionCommand()).thenReturn(buttonChoice);
 
-        c.textArea.setText(c.addNewLineCharacters(1) + "00000101");
+        c.textArea1.setText(c.addNewLineCharacters(1) + "00000101");
         c.values[0] = "5";
         c.values[1] = "";
 
@@ -144,7 +141,7 @@ public class JPanelProgrammerMethodsTest {
         c.values[0] = "00000101";
         c.values[1] = "00000011";
 
-        c.getTextArea().setText(c.addNewLineCharacters(1)+c.values[1]);
+        c.getTextArea1().setText(c.addNewLineCharacters(1)+c.values[1]);
 
         when(ae.getActionCommand()).thenReturn("OR");
         p.performButtonOrActions(ae);
@@ -157,7 +154,7 @@ public class JPanelProgrammerMethodsTest {
         when(ae.getActionCommand()).thenReturn("Mod");
 
         String number = "00000101"; //5
-        c.getTextArea().setText(c.addNewLineCharacters(1)+number);
+        c.getTextArea1().setText(c.addNewLineCharacters(1)+number);
         c.updateTextareaFromTextArea();
         c.values[0] = "5";
         c.values[1] = "";
@@ -166,7 +163,7 @@ public class JPanelProgrammerMethodsTest {
 
         assertEquals("TextArea not as expected!", number+" Mod", c.getTextAreaWithoutNewLineCharacters());
         assertEquals("Textarea not updated!", number+" Mod", String.valueOf(c.getTextarea()));
-        assertTrue("Values["+c.getValuesPosition()+"] should not match "+c.getTextArea(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharacters()));
+        assertTrue("Values["+c.getValuesPosition()+"] should not match "+c.getTextArea1(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharacters()));
     }
 
     @Test
@@ -176,7 +173,7 @@ public class JPanelProgrammerMethodsTest {
         c.setOrButtonBool(false);
         when(ae.getActionCommand()).thenReturn("Mod").thenReturn("=");
 
-        c.getTextArea().setText("\n00000100"); // 4
+        c.getTextArea1().setText("\n00000100"); // 4
         c.updateTextareaFromTextArea();
         c.values[0] = "00000100";
         c.values[1] = "";
@@ -185,7 +182,7 @@ public class JPanelProgrammerMethodsTest {
         p.performButtonModActions(ae);
 
         String number = "00000011"; //3
-        c.getTextArea().setText(c.addNewLineCharacters(1)+number);
+        c.getTextArea1().setText(c.addNewLineCharacters(1)+number);
         c.updateTextareaFromTextArea();
         c.valuesPosition = 1;
         //below is required
@@ -208,7 +205,7 @@ public class JPanelProgrammerMethodsTest {
         c.values[0] = "";
         c.values[1] = "";
         c.valuesPosition = 0;
-        c.getTextArea().setText(c.addNewLineCharacters(1) + "");
+        c.getTextArea1().setText(c.addNewLineCharacters(1) + "");
         c.setTextarea(new StringBuffer());
 
         p.performButtonXorActions(ae);

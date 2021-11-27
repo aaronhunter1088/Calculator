@@ -51,8 +51,9 @@ public class JPanelConverter_v4 extends JPanel
     private final String PI = "\u03C0";
 
 
-    /************* Constructor ******************/
+    /************* Constructors ******************/
     public JPanelConverter_v4() {}
+
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator

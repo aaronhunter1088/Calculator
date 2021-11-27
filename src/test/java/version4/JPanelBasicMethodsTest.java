@@ -1,18 +1,14 @@
 package version4;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import version3.JPanelBasic_v3;
-import version3.StandardCalculator_v3;
 
 import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelBasicMethodsTest {
@@ -36,10 +32,10 @@ public class JPanelBasicMethodsTest {
 
     @Test
     public void switchingFromProgrammerToBasicConvertsTextArea() {
-        c.getTextArea().setText("00000100");
+        c.getTextArea1().setText("00000100");
 
         testTheBasicPanel.convertToDecimal();
-        assertEquals("Did not convert from Binary to Decimal", "4", c.getTextArea().getText().replaceAll("\n", ""));
+        assertEquals("Did not convert from Binary to Decimal", "4", c.getTextArea1().getText().replaceAll("\n", ""));
     }
 
     @Test
