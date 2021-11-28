@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.ParseException;
@@ -16,7 +15,6 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 import static version4.Calculator_v4.*;
-import static version4.CalcType_v4.*;
 
 public class JPanelDate_v4 extends JPanel
 {
@@ -511,7 +509,7 @@ public class JPanelDate_v4 extends JPanel
             switchComponentsForDateDifference();
             setSelectedOption(OPTIONS1);
             updateThisPanel();
-            getCalculator().confirm("Changing to " + OPTIONS1, CalcType_v4.DATE);
+            getCalculator().confirm("Changing to " + OPTIONS1, CalculatorType_v4.DATE);
         }
         else if (!getOptionsBox().getSelectedItem().toString().equals(OPTIONS1) &&
                  !getSelectedOption().equals(OPTIONS2))
@@ -519,10 +517,10 @@ public class JPanelDate_v4 extends JPanel
             switchComponentsForAddSubDate();
             setSelectedOption(OPTIONS2);
             updateThisPanel();
-            getCalculator().confirm("Changing to " + OPTIONS2, CalcType_v4.DATE);
+            getCalculator().confirm("Changing to " + OPTIONS2, CalculatorType_v4.DATE);
         }
         else
-        { getCalculator().confirm("Options not changed", CalcType_v4.DATE); }
+        { getCalculator().confirm("Options not changed", CalculatorType_v4.DATE); }
     }
 
     public void performRadioButtonFunctionality(ActionEvent actionEvent)

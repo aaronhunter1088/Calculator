@@ -4,7 +4,6 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,13 +14,11 @@ import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.Locale;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static version4.CalcType_v4.DATE;
-import static version4.JPanelDate_v4.OPTIONS1;
+import static version4.CalculatorType_v4.DATE;
 import static version4.JPanelDate_v4.OPTIONS2;
 
 @RunWith(MockitoJUnitRunner.class)

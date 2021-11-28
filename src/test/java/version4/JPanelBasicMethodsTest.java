@@ -31,11 +31,12 @@ public class JPanelBasicMethodsTest {
 
 
     @Test
-    public void switchingFromProgrammerToBasicConvertsTextArea() {
-        c.getTextArea1().setText("00000100");
+    public void switchingFromProgrammerToBasicConvertsTextArea() throws CalculatorError_v4
+    {
+        c.getTextArea().setText("00000100");
 
         testTheBasicPanel.convertToDecimal();
-        assertEquals("Did not convert from Binary to Decimal", "4", c.getTextArea1().getText().replaceAll("\n", ""));
+        assertEquals("Did not convert from Binary to Decimal", "4", c.getTextArea().getText().replaceAll("\n", ""));
     }
 
     @Test

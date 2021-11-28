@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import static version4.CalcType_v4.*;
+import static version4.CalculatorType_v4.*;
 
 public class CalculatorMain
 {

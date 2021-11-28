@@ -1,6 +1,5 @@
 package version4;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,12 +8,11 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static version4.Calculator_v4.*;
 import static version4.ConverterType_v4.*;
-import static version4.CalcType_v4.*;
+import static version4.CalculatorType_v4.*;
 import static version4.AngleMethods.*;
 import static version4.AreaMethods.*;
 
