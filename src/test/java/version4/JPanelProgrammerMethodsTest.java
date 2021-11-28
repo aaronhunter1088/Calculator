@@ -15,6 +15,8 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
+import static version4.CalculatorBase_v4.BINARY;
+import static version4.CalculatorBase_v4.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelProgrammerMethodsTest {
@@ -54,7 +56,8 @@ public class JPanelProgrammerMethodsTest {
         c.textarea = new StringBuffer().append(c.getTextArea().getText());
         c.values[0] = "4";
         p.getButtonBin().setSelected(true);
-        p.convertValues();
+        String convertedValue = c.convertFromTypeToTypeOnValues(DECIMAL, BINARY, c.values[c.valuesPosition])[0];
+        c.getTextArea().setText(c.addNewLineCharacters(3) + convertedValue);
         assertEquals("Did not convert from Decimal to Binary", "00000100", c.getTextAreaWithoutNewLineCharacters());
     }
 

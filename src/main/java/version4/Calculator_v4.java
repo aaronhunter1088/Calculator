@@ -225,9 +225,7 @@ public class Calculator_v4 extends JFrame
     }
 
     public JPanel determinePanelType(CalculatorType_v4 calcType) throws ParseException, CalculatorError_v4
-    {
-        return determinePanelType(calcType, null, null);
-    }
+    { return determinePanelType(calcType, null, null); }
 
     public JPanel determinePanelType(CalculatorType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws ParseException, CalculatorError_v4
     {
@@ -1419,39 +1417,6 @@ public class Calculator_v4 extends JFrame
         else { throw new CalculatorError_v4("Unable to determine bytes"); } // shouldn't ever come here
     }
 
-    public void setTheBaseBasedOnTextArea()
-    {
-        getLogger().info("Determining bytes to use based on number");
-        BigInteger numberInTextArea = new BigInteger("0");
-        try {
-            numberInTextArea = new BigInteger(getValues()[getValuesPosition()]);
-        } catch (NumberFormatException | NullPointerException nfe) {
-            logException(nfe);
-        }
-        getLogger().info("numberInTextArea: " + numberInTextArea.intValue());
-        // signed versus unsigned
-        if (isPositiveNumber(String.valueOf(numberInTextArea.intValue())) || numberInTextArea.intValue() == 0)
-        {
-            getLogger().info("Number is positive, unsigned is possible");
-            if (numberInTextArea.intValue() < 256) {
-                isButtonByteSet = true;
-                setCalculatorBase(BINARY);
-            } else if (numberInTextArea.intValue() >= 256 && numberInTextArea.intValue() < 65536) {
-                isButtonWordSet = true;
-            } else {
-                getLogger().warn("SETUP");
-            }
-        }
-        else if (isNegativeNumber(String.valueOf(numberInTextArea.intValue())))
-        {
-            getLogger().info("Number is negative, signed is necessary");
-        }
-        else
-        {
-            getLogger().warn("Unable to determine the bytes: " + numberInTextArea);
-        }
-    }
-
     /**
      * Tests whether a number is a decimal or not
      *
@@ -1536,6 +1501,25 @@ public class Calculator_v4 extends JFrame
 
         numberIsNegative = false;
         return number;
+    }
+
+    protected String getTextAreaWithoutAnything()
+    {
+        return getTextArea().getText()
+                .replaceAll("\n", "")
+                .replace("+","")
+                .replace("-", "")
+                .replace("*", "")
+                .replace("/", "")
+                .replace("MOD", "")
+                .replace("(", "")
+                .replace(")", "")
+                .replace("RoL", "")
+                .replace("RoR", "")
+                .replace("OR", "")
+                .replace("XOR", "")
+                .replace("AND", "")
+                .strip();
     }
 
     protected String getTextAreaWithoutNewLineCharacters()
@@ -1838,6 +1822,7 @@ public class Calculator_v4 extends JFrame
         return Arrays.asList(getButtonClearEntry(), getButtonDelete(), getButtonDot());
     }
 
+    @Deprecated(since = "clearAllOtherBasicCalculatorButtons handles this")
     public void clearVariableNumberOfButtonsFunctionalities()
     {
         getLogger().debug("Clear VariableNumber of Buttons");
@@ -2020,7 +2005,7 @@ public class Calculator_v4 extends JFrame
             dotButtonPressed = false;
             numberIsNegative = false;
 
-            if (getCalculatorType() == PROGRAMMER)
+            if (getCalculatorType() == PROGRAMMER && getCalculatorBase() != DECIMAL)
             {
                 String number = "";
                 try { number = convertFromTypeToTypeOnValues(BINARY, DECIMAL,
@@ -2164,7 +2149,6 @@ public class Calculator_v4 extends JFrame
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             numberIsNegative = false;
-            performValuesConversion();
             confirm();
         }
     }
@@ -2293,7 +2277,6 @@ public class Calculator_v4 extends JFrame
             }
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
-            performValuesConversion();
             confirm();
         }
     }
@@ -2430,7 +2413,6 @@ public class Calculator_v4 extends JFrame
             buttonDot.setEnabled(true);
             dotButtonPressed = false;
             dotButtonPressed = false;
-            performValuesConversion();
             confirm();
         }
     }
@@ -2521,7 +2503,7 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("performButtonEqualsActions");
         String buttonChoice = "=";
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (getCalculatorType() == CalculatorType_v4.BASIC)
+        if (getCalculatorType() == BASIC)
         {
             if (addBool) {
                 try { addition(getCalculatorType()); } // addition();
@@ -2542,7 +2524,7 @@ public class Calculator_v4 extends JFrame
             }
         }
         // TODO: is this necessary. values should always be in DECIMAL form
-        else if (getCalculatorType() == CalculatorType_v4.PROGRAMMER)
+        else if (getCalculatorType() == PROGRAMMER)
         {
             if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonBin().isSelected())
             {
@@ -2564,7 +2546,7 @@ public class Calculator_v4 extends JFrame
             }
             else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonDec().isSelected())
             {
-                getLogger().debug("Do nothing");
+                addition();
             }
             else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonHex().isSelected())
             {
@@ -2580,7 +2562,6 @@ public class Calculator_v4 extends JFrame
             {
                 ((JPanelProgrammer_v4)getCurrentPanel()).performOr();
                 getTextArea().setText(addNewLineCharacters(1) + values[0]);
-                performValuesConversion();
 
             }
             else if (isModButtonPressed())
@@ -2588,7 +2569,6 @@ public class Calculator_v4 extends JFrame
                 LOGGER.info("Modulus result");
                 ((JPanelProgrammer_v4)getCurrentPanel()).performModulus();
                 // update values and textArea accordingly
-                performValuesConversion();
                 valuesPosition = 0;
                 modButtonBool = false;
             }
@@ -2734,33 +2714,12 @@ public class Calculator_v4 extends JFrame
         return oldPanel;
     }
 
-    @Deprecated
-    public void convertAllValuesToDecimal()
-    {
-        if (getCalculatorType().equals(CalculatorType_v4.PROGRAMMER))
-        {
-            values = new String[0];
-            try { values = convertFromTypeToTypeOnValues(BINARY, DECIMAL, values); }
-            catch (CalculatorError_v4 c) { logException(c); }
-        }
-        // TODO: Add more CalcType_v3's here
-    }
-
-    @Deprecated
-    public void convertAllValuesToBinary()
-    {
-        values = new String[0];
-        try { values = convertFromTypeToTypeOnValues(DECIMAL, BINARY, values); }
-        catch (CalculatorError_v4 c) { logException(c); }
-//        values[1] = convertFromTypeToTypeOnValues("Decimal", "Binary", values[1])[0];
-//        values[3] = convertFromTypeToTypeOnValues(CalcType_v3.DECIMAL.getName(), CalcType_v3.BINARY2.getName(), values[3])[0];
-    }
-
     /**
      * This method returns true or false depending on if an operator was pushed or not
      * @return
      */
-    public boolean determineIfMainOperatorWasPushed()
+    @Deprecated(since = "Use String return method")
+    public boolean determineIfMainOperatorWasPushedBoolean()
     {
         boolean result = false;
         if (isAddBool() || isSubBool() ||
@@ -2769,6 +2728,30 @@ public class Calculator_v4 extends JFrame
             result = true;
         }
         return result;
+    }
+
+    public String determineIfBasicPanelOperatorWasPushed()
+    {
+        String results = "";
+        if (isAddBool()) { results = "+"; }
+        else if (isSubBool()) { results = "-"; }
+        else if (isMulBool()) { results = "*"; }
+        else if (isDivBool()) { results = "/"; }
+        getLogger().info("operator: " + (results.equals("") ? "no basic operator pushed" : results));
+        return results;
+    }
+
+    public String determineIfProgrammerOperatorWasPushed()
+    {
+        String results = "";
+        // what operations can be pushed: MOD, OR, XOR, NOT, AND
+        if (isModButtonPressed()) { results = "MOD"; }
+        else if (isOrButtonPressed()) { results = "OR"; }
+        else if (isXorButtonPressed()) { results = "XOR"; }
+        else if (isNotButtonPressed()) { results = "NOT"; }
+        else if (isAndButtonPressed()) { results = "AND"; }
+        getLogger().info("operator: " + (results.equals("") ? "no programmer operator pushed" : results));
+        return results;
     }
 
     /**
@@ -2794,11 +2777,19 @@ public class Calculator_v4 extends JFrame
     public String[] convertFromTypeToTypeOnValues(CalculatorBase_v4 fromType, CalculatorBase_v4 toType, String... strings) throws CalculatorError_v4
     {
         LOGGER.debug("convert from '"+fromType+"' to '"+toType+"' on values: " + Arrays.toString(strings));
+        getLogger().info("previous base: " + getCalculatorBase());
         String[] arrToReturn = new String[strings.length];
         int countOfStrings = 0;
         if (StringUtils.isEmpty(strings[0])) return new String[]{"", "", "", ""};
-        else countOfStrings = 1;
-        if (fromType == DECIMAL && toType == BINARY)
+        else countOfStrings = strings.length;
+        // All from HEXIDECIMAL to any other option
+        if (fromType == HEXIDECIMAL && toType == DECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == HEXIDECIMAL && toType == OCTAL) { confirm("IMPLEMENT"); }
+        else if (fromType == HEXIDECIMAL && toType == BINARY) { confirm("IMPLEMENT"); }
+        // All from DECIMAL to any other option
+        else if (fromType == DECIMAL && toType == HEXIDECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == DECIMAL && toType == OCTAL) { confirm("IMPLEMENT"); }
+        else if (fromType == DECIMAL && toType == BINARY)
         {
             for(String str : Arrays.asList(strings))
             {
@@ -2860,7 +2851,14 @@ public class Calculator_v4 extends JFrame
                 arrToReturn[countOfStrings-1] = strToReturn;
                 countOfStrings++;
             }
+            setCalculatorBase(BINARY);
         }
+        // All from OCTAL to any other option
+        else if (fromType == OCTAL && toType == HEXIDECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == OCTAL && toType == DECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == OCTAL && toType == BINARY) { confirm("IMPLEMENT"); }
+        // All from BINARY to any other option
+        else if (fromType == BINARY && toType == HEXIDECIMAL) { confirm("IMPLEMENT"); }
         else if (fromType == BINARY && toType == DECIMAL)
         {
             for(String str : Arrays.asList(strings))
@@ -2909,83 +2907,12 @@ public class Calculator_v4 extends JFrame
                 LOGGER.debug("arrToReturn["+(countOfStrings - 1)+"]: " + arrToReturn[countOfStrings-1]);
                 countOfStrings++;
             }
+            setCalculatorBase(DECIMAL);
         }
+        else if (fromType == BINARY && toType == OCTAL) { confirm("IMPLEMENT"); }
+
+        getLogger().info("base set to: " + getCalculatorBase());
         return arrToReturn;
-    }
-
-    @Deprecated
-    public void convertFromTypeToType(String type1, String type2)
-    {
-        if (type1.equals("Binary") && type2.equals("Decimal")) {
-            // converting both numbers in values if applicable
-            if (!values[0].equals("")) {
-                try {
-                    double result = 0.0;
-                    double num1 = 0.0;
-                    double num2 = 0.0;
-                    for(int i=0, k=values[0].length()-1; i<values[0].length(); i++, k--) {
-                        String c = Character.toString(values[0].charAt(i));
-                        num1 = Double.valueOf(c);
-                        num2 = Math.pow(2,k);
-                        result = (num1 * num2) + result;
-                    }
-                    values[0] = clearZeroesAtEnd(Double.toString(result)).toString();
-                } catch (NumberFormatException nfe) {
-
-                }
-            }
-            if (!values[1].equals("")) {
-                try {
-                    double result = 0.0;
-                    double num1 = 0.0;
-                    double num2 = 0.0;
-                    for(int i=0, k=values[1].length()-1; i<values[1].length(); i++, k--) {
-                        String c = Character.toString(values[1].charAt(i));
-                        num1 = Double.valueOf(c);
-                        num2 = Math.pow(2,k);
-                        result = (num1 * num2) + result;
-                    }
-                    values[1] = clearZeroesAtEnd(Double.toString(result)).toString();
-                } catch (NumberFormatException nfe) {
-
-                }
-            }
-        }
-    }
-
-    /**
-     * The purpose of this method is to determine at the end of a "cycle", values[0]
-     * and values[1] are numbers in base 10.
-     * It also determines if textArea and textarea are displayed properly.
-     * Remember textArea is all characters, and textarea is simply the value represented
-     */
-    public void performValuesConversion()
-    {
-        // make sure no matter the mode, values[0] and values[1] are numbers and textArea's display correctly
-        if (getCalculatorType() == CalculatorType_v4.PROGRAMMER) {
-            if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonDec().isSelected())
-            {
-                LOGGER.debug("even though we are in programmer mode, decimal base is selected so no conversion is needed");
-            }
-            else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonBin().isSelected())
-            {
-                LOGGER.debug("Programmer mode buttonBin selected");
-                try {
-                    getTextArea().setText(addNewLineCharacters(1)+
-                            convertFromTypeToTypeOnValues(DECIMAL, BINARY, getValues()[0])[0]);
-                } catch (CalculatorError_v4 e) {
-                    logException(e);
-                }
-                updateTextareaFromTextArea();
-            }
-            else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonOct().isSelected()) {}
-            else if (((JPanelProgrammer_v4)getCurrentPanel()).getButtonHex().isSelected()) {}
-            else {
-                convertAllValuesToDecimal();
-            }
-        }
-        //TODO: add more Calctypes here
-
     }
 
     public void performOrLogic(ActionEvent actionEvent)
