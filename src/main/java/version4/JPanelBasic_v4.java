@@ -196,7 +196,7 @@ public class JPanelBasic_v4 extends JPanel
         LOGGER.info("CE button configured");
         LOGGER.info("Delete button configured");
         LOGGER.info("Dot button configured");
-        getCalculator().setBase(DECIMAL);
+        getCalculator().setCalculatorBase(DECIMAL);
         LOGGER.info("Finished configuring the buttons");
     }
 
@@ -374,8 +374,8 @@ public class JPanelBasic_v4 extends JPanel
         //getCalculator().convertFromTypeToTypeOnValues(BINARY.getName(), DECIMAL.getName(), getCalculator().getValues());
         if (!getCalculator().isMemoryValuesEmpty()) getCalculator().convertMemoryValues();
         // set CalcType now
-        getCalculator().setBase(DECIMAL);
-        getCalculator().setCalcType(BASIC);
+        getCalculator().setCalculatorBase(DECIMAL);
+        getCalculator().setCalculatorType(BASIC);
         getCalculator().clearNumberButtonFunctionalities();
         getCalculator().clearAllBasicOperationButtons();
         getCalculator().clearAllOtherBasicCalculatorButtons();

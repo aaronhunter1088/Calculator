@@ -32,7 +32,7 @@ public class JPanelProgrammerMethodsTest {
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelProgrammerMethodsTest");
         c = new Calculator_v4(CalculatorType_v4.PROGRAMMER);
-        c.setCalcType(CalculatorType_v4.PROGRAMMER);
+        c.setCalculatorType(CalculatorType_v4.PROGRAMMER);
         c.firstNumBool = true;
         p = new JPanelProgrammer_v4(c);
         c.setCurrentPanel(p);
@@ -41,7 +41,7 @@ public class JPanelProgrammerMethodsTest {
     @Before
     public void setupBefore() throws Exception {
         c = new Calculator_v4(CalculatorType_v4.PROGRAMMER);
-        c.setCalcType(CalculatorType_v4.PROGRAMMER);
+        c.setCalculatorType(CalculatorType_v4.PROGRAMMER);
         c.firstNumBool = true;
         p = new JPanelProgrammer_v4(c);
         c.setCurrentPanel(p);
@@ -82,7 +82,7 @@ public class JPanelProgrammerMethodsTest {
         //5. Textarea displays proper sum in 8 bit form
         c.getTextArea().setText("");
         c.setTextarea(new StringBuffer());
-        c.setCalcType(CalculatorType_v4.PROGRAMMER);
+        c.setCalculatorType(CalculatorType_v4.PROGRAMMER);
         p.getButtonBin().setSelected(true);
         c.setFirstNumBool(true);
         when(ae.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")

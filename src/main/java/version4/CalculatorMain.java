@@ -41,7 +41,7 @@ public class CalculatorMain
                 calculator.logException(e);
             }
         });
-        calculator.confirm("Calculator started. Initial state", calculator.getCalcType());
+        calculator.confirm("Calculator started. Initial state", calculator.getCalculatorType());
     }
 }
 /*

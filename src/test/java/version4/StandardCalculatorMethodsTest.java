@@ -44,7 +44,7 @@ public class StandardCalculatorMethodsTest {
     @Test
     public void testDivisionFunctionality() {
         c.setValues(new String[]{"15", "5"});
-        c.setCalcType(CalculatorType_v4.BASIC);
+        c.setCalculatorType(CalculatorType_v4.BASIC);
         c.divide();
         assertEquals("Did not get back expected result", "3", c.getValues()[0]);
     }

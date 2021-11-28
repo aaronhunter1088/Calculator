@@ -180,7 +180,7 @@ public class JPanelDate_v4 extends JPanel
     private void setupJPanelDate(String chosenOption)
     {
         LOGGER.info("Starting to construct " + getClass().getName());
-        getLogger().warn("Edit Menu not set up for " + getCalculator().getCalcType());
+        getLogger().warn("Edit Menu not set up for " + getCalculator().getCalculatorType());
         //createEditMenu();
         createViewHelpMenu();
 
