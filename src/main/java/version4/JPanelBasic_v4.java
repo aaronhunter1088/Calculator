@@ -580,9 +580,8 @@ public class JPanelBasic_v4 extends JPanel
             calculator.performInitialChecks();
             boolean operatorWasPushed = getCalculator().determineIfMainOperatorWasPushedBoolean();
             //String convertedValue = getCalculator().convertFromTypeToTypeOnValues(CalcType_v3.PROGRAMMER.getName(), CalcType_v3.BASIC.getName(), getCalculator().getTextAreaWithoutNewLineCharacters())[0];
-            if (StringUtils.isNotBlank(getCalculator().getTextAreaWithoutNewLineCharacters()))
+            if (StringUtils.isNotBlank(getCalculator().getTextAreaWithoutAnything()))
             {
-
                 if (operatorWasPushed) // check all appropriate operators from Programmer calculator that are applicable for Basic Calculator
                 {
                     if (getCalculator().addBool)

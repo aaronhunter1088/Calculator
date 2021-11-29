@@ -3,7 +3,6 @@ package version4;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import version1.Calc;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -240,7 +239,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         String baseChoice = action.getActionCommand();
         CalculatorBase_v4 newBase = determineCalculatorBase(baseChoice);
         //calculator.setCalculatorBase(newBase);
-        String nameOfOperatorPushed = calculator.determineIfProgrammerOperatorWasPushed(); // could be blank
+        String nameOfOperatorPushed = calculator.determineIfProgrammerPanelOperatorWasPushed(); // could be blank
         nameOfOperatorPushed = calculator.determineIfBasicPanelOperatorWasPushed();
         getLogger().info("baseChoice: " + newBase);
         if (newBase == BINARY)
@@ -268,6 +267,7 @@ public class JPanelProgrammer_v4 extends JPanel {
             setButtons2To9(true);
             setButtonsAToF(false);
             updateTextAreaAfterBaseChange(previousBase, newBase, nameOfOperatorPushed);
+            calculator.setCalculatorBase(DECIMAL);// we don't always "update textArea", like when it's blank
         }
         else // newBase == HEXIDECIMAL
         {
@@ -277,19 +277,27 @@ public class JPanelProgrammer_v4 extends JPanel {
             getButtonsAToF().forEach(button -> button.setEnabled(true));
             updateTextAreaAfterBaseChange(previousBase, newBase, nameOfOperatorPushed);
         }
+        calculator.confirm("Bases changed");
     }
 
     public void updateTextAreaAfterBaseChange(CalculatorBase_v4 previousBase, CalculatorBase_v4 newBase, String nameOfOperatorPushed)
     {
         String textAreaValueToConvert = calculator.getTextAreaWithoutAnything();
-        try {
-            textAreaValueToConvert = calculator.convertFromTypeToTypeOnValues(previousBase, newBase, textAreaValueToConvert)[0];
-            if (StringUtils.equals(textAreaValueToConvert, "") || textAreaValueToConvert == null)
-            {
-                textAreaValueToConvert = calculator.getTextAreaWithoutAnything();
+        if (StringUtils.isNotBlank(textAreaValueToConvert)) {
+            if (StringUtils.isEmpty(textAreaValueToConvert)) {
+                textAreaValueToConvert = "0";
             }
+            try {
+                textAreaValueToConvert = calculator.convertFromTypeToTypeOnValues(previousBase, newBase, textAreaValueToConvert)[0];
+                if (StringUtils.equals(textAreaValueToConvert, "") || textAreaValueToConvert == null)
+                {
+                    textAreaValueToConvert = calculator.getTextAreaWithoutAnything();
+                }
+            }
+            catch (CalculatorError_v4 c) { calculator.logException(c); }
+        } else {
+            textAreaValueToConvert = "";
         }
-        catch (CalculatorError_v4 c) { calculator.logException(c); }
         if (StringUtils.isBlank(nameOfOperatorPushed))
         {
             calculator.getTextArea().setText(calculator.addNewLineCharacters(3) + textAreaValueToConvert);
@@ -608,6 +616,14 @@ public class JPanelProgrammer_v4 extends JPanel {
         if (calculator.getCalculatorBase() != BINARY)
         {   // save current number
             calculator.values[calculator.valuesPosition] = calculator.getTextAreaWithoutNewLineCharacters();
+        } else if (calculator.getCalculatorBase() == BINARY)
+        {   // we are in binary mode, and we have reached the byte setting, so convert binary number, and save in values
+            if (calculator.getTextAreaWithoutAnything().length() == calculator.getBytes()) {
+                String convertedNumber = "";
+                try { convertedNumber = calculator.convertFromTypeToTypeOnValues(BINARY, DECIMAL, calculator.getTextAreaWithoutAnything())[0]; }
+                catch (CalculatorError_v4 e) { calculator.logException(e); }
+                calculator.values[calculator.valuesPosition] = convertedNumber;
+            }
         }
         getCalculator().updateTextareaFromTextArea();
         getCalculator().confirm("Pressed " + buttonChoice);
@@ -1119,7 +1135,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         CalculatorBase_v4 currentBase = getCalculator().getCalculatorBase();
         getLogger().info("previous base: " + previousBase);
         getLogger().info("current base: " + currentBase);
-        String nameOfButton = calculator.determineIfProgrammerOperatorWasPushed(); // could be null
+        String nameOfButton = calculator.determineIfProgrammerPanelOperatorWasPushed(); // could be null
         if (previousBase == DECIMAL && currentBase == BINARY ||
                 getCalculator().getCalculatorType() == CalculatorType_v4.BASIC)
         {
@@ -1150,7 +1166,7 @@ public class JPanelProgrammer_v4 extends JPanel {
             // logic for Hexadecimal to Decimal
         } else if (getButtonDec().isSelected()) {
             if (calculator.getTextArea().getText().equals("")) { return; }
-            String operator = calculator.determineIfProgrammerOperatorWasPushed();
+            String operator = calculator.determineIfProgrammerPanelOperatorWasPushed();
             if (!operator.equals(""))
             {
                 calculator.getTextArea().setText(calculator.addNewLineCharacters(3)+operator+" "+calculator.values[calculator.valuesPosition]);
