@@ -337,46 +337,7 @@ public class JPanelBasic_v4 extends JPanel
                 getCalculator().buttonDot.setEnabled(true);
             }
         }
-        performNumberButtonActions(actionEvent.getActionCommand());
-    }
-
-    public void performNumberButtonActions(String buttonChoice)
-    {
-        getCalculator().performInitialChecks();
-        //getTextArea().setText(getTextAreaWithoutNewLineCharacters());
-        //updateTextareaFromTextArea();
-        LOGGER.info("Performing basic actions...");
-        if (!getCalculator().numberIsNegative && !getCalculator().isDotButtonPressed())
-        {
-            LOGGER.info("firstNumBool = true | positive number = true & dotButtonPressed = false");
-            LOGGER.debug("before: '" + getCalculator().getTextAreaWithoutNewLineCharacters() + "'");
-            if (StringUtils.isBlank(getCalculator().textArea.getText()))
-            {
-                getCalculator().textArea.setText("\n" + buttonChoice);
-            }
-            else
-            {
-                getCalculator().textArea.setText("\n" + getCalculator().textArea.getText() + buttonChoice); // update textArea
-            }
-            getCalculator().setValuesToTextAreaValue();
-            getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1) + getCalculator().textArea.getText());
-        }
-        else if (getCalculator().numberIsNegative && !getCalculator().isDotButtonPressed())
-        { // logic for negative numbers
-            LOGGER.info("firstNumBool = true | negative number = true & dotButtonPressed = false");
-            getCalculator().setTextareaToValuesAtPosition(buttonChoice);
-        }
-        else if (!getCalculator().numberIsNegative && getCalculator().isDotButtonPressed())
-        {
-            LOGGER.info("firstNumBool = true | negative number = false & dotButtonPressed = true");
-            getCalculator().performLogicForDotButtonPressed(buttonChoice);
-        }
-        else
-        {
-            LOGGER.info("firstNumBool = true & dotButtonPressed = true");
-            getCalculator().performLogicForDotButtonPressed(buttonChoice);
-        }
-        getCalculator().confirm("Pressed " + buttonChoice);
+        calculator.performNumberButtonActions(actionEvent.getActionCommand());
     }
 
     public void performSquareRootButtonActions(ActionEvent action)
@@ -488,7 +449,7 @@ public class JPanelBasic_v4 extends JPanel
     public void convertToDecimal() throws CalculatorError_v4
     {
         LOGGER.info("convertToDecimal started");
-        calculator.textarea = new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters());
+        String strToConvert = calculator.getTextAreaWithoutAnything();
         int appropriateLength = calculator.getBytes();
         LOGGER.debug("textarea: " + calculator.textarea);
         LOGGER.debug("appropriateLength: " + appropriateLength);
@@ -546,28 +507,25 @@ public class JPanelBasic_v4 extends JPanel
 
         if (calculator.isDecimal(String.valueOf(result)))
         {
-            calculator.textarea = calculator.clearZeroesAtEnd(String.valueOf(result));
+            strToConvert = calculator.clearZeroesAtEnd(String.valueOf(result));
         }
         else
         {
-            calculator.textarea = new StringBuffer().append(String.valueOf(result));
+            strToConvert = String.valueOf(result);
         }
 
         if (operatorIncluded && StringUtils.isNotBlank(operator))
         {
-            calculator.values[calculator.valuesPosition-1] = String.valueOf(calculator.textarea);
-            calculator.textarea = new StringBuffer().append(operator).append(" ").append(calculator.textarea);
-            calculator.getTextArea().setText("\n" + calculator.textarea);
+            calculator.values[calculator.valuesPosition-1] = strToConvert;
+            calculator.getTextArea().setText(calculator.addNewLineCharacters(1) + operator + " " + strToConvert);
         }
         else
         {
-            calculator.values[calculator.valuesPosition] = String.valueOf(calculator.textarea);
-            calculator.textarea = new StringBuffer().append(calculator.textarea);
-            calculator.getTextArea().setText("\n" + calculator.textarea);
+            calculator.values[calculator.valuesPosition] = strToConvert;
+            calculator.getTextArea().setText(calculator.addNewLineCharacters(1) + strToConvert);
         }
-        LOGGER.info("textarea: " + calculator.textarea);
         LOGGER.info("convertToDecimal finished");
-        calculator.confirm("");
+        calculator.confirm("converted str: " + strToConvert);
     }
 
     /**

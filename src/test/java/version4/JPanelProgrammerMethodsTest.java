@@ -56,9 +56,9 @@ public class JPanelProgrammerMethodsTest {
         c.textarea = new StringBuffer().append(c.getTextArea().getText());
         c.values[0] = "4";
         p.getButtonBin().setSelected(true);
-        String convertedValue = c.convertFromTypeToTypeOnValues(DECIMAL, BINARY, c.values[c.valuesPosition])[0];
+        String convertedValue = c.convertFromTypeToTypeOnValues(DECIMAL, BINARY, c.values[c.valuesPosition]);
         c.getTextArea().setText(c.addNewLineCharacters(3) + convertedValue);
-        assertEquals("Did not convert from Decimal to Binary", "00000100", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("Did not convert from Decimal to Binary", "00000100", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
     }
 
     // Done by BDD/TDD
@@ -97,17 +97,17 @@ public class JPanelProgrammerMethodsTest {
         c.valuesPosition = 0;
         for(int i=1; i<=8; i++) { p.performProgrammerCalculatorNumberButtonActions(ae); }
 
-        assertEquals("textArea not as expected", "00000101", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("textArea not as expected", "00000101", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
 
         c.performAdditionButtonActions(ae);
-        assertTrue("Values[0] should not match "+c.getTextArea(), !(String.valueOf(c.values[0]).equals(c.getTextAreaWithoutNewLineCharacters())));
+        assertTrue("Values[0] should not match "+c.getTextArea(), !(String.valueOf(c.values[0]).equals(c.getTextAreaWithoutNewLineCharactersOrWhiteSpace())));
         assertEquals("plus operator not appended", "\n + 00000101", c.getTextArea().getText());
 
         for(int i=1; i<=8; i++) { p.performProgrammerCalculatorNumberButtonActions(ae); }
-        assertEquals("textArea not as expected", "00000011", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("textArea not as expected", "00000011", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
 
         c.performButtonEqualsActions();
-        assertEquals("textArea not as expected", "00001000", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("textArea not as expected", "00001000", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
         assertEquals("text area not as expected", "00001000", c.getTextarea().toString());
         assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(c.values[0]));
     }
@@ -137,7 +137,7 @@ public class JPanelProgrammerMethodsTest {
             ce.printStackTrace();
         }
 
-        assertEquals("TextArea not as expected", "00000101 OR", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("TextArea not as expected", "00000101 OR", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
         assertEquals("Text area not as expected", "00000101 OR", String.valueOf(c.getTextarea()));
         assertEquals("Values[0] is not in decimal base form", Integer.valueOf(5), Integer.valueOf(c.values[0]));
     }
@@ -152,7 +152,7 @@ public class JPanelProgrammerMethodsTest {
         when(ae.getActionCommand()).thenReturn("OR");
         p.performButtonOrActions(ae);
 
-        assertEquals("TextArea not showing expected result", "00000111", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("TextArea not showing expected result", "00000111", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
     }
 
     @Test
@@ -167,9 +167,9 @@ public class JPanelProgrammerMethodsTest {
         c.valuesPosition = 0;
         p.performButtonModActions(ae);
 
-        assertEquals("TextArea not as expected!", number+" Mod", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("TextArea not as expected!", number+" Mod", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
         assertEquals("Textarea not updated!", number+" Mod", String.valueOf(c.getTextarea()));
-        assertTrue("Values["+c.getValuesPosition()+"] should not match "+c.getTextArea(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharacters()));
+        assertTrue("Values["+c.getValuesPosition()+"] should not match "+c.getTextArea(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
     }
 
     @Test
@@ -198,9 +198,9 @@ public class JPanelProgrammerMethodsTest {
         c.performButtonEqualsActions();
 
         verify(ae, times(1)).getActionCommand();
-        assertEquals("TextArea not as expected!", "00000001", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("TextArea not as expected!", "00000001", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
         assertEquals("Textarea not updated!", "00000001", String.valueOf(c.getTextarea()));
-        assertTrue("Values["+0+"] should not match "+c.getTextAreaWithoutNewLineCharacters(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharacters()));
+        assertTrue("Values["+0+"] should not match "+c.getTextAreaWithoutNewLineCharactersOrWhiteSpace(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
         assertEquals("Values["+0+"] not as expected", 1, Integer.parseInt(c.values[0]));
     }
 
@@ -216,7 +216,7 @@ public class JPanelProgrammerMethodsTest {
 
         p.performButtonXorActions(ae);
 
-        assertEquals("TextArea not as expected", "", c.getTextAreaWithoutNewLineCharacters());
+        assertEquals("TextArea not as expected", "", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
         assertEquals("Textarea not as expected", "", String.valueOf(c.getTextarea()));
         assertEquals("Values[0] should be empty", "", c.values[0]);
         assertEquals("Values[1] should be empty", "", c.values[1]);

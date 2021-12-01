@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
+import static version4.CalculatorBase_v4.BINARY;
+import static version4.CalculatorBase_v4.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CalculatorMethodsTest {
@@ -120,7 +122,7 @@ public class CalculatorMethodsTest {
     {
         when(ae.getActionCommand()).thenReturn(".");
         c.getTextArea().setText("-5"); // should become -5.
-        c.values[0] = c.getTextAreaWithoutNewLineCharacters();
+        c.values[0] = c.getTextAreaWithoutNewLineCharactersOrWhiteSpace();
         c.performDotButtonActions(ae);
         assertEquals("Textarea is not as expected", "-5.", c.textarea.toString());
         assertEquals("TextArea is not as expected", "\n.5-", c.getTextArea().getText());
@@ -200,7 +202,7 @@ public class CalculatorMethodsTest {
     @Test
     public void methodResetOperatorsWithFalseResultsInAllOperatorsBeingFalse()
     {
-        c.resetOperators(false);
+        c.resetBasicOperators(false);
         assertFalse("addBool is not false", c.addBool);
         assertFalse("subBool is not false", c.subBool);
         assertFalse("mulBool is not false", c.mulBool);
@@ -210,7 +212,7 @@ public class CalculatorMethodsTest {
     @Test
     public void methodResetOperatorsWithTrueResultsInAllOperatorsBeingTrue()
     {
-        c.resetOperators(true);
+        c.resetBasicOperators(true);
         assertTrue("addBool is not true", c.addBool);
         assertTrue("subBool is not true", c.subBool);
         assertTrue("mulBool is not true", c.mulBool);
@@ -227,6 +229,29 @@ public class CalculatorMethodsTest {
     public void methodConfirmWithAMessageRunsAfterEachButtonPress()
     {
         // TODO: This method requires testing all buttons are pushed and the confirm method runs
+    }
+
+    @Test
+    public void testConvertingBinaryToDecimalWorks() throws CalculatorError_v4
+    {
+        // Test that this work
+        //String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "10000000");
+        //assertEquals(Integer.parseInt(test), 128);
+        // Test another number
+        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111");
+        //assertEquals(Integer.parseInt(test), 255);
+        // Make sure this returns the same as above, although i believe this entry by the user is impossible
+        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111 ");
+        //assertEquals(Integer.parseInt(test), 255);
+        // Test to make sure an incomplete number returns appropriately
+        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "101");
+        //assertEquals(Integer.parseInt(test), 5);
+        // Test to make sure a WORD BINARY entry returns appropriately
+        c.isButtonByteSet = false;
+        c.isButtonWordSet = true;
+        String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, new String("00000001 00000000"));
+        assertEquals(Integer.parseInt(test), 256);
+
     }
 
 }
