@@ -53,7 +53,7 @@ public class JPanelProgrammerMethodsTest {
     public void switchingFromBasicToProgrammerConvertsTextArea() throws CalculatorError_v4
     {
         c.getTextArea().setText("4");
-        c.textarea = new StringBuffer().append(c.getTextArea().getText());
+        c.textareaValue = new StringBuffer().append(c.getTextArea().getText());
         c.values[0] = "4";
         p.getButtonBin().setSelected(true);
         String convertedValue = c.convertFromTypeToTypeOnValues(DECIMAL, BINARY, c.values[c.valuesPosition]);
@@ -84,7 +84,7 @@ public class JPanelProgrammerMethodsTest {
         //4. Press equals.
         //5. Textarea displays proper sum in 8 bit form
         c.getTextArea().setText("");
-        c.setTextarea(new StringBuffer());
+        c.setTextareaValue(new StringBuffer());
         c.setCalculatorType(CalculatorType_v4.PROGRAMMER);
         p.getButtonBin().setSelected(true);
         c.setFirstNumBool(true);
@@ -108,7 +108,7 @@ public class JPanelProgrammerMethodsTest {
 
         c.performButtonEqualsActions();
         assertEquals("textArea not as expected", "00001000", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("text area not as expected", "00001000", c.getTextarea().toString());
+        assertEquals("text area not as expected", "00001000", c.getTextareaValue().toString());
         assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(c.values[0]));
     }
 
@@ -138,7 +138,7 @@ public class JPanelProgrammerMethodsTest {
         }
 
         assertEquals("TextArea not as expected", "00000101 OR", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Text area not as expected", "00000101 OR", String.valueOf(c.getTextarea()));
+        assertEquals("Text area not as expected", "00000101 OR", String.valueOf(c.getTextareaValue()));
         assertEquals("Values[0] is not in decimal base form", Integer.valueOf(5), Integer.valueOf(c.values[0]));
     }
 
@@ -168,7 +168,7 @@ public class JPanelProgrammerMethodsTest {
         p.performButtonModActions(ae);
 
         assertEquals("TextArea not as expected!", number+" Mod", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Textarea not updated!", number+" Mod", String.valueOf(c.getTextarea()));
+        assertEquals("Textarea not updated!", number+" Mod", String.valueOf(c.getTextareaValue()));
         assertTrue("Values["+c.getValuesPosition()+"] should not match "+c.getTextArea(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
     }
 
@@ -199,7 +199,7 @@ public class JPanelProgrammerMethodsTest {
 
         verify(ae, times(1)).getActionCommand();
         assertEquals("TextArea not as expected!", "00000001", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Textarea not updated!", "00000001", String.valueOf(c.getTextarea()));
+        assertEquals("Textarea not updated!", "00000001", String.valueOf(c.getTextareaValue()));
         assertTrue("Values["+0+"] should not match "+c.getTextAreaWithoutNewLineCharactersOrWhiteSpace(), !c.values[0].equals(c.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
         assertEquals("Values["+0+"] not as expected", 1, Integer.parseInt(c.values[0]));
     }
@@ -212,12 +212,12 @@ public class JPanelProgrammerMethodsTest {
         c.values[1] = "";
         c.valuesPosition = 0;
         c.getTextArea().setText(c.addNewLineCharacters(1) + "");
-        c.setTextarea(new StringBuffer());
+        c.setTextareaValue(new StringBuffer());
 
         p.performButtonXorActions(ae);
 
         assertEquals("TextArea not as expected", "", c.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Textarea not as expected", "", String.valueOf(c.getTextarea()));
+        assertEquals("Textarea not as expected", "", String.valueOf(c.getTextareaValue()));
         assertEquals("Values[0] should be empty", "", c.values[0]);
         assertEquals("Values[1] should be empty", "", c.values[1]);
         assertEquals("XorButton should be set yet", true, c.isXorButtonPressed());

@@ -99,7 +99,7 @@ public class CalculatorMethodsTest {
     public void testDeleteButtonFunctionality()
     {
         c.getTextArea().setText("\n35");
-        c.setTextarea(new StringBuffer().append("35"));
+        c.setTextareaValue(new StringBuffer().append("35"));
         c.values[0] = "35";
 //        Calculator_v4.DeleteButtonHandler handler = c.getDeleteButtonHandler();
         when(ae.getActionCommand()).thenReturn("DEL");
@@ -112,7 +112,7 @@ public class CalculatorMethodsTest {
     {
         when(ae.getActionCommand()).thenReturn(".");
         c.performDotButtonActions(ae);
-        assertEquals("textarea is not as expected", "\n0.", "\n"+c.textarea);
+        assertEquals("textarea is not as expected", "\n0.", "\n"+c.textareaValue);
         assertEquals("textArea is not \n.0", "\n.0", c.getTextArea().getText());
         assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
     }
@@ -124,7 +124,7 @@ public class CalculatorMethodsTest {
         c.getTextArea().setText("-5"); // should become -5.
         c.values[0] = c.getTextAreaWithoutNewLineCharactersOrWhiteSpace();
         c.performDotButtonActions(ae);
-        assertEquals("Textarea is not as expected", "-5.", c.textarea.toString());
+        assertEquals("Textarea is not as expected", "-5.", c.textareaValue.toString());
         assertEquals("TextArea is not as expected", "\n.5-", c.getTextArea().getText());
         assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
     }
@@ -148,12 +148,29 @@ public class CalculatorMethodsTest {
     @Test
     public void pressingDotButtonAfterNumberButtonReturnsNumberDot()
     {
-        c.getTextArea().setText("5");
+        //c.getTextArea().setText(c.addNewLineCharacters(1)+"5");
+        //c.values[0] = c.getTextAreaWithoutAnything();
+        //c.textareaValue = new StringBuffer(c.getTextAreaWithoutAnything());
+        //when(ae.getActionCommand()).thenReturn(".");
+        //c.performDotButtonActions(ae);
+        //assertEquals("Textarea is not as expected", ".5", c.textareaValue.toString());
+        //assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
+        c.valuesPosition = 0;
+        //c.getTextArea().setText(c.addNewLineCharacters(1)+"54");
+        //c.values[c.valuesPosition] = c.getTextAreaWithoutAnything();
+        //c.textareaValue = new StringBuffer(c.getTextAreaWithoutAnything());
+        //when(ae.getActionCommand()).thenReturn(".");
+        //c.performDotButtonActions(ae);
+        //assertEquals("Textarea is not as expected", "54.", c.textareaValue.toString());
+        //assertEquals("Values[valuesPosition]", "54.", c.values[c.valuesPosition]);
+
+        c.getTextArea().setText(c.addNewLineCharacters(1)+"544");
+        c.values[c.valuesPosition] = c.getTextAreaWithoutAnything();
+        c.textareaValue = new StringBuffer(c.getTextAreaWithoutAnything());
         when(ae.getActionCommand()).thenReturn(".");
         c.performDotButtonActions(ae);
-        assertEquals("Textarea is not as expected", "5.", c.textarea.toString());
-        assertEquals("TextArea is not as expected", "\n.5", c.getTextArea().getText());
-        assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
+        assertEquals("Textarea is not as expected", "544.", c.textareaValue.toString());
+        assertEquals("Values[valuesPosition]", "544.", c.values[c.valuesPosition]);
     }
 
     @Test
@@ -165,7 +182,7 @@ public class CalculatorMethodsTest {
             assertTrue("Values@"+i+" is not blank", StringUtils.isBlank(c.values[i]));
         }
         assertEquals("TextArea is not 0", "\n0", c.getTextArea().getText());
-        assertEquals("textarea is not 0", "0", c.textarea.toString());
+        assertEquals("textarea is not 0", "0", c.textareaValue.toString());
         assertFalse("addBool is not false", c.addBool);
         assertFalse("subBool is not false", c.subBool);
         assertFalse("mulBool is not false", c.mulBool);
@@ -184,7 +201,7 @@ public class CalculatorMethodsTest {
         when(ae.getActionCommand()).thenReturn("CE");
         c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));
-        assertTrue("textarea was not cleared", StringUtils.isBlank(c.textarea));
+        assertTrue("textarea was not cleared", StringUtils.isBlank(c.textareaValue));
     }
 
     @Test
@@ -195,7 +212,7 @@ public class CalculatorMethodsTest {
         when(ae.getActionCommand()).thenReturn("CE");
         c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));
-        assertTrue("textarea was not cleared", StringUtils.isBlank(c.textarea));
+        assertTrue("textarea was not cleared", StringUtils.isBlank(c.textareaValue));
         assertFalse("addBool expected to be false", c.addBool);
     }
 

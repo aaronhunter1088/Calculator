@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static version4.CalculatorType_v4.*;
+import static version4.CalculatorBase_v4.*;
 
 public class CalculatorMain
 {
@@ -24,7 +25,7 @@ public class CalculatorMain
         //Start a basic calculator
         //Calculator_v4 calculator = new Calculator_v4(BASIC);
         //Start a programmer calculator
-        Calculator_v4 calculator = new Calculator_v4(PROGRAMMER);
+        Calculator_v4 calculator = new Calculator_v4(PROGRAMMER, DECIMAL);
         //Start a date calculator with options1 selected
         //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
@@ -41,7 +42,7 @@ public class CalculatorMain
                 calculator.logException(e);
             }
         });
-        calculator.confirm("Calculator started. Initial state", calculator.getCalculatorType());
+        calculator.confirm("Calculator started. Initial state");
     }
 }
 /*

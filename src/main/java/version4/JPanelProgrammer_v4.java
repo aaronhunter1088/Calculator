@@ -68,15 +68,29 @@ public class JPanelProgrammer_v4 extends JPanel {
     final private JRadioButton buttonDWord = new JRadioButton("Dword");
     final private JRadioButton buttonWord = new JRadioButton("Word");
     final private JRadioButton buttonByte = new JRadioButton("Byte");
-    final private JButton buttonFraction = new JButton("1/x");
-    final private JButton buttonPercent = new JButton("%");
-    final private JButton buttonSqrt = new JButton("\u221A");
+
     protected StringBuffer conversion = new StringBuffer();
     protected Calculator_v4 calculator;
 
     /************* Constructors ******************/
     public JPanelProgrammer_v4() {}
 
+    /**
+     * This constructor is used to start up the Programmer panel in a specific base
+     */
+    public JPanelProgrammer_v4(Calculator_v4 calculator, CalculatorBase_v4 base) throws CalculatorError_v4
+    {
+        setCalculator(calculator);
+        setMinimumSize(new Dimension(600,400));
+        setPanelLayout(new GridBagLayout());
+        setLayout(getPanelLayout()); // set frame layout
+        setConstraints(new GridBagConstraints()); // instantiate constraints
+        setupProgrammerPanel(base);
+        setupHelpMenu();
+        addComponentsToPanel();
+        SwingUtilities.updateComponentTreeUI(this);
+        getLogger().info("Finished setting up programmer panel");
+    }
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
@@ -88,7 +102,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         setPanelLayout(new GridBagLayout());
         setLayout(getPanelLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupProgrammerPanel();
+        setupProgrammerPanel(BINARY);
         setupHelpMenu();
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
@@ -96,7 +110,7 @@ public class JPanelProgrammer_v4 extends JPanel {
     }
 
     /************* Start of methods here ******************/
-    public void setupProgrammerPanel() throws CalculatorError_v4
+    public void setupProgrammerPanel(CalculatorBase_v4 base) throws CalculatorError_v4
     {
         getLogger().info("Configuring programmer panel buttons");
         getCalculator().getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -105,23 +119,14 @@ public class JPanelProgrammer_v4 extends JPanel {
         getCalculator().getTextArea().setPreferredSize(new Dimension(105, 60)); //70, 35
         getCalculator().getTextArea().setEditable(false);
         getLogger().info("TextArea setup");
-        getButtonFraction().setFont(Calculator_v4.font);
-        getButtonFraction().setPreferredSize(new Dimension(35, 35) );
-        getButtonFraction().setBorder(new LineBorder(Color.BLACK));
-        getButtonFraction().setEnabled(false);
-        getButtonFraction().addActionListener(this::performFractionButtonActions);
+        calculator.setupFractionButton();
+        calculator.getButtonFraction().addActionListener(this::performFractionButtonActions);
         LOGGER.info("Fraction button configured");
-        getButtonPercent().setFont(Calculator_v4.font);
-        getButtonPercent().setPreferredSize(new Dimension(35, 35) );
-        getButtonPercent().setBorder(new LineBorder(Color.BLACK));
-        getButtonPercent().setEnabled(false);
-        getButtonPercent().addActionListener(this::performPercentButtonActions);
+        calculator.setupPercentButton();
+        calculator.getButtonPercent().addActionListener(this::performPercentButtonActions);
         LOGGER.info("Percent button configured");
-        getButtonSqrt().setFont(Calculator_v4.font);
-        getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
-        getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
-        getButtonSqrt().setEnabled(false);
-        getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
+        calculator.setupSquareRootButton();
+        calculator.getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
         LOGGER.info("Square Root button configured");
         getCalculator().getButtonNegate().setEnabled(false);
         LOGGER.info("Negate button not enabled");
@@ -131,25 +136,64 @@ public class JPanelProgrammer_v4 extends JPanel {
 
         getCalculator().setupMemoryButtons(); // MR MC MS M+ M-
         getCalculator().setupBasicCalculatorOperationButtons(); // + - * /
-        getCalculator().setupOtherBasicCalculatorButtons(); // = Negate
+        getCalculator().setupEqualsButton();
+        getCalculator().setupNegateButton(); // = Negate
         getCalculator().setupOtherCalculatorButtons(); // C CE DEL Dot
         setupNumberButtons(true);
 
         // Set the base
-        if (StringUtils.isNotBlank(calculator.values[0]))
+        if (base != null)
         {
-            calculator.setCalculatorBase(DECIMAL);
-            getButtonDec().setSelected(true);
-            calculator.isButtonDecSet = true;
-            setButtons2To9(true);
-            setButtonsAToF(false);
+            calculator.resetProgrammerByteOperators(false);
+            calculator.isButtonByteSet = true;
+            if (base == DECIMAL) {
+                calculator.setCalculatorBase(DECIMAL);
+                getButtonDec().setSelected(true);
+                calculator.isButtonDecSet = true;
+                setButtons2To9(true);
+                setButtonsAToF(false);
+            }
+            else if (base == OCTAL)
+            {
+                getCalculator().setCalculatorBase(base);
+                setButtons2To9(true);
+                calculator.getButton8().setEnabled(false);
+                calculator.getButton9().setEnabled(false);
+                setButtonsAToF(false);
+                getButtonOct().setSelected(true);
+                calculator.isButtonOctSet = true;
+            }
+            else if (base == HEXIDECIMAL) {
+                getCalculator().setCalculatorBase(base);
+                setButtons2To9(true);
+                setButtonsAToF(true);
+                getButtonHex().setSelected(true);
+                calculator.isButtonHexSet = true;
+            }
+            else {
+                if (StringUtils.isNotBlank(calculator.values[0])) {
+                    calculator.setCalculatorBase(DECIMAL);
+                    getButtonDec().setSelected(true);
+                    calculator.isButtonDecSet = true;
+                    setButtons2To9(true);
+                    setButtonsAToF(false);
+                } else {
+                    // base == binary
+                    getCalculator().setCalculatorBase(BINARY);
+                    setButtons2To9(false);
+                    setButtonsAToF(false);
+                    getButtonBin().setSelected(true);
+                    calculator.isButtonBinSet = true;
+                }
+            }
         }
-        else
+        else if (base == null)
         {
             getCalculator().setCalculatorBase(BINARY);
             setButtons2To9(false);
             setButtonsAToF(false);
             getButtonBin().setSelected(true);
+            calculator.isButtonBinSet = true;
         }
         // Set the byte
         getButtonByte().setSelected(true);
@@ -457,7 +501,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         setComponent(getCalculator().buttonClearEntry, 1, 4, 1, 1, otherButtonLayout);
         setComponent(getCalculator().buttonClear, 1, 5, 1, 1, otherButtonLayout);
         setComponent(getCalculator().buttonNegate, 1, 6, 1, 1, otherButtonLayout);
-        setComponent(buttonSqrt, 1, 7, 1, 1, otherButtonLayout);
+        setComponent(getCalculator().buttonSqrt, 1, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(buttonLPar);
         allOtherButtonsPanel.add(buttonRPar);
         allOtherButtonsPanel.add(buttonB);
@@ -465,7 +509,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         allOtherButtonsPanel.add(getCalculator().buttonClearEntry);
         allOtherButtonsPanel.add(getCalculator().buttonClear);
         allOtherButtonsPanel.add(getCalculator().buttonNegate);
-        allOtherButtonsPanel.add(buttonSqrt);
+        allOtherButtonsPanel.add(getCalculator().buttonSqrt);
 
         setComponent(buttonRol, 2, 0, 1, 1, otherButtonLayout);
         setComponent(buttonRor, 2, 1, 1, 1, otherButtonLayout);
@@ -474,7 +518,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         setComponent(getCalculator().button8, 2, 4, 1, 1, otherButtonLayout);
         setComponent(getCalculator().button9, 2, 5, 1, 1, otherButtonLayout);
         setComponent(getCalculator().buttonDivide, 2, 6, 1, 1, otherButtonLayout);
-        setComponent(buttonPercent, 2, 7, 1, 1, otherButtonLayout);
+        setComponent(getCalculator().buttonPercent, 2, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(buttonRol);
         allOtherButtonsPanel.add(buttonRor);
         allOtherButtonsPanel.add(buttonC);
@@ -482,7 +526,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         allOtherButtonsPanel.add(getCalculator().button8);
         allOtherButtonsPanel.add(getCalculator().button9);
         allOtherButtonsPanel.add(getCalculator().buttonDivide);
-        allOtherButtonsPanel.add(buttonPercent);
+        allOtherButtonsPanel.add(getCalculator().buttonPercent);
 
         setComponent(buttonOr, 3, 0, 1, 1, otherButtonLayout);
         setComponent(buttonXor, 3, 1, 1, 1, otherButtonLayout);
@@ -491,7 +535,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         setComponent(getCalculator().button5, 3, 4, 1, 1, otherButtonLayout);
         setComponent(getCalculator().button6, 3, 5, 1, 1, otherButtonLayout);
         setComponent(getCalculator().buttonMultiply, 3, 6, 1, 1, otherButtonLayout);
-        setComponent(buttonFraction, 3, 7, 1, 1, otherButtonLayout);
+        setComponent(getCalculator().buttonFraction, 3, 7, 1, 1, otherButtonLayout);
         allOtherButtonsPanel.add(buttonOr);
         allOtherButtonsPanel.add(buttonXor);
         allOtherButtonsPanel.add(buttonD);
@@ -499,7 +543,7 @@ public class JPanelProgrammer_v4 extends JPanel {
         allOtherButtonsPanel.add(getCalculator().button5);
         allOtherButtonsPanel.add(getCalculator().button6);
         allOtherButtonsPanel.add(getCalculator().buttonMultiply);
-        allOtherButtonsPanel.add(buttonFraction);
+        allOtherButtonsPanel.add(getCalculator().buttonFraction);
 
         setComponent(buttonLSh, 4, 0, 1, 1, otherButtonLayout);
         setComponent(buttonRSh, 4, 1, 1, 1, otherButtonLayout);
@@ -541,12 +585,11 @@ public class JPanelProgrammer_v4 extends JPanel {
     {
         getLogger().info("Switching to the programmer panel...");
         getCalculator().clearNumberButtonFunctionalities();
-        getCalculator().clearAllBasicOperationButtons();
+        getCalculator().clearAllBasicOperationButtons(); // clears + - * /
         getCalculator().clearAllOtherBasicCalculatorButtons();
-        getCalculator().clearVariableNumberOfButtonsFunctionalities();
         clearBasesFunctionality();
         clearBytesFunctionality();
-        setupProgrammerPanel();
+        setupProgrammerPanel(BINARY);
         getLogger().info("Programmer panel setup");
         // TODO: create method below
         setupHelpMenu();
@@ -627,10 +670,10 @@ public class JPanelProgrammer_v4 extends JPanel {
 
     public void performProgrammerNumberButtonActions(String buttonChoice) throws CalculatorError_v4
     {
-        getCalculator().performInitialChecks();
+        //getCalculator().performInitialChecks();
         LOGGER.info("Performing programmer number button actions...");
         LOGGER.info("Update bytes based on length of number in textArea");
-        LOGGER.info("Add {} to textArea", buttonChoice);
+        LOGGER.info("Adding '{}' to textArea", buttonChoice);
         if (calculator.getCalculatorBase() == BINARY) {
             int lengthOfTextArea = getCalculator().getTextAreaWithoutNewLineCharacters().length();
             if (lengthOfTextArea == 8 || lengthOfTextArea == 17 || lengthOfTextArea == 26 || lengthOfTextArea == 35 || lengthOfTextArea == 44)
@@ -859,9 +902,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 8) {
                 if (calculator.getTextArea().getText().equals(""))
-                    calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(8,16));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                    calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(8,16));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -869,9 +912,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 16) {
-                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,16));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(0,16));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -879,9 +922,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 32) {
-                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,32));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(0,32));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -889,9 +932,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 64) {
-                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,64));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(0,64));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -969,9 +1012,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 8) {
                 if (calculator.getTextArea().getText().equals(""))
-                    calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(8,16));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                    calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(8,16));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -979,9 +1022,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 16) {
-                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,16));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(0,16));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -989,9 +1032,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 32) {
-                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,32));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(0,32));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -999,9 +1042,9 @@ public class JPanelProgrammer_v4 extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (calculator.getTextArea().getText().length() > 64) {
-                calculator.textarea = new StringBuffer().append(calculator.getTextArea().getText());
-                calculator.textarea = new StringBuffer().append(calculator.textarea.substring(0,64));
-                calculator.getTextArea().setText(calculator.textarea.toString());
+                calculator.textareaValue = new StringBuffer().append(calculator.getTextArea().getText());
+                calculator.textareaValue = new StringBuffer().append(calculator.textareaValue.substring(0,64));
+                calculator.getTextArea().setText(calculator.textareaValue.toString());
             }
         }
     }
@@ -1014,17 +1057,17 @@ public class JPanelProgrammer_v4 extends JPanel {
         getLogger().info("button: " + buttonChoice);
         getCalculator().setNotButtonBool(false);
         getButtonNot().setEnabled(false);
-        calculator.textarea = new StringBuffer(calculator.getTextArea().getText().replaceAll("\n", ""));
-        LOGGER.debug("before operation execution: " + calculator.textarea.toString());
+        calculator.textareaValue = new StringBuffer(calculator.getTextArea().getText().replaceAll("\n", ""));
+        LOGGER.debug("before operation execution: " + calculator.textareaValue.toString());
         StringBuffer newBuffer = new StringBuffer();
-        for (int i = 0; i < calculator.textarea.length(); i++) {
-            String s = Character.toString(calculator.textarea.charAt(i));
+        for (int i = 0; i < calculator.textareaValue.length(); i++) {
+            String s = Character.toString(calculator.textareaValue.charAt(i));
             if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
             else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
         }
         LOGGER.debug("after operation execution: " + newBuffer);
-        calculator.textarea = new StringBuffer(newBuffer);
-        calculator.getTextArea().setText("\n"+calculator.textarea.toString());
+        calculator.textareaValue = new StringBuffer(newBuffer);
+        calculator.getTextArea().setText("\n"+calculator.textareaValue.toString());
         LOGGER.info("not operation completed.");
     }
 
@@ -1068,7 +1111,7 @@ public class JPanelProgrammer_v4 extends JPanel {
             calculator.firstNumBool = false;
             getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
                                                   + buttonChoice + " " + getCalculator().getValues()[0]);
-            getCalculator().setTextarea(new StringBuffer().append(getCalculator().getValues()[0] + " " + buttonChoice));
+            getCalculator().setTextareaValue(new StringBuffer().append(getCalculator().getValues()[0] + " " + buttonChoice));
             calculator.valuesPosition++;
             calculator.confirm("OR complete");
         }
@@ -1282,25 +1325,25 @@ public class JPanelProgrammer_v4 extends JPanel {
                     {
                         getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
                                 + " + " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " +"));
+                        getCalculator().setTextareaValue(new StringBuffer().append(convertedValue + " +"));
                     }
                     else if (getCalculator().subBool)
                     {
                         getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
                                 + " - " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " -"));
+                        getCalculator().setTextareaValue(new StringBuffer().append(convertedValue + " -"));
                     }
                     else if (getCalculator().mulBool)
                     {
                         getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
                                 + " * " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " *"));
+                        getCalculator().setTextareaValue(new StringBuffer().append(convertedValue + " *"));
                     }
                     else if (getCalculator().divBool)
                     {
                         getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
                                 + " / " + convertedValue);
-                        getCalculator().setTextarea(new StringBuffer().append(convertedValue + " /"));
+                        getCalculator().setTextareaValue(new StringBuffer().append(convertedValue + " /"));
                     }
                     // while coming from PROGRAMMER, some operators we don't care about coming from that CalcType
                 }
@@ -1308,7 +1351,7 @@ public class JPanelProgrammer_v4 extends JPanel {
                 {
                     getCalculator().getTextArea().setText(getCalculator().addNewLineCharacters(1)
                             + convertedValue);
-                    getCalculator().setTextarea(new StringBuffer().append(convertedValue));
+                    getCalculator().setTextareaValue(new StringBuffer().append(convertedValue));
                 }
             }
         }
@@ -1424,9 +1467,6 @@ public class JPanelProgrammer_v4 extends JPanel {
     public JRadioButton getButtonDWord() { return buttonDWord; }
     public JRadioButton getButtonWord() { return buttonWord; }
     public JRadioButton getButtonByte() { return buttonByte; }
-    public JButton getButtonFraction() { return buttonFraction; }
-    public JButton getButtonPercent() { return buttonPercent; }
-    public JButton getButtonSqrt() { return buttonSqrt; }
     public StringBuffer getConversion() { return conversion; }
     public Calculator_v4 getCalculator() { return calculator; }
     public JLabel getTopLeftBytesLabel() { return topLeftBytesLabel; }
