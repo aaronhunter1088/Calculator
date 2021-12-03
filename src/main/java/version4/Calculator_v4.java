@@ -714,18 +714,19 @@ public class Calculator_v4 extends JFrame
         if (isPositiveNumber(values[valuesPosition]) && !dotButtonPressed)
         {
             LOGGER.info("positive number & dot button was not pushed");
-            LOGGER.debug("before: '" + textareaValue + "'");
+            LOGGER.debug("before: '" + values[valuesPosition] + "'");
             if (StringUtils.isBlank(values[valuesPosition]))
             {
                 textareaValue = new StringBuffer().append(buttonChoice);
             }
             else
             {
-                textareaValue = new StringBuffer().append(textareaValue).append(buttonChoice);
+                textareaValue = new StringBuffer().append(values[valuesPosition]).append(buttonChoice);
             }
             LOGGER.debug("after: '" + textareaValue + "'");
-            updateTheTextAreaBasedOnTheTypeAndBase();
             setValuesToTextAreaValue();
+            updateTheTextAreaBasedOnTheTypeAndBase();
+
         }
         else if (numberIsNegative && !dotButtonPressed)
         { // logic for negative numbers
@@ -1019,6 +1020,7 @@ public class Calculator_v4 extends JFrame
         }
         dotButtonPressed = false;
         buttonDot.setEnabled(true);
+        numberIsNegative = false;
         textareaValue.append(textArea.getText());
         LOGGER.info("ClearEntryButtonHandler() finished");
         confirm();
@@ -1223,30 +1225,32 @@ public class Calculator_v4 extends JFrame
     public void performDot(String buttonChoice)
     {
 
-        if (StringUtils.isBlank(textareaValue) || !firstNumBool)
+        if (StringUtils.isBlank(values[valuesPosition]) || !firstNumBool)
         {   // dot pushed with nothing in textArea
-            textareaValue = new StringBuffer().append(buttonChoice).append("0");
-            updateTheTextAreaBasedOnTheTypeAndBase();
+            textareaValue = new StringBuffer().append("0").append(buttonChoice);
             setValuesToTextAreaValue();
+            updateTheTextAreaBasedOnTheTypeAndBase();
         }
         else if (isPositiveNumber(values[valuesPosition]) && !dotButtonPressed)
         {   // number and then dot is pushed ex: 5 -> .5
             //StringBuffer lodSB = new StringBuffer(textareaValue);
-            textareaValue = new StringBuffer().append(buttonChoice).append(values[valuesPosition]);
-            updateTheTextAreaBasedOnTheTypeAndBase();
             textareaValue = new StringBuffer().append(values[valuesPosition]).append(buttonChoice);
             setValuesToTextAreaValue();
-            dotButtonPressed = false; // !LEAVE. dot logic should not be executed anymore for the current number
+            StringBuffer valuesSB = new StringBuffer(values[valuesPosition].replace(".",""));
+            textareaValue = new StringBuffer().append(buttonChoice).append(valuesSB);
+            updateTheTextAreaBasedOnTheTypeAndBase();
+            textareaValue = new StringBuffer(values[valuesPosition].replace(".","")+".");
+            dotButtonPressed = true; // !LEAVE. dot logic should not be executed anymore for the current number
         }
         else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
         {
             textareaValue = new StringBuffer().append(convertToPositive(values[valuesPosition]));
             //getTextArea().setText(addNewLineCharacters(1)+buttonChoice+ textareaValue +"-");
-            textareaValue.append(buttonChoice);
             textareaValue = new StringBuffer().append(convertToNegative(textareaValue.toString()));
-            updateTheTextAreaBasedOnTheTypeAndBase();
+            textareaValue.append(buttonChoice);
             textareaValue.reverse();
             setValuesToTextAreaValue();
+            updateTheTextAreaBasedOnTheTypeAndBase();
         }
         buttonDot.setEnabled(false); // deactivate button now that its active for this number
         setDotButtonPressed(true); // control variable used to check if we have pushed the dot button
@@ -2308,6 +2312,7 @@ public class Calculator_v4 extends JFrame
             values[0] = new StringBuffer().append(convertToNegative(values[0])).toString();
             dotButtonPressed = false;
             buttonDot.setEnabled(true);
+            numberIsNegative = true;
         }
         else
         { // if double == double, keep decimal and number afterwards
@@ -2322,18 +2327,30 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("Updating the textArea");
         if (getCalculatorType() == BASIC)
         {
-            textArea.setText(addNewLineCharacters(1) + textareaValue);
+            if (!numberIsNegative)
+                textArea.setText(addNewLineCharacters(1) + values[valuesPosition]);
+            else {
+                textArea.setText(addNewLineCharacters(1) + convertToPositive(values[valuesPosition]) + "-");
+                textareaValue = new StringBuffer("-"+values[valuesPosition]);
+                numberIsNegative = true;
+            }
         }
         else if (getCalculatorType() == PROGRAMMER)
         {
             if (getCalculatorBase() == BINARY) {
                 String convertedToBinary = "";
-                try { convertedToBinary = convertFromTypeToTypeOnValues(DECIMAL, BINARY, values[valuesPosition]); }
+                try { convertedToBinary = convertFromTypeToTypeOnValues(DECIMAL, BINARY, values[0]); }
                 catch (CalculatorError_v4 c) { logException(c); }
                 textArea.setText(addNewLineCharacters(3) + convertedToBinary);
             }
             else if (getCalculatorBase() == DECIMAL) {
-                textArea.setText(addNewLineCharacters(3) + textareaValue);
+                if (!numberIsNegative)
+                    textArea.setText(addNewLineCharacters(3) + textareaValue);
+                else {
+                    textArea.setText(addNewLineCharacters(3) + convertToPositive(values[0]) + "-");
+                    textareaValue = new StringBuffer("-"+values[valuesPosition]);
+                    numberIsNegative = true;
+                }
             }
             else if (getCalculatorBase() == OCTAL) {}
             else /* (getCalculatorBase() == HEXIDECIMAL) */ {}
@@ -2446,6 +2463,7 @@ public class Calculator_v4 extends JFrame
             LOGGER.info("We have a decimal");
             values[0] = Double.toString(result);
         }
+        textareaValue = new StringBuffer(values[0]);
     }
 
     @Deprecated(since = "No longer need to specify the type. Call default subtract")
@@ -2569,21 +2587,7 @@ public class Calculator_v4 extends JFrame
         else
         { // if double == double, keep decimal and number afterwards
             LOGGER.info("We have a decimal");
-            if (Double.parseDouble(values[0]) < 0.0 )
-            {
-                values[0] = formatNumber(values[0]);
-                LOGGER.info("textarea: '" + textareaValue + "'");
-                textareaValue = new StringBuffer().append(values[0]);
-                LOGGER.info("textarea: '" + textareaValue + "'");
-                textareaValue = new StringBuffer().append(textareaValue.substring(1, textareaValue.length()));
-                LOGGER.info("textarea: '" + textareaValue + "'");
-                //textArea.setText("\n" + textarea + "-"); // update textArea
-                //LOGGER.info("temp["+valuesPosition+"] '" + values[valuesPosition] + "'");
-            }
-            else
-            {
-                values[0] = formatNumber(values[0]);
-            }
+            values[0] = String.valueOf(result);
         }
 
 
@@ -2619,6 +2623,7 @@ public class Calculator_v4 extends JFrame
         {// if double == double, keep decimal and number afterwards
             textArea.setText("\n" + formatNumber(values[0]));
         }
+        textareaValue = new StringBuffer(values[0]);
     }
 
     public void multiply(CalculatorType_v4 calculatorType_v4)
@@ -2762,6 +2767,7 @@ public class Calculator_v4 extends JFrame
                 values[0] = formatNumber(values[0]);
             }
         }
+        textareaValue = new StringBuffer(values[0]);
     }
 
     public void divide(CalculatorType_v4 calculatorType_v4)
@@ -2788,22 +2794,7 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         if (getCalculatorType() == BASIC)
         {
-            if (addBool) {
-                addition();
-                addBool = resetOperator(addBool);
-            }
-            else if (subBool){
-                subtract(getCalculatorType());
-                subBool = resetOperator(subBool);
-            }
-            else if (mulBool){
-                multiply(getCalculatorType());
-                mulBool = resetOperator(mulBool);
-            }
-            else if (divBool){
-                divide(getCalculatorType());
-                divBool = resetOperator(divBool);
-            }
+            determineAndPerformBasicCalculatorOperation();
             String operator = determineIfBasicPanelOperatorWasPushed();
             if (operator != "") textArea.setText(addNewLineCharacters(1) + operator + " " + textareaValue);
             else textArea.setText(addNewLineCharacters(1) + textareaValue);
@@ -2854,10 +2845,9 @@ public class Calculator_v4 extends JFrame
                 modButtonBool = false;
             }
             updateTheTextAreaBasedOnTheTypeAndBase();
-            updateTextareaFromTextArea();
         }
-
         //TODO: add more calculator types here
+
 
         if (values[0].equals("") && values[1].equals(""))
         {
@@ -2887,7 +2877,7 @@ public class Calculator_v4 extends JFrame
             addBool = resetOperator(addBool);
         }
         else if (subBool){
-            subtract(getCalculatorType());
+            subtract();
             subBool = resetOperator(subBool);
         }
         else if (mulBool){

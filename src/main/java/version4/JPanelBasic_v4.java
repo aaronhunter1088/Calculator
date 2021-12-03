@@ -178,7 +178,7 @@ public class JPanelBasic_v4 extends JPanel
         setupBasicPanel();
         getLogger().info("Basic panel setup");
         setupHelpMenu();
-        convertTextArea();
+        calculator.updateTheTextAreaBasedOnTheTypeAndBase();
         if (!getCalculator().isMemoryValuesEmpty()) getCalculator().convertMemoryValues();
         LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
     }
@@ -561,9 +561,10 @@ public class JPanelBasic_v4 extends JPanel
                 }
                 else // operator not pushed but textArea has some value
                 {
-                    getCalculator().getTextArea().setText(
-                        getCalculator().addNewLineCharacters(1) + getCalculator().getValues()[0]);
-                    getCalculator().setTextareaValue(new StringBuffer().append(getCalculator().getValues()[0]));
+                    if (!calculator.numberIsNegative)
+                        calculator.getTextArea().setText(calculator.addNewLineCharacters(1) + calculator.getValues()[0]);
+                    else
+                        calculator.getTextArea().setText(calculator.addNewLineCharacters(1) + calculator.convertToPositive(calculator.getValues()[0]) + "-");
                 }
             }
         // TODO: conversion from Scientific logic needed
