@@ -3,34 +3,34 @@ package Panels;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-import static Enums.CalculatorBase_v4.*;
-import static Enums.CalculatorType_v4.*;
+import static Types.CalculatorBase.*;
+import static Types.CalculatorType.*;
 
 // The face for a basic calculator
-public class JPanelBasic_v4 extends JPanel
+public class BasicPanel extends JPanel
 {
-    protected final static Logger LOGGER = LogManager.getLogger(JPanelBasic_v4.class);
+    protected final static Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
     private GridBagLayout panelLayout; // layout of the calculator
     private GridBagConstraints constraints; // layout's constraints
-    private Calculator_v4 calculator;
+    private Calculator calculator;
 
     /************* Constructors ******************/
-    public JPanelBasic_v4() {}
+    public BasicPanel() {}
 
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
      */
-    public JPanelBasic_v4(Calculator_v4 calculator)
+    public BasicPanel(Calculator calculator)
     {
         setCalculator(calculator);
         setMinimumSize(new Dimension(100,200));
@@ -203,7 +203,7 @@ public class JPanelBasic_v4 extends JPanel
                 menuOption.remove(valueForThisMenuOption);
                 // set up new viewHelpItem option
                 JMenuItem viewHelpItem = new JMenuItem("View Help");
-                viewHelpItem.setFont(Calculator_v4.font);
+                viewHelpItem.setFont(Calculator.font);
                 viewHelpItem.setName("View Help");
                 viewHelpItem.addActionListener(action -> {
                     JLabel text = new JLabel(helpString);
@@ -415,5 +415,5 @@ public class JPanelBasic_v4 extends JPanel
         this.panelLayout = panelLayout;
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
 }

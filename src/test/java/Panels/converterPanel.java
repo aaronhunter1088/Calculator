@@ -1,8 +1,7 @@
 package Panels;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import Converters.AngleMethods;
-import Panels.JPanelConverter_v4;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,12 +11,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.assertEquals;
-import static Enums.ConverterType_v4.*;
+import static Types.ConverterType.*;
 
-public class JPanelConverter_v4Test {
+public class converterPanel {
 
-    private static Calculators.Calculator_v4 testCalculator;
-    private static Panels.JPanelConverter_v4 testTheConverterPanel;
+    private static Calculator testCalculator;
+    private static ConverterPanel testTheConverterPanel;
 
     @Mock
     ActionEvent ae;
@@ -25,8 +24,8 @@ public class JPanelConverter_v4Test {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelBasicMethodsTest");
-        testCalculator = new Calculator_v4();
-        testTheConverterPanel = new JPanelConverter_v4(testCalculator, AREA);
+        testCalculator = new Calculator();
+        testTheConverterPanel = new ConverterPanel(testCalculator, AREA);
         testCalculator.setCurrentPanel(testTheConverterPanel);
     }
     @Before

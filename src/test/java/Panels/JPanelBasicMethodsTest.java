@@ -1,8 +1,7 @@
 package Panels;
 
-import Calculators.CalculatorError_v4;
-import Calculators.Calculator_v4;
-import Panels.JPanelBasic_v4;
+import Calculators.Calculator;
+import Calculators.CalculatorError;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +11,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.*;
-import static Enums.CalculatorBase_v4.BINARY;
-import static Enums.CalculatorBase_v4.DECIMAL;
+import static Types.CalculatorBase.BINARY;
+import static Types.CalculatorBase.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelBasicMethodsTest {
 
-    private static Calculators.Calculator_v4 c;
-    private static Panels.JPanelBasic_v4 testTheBasicPanel;
+    private static Calculator c;
+    private static BasicPanel testTheBasicPanel;
     private String number;
     private boolean result;
 
@@ -29,14 +28,14 @@ public class JPanelBasicMethodsTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelBasicMethodsTest");
-        c = new Calculator_v4();
-        testTheBasicPanel = new JPanelBasic_v4(c);
+        c = new Calculator();
+        testTheBasicPanel = new BasicPanel(c);
     }
 
 
 
     @Test
-    public void switchingFromProgrammerToBasicConvertsTextArea() throws CalculatorError_v4
+    public void switchingFromProgrammerToBasicConvertsTextArea() throws CalculatorError
     {
         c.textArea.setText("00000100");
         c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, c.getTextAreaWithoutAnything());

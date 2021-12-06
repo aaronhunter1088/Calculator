@@ -1,9 +1,9 @@
 package Runnables;
 
-import Calculators.Calculator_v4;
-import Panels.JPanelBasic_v4;
-import Panels.JPanelDate_v4_withBorders;
-import Panels.JPanelProgrammer_v4;
+import Calculators.Calculator;
+import Panels.BasicPanel;
+import Panels.DatePanelWithBorders;
+import Panels.ProgrammerPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,11 +23,11 @@ public class DifferentPanelsTester extends JFrame
 	//private JButton btn2 = new JButton("Button 2");
 	//private GridLayout gridLayout = new GridLayout(2,0);
 	
-	private Calculator_v4 calculator_v4 = new Calculator_v4();
+	private Calculator calculator_ = new Calculator();
 	private static final long serialVersionUID = 1L;
-	private JPanel basic = new JPanelBasic_v4(calculator_v4);
-	private JPanel date = new JPanelDate_v4_withBorders(calculator_v4);
-	private JPanel programmer = new JPanelProgrammer_v4(calculator_v4);
+	private JPanel basic = new BasicPanel(calculator_);
+	private JPanel date = new DatePanelWithBorders(calculator_);
+	private JPanel programmer = new ProgrammerPanel(calculator_);
 	private JPanel currentPanel;
 	//private JTextField textField1 = new JTextField("Input text here");
 	//private JTextField textField2 = new JTextField("Input text here");

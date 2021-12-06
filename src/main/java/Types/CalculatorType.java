@@ -1,23 +1,18 @@
-package Enums;
+package Types;
 
-public enum CalculatorType_v4
+public enum CalculatorType
 {
-	// Types
 	BASIC("Basic"),
 	SCIENTIFIC("Scientific"),
 	PROGRAMMER("Programmer"),
 	DATE("Date"),
-	// NEW
 	CONVERTER("Converter");
 
-	private String name;
-	CalculatorType_v4(String s1) {
-		setName(s1);
-	}
-
-	private void setName(String name) {
+	private final String name;
+	CalculatorType(String name) {
 		this.name = name;
 	}
+
 	public String getName() {
 		return this.name;
 	}

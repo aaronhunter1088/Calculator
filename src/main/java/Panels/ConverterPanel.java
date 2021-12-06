@@ -1,12 +1,12 @@
 package Panels;
 
-import Enums.ConverterType_v4;
-import Enums.ConverterUnits;
+import Calculators.Calculator;
+import Types.ConverterType;
+import Types.ConverterUnits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import Converters.AngleMethods;
-import Calculators.CalculatorError_v4;
-import Calculators.Calculator_v4;
+import Calculators.CalculatorError;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -15,15 +15,15 @@ import java.awt.event.*;
 import java.text.ParseException;
 import java.util.Objects;
 
-import static Calculators.Calculator_v4.*;
-import static Enums.ConverterType_v4.*;
-import static Enums.CalculatorType_v4.*;
+import static Calculators.Calculator.*;
+import static Types.ConverterType.*;
+import static Types.CalculatorType.*;
 import static Converters.AngleMethods.*;
 import static Converters.AreaMethods.*;
 
-public class JPanelConverter_v4 extends JPanel
+public class ConverterPanel extends JPanel
 {
-    protected final static Logger LOGGER = LogManager.getLogger(JPanelBasic_v4.class);
+    protected final static Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
     private GridBagLayout converterLayout; // layout of the panel
@@ -35,8 +35,8 @@ public class JPanelConverter_v4 extends JPanel
     private JComboBox<String> unitOptions1;
     private JComboBox<String> unitOptions2;
     private JTextArea bottomSpaceAboveNumbers;
-    private Calculator_v4 calculator;
-    private Enums.ConverterType_v4 converterType;
+    private Calculator calculator;
+    private ConverterType converterType;
     private JPanel numbersPanel;
     private JButton buttonBlank;
     private JButton buttonStartConversion;
@@ -49,14 +49,14 @@ public class JPanelConverter_v4 extends JPanel
 
 
     /************* Constructors ******************/
-    public JPanelConverter_v4() {}
+    public ConverterPanel() {}
 
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
      * @param converterType
      */
-    public JPanelConverter_v4(Calculator_v4 calculator, Enums.ConverterType_v4 converterType) throws ParseException, CalculatorError_v4
+    public ConverterPanel(Calculator calculator, ConverterType converterType) throws ParseException, CalculatorError
     {
         setCalculator(calculator);
         setConverterType(converterType);
@@ -72,7 +72,7 @@ public class JPanelConverter_v4 extends JPanel
     }
 
     /************* Start of methods here ******************/
-    public void performConverterCalculatorTypeSwitchOperations(Enums.ConverterType_v4 converterType)
+    public void performConverterCalculatorTypeSwitchOperations(ConverterType converterType)
     {
         getTextField1().requestFocusInWindow();
         // if coming from programmer calculator, make sure these things are set
@@ -84,7 +84,7 @@ public class JPanelConverter_v4 extends JPanel
         SwingUtilities.updateComponentTreeUI(this);
     }
 
-    private void setupJPanelConverter_v4() throws CalculatorError_v4
+    private void setupJPanelConverter_v4() throws CalculatorError
     {
         LOGGER.info("Starting setupJPanelConverter_v4");
         switch (converterType)
@@ -99,7 +99,7 @@ public class JPanelConverter_v4 extends JPanel
             }
             default: {
                 LOGGER.error("Unknown converterType: " + converterType);
-                throw new CalculatorError_v4("Unknown converterType: " + converterType);
+                throw new CalculatorError("Unknown converterType: " + converterType);
             }
         }
         LOGGER.info("Finished setupJPanelConverter_v4");
@@ -272,16 +272,16 @@ public class JPanelConverter_v4 extends JPanel
         repaint();
     }
 
-    public Enums.ConverterUnits convertStringUnitToConverterUnits(String unit)
+    public ConverterUnits convertStringUnitToConverterUnits(String unit)
     {
-        Enums.ConverterUnits thisUnit = null;
+        ConverterUnits thisUnit = null;
         switch (unit) {
             case AngleMethods.DEGREES : {
-                thisUnit = Enums.ConverterUnits.DEGREES;
+                thisUnit = ConverterUnits.DEGREES;
                 break;
             }
             case AngleMethods.RADIANS : {
-                thisUnit = Enums.ConverterUnits.RADIANS;
+                thisUnit = ConverterUnits.RADIANS;
                 break;
             }
             case AngleMethods.GRADIANS : {
@@ -324,7 +324,7 @@ public class JPanelConverter_v4 extends JPanel
     }
 
     // To set up the help menu in the menu bar for each converter
-    private void setupHelpMenu(Enums.ConverterType_v4 converterType)
+    private void setupHelpMenu(ConverterType converterType)
     {
         switch (converterType)
         {
@@ -606,8 +606,8 @@ public class JPanelConverter_v4 extends JPanel
     {
         return serialVersionUID;
     }
-    public Calculator_v4 getCalculator() { return calculator; }
-    public Enums.ConverterType_v4 getConverterType() { return converterType; }
+    public Calculator getCalculator() { return calculator; }
+    public ConverterType getConverterType() { return converterType; }
     public JPanel getNumbersPanel() { return numbersPanel; }
     public JButton getButtonBlank() { return buttonBlank; }
     public JButton getButtonStartConversion() { return buttonStartConversion; }
@@ -625,8 +625,8 @@ public class JPanelConverter_v4 extends JPanel
     public void setUnitOptions1(JComboBox<String> unitOptions1) { this.unitOptions1 = unitOptions1; }
     public void setUnitOptions2(JComboBox<String> unitOptions2) { this.unitOptions2 = unitOptions2; }
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
-    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
-    public void setConverterType(ConverterType_v4 converterType) { this.converterType = converterType; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
+    public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
     public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
     public void setButtonBlank(JButton buttonBlank) { this.buttonBlank = buttonBlank; }
     public void setButtonStartConversion(JButton buttonStartConversion) { this.buttonStartConversion = buttonStartConversion; }

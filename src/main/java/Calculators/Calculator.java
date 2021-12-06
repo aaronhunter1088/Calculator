@@ -1,13 +1,9 @@
 package Calculators;
 
-import Enums.CalculatorBase_v4;
-import Enums.CalculatorType_v4;
-import Enums.ConverterType_v4;
-import Panels.JPanelBasic_v4;
-import Panels.JPanelConverter_v4;
-import Panels.JPanelDate_v4;
-import Panels.JPanelProgrammer_v4;
-import Panels.JPanelScientific_v4;
+import Types.CalculatorBase;
+import Types.CalculatorType;
+import Types.ConverterType;
+import Panels.*;
 import com.apple.eawt.Application;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,15 +26,15 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static Enums.CalculatorType_v4.*;
-import static Enums.CalculatorBase_v4.*;
-import static Enums.ConverterType_v4.ANGLE;
-import static Enums.ConverterType_v4.AREA;
-import static Panels.JPanelDate_v4.OPTIONS1;
+import static Types.CalculatorType.*;
+import static Types.CalculatorBase.*;
+import static Types.ConverterType.ANGLE;
+import static Types.ConverterType.AREA;
+import static Panels.DatePanel.OPTIONS1;
 
-public class Calculator_v4 extends JFrame
+public class Calculator extends JFrame
 {
-    final static protected Logger LOGGER = LogManager.getLogger(Calculator_v4.class);
+    final static protected Logger LOGGER = LogManager.getLogger(Calculator.class);
     final static private long serialVersionUID = 1L;
     public final static Font font = new Font("Segoe UI", Font.PLAIN, 12);
     public final static Font font_Bold = new Font("Segoe UI", Font.BOLD, 12);
@@ -80,9 +76,9 @@ public class Calculator_v4 extends JFrame
     public int memoryRecallPosition = 0;
     public JTextArea textArea = new JTextArea(2,5); // rows, columns
     public StringBuffer textareaValue = new StringBuffer(); // String representing appropriate visual of number
-    public Enums.CalculatorType_v4 calcType;
+    public CalculatorType calcType;
     public JPanel currentPanel;
-    public ImageIcon calculatorImage1, calculator2, macLogo, windowsLogo, blankImage;
+    public ImageIcon windowsCalculator, macLogo, windowsLogo, blankImage;
     public JLabel iconLabel, textLabel;
     public JMenuBar bar;
 
@@ -113,20 +109,20 @@ public class Calculator_v4 extends JFrame
     public boolean negateButtonBool = false;
     public boolean notButtonBool = false;
     public boolean andButtonBool = false;
-    public Enums.CalculatorBase_v4 base = DECIMAL;
+    public CalculatorBase base = DECIMAL;
 
-    public Calculator_v4() throws Exception { this(BASIC, null, null); }
+    public Calculator() throws Exception { this(BASIC, null, null); }
     /**
      * This constructor is used to create a calculator with a specific panel
      * @param calcType the type of calculator to create. sets the title
      */
-    public Calculator_v4(Enums.CalculatorType_v4 calcType) throws Exception { this(calcType, null, null); }
+    public Calculator(CalculatorType calcType) throws Exception { this(calcType, null, null); }
     /**
      * This constructor is used to start up a Programmer Calculator in a specific mode
      * @param calcType
      * @param base
      */
-    public Calculator_v4(Enums.CalculatorType_v4 calcType, Enums.CalculatorBase_v4 base)
+    public Calculator(CalculatorType calcType, CalculatorBase base)
     {
         super(calcType.getName()); // default title is Basic
         setLayout(new GridBagLayout());
@@ -134,8 +130,8 @@ public class Calculator_v4 extends JFrame
         setCalculatorType(calcType);
         setupMenuBar(); // setup here for all types
         setupCalculatorImages();
-        try { setCurrentPanel(new JPanelProgrammer_v4(this, base)); }
-        catch (CalculatorError_v4 c) { logException(c); }
+        try { setCurrentPanel(new ProgrammerPanel(this, base)); }
+        catch (CalculatorError c) { logException(c); }
         add(getCurrentPanel());
         LOGGER.info("Panel added to calculator");
         setMaximumSize(getCurrentPanel().getSize());
@@ -150,14 +146,14 @@ public class Calculator_v4 extends JFrame
      * This constructor is used to create a calculator with a specific converter panel
      * @param calcType the type of calculator to create. sets the title
      */
-    public Calculator_v4(Enums.CalculatorType_v4 calcType, String chosenOption) throws Exception { this(calcType, null, chosenOption); }
+    public Calculator(CalculatorType calcType, String chosenOption) throws Exception { this(calcType, null, chosenOption); }
     /**
      *
      * @param calcType
      * @param converterType
      * @throws Exception
      */
-    public Calculator_v4(Enums.CalculatorType_v4 calcType, Enums.ConverterType_v4 converterType) throws Exception
+    public Calculator(CalculatorType calcType, ConverterType converterType) throws Exception
     { this(calcType, converterType, null); }
     /**
      * MAIN CONSTRUCTOR USED
@@ -165,7 +161,7 @@ public class Calculator_v4 extends JFrame
      * @param converterType
      * @param chosenOption
      */
-    public Calculator_v4(Enums.CalculatorType_v4 calcType, Enums.ConverterType_v4 converterType, String chosenOption)  throws CalculatorError_v4, ParseException, IOException, UnsupportedLookAndFeelException
+    public Calculator(CalculatorType calcType, ConverterType converterType, String chosenOption)  throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
     {
         super(calcType.getName()); // default title is Basic
         setLayout(new GridBagLayout());
@@ -191,7 +187,7 @@ public class Calculator_v4 extends JFrame
     public void setupTextArea()
     {
         textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        textArea.setFont(Calculator_v4.font);
+        textArea.setFont(Calculator.font);
         textArea.setEditable(false);
         if (getCalculatorType() == BASIC) textArea.setPreferredSize(new Dimension(70, 30));
         else if (getCalculatorType() == PROGRAMMER) {}
@@ -200,7 +196,7 @@ public class Calculator_v4 extends JFrame
     }
 
     /**
-     * Handles the logic for setting up a Calculator_v4. Should
+     * Handles the logic for setting up a Calculator. Should
      * run once. Anything that needs to be reset, should be reset
      * where appropriate.
      */
@@ -208,8 +204,8 @@ public class Calculator_v4 extends JFrame
     {
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
-        Application.getApplication().setDockIconImage(getCalculator2().getImage());
-        setIconImage(getCalculator2().getImage());
+        Application.getApplication().setDockIconImage(windowsCalculator.getImage());
+        setIconImage(windowsCalculator.getImage());
         LOGGER.info("All images set for Calculator");
     }
 
@@ -258,45 +254,45 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("Divide button configured");
     }
 
-    public JPanel determinePanelType(Enums.CalculatorType_v4 calcType) throws ParseException, CalculatorError_v4
+    public JPanel determinePanelType(CalculatorType calcType) throws ParseException, CalculatorError
     { return determinePanelType(calcType, null, null); }
 
-    public JPanel determinePanelType(Enums.CalculatorType_v4 calcType, Enums.ConverterType_v4 converterType, String chosenOption) throws ParseException, CalculatorError_v4
+    public JPanel determinePanelType(CalculatorType calcType, ConverterType converterType, String chosenOption) throws ParseException, CalculatorError
     {
         if (calcType == null) {
             LOGGER.error("CalcType cannot be null");
-            throw new CalculatorError_v4("CalcType cannot be null");
+            throw new CalculatorError("CalcType cannot be null");
         }
         if (calcType == BASIC) {
-            return new Panels.JPanelBasic_v4(this);
+            return new BasicPanel(this);
         } else if (calcType == PROGRAMMER) {
-            return new Panels.JPanelProgrammer_v4(this);
+            return new ProgrammerPanel(this);
         } else if (calcType == SCIENTIFIC) {
-            return new JPanelScientific_v4();
+            return new ScientificPanel();
         } else if (calcType == DATE) {
-            return new Panels.JPanelDate_v4(this, chosenOption);
+            return new DatePanel(this, chosenOption);
         }
         else //if (calcType == CONVERTER) {
         {
             if (converterType == ANGLE)
             {
-                return new Panels.JPanelConverter_v4(this, ANGLE);
+                return new ConverterPanel(this, ANGLE);
             }
             else if (converterType == AREA)
             {
-                return new Panels.JPanelConverter_v4(this, AREA);
+                return new ConverterPanel(this, AREA);
             }
             else
             {
                 LOGGER.error("Add the specific converter panel now");
-                throw new CalculatorError_v4("Add the specific converter panel now");
+                throw new CalculatorError("Add the specific converter panel now");
             }
         }
     }
 
     public void setupFractionButton()
     {
-        getButtonFraction().setFont(Calculator_v4.font);
+        getButtonFraction().setFont(Calculator.font);
         getButtonFraction().setPreferredSize(new Dimension(35, 35) );
         getButtonFraction().setBorder(new LineBorder(Color.BLACK));
         getButtonFraction().setEnabled(true);
@@ -304,7 +300,7 @@ public class Calculator_v4 extends JFrame
 
     public void setupPercentButton()
     {
-        getButtonPercent().setFont(Calculator_v4.font);
+        getButtonPercent().setFont(Calculator.font);
         getButtonPercent().setPreferredSize(new Dimension(35, 35) );
         getButtonPercent().setBorder(new LineBorder(Color.BLACK));
         getButtonPercent().setEnabled(true);
@@ -312,7 +308,7 @@ public class Calculator_v4 extends JFrame
 
     public void setupSquareRootButton()
     {
-        getButtonSqrt().setFont(Calculator_v4.font);
+        getButtonSqrt().setFont(Calculator.font);
         getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
         getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
         getButtonSqrt().setEnabled(true);
@@ -357,7 +353,7 @@ public class Calculator_v4 extends JFrame
     {
         AtomicInteger i = new AtomicInteger(0);
         getNumberButtons().forEach(button -> {
-            button.setFont(Calculator_v4.font);
+            button.setFont(Calculator.font);
             button.setEnabled(isEnabled);
             if (button.getText().equals("0")) { button.setPreferredSize(new Dimension(70, 35)); }
             else { button.setPreferredSize(new Dimension(35, 35)); }
@@ -466,9 +462,9 @@ public class Calculator_v4 extends JFrame
         getBar().add(lookMenu);
 
         // View menu options, the converterMenu is an option which is a menu of more choices
-        JMenuItem basic = new JMenuItem(Enums.CalculatorType_v4.BASIC.getName());
-        JMenuItem programmer = new JMenuItem(Enums.CalculatorType_v4.PROGRAMMER.getName());
-        JMenuItem dates = new JMenuItem(Enums.CalculatorType_v4.DATE.getName());
+        JMenuItem basic = new JMenuItem(CalculatorType.BASIC.getName());
+        JMenuItem programmer = new JMenuItem(CalculatorType.PROGRAMMER.getName());
+        JMenuItem dates = new JMenuItem(CalculatorType.DATE.getName());
         JMenu converterMenu = new JMenu(CONVERTER.getName());
 
         // commonalities
@@ -477,12 +473,12 @@ public class Calculator_v4 extends JFrame
         basic.addActionListener(action -> {
             try
             {
-                JPanel panel = new Panels.JPanelBasic_v4(this);
+                JPanel panel = new BasicPanel(this);
                 performTasksWhenChangingJPanels(panel, BASIC);
             }
-            catch (CalculatorError_v4 e)
+            catch (CalculatorError e)
             {
-                LOGGER.error("Couldn't change to JPanelBasic_v4 because {}", e.getMessage());
+                LOGGER.error("Couldn't change to BasicPanel because {}", e.getMessage());
             }
         });
 
@@ -492,13 +488,13 @@ public class Calculator_v4 extends JFrame
             try
             {
                 JPanel panel = null;
-                if (!textareaValue.equals("")) panel = new Panels.JPanelProgrammer_v4(this, DECIMAL);
-                else panel = new Panels.JPanelProgrammer_v4(this);
+                if (!textareaValue.equals("")) panel = new ProgrammerPanel(this, DECIMAL);
+                else panel = new ProgrammerPanel(this);
                 performTasksWhenChangingJPanels(panel, PROGRAMMER);
             }
-            catch (CalculatorError_v4 e)
+            catch (CalculatorError e)
             {
-                LOGGER.error("Couldn't change to JPanelProgrammer_v4 because {}", e.getMessage());
+                LOGGER.error("Couldn't change to ProgrammerPanel because {}", e.getMessage());
             }
         });
 
@@ -507,12 +503,12 @@ public class Calculator_v4 extends JFrame
         dates.addActionListener(action -> {
             try
             {
-                JPanel panel = new Panels.JPanelDate_v4(this);
+                JPanel panel = new DatePanel(this);
                 performTasksWhenChangingJPanels(panel, DATE);
             }
-            catch (ParseException | CalculatorError_v4 e)
+            catch (ParseException | CalculatorError e)
             {
-                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                LOGGER.error("Couldn't change to DatePanel because {}", e.getMessage());
             }
         });
 
@@ -520,7 +516,7 @@ public class Calculator_v4 extends JFrame
         converterMenu.setName(CONVERTER.getName());
         // options for converterMenu
         JMenuItem angleConverter = new JMenuItem(ANGLE.getName());
-        JMenuItem areaConverter = new JMenuItem(Enums.ConverterType_v4.AREA.getName());
+        JMenuItem areaConverter = new JMenuItem(ConverterType.AREA.getName());
 
         // commonalities
         angleConverter.setFont(font);
@@ -530,25 +526,25 @@ public class Calculator_v4 extends JFrame
         angleConverter.addActionListener(action -> {
             try
             {
-                //setCurrentPanel(new JPanelConverter_v4());
-                JPanel panel = new JPanelConverter_v4(this, ANGLE);
+                //setCurrentPanel(new ConverterPanel());
+                JPanel panel = new ConverterPanel(this, ANGLE);
                 performTasksWhenChangingJPanels(panel, CONVERTER, ANGLE);
             }
-            catch (ParseException | CalculatorError_v4 e)
+            catch (ParseException | CalculatorError e)
             {
-                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                LOGGER.error("Couldn't change to DatePanel because {}", e.getMessage());
             }
         });
         areaConverter.addActionListener(action -> {
             try
             {
-                //setCurrentPanel(new JPanelConverter_v4());
-                JPanel panel = new Panels.JPanelConverter_v4(this, AREA);
+                //setCurrentPanel(new ConverterPanel());
+                JPanel panel = new ConverterPanel(this, AREA);
                 performTasksWhenChangingJPanels(panel, CONVERTER, AREA);
             }
-            catch (ParseException | CalculatorError_v4 e)
+            catch (ParseException | CalculatorError e)
             {
-                LOGGER.error("Couldn't change to JPanelDate_v4 because {}", e.getMessage());
+                LOGGER.error("Couldn't change to DatePanel because {}", e.getMessage());
             }
         });
 
@@ -652,9 +648,9 @@ public class Calculator_v4 extends JFrame
         getButtonClear().setName("C");
         getButtonClear().addActionListener(action -> {
             performClearButtonActions(action);
-            if (getCalculatorType() == Enums.CalculatorType_v4.PROGRAMMER)
+            if (getCalculatorType() == CalculatorType.PROGRAMMER)
             {
-                ((Panels.JPanelProgrammer_v4) getCurrentPanel()).resetProgrammerOperators();
+                ((ProgrammerPanel) getCurrentPanel()).resetProgrammerOperators();
             }
         });
         LOGGER.info("Clear button configured");
@@ -673,35 +669,35 @@ public class Calculator_v4 extends JFrame
 
 	public void setupMemoryButtons()
     {
-        buttonMemoryStore.setFont(Calculator_v4.font);
+        buttonMemoryStore.setFont(Calculator.font);
         buttonMemoryStore.setPreferredSize(new Dimension(35, 35));
         buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
         buttonMemoryStore.setEnabled(true);
         buttonMemoryStore.setName("MS");
         buttonMemoryStore.addActionListener(this::performMemoryStoreActions);
         LOGGER.info("Memory Store button configured");
-        getButtonMemoryClear().setFont(Calculator_v4.font);
+        getButtonMemoryClear().setFont(Calculator.font);
         getButtonMemoryClear().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryClear().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryClear().setEnabled(false);
         getButtonMemoryClear().setName("MC");
         getButtonMemoryClear().addActionListener(this::performMemoryClearActions);
         LOGGER.info("Memory Clear button configured");
-        getButtonMemoryRecall().setFont(Calculator_v4.font);
+        getButtonMemoryRecall().setFont(Calculator.font);
         getButtonMemoryRecall().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryRecall().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryRecall().setEnabled(false);
         getButtonMemoryRecall().setName("MR");
         getButtonMemoryRecall().addActionListener(this::performMemoryRecallActions);
         LOGGER.info("Memory Recall button configured");
-        getButtonMemoryAddition().setFont(Calculator_v4.font);
+        getButtonMemoryAddition().setFont(Calculator.font);
         getButtonMemoryAddition().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryAddition().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryAddition().setEnabled(false);
         getButtonMemoryAddition().setName("M+");
         getButtonMemoryAddition().addActionListener(this::performMemoryAddActions);
         LOGGER.info("Memory Add button configured");
-        getButtonMemorySubtraction().setFont(Calculator_v4.font);
+        getButtonMemorySubtraction().setFont(Calculator.font);
         getButtonMemorySubtraction().setPreferredSize(new Dimension(35, 35));
         getButtonMemorySubtraction().setBorder(new LineBorder(Color.BLACK));
         getButtonMemorySubtraction().setEnabled(false);
@@ -1022,8 +1018,8 @@ public class Calculator_v4 extends JFrame
             textArea.setText(addNewLineCharacters(3)+"0");
             resetBasicOperators(false);
             resetProgrammerByteOperators(false);
-            ((Panels.JPanelProgrammer_v4)getCurrentPanel()).resetProgrammerOperators();
-            ((Panels.JPanelProgrammer_v4)getCurrentPanel()).getButtonByte().setSelected(true);
+            ((ProgrammerPanel)getCurrentPanel()).resetProgrammerOperators();
+            ((ProgrammerPanel)getCurrentPanel()).getButtonByte().setSelected(true);
             isButtonByteSet = true;
         }
         updateTextareaFromTextArea();
@@ -1061,8 +1057,8 @@ public class Calculator_v4 extends JFrame
         if (getCalculatorType() == PROGRAMMER) {
             resetBasicOperators(false);
             resetProgrammerByteOperators(false);
-            ((Panels.JPanelProgrammer_v4)getCurrentPanel()).resetProgrammerOperators();
-            ((Panels.JPanelProgrammer_v4)getCurrentPanel()).getButtonByte().setSelected(true);
+            ((ProgrammerPanel)getCurrentPanel()).resetProgrammerOperators();
+            ((ProgrammerPanel)getCurrentPanel()).getButtonByte().setSelected(true);
             isButtonByteSet = true;
         }
         dotButtonPressed = false;
@@ -1440,7 +1436,7 @@ public class Calculator_v4 extends JFrame
      *
      * @param message a message to send into the confirm results view
      */
-    public void confirm(String message, Enums.CalculatorType_v4 calculatorType)
+    public void confirm(String message, CalculatorType calculatorType)
     {
         if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: {}", message); }
         else { LOGGER.info("Confirm Results"); }
@@ -1501,40 +1497,40 @@ public class Calculator_v4 extends JFrame
                 LOGGER.info("isNegative: '{}'", numberIsNegative);
                 LOGGER.info("calcType: '{}", calcType);
                 LOGGER.info("calcBase: '{}'", base);
-                try { LOGGER.info("calcByte: '{} {}'", getBytes(), getByteWord()); } catch (CalculatorError_v4 c) { logException(c); }
+                try { LOGGER.info("calcByte: '{} {}'", getBytes(), getByteWord()); } catch (CalculatorError c) { logException(c); }
                 break;
             }
             case SCIENTIFIC : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
             case DATE : {
-                if (((Panels.JPanelDate_v4)getCurrentPanel()).getSelectedOption().equals(OPTIONS1))
+                if (((DatePanel)getCurrentPanel()).getSelectedOption().equals(OPTIONS1))
                 {
-                    LOGGER.info("OPTIONS Selected: " +((Panels.JPanelDate_v4)getCurrentPanel()).OPTIONS1);
-                    int year = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
-                    int month = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
-                    int day = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
+                    LOGGER.info("OPTIONS Selected: " +((DatePanel)getCurrentPanel()).OPTIONS1);
+                    int year = ((DatePanel)getCurrentPanel()).getTheYearFromTheFromDatePicker();
+                    int month = ((DatePanel)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
+                    int day = ((DatePanel)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
                     LocalDate date = LocalDate.of(year, month, day);
                     LOGGER.info("FromDate(yyyy-mm-dd): " +date);
-                    year = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheYearFromTheToDatePicker();
-                    month = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheToDatePicker();
-                    day = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheToDatePicker();
+                    year = ((DatePanel)getCurrentPanel()).getTheYearFromTheToDatePicker();
+                    month = ((DatePanel)getCurrentPanel()).getTheMonthFromTheToDatePicker();
+                    day = ((DatePanel)getCurrentPanel()).getTheDayOfTheMonthFromTheToDatePicker();
                     date = LocalDate.of(year, month, day);
                     LOGGER.info("ToDate(yyyy-mm-dd): " + date);
                     LOGGER.info("Difference");
-                    LOGGER.info("Year: " + ((Panels.JPanelDate_v4)getCurrentPanel()).getYearsDifferenceLabel().getText());
-                    LOGGER.info("Month: " + ((Panels.JPanelDate_v4)getCurrentPanel()).getMonthsDifferenceLabel().getText());
-                    LOGGER.info("Weeks: " + ((Panels.JPanelDate_v4)getCurrentPanel()).getWeeksDifferenceLabel().getText());
-                    LOGGER.info("Days: " + ((Panels.JPanelDate_v4)getCurrentPanel()).getDaysDifferenceLabel().getText());
+                    LOGGER.info("Year: " + ((DatePanel)getCurrentPanel()).getYearsDifferenceLabel().getText());
+                    LOGGER.info("Month: " + ((DatePanel)getCurrentPanel()).getMonthsDifferenceLabel().getText());
+                    LOGGER.info("Weeks: " + ((DatePanel)getCurrentPanel()).getWeeksDifferenceLabel().getText());
+                    LOGGER.info("Days: " + ((DatePanel)getCurrentPanel()).getDaysDifferenceLabel().getText());
                 }
                 else {
-                    LOGGER.info("OPTIONS Selected: " +((Panels.JPanelDate_v4)getCurrentPanel()).OPTIONS2);
-                    int year = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheYearFromTheFromDatePicker();
-                    int month = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
-                    int day = ((Panels.JPanelDate_v4)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
+                    LOGGER.info("OPTIONS Selected: " +((DatePanel)getCurrentPanel()).OPTIONS2);
+                    int year = ((DatePanel)getCurrentPanel()).getTheYearFromTheFromDatePicker();
+                    int month = ((DatePanel)getCurrentPanel()).getTheMonthFromTheFromDatePicker();
+                    int day = ((DatePanel)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
                     LocalDate date = LocalDate.of(year, month, day);
                     LOGGER.info("FromDate(yyyy-mm-dd): " + date);
-                    boolean isAddSelected = ((JPanelDate_v4)getCurrentPanel()).getAddRadioButton().isSelected();
+                    boolean isAddSelected = ((DatePanel)getCurrentPanel()).getAddRadioButton().isSelected();
                     LOGGER.info("Add or Subtract Selection: " + (isAddSelected ? "Add" : "Subtract") );
-                    LOGGER.info("New Date: " + ((Panels.JPanelDate_v4)getCurrentPanel()).getResultsLabel().getText());
+                    LOGGER.info("New Date: " + ((DatePanel)getCurrentPanel()).getResultsLabel().getText());
                 }
                 break;
             }
@@ -1542,11 +1538,11 @@ public class Calculator_v4 extends JFrame
                 if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
                 else { LOGGER.info("Confirm Results"); }
                 LOGGER.info("---------------- ");
-                LOGGER.info("Converter: '" + ((Panels.JPanelConverter_v4)getCurrentPanel()).getConverterNameAsString() + "'");
-                LOGGER.info("textField1: '" + ((Panels.JPanelConverter_v4)getCurrentPanel()).getTextField1().getText() + " "
-                        + ((Panels.JPanelConverter_v4)getCurrentPanel()).getUnitOptions1().getSelectedItem() + "'");
-                LOGGER.info("textField2: '" + ((Panels.JPanelConverter_v4)getCurrentPanel()).getTextField2().getText() + " "
-                        + ((Panels.JPanelConverter_v4)getCurrentPanel()).getUnitOptions2().getSelectedItem() + "'");
+                LOGGER.info("Converter: '" + ((ConverterPanel)getCurrentPanel()).getConverterNameAsString() + "'");
+                LOGGER.info("textField1: '" + ((ConverterPanel)getCurrentPanel()).getTextField1().getText() + " "
+                        + ((ConverterPanel)getCurrentPanel()).getUnitOptions1().getSelectedItem() + "'");
+                LOGGER.info("textField2: '" + ((ConverterPanel)getCurrentPanel()).getTextField2().getText() + " "
+                        + ((ConverterPanel)getCurrentPanel()).getUnitOptions2().getSelectedItem() + "'");
                 break;
             }
         }
@@ -1674,16 +1670,16 @@ public class Calculator_v4 extends JFrame
         return new StringBuffer().append(String.valueOf(textareaValue)).toString();
     }
 
-    public int getBytes() throws CalculatorError_v4
+    public int getBytes() throws CalculatorError
     {
         if (isButtonByteSet) { return 8; }
         else if (isButtonWordSet) { return 16; }
         else if (isButtonDWordSet) { return 32; }
         else if (isButtonQWordSet) { return 64; }
-        else { throw new CalculatorError_v4("Unable to determine bytes"); } // shouldn't ever come here
+        else { throw new CalculatorError("Unable to determine bytes"); } // shouldn't ever come here
     }
 
-    public String getByteWord() throws CalculatorError_v4
+    public String getByteWord() throws CalculatorError
     {
         if (getBytes() == 8)       return "Byte";
         else if (getBytes() == 16) return "Word";
@@ -1903,15 +1899,14 @@ public class Calculator_v4 extends JFrame
     {
         try
         {
-            setCalculatorImage1(createImageIcon("src/main/resources/images/calculatorOriginalCopy.jpg"));
-            setCalculator2(createImageIcon("src/main/resources/images/calculatorOriginal.jpg"));
-            setMacLogo(createImageIcon("src/main/resources/images/maclogo.jpg"));
+            setWindowsCalculator(createImageIcon("src/main/resources/images/windowsCalculator.jpg"));
+            setMacLogo(createImageIcon("src/main/resources/images/solidBlackAppleLogo.jpg"));
             setWindowsLogo(createImageIcon("src/main/resources/images/windows11.jpg"));
             setBlankImage(null); // new ImageIcon()
         }
         catch (FileNotFoundException e)
         {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(new CalculatorError("The image to set doesn't exist", e));
         }
     }
 
@@ -2008,40 +2003,40 @@ public class Calculator_v4 extends JFrame
 
     public void logException(Exception e) { LOGGER.error(e.getClass().getName() + ": " + e.getMessage()); }
 
-    public void performTasksWhenChangingJPanels(JPanel newPanel, Enums.CalculatorType_v4 calculatorType_v4, ConverterType_v4 converterType_v4) throws CalculatorError_v4
+    public void performTasksWhenChangingJPanels(JPanel newPanel, CalculatorType calculatorType, ConverterType converterType) throws CalculatorError
     {
         LOGGER.info("Starting performTasksWhenChangingJPanels");
         boolean changedPanels = false;
         JPanel oldPanel = updateJPanel(newPanel);
-        if (converterType_v4 == null)
+        if (converterType == null)
         {
-            setTitle(calculatorType_v4.getName());
+            setTitle(calculatorType.getName());
             LOGGER.debug("oldPanel: " + oldPanel.getClass().getName());
             LOGGER.debug("newPanel: " + getCurrentPanel().getClass().getName());
             // if oldPanel is same as newPanel, don't change
             if (oldPanel.getClass().getName().equals(getCurrentPanel().getClass().getName())) {}
-            else if (getCurrentPanel() instanceof Panels.JPanelBasic_v4)
+            else if (getCurrentPanel() instanceof BasicPanel)
             {
-                ((JPanelBasic_v4)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations();
+                ((BasicPanel)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations();
                 changedPanels = true;
             }
-            else if (getCurrentPanel() instanceof Panels.JPanelProgrammer_v4)
+            else if (getCurrentPanel() instanceof ProgrammerPanel)
             {
-                ((Panels.JPanelProgrammer_v4)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations();
+                ((ProgrammerPanel)getCurrentPanel()).performProgrammerCalculatorTypeSwitchOperations();
                 changedPanels = true;
             }
-            else //if (getCurrentPanel() instanceof JPanelDate_v4)
+            else //if (getCurrentPanel() instanceof DatePanel)
             {
-                ((Panels.JPanelDate_v4)getCurrentPanel()).performDateCalculatorTypeSwitchOperations();
+                ((DatePanel)getCurrentPanel()).performDateCalculatorTypeSwitchOperations();
                 changedPanels = true;
             }
         }
         else
         {
-            setTitle(calculatorType_v4.getName());
-            if (getCurrentPanel() instanceof Panels.JPanelConverter_v4)
+            setTitle(calculatorType.getName());
+            if (getCurrentPanel() instanceof ConverterPanel)
             {
-                ((Panels.JPanelConverter_v4)newPanel).performConverterCalculatorTypeSwitchOperations(converterType_v4);
+                ((ConverterPanel)newPanel).performConverterCalculatorTypeSwitchOperations(converterType);
                 changedPanels = true;
             }
         }
@@ -2052,9 +2047,9 @@ public class Calculator_v4 extends JFrame
         else confirm("Not changing panels when oldPanel("+oldPanel.getClass().getName()+") == newPanel("+getCurrentPanel().getClass().getName()+")");
     }
 
-    public void performTasksWhenChangingJPanels(JPanel currentPanel, Enums.CalculatorType_v4 calculatorType_v4) throws CalculatorError_v4
+    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalculatorType calculatorType) throws CalculatorError
     {
-        performTasksWhenChangingJPanels(currentPanel, calculatorType_v4, null);
+        performTasksWhenChangingJPanels(currentPanel, calculatorType, null);
     }
 
     public Collection<JButton> getBasicOperationButtons()
@@ -2174,7 +2169,7 @@ public class Calculator_v4 extends JFrame
                 try { number = convertFromTypeToTypeOnValues(BINARY, DECIMAL, number);
                     LOGGER.info("number converted after add pushed: " + number);
                 }
-                catch (CalculatorError_v4 c) { logException(c); }
+                catch (CalculatorError c) { logException(c); }
                 values[0] = number;
             }
             confirm("Pressed: " + buttonChoice);
@@ -2185,7 +2180,7 @@ public class Calculator_v4 extends JFrame
     {
         int lengthOfNumber = number.length();
         int zeroesToAdd = 0;
-        ((Panels.JPanelProgrammer_v4)getCurrentPanel()).setTheBytesBasedOnTheNumbersLength(number);
+        ((ProgrammerPanel)getCurrentPanel()).setTheBytesBasedOnTheNumbersLength(number);
         if (isButtonByteSet) { zeroesToAdd = 8 - lengthOfNumber; }
         else if (isButtonWordSet) { zeroesToAdd = 16 - lengthOfNumber; }
         else if (isButtonDWordSet) { zeroesToAdd = 32 - lengthOfNumber; }
@@ -2246,7 +2241,7 @@ public class Calculator_v4 extends JFrame
             if (getCalculatorBase() == BINARY) {
                 String convertedToBinary = "";
                 try { convertedToBinary = convertFromTypeToTypeOnValues(DECIMAL, BINARY, values[0]); }
-                catch (CalculatorError_v4 c) { logException(c); }
+                catch (CalculatorError c) { logException(c); }
                 textArea.setText(addNewLineCharacters(3) + convertedToBinary);
             }
             else if (getCalculatorBase() == DECIMAL) {
@@ -2373,17 +2368,17 @@ public class Calculator_v4 extends JFrame
     }
 
     @Deprecated(since = "No longer need to specify the type. Call default subtract")
-    public void subtract(Enums.CalculatorType_v4 calculatorType_v4)
+    public void subtract(CalculatorType calculatorType)
     {
 
-        if (calculatorType_v4.equals(Enums.CalculatorType_v4.BASIC))
+        if (calculatorType.equals(CalculatorType.BASIC))
         {
             subtract();
             if (isPositiveNumber(values[0])) textArea.setText(addNewLineCharacters(1) + values[0]);
             else textArea.setText(addNewLineCharacters(1) + convertToPositive(values[0]) + "-");
             updateTextareaFromTextArea();
         }
-        else if (calculatorType_v4.equals(Enums.CalculatorType_v4.PROGRAMMER))
+        else if (calculatorType.equals(CalculatorType.PROGRAMMER))
         {
             subtract();
             String operator = determineIfProgrammerPanelOperatorWasPushed();
@@ -2532,15 +2527,15 @@ public class Calculator_v4 extends JFrame
         textareaValue = new StringBuffer(values[0]);
     }
 
-    public void multiply(Enums.CalculatorType_v4 calculatorType_v4)
+    public void multiply(CalculatorType calculatorType)
     {
-        if (calculatorType_v4.equals(Enums.CalculatorType_v4.BASIC)) {
+        if (calculatorType.equals(CalculatorType.BASIC)) {
             multiply();
             if (isPositiveNumber(values[0])) textArea.setText(addNewLineCharacters(1) + values[0]);
             else textArea.setText(addNewLineCharacters(1) + convertToPositive(values[0]) + "-");
             updateTextareaFromTextArea();
         }
-        else if (calculatorType_v4.equals(Enums.CalculatorType_v4.PROGRAMMER)) {
+        else if (calculatorType.equals(CalculatorType.PROGRAMMER)) {
             //convertFromTypeToType("Binary", "Decimal");
             multiply();
             textArea.setText(addNewLineCharacters(3) + values[0]);
@@ -2676,15 +2671,15 @@ public class Calculator_v4 extends JFrame
         textareaValue = new StringBuffer(values[0]);
     }
 
-    public void divide(Enums.CalculatorType_v4 calculatorType_v4)
+    public void divide(CalculatorType calculatorType)
     {
-        if (calculatorType_v4.equals(Enums.CalculatorType_v4.BASIC)) {
+        if (calculatorType.equals(CalculatorType.BASIC)) {
             divide();
             if (isPositiveNumber(values[0])) textArea.setText(addNewLineCharacters(1) + values[0]);
             else textArea.setText(addNewLineCharacters(1) + convertToPositive(values[0]) + "-");
             updateTextareaFromTextArea();
         }
-        else if (calculatorType_v4.equals(Enums.CalculatorType_v4.PROGRAMMER))
+        else if (calculatorType.equals(CalculatorType.PROGRAMMER))
         {
 //            convertFromTypeToType("Binary", "Decimal");
             divide();
@@ -2709,43 +2704,43 @@ public class Calculator_v4 extends JFrame
         {
             // Get the current number first. save
             String numberInTextArea = getTextAreaWithoutAnything();
-            if (((Panels.JPanelProgrammer_v4)getCurrentPanel()).getButtonBin().isSelected())
+            if (((ProgrammerPanel)getCurrentPanel()).getButtonBin().isSelected())
             {
                 try { values[1] = convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInTextArea); }
-                catch (CalculatorError_v4 c) { logException(c); }
+                catch (CalculatorError c) { logException(c); }
                 LOGGER.info("Values[1] saved to {}", values[1]);
                 LOGGER.info("Now performing operation...");
                 determineAndPerformBasicCalculatorOperation();
             }
-            else if (((Panels.JPanelProgrammer_v4)getCurrentPanel()).getButtonOct().isSelected())
+            else if (((ProgrammerPanel)getCurrentPanel()).getButtonOct().isSelected())
             {
                 try { values[1] = convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInTextArea); }
-                catch (CalculatorError_v4 c) { logException(c); }
+                catch (CalculatorError c) { logException(c); }
             }
-            else if (((Panels.JPanelProgrammer_v4)getCurrentPanel()).getButtonDec().isSelected())
+            else if (((ProgrammerPanel)getCurrentPanel()).getButtonDec().isSelected())
             {
                 determineAndPerformBasicCalculatorOperation();
             }
-            else if (((Panels.JPanelProgrammer_v4)getCurrentPanel()).getButtonHex().isSelected())
+            else if (((ProgrammerPanel)getCurrentPanel()).getButtonHex().isSelected())
             {
                 values[0] = "";
-                try { values[0] = convertFromTypeToTypeOnValues(HEXIDECIMAL, DECIMAL, values[0]); }
-                catch (CalculatorError_v4 c) { logException(c); }
+                try { values[0] = convertFromTypeToTypeOnValues(HEXADECIMAL, DECIMAL, values[0]); }
+                catch (CalculatorError c) { logException(c); }
                 values[1] = "";
-                try { values[0] = convertFromTypeToTypeOnValues(HEXIDECIMAL, DECIMAL, values[1]); }
-                catch (CalculatorError_v4 c) { logException(c); }
+                try { values[0] = convertFromTypeToTypeOnValues(HEXADECIMAL, DECIMAL, values[1]); }
+                catch (CalculatorError c) { logException(c); }
             }
 
             if (orButtonBool)
             {
-                ((Panels.JPanelProgrammer_v4)getCurrentPanel()).performOr();
+                ((ProgrammerPanel)getCurrentPanel()).performOr();
                 getTextArea().setText(addNewLineCharacters(1) + values[0]);
 
             }
             else if (isModButtonPressed())
             {
                 LOGGER.info("Modulus result");
-                ((Panels.JPanelProgrammer_v4)getCurrentPanel()).performModulus();
+                ((ProgrammerPanel)getCurrentPanel()).performModulus();
                 // update values and textArea accordingly
                 valuesPosition = 0;
                 modButtonBool = false;
@@ -2915,20 +2910,20 @@ public class Calculator_v4 extends JFrame
     {
         String[] newMemoryValues = new String[10];
         int i = 0;
-        if (getCalculatorType() == Enums.CalculatorType_v4.PROGRAMMER)
+        if (getCalculatorType() == CalculatorType.PROGRAMMER)
         {
             for(String numberInMemory : getMemoryValues())
             {
                 newMemoryValues[i] = "";
                 try { newMemoryValues[i] = convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInMemory); }
-                catch (CalculatorError_v4 c) { logException(c); }
+                catch (CalculatorError c) { logException(c); }
                 LOGGER.debug("new number in memory is: " + newMemoryValues[i]);
                 i++;
             }
         }
     }
 
-    public String convertFromTypeToTypeOnValues(Enums.CalculatorBase_v4 fromType, Enums.CalculatorBase_v4 toType, String strings) throws CalculatorError_v4
+    public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String strings) throws CalculatorError
     {
         LOGGER.debug("convert from {} to {}", fromType, toType);
         LOGGER.debug("on value: {}", strings);
@@ -2945,11 +2940,11 @@ public class Calculator_v4 extends JFrame
         String convertedValue = "";
         if (StringUtils.isEmpty(strings)) return "";
         // All from HEXIDECIMAL to any other option
-        if (fromType == HEXIDECIMAL && toType == DECIMAL) { confirm("IMPLEMENT"); }
-        else if (fromType == HEXIDECIMAL && toType == OCTAL) { confirm("IMPLEMENT"); }
-        else if (fromType == HEXIDECIMAL && toType == BINARY) { confirm("IMPLEMENT"); }
+        if (fromType == HEXADECIMAL && toType == DECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == HEXADECIMAL && toType == OCTAL) { confirm("IMPLEMENT"); }
+        else if (fromType == HEXADECIMAL && toType == BINARY) { confirm("IMPLEMENT"); }
         // All from DECIMAL to any other option
-        else if (fromType == DECIMAL && toType == HEXIDECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == DECIMAL && toType == HEXADECIMAL) { confirm("IMPLEMENT"); }
         else if (fromType == DECIMAL && toType == OCTAL) { confirm("IMPLEMENT"); }
         else if (fromType == DECIMAL && toType == BINARY)
         {
@@ -3015,11 +3010,11 @@ public class Calculator_v4 extends JFrame
             convertedValue = strToReturn;
         }
         // All from OCTAL to any other option
-        else if (fromType == OCTAL && toType == HEXIDECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == OCTAL && toType == HEXADECIMAL) { confirm("IMPLEMENT"); }
         else if (fromType == OCTAL && toType == DECIMAL) { confirm("IMPLEMENT"); }
         else if (fromType == OCTAL && toType == BINARY) { confirm("IMPLEMENT"); }
         // All from BINARY to any other option
-        else if (fromType == BINARY && toType == HEXIDECIMAL) { confirm("IMPLEMENT"); }
+        else if (fromType == BINARY && toType == HEXADECIMAL) { confirm("IMPLEMENT"); }
         else if (fromType == BINARY && toType == DECIMAL)
         {
             LOGGER.debug("Converting str("+sb+")");
@@ -3142,7 +3137,7 @@ public class Calculator_v4 extends JFrame
         JPanel mainPanel = new JPanel();
         mainPanel.add(iconLabel);
         mainPanel.add(textLabel);
-        JOptionPane.showMessageDialog(Calculator_v4.this,
+        JOptionPane.showMessageDialog(Calculator.this,
                 mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
     }
 
@@ -3159,7 +3154,7 @@ public class Calculator_v4 extends JFrame
         JPanel mainPanel = new JPanel();
         mainPanel.add(iconLabel);
         mainPanel.add(textLabel);
-        JOptionPane.showMessageDialog(Calculator_v4.this,
+        JOptionPane.showMessageDialog(Calculator.this,
                 mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
 
     }
@@ -3203,10 +3198,9 @@ public class Calculator_v4 extends JFrame
     public int getMemoryPosition() { return memoryPosition; }
     protected JTextArea getTextArea() { return this.textArea; }
     public StringBuffer getTextareaValue() { return textareaValue; }
-    public Enums.CalculatorType_v4 getCalculatorType() { return this.calcType; }
+    public CalculatorType getCalculatorType() { return this.calcType; }
     public JPanel getCurrentPanel() { return currentPanel; }
-    public ImageIcon getCalculatorImage1() { return calculatorImage1; }
-    public ImageIcon getCalculator2() { return calculator2; }
+    public ImageIcon getWindowsCalculator() { return windowsCalculator; }
     public ImageIcon getMacLogo() { return macLogo; }
     public ImageIcon getWindowsLogo() { return windowsLogo; }
     public ImageIcon getBlankImage() { return blankImage; }
@@ -3230,7 +3224,7 @@ public class Calculator_v4 extends JFrame
     public boolean isNegateButtonPressed() { return negateButtonBool; }
     public boolean isNotButtonPressed() { return notButtonBool; }
     public boolean isAndButtonPressed() { return andButtonBool; }
-    public Enums.CalculatorBase_v4 getCalculatorBase() { return base; }
+    public CalculatorBase getCalculatorBase() { return base; }
     public JMenuBar getBar() { return bar; }
 
     public boolean isButtonBinSet() { return isButtonBinSet; }
@@ -3250,11 +3244,10 @@ public class Calculator_v4 extends JFrame
     public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
     public void setTextArea(JTextArea textArea) { this.textArea = textArea; }
     public void setTextareaValue(StringBuffer textareaValue) { this.textareaValue = textareaValue; }
-    public void setCalculatorType(CalculatorType_v4 calcType) { this.calcType = calcType; }
+    public void setCalculatorType(CalculatorType calcType) { this.calcType = calcType; }
 
     public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
-    public void setCalculatorImage1(ImageIcon calculatorImage1) { this.calculatorImage1 = calculatorImage1; }
-    public void setCalculator2(ImageIcon calculator2) { this.calculator2 = calculator2; }
+    public void setWindowsCalculator(ImageIcon windowsCalculator) { this.windowsCalculator = windowsCalculator; }
     public void setMacLogo(ImageIcon macLogo) { this.macLogo = macLogo; }
     public void setWindowsLogo(ImageIcon windowsLogo) { this.windowsLogo = windowsLogo; }
     public void setBlankImage(ImageIcon blankImage) { this.blankImage = blankImage; }
@@ -3285,7 +3278,7 @@ public class Calculator_v4 extends JFrame
     public void setNegateButtonBool(boolean negateButtonBool) { this.negateButtonBool = negateButtonBool; }
     public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
     public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
-    public void setCalculatorBase(CalculatorBase_v4 base) { this.base = base; }
+    public void setCalculatorBase(CalculatorBase base) { this.base = base; }
     public void setBar(JMenuBar bar) { this.bar = bar; }
 
 }

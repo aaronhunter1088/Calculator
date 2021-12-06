@@ -1,13 +1,13 @@
 package Panels;
 
-import Enums.CalculatorType_v4;
+import Calculators.Calculator;
+import Types.CalculatorType;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import Calculators.Calculator_v4;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,15 +16,15 @@ import java.text.ParseException;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
-import static Calculators.Calculator_v4.*;
+import static Calculators.Calculator.*;
 
-public class JPanelDate_v4 extends JPanel
+public class DatePanel extends JPanel
 {
     protected final static Logger LOGGER;
     static
     {
-        System.setProperty("appName", "JPanelDate_v4");
-        LOGGER = LogManager.getLogger(JPanelBasic_v4.class);
+        System.setProperty("appName", "DatePanel");
+        LOGGER = LogManager.getLogger(BasicPanel.class);
     }
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class JPanelDate_v4 extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator_v4 calculator;
+    private Calculator calculator;
     private JComboBox optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, weeksLabel, daysLabel, resultsLabel,
@@ -71,14 +71,14 @@ public class JPanelDate_v4 extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructors ******************/
-    public JPanelDate_v4(Calculator_v4 calculator) throws ParseException { this(calculator, null); }
+    public DatePanel(Calculator calculator) throws ParseException { this(calculator, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
      * @param chosenOption
      */
-    public JPanelDate_v4(Calculator_v4 calculator, String chosenOption) throws ParseException
+    public DatePanel(Calculator calculator, String chosenOption) throws ParseException
     {
         setCalculator(calculator);
         setMinimumSize(new Dimension(100,400));
@@ -511,7 +511,7 @@ public class JPanelDate_v4 extends JPanel
             switchComponentsForDateDifference();
             setSelectedOption(OPTIONS1);
             updateThisPanel();
-            getCalculator().confirm("Changing to " + OPTIONS1, Enums.CalculatorType_v4.DATE);
+            getCalculator().confirm("Changing to " + OPTIONS1, CalculatorType.DATE);
         }
         else if (!getOptionsBox().getSelectedItem().toString().equals(OPTIONS1) &&
                  !getSelectedOption().equals(OPTIONS2))
@@ -519,10 +519,10 @@ public class JPanelDate_v4 extends JPanel
             switchComponentsForAddSubDate();
             setSelectedOption(OPTIONS2);
             updateThisPanel();
-            getCalculator().confirm("Changing to " + OPTIONS2, Enums.CalculatorType_v4.DATE);
+            getCalculator().confirm("Changing to " + OPTIONS2, CalculatorType.DATE);
         }
         else
-        { getCalculator().confirm("Options not changed", CalculatorType_v4.DATE); }
+        { getCalculator().confirm("Options not changed", CalculatorType.DATE); }
     }
 
     public void performRadioButtonFunctionality(ActionEvent actionEvent)
@@ -878,7 +878,7 @@ public class JPanelDate_v4 extends JPanel
     public JDatePanelImpl getToDatePanel()  { return toDatePanel; }
     public JDatePickerImpl getFromDatePicker() { return fromDatePicker; }
     public JDatePickerImpl getToDatePicker() { return toDatePicker; }
-    public Calculator_v4 getCalculator() { return calculator; }
+    public Calculator getCalculator() { return calculator; }
     public JComboBox getOptionsBox() { return optionsBox; }
 
     public JLabel getYearsDifferenceLabel() { return this.yearsDifferenceLabel; }
@@ -923,7 +923,7 @@ public class JPanelDate_v4 extends JPanel
     public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; }
     public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; }
     public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; }
-    private void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
+    private void setCalculator(Calculator calculator) { this.calculator = calculator; }
     private void setOptionsBox(JComboBox optionsBox) { this.optionsBox = optionsBox; }
     private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; }
     private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; }

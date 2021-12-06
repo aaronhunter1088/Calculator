@@ -1,8 +1,6 @@
 package Calculators;
 
-import Calculators.CalculatorError_v4;
-import Calculators.Calculator_v4;
-import Enums.CalculatorType_v4;
+import Types.CalculatorType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -15,13 +13,13 @@ import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
-import static Enums.CalculatorBase_v4.BINARY;
-import static Enums.CalculatorBase_v4.DECIMAL;
+import static Types.CalculatorBase.BINARY;
+import static Types.CalculatorBase.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CalculatorMethodsTest {
 
-    private static Calculators.Calculator_v4 c;
+    private static Calculator c;
     private String number;
     private boolean result;
 
@@ -32,7 +30,7 @@ public class CalculatorMethodsTest {
     public static void setup() throws Exception
     {
         System.setProperty("appName", "CalculatorMethodsTest");
-        c = new Calculator_v4();
+        c = new Calculator();
     }
 
     @Before
@@ -66,7 +64,7 @@ public class CalculatorMethodsTest {
     @Test
     public void testDivisionFunctionality() {
         c.setValues(new String[]{"15", "5"});
-        c.setCalculatorType(CalculatorType_v4.BASIC);
+        c.setCalculatorType(CalculatorType.BASIC);
         c.divide();
         assertEquals("Did not get back expected result", "3", c.getValues()[0]);
     }
@@ -141,7 +139,7 @@ public class CalculatorMethodsTest {
         c.getTextArea().setText("\n35");
         c.setTextareaValue(new StringBuffer().append("35"));
         c.values[0] = "35";
-//        Calculator_v4.DeleteButtonHandler handler = c.getDeleteButtonHandler();
+//        Calculator.DeleteButtonHandler handler = c.getDeleteButtonHandler();
         when(ae.getActionCommand()).thenReturn("DEL");
         c.performDeleteButtonActions(ae);
         assertEquals("TextArea does not equal 3", "\n3", c.getTextArea().getText());
@@ -226,7 +224,7 @@ public class CalculatorMethodsTest {
     {
         c.getTextArea().setText("1088");
         c.values[0] = "1088";
-//        Calculator_v4.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
+//        Calculator.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
         c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextArea().getText()));
@@ -237,7 +235,7 @@ public class CalculatorMethodsTest {
     public void pressingClearEntryAfterPressingAnOperatorResetsTextAreaAndOperator()
     {
         c.getTextArea().setText("1088 +");
-//        Calculator_v4.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
+//        Calculator.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
         c.performClearEntryButtonActions(ae);
         assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextAreaWithoutAnything()));
@@ -278,7 +276,7 @@ public class CalculatorMethodsTest {
     }
 
     @Test
-    public void testConvertingBinaryToDecimalWorks() throws CalculatorError_v4
+    public void testConvertingBinaryToDecimalWorks() throws CalculatorError
     {
         // Test that this work
         //String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "10000000");
@@ -298,6 +296,12 @@ public class CalculatorMethodsTest {
         String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, new String("00000001 00000000"));
         assertEquals(Integer.parseInt(test), 256);
 
+    }
+
+    @Test
+    public void testSetImageIconsWorksAsExpected()
+    {
+        c.setImageIcons();
     }
 
 }

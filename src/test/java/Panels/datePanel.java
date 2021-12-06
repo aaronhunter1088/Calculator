@@ -1,7 +1,6 @@
 package Panels;
 
-import Calculators.Calculator_v4;
-import Panels.JPanelDate_v4;
+import Calculators.Calculator;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
@@ -20,14 +19,14 @@ import java.util.Locale;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static Enums.CalculatorType_v4.DATE;
-import static Panels.JPanelDate_v4.OPTIONS2;
+import static Types.CalculatorType.DATE;
+import static Panels.DatePanel.OPTIONS2;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JPanelDate_v4Test {
+public class datePanel {
 
-    private static Calculators.Calculator_v4 c;
-    private static JPanelDate_v4 testTheDatePanel;
+    private static Calculator c;
+    private static DatePanel testTheDatePanel;
 
     @Mock
     ActionEvent ae = mock(ActionEvent.class);
@@ -35,14 +34,14 @@ public class JPanelDate_v4Test {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelDateTest");
-        c = new Calculator_v4(DATE, OPTIONS2);
-        testTheDatePanel = (Panels.JPanelDate_v4) c.getCurrentPanel();
+        c = new Calculator(DATE, OPTIONS2);
+        testTheDatePanel = (DatePanel) c.getCurrentPanel();
     }
 
     @After
     public void beforeEach() throws Exception
     {
-        //testTheDatePanel.reset(JPanelDate_v4.OPTIONS2);
+        //testTheDatePanel.reset(DatePanel.OPTIONS2);
     }
 
     @Test

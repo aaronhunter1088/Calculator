@@ -2,12 +2,12 @@ package Runnables;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import static Enums.CalculatorType_v4.*;
+import static Types.CalculatorType.*;
 
 public class CalculatorMain
 {
@@ -18,13 +18,13 @@ public class CalculatorMain
     {
         LOGGER.info("Starting here...");
         //Start a basic calculator
-        Calculator_v4 calculator = new Calculator_v4(BASIC);
+        Calculator calculator = new Calculator(BASIC);
         //Start a programmer calculator
-        //Calculator_v4 calculator = new Calculator_v4(PROGRAMMER, DECIMAL);
+        //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
         //Start a date calculator with options1 selected
-        //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS1); //(DATE);
+        //Calculator calculator = new Calculator(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
-        //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS2);
+        //Calculator calculator = new Calculator(DATE, OPTIONS2);
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {

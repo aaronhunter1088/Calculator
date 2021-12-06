@@ -1,12 +1,12 @@
 package Panels;
 
+import Calculators.Calculator;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import Calculators.Calculator_v4;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -21,18 +21,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static Calculators.Calculator_v4.font2;
+import static Calculators.Calculator.font2;
 
 /**
  * Tester class. Not in use
  */
-public class JPanelDate_v4_withBorders extends JPanel
+public class DatePanelWithBorders extends JPanel
 {
     protected final static Logger LOGGER;
     static
     {
-        System.setProperty("appName", "JPanelDate_v4");
-        LOGGER = LogManager.getLogger(JPanelBasic_v4.class);
+        System.setProperty("appName", "DatePanel");
+        LOGGER = LogManager.getLogger(BasicPanel.class);
     }
 
     private static final long serialVersionUID = 1L;
@@ -42,7 +42,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator_v4 calculator;
+    private Calculator calculator;
     private JComboBox optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, daysLabel, resultsLabel;
@@ -76,7 +76,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructor ******************/
-    public JPanelDate_v4_withBorders(Calculator_v4 calculator) throws ParseException
+    public DatePanelWithBorders(Calculator calculator) throws ParseException
     {
         setMinimumSize(new Dimension(100,400));
         setDateLayout(new GridBagLayout());
@@ -88,7 +88,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     }
 
     /************* Start of methods here ******************/
-    private void setupJPanelDate_v3(Calculator_v4 calculator) throws ParseException
+    private void setupJPanelDate_v3(Calculator calculator) throws ParseException
     {
         LOGGER.info("Starting setupPanel_v3");
         setCalculator(calculator);
@@ -538,7 +538,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     {
         return toDatePicker;
     }
-    public Calculator_v4 getCalculator()
+    public Calculator getCalculator()
     {
         return calculator;
     }
@@ -684,7 +684,7 @@ public class JPanelDate_v4_withBorders extends JPanel
     {
         this.toDatePicker = toDatePicker;
     }
-    private void setCalculator(Calculator_v4 calculator)
+    private void setCalculator(Calculator calculator)
     {
         this.calculator = calculator;
     }

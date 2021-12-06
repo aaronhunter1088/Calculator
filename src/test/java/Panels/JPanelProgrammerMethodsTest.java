@@ -1,8 +1,8 @@
 package Panels;
 
-import Calculators.CalculatorError_v4;
-import Calculators.Calculator_v4;
-import Enums.CalculatorType_v4;
+import Calculators.Calculator;
+import Calculators.CalculatorError;
+import Types.CalculatorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import Calculators.CalculatorError_v4;
 
 import java.awt.event.ActionEvent;
 import java.math.BigInteger;
@@ -19,19 +18,19 @@ import java.math.BigInteger;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static Enums.CalculatorBase_v4.BINARY;
-import static Enums.CalculatorBase_v4.DECIMAL;
+import static Types.CalculatorBase.BINARY;
+import static Types.CalculatorBase.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelProgrammerMethodsTest
 {
     static { System.setProperty("appName", JPanelProgrammerMethodsTest.class.getSimpleName()); }
     protected final static Logger LOGGER = LogManager.getLogger(JPanelProgrammerMethodsTest.class);
-    private static Calculators.Calculator_v4 calculator;
+    private static Calculator calculator;
     private String number;
     private boolean result;
 
-    private static JPanelProgrammer_v4 programmerPanel;
+    private static ProgrammerPanel programmerPanel;
 
     @Mock
     ActionEvent actionEvent;
@@ -39,24 +38,24 @@ public class JPanelProgrammerMethodsTest
     @BeforeClass
     public static void setup() throws Exception
     {
-        calculator = new Calculators.Calculator_v4(Enums.CalculatorType_v4.PROGRAMMER);
-        calculator.setCalculatorType(Enums.CalculatorType_v4.PROGRAMMER);
+        calculator = new Calculator(CalculatorType.PROGRAMMER);
+        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
         calculator.firstNumBool = true;
-        programmerPanel = new Panels.JPanelProgrammer_v4(calculator);
+        programmerPanel = new ProgrammerPanel(calculator);
         calculator.setCurrentPanel(programmerPanel);
     }
 
     @Before
     public void setupBefore() throws Exception {
-        calculator = new Calculator_v4(Enums.CalculatorType_v4.PROGRAMMER);
-        calculator.setCalculatorType(Enums.CalculatorType_v4.PROGRAMMER);
+        calculator = new Calculator(CalculatorType.PROGRAMMER);
+        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
         calculator.firstNumBool = true;
-        programmerPanel = new Panels.JPanelProgrammer_v4(calculator);
+        programmerPanel = new ProgrammerPanel(calculator);
         calculator.setCurrentPanel(programmerPanel);
     }
 
     @Test
-    public void switchingFromBasicToProgrammerConvertsTextArea() throws Calculators.CalculatorError_v4
+    public void switchingFromBasicToProgrammerConvertsTextArea() throws CalculatorError
     {
         calculator.textArea.setText("4");
         calculator.textareaValue = new StringBuffer().append(calculator.textArea.getText());
@@ -82,7 +81,7 @@ public class JPanelProgrammerMethodsTest
     }
 
     @Test
-    public void testProgrammerNumberEntry() throws CalculatorError_v4 {
+    public void testProgrammerNumberEntry() throws CalculatorError {
         // This method tests the user's ability to
         //1. Input a single, 8 bit number
         //2. Press an operator
@@ -91,7 +90,7 @@ public class JPanelProgrammerMethodsTest
         //5. Textarea displays proper sum in 8 bit form
         calculator.textArea.setText("");
         calculator.setTextareaValue(new StringBuffer());
-        calculator.setCalculatorType(CalculatorType_v4.PROGRAMMER);
+        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
         programmerPanel.getButtonBin().setSelected(true);
         calculator.setFirstNumBool(true);
         when(actionEvent.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
@@ -118,8 +117,8 @@ public class JPanelProgrammerMethodsTest
         assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(calculator.values[0]));
     }
 
-    @Test(expected = Calculators.CalculatorError_v4.class)
-    public void testPushingButtonOrWithValuesAtZeroNotSet() throws Calculators.CalculatorError_v4 {
+    @Test(expected = CalculatorError.class)
+    public void testPushingButtonOrWithValuesAtZeroNotSet() throws CalculatorError {
         when(actionEvent.getActionCommand()).thenReturn("OR");
         calculator.values[0] = "";
         calculator.values[1] = "50";
@@ -139,7 +138,7 @@ public class JPanelProgrammerMethodsTest
         try {
             programmerPanel.performButtonOrActions(actionEvent);
             calculator.updateTextareaFromTextArea();
-        } catch (Calculators.CalculatorError_v4 ce) {
+        } catch (CalculatorError ce) {
             ce.printStackTrace();
         }
 
@@ -149,7 +148,7 @@ public class JPanelProgrammerMethodsTest
     }
 
     @Test
-    public void testPushingButtonOrWithBothValuesSetReturnsCorrectResult() throws CalculatorError_v4 {
+    public void testPushingButtonOrWithBothValuesSetReturnsCorrectResult() throws CalculatorError {
         calculator.values[0] = "00000101";
         calculator.values[1] = "00000011";
 
@@ -179,7 +178,7 @@ public class JPanelProgrammerMethodsTest
     }
 
     @Test
-    public void testPushingModulusButtonWithBothValuesSetReturnsProperResult() throws CalculatorError_v4 {
+    public void testPushingModulusButtonWithBothValuesSetReturnsProperResult() throws CalculatorError {
         programmerPanel.getButtonBin().setSelected(true);
         calculator.setAddBool(false);
         calculator.setOrButtonBool(false);
