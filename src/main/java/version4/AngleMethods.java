@@ -1,18 +1,22 @@
 package version4;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
 public abstract class AngleMethods
 {
+    private final static Logger LOGGER = LogManager.getLogger(AngleMethods.class);
     static final String DEGREES = "Degrees";
     static final String RADIANS = "Radians";
     static final String GRADIANS = "Gradians";
 
     static void convertValues(Calculator_v4 calculator)
     {
-        calculator.getLogger().debug("starting conversion");
+        LOGGER.debug("starting conversion");
         ConverterUnits unit1 = ((JPanelConverter_v4)calculator.getCurrentPanel()).convertStringUnitToConverterUnits((String) Objects.requireNonNull(((JPanelConverter_v4)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem()));
         ConverterUnits unit2 = ((JPanelConverter_v4)calculator.getCurrentPanel()).convertStringUnitToConverterUnits((String)Objects.requireNonNull(((JPanelConverter_v4)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem()));
         double number;
@@ -222,11 +226,11 @@ public abstract class AngleMethods
         {
             radians = Double.parseDouble(((JPanelConverter_v4)calculator.getCurrentPanel()).getTextField2().getText());
         }
-        calculator.getLogger().info("Radians to Degrees");
-        calculator.getLogger().debug("radians: " + radians);
+        LOGGER.info("Radians to Degrees");
+        LOGGER.debug("radians: " + radians);
         BigDecimal gradians = BigDecimal.valueOf(radians * 63.662);
         double x = gradians.setScale(4, RoundingMode.UP).doubleValue();
-        calculator.getLogger().info("gradians: " + x);
+        LOGGER.info("gradians: " + x);
         return x;
     }
 
@@ -241,11 +245,11 @@ public abstract class AngleMethods
         {
             gradians = Double.parseDouble(((JPanelConverter_v4)calculator.getCurrentPanel()).getTextField2().getText());
         }
-        calculator.getLogger().info("Gradians to Radians");
-        calculator.getLogger().debug("gradians: " + gradians);
+        LOGGER.info("Gradians to Radians");
+        LOGGER.debug("gradians: " + gradians);
         BigDecimal radians = new BigDecimal(gradians / 63.662);
         double x = radians.setScale(4, RoundingMode.UP).doubleValue();
-        calculator.getLogger().debug("radians: " + x);
+        LOGGER.debug("radians: " + x);
         return x;
     }
 
@@ -260,11 +264,11 @@ public abstract class AngleMethods
         {
             degrees = Double.parseDouble(((JPanelConverter_v4)calculator.getCurrentPanel()).getTextField2().getText());
         }
-        calculator.getLogger().info("Degrees to Gradians");
-        calculator.getLogger().debug("degrees: " + degrees);
+        LOGGER.info("Degrees to Gradians");
+        LOGGER.debug("degrees: " + degrees);
         BigDecimal gradians = new BigDecimal(degrees * 1.111111);
         double x = gradians.setScale(4, RoundingMode.UP).doubleValue();
-        calculator.getLogger().debug("gradians: " + x);
+        LOGGER.debug("gradians: " + x);
         return x;
     }
 
@@ -278,11 +282,11 @@ public abstract class AngleMethods
         {
             gradians = Double.parseDouble(((JPanelConverter_v4)calculator.getCurrentPanel()).getTextField2().getText());
         }
-        calculator.getLogger().info("Gradians to Degrees");
-        calculator.getLogger().debug("gradians: " + gradians);
+        LOGGER.info("Gradians to Degrees");
+        LOGGER.debug("gradians: " + gradians);
         BigDecimal degrees = new BigDecimal(gradians / 1.111111);
         double x = degrees.setScale(4, RoundingMode.UP).doubleValue();
-        calculator.getLogger().debug("degrees: " + x);
+        LOGGER.debug("degrees: " + x);
         return x;
     }
 
@@ -296,11 +300,11 @@ public abstract class AngleMethods
         else {
             degrees = Double.parseDouble(((JPanelConverter_v4)calculator.getCurrentPanel()).getTextField2().getText());
         }
-        calculator.getLogger().info("Degrees to Radians");
-        calculator.getLogger().debug("degrees: " + degrees);
+        LOGGER.info("Degrees to Radians");
+        LOGGER.debug("degrees: " + degrees);
         BigDecimal radians = BigDecimal.valueOf(Math.toRadians(degrees));
         double x = radians.setScale(4, RoundingMode.UP).doubleValue();
-        calculator.getLogger().info("radians: " + x);
+        LOGGER.info("radians: " + x);
         return x;
     }
 
@@ -315,11 +319,11 @@ public abstract class AngleMethods
         {
             radians = Double.parseDouble(((JPanelConverter_v4)calculator.getCurrentPanel()).getTextField2().getText());
         }
-        calculator.getLogger().info("Radians to Degrees");
-        calculator.getLogger().debug("radians: " + radians);
+        LOGGER.info("Radians to Degrees");
+        LOGGER.debug("radians: " + radians);
         BigDecimal degrees = BigDecimal.valueOf(Math.toDegrees(radians));
         double x = degrees.setScale(4, RoundingMode.UP).doubleValue();
-        calculator.getLogger().info("degrees: " + x);
+        LOGGER.info("degrees: " + x);
         return x;
     }
 }

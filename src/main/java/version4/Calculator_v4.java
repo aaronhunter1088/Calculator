@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static version4.CalculatorType_v4.*;
@@ -148,14 +150,14 @@ public class Calculator_v4 extends JFrame
         try { setCurrentPanel(new JPanelProgrammer_v4(this, base)); }
         catch (CalculatorError_v4 c) { logException(c); }
         add(getCurrentPanel());
-        getLogger().info("Panel added to calculator");
+        LOGGER.info("Panel added to calculator");
         setMaximumSize(getCurrentPanel().getSize());
         pack();
         setVisible(true);
         setResizable(false);
         setLocation(750, 250);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getLogger().info("Finished constructing the calculator\n");
+        LOGGER.info("Finished constructing the calculator\n");
     }
     /**
      * This constructor is used to create a calculator with a specific converter panel
@@ -188,17 +190,27 @@ public class Calculator_v4 extends JFrame
         else if (converterType != null) setCurrentPanel(determinePanelType(calcType, converterType, null));
         else if (chosenOption != null)  setCurrentPanel(determinePanelType(calcType, null, chosenOption));
         add(getCurrentPanel());
-        getLogger().info("Panel added to calculator");
+        LOGGER.info("Panel added to calculator");
         setMaximumSize(getCurrentPanel().getSize());
         pack();
         setVisible(true);
         setResizable(false);
         setLocation(750, 250);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getLogger().info("Finished constructing the calculator\n");
+        LOGGER.info("Finished constructing the calculator\n");
     }
 
     /******************** Start of methods here **********************/
+    public void setupTextArea()
+    {
+        textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        textArea.setFont(Calculator_v4.font);
+        textArea.setEditable(false);
+        if (getCalculatorType() == BASIC) textArea.setPreferredSize(new Dimension(70, 30));
+        else if (getCalculatorType() == PROGRAMMER) {}
+        else {}
+        LOGGER.info("Text Area configured");
+    }
 
     /**
      * Handles the logic for setting up a Calculator_v4. Should
@@ -211,17 +223,21 @@ public class Calculator_v4 extends JFrame
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
         Application.getApplication().setDockIconImage(getCalculator2().getImage());
         setIconImage(getCalculator2().getImage());
-        getLogger().info("All images set for Calculator");
+        LOGGER.info("All images set for Calculator");
     }
 
-    public void setupBasicCalculatorOperationButtons()
+    public void setupAddButton()
     {
         getButtonAdd().setFont(font);
         getButtonAdd().setPreferredSize(new Dimension(35, 35) );
         getButtonAdd().setBorder(new LineBorder(Color.BLACK));
         getButtonAdd().setEnabled(true);
         getButtonAdd().addActionListener(this::performAdditionButtonActions);
+        LOGGER.info("Add button configured");
+    }
 
+    public void setupSubtractButton()
+    {
         getButtonSubtract().setFont(font);
         getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
         getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
@@ -229,7 +245,10 @@ public class Calculator_v4 extends JFrame
         getButtonSubtract().addActionListener(action -> {
             performSubtractionButtonActions(action);
         });
+    }
 
+    public void setupMultiplyButton()
+    {
         getButtonMultiply().setFont(font);
         getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
         getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
@@ -237,7 +256,11 @@ public class Calculator_v4 extends JFrame
         getButtonMultiply().addActionListener(action -> {
             performMultiplicationActions(action);
         });
+        LOGGER.info("Multiply button configured");
+    }
 
+    public void setupDivideButton()
+    {
         getButtonDivide().setFont(font);
         getButtonDivide().setPreferredSize(new Dimension(35, 35) );
         getButtonDivide().setBorder(new LineBorder(Color.BLACK));
@@ -245,6 +268,7 @@ public class Calculator_v4 extends JFrame
         getButtonDivide().addActionListener(action -> {
             performDivideButtonActions(action);
         });
+        LOGGER.info("Divide button configured");
     }
 
     public JPanel determinePanelType(CalculatorType_v4 calcType) throws ParseException, CalculatorError_v4
@@ -253,7 +277,7 @@ public class Calculator_v4 extends JFrame
     public JPanel determinePanelType(CalculatorType_v4 calcType, ConverterType_v4 converterType, String chosenOption) throws ParseException, CalculatorError_v4
     {
         if (calcType == null) {
-            getLogger().error("CalcType cannot be null");
+            LOGGER.error("CalcType cannot be null");
             throw new CalculatorError_v4("CalcType cannot be null");
         }
         if (calcType == BASIC) {
@@ -334,6 +358,26 @@ public class Calculator_v4 extends JFrame
         getButtonNegate().addActionListener(action -> {
             performNegateButtonActions(action);
         });
+    }
+
+    /**
+     * This method handles the logic when we switch from any type of calculator
+     * to the Programmer type
+     *
+     * TODO: Implement this method
+     */
+    public void setupNumberButtons(boolean isEnabled)
+    {
+        AtomicInteger i = new AtomicInteger(0);
+        getNumberButtons().forEach(button -> {
+            button.setFont(Calculator_v4.font);
+            button.setEnabled(isEnabled);
+            if (button.getText().equals("0")) { button.setPreferredSize(new Dimension(70, 35)); }
+            else { button.setPreferredSize(new Dimension(35, 35)); }
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setName(String.valueOf(i.getAndAdd(1)));
+        });
+        LOGGER.info("Number buttons configured");
     }
 
     public void setupMenuBar()
@@ -460,7 +504,9 @@ public class Calculator_v4 extends JFrame
         programmer.addActionListener(action -> {
             try
             {
-                JPanel panel = new JPanelProgrammer_v4(this);
+                JPanel panel = null;
+                if (!textareaValue.equals("")) panel = new JPanelProgrammer_v4(this, DECIMAL);
+                else panel = new JPanelProgrammer_v4(this);
                 performTasksWhenChangingJPanels(panel, PROGRAMMER);
             }
             catch (CalculatorError_v4 e)
@@ -588,7 +634,29 @@ public class Calculator_v4 extends JFrame
         return aboutCalculatorItem;
     }
 
-	public void setupOtherCalculatorButtons()
+    public void setupDeleteButton()
+    {
+        getButtonDelete().setFont(font);
+        getButtonDelete().setPreferredSize(new Dimension(35, 35));
+        getButtonDelete().setBorder(new LineBorder(Color.BLACK));
+        getButtonDelete().setEnabled(true);
+        getButtonDelete().setName("\u2190");
+        getButtonDelete().addActionListener(this::performDeleteButtonActions);
+        LOGGER.info("Delete button configured");
+    }
+
+    public void setupClearEntryButton()
+    {
+        getButtonClearEntry().setFont(font);
+        getButtonClearEntry().setPreferredSize(new Dimension(35, 35));
+        getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
+        getButtonClearEntry().setEnabled(true);
+        getButtonClearEntry().setName("CE");
+        getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
+        LOGGER.info("Clear Entry button configured");
+    }
+
+    public void setupClearButton()
     {
         getButtonClear().setFont(font);
         getButtonClear().setPreferredSize(new Dimension(35, 35));
@@ -602,68 +670,60 @@ public class Calculator_v4 extends JFrame
                 ((JPanelProgrammer_v4) getCurrentPanel()).resetProgrammerOperators();
             }
         });
+        LOGGER.info("Clear button configured");
+    }
 
-        getButtonClearEntry().setFont(font);
-        getButtonClearEntry().setPreferredSize(new Dimension(35, 35));
-        getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
-        getButtonClearEntry().setEnabled(true);
-        getButtonClearEntry().setName("CE");
-        getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
-
-        getButtonDelete().setFont(font);
-        getButtonDelete().setPreferredSize(new Dimension(35, 35));
-        getButtonDelete().setBorder(new LineBorder(Color.BLACK));
-        getButtonDelete().setEnabled(true);
-        getButtonDelete().setName("\u2190");
-        getButtonDelete().addActionListener(this::performDeleteButtonActions);
-
+    public void setupDotButton()
+    {
         getButtonDot().setFont(font);
         getButtonDot().setPreferredSize(new Dimension(35, 35));
         getButtonDot().setBorder(new LineBorder(Color.BLACK));
         getButtonDot().setEnabled(true);
         getButtonDot().setName(".");
         getButtonDot().addActionListener(this::performDotButtonActions);
+        LOGGER.info("Dot button configured");
     }
 
 	public void setupMemoryButtons()
     {
-        getButtonMemoryStore().setFont(Calculator_v4.font);
-        getButtonMemoryStore().setPreferredSize(new Dimension(35, 35));
-        getButtonMemoryStore().setBorder(new LineBorder(Color.BLACK));
-        getButtonMemoryStore().setEnabled(true);
-        getButtonMemoryStore().setName("MS");
-        getButtonMemoryStore().addActionListener(this::performMemoryStoreActions);
-
+        buttonMemoryStore.setFont(Calculator_v4.font);
+        buttonMemoryStore.setPreferredSize(new Dimension(35, 35));
+        buttonMemoryStore.setBorder(new LineBorder(Color.BLACK));
+        buttonMemoryStore.setEnabled(true);
+        buttonMemoryStore.setName("MS");
+        buttonMemoryStore.addActionListener(this::performMemoryStoreActions);
+        LOGGER.info("Memory Store button configured");
         getButtonMemoryClear().setFont(Calculator_v4.font);
         getButtonMemoryClear().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryClear().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryClear().setEnabled(false);
         getButtonMemoryClear().setName("MC");
         getButtonMemoryClear().addActionListener(this::performMemoryClearActions);
-
+        LOGGER.info("Memory Clear button configured");
         getButtonMemoryRecall().setFont(Calculator_v4.font);
         getButtonMemoryRecall().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryRecall().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryRecall().setEnabled(false);
         getButtonMemoryRecall().setName("MR");
         getButtonMemoryRecall().addActionListener(this::performMemoryRecallActions);
-
+        LOGGER.info("Memory Recall button configured");
         getButtonMemoryAddition().setFont(Calculator_v4.font);
         getButtonMemoryAddition().setPreferredSize(new Dimension(35, 35));
         getButtonMemoryAddition().setBorder(new LineBorder(Color.BLACK));
         getButtonMemoryAddition().setEnabled(false);
         getButtonMemoryAddition().setName("M+");
         getButtonMemoryAddition().addActionListener(this::performMemoryAddActions);
-
+        LOGGER.info("Memory Add button configured");
         getButtonMemorySubtraction().setFont(Calculator_v4.font);
         getButtonMemorySubtraction().setPreferredSize(new Dimension(35, 35));
         getButtonMemorySubtraction().setBorder(new LineBorder(Color.BLACK));
         getButtonMemorySubtraction().setEnabled(false);
         getButtonMemorySubtraction().setName("M-");
         getButtonMemorySubtraction().addActionListener(this::performMemorySubtractionActions);
-
+        LOGGER.info("Memory Subtract button configured");
         // reset buttons to enabled if memories are saved
-        if (getMemoryValues()[0] != "") {
+        if (!getMemoryValues()[0].equals(""))
+        {
             getButtonMemoryClear().setEnabled(true);
             getButtonMemoryRecall().setEnabled(true);
             getButtonMemoryAddition().setEnabled(true);
@@ -813,12 +873,12 @@ public class Calculator_v4 extends JFrame
         LOGGER.info("button: " + action.getActionCommand());
         if (memoryPosition == 10 || StringUtils.isBlank(memoryValues[memoryPosition]))
         {
-            getLogger().debug("Resetting memoryPosition to 0");
+            LOGGER.debug("Resetting memoryPosition to 0");
             memoryPosition = 0;
         }
         if (!isMemoryValuesEmpty())
         {
-            getLogger().info("Clearing memoryValue["+memoryPosition+"] = " + getMemoryValues()[getMemoryPosition()]);
+            LOGGER.info("Clearing memoryValue["+memoryPosition+"] = " + getMemoryValues()[getMemoryPosition()]);
             memoryValues[memoryPosition] = "";
             memoryPosition++;
             // MemorySuite now could potentially be empty
@@ -1397,80 +1457,70 @@ public class Calculator_v4 extends JFrame
      */
     public void confirm(String message, CalculatorType_v4 calculatorType)
     {
+        if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: {}", message); }
+        else { LOGGER.info("Confirm Results"); }
+        LOGGER.info("---------------- ");
         switch (calculatorType) {
             case BASIC : {
-                if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
-                else { LOGGER.info("Confirm Results"); }
-                LOGGER.info("---------------- ");
-                LOGGER.info("textareaValue: '"+getTextareaValueWithoutAnything()+"'");
+                LOGGER.info("textareaValue: '{}'", getTextareaValueWithoutAnything());
                 if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
                 { LOGGER.info("no memories stored!"); }
                 else
                 {
-                    LOGGER.info("memoryPosition: '"+memoryPosition+"'");
-                    LOGGER.info("memoryRecallPosition: '"+memoryRecallPosition+"'");
+                    LOGGER.info("memoryPosition: '{}'", memoryPosition);
+                    LOGGER.info("memoryRecallPosition: '{}'", memoryRecallPosition);
                     for(int i = 0; i < 10; i++)
                         {if (StringUtils.isNotBlank(memoryValues[i])) {
-                            LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);}}}
-                LOGGER.info("addBool: '"+addBool+"'");
-                LOGGER.info("subBool: '"+subBool+"'");
-                LOGGER.info("mulBool: '"+mulBool+"'");
-                LOGGER.info("divBool: '"+divBool+"'");
-                LOGGER.info("values["+0+"]: '" + values[0] + "'");
-                LOGGER.info("values["+1+"]: '" + values[1] + "'");
-                LOGGER.info("values["+2+"]: '" + values[2] + "'");
-                LOGGER.info("valuesPosition: '"+valuesPosition+"'");
-                LOGGER.info("firstNumBool: '"+firstNumBool+"'");
-                LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
-                LOGGER.info("isNegative: '"+numberIsNegative+"'");
-                LOGGER.info("calcType: '" + calcType + "'");
-                LOGGER.info("calcBase: '" + base + "'");
-                LOGGER.info("-------- End Confirm Results --------\n");
+                            LOGGER.info("memoryValues[{}]: ", memoryValues[i]);}}}
+                LOGGER.info("addBool: '{}'", addBool);
+                LOGGER.info("subBool: '{}'", subBool);
+                LOGGER.info("mulBool: '{}'", mulBool);
+                LOGGER.info("divBool: '{}'", divBool);
+                LOGGER.info("values[{}]: '{}'",0, values[0]);
+                LOGGER.info("values[{}]: '{}'",1, values[1]);
+                LOGGER.info("values[{}]: '{}'",2, values[2]);
+                LOGGER.info("valuesPosition: '{}'", valuesPosition);
+                LOGGER.info("firstNumBool: '{}'", firstNumBool);
+                LOGGER.info("dotButtonPressed: '{}'", dotButtonPressed);
+                LOGGER.info("isNegative: '{}'", numberIsNegative);
+                LOGGER.info("calcType: '{}", calcType);
+                LOGGER.info("calcBase: '{}'", base);
                 break;
             }
             case PROGRAMMER : {
-                if (StringUtils.isNotEmpty(message)) { LOGGER.info("Confirm Results: " + message); }
-                else { LOGGER.info("Confirm Results"); }
-                LOGGER.info("---------------- ");
-                LOGGER.info("textareaValue: '"+getTextareaValueWithoutAnything()+"'");
-                textareaValue.reverse();
+                LOGGER.info("textareaValue: '{}'", getTextareaValueWithoutAnything());
                 if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition]))
                 { LOGGER.info("no memories stored!"); }
                 else
                 {
-                    LOGGER.info("memoryPosition: '"+memoryPosition+"'");
-                    LOGGER.info("memoryRecallPosition: '"+memoryRecallPosition+"'");
+                    LOGGER.info("memoryPosition: '{}'", memoryPosition);
+                    LOGGER.info("memoryRecallPosition: '{}'", memoryRecallPosition);
                     for(int i = 0; i < 10; i++)
-                        {if (StringUtils.isNotBlank(memoryValues[i])) {
-                            LOGGER.info("memoryValues["+i+"]: " + memoryValues[i]);}}}
-                LOGGER.info("addBool: '"+addBool+"'");
-                LOGGER.info("subBool: '"+subBool+"'");
-                LOGGER.info("mulBool: '"+mulBool+"'");
-                LOGGER.info("divBool: '"+divBool+"'");
-                LOGGER.info("orButtonBool: '" +orButtonBool+"'");
-                LOGGER.info("modButtonBool: '" +modButtonBool+"'");
-                LOGGER.info("xorButtonBool: '" +xorButtonBool+"'");
-                LOGGER.info("notButtonBool: '" +notButtonBool+"'");
-                LOGGER.info("andButtonBool: '" +andButtonBool+"'");
-                LOGGER.info("values["+0+"]: '" + values[0] + "'");
-                LOGGER.info("values["+1+"]: '" + values[1] + "'");
-                LOGGER.info("values["+2+"]: '" + values[2] + "'");
-                LOGGER.info("valuesPosition: '"+valuesPosition+"'");
-                LOGGER.info("firstNumBool: '"+firstNumBool+"'");
-                LOGGER.info("dotButtonPressed: '"+dotButtonPressed+"'");
-                LOGGER.info("isNegative: '"+numberIsNegative+"'");
-                LOGGER.info("calcType: '" + calcType + "'");
-                LOGGER.info("calcBase: '" + base + "'");
-                try { LOGGER.info("calcByte: '" + getBytes() + " " + getByteWord() + "'"); } catch (CalculatorError_v4 c) { logException(c); }
-                LOGGER.info("-------- End Confirm Results --------\n");
+                    {if (StringUtils.isNotBlank(memoryValues[i])) {
+                        LOGGER.info("memoryValues[{}]: ", memoryValues[i]);}}}
+                LOGGER.info("addBool: '{}'", addBool);
+                LOGGER.info("subBool: '{}'", subBool);
+                LOGGER.info("mulBool: '{}'", mulBool);
+                LOGGER.info("divBool: '{}'", divBool);
+                LOGGER.info("orButtonBool: '{}'", orButtonBool);
+                LOGGER.info("modButtonBool: '{}'", modButtonBool);
+                LOGGER.info("xorButtonBool: '{}'", xorButtonBool);
+                LOGGER.info("notButtonBool: '{}'", notButtonBool);
+                LOGGER.info("andButtonBool: '{}'", andButtonBool);
+                LOGGER.info("values[{}]: '{}'",0, values[0]);
+                LOGGER.info("values[{}]: '{}'",1, values[1]);
+                LOGGER.info("values[{}]: '{}'",2, values[2]);
+                LOGGER.info("valuesPosition: '{}'", valuesPosition);
+                LOGGER.info("firstNumBool: '{}'", firstNumBool);
+                LOGGER.info("dotButtonPressed: '{}'", dotButtonPressed);
+                LOGGER.info("isNegative: '{}'", numberIsNegative);
+                LOGGER.info("calcType: '{}", calcType);
+                LOGGER.info("calcBase: '{}'", base);
+                try { LOGGER.info("calcByte: '{} {}'", getBytes(), getByteWord()); } catch (CalculatorError_v4 c) { logException(c); }
                 break;
             }
             case SCIENTIFIC : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
             case DATE : {
-                if (StringUtils.isNotEmpty(message))
-                {LOGGER.info("Confirm Results: " + message);}
-                else
-                {LOGGER.info("Confirm Results");}
                 if (((JPanelDate_v4)getCurrentPanel()).getSelectedOption().equals(OPTIONS1))
                 {
                     LOGGER.info("OPTIONS Selected: " +((JPanelDate_v4)getCurrentPanel()).OPTIONS1);
@@ -1501,7 +1551,6 @@ public class Calculator_v4 extends JFrame
                     LOGGER.info("Add or Subtract Selection: " + (isAddSelected ? "Add" : "Subtract") );
                     LOGGER.info("New Date: " + ((JPanelDate_v4)getCurrentPanel()).getResultsLabel().getText());
                 }
-                LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
             case CONVERTER:  {
@@ -1513,10 +1562,10 @@ public class Calculator_v4 extends JFrame
                         + ((JPanelConverter_v4)getCurrentPanel()).getUnitOptions1().getSelectedItem() + "'");
                 LOGGER.info("textField2: '" + ((JPanelConverter_v4)getCurrentPanel()).getTextField2().getText() + " "
                         + ((JPanelConverter_v4)getCurrentPanel()).getUnitOptions2().getSelectedItem() + "'");
-                LOGGER.info("-------- End Confirm Results --------\n");
                 break;
             }
         }
+        LOGGER.info("-------- End Confirm Results --------\n");
     }
 
     /**
@@ -1861,7 +1910,7 @@ public class Calculator_v4 extends JFrame
                 //LOGGER.info("the path '" + path + "' created an image after removing 'src/main/resources/'! the ImageIcon is being returned...");
                 //LOGGER.info("End createImageIcon()");
             } else {
-                getLogger().error("The path '" + path + "' could not find an image there after removing src/main/resources/!. Returning null!");
+                LOGGER.error("The path '" + path + "' could not find an image there after removing src/main/resources/!. Returning null!");
                 throw new FileNotFoundException("The resource you are attempting to use cannot be found at: " + path);
             }
 
@@ -1882,7 +1931,7 @@ public class Calculator_v4 extends JFrame
         }
         catch (FileNotFoundException e)
         {
-            getLogger().error(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -1934,137 +1983,20 @@ public class Calculator_v4 extends JFrame
         //}
     }
 
-    /************* All Getters and Setters ******************/
-
-    public Logger getLogger() { return LOGGER; }
-    public long getSerialVersionUID() { return serialVersionUID; }
-    @Override
-    public GridBagLayout getLayout() { return layout; }
-    public GridBagConstraints getConstraints() { return constraints; }
-    public JButton getButton0() { return button0; }
-    public JButton getButton1() { return button1; }
-    public JButton getButton2() { return button2; }
-    public JButton getButton3() { return button3; }
-    public JButton getButton4() { return button4; }
-    public JButton getButton5() { return button5; }
-    public JButton getButton6() { return button6; }
-    public JButton getButton7() { return button7; }
-    public JButton getButton8() { return button8; }
-    public JButton getButton9() { return button9; }
-    public JButton getButtonClear() { return buttonClear; }
-    public JButton getButtonClearEntry() { return buttonClearEntry; }
-    public JButton getButtonDelete() { return buttonDelete; }
-    public JButton getButtonDot() { return buttonDot; }
-    public JButton getButtonFraction() { return buttonFraction; }
-    public JButton getButtonPercent() { return buttonPercent; }
-    public JButton getButtonSqrt() { return buttonSqrt; }
-    public JButton getButtonMemoryClear() { return buttonMemoryClear; }
-    public JButton getButtonMemoryRecall() { return buttonMemoryRecall; }
-    public JButton getButtonMemoryStore() { return buttonMemoryStore; }
-    public JButton getButtonMemoryAddition() { return buttonMemoryAddition; }
-    public JButton getButtonMemorySubtraction() { return buttonMemorySubtraction; }
-    public JButton getButtonAdd() { return buttonAdd; }
-    public JButton getButtonSubtract() { return buttonSubtract; }
-    public JButton getButtonMultiply() { return buttonMultiply; }
-    public JButton getButtonDivide() { return buttonDivide; }
-    public JButton getButtonEquals() { return buttonEquals; }
-    public JButton getButtonNegate() { return buttonNegate; }
-    public Font getFont() { return font; }
-    public String[] getValues() { return values; }
-    public String[] getMemoryValues() { return memoryValues; }
-    public int getValuesPosition() { return valuesPosition; }
-    public int getMemoryPosition() { return memoryPosition; }
-    protected JTextArea getTextArea() { return this.textArea; }
-    public StringBuffer getTextareaValue() { return textareaValue; }
-    public CalculatorType_v4 getCalculatorType() { return this.calcType; }
-    public JPanel getCurrentPanel() { return currentPanel; }
-    public ImageIcon getCalculatorImage1() { return calculatorImage1; }
-    public ImageIcon getCalculator2() { return calculator2; }
-    public ImageIcon getMacLogo() { return macLogo; }
-    public ImageIcon getWindowsLogo() { return windowsLogo; }
-    public ImageIcon getBlankImage() { return blankImage; }
-    public JLabel getIconLabel() { return iconLabel; }
-    public JLabel getTextLabel() { return textLabel; }
-
-    public boolean isFirstNumBool() { return firstNumBool; }
-    public boolean isNumberNegative() { return numberIsNegative; }
-    public boolean isMemorySwitchBool() { return memorySwitchBool; }
-    public boolean isAddBool() { return addBool; }
-    public boolean isSubBool() { return subBool; }
-    public boolean isMulBool() { return mulBool; }
-    public boolean isDivBool() { return divBool; }
-    public boolean isMemAddBool() { return memAddBool; }
-    public boolean isMemSubBool() { return memSubBool; }
-    public boolean isNegatePressed() { return negatePressed; }
-    public boolean isDotButtonPressed() { return dotButtonPressed; }
-    public boolean isOrButtonPressed() { return orButtonBool; }
-    public boolean isModButtonPressed() { return modButtonBool; }
-    public boolean isXorButtonPressed() { return xorButtonBool; }
-    public boolean isNegateButtonPressed() { return negateButtonBool; }
-    public boolean isNotButtonPressed() { return notButtonBool; }
-    public boolean isAndButtonPressed() { return andButtonBool; }
-    public CalculatorBase_v4 getCalculatorBase() { return base; }
-    public JMenuBar getBar() { return bar; }
-
-    public boolean isButtonBinSet() { return isButtonBinSet; }
-    public boolean isButtonOctSet() { return isButtonOctSet; }
-    public boolean isButtonDecSet() { return isButtonDecSet; }
-    public boolean isButtonHexSet() { return isButtonHexSet; }
-    public boolean isButtonByteSet() { return isButtonByteSet; }
-    public boolean isButtonWordSet() { return isButtonWordSet; }
-    public boolean isButtonDWordSet() { return isButtonDwordSet; }
-    public boolean isButtonQWordSet() { return isButtonQwordSet; }
-
-    public void setLayout(GridBagLayout layout) { this.layout = layout; }
-    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setValues(String[] values) { this.values = values; }
-    public void setValuesPosition(int valuesPosition) { this.valuesPosition = valuesPosition; }
-    public void setMemoryValues(String[] memoryValues) { this.memoryValues = memoryValues; }
-    public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
-    public void setTextArea(JTextArea textArea) { this.textArea = textArea; }
-    public void setTextareaValue(StringBuffer textareaValue) { this.textareaValue = textareaValue; }
-    public void setCalculatorType(CalculatorType_v4 calcType) { this.calcType = calcType; }
-
-    public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
-    public void setCalculatorImage1(ImageIcon calculatorImage1) { this.calculatorImage1 = calculatorImage1; }
-    public void setCalculator2(ImageIcon calculator2) { this.calculator2 = calculator2; }
-    public void setMacLogo(ImageIcon macLogo) { this.macLogo = macLogo; }
-    public void setWindowsLogo(ImageIcon windowsLogo) { this.windowsLogo = windowsLogo; }
-    public void setBlankImage(ImageIcon blankImage) { this.blankImage = blankImage; }
-    public void setIconLabel(JLabel iconLabel) { this.iconLabel = iconLabel; }
-    public void setTextLabel(JLabel textLabel) { this.textLabel = textLabel; }
-    public void setFirstNumBool(boolean firstNumBool) { this.firstNumBool = firstNumBool; }
-    public void setNumberIsNegative(boolean numberIsNegative) { this.numberIsNegative = numberIsNegative; }
-    public void setMemorySwitchBool(boolean memorySwitchBool) { this.memorySwitchBool = memorySwitchBool; }
-    public void setAddBool(boolean addBool) { this.addBool = addBool; }
-    public void setSubBool(boolean subBool) { this.subBool = subBool; }
-    public void setMulBool(boolean mulBool) { this.mulBool = mulBool; }
-    public void setDivBool(boolean divBool) { this.divBool = divBool; }
-    public void setMemAddBool(boolean memAddBool) { this.memAddBool = memAddBool; }
-    public void setMemSubBool(boolean memSubBool) { this.memSubBool = memSubBool; }
-    public void setNegatePressed(boolean negatePressed) { this.negatePressed = negatePressed; }
-    public void setDotButtonPressed(boolean dotButtonPressed) { this.dotButtonPressed = dotButtonPressed; }
-    public void setButtonBin(boolean buttonBinSet) { isButtonBinSet = buttonBinSet; }
-    public void setButtonOct(boolean buttonOctSet) { isButtonOctSet = buttonOctSet; }
-    public void setButtonDec(boolean buttonDecSet) { isButtonDecSet = buttonDecSet; }
-    public void setButtonHex(boolean buttonHexSet) { isButtonHexSet = buttonHexSet; }
-    public void setButtonByte(boolean buttonByteSet) { isButtonByteSet = buttonByteSet; }
-    public void setButtonWord(boolean buttonWordSet) { isButtonWordSet = buttonWordSet; }
-    public void setButtonDWord(boolean buttonDwordSet) { isButtonDwordSet = buttonDwordSet; }
-    public void setButtonQWord(boolean buttonQwordSet) { isButtonQwordSet = buttonQwordSet; }
-    public void setOrButtonBool(boolean orButtonBool) { this.orButtonBool = orButtonBool; }
-    public void setModButtonBool(boolean modButtonBool) { this.modButtonBool = modButtonBool; }
-    public void setXorButtonBool(boolean xorButtonBool) { this.xorButtonBool = xorButtonBool; }
-    public void setNegateButtonBool(boolean negateButtonBool) { this.negateButtonBool = negateButtonBool; }
-    public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
-    public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
-    public void setCalculatorBase(CalculatorBase_v4 base) { this.base = base; }
-    public void setBar(JMenuBar bar) { this.bar = bar; }
-
     public Collection<JButton> getNumberButtons()
     {
-        return Arrays.asList(getButton0(), getButton1(), getButton2(), getButton3(), getButton4(), getButton5(),
-                getButton6(), getButton7(), getButton8(), getButton9());
+        LinkedList<JButton> buttons = new LinkedList<>();
+        buttons.add(getButton0());
+        buttons.add(getButton1());
+        buttons.add(getButton2());
+        buttons.add(getButton3());
+        buttons.add(getButton4());
+        buttons.add(getButton5());
+        buttons.add(getButton6());
+        buttons.add(getButton7());
+        buttons.add(getButton8());
+        buttons.add(getButton9());
+        return buttons;
     }
 
     public Collection<JButton> getButtonClearEntryAndButtonDeleteAndButtonDot()
@@ -2075,9 +2007,9 @@ public class Calculator_v4 extends JFrame
     @Deprecated(since = "clearAllOtherBasicCalculatorButtons handles this")
     public void clearVariableNumberOfButtonsFunctionalities()
     {
-        getLogger().debug("Clear VariableNumber of Buttons");
+        LOGGER.debug("Clear VariableNumber of Buttons");
         getButtonClearEntryAndButtonDeleteAndButtonDot().forEach(button -> {
-            getLogger().debug("Removing action listener from button: " + button.getName());
+            LOGGER.debug("Removing action listener from button: " + button.getName());
             Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(al -> {
                 button.removeActionListener(al);
             });
@@ -2087,30 +2019,30 @@ public class Calculator_v4 extends JFrame
 
     public void clearNumberButtonFunctionalities()
     {
-        getLogger().debug("Number buttons cleared of action listeners");
+        LOGGER.debug("Number buttons cleared of action listeners");
         getNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(al -> {
-            getLogger().debug("Removing action listener from button: " + button.getName());
+            LOGGER.debug("Removing action listener from button: " + button.getName());
             button.removeActionListener(al);
         }));
     }
 
     public void logException(Exception e) { LOGGER.error(e.getClass().getName() + ": " + e.getMessage()); }
 
-    public void performTasksWhenChangingJPanels(JPanel currentPanel, CalculatorType_v4 calculatorType_v4, ConverterType_v4 converterType_v4) throws CalculatorError_v4
+    public void performTasksWhenChangingJPanels(JPanel newPanel, CalculatorType_v4 calculatorType_v4, ConverterType_v4 converterType_v4) throws CalculatorError_v4
     {
-        getLogger().info("Starting performTasksWhenChangingJPanels");
+        LOGGER.info("Starting performTasksWhenChangingJPanels");
         boolean changedPanels = false;
-        JPanel oldPanel = updateJPanel(currentPanel);
+        JPanel oldPanel = updateJPanel(newPanel);
         if (converterType_v4 == null)
         {
             setTitle(calculatorType_v4.getName());
-            getLogger().debug("oldPanel: " + oldPanel.getClass().getName());
-            getLogger().debug("newPanel: " + getCurrentPanel().getClass().getName());
+            LOGGER.debug("oldPanel: " + oldPanel.getClass().getName());
+            LOGGER.debug("newPanel: " + getCurrentPanel().getClass().getName());
             // if oldPanel is same as newPanel, don't change
             if (oldPanel.getClass().getName().equals(getCurrentPanel().getClass().getName())) {}
             else if (getCurrentPanel() instanceof JPanelBasic_v4)
             {
-                ((JPanelBasic_v4)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations(oldPanel);
+                ((JPanelBasic_v4)getCurrentPanel()).performBasicCalculatorTypeSwitchOperations();
                 changedPanels = true;
             }
             else if (getCurrentPanel() instanceof JPanelProgrammer_v4)
@@ -2129,13 +2061,13 @@ public class Calculator_v4 extends JFrame
             setTitle(calculatorType_v4.getName());
             if (getCurrentPanel() instanceof JPanelConverter_v4)
             {
-                ((JPanelConverter_v4)currentPanel).performConverterCalculatorTypeSwitchOperations(converterType_v4);
+                ((JPanelConverter_v4)newPanel).performConverterCalculatorTypeSwitchOperations(converterType_v4);
                 changedPanels = true;
             }
         }
-        setCurrentPanel(currentPanel);
+        setCurrentPanel(newPanel);
         super.pack();
-        getLogger().info("Finished performTasksWhenChangingJPanels\n");
+        LOGGER.info("Finished performTasksWhenChangingJPanels\n");
         if (changedPanels) confirm("Switched Calculator Types");
         else confirm("Not changing panels when oldPanel("+oldPanel.getClass().getName()+") == newPanel("+getCurrentPanel().getClass().getName()+")");
     }
@@ -2235,7 +2167,7 @@ public class Calculator_v4 extends JFrame
                 valuesPosition++; // increase valuesPosition for storing textarea
             }
             else if (StringUtils.isBlank(getTextAreaWithoutAnything())) {
-                getLogger().warn("The user pushed plus but there is no number.");
+                LOGGER.warn("The user pushed plus but there is no number.");
                 if (getCalculatorType() == BASIC) textArea.setText(addNewLineCharacters(1) + "Enter a Number");
                 else if (getCalculatorType() == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + "Enter a Number");
                 else if (getCalculatorType() == SCIENTIFIC) LOGGER.warn("SETUP");
@@ -2260,7 +2192,7 @@ public class Calculator_v4 extends JFrame
                 }
 
                 try { number = convertFromTypeToTypeOnValues(BINARY, DECIMAL, number);
-                      LOGGER.info("number converted after add pushed: " + number);
+                    LOGGER.info("number converted after add pushed: " + number);
                 }
                 catch (CalculatorError_v4 c) { logException(c); }
                 values[0] = number;
@@ -2279,13 +2211,13 @@ public class Calculator_v4 extends JFrame
         else if (isButtonDwordSet) { zeroesToAdd = 32 - lengthOfNumber; }
         else /* (isButtonQwordSet) */ { zeroesToAdd = 64 - lengthOfNumber; }
         if (zeroesToAdd != 0) {
-            getLogger().debug("zeroesToAdd: " + zeroesToAdd);
+            LOGGER.debug("zeroesToAdd: " + zeroesToAdd);
             StringBuffer zeroes = new StringBuffer();
             for(int i=0; i<zeroesToAdd; i++) zeroes = zeroes.append("0");
             number = zeroes + number;
-            getLogger().info("After adding zeroes: " + number);
+            LOGGER.info("After adding zeroes: " + number);
         } else {
-            getLogger().info("Not adding any zeroes. Number appropriate length.");
+            LOGGER.info("Not adding any zeroes. Number appropriate length.");
         }
         return number;
     }
@@ -2419,7 +2351,7 @@ public class Calculator_v4 extends JFrame
                 valuesPosition++; // increase valuesPosition for storing textarea
             }
             else if (StringUtils.isBlank(getTextAreaWithoutAnything())) {
-                getLogger().warn("The user pushed subtract but there is no number.");
+                LOGGER.warn("The user pushed subtract but there is no number.");
                 if (getCalculatorType() == BASIC) textArea.setText(addNewLineCharacters(1) + "Enter a Number");
                 else if (getCalculatorType() == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + "Enter a Number");
                 else if (getCalculatorType() == SCIENTIFIC) LOGGER.warn("SETUP");
@@ -2547,7 +2479,7 @@ public class Calculator_v4 extends JFrame
                 valuesPosition++; // increase valuesPosition for storing textarea
             }
             else if (StringUtils.isBlank(getTextAreaWithoutAnything())) {
-                getLogger().warn("The user pushed multiply but there is no number.");
+                LOGGER.warn("The user pushed multiply but there is no number.");
                 if (getCalculatorType() == BASIC) textArea.setText(addNewLineCharacters(1) + "Enter a Number");
                 else if (getCalculatorType() == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + "Enter a Number");
                 else if (getCalculatorType() == SCIENTIFIC) LOGGER.warn("SETUP");
@@ -2701,7 +2633,7 @@ public class Calculator_v4 extends JFrame
                 valuesPosition++; // increase valuesPosition for storing textarea
             }
             else if (StringUtils.isBlank(getTextAreaWithoutAnything())) {
-                getLogger().warn("The user pushed divide but there is no number.");
+                LOGGER.warn("The user pushed divide but there is no number.");
                 if (getCalculatorType() == BASIC) textArea.setText(addNewLineCharacters(1) + "Enter a Number");
                 else if (getCalculatorType() == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + "Enter a Number");
                 else if (getCalculatorType() == SCIENTIFIC) LOGGER.warn("SETUP");
@@ -2985,7 +2917,7 @@ public class Calculator_v4 extends JFrame
         else if (isSubBool()) { results = "-"; }
         else if (isMulBool()) { results = "*"; }
         else if (isDivBool()) { results = "/"; }
-        getLogger().info("operator: " + (results.equals("") ? "no basic operator pushed" : results));
+        LOGGER.info("operator: " + (results.equals("") ? "no basic operator pushed" : results));
         return results;
     }
 
@@ -2998,7 +2930,7 @@ public class Calculator_v4 extends JFrame
         else if (isXorButtonPressed()) { results = "XOR"; }
         else if (isNotButtonPressed()) { results = "NOT"; }
         else if (isAndButtonPressed()) { results = "AND"; }
-        getLogger().info("operator: " + (results.equals("") ? "no programmer operator pushed" : results));
+        LOGGER.info("operator: " + (results.equals("") ? "no programmer operator pushed" : results));
         return results;
     }
 
@@ -3016,7 +2948,7 @@ public class Calculator_v4 extends JFrame
                 newMemoryValues[i] = "";
                 try { newMemoryValues[i] = convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInMemory); }
                 catch (CalculatorError_v4 c) { logException(c); }
-                getLogger().debug("new number in memory is: " + newMemoryValues[i]);
+                LOGGER.debug("new number in memory is: " + newMemoryValues[i]);
                 i++;
             }
         }
@@ -3094,13 +3026,13 @@ public class Calculator_v4 extends JFrame
                 for(int i = 0; i < zeroesToAdd; i++) zeroes = zeroes + "0";
                 sb.append(zeroes);
             } catch (StringIndexOutOfBoundsException e) {
-                getLogger().warn("No second bits found");
+                LOGGER.warn("No second bits found");
             }
-            getLogger().info("Before reverse: {}", sb);
+            LOGGER.info("Before reverse: {}", sb);
             // End adding zeroes here
 
             sb = sb.reverse();
-            getLogger().info("After reverse: {}", sb);
+            LOGGER.info("After reverse: {}", sb);
             String strToReturn = sb.toString();
             LOGGER.debug("convertFrom("+fromType+")To("+toType+") = "+ sb);
             LOGGER.warn("ADD CODE THAT MAKES SURE RETURNED VALUE UPDATES BYTES");
@@ -3158,7 +3090,7 @@ public class Calculator_v4 extends JFrame
         }
         else if (fromType == BINARY && toType == OCTAL) { confirm("IMPLEMENT"); }
 
-        getLogger().info("base set to: " + getCalculatorBase() + addNewLineCharacters(1));
+        LOGGER.info("base set to: " + getCalculatorBase() + addNewLineCharacters(1));
         return convertedValue;
     }
 
@@ -3257,5 +3189,129 @@ public class Calculator_v4 extends JFrame
                 mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
 
     }
+
+    /************* All Getters and Setters ******************/
+
+    @Override
+    public GridBagLayout getLayout() { return layout; }
+    public GridBagConstraints getConstraints() { return constraints; }
+    public JButton getButton0() { return button0; }
+    public JButton getButton1() { return button1; }
+    public JButton getButton2() { return button2; }
+    public JButton getButton3() { return button3; }
+    public JButton getButton4() { return button4; }
+    public JButton getButton5() { return button5; }
+    public JButton getButton6() { return button6; }
+    public JButton getButton7() { return button7; }
+    public JButton getButton8() { return button8; }
+    public JButton getButton9() { return button9; }
+    public JButton getButtonClear() { return buttonClear; }
+    public JButton getButtonClearEntry() { return buttonClearEntry; }
+    public JButton getButtonDelete() { return buttonDelete; }
+    public JButton getButtonDot() { return buttonDot; }
+    public JButton getButtonFraction() { return buttonFraction; }
+    public JButton getButtonPercent() { return buttonPercent; }
+    public JButton getButtonSqrt() { return buttonSqrt; }
+    public JButton getButtonMemoryClear() { return buttonMemoryClear; }
+    public JButton getButtonMemoryRecall() { return buttonMemoryRecall; }
+    public JButton getButtonMemoryStore() { return buttonMemoryStore; }
+    public JButton getButtonMemoryAddition() { return buttonMemoryAddition; }
+    public JButton getButtonMemorySubtraction() { return buttonMemorySubtraction; }
+    public JButton getButtonAdd() { return buttonAdd; }
+    public JButton getButtonSubtract() { return buttonSubtract; }
+    public JButton getButtonMultiply() { return buttonMultiply; }
+    public JButton getButtonDivide() { return buttonDivide; }
+    public JButton getButtonEquals() { return buttonEquals; }
+    public JButton getButtonNegate() { return buttonNegate; }
+    public String[] getValues() { return values; }
+    public String[] getMemoryValues() { return memoryValues; }
+    public int getValuesPosition() { return valuesPosition; }
+    public int getMemoryPosition() { return memoryPosition; }
+    protected JTextArea getTextArea() { return this.textArea; }
+    public StringBuffer getTextareaValue() { return textareaValue; }
+    public CalculatorType_v4 getCalculatorType() { return this.calcType; }
+    public JPanel getCurrentPanel() { return currentPanel; }
+    public ImageIcon getCalculatorImage1() { return calculatorImage1; }
+    public ImageIcon getCalculator2() { return calculator2; }
+    public ImageIcon getMacLogo() { return macLogo; }
+    public ImageIcon getWindowsLogo() { return windowsLogo; }
+    public ImageIcon getBlankImage() { return blankImage; }
+    public JLabel getIconLabel() { return iconLabel; }
+    public JLabel getTextLabel() { return textLabel; }
+
+    public boolean isFirstNumBool() { return firstNumBool; }
+    public boolean isNumberNegative() { return numberIsNegative; }
+    public boolean isMemorySwitchBool() { return memorySwitchBool; }
+    public boolean isAddBool() { return addBool; }
+    public boolean isSubBool() { return subBool; }
+    public boolean isMulBool() { return mulBool; }
+    public boolean isDivBool() { return divBool; }
+    public boolean isMemAddBool() { return memAddBool; }
+    public boolean isMemSubBool() { return memSubBool; }
+    public boolean isNegatePressed() { return negatePressed; }
+    public boolean isDotButtonPressed() { return dotButtonPressed; }
+    public boolean isOrButtonPressed() { return orButtonBool; }
+    public boolean isModButtonPressed() { return modButtonBool; }
+    public boolean isXorButtonPressed() { return xorButtonBool; }
+    public boolean isNegateButtonPressed() { return negateButtonBool; }
+    public boolean isNotButtonPressed() { return notButtonBool; }
+    public boolean isAndButtonPressed() { return andButtonBool; }
+    public CalculatorBase_v4 getCalculatorBase() { return base; }
+    public JMenuBar getBar() { return bar; }
+
+    public boolean isButtonBinSet() { return isButtonBinSet; }
+    public boolean isButtonOctSet() { return isButtonOctSet; }
+    public boolean isButtonDecSet() { return isButtonDecSet; }
+    public boolean isButtonHexSet() { return isButtonHexSet; }
+    public boolean isButtonByteSet() { return isButtonByteSet; }
+    public boolean isButtonWordSet() { return isButtonWordSet; }
+    public boolean isButtonDWordSet() { return isButtonDwordSet; }
+    public boolean isButtonQWordSet() { return isButtonQwordSet; }
+
+    public void setLayout(GridBagLayout layout) { this.layout = layout; }
+    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
+    public void setValues(String[] values) { this.values = values; }
+    public void setValuesPosition(int valuesPosition) { this.valuesPosition = valuesPosition; }
+    public void setMemoryValues(String[] memoryValues) { this.memoryValues = memoryValues; }
+    public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
+    public void setTextArea(JTextArea textArea) { this.textArea = textArea; }
+    public void setTextareaValue(StringBuffer textareaValue) { this.textareaValue = textareaValue; }
+    public void setCalculatorType(CalculatorType_v4 calcType) { this.calcType = calcType; }
+
+    public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
+    public void setCalculatorImage1(ImageIcon calculatorImage1) { this.calculatorImage1 = calculatorImage1; }
+    public void setCalculator2(ImageIcon calculator2) { this.calculator2 = calculator2; }
+    public void setMacLogo(ImageIcon macLogo) { this.macLogo = macLogo; }
+    public void setWindowsLogo(ImageIcon windowsLogo) { this.windowsLogo = windowsLogo; }
+    public void setBlankImage(ImageIcon blankImage) { this.blankImage = blankImage; }
+    public void setIconLabel(JLabel iconLabel) { this.iconLabel = iconLabel; }
+    public void setTextLabel(JLabel textLabel) { this.textLabel = textLabel; }
+    public void setFirstNumBool(boolean firstNumBool) { this.firstNumBool = firstNumBool; }
+    public void setNumberIsNegative(boolean numberIsNegative) { this.numberIsNegative = numberIsNegative; }
+    public void setMemorySwitchBool(boolean memorySwitchBool) { this.memorySwitchBool = memorySwitchBool; }
+    public void setAddBool(boolean addBool) { this.addBool = addBool; }
+    public void setSubBool(boolean subBool) { this.subBool = subBool; }
+    public void setMulBool(boolean mulBool) { this.mulBool = mulBool; }
+    public void setDivBool(boolean divBool) { this.divBool = divBool; }
+    public void setMemAddBool(boolean memAddBool) { this.memAddBool = memAddBool; }
+    public void setMemSubBool(boolean memSubBool) { this.memSubBool = memSubBool; }
+    public void setNegatePressed(boolean negatePressed) { this.negatePressed = negatePressed; }
+    public void setDotButtonPressed(boolean dotButtonPressed) { this.dotButtonPressed = dotButtonPressed; }
+    public void setButtonBin(boolean buttonBinSet) { isButtonBinSet = buttonBinSet; }
+    public void setButtonOct(boolean buttonOctSet) { isButtonOctSet = buttonOctSet; }
+    public void setButtonDec(boolean buttonDecSet) { isButtonDecSet = buttonDecSet; }
+    public void setButtonHex(boolean buttonHexSet) { isButtonHexSet = buttonHexSet; }
+    public void setButtonByte(boolean buttonByteSet) { isButtonByteSet = buttonByteSet; }
+    public void setButtonWord(boolean buttonWordSet) { isButtonWordSet = buttonWordSet; }
+    public void setButtonDWord(boolean buttonDwordSet) { isButtonDwordSet = buttonDwordSet; }
+    public void setButtonQWord(boolean buttonQwordSet) { isButtonQwordSet = buttonQwordSet; }
+    public void setOrButtonBool(boolean orButtonBool) { this.orButtonBool = orButtonBool; }
+    public void setModButtonBool(boolean modButtonBool) { this.modButtonBool = modButtonBool; }
+    public void setXorButtonBool(boolean xorButtonBool) { this.xorButtonBool = xorButtonBool; }
+    public void setNegateButtonBool(boolean negateButtonBool) { this.negateButtonBool = negateButtonBool; }
+    public void setNotButtonBool(boolean notButtonBool) { this.notButtonBool = notButtonBool; }
+    public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
+    public void setCalculatorBase(CalculatorBase_v4 base) { this.base = base; }
+    public void setBar(JMenuBar bar) { this.bar = bar; }
 
 }

@@ -11,27 +11,20 @@ import static version4.CalculatorBase_v4.*;
 
 public class CalculatorMain
 {
-
-    private final static Logger LOGGER;
-    static
-    {
-        System.setProperty("appName", "Calculator_v4");
-        LOGGER = LogManager.getLogger(CalculatorMain.class);
-    }
+    static { System.setProperty("appName", "Calculator"); }
+    private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class);
 
 	public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting here...");
         //Start a basic calculator
-        //Calculator_v4 calculator = new Calculator_v4(BASIC);
+        Calculator_v4 calculator = new Calculator_v4(BASIC);
         //Start a programmer calculator
-        Calculator_v4 calculator = new Calculator_v4(PROGRAMMER, DECIMAL);
+        //Calculator_v4 calculator = new Calculator_v4(PROGRAMMER, DECIMAL);
         //Start a date calculator with options1 selected
         //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
         //Calculator_v4 calculator = new Calculator_v4(DATE, OPTIONS2);
-
-        // All other options here
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {
@@ -49,44 +42,45 @@ public class CalculatorMain
 a. PROGRAMMER: Michael Ball
 b. DATE:   Version 4: 2021
 c. ENVIRONMENT: Mac Mohave 10.14
-d. FILES INCLUDED: TODO: Add file names
+d. FILES INCLUDED:
 e. PURPOSE: To enhance the functionality of this calculator tenfold. 
 f. INPUT:  user will input numbers and based on the calculator type will return results.
 g. PRECONDITIONS: 
 h. OUTPUT: displays calculated result from input number buttons
-i. POSTCONDITIONS: Most Booleans returned to intial state. Some stay switched on, like the decimal boolean, until explicitely turned off.
+i. POST CONDITIONS: Most Booleans returned to initial state. Some stay switched on, like the decimal boolean,
+                    until explicitly turned off.
 j. ALGORITHM: 
 k.  ERRORS: Errors are organized by Date and then by what the error was effecting.  
 
 o.  HISTORY:
 Version One Started: Unknown date
-Version One Concluded: March 6, 2017
+Version One Concluded: March 6, 2017,
             Status of Calculator: 20/28 buttons are operational (but not validated).
-            No other history to report unfortunately.
+            No other history to report, unfortunately.
 
-Version Two Started: March 7, 2017
+Version Two Started: March 7, 2017,
             Errors Found:
-            [a] Dot operator is doing the same thing as the negate. The dot symbol
+            [a] Dot operator is doing the same thing as the negate button was. The dot symbol
             is being print out in front of the number and not at the end. However, the
             issue is resolved after adding another number to the flow. I will continue
             to work on this issue so the dot operator does not print out at the front.
 
-            March 8, 2017
+            March 8, 2017,
             Errors Corrected:
-            [a] The dot operator is now working perfectly. The logic was a lot simplier
+            [a] The dot operator is now working perfectly. The logic was a lot simpler
             than I thought before. However, it required restructuring of the logic. Before
             I was only collecting integer inputs. By adding double inputs I 1) had to store
-            them somewhere and 2) had to check for each input whether or not it was changed
-            to a double. 
+            them somewhere and 2) had to check for each input whether it was changed
+            to a double, or not.
 
-            March 15, 2017
+            March 15, 2017,
             See above documentation. As of this date, with the new string input logic implemented,
             I now appear to once again have 20/28 buttons working and functional. The implementation
-            of first trying to distinquish between ints and doubles input really messed up the logic.
+            of first trying to distinguish between int's and doubles input really messed up the logic.
             Then the implementation of storing the input as string 1) simplified the logic and 2) quickly
             allowed me to fix many buttons that broke during this time frame of the two implementations.
             
-            March 18, 2017
+            March 18, 2017,
             Today I was about to start on the logic to allow the memory buttons to work. Before starting
             to write my logic, I first tested how the buttons work. During testing, I noticed that the simple
             operation of 85 + 5 was not setting the text area to 90. The storage area was receiving the proper
@@ -105,7 +99,7 @@ Version Two Started: March 7, 2017
             it was resetting all values for temp. I actually only wanted to reset input one, two and result. 
             Fixing the for loop fixed this issue. 
 
-            March 21, 2017
+            March 21, 2017,
             Today I fixed the error where if you were to type into the calculator this problem: 5 + negate + percent,
             it would return: 0.05-. This is the correct answer, but the output is all wrong. So what I did was I took
             the code that changed the input to negative and reversed it to take the negative away. Then add it to the 
@@ -121,27 +115,27 @@ Version Two Started: March 7, 2017
 
             Today I thought of an issue that I had not thought of yet and when I verified my idea, I was right.
             I had left out some logic that would only allow the operator button to happen once. After that I
-            added it to the other operator buttons and they all checked out. Now you cannot keep pressing an
+            added it to the other operator buttons, and they all checked out. Now you cannot keep pressing an
             operator button. It only allows it once. 
-            Also I figured out that memory recall did not display negative numbers properly. It was again displaying
+            Also, I figured out that memory recall did not display negative numbers properly. It was again displaying
             the negative sign at the end of the number and not the front. So I added in the code I already had to
             convert numbers to display properly and nested my existed logic together in an if else statement. Then
             almost immediately, I thought about what would happen with a decimal number. And it broke. This issue
-            took a more thought to fix but it only took about 15 minutes. I added some logic to print out the 
+            took a more thought to fix, but it only took about 15 minutes. I added some logic to print out the
             result if the number was a double in an else if (number.number < 0.0) but that did not work. So I 
             tried putting it in the first condition as an or, but that also didn't work. So I changed the entire
             condition to just (number.number < 0.0) and it works for whole and decimal numbers. 
             
-            March 24, 2017
+            March 24, 2017,
             I fixed an issue that broke the calculator if the delete button was pushed. It should not do 
             anything if the text area is empty. This was an easy fix. I then needed to implement this idea
             for all other buttons where this could happen. 
 
-            March 25, 2017
+            March 25, 2017,
             I continue to fix issues where a button should not perform any action if there is no number
             in the text area. 
 
-            March 26, 2017
+            March 26, 2017,
             I had an issue where the negate button broke. This likely happened when I was implementing some
             logic to not allow a button to be pushed when there is no number to associate the button with.
             I had one if statement the same as the initial. This was incorrect. It took about 10 minutes
@@ -152,40 +146,40 @@ Version Two Started: March 7, 2017
             spots were fixed accordingly. 
 
             // add in logic to check to see if operator can be performed on a negative number.
-            April 1, 2017
-            I am now trying to add logic into the operator buttons that would allow syncronize to the flow
+            April 1, 2017,
+            I am now trying to add logic into the operator buttons that would allow them to synchronize to the flow
             of a problem. For example, the user could do this: 5+5+5+5 and it would work and update with each 
             push of an operator. Plus pushing any other operator would return the updated result and perform
             the operator after.
             // DEL doesn't erase operator if that is the last entry!
 
-            April 7, 2017
+            April 7, 2017,
             DEL button is not working properly. I thought I had fixed this issue. But I was way off. So 
             today and on the 11, I made sure that the proper action was performed to make sure the number
             returned was appropriate.
 
-            April 29, 2017
+            April 29, 2017,
             Today I fixed a bug with the DEL button where when the input was something like 0.5,
             it was returning .0 instead of just 0. I fixed the issue and in the process made some 
             additional methods. 
             Today I also fixed a bug where the input was taking 0625 as a number instead of eliminating
             the unnecessary zero in the front.
 
-            April 30, 2017
+            April 30, 2017,
             Today, I worked on the negate button. I was able to simplify the logic by so much.
             I reduced the negate button by 61 lines of code. This is due to the fact that my 
-            calculator was not doing the same thing as Microsofts. So after checking and double
-            checking what Microsoft's calculator did, I changed my code to do the same. This
+            calculator was not doing the same thing as Microsoft's. So after checking and double-checking
+            what Microsoft's calculator did, I changed my code to do the same. This
             helped majorly in reducing the code.
 
-            May 6, 2017
-            I found a slight variation in my calculator that is different from Microsofts. I noticed
+            May 6, 2017,
+            I found a slight variation in my calculator that is different from Microsoft's. I noticed
             that pushing the negate button, effecting a negative number, it was not returning it to a
             positive number. After looking at my code, I noticed I just was not allowing it to add another
             negative sign. So I changed my method to convert it back to positive. Done actually on May
-            8, 2017 but I discovered the issue on the 6th.
-Version Two Concluded: March 6, 2017
-Version Three Started: October 26, 2017
+            8, 2017, but I discovered the issue on the 6th.
+Version Two Concluded: March 6, 2017,
+Version Three Started: October 26, 2017,
             October 26, 2017:
             Today, I begin version three. I will start by saying that the project is going to be completely
             redesigned. There will be more structure to this new version of the calculator. There will be a
@@ -195,7 +189,7 @@ Version Three Started: October 26, 2017
             Standard | Scientific | Programmer | Date Calculation | Converter (has more subclasses; may be on top tier of its own)
                                                                     Currency | Volume | Length | Weight and Mass.....
 
-Version Four Started: August 14, 2021
+Version Four Started: August 14, 2021,
     Saturday, Aug 14, 2021:
     I started the Converter version. It should be relatively easy to implement seeing as they all have a
     common face. So build the face, allow for parameters and fill them in as a particular type is added.

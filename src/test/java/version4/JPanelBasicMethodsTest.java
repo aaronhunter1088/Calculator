@@ -9,6 +9,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.*;
+import static version4.CalculatorBase_v4.BINARY;
+import static version4.CalculatorBase_v4.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JPanelBasicMethodsTest {
@@ -34,9 +36,8 @@ public class JPanelBasicMethodsTest {
     public void switchingFromProgrammerToBasicConvertsTextArea() throws CalculatorError_v4
     {
         c.getTextArea().setText("00000100");
-
-        testTheBasicPanel.convertToDecimal();
-        assertEquals("Did not convert from Binary to Decimal", "4", c.getTextArea().getText().replaceAll("\n", ""));
+        c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, c.getTextAreaWithoutAnything());
+        assertEquals("Did not convert from Binary to Decimal", "4", c.getTextareaValueWithoutAnything().toString());
     }
 
     @Test
