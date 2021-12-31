@@ -1,0 +1,46 @@
+[INFO ] 12-21-2021 09:45:05.943 [Method:main] Runnables.CalculatorMain:19 - Starting here...
+[INFO ] 12-21-2021 09:45:06.997 [Method:setupMenuBar] Calculators.Calculator:353 - Setting up the default menu bar
+[INFO ] 12-21-2021 09:45:07.063 [Method:setupMenuBar] Calculators.Calculator:527 - Finished creating the menu bar
+[INFO ] 12-21-2021 09:45:07.161 [Method:setupCalculatorImages] Calculators.Calculator:183 - All images set for Calculator
+[INFO ] 12-21-2021 09:45:07.171 [Method:setupBasicPanelComponents] Panels.BasicPanel:56 - Configuring the components for the basic view
+[INFO ] 12-21-2021 09:45:07.172 [Method:setupTextArea] Calculators.Calculator:169 - Text Area configured
+[INFO ] 12-21-2021 09:45:07.172 [Method:setupMemoryButtons] Calculators.Calculator:611 - Memory Store button configured
+[INFO ] 12-21-2021 09:45:07.173 [Method:setupMemoryButtons] Calculators.Calculator:618 - Memory Clear button configured
+[INFO ] 12-21-2021 09:45:07.174 [Method:setupMemoryButtons] Calculators.Calculator:625 - Memory Recall button configured
+[INFO ] 12-21-2021 09:45:07.175 [Method:setupMemoryButtons] Calculators.Calculator:632 - Memory Add button configured
+[INFO ] 12-21-2021 09:45:07.175 [Method:setupMemoryButtons] Calculators.Calculator:639 - Memory Subtract button configured
+[INFO ] 12-21-2021 09:45:07.176 [Method:setupDeleteButton] Calculators.Calculator:561 - Delete button configured
+[INFO ] 12-21-2021 09:45:07.177 [Method:setupClearEntryButton] Calculators.Calculator:572 - Clear Entry button configured
+[INFO ] 12-21-2021 09:45:07.178 [Method:setupClearButton] Calculators.Calculator:589 - Clear button configured
+[INFO ] 12-21-2021 09:45:07.182 [Method:setupNumberButtons] Calculators.Calculator:348 - Number buttons configured
+[INFO ] 12-21-2021 09:45:07.183 [Method:setupDotButton] Calculators.Calculator:600 - Dot button configured
+[INFO ] 12-21-2021 09:45:07.184 [Method:setupAddButton] Calculators.Calculator:193 - Add button configured
+[INFO ] 12-21-2021 09:45:07.184 [Method:setupSubtractButton] Calculators.Calculator:203 - Subtract button configured
+[INFO ] 12-21-2021 09:45:07.185 [Method:setupMultiplyButton] Calculators.Calculator:213 - Multiply button configured
+[INFO ] 12-21-2021 09:45:07.186 [Method:setupDivideButton] Calculators.Calculator:223 - Divide button configured
+[INFO ] 12-21-2021 09:45:07.188 [Method:setupBasicPanelComponents] Panels.BasicPanel:79 - Finished configuring the buttons
+[DEBUG] 12-21-2021 09:45:07.189 [Method:createViewHelpMenu] Panels.BasicPanel:191 - Found the current View Help option
+[INFO ] 12-21-2021 09:45:07.194 [Method:addComponentsToPanel] Panels.BasicPanel:120 - Buttons added to panel
+[INFO ] 12-21-2021 09:45:07.211 [Method:setupBasicPanel] Panels.BasicPanel:51 - Finished setting up basic panel
+[INFO ] 12-21-2021 09:45:07.212 [Method:<init>] Calculators.Calculator:145 - Panel added to calculator
+[INFO ] 12-21-2021 09:45:07.914 [Method:<init>] Calculators.Calculator:153 - Finished constructing the calculator
+[INFO ] 12-21-2021 09:45:07.940 [Method:confirm] Calculators.Calculator:1332 - Confirm Results: Calculator started. Initial state
+[INFO ] 12-21-2021 09:45:07.941 [Method:confirm] Calculators.Calculator:1334 - ---------------- 
+[INFO ] 12-21-2021 09:45:07.942 [Method:confirm] Calculators.Calculator:1337 - textareaValue: ''
+[INFO ] 12-21-2021 09:45:07.942 [Method:confirm] Calculators.Calculator:1339 - no memories stored!
+[INFO ] 12-21-2021 09:45:07.944 [Method:confirm] Calculators.Calculator:1347 - addBool: 'false'
+[INFO ] 12-21-2021 09:45:07.944 [Method:confirm] Calculators.Calculator:1348 - subBool: 'false'
+[INFO ] 12-21-2021 09:45:07.944 [Method:confirm] Calculators.Calculator:1349 - mulBool: 'false'
+[INFO ] 12-21-2021 09:45:07.944 [Method:confirm] Calculators.Calculator:1350 - divBool: 'false'
+[INFO ] 12-21-2021 09:45:07.945 [Method:confirm] Calculators.Calculator:1351 - values[0]: ''
+[INFO ] 12-21-2021 09:45:07.945 [Method:confirm] Calculators.Calculator:1352 - values[1]: ''
+[INFO ] 12-21-2021 09:45:07.946 [Method:confirm] Calculators.Calculator:1353 - values[2]: ''
+[INFO ] 12-21-2021 09:45:07.946 [Method:confirm] Calculators.Calculator:1354 - valuesPosition: '0'
+[INFO ] 12-21-2021 09:45:07.946 [Method:confirm] Calculators.Calculator:1355 - firstNumBool: 'true'
+[INFO ] 12-21-2021 09:45:07.947 [Method:confirm] Calculators.Calculator:1356 - dotButtonPressed: 'false'
+[INFO ] 12-21-2021 09:45:07.947 [Method:confirm] Calculators.Calculator:1357 - isNegative: 'false'
+[INFO ] 12-21-2021 09:45:07.948 [Method:confirm] Calculators.Calculator:1358 - calcType: 'BASIC
+[INFO ] 12-21-2021 09:45:07.948 [Method:confirm] Calculators.Calculator:1359 - calcBase: 'DECIMAL'
+[INFO ] 12-21-2021 09:45:07.948 [Method:confirm] Calculators.Calculator:1437 - -------- End Confirm Results --------
+
+
