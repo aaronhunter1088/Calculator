@@ -22,10 +22,10 @@ import static Types.CalculatorBase.BINARY;
 import static Types.CalculatorBase.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JPanelProgrammerMethodsTest
+public class ProgrammerPanelTest
 {
-    static { System.setProperty("appName", JPanelProgrammerMethodsTest.class.getSimpleName()); }
-    protected final static Logger LOGGER = LogManager.getLogger(JPanelProgrammerMethodsTest.class);
+    static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
+    protected final static Logger LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
     private static Calculator calculator;
     private String number;
     private boolean result;

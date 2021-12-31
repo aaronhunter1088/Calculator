@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static Types.CalculatorType.*;
+import static Types.ConverterType.*;
 
 public class CalculatorMain
 {
@@ -18,13 +19,15 @@ public class CalculatorMain
     {
         LOGGER.info("Starting here...");
         //Start a basic calculator
-        Calculator calculator = new Calculator(BASIC);
+        //Calculator calculator = new Calculator(BASIC);
         //Start a programmer calculator
         //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
         //Start a date calculator with options1 selected
         //Calculator calculator = new Calculator(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
         //Calculator calculator = new Calculator(DATE, OPTIONS2);
+        //Start a converter calculator
+        Calculator calculator = new Calculator(CONVERTER, AREA); // (CONVERTER, <ConverterType>);
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {

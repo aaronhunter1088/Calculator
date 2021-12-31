@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import static org.junit.Assert.assertEquals;
 import static Types.ConverterType.*;
 
-public class converterPanel {
+public class ConverterPanelTest {
 
     private static Calculator testCalculator;
     private static ConverterPanel testTheConverterPanel;
@@ -23,7 +23,7 @@ public class converterPanel {
 
     @BeforeClass
     public static void setup() throws Exception {
-        System.setProperty("appName", "JPanelBasicMethodsTest");
+        System.setProperty("appName", "BasicPanelTest");
         testCalculator = new Calculator();
         testTheConverterPanel = new ConverterPanel(testCalculator, AREA);
         testCalculator.setCurrentPanel(testTheConverterPanel);

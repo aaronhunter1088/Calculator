@@ -15,7 +15,7 @@ import static Types.CalculatorBase.BINARY;
 import static Types.CalculatorBase.DECIMAL;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JPanelBasicMethodsTest {
+public class BasicPanelTest {
 
     private static Calculator c;
     private static BasicPanel testTheBasicPanel;
@@ -27,7 +27,7 @@ public class JPanelBasicMethodsTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        System.setProperty("appName", "JPanelBasicMethodsTest");
+        System.setProperty("appName", "BasicPanelTest");
         c = new Calculator();
         testTheBasicPanel = new BasicPanel(c);
     }

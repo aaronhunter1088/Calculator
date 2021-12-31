@@ -71,32 +71,41 @@ public class DatePanel extends JPanel
     private final String EMPTY_STRING = "";
 
     /************* Constructors ******************/
-    public DatePanel(Calculator calculator) throws ParseException { this(calculator, null); }
+    public DatePanel() { LOGGER.info("Date panel created"); }
+
+    public DatePanel(Calculator calculator){ this(calculator, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
      * @param chosenOption
      */
-    public DatePanel(Calculator calculator, String chosenOption) throws ParseException
+    public DatePanel(Calculator calculator, String chosenOption)
+    {
+        setupDatePanel(calculator, chosenOption);
+    }
+
+    /************* Start of methods here ******************/
+    public void setupDatePanel(Calculator calculator, String chosenOption)
     {
         setCalculator(calculator);
+        calculator.setCalculatorType(CalculatorType.DATE);
+        calculator.setConverterType(null);
         setMinimumSize(new Dimension(100,400));
         setDateLayout(new GridBagLayout());
         setLayout(getDateLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupJPanelDate(chosenOption);
-        updateThisPanel();
+        setupPanel(chosenOption);
+        createViewHelpMenu();
+        //updateThisPanel();
+        SwingUtilities.updateComponentTreeUI(this);
         getLogger().info("Finished constructing Date panel");
     }
 
-    /************* Start of methods here ******************/
-    public void performDateCalculatorTypeSwitchOperations()
+    public void performDateCalculatorTypeSwitchOperations(Calculator calculator, String chosenOption)
     {
         getLogger().info("Performing tasks associated to switching to the Date panel");
-        //setupEditMenu();
-        createViewHelpMenu();
-        SwingUtilities.updateComponentTreeUI(this);
+        setupDatePanel(calculator, chosenOption);
         getLogger().info("Finished tasks associated to switching to the Date panel");
     }
 
@@ -140,7 +149,7 @@ public class DatePanel extends JPanel
                 viewHelpItem.setName("View Help");
                 viewHelpItem.addActionListener(action -> {
                     JLabel textLabel = new JLabel(helpString,
-                            getCalculator().getBlankImage(), SwingConstants.CENTER);
+                            getCalculator().blankImage, SwingConstants.CENTER);
                     textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                     textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -179,7 +188,7 @@ public class DatePanel extends JPanel
         getCalculator().confirm(getClass().getName() + " was reset!");
     }
 
-    private void setupJPanelDate(String chosenOption)
+    private void setupPanel(String chosenOption)
     {
         LOGGER.info("Starting to construct " + getClass().getName());
         getLogger().warn("Edit Menu not set up for " + getCalculator().getCalculatorType());
@@ -425,7 +434,7 @@ public class DatePanel extends JPanel
 
     public void updateThisPanel()
     {
-        getLogger().info("Panel updated");
+        LOGGER.info("Panel updated");
         this.repaint();
         this.revalidate();
         try { UIManager.setLookAndFeel(UIManager.getLookAndFeel()); }
@@ -439,7 +448,7 @@ public class DatePanel extends JPanel
             { getLogger().error("An exception has occurred: " + e.getMessage()); }
         }
         SwingUtilities.invokeLater(() -> SwingUtilities.updateComponentTreeUI(getCalculator()));
-        getCalculator().pack();
+        calculator.pack();
     }
 
     public void switchComponentsForDateDifference()
@@ -915,6 +924,7 @@ public class DatePanel extends JPanel
     public String getSelectedOption() { return this.selectedOption; }
 
     /************* All Setters ******************/
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     private void setDateLayout(GridBagLayout dateLayout) { this.dateLayout = dateLayout; }
     private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setFromModel(UtilCalendarModel fromModel) { this.fromModel = fromModel; }
@@ -923,7 +933,6 @@ public class DatePanel extends JPanel
     public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; }
     public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; }
     public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; }
-    private void setCalculator(Calculator calculator) { this.calculator = calculator; }
     private void setOptionsBox(JComboBox optionsBox) { this.optionsBox = optionsBox; }
     private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; }
     private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; }

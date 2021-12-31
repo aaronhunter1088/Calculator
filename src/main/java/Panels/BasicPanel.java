@@ -24,27 +24,31 @@ public class BasicPanel extends JPanel
     private Calculator calculator;
 
     /************* Constructors ******************/
-    public BasicPanel() {}
+    public BasicPanel() { LOGGER.info("Basic panel created"); }
 
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
      */
-    public BasicPanel(Calculator calculator)
+    public BasicPanel(Calculator calculator) { setupBasicPanel(calculator); }
+
+    /************* Start of methods here ******************/
+    public void setupBasicPanel(Calculator calculator)
     {
         setCalculator(calculator);
+        calculator.setCalculatorType(BASIC);
+        calculator.setConverterType(null);
         setMinimumSize(new Dimension(100,200));
         setLayout(new GridBagLayout()); // set panel layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupBasicPanel();
+        setupBasicPanelComponents();
         setupHelpMenu();
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up basic panel");
     }
 
-    /************* Start of methods here ******************/
-    public void setupBasicPanel()
+    public void setupBasicPanelComponents()
     {
         LOGGER.info("Configuring the components for the basic view");
         calculator.setupTextArea();
@@ -113,18 +117,9 @@ public class BasicPanel extends JPanel
         LOGGER.info("Buttons added to panel");
     }
 
-    public void performBasicCalculatorTypeSwitchOperations()
+    public void performBasicCalculatorTypeSwitchOperations(Calculator calculator)
     {
-        LOGGER.info("Switching to the basic panel...");
-        calculator.clearNumberButtonFunctionalities();
-        calculator.clearAllBasicOperationButtons(); // clears + - * /
-        calculator.clearAllOtherBasicCalculatorButtons();
-        setupBasicPanel();
-        LOGGER.info("Basic panel setup");
-        setupHelpMenu();
-        calculator.updateTheTextAreaBasedOnTheTypeAndBase();
-        if (!calculator.isMemoryValuesEmpty()) calculator.convertMemoryValues();
-        LOGGER.info("Finished performBasicCalculatorTypeSwitchOperations");
+        setupBasicPanel(calculator);
     }
 
     private void setupHelpMenu()

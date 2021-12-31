@@ -23,7 +23,7 @@ import static Types.CalculatorType.DATE;
 import static Panels.DatePanel.OPTIONS2;
 
 @RunWith(MockitoJUnitRunner.class)
-public class datePanel {
+public class DatePanelTest {
 
     private static Calculator c;
     private static DatePanel testTheDatePanel;

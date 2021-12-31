@@ -73,29 +73,33 @@ public class ProgrammerPanel extends JPanel {
     protected Calculator calculator;
 
     /************* Constructors ******************/
-    public ProgrammerPanel() {}
+    public ProgrammerPanel() { LOGGER.info("Programmer panel created"); }
 
-    public ProgrammerPanel(Calculator calculator) throws CalculatorError
-    { this(calculator, null); }
+    public ProgrammerPanel(Calculator calculator) { this(calculator, null); }
+
     /**
      * MAIN CONSTRUCTOR USED
      * @param calculator
      */
-    public ProgrammerPanel(Calculator calculator, CalculatorBase base) throws CalculatorError
+    public ProgrammerPanel(Calculator calculator, CalculatorBase base) { setupProgrammerPanel(calculator, base); }
+
+    /************* Start of methods here ******************/
+    public void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         setCalculator(calculator);
+        calculator.setCalculatorType(PROGRAMMER);
+        calculator.setConverterType(null);
         setMinimumSize(new Dimension(600,400));
         setLayout(new GridBagLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupProgrammerPanel(base);
+        setupProgrammerPanelComponents(base);
         setupHelpMenu();
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up programmer panel");
     }
 
-    /************* Start of methods here ******************/
-    public void setupProgrammerPanel(CalculatorBase base) throws CalculatorError
+    public void setupProgrammerPanelComponents(CalculatorBase base)
     {
         LOGGER.info("Configuring programmer panel buttons");
         calculator.textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -180,11 +184,22 @@ public class ProgrammerPanel extends JPanel {
         }
         else
         {
-            calculator.setCalculatorBase(BINARY);
-            setButtons2To9(false);
-            setButtonsAToF(false);
-            getButtonBin().setSelected(true);
-            calculator.isButtonBinSet = true;
+            if (!calculator.textareaValue.toString().equals(""))
+            {
+                calculator.setCalculatorBase(DECIMAL);
+                getButtonDec().setSelected(true);
+                calculator.isButtonDecSet = true;
+                setButtons2To9(true);
+                setButtonsAToF(false);
+            }
+            else
+            {
+                calculator.setCalculatorBase(BINARY);
+                setButtons2To9(false);
+                setButtonsAToF(false);
+                getButtonBin().setSelected(true);
+                calculator.isButtonBinSet = true;
+            }
         }
         // Set the byte
         getButtonByte().setSelected(true);
@@ -572,40 +587,10 @@ public class ProgrammerPanel extends JPanel {
         LOGGER.info("Finished addComponentsToProgrammerPanel");
     }
 
-    public void performProgrammerCalculatorTypeSwitchOperations() throws CalculatorError
+    public void performProgrammerCalculatorTypeSwitchOperations(Calculator calculator, CalculatorBase base )
     {
         LOGGER.info("Switching to the programmer panel...");
-        calculator.clearNumberButtonFunctionalities();
-        calculator.clearAllBasicOperationButtons(); // clears + - * /
-        calculator.clearAllOtherBasicCalculatorButtons();
-        clearBasesFunctionality();
-        clearBytesFunctionality();
-        setupProgrammerPanel(BINARY);
-        LOGGER.info("Programmer panel setup");
-        // TODO: create method below
-        setupHelpMenu();
-        String convertedValue = ""; // conversion does not always happen
-        String operator = calculator.determineIfBasicPanelOperatorWasPushed(); // operator not always included
-        if (calculator.getCalculatorBase() != DECIMAL)
-        {   // only convert if base is not decimal
-            convertedValue = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.values[calculator.valuesPosition]);
-        }
-        if (StringUtils.isBlank(operator) && StringUtils.isBlank(convertedValue))
-        {   // no operator, no conversion
-            calculator.textArea.setText(calculator.addNewLineCharacters(3) + calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        }
-        else if (StringUtils.isNotBlank(operator) && StringUtils.isBlank(convertedValue))
-        {   // operator, no conversion
-            calculator.textArea.setText(calculator.addNewLineCharacters(3) + operator + " " + calculator.values[0]);
-        }
-        else if (StringUtils.isBlank(operator) && StringUtils.isNotBlank(convertedValue))
-        {   // no operator, has conversion
-            calculator.textArea.setText(calculator.addNewLineCharacters(3)  + convertedValue);
-        }
-        else // if (StringUtils.isNotBlank(operator) && StringUtils.isNotBlank(convertedValue))
-        {   // operator, conversion
-            calculator.textArea.setText(calculator.addNewLineCharacters(3) + operator + " " + convertedValue);
-        }
+        setupProgrammerPanel(calculator, base);
     }
 
     public void setupNumberButtons(boolean isEnabled)
