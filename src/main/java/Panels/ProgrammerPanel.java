@@ -23,53 +23,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
 
-public class ProgrammerPanel extends JPanel {
-
-    protected final static Logger LOGGER;
-    static {
-        LOGGER = LogManager.getLogger(ProgrammerPanel.class);
-    }
-
+public class ProgrammerPanel extends JPanel
+{
+    private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanel.class);
     private static final long serialVersionUID = 1L;
 
-    private GridBagLayout panelLayout; // layout of the calculator
+    private GridBagLayout programmerLayout; // layout of the calculator
     private GridBagLayout otherButtonLayout = new GridBagLayout();
     private JPanel allOtherButtonsPanel = new JPanel(otherButtonLayout);
     private GridBagConstraints constraints; // layout's constraints
-
     private final ButtonGroup btnGroupOne = new ButtonGroup();
     private final ButtonGroup btnGroupTwo = new ButtonGroup();
     private final JPanel buttonGroup1ButtonPanel = new JPanel(); // contains the first button group
     private final JPanel buttonGroup2ButtonPanel = new JPanel(); // contains the second button group
-
-    final private JButton buttonBlank = new JButton(" ");
-    final private JButton buttonMod = new JButton("MOD");
-    final private JButton buttonLPar = new JButton("(");
-    final private JButton buttonRPar = new JButton(")");
-    final private JButton buttonRol = new JButton ("RoL");
-    final private JButton buttonRor = new JButton ("RoR");
-    final private JButton buttonOr = new JButton ("OR");
-    final private JButton buttonXor = new JButton ("XOR");
-    final private JButton buttonLSh = new JButton ("Lsh");
-    final private JButton buttonRSh = new JButton ("Rsh");
-    final private JButton buttonNot = new JButton ("NOT");
-    final private JButton buttonAnd = new JButton ("AND");
-    final private JButton buttonA = new JButton("A");
-    final private JButton buttonB = new JButton("B");
-    final private JButton buttonC = new JButton("C");
-    final private JButton buttonD = new JButton("D");
-    final private JButton buttonE = new JButton("E");
-    final private JButton buttonF = new JButton("F");
-    final private JRadioButton buttonHex = new JRadioButton("Hex");
-    final private JRadioButton buttonDec = new JRadioButton("Dec");
-    final private JRadioButton buttonOct = new JRadioButton("Oct");
-    final private JRadioButton buttonBin = new JRadioButton("Bin");
-    final private JRadioButton buttonQWord = new JRadioButton("QWord");
-    final private JRadioButton buttonDWord = new JRadioButton("DWord");
-    final private JRadioButton buttonWord = new JRadioButton("Word");
-    final private JRadioButton buttonByte = new JRadioButton("Byte");
-
-    protected StringBuffer conversion = new StringBuffer();
+    final private JButton buttonBlank = new JButton(" "), buttonMod = new JButton("MOD"),
+                          buttonLPar = new JButton("("), buttonRPar = new JButton(")"),
+                          buttonRol = new JButton ("RoL"), buttonRor = new JButton ("RoR"),
+                          buttonOr = new JButton ("OR"), buttonXor = new JButton ("XOR"),
+                          buttonLSh = new JButton ("Lsh"), buttonRSh = new JButton ("Rsh"),
+                          buttonNot = new JButton ("NOT"), buttonAnd = new JButton ("AND"),
+                          buttonA = new JButton("A"), buttonB = new JButton("B"),
+                          buttonC = new JButton("C"), buttonD = new JButton("D"),
+                          buttonE = new JButton("E"), buttonF = new JButton("F");
+    final private JRadioButton buttonHex = new JRadioButton("Hex"), buttonDec = new JRadioButton("Dec"),
+                               buttonOct = new JRadioButton("Oct"), buttonBin = new JRadioButton("Bin"),
+                               buttonQWord = new JRadioButton("QWord"), buttonDWord = new JRadioButton("DWord"),
+                               buttonWord = new JRadioButton("Word"), buttonByte = new JRadioButton("Byte");
     protected Calculator calculator;
 
     /************* Constructors ******************/
@@ -87,13 +66,13 @@ public class ProgrammerPanel extends JPanel {
     public void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         setCalculator(calculator);
-        calculator.setCalculatorType(PROGRAMMER);
-        calculator.setConverterType(null);
-        setMinimumSize(new Dimension(600,400));
         setLayout(new GridBagLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupProgrammerPanelComponents(base);
+        setMaximumSize(new Dimension(600,400));
+        calculator.setCalculatorType(PROGRAMMER);
+        calculator.setConverterType(null);
         setupHelpMenu();
+        setupProgrammerPanelComponents(base);
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up programmer panel");
@@ -442,14 +421,10 @@ public class ProgrammerPanel extends JPanel {
     public void addComponentsToPanel()
     {
         LOGGER.info("Starting addComponentsToProgrammerPanel");
-        //constraints.insets = new Insets(5,5,5,5);
-        //addComponent(getTopLeftBytesLabel(), 0,0, 0, 1);
-        //addComponent(getTopRightBytesLabel(), 0, 5, 0, 1);
         constraints.insets = new Insets(5,0,5,0); //9905
         addComponent(calculator.textArea, 0, 0, 9, 2);
         constraints.insets = new Insets(5,5,5,5);
-        //addComponent(getBottomLeftBytesLabel(), 1, 0, 0, 1);
-        //addComponent(getBottomRightBytesLabel(), 1, 5, 0, 1);
+
         buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
         // add buttons to panel
         buttonGroup1ButtonPanel.add(buttonHex);
@@ -483,14 +458,14 @@ public class ProgrammerPanel extends JPanel {
         addComponent(buttonGroup2ButtonPanel, 8, 0, 1, 4);
 
         constraints.insets = new Insets(5,0,1,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        setComponent(buttonBlank, 0, 0, 1, 1, otherButtonLayout);
-        setComponent(buttonMod, 0, 1, 1, 1, otherButtonLayout);
-        setComponent(buttonA, 0, 2, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonMemoryStore, 0, 3, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonMemoryClear, 0, 4, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonMemoryRecall, 0, 5, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonMemoryAddition, 0, 6, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonMemorySubtraction, 0, 7, 1, 1, otherButtonLayout);
+        setComponent(buttonBlank, 0, 0, 1, 1);
+        setComponent(buttonMod, 0, 1, 1, 1);
+        setComponent(buttonA, 0, 2, 1, 1);
+        setComponent(calculator.buttonMemoryStore, 0, 3, 1, 1);
+        setComponent(calculator.buttonMemoryClear, 0, 4, 1, 1);
+        setComponent(calculator.buttonMemoryRecall, 0, 5, 1, 1);
+        setComponent(calculator.buttonMemoryAddition, 0, 6, 1, 1);
+        setComponent(calculator.buttonMemorySubtraction, 0, 7, 1, 1);
         allOtherButtonsPanel.add(buttonBlank);
         allOtherButtonsPanel.add(buttonMod);
         allOtherButtonsPanel.add(buttonA);
@@ -500,14 +475,14 @@ public class ProgrammerPanel extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonMemoryAddition);
         allOtherButtonsPanel.add(calculator.buttonMemorySubtraction);
 
-        setComponent(buttonLPar, 1, 0, 1, 1, otherButtonLayout);
-        setComponent(buttonRPar, 1, 1, 1, 1, otherButtonLayout);
-        setComponent(buttonB, 1, 2, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonDelete, 1, 3, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonClearEntry, 1, 4, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonClear, 1, 5, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonNegate, 1, 6, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonSqrt, 1, 7, 1, 1, otherButtonLayout);
+        setComponent(buttonLPar, 1, 0, 1, 1);
+        setComponent(buttonRPar, 1, 1, 1, 1);
+        setComponent(buttonB, 1, 2, 1, 1);
+        setComponent(calculator.buttonDelete, 1, 3, 1, 1);
+        setComponent(calculator.buttonClearEntry, 1, 4, 1, 1);
+        setComponent(calculator.buttonClear, 1, 5, 1, 1);
+        setComponent(calculator.buttonNegate, 1, 6, 1, 1);
+        setComponent(calculator.buttonSqrt, 1, 7, 1, 1);
         allOtherButtonsPanel.add(buttonLPar);
         allOtherButtonsPanel.add(buttonRPar);
         allOtherButtonsPanel.add(buttonB);
@@ -517,14 +492,14 @@ public class ProgrammerPanel extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonNegate);
         allOtherButtonsPanel.add(calculator.buttonSqrt);
 
-        setComponent(buttonRol, 2, 0, 1, 1, otherButtonLayout);
-        setComponent(buttonRor, 2, 1, 1, 1, otherButtonLayout);
-        setComponent(buttonC, 2, 2, 1, 1, otherButtonLayout);
-        setComponent(calculator.button7, 2, 3, 1, 1, otherButtonLayout);
-        setComponent(calculator.button8, 2, 4, 1, 1, otherButtonLayout);
-        setComponent(calculator.button9, 2, 5, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonDivide, 2, 6, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonPercent, 2, 7, 1, 1, otherButtonLayout);
+        setComponent(buttonRol, 2, 0, 1, 1);
+        setComponent(buttonRor, 2, 1, 1, 1);
+        setComponent(buttonC, 2, 2, 1, 1);
+        setComponent(calculator.button7, 2, 3, 1, 1);
+        setComponent(calculator.button8, 2, 4, 1, 1);
+        setComponent(calculator.button9, 2, 5, 1, 1);
+        setComponent(calculator.buttonDivide, 2, 6, 1, 1);
+        setComponent(calculator.buttonPercent, 2, 7, 1, 1);
         allOtherButtonsPanel.add(buttonRol);
         allOtherButtonsPanel.add(buttonRor);
         allOtherButtonsPanel.add(buttonC);
@@ -534,14 +509,14 @@ public class ProgrammerPanel extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonDivide);
         allOtherButtonsPanel.add(calculator.buttonPercent);
 
-        setComponent(buttonOr, 3, 0, 1, 1, otherButtonLayout);
-        setComponent(buttonXor, 3, 1, 1, 1, otherButtonLayout);
-        setComponent(buttonD, 3, 2, 1, 1, otherButtonLayout);
-        setComponent(calculator.button4, 3, 3, 1, 1, otherButtonLayout);
-        setComponent(calculator.button5, 3, 4, 1, 1, otherButtonLayout);
-        setComponent(calculator.button6, 3, 5, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonMultiply, 3, 6, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonFraction, 3, 7, 1, 1, otherButtonLayout);
+        setComponent(buttonOr, 3, 0, 1, 1);
+        setComponent(buttonXor, 3, 1, 1, 1);
+        setComponent(buttonD, 3, 2, 1, 1);
+        setComponent(calculator.button4, 3, 3, 1, 1);
+        setComponent(calculator.button5, 3, 4, 1, 1);
+        setComponent(calculator.button6, 3, 5, 1, 1);
+        setComponent(calculator.buttonMultiply, 3, 6, 1, 1);
+        setComponent(calculator.buttonFraction, 3, 7, 1, 1);
         allOtherButtonsPanel.add(buttonOr);
         allOtherButtonsPanel.add(buttonXor);
         allOtherButtonsPanel.add(buttonD);
@@ -551,14 +526,14 @@ public class ProgrammerPanel extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonMultiply);
         allOtherButtonsPanel.add(calculator.buttonFraction);
 
-        setComponent(buttonLSh, 4, 0, 1, 1, otherButtonLayout);
-        setComponent(buttonRSh, 4, 1, 1, 1, otherButtonLayout);
-        setComponent(buttonE, 4, 2, 1, 1, otherButtonLayout);
-        setComponent(calculator.button1, 4, 3, 1, 1, otherButtonLayout);
-        setComponent(calculator.button2, 4, 4, 1, 1, otherButtonLayout);
-        setComponent(calculator.button3, 4, 5, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonSubtract, 4, 6, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonEquals, 4, 7, 1, 2, otherButtonLayout);
+        setComponent(buttonLSh, 4, 0, 1, 1);
+        setComponent(buttonRSh, 4, 1, 1, 1);
+        setComponent(buttonE, 4, 2, 1, 1);
+        setComponent(calculator.button1, 4, 3, 1, 1);
+        setComponent(calculator.button2, 4, 4, 1, 1);
+        setComponent(calculator.button3, 4, 5, 1, 1);
+        setComponent(calculator.buttonSubtract, 4, 6, 1, 1);
+        setComponent(calculator.buttonEquals, 4, 7, 1, 2);
         allOtherButtonsPanel.add(buttonLSh);
         allOtherButtonsPanel.add(buttonRSh);
         allOtherButtonsPanel.add(buttonE);
@@ -568,12 +543,12 @@ public class ProgrammerPanel extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonSubtract);
         allOtherButtonsPanel.add(calculator.buttonEquals);
 
-        setComponent(buttonNot, 5, 0, 1, 1, otherButtonLayout);
-        setComponent(buttonAnd, 5, 1, 1, 1, otherButtonLayout);
-        setComponent(buttonF, 5, 2, 1, 1, otherButtonLayout);
-        setComponent(calculator.getButton0(), 5, 3, 2, 1, otherButtonLayout);
-        setComponent(calculator.buttonDot, 5, 5, 1, 1, otherButtonLayout);
-        setComponent(calculator.buttonAdd, 5, 6, 1, 2, otherButtonLayout);
+        setComponent(buttonNot, 5, 0, 1, 1);
+        setComponent(buttonAnd, 5, 1, 1, 1);
+        setComponent(buttonF, 5, 2, 1, 1);
+        setComponent(calculator.getButton0(), 5, 3, 2, 1);
+        setComponent(calculator.buttonDot, 5, 5, 1, 1);
+        setComponent(calculator.buttonAdd, 5, 6, 1, 2);
 
         allOtherButtonsPanel.add(buttonNot);
         allOtherButtonsPanel.add(buttonAnd);
@@ -583,7 +558,7 @@ public class ProgrammerPanel extends JPanel {
         allOtherButtonsPanel.add(calculator.buttonAdd);
         // add allOtherButtonsPanel to gui
         constraints.insets = new Insets(0, 0, 5, 0);
-        addComponent(allOtherButtonsPanel, 5, 1, 6, 8, panelLayout);
+        addComponent(allOtherButtonsPanel, 5, 1, 6, 8, programmerLayout);
         LOGGER.info("Finished addComponentsToProgrammerPanel");
     }
 
@@ -729,7 +704,7 @@ public class ProgrammerPanel extends JPanel {
         constraints.weighty = 0;
         constraints.weightx = 0;
 
-        panelLayout.setConstraints(c, constraints); // set constraints
+        programmerLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
 
@@ -745,7 +720,7 @@ public class ProgrammerPanel extends JPanel {
         constraints.weighty = 0;
         constraints.weightx = 0;
 
-        panelLayout.setConstraints(c, constraints); // set constraints
+        programmerLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
 
@@ -759,13 +734,13 @@ public class ProgrammerPanel extends JPanel {
         add(c); // add component
     }
 
-    public void setComponent(Component c, int row, int column, int gwidth, int gheight, GridBagLayout layout)
+    public void setComponent(Component c, int row, int column, int gwidth, int gheight)
     {
         constraints.gridx = column;
         constraints.gridy = row;
         constraints.gridwidth = gwidth;
         constraints.gridheight = gheight;
-        layout.setConstraints(c, constraints); // set constraints
+        otherButtonLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
 
@@ -1440,7 +1415,7 @@ public class ProgrammerPanel extends JPanel {
 
     /************* All Getters and Setters ******************/
     @Override
-    public GridBagLayout getLayout() { return panelLayout; }
+    public GridBagLayout getLayout() { return programmerLayout; }
     public GridBagLayout getOtherButtonLayout() { return otherButtonLayout; }
     public JPanel getAllOtherButtonsPanel() { return allOtherButtonsPanel; }
     public ButtonGroup getBtnGroupOne() { return btnGroupOne; }
@@ -1473,13 +1448,12 @@ public class ProgrammerPanel extends JPanel {
     public JRadioButton getButtonDWord() { return buttonDWord; }
     public JRadioButton getButtonWord() { return buttonWord; }
     public JRadioButton getButtonByte() { return buttonByte; }
-    public StringBuffer getConversion() { return conversion; }
     public Calculator getCalculator() { return calculator; }
 
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
-        this.panelLayout = panelLayout;
+        this.programmerLayout = panelLayout;
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
 

@@ -32,12 +32,12 @@ import static Panels.DatePanel.*;
 
 public class Calculator extends JFrame
 {
-    final static private Logger LOGGER = LogManager.getLogger(Calculator.class);
-    final static private long serialVersionUID = 1L;
-    final static public Font font = new Font("Segoe UI", Font.PLAIN, 12),
+    private static final Logger LOGGER = LogManager.getLogger(Calculator.class);
+    private static final long serialVersionUID = 1L;
+    public static final Font font = new Font("Segoe UI", Font.PLAIN, 12),
                              font2 = new Font("Verdana", Font.BOLD, 20),
                              font_Bold = new Font("Segoe UI", Font.BOLD, 12);
-    final public JButton button0 = new JButton("0"), button1 = new JButton("1"),
+    public final JButton button0 = new JButton("0"), button1 = new JButton("1"),
             button2 = new JButton("2"), button3 = new JButton("3"),
             button4 = new JButton("4"), button5 = new JButton("5"),
             button6 = new JButton("6"), button7 = new JButton("7"),

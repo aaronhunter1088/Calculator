@@ -16,10 +16,10 @@ import static Types.CalculatorType.*;
 // The face for a basic calculator
 public class BasicPanel extends JPanel
 {
-    protected final static Logger LOGGER = LogManager.getLogger(BasicPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
-    private GridBagLayout panelLayout; // layout of the calculator
+    private GridBagLayout basicLayout; // layout of the calculator
     private GridBagConstraints constraints; // layout's constraints
     private Calculator calculator;
 
@@ -36,13 +36,13 @@ public class BasicPanel extends JPanel
     public void setupBasicPanel(Calculator calculator)
     {
         setCalculator(calculator);
-        calculator.setCalculatorType(BASIC);
-        calculator.setConverterType(null);
-        setMinimumSize(new Dimension(100,200));
         setLayout(new GridBagLayout()); // set panel layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setupBasicPanelComponents();
+        setMaximumSize(new Dimension(100,200));
+        calculator.setCalculatorType(BASIC);
+        calculator.setConverterType(null);
         setupHelpMenu();
+        setupBasicPanelComponents();
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up basic panel");
@@ -83,7 +83,7 @@ public class BasicPanel extends JPanel
         constraints.insets = new Insets(5,0,5,0);
         addComponent(calculator.textArea, 0, 0, 5, 2);
         constraints.insets = new Insets(5,5,5,5);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.getButtonMemoryStore(), 2, 0, 1, 1);
         addComponent(calculator.getButtonMemoryClear(), 2, 1, 1, 1);
         addComponent(calculator.getButtonMemoryRecall(), 2, 2, 1, 1);
@@ -124,6 +124,7 @@ public class BasicPanel extends JPanel
 
     private void setupHelpMenu()
     {
+        LOGGER.info("Creating the view help menu for basic panel");
         String helpString = "<html>" +
                 "How to use the " + BASIC.getName() + " Calculator<br><br>" +
                 "For basic usage: <br>" +
@@ -169,11 +170,6 @@ public class BasicPanel extends JPanel
                 "in memory.<br> The text area will update to show<br> the result. <br><br>"+
 
                 "</html>";
-        createViewHelpMenu(helpString);
-    }
-
-    public void createViewHelpMenu(String helpString)
-    {
         // 4 menu options: loop through to find the Help option
         for(int i=0; i < calculator.getBar().getMenuCount(); i++) {
             JMenu menuOption = calculator.getBar().getMenu(i);
@@ -224,7 +220,7 @@ public class BasicPanel extends JPanel
         constraints.gridy = row;
         constraints.gridwidth = width;
         constraints.gridheight = height;
-        panelLayout.setConstraints(c, constraints); // set constraints
+        basicLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
 
@@ -407,7 +403,7 @@ public class BasicPanel extends JPanel
     /************* All Getters and Setters ******************/
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
-        this.panelLayout = panelLayout;
+        this.basicLayout = panelLayout;
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }

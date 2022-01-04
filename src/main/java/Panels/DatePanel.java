@@ -12,21 +12,15 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.text.ParseException;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 import static Calculators.Calculator.*;
+import static Types.CalculatorType.*;
 
 public class DatePanel extends JPanel
 {
-    protected final static Logger LOGGER;
-    static
-    {
-        System.setProperty("appName", "DatePanel");
-        LOGGER = LogManager.getLogger(BasicPanel.class);
-    }
-
+    private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
     private GridBagLayout dateLayout; // layout of the calculator
@@ -58,7 +52,7 @@ public class DatePanel extends JPanel
     private final String YEAR = "Year";
     private final String MONTH = "Month";
     private final String WEEK = "Week";
-    private final String DATE = "Date";
+    private final String DATE_ = "Date";
     private final String DAY = "Day";
     private final String LOWER_CASE_S = "s";
     private final String SAME_YEAR = SAME + SPACE + YEAR;
@@ -73,7 +67,7 @@ public class DatePanel extends JPanel
     /************* Constructors ******************/
     public DatePanel() { LOGGER.info("Date panel created"); }
 
-    public DatePanel(Calculator calculator){ this(calculator, null); }
+    public DatePanel(Calculator calculator) { this(calculator, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
@@ -89,15 +83,14 @@ public class DatePanel extends JPanel
     public void setupDatePanel(Calculator calculator, String chosenOption)
     {
         setCalculator(calculator);
-        calculator.setCalculatorType(CalculatorType.DATE);
-        calculator.setConverterType(null);
-        setMinimumSize(new Dimension(100,400));
-        setDateLayout(new GridBagLayout());
-        setLayout(getDateLayout()); // set frame layout
+        setLayout(new GridBagLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
+        setMaximumSize(new Dimension(100,400));
+        calculator.setCalculatorType(DATE);
+        calculator.setConverterType(null);
+        setupHelpMenu();
         setupPanel(chosenOption);
-        createViewHelpMenu();
-        //updateThisPanel();
+        addStartupComponentsToPanel(chosenOption);
         SwingUtilities.updateComponentTreeUI(this);
         getLogger().info("Finished constructing Date panel");
     }
@@ -109,10 +102,10 @@ public class DatePanel extends JPanel
         getLogger().info("Finished tasks associated to switching to the Date panel");
     }
 
-    public void createViewHelpMenu()
+    public void setupHelpMenu()
     {
-        getLogger().info("Creating the view help menu for date panel");
-        String helpString = "<html>How to use the " + DATE + " Calculator<br><br>" +
+        LOGGER.info("Creating the view help menu for date panel");
+        String helpString = "<html>How to use the " + DATE_ + " Calculator<br><br>" +
                 "Difference Between Dates:<br>" +
                 "Enter a date into either field, From or To.<br>" +
                 "Only 1 date is required to change to show a difference.<br>" +
@@ -191,47 +184,32 @@ public class DatePanel extends JPanel
     private void setupPanel(String chosenOption)
     {
         LOGGER.info("Starting to construct " + getClass().getName());
-        getLogger().warn("Edit Menu not set up for " + getCalculator().getCalculatorType());
-        //createEditMenu();
-        createViewHelpMenu();
-
+        LOGGER.warn("Edit Menu not set up for " + getCalculator().getCalculatorType());
         setupOptionsSelection(chosenOption);
-
         setupFromDate();
         setupToDate();
-
         setDifferenceLabel(new JLabel(DIFFERENCE));
         getDifferenceLabel().setFont(font2);
         getDifferenceLabel().setHorizontalAlignment(SwingConstants.LEFT);
-
-        // TODO: change textfields to labels
         setYearsDifferenceLabel(new JLabel(SAME_YEAR));
         setMonthsDifferenceLabel(new JLabel(SAME_MONTH));
         setWeeksDifferenceLabel(new JLabel(SAME_WEEK));
         setDaysDifferenceLabel(new JLabel(SAME_DAY));
-        //setYearsDiffTextField(new JTextField(SAME_YEAR));
-        //setMonthsDiffTextField(new JTextField(SAME_MONTH));
-        //setDaysDiffTextField(new JTextField(SAME_DATE));
 
         setBlankLabel1(new JLabel(SPACE));
         getBlankLabel1().setHorizontalAlignment(SwingConstants.LEFT);
-        //getBlankLabel1();
 
         setBlankLabel2(new JLabel(SPACE));
         getBlankLabel2().setHorizontalAlignment(SwingConstants.LEFT);
-        //getBlankLabel2();
 
         setBlankLabel3(new JLabel(SPACE));
         getBlankLabel3().setHorizontalAlignment(SwingConstants.LEFT);
-        //getBlankLabel3();
 
         setBlankLabel4(new JLabel(SPACE));
         getBlankLabel4().setHorizontalAlignment(SwingConstants.LEFT);
-        //getBlankLabel4();
 
         setBlankLabel5(new JLabel(SPACE));
         getBlankLabel5().setHorizontalAlignment(SwingConstants.LEFT);
-        //getBlankLabel5();
 
         setAddRadioButton(new JRadioButton(ADD));
         getAddRadioButton().setSelected(true);
@@ -292,26 +270,16 @@ public class DatePanel extends JPanel
         getTextFieldsGroupPanel().add(getDaysLabel());
         getTextFieldsGroupPanel().add(getDaysTextField());
 
-        //setLabelsGroupPanel(new JPanel());
-        //getLabelsGroupPanel().setLayout(new GridLayout(1,3, 30, 5));
-        //getLabelsGroupPanel().add(getYearsLabel());
-        //getLabelsGroupPanel().add(getMonthsLabel());
-        //getLabelsGroupPanel().add(getDaysLabel());
-
-        setDateLabel(new JLabel(DATE));
+        setDateLabel(new JLabel(DATE_));
         getDateLabel().setFont(font2);
         getDateLabel().setHorizontalAlignment(SwingConstants.LEFT);
 
         setupResultsLabel();
 
-        if (chosenOption == null || chosenOption.equals(OPTIONS1)) {
-            addStartupComponentsToJPanelDate(OPTIONS1);
-            setSelectedOption(OPTIONS1);
-        }
-        else {
-            addStartupComponentsToJPanelDate(chosenOption);
-            setSelectedOption(OPTIONS2);
-        }
+        if (chosenOption == null || chosenOption.equals(OPTIONS1))
+             setSelectedOption(OPTIONS1);
+        else setSelectedOption(OPTIONS2);
+
         getOptionsBox().repaint();
         LOGGER.info("Finished setting up " + getClass().getName());
     }
@@ -590,7 +558,7 @@ public class DatePanel extends JPanel
         performRadioButtonFunctionality(actionEvent);
     }
 
-    private void addStartupComponentsToJPanelDate(String chosenOption)
+    private void addStartupComponentsToPanel(String chosenOption)
     {
         LOGGER.info("Adding components to date panel, using " + chosenOption);
         if (chosenOption.equals(OPTIONS1))
@@ -636,12 +604,12 @@ public class DatePanel extends JPanel
         constraints.gridy = row;
         constraints.gridwidth = width;
         constraints.gridheight = height;
-        constraints.fill = GridBagConstraints.VERTICAL;
+        constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
         constraints.weighty = weighty;
         constraints.weightx = weightx;
         constraints.insets = new Insets(0, 0, 0, 0);
-        getDateLayout().setConstraints(c, getConstraints()); // set constraints
+        dateLayout.setConstraints(c, getConstraints()); // set constraints
         add(c); // add component
     }
 
@@ -871,7 +839,7 @@ public class DatePanel extends JPanel
             getYearsDifferenceLabel().setText(SAME + SPACE + YEAR);
             getMonthsDifferenceLabel().setText(SAME + SPACE + MONTH);
             getWeeksDifferenceLabel().setText(SAME + SPACE + WEEK);
-            getDaysDifferenceLabel().setText(SAME + SPACE + DATE);
+            getDaysDifferenceLabel().setText(SAME + SPACE + DATE_);
         }
         getLogger().info("Difference Results updated");
     }
@@ -924,6 +892,10 @@ public class DatePanel extends JPanel
     public String getSelectedOption() { return this.selectedOption; }
 
     /************* All Setters ******************/
+    public void setLayout(GridBagLayout dateLayout) {
+        super.setLayout(dateLayout);
+        this.dateLayout = dateLayout;
+    }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     private void setDateLayout(GridBagLayout dateLayout) { this.dateLayout = dateLayout; }
     private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }

@@ -21,7 +21,7 @@ import static Converters.AreaMethods.*;
 
 public class ConverterPanel extends JPanel
 {
-    protected final static Logger LOGGER = LogManager.getLogger(BasicPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
     private GridBagLayout converterLayout; // layout of the panel
@@ -59,25 +59,18 @@ public class ConverterPanel extends JPanel
     public void setupConverterPanel(Calculator calculator, ConverterType converterType)
     {
         setCalculator(calculator);
-        calculator.setCalculatorType(CONVERTER);
-        calculator.setConverterType(converterType);
-        setMinimumSize(new Dimension(300,400));
         setConverterLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setLayout(getConverterLayout());
-        calculator.setupNumberButtons(true);
-        calculator.setupClearEntryButton();
-        calculator.setupDeleteButton();
-        calculator.setupDotButton();
+        setMaximumSize(new Dimension(300,400));
+        calculator.setCalculatorType(CONVERTER);
+        calculator.setConverterType(converterType);
+        setupEditMenu();
+        setupHelpMenu(converterType);
         setupAllConverterButtonsFunctionalities();
         setupJPanelConverter();
         addStartupComponentsToJPanelConverter();
-        getTextField1().requestFocusInWindow();
-        setupEditMenu();
-        setupHelpMenu(converterType);
-        // end coming from programmer calculator, make sure to do these things
         SwingUtilities.updateComponentTreeUI(this);
-        getLogger().info("Finished setting up converter panel");
+        LOGGER.info("Finished setting up converter panel");
     }
 
     public void performConverterCalculatorTypeSwitchOperations(Calculator calculator, ConverterType converterType)
@@ -87,9 +80,13 @@ public class ConverterPanel extends JPanel
 
     private void setupJPanelConverter()
     {
-        LOGGER.info("Starting setupJPanelConverter");
-        getCalculator().setupButtonBlank1();
-        getCalculator().setupButtonBlank2();
+        LOGGER.info("Starting to setup the panel");
+        calculator.setupButtonBlank1();
+        calculator.setupButtonBlank2();
+        calculator.setupNumberButtons(true);
+        calculator.setupClearEntryButton();
+        calculator.setupDeleteButton();
+        calculator.setupDotButton();
         switch (calculator.getConverterType())
         {
             case ANGLE: {
@@ -104,12 +101,13 @@ public class ConverterPanel extends JPanel
                 LOGGER.error("Unknown converterType: " + calculator.getConverterType());
             }
         }
-        LOGGER.info("Finished setupJPanelConverter");
+        getTextField1().requestFocusInWindow();
+        LOGGER.info("Finished setting up the panel");
     }
 
     private void addStartupComponentsToJPanelConverter()
     {
-        LOGGER.info("Starting addStartupComponentsToJPanelConverter");
+        LOGGER.info("Starting to add components to panel");
         // all the following components are added no matter the option selected
         getConstraints().fill = GridBagConstraints.BOTH;
         getConstraints().anchor = GridBagConstraints.CENTER;
@@ -118,11 +116,10 @@ public class ConverterPanel extends JPanel
         addComponent(getUnitOptions1(), 3, 0, 0,1, 1.0,1.0);
         addComponent(getTextField2(), 4, 0, 0, 1,1.0,1.0);
         addComponent(getUnitOptions2(), 6, 0, 0,1, 1.0,1.0);
-        addComponent(getBottomSpaceAboveNumbers(), 7, 0, 1,1, 1.0,1.0);
         // numbers are added on top of a single panel
         getConstraints().anchor = GridBagConstraints.PAGE_START;
-        addComponent(getNumbersPanel(), 8, 0, 0, 1, 1.0, 1.0);
-        LOGGER.info("Finished addStartupComponentsToJPanelConverter");
+        addComponent(getNumbersPanel(), 7, 0, 0, 1, 1.0, 1.0);
+        LOGGER.info("Finished adding components to panel");
     }
 
     public void setupAllConverterButtonsFunctionalities()
@@ -415,7 +412,7 @@ public class ConverterPanel extends JPanel
                         // remove old option
                         menuOption.remove(valueForThisMenuOption);
                         // create new copy here
-                        JMenuItem copyItem = new JMenuItem("CopyC");
+                        JMenuItem copyItem = new JMenuItem("Copy");
                         copyItem.setAccelerator(KeyStroke.getKeyStroke(
                                 KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
                         copyItem.setFont(font);
@@ -431,7 +428,7 @@ public class ConverterPanel extends JPanel
                         // remove old option
                         menuOption.remove(valueForThisMenuOption);
                         // create new copy here
-                        JMenuItem pasteItem = new JMenuItem("PasteC");
+                        JMenuItem pasteItem = new JMenuItem("Paste");
                         pasteItem.setAccelerator(KeyStroke.getKeyStroke(
                                 KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
                         pasteItem.setFont(font);
@@ -605,7 +602,10 @@ public class ConverterPanel extends JPanel
     public boolean isTextField1Selected() { return isTextField1Selected; }
 
     /************* All Setters ******************/
-    public void setConverterLayout(GridBagLayout converterLayout) { this.converterLayout = converterLayout; }
+    public void setConverterLayout(GridBagLayout converterLayout) {
+        super.setLayout(converterLayout);
+        this.converterLayout = converterLayout;
+    }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setConverterTypeName(JLabel converterTypeName) { this.converterTypeName = converterTypeName; }
     public void setConverterTypeNameAsString(String converterName) { this.converterName = converterName; }
