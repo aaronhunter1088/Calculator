@@ -20,7 +20,7 @@ import java.util.Locale;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static Types.CalculatorType.DATE;
-import static Panels.DatePanel.OPTIONS2;
+import static Panels.DatePanel.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatePanelTest {
@@ -71,33 +71,33 @@ public class DatePanelTest {
         int month = todaysDate.getMonthValue()-1;
         int day = todaysDate.getDayOfMonth();
         testTheDatePanel.setFromModel(new UtilCalendarModel());
-        testTheDatePanel.getFromModel().setDate(year, month, day);
-        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.getFromModel()));
-        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.getFromDatePanel()));
+        testTheDatePanel.fromModel.setDate(year, month, day);
+        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.fromModel));
+        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.fromDatePanel));
 
-        testTheDatePanel.getYearsTextField().setText("29");
-        testTheDatePanel.getMonthsTextField().setText("2");
-        testTheDatePanel.getDaysTextField().setText("21"); // as of 11/19/2021
+        testTheDatePanel.yearsLabel.setText("29");
+        testTheDatePanel.monthLabel.setText("2");
+        testTheDatePanel.daysLabel.setText("21"); // as of 11/19/2021
 
         System.out.println("pushing subtract radio button");
         testTheDatePanel.performSubtractRadioButtonFunctionality(ae);
-        testTheDatePanel.getCalculator().confirm("Pushed Subtract From Test");
+        testTheDatePanel.calculator.confirm("Pushed Subtract From Test");
 
         testTheDatePanel.updateThisPanel();
 
-        year = testTheDatePanel.getFromDatePicker().getModel().getYear();
-        month = testTheDatePanel.getFromDatePicker().getModel().getMonth()+1;
-        day = testTheDatePanel.getFromDatePicker().getModel().getDay();
+        year = testTheDatePanel.fromDatePicker.getModel().getYear();
+        month = testTheDatePanel.fromDatePicker.getModel().getMonth()+1;
+        day = testTheDatePanel.fromDatePicker.getModel().getDay();
         todaysDate = LocalDate.of(year, month, day);
         assertEquals(LocalDate.of(1992, 8, 29), todaysDate);
 
         // Now add the same values back and test that the same date is returned
         testTheDatePanel.performAddRadioButtonFunctionality(ae);
-        testTheDatePanel.getCalculator().confirm("Pushed Add From Test");
+        testTheDatePanel.calculator.confirm("Pushed Add From Test");
 
-        year = testTheDatePanel.getFromDatePicker().getModel().getYear();
-        month = testTheDatePanel.getFromDatePicker().getModel().getMonth()+1;
-        day = testTheDatePanel.getFromDatePicker().getModel().getDay();
+        year = testTheDatePanel.fromDatePicker.getModel().getYear();
+        month = testTheDatePanel.fromDatePicker.getModel().getMonth()+1;
+        day = testTheDatePanel.fromDatePicker.getModel().getDay();
         todaysDate = LocalDate.of(year, month, day);
         assertEquals(LocalDate.of(2021, 11, 19), todaysDate);
     }
@@ -108,21 +108,21 @@ public class DatePanelTest {
         // LocalDate month value uses 0 based counting
         LocalDate myBirthday = LocalDate.of(1992, 7, 29);
         testTheDatePanel.setFromModel(new UtilCalendarModel());
-        testTheDatePanel.getFromModel().setDate(myBirthday.getYear(), myBirthday.getMonthValue(), myBirthday.getDayOfMonth());
-        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.getFromModel()));
-        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.getFromDatePanel()));
+        testTheDatePanel.fromModel.setDate(myBirthday.getYear(), myBirthday.getMonthValue(), myBirthday.getDayOfMonth());
+        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.fromModel));
+        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.fromDatePanel));
 
-        testTheDatePanel.getYearsTextField().setText("29");
-        testTheDatePanel.getMonthsTextField().setText("2");
-        testTheDatePanel.getDaysTextField().setText("21");
+        testTheDatePanel.yearsLabel.setText("29");
+        testTheDatePanel.monthLabel.setText("2");
+        testTheDatePanel.daysLabel.setText("21");
 
         System.out.println("pushing add radio button");
         testTheDatePanel.performAddRadioButtonFunctionality(ae);
-        testTheDatePanel.getCalculator().confirm("Pushed Add From Test");
+        testTheDatePanel.calculator.confirm("Pushed Add From Test");
 
-        int year = testTheDatePanel.getFromDatePicker().getModel().getYear();
-        int month = testTheDatePanel.getFromDatePicker().getModel().getMonth()+1;
-        int day = testTheDatePanel.getFromDatePicker().getModel().getDay();
+        int year = testTheDatePanel.fromDatePicker.getModel().getYear();
+        int month = testTheDatePanel.fromDatePicker.getModel().getMonth()+1;
+        int day = testTheDatePanel.fromDatePicker.getModel().getDay();
         myBirthday = LocalDate.of(year, month, day);
         assertEquals(LocalDate.of(2021, 11, 19), myBirthday);
     }
@@ -134,16 +134,16 @@ public class DatePanelTest {
         int month = LocalDate.now().getMonthValue()-1;
         int day = LocalDate.now().getDayOfMonth();
         testTheDatePanel.setFromModel(new UtilCalendarModel());
-        testTheDatePanel.getFromModel().setDate(year, month, day);
-        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.getFromModel()));
-        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.getFromDatePanel()));
+        testTheDatePanel.fromModel.setDate(year, month, day);
+        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.fromModel));
+        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.fromDatePanel));
         LocalDateTime todayLDT = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.now());
 
         // get values of from date, set to today's date
         testTheDatePanel.setToModel(new UtilCalendarModel());
-        testTheDatePanel.getToModel().setDate(1992, 7, 29);
-        testTheDatePanel.setToDatePanel(new JDatePanelImpl(testTheDatePanel.getToModel()));
-        testTheDatePanel.setToDatePicker(new JDatePickerImpl(testTheDatePanel.getToDatePanel()));
+        testTheDatePanel.toModel.setDate(1992, 7, 29);
+        testTheDatePanel.setToDatePanel(new JDatePanelImpl(testTheDatePanel.toModel));
+        testTheDatePanel.setToDatePicker(new JDatePickerImpl(testTheDatePanel.toDatePanel));
         //testTheDatePanel.getToDatePicker().getModel().setDate(1992, 7, 29);
 
         year = testTheDatePanel.getTheYearFromTheFromDatePicker();
@@ -173,9 +173,9 @@ public class DatePanelTest {
         int month = LocalDate.now().getMonthValue()-1;
         int day = LocalDate.now().getDayOfMonth();
         testTheDatePanel.setToModel(new UtilCalendarModel());
-        testTheDatePanel.getToModel().setDate(year, month, day);
-        testTheDatePanel.setToDatePanel(new JDatePanelImpl(testTheDatePanel.getToModel()));
-        testTheDatePanel.setToDatePicker(new JDatePickerImpl(testTheDatePanel.getToDatePanel()));
+        testTheDatePanel.toModel.setDate(year, month, day);
+        testTheDatePanel.setToDatePanel(new JDatePanelImpl(testTheDatePanel.toModel));
+        testTheDatePanel.setToDatePicker(new JDatePickerImpl(testTheDatePanel.toDatePanel));
         LocalDateTime todayLDT = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.now());
         // get values of to date, set to today's date
         year = testTheDatePanel.getTheYearFromTheToDatePicker();
@@ -187,9 +187,9 @@ public class DatePanelTest {
 
         // get values of from date, set to my birthday
         testTheDatePanel.setFromModel(new UtilCalendarModel());
-        testTheDatePanel.getFromModel().setDate(1992, 7, 29);
-        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.getFromModel()));
-        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.getFromDatePanel()));
+        testTheDatePanel.fromModel.setDate(1992, 7, 29);
+        testTheDatePanel.setFromDatePanel(new JDatePanelImpl(testTheDatePanel.fromModel));
+        testTheDatePanel.setFromDatePicker(new JDatePickerImpl(testTheDatePanel.fromDatePanel));
         // get values of to date, set to my birthday
         year = testTheDatePanel.getTheYearFromTheFromDatePicker();
         month = testTheDatePanel.getTheMonthFromTheFromDatePicker();

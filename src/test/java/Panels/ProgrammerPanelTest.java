@@ -60,7 +60,7 @@ public class ProgrammerPanelTest
         calculator.textArea.setText("4");
         calculator.textareaValue = new StringBuffer().append(calculator.textArea.getText());
         calculator.values[0] = "4";
-        programmerPanel.getButtonBin().setSelected(true);
+        programmerPanel.buttonBin.setSelected(true);
         String convertedValue = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.values[calculator.valuesPosition]);
         calculator.textArea.setText(calculator.addNewLineCharacters(3) + convertedValue);
         assertEquals("Did not convert from Decimal to Binary", "00000100", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
@@ -91,7 +91,7 @@ public class ProgrammerPanelTest
         calculator.textArea.setText("");
         calculator.setTextareaValue(new StringBuffer());
         calculator.setCalculatorType(CalculatorType.PROGRAMMER);
-        programmerPanel.getButtonBin().setSelected(true);
+        programmerPanel.buttonBin.setSelected(true);
         calculator.setFirstNumBool(true);
         when(actionEvent.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")
                                    .thenReturn("0").thenReturn("1").thenReturn("0").thenReturn("1") //5
@@ -179,7 +179,7 @@ public class ProgrammerPanelTest
 
     @Test
     public void testPushingModulusButtonWithBothValuesSetReturnsProperResult() throws CalculatorError {
-        programmerPanel.getButtonBin().setSelected(true);
+        programmerPanel.buttonBin.setSelected(true);
         calculator.setAddBool(false);
         calculator.setOrButtonBool(false);
         when(actionEvent.getActionCommand()).thenReturn("Mod").thenReturn("=");

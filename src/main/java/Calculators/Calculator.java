@@ -25,10 +25,10 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static Panels.DatePanel.*;
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
 import static Types.ConverterType.*;
-import static Panels.DatePanel.*;
 
 public class Calculator extends JFrame
 {
@@ -281,6 +281,30 @@ public class Calculator extends JFrame
         getButtonFraction().setPreferredSize(new Dimension(35, 35) );
         getButtonFraction().setBorder(new LineBorder(Color.BLACK));
         getButtonFraction().setEnabled(true);
+        getButtonFraction().addActionListener(this::performFractionButtonActions);
+    }
+
+    public void performFractionButtonActions(ActionEvent action)
+    {
+        LOGGER.info("FracStoreButtonHandler class started");
+        String buttonChoice = action.getActionCommand();
+        if (values[0].contains("E"))
+        {
+            confirm("Cannot perform fraction operation. Number too big!");
+        }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            if (!textArea.getText().equals("")) {
+                double result = Double.parseDouble(values[valuesPosition]);
+                result = 1 / result;
+                LOGGER.info("result: " + result);
+                values[valuesPosition] = Double.toString(result);
+                textArea.setText("\n" + values[valuesPosition]);
+                LOGGER.info("temp[" + valuesPosition+"] is " + values[valuesPosition]);
+            }
+            confirm();
+        }
     }
 
     public void setupPercentButton()
@@ -289,6 +313,56 @@ public class Calculator extends JFrame
         getButtonPercent().setPreferredSize(new Dimension(35, 35) );
         getButtonPercent().setBorder(new LineBorder(Color.BLACK));
         getButtonPercent().setEnabled(true);
+        getButtonPercent().addActionListener(this::performPercentButtonActions);
+    }
+
+    public void performPercentButtonActions(ActionEvent action)
+    {
+        LOGGER.info("PercentStoreButtonHandler class started");
+        String buttonChoice = action.getActionCommand();
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform percent operation. Number too big!";
+            confirm(errorMsg);
+        }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice); // print out button confirmation
+            if (!textArea.getText().equals("")) {
+                //if(textArea.getText().substring(textArea.getText().length()-1).equals("-")) { // if the last index equals '-'
+                // if the number is negative
+                if (isNegativeNumber(textArea.getText().replaceAll("\\n", ""))) {
+                    LOGGER.info("if condition true");
+                    //temp[valuesPosition] = textArea.getText(); // textarea
+                    double percent = Double.parseDouble(values[valuesPosition]);
+                    percent /= 100;
+                    LOGGER.info("percent: "+percent);
+                    values[valuesPosition] = Double.toString(percent);
+                    textareaValue = new StringBuffer().append(formatNumber(values[valuesPosition]));
+                    LOGGER.info("Old " + values[valuesPosition]);
+                    values[valuesPosition] = values[valuesPosition].substring(1, values[valuesPosition].length());
+                    LOGGER.info("New " + values[valuesPosition] + "-");
+                    textArea.setText(values[valuesPosition] + "-"); // update textArea
+                    LOGGER.info("temp["+valuesPosition+"] is " + values[valuesPosition]);
+                    //textArea.setText(textarea);
+                    values[valuesPosition] = textareaValue.toString();//+textarea;
+                    textareaValue = new StringBuffer();
+                    LOGGER.info("temp["+valuesPosition+"] is " + values[valuesPosition]);
+                    LOGGER.info("textArea: "+textArea.getText());
+                } else {
+                    double percent = Double.parseDouble(values[valuesPosition]);
+                    percent /= 100;
+                    values[valuesPosition] = Double.toString(percent);
+                    textArea.setText("\n" + formatNumber(values[valuesPosition]));
+                    values[valuesPosition] = textArea.getText().replaceAll("\\n", "");
+                    LOGGER.info("temp["+valuesPosition+"] is " + values[valuesPosition]);
+                    LOGGER.info("textArea: "+textArea.getText());
+                }
+            }
+            dotButtonPressed = true;
+            textareaValue = new StringBuffer().append(textArea.getText());
+            confirm();
+        }
     }
 
     public void setupSquareRootButton()
@@ -297,6 +371,38 @@ public class Calculator extends JFrame
         getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
         getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
         getButtonSqrt().setEnabled(true);
+        getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
+    }
+
+    public void performSquareRootButtonActions(ActionEvent action)
+    {
+        LOGGER.info("SquareRoot ButtonHandler class started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        String errorStringNaN = "Not a Number";
+        LOGGER.debug("text: " + textArea.getText().replace("\n",""));
+        if (values[0].contains("E"))
+        {
+            String errorMsg = "Cannot perform square root operation. Number too big!";
+            confirm(errorMsg);
+        }
+        else
+        {
+            if (textArea.getText().equals("") || isNegativeNumber(textArea.getText()))
+            {
+                textArea.setText("\n"+errorStringNaN);
+                textareaValue = new StringBuffer().append("\n"+errorStringNaN);
+                confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
+            }
+            else
+            {
+                String result = String.valueOf(Math.sqrt(Double.valueOf(textArea.getText())));
+                result = formatNumber(result);
+                textArea.setText("\n"+result);
+                textareaValue = new StringBuffer().append(result);
+                confirm();
+            }
+        }
     }
 
     public void setupEqualsButton()
@@ -345,6 +451,7 @@ public class Calculator extends JFrame
                 { button.setPreferredSize(new Dimension(35, 35)); }
             button.setBorder(new LineBorder(Color.BLACK));
             button.setName(String.valueOf(i.getAndAdd(1)));
+            button.addActionListener(this::performNumberButtonActions);
         });
         LOGGER.info("Number buttons configured");
     }
@@ -704,8 +811,23 @@ public class Calculator extends JFrame
         LOGGER.info("Performing initial checks.... results: " + checkFound);
     }
 
-    public void performNumberButtonActions(String buttonChoice)
+    public void performNumberButtonActions(ActionEvent actionEvent)
     {
+        String buttonChoice = actionEvent.getActionCommand();
+        if (!isFirstNumBool()) // do for second number
+        {
+            if (!isDotButtonPressed())
+            {
+                textArea.setText("");
+                setTextareaValue(new StringBuffer().append(textArea.getText()));
+                if (!isFirstNumBool()) {
+                    setFirstNumBool(true);
+                    setNumberIsNegative(false);
+                } else
+                    setDotButtonPressed(true);
+                buttonDot.setEnabled(true);
+            }
+        }
         performInitialChecks();
         LOGGER.info("Performing number button actions...");
         if (isPositiveNumber(values[valuesPosition]) && !dotButtonPressed)
@@ -948,7 +1070,7 @@ public class Calculator extends JFrame
             resetBasicOperators(false);
             resetProgrammerByteOperators(false);
             ((ProgrammerPanel)getCurrentPanel()).resetProgrammerOperators();
-            ((ProgrammerPanel)getCurrentPanel()).getButtonByte().setSelected(true);
+            ((ProgrammerPanel)getCurrentPanel()).buttonByte.setSelected(true);
             isButtonByteSet = true;
         }
         updateTextareaFromTextArea();
@@ -987,7 +1109,7 @@ public class Calculator extends JFrame
             resetBasicOperators(false);
             resetProgrammerByteOperators(false);
             ((ProgrammerPanel)getCurrentPanel()).resetProgrammerOperators();
-            ((ProgrammerPanel)getCurrentPanel()).getButtonByte().setSelected(true);
+            ((ProgrammerPanel)getCurrentPanel()).buttonByte.setSelected(true);
             isButtonByteSet = true;
         }
         dotButtonPressed = false;
@@ -1416,7 +1538,7 @@ public class Calculator extends JFrame
             }
             case SCIENTIFIC : { LOGGER.warn("Confirm message not setup for " + calculatorType); break; }
             case DATE : {
-                if (((DatePanel)getCurrentPanel()).getSelectedOption().equals(OPTIONS1))
+                if (((DatePanel)getCurrentPanel()).selectedOption.equals(OPTIONS1))
                 {
                     LOGGER.info("{} Selected", OPTIONS1);
                     int year = ((DatePanel)getCurrentPanel()).getTheYearFromTheFromDatePicker();
@@ -1430,10 +1552,10 @@ public class Calculator extends JFrame
                     date = LocalDate.of(year, month, day);
                     LOGGER.info("ToDate(yyyy-mm-dd): " + date);
                     LOGGER.info("Difference");
-                    LOGGER.info("Year: " + ((DatePanel)getCurrentPanel()).getYearsDifferenceLabel().getText());
-                    LOGGER.info("Month: " + ((DatePanel)getCurrentPanel()).getMonthsDifferenceLabel().getText());
-                    LOGGER.info("Weeks: " + ((DatePanel)getCurrentPanel()).getWeeksDifferenceLabel().getText());
-                    LOGGER.info("Days: " + ((DatePanel)getCurrentPanel()).getDaysDifferenceLabel().getText());
+                    LOGGER.info("Year: " + ((DatePanel)getCurrentPanel()).yearsDifferenceLabel.getText());
+                    LOGGER.info("Month: " + ((DatePanel)getCurrentPanel()).monthsDifferenceLabel.getText());
+                    LOGGER.info("Weeks: " + ((DatePanel)getCurrentPanel()).monthsDifferenceLabel.getText());
+                    LOGGER.info("Days: " + ((DatePanel)getCurrentPanel()).daysDifferenceLabel.getText());
                 }
                 else {
                     LOGGER.info("{} Selected", OPTIONS2);
@@ -1442,18 +1564,18 @@ public class Calculator extends JFrame
                     int day = ((DatePanel)getCurrentPanel()).getTheDayOfTheMonthFromTheFromDatePicker();
                     LocalDate date = LocalDate.of(year, month, day);
                     LOGGER.info("FromDate(yyyy-mm-dd): " + date);
-                    boolean isAddSelected = ((DatePanel)getCurrentPanel()).getAddRadioButton().isSelected();
+                    boolean isAddSelected = ((DatePanel)getCurrentPanel()).addRadioButton.isSelected();
                     LOGGER.info("Add or Subtract Selection: " + (isAddSelected ? "Add" : "Subtract") );
-                    LOGGER.info("New Date: " + ((DatePanel)getCurrentPanel()).getResultsLabel().getText());
+                    LOGGER.info("New Date: " + ((DatePanel)getCurrentPanel()).resultsLabel.getText());
                 }
                 break;
             }
             case CONVERTER:  {
-                LOGGER.info("Converter: '{}'", ((ConverterPanel)getCurrentPanel()).getConverterNameAsString());
-                LOGGER.info("text field 1: '{}'", ((ConverterPanel)getCurrentPanel()).getTextField1().getText() + " "
-                        + ((ConverterPanel)getCurrentPanel()).getUnitOptions1().getSelectedItem());
-                LOGGER.info("text field 2: '{}'", ((ConverterPanel)getCurrentPanel()).getTextField2().getText() + " "
-                        + ((ConverterPanel)getCurrentPanel()).getUnitOptions2().getSelectedItem());
+                LOGGER.info("Converter: '{}'", ((ConverterPanel)getCurrentPanel()).converterName);
+                LOGGER.info("text field 1: '{}'", ((ConverterPanel)getCurrentPanel()).textField1.getText() + " "
+                        + ((ConverterPanel)getCurrentPanel()).unitOptions1.getSelectedItem());
+                LOGGER.info("text field 2: '{}'", ((ConverterPanel)getCurrentPanel()).textField2.getText() + " "
+                        + ((ConverterPanel)getCurrentPanel()).unitOptions2.getSelectedItem());
                 break;
             }
         }
@@ -1900,7 +2022,7 @@ public class Calculator extends JFrame
             setTitle(calculatorType.getName());
             setCurrentPanel(newPanel);
             pack();
-            LOGGER.info("Finished changing jPanels\n");
+            LOGGER.info("Finished changing jPanels");
             confirm("Switched from " + oldPanel.getClass().getSimpleName() + " to " + newPanel.getClass().getSimpleName());
         }
         else if (getCurrentPanel() instanceof ProgrammerPanel)
@@ -2583,7 +2705,7 @@ public class Calculator extends JFrame
         {
             // Get the current number first. save
             String numberInTextArea = getTextAreaWithoutAnything();
-            if (((ProgrammerPanel)getCurrentPanel()).getButtonBin().isSelected())
+            if (((ProgrammerPanel)getCurrentPanel()).buttonBin.isSelected())
             {
                 try { values[1] = convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInTextArea); }
                 catch (CalculatorError c) { logException(c); }
@@ -2591,16 +2713,16 @@ public class Calculator extends JFrame
                 LOGGER.info("Now performing operation...");
                 determineAndPerformBasicCalculatorOperation();
             }
-            else if (((ProgrammerPanel)getCurrentPanel()).getButtonOct().isSelected())
+            else if (((ProgrammerPanel)getCurrentPanel()).buttonOct.isSelected())
             {
                 try { values[1] = convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInTextArea); }
                 catch (CalculatorError c) { logException(c); }
             }
-            else if (((ProgrammerPanel)getCurrentPanel()).getButtonDec().isSelected())
+            else if (((ProgrammerPanel)getCurrentPanel()).buttonDec.isSelected())
             {
                 determineAndPerformBasicCalculatorOperation();
             }
-            else if (((ProgrammerPanel)getCurrentPanel()).getButtonHex().isSelected())
+            else if (((ProgrammerPanel)getCurrentPanel()).buttonHex.isSelected())
             {
                 values[0] = "";
                 try { values[0] = convertFromTypeToTypeOnValues(HEXADECIMAL, DECIMAL, values[0]); }

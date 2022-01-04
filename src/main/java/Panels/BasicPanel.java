@@ -1,6 +1,5 @@
 package Panels;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import Calculators.Calculator;
@@ -8,12 +7,10 @@ import Calculators.Calculator;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorType.*;
 
-// The face for a basic calculator
 public class BasicPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
@@ -36,11 +33,9 @@ public class BasicPanel extends JPanel
     public void setupBasicPanel(Calculator calculator)
     {
         setCalculator(calculator);
-        setLayout(new GridBagLayout()); // set panel layout
-        setConstraints(new GridBagConstraints()); // instantiate constraints
+        setLayout(new GridBagLayout());
+        setConstraints(new GridBagConstraints());
         setMaximumSize(new Dimension(100,200));
-        calculator.setCalculatorType(BASIC);
-        calculator.setConverterType(null);
         setupHelpMenu();
         setupBasicPanelComponents();
         addComponentsToPanel();
@@ -50,7 +45,9 @@ public class BasicPanel extends JPanel
 
     public void setupBasicPanelComponents()
     {
-        LOGGER.info("Configuring the components for the basic view");
+        calculator.setCalculatorBase(DECIMAL);
+        calculator.setCalculatorType(BASIC);
+        calculator.setConverterType(null);
         calculator.setupTextArea();
         calculator.setupMemoryButtons(); // MS, MC, MR, M+, M-
         calculator.setupDeleteButton();
@@ -58,32 +55,24 @@ public class BasicPanel extends JPanel
         calculator.setupClearButton();
         calculator.setupNegateButton();
         calculator.setupSquareRootButton();
-        calculator.getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
         calculator.setupNumberButtons(true);
-        calculator.getNumberButtons().forEach(button -> button.addActionListener(this::performBasicCalculatorNumberButtonActions));
         calculator.setupDotButton();
         calculator.setupAddButton();
         calculator.setupSubtractButton();
         calculator.setupMultiplyButton();
         calculator.setupDivideButton();
         calculator.setupPercentButton();
-        calculator.getButtonPercent().addActionListener(this::performPercentButtonActions);
         calculator.setupFractionButton();
-        calculator.getButtonFraction().addActionListener(this::performFractionButtonActions);
         calculator.setupEqualsButton();
-        calculator.setCalculatorBase(DECIMAL);
-        calculator.setCalculatorType(BASIC);
         LOGGER.info("Finished configuring the buttons");
     }
 
     public void addComponentsToPanel()
     {
-        constraints.fill = GridBagConstraints.BOTH;
         calculator.textArea.setBorder(new LineBorder(Color.BLACK));
         constraints.insets = new Insets(5,0,5,0);
         addComponent(calculator.textArea, 0, 0, 5, 2);
         constraints.insets = new Insets(5,5,5,5);
-        constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.getButtonMemoryStore(), 2, 0, 1, 1);
         addComponent(calculator.getButtonMemoryClear(), 2, 1, 1, 1);
         addComponent(calculator.getButtonMemoryRecall(), 2, 2, 1, 1);
@@ -108,13 +97,11 @@ public class BasicPanel extends JPanel
         addComponent(calculator.getButton2(), 6, 1, 1, 1);
         addComponent(calculator.getButton3(), 6, 2, 1, 1);
         addComponent(calculator.getButtonSubtract(), 6, 3, 1, 1);
-        constraints.fill = GridBagConstraints.BOTH;
         addComponent(calculator.getButtonEquals(), 6, 4, 1, 2);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        addComponent(calculator.getButton0(), 7, 0, 2, 1);
+        addComponent(calculator.getButton0(), 7, 0, 2, 1, GridBagConstraints.HORIZONTAL);
         addComponent(calculator.getButtonDot(), 7, 2, 1, 1);
         addComponent(calculator.getButtonAdd(), 7, 3, 1, 1);
-        LOGGER.info("Buttons added to panel");
+        LOGGER.info("Buttons added to basic panel");
     }
 
     public void performBasicCalculatorTypeSwitchOperations(Calculator calculator)
@@ -124,7 +111,6 @@ public class BasicPanel extends JPanel
 
     private void setupHelpMenu()
     {
-        LOGGER.info("Creating the view help menu for basic panel");
         String helpString = "<html>" +
                 "How to use the " + BASIC.getName() + " Calculator<br><br>" +
                 "For basic usage: <br>" +
@@ -212,6 +198,21 @@ public class BasicPanel extends JPanel
                 //break; //?? for just changing one option could be ok. issue maybe if changing other options
             }
         }
+        LOGGER.info("Finished setting up the help menu");
+    }
+
+    public void addComponent(Component c, int row, int column, int width, int height, int fill)
+    {
+        constraints.gridx = column;
+        constraints.gridy = row;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+        constraints.fill = fill;
+        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        basicLayout.setConstraints(c, constraints); // set constraints
+        add(c); // add component
     }
 
     public void addComponent(Component c, int row, int column, int width, int height)
@@ -220,187 +221,15 @@ public class BasicPanel extends JPanel
         constraints.gridy = row;
         constraints.gridwidth = width;
         constraints.gridheight = height;
+        constraints.fill = GridBagConstraints.BOTH;
+        //constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        //constraints.weighty = 0;
+        //constraints.weightx = 0;
         basicLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
 
-    public void performBasicCalculatorNumberButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("Starting basic calculator number button actions");
-        LOGGER.info("button: " + actionEvent.getActionCommand());
-        if (!calculator.isFirstNumBool()) // do for second number
-        {
-            if (!calculator.isDotButtonPressed())
-            {
-                calculator.textArea.setText("");
-                calculator.setTextareaValue(new StringBuffer().append(calculator.textArea.getText()));
-                if (!calculator.isFirstNumBool()) {
-                    calculator.setFirstNumBool(true);
-                    calculator.setNumberIsNegative(false);
-                } else
-                    calculator.setDotButtonPressed(true);
-                calculator.buttonDot.setEnabled(true);
-            }
-        }
-        calculator.performNumberButtonActions(actionEvent.getActionCommand());
-    }
-
-    public void performSquareRootButtonActions(ActionEvent action)
-    {
-        LOGGER.info("SquareRoot ButtonHandler class started");
-        String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        String errorStringNaN = "Not a Number";
-        LOGGER.debug("text: " + calculator.textArea.getText().replace("\n",""));
-        if (calculator.values[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform square root operation. Number too big!";
-            calculator.confirm(errorMsg);
-        }
-        else
-        {
-            if (calculator.textArea.getText().equals("") || calculator.isNegativeNumber(calculator.textArea.getText()))
-            {
-                calculator.textArea.setText("\n"+errorStringNaN);
-                calculator.textareaValue = new StringBuffer().append("\n"+errorStringNaN);
-                calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
-            }
-            else
-            {
-                String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.textArea.getText())));
-                result = calculator.formatNumber(result);
-                calculator.textArea.setText("\n"+result);
-                calculator.textareaValue = new StringBuffer().append(result);
-                calculator.confirm();
-            }
-        }
-    }
-
-    public void performPercentButtonActions(ActionEvent action)
-    {
-        LOGGER.info("PercentStoreButtonHandler class started");
-        String buttonChoice = action.getActionCommand();
-        if (calculator.values[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform percent operation. Number too big!";
-            calculator.confirm(errorMsg);
-        }
-        else
-        {
-            LOGGER.info("button: " + buttonChoice); // print out button confirmation
-            if (!calculator.textArea.getText().equals("")) {
-                //if(textArea.getText().substring(textArea.getText().length()-1).equals("-")) { // if the last index equals '-'
-                // if the number is negative
-                if (calculator.isNegativeNumber(calculator.textArea.getText().replaceAll("\\n", ""))) {
-                    LOGGER.info("if condition true");
-                    //temp[valuesPosition] = textArea.getText(); // textarea
-                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                    percent /= 100;
-                    LOGGER.info("percent: "+percent);
-                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                    calculator.textareaValue = new StringBuffer().append(calculator.formatNumber(calculator.values[calculator.valuesPosition]));
-                    LOGGER.info("Old " + calculator.values[calculator.valuesPosition]);
-                    calculator.values[calculator.valuesPosition] = calculator.values[calculator.valuesPosition].substring(1, calculator.values[calculator.valuesPosition].length());
-                    LOGGER.info("New " + calculator.values[calculator.valuesPosition] + "-");
-                    calculator.textArea.setText(calculator.values[calculator.valuesPosition] + "-"); // update textArea
-                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                    //textArea.setText(textarea);
-                    calculator.values[calculator.valuesPosition] = calculator.textareaValue.toString();//+textarea;
-                    calculator.textareaValue = new StringBuffer();
-                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                    LOGGER.info("textArea: "+calculator.textArea.getText());
-                } else {
-                    double percent = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                    percent /= 100;
-                    calculator.values[calculator.valuesPosition] = Double.toString(percent);
-                    calculator.textArea.setText("\n" + calculator.formatNumber(calculator.values[calculator.valuesPosition]));
-                    calculator.values[calculator.valuesPosition] = calculator.textArea.getText().replaceAll("\\n", "");
-                    LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-                    LOGGER.info("textArea: "+calculator.textArea.getText());
-                }
-            }
-            calculator.dotButtonPressed = true;
-            calculator.textareaValue = new StringBuffer().append(calculator.textArea.getText());
-            calculator.confirm();
-        }
-    }
-
-    public void performFractionButtonActions(ActionEvent action)
-    {
-        LOGGER.info("FracStoreButtonHandler class started");
-        String buttonChoice = action.getActionCommand();
-        if (calculator.values[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform fraction operation. Number too big!";
-            calculator.confirm(errorMsg);
-        }
-        else
-        {
-            LOGGER.info("button: " + buttonChoice); // print out button confirmation
-            if (!calculator.textArea.getText().equals("")) {
-                double result = Double.parseDouble(calculator.values[calculator.valuesPosition]);
-                result = 1 / result;
-                LOGGER.info("result: " + result);
-                calculator.values[calculator.valuesPosition] = Double.toString(result);
-                calculator.textArea.setText("\n" + calculator.values[calculator.valuesPosition]);
-                LOGGER.info("temp["+calculator.valuesPosition+"] is " + calculator.values[calculator.valuesPosition]);
-            }
-            calculator.confirm();
-        }
-    }
-
-    /**
-     * This method converts the textArea from a CalcType to CalcType.DECIMAL
-     * Since values should always be in DECIMAL form, converting should be easy as pie.
-     */
-    public void convertTextArea()
-    {
-        LOGGER.debug("Going from programmer to decimal...");
-            calculator.performInitialChecks();
-            boolean operatorWasPushed = calculator.determineIfMainOperatorWasPushedBoolean();
-            //String convertedValue = calculator.convertFromTypeToTypeOnValues(CalcType_v3.PROGRAMMER.getName(), CalcType_v3.BASIC.getName(), calculator.getTextAreaWithoutNewLineCharacters())[0];
-            if (StringUtils.isNotBlank(calculator.getTextAreaWithoutAnything()))
-            {
-                if (operatorWasPushed) // check all appropriate operators from Programmer calculator that are applicable for Basic Calculator
-                {
-                    if (calculator.addBool)
-                    {
-                        calculator.textArea.setText(calculator.addNewLineCharacters(1)
-                            + " + " + calculator.getValues()[0]);
-                        calculator.setTextareaValue(new StringBuffer().append(calculator.getValues()[0] + " +"));
-                    }
-                    else if (calculator.subBool)
-                    {
-                        calculator.textArea.setText(calculator.addNewLineCharacters(1)
-                                + " - " + calculator.getValues()[0]);
-                        calculator.setTextareaValue(new StringBuffer().append(calculator.getValues()[0] + " -"));
-                    }
-                    else if (calculator.mulBool)
-                    {
-                        calculator.textArea.setText(calculator.addNewLineCharacters(1)
-                                + " * " + calculator.getValues()[0]);
-                        calculator.setTextareaValue(new StringBuffer().append(calculator.getValues()[0] + " *"));
-                    }
-                    else if (calculator.divBool)
-                    {
-                        calculator.textArea.setText(calculator.addNewLineCharacters(1)
-                                + " / " + calculator.getValues()[0]);
-                        calculator.setTextareaValue(new StringBuffer().append(calculator.getValues()[0] + " /"));
-                    }
-                    // while coming from PROGRAMMER, some operators we don't care about coming from that CalcType
-                }
-                else // operator not pushed but textArea has some value
-                {
-                    if (!calculator.numberIsNegative)
-                        calculator.textArea.setText(calculator.addNewLineCharacters(1) + calculator.getValues()[0]);
-                    else
-                        calculator.textArea.setText(calculator.addNewLineCharacters(1) + calculator.convertToPositive(calculator.getValues()[0]) + "-");
-                }
-            }
-        // TODO: conversion from Scientific logic needed
-    }
-
-    /************* All Getters and Setters ******************/
+    /************* All Setters ******************/
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
         this.basicLayout = panelLayout;

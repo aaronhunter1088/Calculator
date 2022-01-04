@@ -24,26 +24,16 @@ public class ConverterPanel extends JPanel
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
-    private GridBagLayout converterLayout; // layout of the panel
-    private GridBagConstraints constraints; // layout's constraints
-    private JLabel converterTypeName;
-    private String converterName;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JComboBox<String> unitOptions1;
-    private JComboBox<String> unitOptions2;
-    private JTextArea bottomSpaceAboveNumbers;
-    private Calculator calculator;
-    private JPanel numbersPanel;
-    private JButton buttonBlank1;
-    private JButton buttonBlank2;
-    private boolean isTextField1Selected;
-    //private final String degreesSymbol = "\u00B0";
-    //private final String piSymbol = "\u03C0";
-    //private final String gradianSymbol = "grad";
-    // Angle measurements
-    private final String PI = "\u03C0";
-
+    private GridBagLayout converterLayout;
+    private GridBagConstraints constraints;
+    public JLabel converterTypeName;
+    public String converterName;
+    public JTextField textField1, textField2;
+    public JComboBox<String> unitOptions1, unitOptions2;
+    public JTextArea bottomSpaceAboveNumbers;
+    public Calculator calculator;
+    public JPanel numbersPanel;
+    public boolean isTextField1Selected;
 
     /************* Constructors ******************/
     public ConverterPanel() { LOGGER.info("Converter panel created"); }
@@ -62,13 +52,10 @@ public class ConverterPanel extends JPanel
         setConverterLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setMaximumSize(new Dimension(300,400));
-        calculator.setCalculatorType(CONVERTER);
-        calculator.setConverterType(converterType);
         setupEditMenu();
         setupHelpMenu(converterType);
-        setupAllConverterButtonsFunctionalities();
-        setupJPanelConverter();
-        addStartupComponentsToJPanelConverter();
+        setupConverterPanelComponents(converterType);
+        addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up converter panel");
     }
@@ -78,9 +65,11 @@ public class ConverterPanel extends JPanel
         setupConverterPanel(calculator, converterType);
     }
 
-    private void setupJPanelConverter()
+    private void setupConverterPanelComponents(ConverterType converterType)
     {
-        LOGGER.info("Starting to setup the panel");
+        setupAllConverterButtonsFunctionalities();
+        calculator.setCalculatorType(CONVERTER);
+        calculator.setConverterType(converterType);
         calculator.setupButtonBlank1();
         calculator.setupButtonBlank2();
         calculator.setupNumberButtons(true);
@@ -101,24 +90,22 @@ public class ConverterPanel extends JPanel
                 LOGGER.error("Unknown converterType: " + calculator.getConverterType());
             }
         }
-        getTextField1().requestFocusInWindow();
+        textField1.requestFocusInWindow();
         LOGGER.info("Finished setting up the panel");
     }
 
-    private void addStartupComponentsToJPanelConverter()
+    private void addComponentsToPanel()
     {
-        LOGGER.info("Starting to add components to panel");
-        // all the following components are added no matter the option selected
-        getConstraints().fill = GridBagConstraints.BOTH;
-        getConstraints().anchor = GridBagConstraints.CENTER;
-        addComponent(getConverterTypeName(), 0,0,1,1, 1.0,1.0);
-        addComponent(getTextField1(), 1, 0, 0, 1,1.0,1.0);
-        addComponent(getUnitOptions1(), 3, 0, 0,1, 1.0,1.0);
-        addComponent(getTextField2(), 4, 0, 0, 1,1.0,1.0);
-        addComponent(getUnitOptions2(), 6, 0, 0,1, 1.0,1.0);
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.CENTER;
+        addComponent(converterTypeName, 0,0,1,1, 1.0,1.0);
+        addComponent(textField1, 1, 0, 0, 1,1.0,1.0);
+        addComponent(unitOptions1, 3, 0, 0,1, 1.0,1.0);
+        addComponent(textField2, 4, 0, 0, 1,1.0,1.0);
+        addComponent(unitOptions2, 6, 0, 0,1, 1.0,1.0);
         // numbers are added on top of a single panel
-        getConstraints().anchor = GridBagConstraints.PAGE_START;
-        addComponent(getNumbersPanel(), 7, 0, 0, 1, 1.0, 1.0);
+        constraints.anchor = GridBagConstraints.PAGE_START;
+        addComponent(numbersPanel, 7, 0, 0, 1, 1.0, 1.0);
         LOGGER.info("Finished adding components to panel");
     }
 
@@ -126,27 +113,27 @@ public class ConverterPanel extends JPanel
     {
         LOGGER.info("Starting to setup all converter button functions");
         // Clear the buttons I will use of their functionality (other than numbers)
-        getCalculator().clearAllOtherBasicCalculatorButtons();
+        calculator.clearAllOtherBasicCalculatorButtons();
         // Clear Entry button functionality
-        getCalculator().getButtonClearEntry().addActionListener(this::performClearEntryButtonFunctionality);
+        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonFunctionality);
         // Delete button functionality
-        getCalculator().getButtonDelete().addActionListener(this::performDeleteButtonFunctionality);
+        calculator.getButtonDelete().addActionListener(this::performDeleteButtonFunctionality);
         // Set up decimal button
-        getCalculator().getButtonDot().addActionListener(this::performDotButtonFunctionality);
+        calculator.getButtonDot().addActionListener(this::performDotButtonFunctionality);
         // Number button functionalities
         // First clear all functionality assigned to them
-        getCalculator().clearNumberButtonFunctionalities();
+        calculator.clearNumberButtonFunctionalities();
         // Next, set up each number button. 0 is a bit different from the rest.
-        getCalculator().getButton0().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton1().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton2().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton3().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton4().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton5().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton6().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton7().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton8().addActionListener(this::performNumberButtonFunctionality);
-        getCalculator().getButton9().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton2().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton3().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton4().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton5().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton6().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton7().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton8().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton9().addActionListener(this::performNumberButtonFunctionality);
         LOGGER.info("Finished setting up all converter button functions");
     }
 
@@ -154,12 +141,12 @@ public class ConverterPanel extends JPanel
     {
         LOGGER.info("ClearEntryButtonHandler() started for Converter");
         LOGGER.info("button: " + ae.getActionCommand());
-        getTextField1().setText("0");
-        getTextField2().setText("0");
-        getTextField1().requestFocusInWindow();
+        textField1.setText("0");
+        textField2.setText("0");
+        textField1.requestFocusInWindow();
         isTextField1Selected = true;
         LOGGER.info("ClearEntryButtonHandler() finished for Converter");
-        getCalculator().confirm("ClearEntryButton pushed", CONVERTER);
+        calculator.confirm("ClearEntryButton pushed", CONVERTER);
     }
 
     private void performDeleteButtonFunctionality(ActionEvent ae)
@@ -167,15 +154,15 @@ public class ConverterPanel extends JPanel
         LOGGER.info("DeleteButtonHandler() started for Converter");
         LOGGER.info("button: " + ae.getActionCommand());
         if (isTextField1Selected) {
-            if (getTextField1().getText().length() == 1) getTextField1().setText("0");
-            else getTextField1().setText(getTextField1().getText().substring(0, getTextField1().getText().length()-1));
+            if (textField1.getText().length() == 1) textField1.setText("0");
+            else textField1.setText(textField1.getText().substring(0, textField1.getText().length()-1));
         }
         else {
-            if (getTextField2().getText().length() == 1) getTextField2().setText("0");
-            else getTextField2().setText(getTextField2().getText().substring(0, getTextField2().getText().length()-1));
+            if (textField2.getText().length() == 1) textField2.setText("0");
+            else textField2.setText(textField2.getText().substring(0, textField2.getText().length()-1));
         }
         LOGGER.info("DeleteButtonHandler() finished for Converter");
-        getCalculator().confirm("DeleteButton pushed", CONVERTER);
+        calculator.confirm("DeleteButton pushed", CONVERTER);
     }
 
     public void performDotButtonFunctionality(ActionEvent ae)
@@ -183,13 +170,13 @@ public class ConverterPanel extends JPanel
         LOGGER.info("DotButtonHandler() started for Converter");
         LOGGER.info("button: " + ae.getActionCommand());
         if (isTextField1Selected) {
-            getTextField1().setText(getTextField1().getText() + ".");
+            textField1.setText(textField1.getText() + ".");
         }
         else {
-            getTextField2().setText(getTextField2().getText() + ".");
+            textField2.setText(textField2.getText() + ".");
         }
         LOGGER.info("DotButtonHandler() finished for Converter");
-        getCalculator().confirm("DotButton pushed", CONVERTER);
+        calculator.confirm("DotButton pushed", CONVERTER);
     }
 
     private void performNumberButtonFunctionality(ActionEvent ae)
@@ -201,7 +188,7 @@ public class ConverterPanel extends JPanel
         String buttonValue = ae.getActionCommand();
         LOGGER.info("Pressed " + buttonValue);
         if (isTextField1Selected) {
-            switch ((String)Objects.requireNonNull(getUnitOptions1().getSelectedItem())) {
+            switch ((String)Objects.requireNonNull(unitOptions1.getSelectedItem())) {
                 case DEGREES :
                 case RADIANS :
                 case GRADIANS:
@@ -214,14 +201,14 @@ public class ConverterPanel extends JPanel
                 case SQUARE_FEET :
                 case SQUARE_YARD_ACRES :
                 case SQUARE_MILES : {
-                    if (!getTextField1().getText().equals("0")) {
-                        getTextField1().setText(getTextField1().getText() + buttonValue);
+                    if (!textField1.getText().equals("0")) {
+                        textField1.setText(textField1.getText() + buttonValue);
                     } else {
-                        if (getTextField1().getText().equals("0")) {
-                            getTextField1().setText(buttonValue);
+                        if (textField1.getText().equals("0")) {
+                            textField1.setText(buttonValue);
                         }
                         else {
-                            getTextField1().setText(getTextField1().getText() + buttonValue);
+                            textField1.setText(textField1.getText() + buttonValue);
                         }
                     }
                     break;
@@ -230,7 +217,7 @@ public class ConverterPanel extends JPanel
             }
         }
         else {
-            switch ((String)Objects.requireNonNull(getUnitOptions2().getSelectedItem())) {
+            switch ((String)Objects.requireNonNull(unitOptions2.getSelectedItem())) {
                 case DEGREES :
                 case RADIANS :
                 case GRADIANS:
@@ -243,14 +230,14 @@ public class ConverterPanel extends JPanel
                 case SQUARE_FEET :
                 case SQUARE_YARD_ACRES :
                 case SQUARE_MILES : {
-                    if (!getTextField2().getText().equals("0")) {
-                        getTextField2().setText(getTextField2().getText() + buttonValue);
+                    if (!textField2.getText().equals("0")) {
+                        textField2.setText(textField2.getText() + buttonValue);
                     } else {
-                        if (getTextField2().getText().equals("0")) {
-                            getTextField2().setText(buttonValue);
+                        if (textField2.getText().equals("0")) {
+                            textField2.setText(buttonValue);
                         }
                         else {
-                            getTextField2().setText(getTextField2().getText() + buttonValue);
+                            textField2.setText(textField2.getText() + buttonValue);
                         }
                     }
                     break;
@@ -265,8 +252,8 @@ public class ConverterPanel extends JPanel
     private void convertAndUpdatePanel()
     {
         LOGGER.info("Performing automatic conversion after each number button");
-        AngleMethods.convertValues(getCalculator());
-        getCalculator().confirm("Conversion done", CONVERTER);
+        AngleMethods.convertValues(calculator);
+        calculator.confirm("Conversion done", CONVERTER);
         repaint();
     }
 
@@ -301,23 +288,23 @@ public class ConverterPanel extends JPanel
         constraints.weighty = weighty;
         constraints.weightx = weightx;
         constraints.insets = new Insets(0, 0, 0, 0);
-        getConverterLayout().setConstraints(c, getConstraints()); // set constraints
+        converterLayout.setConstraints(c, constraints); // set constraints
         add(c); // add component
     }
 
     private void addComponentToNumbersPanel(Component c, int row, int column, int width, int height, double weighty, double weightx)
     {
-        getConstraints().gridx = column;
-        getConstraints().gridy = row;
-        getConstraints().gridwidth = width;
-        getConstraints().gridheight = height;
-        getConstraints().fill = GridBagConstraints.BOTH;
-        getConstraints().anchor = GridBagConstraints.CENTER;
-        getConstraints().weighty = weighty;
-        getConstraints().weightx = weightx;
-        getConstraints().insets = new Insets(0, 0, 0, 0);
-        ((GridBagLayout)getNumbersPanel().getLayout()).setConstraints(c, getConstraints()); // set constraints
-        getNumbersPanel().add(c);
+        constraints.gridx = column;
+        constraints.gridy = row;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.weighty = weighty;
+        constraints.weightx = weightx;
+        constraints.insets = new Insets(0, 0, 0, 0);
+        ((GridBagLayout)numbersPanel.getLayout()).setConstraints(c, constraints); // set constraints
+        numbersPanel.add(c);
     }
 
     // To set up the help menu in the menu bar for each converter
@@ -352,8 +339,8 @@ public class ConverterPanel extends JPanel
     public void createViewHelpMenu(String helpString)
     {
         // 4 menu options: loop through to find the Help option
-        for(int i=0; i < getCalculator().getBar().getMenuCount(); i++) {
-            JMenu menuOption = getCalculator().getBar().getMenu(i);
+        for(int i=0; i < calculator.getBar().getMenuCount(); i++) {
+            JMenu menuOption = calculator.getBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
                 // get the options. remove viewHelpItem
@@ -379,7 +366,7 @@ public class ConverterPanel extends JPanel
                 viewHelpItem.setName("View Help");
                 viewHelpItem.addActionListener(action -> {
                     JLabel textLabel = new JLabel(helpString,
-                            getCalculator().blankImage, SwingConstants.CENTER);
+                            calculator.blankImage, SwingConstants.CENTER);
                     textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                     textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -402,13 +389,13 @@ public class ConverterPanel extends JPanel
             JMenu menuOption = calculator.getBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Edit")) {
-                getLogger().info("Found the edit option");
+                LOGGER.info("Found the edit option");
                 for(int j=0; j<menuOption.getItemCount(); j++) {
                     valueForThisMenuOption = menuOption.getItem(j);
                     if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("Copy"))
                     {
-                        getLogger().info("Found copy");
+                        LOGGER.info("Found copy");
                         // remove old option
                         menuOption.remove(valueForThisMenuOption);
                         // create new copy here
@@ -424,7 +411,7 @@ public class ConverterPanel extends JPanel
                     else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("Paste"))
                     {
-                        getLogger().info("Found paste");
+                        LOGGER.info("Found paste");
                         // remove old option
                         menuOption.remove(valueForThisMenuOption);
                         // create new copy here
@@ -444,22 +431,22 @@ public class ConverterPanel extends JPanel
 
     private void createCopyFunctionalityForConverter(ActionEvent ae)
     {
-        if (isTextField1Selected()) {
-            getCalculator().getValues()[2] = getTextField1().getText();
+        if (isTextField1Selected) {
+            calculator.getValues()[2] = textField1.getText();
         } else {
-            getCalculator().getValues()[2] = getTextField2().getText();
+            calculator.getValues()[2] = textField2.getText();
         }
-        getCalculator().confirm("Copied " + getCalculator().getValues()[2], CONVERTER);
+        calculator.confirm("Copied " + calculator.getValues()[2], CONVERTER);
     }
 
     private void createPasteFunctionalityForConverter(ActionEvent ae)
     {
-        if (isTextField1Selected()) {
-            getTextField1().setText(getCalculator().getValues()[2]);
+        if (isTextField1Selected) {
+            textField1.setText(calculator.getValues()[2]);
         } else {
-            getTextField2().setText(getCalculator().getValues()[2]);
+            textField2.setText(calculator.getValues()[2]);
         }
-        getCalculator().confirm("Pasted " + getCalculator().getValues()[2], CONVERTER);
+        calculator.confirm("Pasted " + calculator.getValues()[2], CONVERTER);
     }
 
     private void setupAngleConverter()
@@ -471,9 +458,9 @@ public class ConverterPanel extends JPanel
         setUnitOptions1(new JComboBox<>(new String[]{AngleMethods.DEGREES, AngleMethods.RADIANS, AngleMethods.GRADIANS}));
         setUnitOptions2(new JComboBox<>(new String[]{AngleMethods.DEGREES, AngleMethods.RADIANS, AngleMethods.GRADIANS}));
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
-        getBottomSpaceAboveNumbers().setEnabled(false);
-        getUnitOptions1().addActionListener(this::performAngleUnitsSwitch);
-        getUnitOptions2().addActionListener(this::performAngleUnitsSwitch);
+        bottomSpaceAboveNumbers.setEnabled(false);
+        unitOptions1.addActionListener(this::performAngleUnitsSwitch);
+        unitOptions2.addActionListener(this::performAngleUnitsSwitch);
         LOGGER.info("Ending Angle specific setup");
     }
 
@@ -486,9 +473,9 @@ public class ConverterPanel extends JPanel
         setUnitOptions1(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
         setUnitOptions2(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
-        getBottomSpaceAboveNumbers().setEnabled(false);
-        getUnitOptions1().addActionListener(this::performAreaUnitsSwitch);
-        getUnitOptions2().addActionListener(this::performAreaUnitsSwitch);
+        bottomSpaceAboveNumbers.setEnabled(false);
+        unitOptions1.addActionListener(this::performAreaUnitsSwitch);
+        unitOptions2.addActionListener(this::performAreaUnitsSwitch);
         LOGGER.info("Ending Area specific setup");
     }
 
@@ -496,15 +483,15 @@ public class ConverterPanel extends JPanel
     {
         LOGGER.info("Starting " + nameOfConverter + " Converter setup");
         setConverterTypeName(new JLabel(nameOfConverter));
-        getConverterTypeName().setFont(font2);
+        converterTypeName.setFont(font2);
 
         setupEditMenu();
         setupHelpMenu(calculator.getConverterType());
 
         setTextField1(new JTextField());
-        getTextField1().setText("0");
-        getTextField1().setFont(font2);
-        getTextField1().addFocusListener(new FocusListener() {
+        textField1.setText("0");
+        textField1.setFont(font2);
+        textField1.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 isTextField1Selected = true;
@@ -512,11 +499,10 @@ public class ConverterPanel extends JPanel
             @Override
             public void focusLost(FocusEvent e) {}
         });
-
         setTextField2(new JTextField());
-        getTextField2().setText("0");
-        getTextField2().setFont(font2);
-        getTextField2().addFocusListener(new FocusListener() {
+        textField2.setText("0");
+        textField2.setFont(font2);
+        textField2.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 isTextField1Selected = false;
@@ -525,28 +511,28 @@ public class ConverterPanel extends JPanel
             public void focusLost(FocusEvent e) {
             }
         });
-        getTextField1().grabFocus();
+        textField1.grabFocus();
 
         setNumbersPanel(new JPanel());
-        getNumbersPanel().setLayout(new GridBagLayout());
-        getNumbersPanel().setBackground(Color.BLACK);
-        getNumbersPanel().setBorder(new LineBorder(Color.BLACK));
-        addComponentToNumbersPanel(getCalculator().getButtonBlank2(), 0, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton7(), 1, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton8(), 1, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton9(), 1, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton4(), 2, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton5(), 2, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton6(), 2, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton1(), 3, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton2(), 3, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButton3(), 3, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButtonBlank1(), 4, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(getCalculator().getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
-        getCalculator().getButton0().setPreferredSize(new Dimension(35, 35));
-        addComponentToNumbersPanel(getCalculator().getButton0(), 4, 2, 1, 1, 1.0, 1.0);
+        numbersPanel.setLayout(new GridBagLayout());
+        numbersPanel.setBackground(Color.BLACK);
+        numbersPanel.setBorder(new LineBorder(Color.BLACK));
+        addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
+        calculator.getButton0().setPreferredSize(new Dimension(35, 35));
+        addComponentToNumbersPanel(calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0);
         LOGGER.info("Ending " + nameOfConverter + " Converter setup");
     }
 
@@ -554,7 +540,7 @@ public class ConverterPanel extends JPanel
     {
         LOGGER.info("Start performing Angle units switch");
         LOGGER.debug("action: " + action.getActionCommand());
-        if (getUnitOptions1().hasFocus())
+        if (unitOptions1.hasFocus())
         {
             LOGGER.info("UnitOptions1 selected");
             isTextField1Selected = true;
@@ -564,9 +550,9 @@ public class ConverterPanel extends JPanel
             LOGGER.info("UnitOptions2 selected");
             isTextField1Selected = false;
         }
-        convertValues(getCalculator());
+        convertValues(calculator);
         isTextField1Selected = !isTextField1Selected;
-        getCalculator().confirm("Finished performing Angle units switch", CONVERTER);
+        calculator.confirm("Finished performing Angle units switch", CONVERTER);
     }
 
     private void performAreaUnitsSwitch(ActionEvent actionEvent)
@@ -574,32 +560,8 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Start performing Area units switch");
         // do any converting
         LOGGER.info("Finished performing Area units switch");
-        getCalculator().confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
+        calculator.confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
     }
-
-    /************* All Getters ******************/
-    public GridBagLayout getConverterLayout() { return converterLayout; }
-    public GridBagConstraints getConstraints() { return constraints; }
-    public JLabel getConverterTypeName() { return converterTypeName; }
-    public String getConverterNameAsString() { return converterName; }
-    public JTextField getTextField1() { return textField1; }
-    public JTextField getTextField2() { return textField2; }
-    public JComboBox<String> getUnitOptions1() { return unitOptions1; }
-    public JComboBox<String> getUnitOptions2() { return unitOptions2; }
-    public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
-    public static Logger getLogger()
-    {
-        return LOGGER;
-    }
-    public static long getSerialVersionUID()
-    {
-        return serialVersionUID;
-    }
-    public Calculator getCalculator() { return calculator; }
-    public JPanel getNumbersPanel() { return numbersPanel; }
-    public JButton getButtonBlank1() { return buttonBlank1; }
-    public JButton getButtonBlank2() { return buttonBlank2; }
-    public boolean isTextField1Selected() { return isTextField1Selected; }
 
     /************* All Setters ******************/
     public void setConverterLayout(GridBagLayout converterLayout) {
@@ -618,7 +580,5 @@ public class ConverterPanel extends JPanel
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
-    public void setButtonBlank1(JButton buttonBlank1) { this.buttonBlank1 = buttonBlank1; }
-    public void setButtonBlank2(JButton buttonBlank2) { this.buttonBlank2 = buttonBlank2; }
     public void setIsTextField1Selected(boolean isTextField1Selected) { this.isTextField1Selected = isTextField1Selected; }
 }
