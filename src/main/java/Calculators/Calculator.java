@@ -43,7 +43,7 @@ public class Calculator extends JFrame
             button6 = new JButton("6"), button7 = new JButton("7"),
             button8 = new JButton("8"), button9 = new JButton("9"),
             buttonClear = new JButton("C"), buttonClearEntry = new JButton("CE"),
-            buttonDelete = new JButton("\u2190"), /*"<--"*/ buttonDot = new JButton("."),
+            buttonDelete = new JButton("\u2190"), buttonDot = new JButton("."),
             buttonFraction = new JButton("1/x"), buttonPercent = new JButton("%"),
             buttonSqrt = new JButton("\u221A"), buttonMemoryClear = new JButton("MC"),
             buttonMemoryRecall = new JButton("MR"), buttonMemoryStore = new JButton("MS"),

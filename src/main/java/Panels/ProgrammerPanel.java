@@ -32,9 +32,9 @@ public class ProgrammerPanel extends JPanel
     private GridBagConstraints constraints; // layout's constraints
     private final ButtonGroup btnGroupOne = new ButtonGroup();
     private final ButtonGroup btnGroupTwo = new ButtonGroup();
-    private final JPanel buttonGroup1ButtonPanel = new JPanel(); // contains the first button group
-    private final JPanel buttonGroup2ButtonPanel = new JPanel(); // contains the second button group
-    final private JButton buttonBlank = new JButton(" "), buttonMod = new JButton("MOD"),
+    private final JPanel btnGroupOnePanel = new JPanel(), // contains the first button group
+                         btnGroupTwoPanel = new JPanel(); // contains the second button group
+    final private JButton buttonMod = new JButton("MOD"),
                           buttonLPar = new JButton("("), buttonRPar = new JButton(")"),
                           buttonRol = new JButton ("RoL"), buttonRor = new JButton ("RoR"),
                           buttonOr = new JButton ("OR"), buttonXor = new JButton ("XOR"),
@@ -191,18 +191,35 @@ public class ProgrammerPanel extends JPanel
         getButtonDec().addActionListener(this::performBaseButtonSwitch);
         getButtonOct().addActionListener(this::performBaseButtonSwitch);
         getButtonBin().addActionListener(this::performBaseButtonSwitch);
+        btnGroupOnePanel.setLayout(new GridLayout(4,1));
+        // add buttons to panel
+        btnGroupOnePanel.add(buttonHex);
+        btnGroupOnePanel.add(buttonDec);
+        btnGroupOnePanel.add(buttonOct);
+        btnGroupOnePanel.add(buttonBin);
+        Border border = btnGroupOnePanel.getBorder();
+        Border margin = new TitledBorder("Base");
+        btnGroupOnePanel.setBorder(new CompoundBorder(border, margin));
         btnGroupOne.add(buttonHex);
         btnGroupOne.add(buttonDec);
         btnGroupOne.add(buttonOct);
         btnGroupOne.add(buttonBin);
-        // add buttons to ButtonGroupTwo
+        btnGroupTwoPanel.setLayout(new GridLayout(4,1)); //rows and columns
+        // add buttons to panel
+        btnGroupTwoPanel.add(buttonQWord);
+        btnGroupTwoPanel.add(buttonDWord);
+        btnGroupTwoPanel.add(buttonWord);
+        btnGroupTwoPanel.add(buttonByte);
+        Border border2 = btnGroupTwoPanel.getBorder();
+        Border margin2 = new TitledBorder("Byte");
+        btnGroupTwoPanel.setBorder(new CompoundBorder(border2, margin2));
         btnGroupTwo.add(buttonQWord);
         btnGroupTwo.add(buttonDWord);
         btnGroupTwo.add(buttonWord);
         btnGroupTwo.add(buttonByte);
 
-        buttonBlank.setPreferredSize(new Dimension(35,35));
-        buttonBlank.setBorder(new LineBorder(Color.BLACK));
+        calculator.buttonBlank1.setPreferredSize(new Dimension(35,35));
+        calculator.buttonBlank1.setBorder(new LineBorder(Color.BLACK));
 
         buttonMod.setFont(Calculator.font);
         buttonMod.setPreferredSize(new Dimension(35,35));
@@ -422,32 +439,11 @@ public class ProgrammerPanel extends JPanel
         constraints.insets = new Insets(5,0,5,0); //9905
         addComponent(calculator.textArea, 0, 0, 9, 2);
         constraints.insets = new Insets(5,5,5,5);
-
-        buttonGroup1ButtonPanel.setLayout(new GridLayout(4,1));
-        // add buttons to panel
-        buttonGroup1ButtonPanel.add(buttonHex);
-        buttonGroup1ButtonPanel.add(buttonDec);
-        buttonGroup1ButtonPanel.add(buttonOct);
-        buttonGroup1ButtonPanel.add(buttonBin);
-        Border border = buttonGroup1ButtonPanel.getBorder();
-        Border margin = new TitledBorder("Base");
-        buttonGroup1ButtonPanel.setBorder(new CompoundBorder(border, margin));
-        addComponent(buttonGroup1ButtonPanel, 4, 0, 1, 4, GridBagConstraints.HORIZONTAL);
-
-        buttonGroup2ButtonPanel.setLayout(new GridLayout(4,1)); //rows and columns
-        // add buttons to panel
-        buttonGroup2ButtonPanel.add(buttonQWord);
-        buttonGroup2ButtonPanel.add(buttonDWord);
-        buttonGroup2ButtonPanel.add(buttonWord);
-        buttonGroup2ButtonPanel.add(buttonByte);
-        Border border2 = buttonGroup2ButtonPanel.getBorder();
-        Border margin2 = new TitledBorder("Byte");
-        buttonGroup2ButtonPanel.setBorder(new CompoundBorder(border2, margin2));
-        // add panel to Calculator
-        addComponent(buttonGroup2ButtonPanel, 7, 0, 1, 4, GridBagConstraints.HORIZONTAL);
+        addComponent(btnGroupOnePanel, 4, 0, 1, 4, GridBagConstraints.HORIZONTAL);
+        addComponent(btnGroupTwoPanel, 7, 0, 1, 4, GridBagConstraints.HORIZONTAL);
 
         constraints.insets = new Insets(5,0,1,5); //THIS LINE ADDS PADDING; LOOK UP TO LEARN MORE
-        addComponent(buttonBlank, 4, 1, 1, 1);
+        addComponent(calculator.buttonBlank1, 4, 1, 1, 1);
         addComponent(buttonMod, 4, 2, 1, 1);
         addComponent(buttonA, 4, 3, 1, 1);
         addComponent(calculator.buttonMemoryStore, 4, 4, 1, 1);
@@ -1333,9 +1329,8 @@ public class ProgrammerPanel extends JPanel
     public GridBagLayout getLayout() { return programmerLayout; }
     public ButtonGroup getBtnGroupOne() { return btnGroupOne; }
     public ButtonGroup getBtnGroupTwo() { return btnGroupTwo; }
-    public JPanel getButtonGroup1ButtonPanel() { return buttonGroup1ButtonPanel; }
-    public JPanel getButtonGroup2ButtonPanel() { return buttonGroup2ButtonPanel; }
-    public JButton getButtonBlank() { return buttonBlank; }
+    public JPanel getBtnGroupOnePanel() { return btnGroupOnePanel; }
+    public JPanel getBtnGroupTwoPanel() { return btnGroupTwoPanel; }
     public JButton getButtonMod() { return buttonMod; }
     public JButton getButtonLPar() { return buttonLPar; }
     public JButton getButtonRPar() { return buttonRPar; }
