@@ -35,7 +35,7 @@ public class DatePanelTest {
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelDateTest");
         c = new Calculator(DATE, OPTIONS2);
-        testTheDatePanel = (DatePanel) c.getCurrentPanel();
+        testTheDatePanel = (DatePanel) c.currentPanel;
     }
 
     @After

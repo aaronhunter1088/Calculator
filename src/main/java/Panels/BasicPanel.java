@@ -73,34 +73,34 @@ public class BasicPanel extends JPanel
         constraints.insets = new Insets(5,0,5,0);
         addComponent(calculator.textArea, 0, 0, 5, 2);
         constraints.insets = new Insets(5,5,5,5);
-        addComponent(calculator.getButtonMemoryStore(), 2, 0, 1, 1);
-        addComponent(calculator.getButtonMemoryClear(), 2, 1, 1, 1);
-        addComponent(calculator.getButtonMemoryRecall(), 2, 2, 1, 1);
-        addComponent(calculator.getButtonMemoryAddition(), 2, 3, 1, 1);
-        addComponent(calculator.getButtonMemorySubtraction(), 2, 4, 1, 1);
-        addComponent(calculator.getButtonDelete(), 3, 0, 1, 1);
-        addComponent(calculator.getButtonClearEntry(), 3, 1, 1, 1);
-        addComponent(calculator.getButtonClear(), 3, 2, 1, 1);
-        addComponent(calculator.getButtonNegate(), 3, 3, 1, 1);
-        addComponent(calculator.getButtonSqrt(), 3, 4, 1, 1);
-        addComponent(calculator.getButton7(), 4, 0, 1, 1);
-        addComponent(calculator.getButton8(), 4, 1, 1, 1);
-        addComponent(calculator.getButton9(), 4, 2, 1, 1);
-        addComponent(calculator.getButtonDivide(), 4, 3, 1, 1);
-        addComponent(calculator.getButtonPercent(), 4, 4, 1, 1);
-        addComponent(calculator.getButton4(), 5, 0, 1, 1);
-        addComponent(calculator.getButton5(), 5, 1, 1, 1);
-        addComponent(calculator.getButton6(), 5, 2, 1, 1);
-        addComponent(calculator.getButtonMultiply(), 5, 3, 1, 1);
-        addComponent(calculator.getButtonFraction(), 5, 4, 1, 1);
-        addComponent(calculator.getButton1(), 6, 0, 1, 1);
-        addComponent(calculator.getButton2(), 6, 1, 1, 1);
-        addComponent(calculator.getButton3(), 6, 2, 1, 1);
-        addComponent(calculator.getButtonSubtract(), 6, 3, 1, 1);
-        addComponent(calculator.getButtonEquals(), 6, 4, 1, 2);
-        addComponent(calculator.getButton0(), 7, 0, 2, 1, GridBagConstraints.HORIZONTAL);
-        addComponent(calculator.getButtonDot(), 7, 2, 1, 1);
-        addComponent(calculator.getButtonAdd(), 7, 3, 1, 1);
+        addComponent(calculator.buttonMemoryStore, 2, 0, 1, 1);
+        addComponent(calculator.buttonMemoryClear, 2, 1, 1, 1);
+        addComponent(calculator.buttonMemoryRecall, 2, 2, 1, 1);
+        addComponent(calculator.buttonMemoryAddition, 2, 3, 1, 1);
+        addComponent(calculator.buttonMemorySubtraction, 2, 4, 1, 1);
+        addComponent(calculator.buttonDelete, 3, 0, 1, 1);
+        addComponent(calculator.buttonClearEntry, 3, 1, 1, 1);
+        addComponent(calculator.buttonClear, 3, 2, 1, 1);
+        addComponent(calculator.buttonNegate, 3, 3, 1, 1);
+        addComponent(calculator.buttonSqrt, 3, 4, 1, 1);
+        addComponent(calculator.button7, 4, 0, 1, 1);
+        addComponent(calculator.button8, 4, 1, 1, 1);
+        addComponent(calculator.button9, 4, 2, 1, 1);
+        addComponent(calculator.buttonDivide, 4, 3, 1, 1);
+        addComponent(calculator.buttonPercent, 4, 4, 1, 1);
+        addComponent(calculator.button4, 5, 0, 1, 1);
+        addComponent(calculator.button5, 5, 1, 1, 1);
+        addComponent(calculator.button6, 5, 2, 1, 1);
+        addComponent(calculator.buttonMultiply, 5, 3, 1, 1);
+        addComponent(calculator.buttonFraction, 5, 4, 1, 1);
+        addComponent(calculator.button1, 6, 0, 1, 1);
+        addComponent(calculator.button2, 6, 1, 1, 1);
+        addComponent(calculator.button3, 6, 2, 1, 1);
+        addComponent(calculator.buttonSubtract, 6, 3, 1, 1);
+        addComponent(calculator.buttonEquals, 6, 4, 1, 2);
+        addComponent(calculator.button0, 7, 0, 2, 1, GridBagConstraints.HORIZONTAL);
+        addComponent(calculator.buttonDot, 7, 2, 1, 1);
+        addComponent(calculator.buttonAdd, 7, 3, 1, 1);
         LOGGER.info("Buttons added to basic panel");
     }
 
@@ -157,8 +157,8 @@ public class BasicPanel extends JPanel
 
                 "</html>";
         // 4 menu options: loop through to find the Help option
-        for(int i=0; i < calculator.getBar().getMenuCount(); i++) {
-            JMenu menuOption = calculator.getBar().getMenu(i);
+        for(int i=0; i < calculator.bar.getMenuCount(); i++) {
+            JMenu menuOption = calculator.bar.getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
                 // get the options. remove viewHelpItem

@@ -113,7 +113,7 @@ public class ProgrammerPanelTest
 
         calculator.performButtonEqualsActions();
         assertEquals("textArea not as expected", "00001000", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("text area not as expected", "00001000", calculator.getTextareaValue().toString());
+        assertEquals("text area not as expected", "00001000", calculator.textareaValue.toString());
         assertTrue("values[0] did not stay in decimal form",8 == Integer.parseInt(calculator.values[0]));
     }
 
@@ -143,7 +143,7 @@ public class ProgrammerPanelTest
         }
 
         assertEquals("TextArea not as expected", "00000101 OR", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Text area not as expected", "00000101 OR", String.valueOf(calculator.getTextareaValue()));
+        assertEquals("Text area not as expected", "00000101 OR", String.valueOf(calculator.textareaValue));
         assertEquals("Values[0] is not in decimal base form", Integer.valueOf(5), Integer.valueOf(calculator.values[0]));
     }
 
@@ -173,8 +173,8 @@ public class ProgrammerPanelTest
         programmerPanel.performButtonModActions(actionEvent);
 
         assertEquals("TextArea not as expected!", number+" Mod", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Textarea not updated!", number+" Mod", String.valueOf(calculator.getTextareaValue()));
-        assertTrue("Values["+ calculator.getValuesPosition()+"] should not match "+ calculator.textArea, !calculator.values[0].equals(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
+        assertEquals("Textarea not updated!", number+" Mod", String.valueOf(calculator.textareaValue));
+        assertTrue("Values["+ calculator.valuesPosition+"] should not match "+ calculator.textArea, !calculator.values[0].equals(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
     }
 
     @Test
@@ -204,7 +204,7 @@ public class ProgrammerPanelTest
 
         verify(actionEvent, times(1)).getActionCommand();
         assertEquals("TextArea not as expected!", "00000001", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Textarea not updated!", "00000001", String.valueOf(calculator.getTextareaValue()));
+        assertEquals("Textarea not updated!", "00000001", String.valueOf(calculator.textareaValue));
         assertTrue("Values["+0+"] should not match "+ calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace(), !calculator.values[0].equals(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
         assertEquals("Values["+0+"] not as expected", 1, Integer.parseInt(calculator.values[0]));
     }
@@ -222,10 +222,10 @@ public class ProgrammerPanelTest
         programmerPanel.performButtonXorActions(actionEvent);
 
         assertEquals("TextArea not as expected", "", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        assertEquals("Textarea not as expected", "", String.valueOf(calculator.getTextareaValue()));
+        assertEquals("Textarea not as expected", "", String.valueOf(calculator.textareaValue));
         assertEquals("Values[0] should be empty", "", calculator.values[0]);
         assertEquals("Values[1] should be empty", "", calculator.values[1]);
-        assertEquals("XorButton should be set yet", true, calculator.isXorButtonPressed());
+        assertEquals("XorButton should be set yet", true, calculator.xorButtonBool);
     }
 
     @Test
@@ -245,7 +245,7 @@ public class ProgrammerPanelTest
         calculator.valuesPosition = 0;
         calculator.values[calculator.valuesPosition] = "5";
         try {
-            value = new BigInteger(calculator.getValues()[calculator.valuesPosition]);
+            value = new BigInteger(calculator.values[calculator.valuesPosition]);
         } catch (NumberFormatException nfe) {
             fail();
         }
@@ -258,16 +258,16 @@ public class ProgrammerPanelTest
         calculator.setupNumberButtons(true); // they all start enabled
         programmerPanel.setButtons2To9(false); // switched into programmer panel or pressed binary
 
-        assertTrue(calculator.getButton0().isEnabled());
-        assertTrue(calculator.getButton1().isEnabled());
-        assertFalse(calculator.getButton2().isEnabled());
-        assertFalse(calculator.getButton3().isEnabled());
-        assertFalse(calculator.getButton4().isEnabled());
-        assertFalse(calculator.getButton5().isEnabled());
-        assertFalse(calculator.getButton6().isEnabled());
-        assertFalse(calculator.getButton7().isEnabled());
-        assertFalse(calculator.getButton8().isEnabled());
-        assertFalse(calculator.getButton9().isEnabled());
+        assertTrue(calculator.button0.isEnabled());
+        assertTrue(calculator.button1.isEnabled());
+        assertFalse(calculator.button2.isEnabled());
+        assertFalse(calculator.button3.isEnabled());
+        assertFalse(calculator.button4.isEnabled());
+        assertFalse(calculator.button5.isEnabled());
+        assertFalse(calculator.button6.isEnabled());
+        assertFalse(calculator.button7.isEnabled());
+        assertFalse(calculator.button8.isEnabled());
+        assertFalse(calculator.button9.isEnabled());
     }
 
 }

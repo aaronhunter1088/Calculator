@@ -76,7 +76,7 @@ public class ConverterPanel extends JPanel
         calculator.setupClearEntryButton();
         calculator.setupDeleteButton();
         calculator.setupDotButton();
-        switch (calculator.getConverterType())
+        switch (calculator.converterType)
         {
             case ANGLE: {
                 setupAngleConverter();
@@ -87,7 +87,7 @@ public class ConverterPanel extends JPanel
                 break;
             }
             default: {
-                LOGGER.error("Unknown converterType: " + calculator.getConverterType());
+                LOGGER.error("Unknown converterType: " + calculator.converterType);
             }
         }
         textField1.requestFocusInWindow();
@@ -115,25 +115,25 @@ public class ConverterPanel extends JPanel
         // Clear the buttons I will use of their functionality (other than numbers)
         calculator.clearAllOtherBasicCalculatorButtons();
         // Clear Entry button functionality
-        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonFunctionality);
+        calculator.buttonClearEntry.addActionListener(this::performClearEntryButtonFunctionality);
         // Delete button functionality
-        calculator.getButtonDelete().addActionListener(this::performDeleteButtonFunctionality);
+        calculator.buttonDelete.addActionListener(this::performDeleteButtonFunctionality);
         // Set up decimal button
-        calculator.getButtonDot().addActionListener(this::performDotButtonFunctionality);
+        calculator.buttonDot.addActionListener(this::performDotButtonFunctionality);
         // Number button functionalities
         // First clear all functionality assigned to them
         calculator.clearNumberButtonFunctionalities();
         // Next, set up each number button. 0 is a bit different from the rest.
-        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton2().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton3().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton4().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton5().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton6().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton7().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton8().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton9().addActionListener(this::performNumberButtonFunctionality);
+        calculator.button0.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button1.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button2.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button3.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button4.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button5.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button6.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button7.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button8.addActionListener(this::performNumberButtonFunctionality);
+        calculator.button9.addActionListener(this::performNumberButtonFunctionality);
         LOGGER.info("Finished setting up all converter button functions");
     }
 
@@ -307,13 +307,12 @@ public class ConverterPanel extends JPanel
         numbersPanel.add(c);
     }
 
-    // To set up the help menu in the menu bar for each converter
     private void setupHelpMenu(ConverterType converterType)
     {
         switch (converterType)
         {
             case ANGLE : {
-                //LOGGER.debug("Size of MenuBar: " + getCalculator().getBar().getMenuCount());
+                //LOGGER.debug("Size of MenuBar: " + getCalculator().bar.getMenuCount());
                 // which is the number of menu choices
                 String helpString = "<html>How to use the " + ANGLE.getName() + " Converter<br><br>" +
                         "Step 1. Select the unit for each conversion first.<br>" +
@@ -339,8 +338,8 @@ public class ConverterPanel extends JPanel
     public void createViewHelpMenu(String helpString)
     {
         // 4 menu options: loop through to find the Help option
-        for(int i=0; i < calculator.getBar().getMenuCount(); i++) {
-            JMenu menuOption = calculator.getBar().getMenu(i);
+        for(int i=0; i < calculator.bar.getMenuCount(); i++) {
+            JMenu menuOption = calculator.bar.getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
                 // get the options. remove viewHelpItem
@@ -376,17 +375,14 @@ public class ConverterPanel extends JPanel
                             mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
-                //menuOption.add(new JPopupMenu.Separator(), 1);
-                //menuOption.add(getCalculator().createAboutCalculatorJMenuItem(), 2);
-                //break; //?? for just changing one option could be ok. issue maybe if changing other options
             }
         }
     }
 
     private void setupEditMenu()
     {
-        for(int i = 0; i < calculator.getBar().getMenuCount(); i++) {
-            JMenu menuOption = calculator.getBar().getMenu(i);
+        for(int i = 0; i < calculator.bar.getMenuCount(); i++) {
+            JMenu menuOption = calculator.bar.getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Edit")) {
                 LOGGER.info("Found the edit option");
@@ -432,21 +428,21 @@ public class ConverterPanel extends JPanel
     private void createCopyFunctionalityForConverter(ActionEvent ae)
     {
         if (isTextField1Selected) {
-            calculator.getValues()[2] = textField1.getText();
+            calculator.values[2] = textField1.getText();
         } else {
-            calculator.getValues()[2] = textField2.getText();
+            calculator.values[2] = textField2.getText();
         }
-        calculator.confirm("Copied " + calculator.getValues()[2], CONVERTER);
+        calculator.confirm("Copied " + calculator.values[2], CONVERTER);
     }
 
     private void createPasteFunctionalityForConverter(ActionEvent ae)
     {
         if (isTextField1Selected) {
-            textField1.setText(calculator.getValues()[2]);
+            textField1.setText(calculator.values[2]);
         } else {
-            textField2.setText(calculator.getValues()[2]);
+            textField2.setText(calculator.values[2]);
         }
-        calculator.confirm("Pasted " + calculator.getValues()[2], CONVERTER);
+        calculator.confirm("Pasted " + calculator.values[2], CONVERTER);
     }
 
     private void setupAngleConverter()
@@ -486,7 +482,7 @@ public class ConverterPanel extends JPanel
         converterTypeName.setFont(font2);
 
         setupEditMenu();
-        setupHelpMenu(calculator.getConverterType());
+        setupHelpMenu(calculator.converterType);
 
         setTextField1(new JTextField());
         textField1.setText("0");
@@ -512,27 +508,26 @@ public class ConverterPanel extends JPanel
             }
         });
         textField1.grabFocus();
-
         setNumbersPanel(new JPanel());
         numbersPanel.setLayout(new GridBagLayout());
         numbersPanel.setBackground(Color.BLACK);
         numbersPanel.setBorder(new LineBorder(Color.BLACK));
-        addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
-        calculator.getButton0().setPreferredSize(new Dimension(35, 35));
-        addComponentToNumbersPanel(calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.buttonBlank1, 0, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.buttonClearEntry, 0, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.buttonDelete, 0, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button7, 1, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button8, 1, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button9, 1, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button4, 2, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button5, 2, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button6, 2, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button1, 3, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button2, 3, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.button3, 3, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.buttonBlank2, 4, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.buttonDot, 4, 1, 1, 1, 1.0, 1.0);
+        calculator.button0.setPreferredSize(new Dimension(35, 35));
+        addComponentToNumbersPanel(calculator.button0, 4, 2, 1, 1, 1.0, 1.0);
         LOGGER.info("Ending " + nameOfConverter + " Converter setup");
     }
 

@@ -96,9 +96,9 @@ public class DatePanel extends JPanel
                 "Enter values in the choices: Years, Months, or Days.<br>" +
                 "Click Add or Subtract to execute that action using your values and date.</html>";
         // 4 menu options: loop through to find the Help option
-        for(int i=0; i < calculator.getBar().getMenuCount(); i++)
+        for(int i=0; i < calculator.bar.getMenuCount(); i++)
         {
-            JMenu menuOption = calculator.getBar().getMenu(i);
+            JMenu menuOption = calculator.bar.getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
                 // get the options. remove viewHelpItem
@@ -138,25 +138,6 @@ public class DatePanel extends JPanel
         LOGGER.info("Finished creating the view help menu");
     }
 
-    public void reset(String chosenOption)
-    {
-        // for either option
-        setSelectedOption(chosenOption);
-        setupFromDate();
-        // if option1 was chosen
-        setupToDate();
-        yearsDifferenceLabel.setText("");
-        monthsDifferenceLabel.setText("");
-        daysDifferenceLabel.setText("");
-        resultsLabel.setText("");
-        // if option2 was chosen
-        addRadioButton.setSelected(true);
-        yearsTextField.setText("");
-        monthsTextField.setText("");
-        daysTextField.setText("");
-        calculator.confirm(getClass().getName() + " was reset!");
-    }
-
     private void setupDatePanelComponents(String chosenOption)
     {
         calculator.setCalculatorType(DATE);
@@ -164,60 +145,155 @@ public class DatePanel extends JPanel
         setupOptionsSelection(chosenOption);
         setupFromDate();
         setupToDate();
-        setDifferenceLabel(new JLabel(DIFFERENCE));
-        differenceLabel.setFont(font2);
-        differenceLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        setupDifferenceLabel();
         setYearsDifferenceLabel(new JLabel(SAME_YEAR));
         setMonthsDifferenceLabel(new JLabel(SAME_MONTH));
         setWeeksDifferenceLabel(new JLabel(SAME_WEEK));
         setDaysDifferenceLabel(new JLabel(SAME_DAY));
+        setupBlankLabel1();
+        setupBlankLabel2();
+        setupBlankLabel3();
+        setupBlankLabel4();
+        setupBlankLabel5();
+        setupAddRadioButton();
+        setupSubtractRadioButton();
+        setupButtonGroup();
+        setupYearsLabel();
+        setupMonthsLabel();
+        setupWeeksLabel();
+        setupDaysLabel();
+        setupYearsTextField();
+        setupMonthsTextField();
+        setupWeeksTextField();
+        setupDaysTextField();
+        setupTextFieldsPanel();
+        setupDateLabel();
+        setupResultsLabel();
+        setTheSelectedOption(chosenOption);
+        SwingUtilities.updateComponentTreeUI(this);
+        LOGGER.info("Finished setting up date panel");
+    }
+
+    public void setupDifferenceLabel()
+    {
+        setDifferenceLabel(new JLabel(DIFFERENCE));
+        differenceLabel.setFont(font2);
+        differenceLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupBlankLabel1()
+    {
         setBlankLabel1(new JLabel(SPACE));
         blankLabel1.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupBlankLabel2()
+    {
         setBlankLabel2(new JLabel(SPACE));
         blankLabel2.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupBlankLabel3()
+    {
         setBlankLabel3(new JLabel(SPACE));
         blankLabel3.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupBlankLabel4()
+    {
         setBlankLabel4(new JLabel(SPACE));
         blankLabel4.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupBlankLabel5()
+    {
         setBlankLabel5(new JLabel(SPACE));
         blankLabel5.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupAddRadioButton()
+    {
         setAddRadioButton(new JRadioButton(ADD));
         addRadioButton.setSelected(true);
         addRadioButton.setName(ADD);
         addRadioButton.addActionListener(this::performAddRadioButtonFunctionality);
+    }
+
+    public void setupSubtractRadioButton()
+    {
         setSubtractRadioButton(new JRadioButton(SUBTRACT));
         subtractRadioButton.setSelected(false);
         subtractRadioButton.setName(SUBTRACT);
         subtractRadioButton.addActionListener(this::performSubtractRadioButtonFunctionality);
+    }
+
+    public void setupButtonGroup()
+    {
         setButtonGroup(new ButtonGroup());
         setButtonGroupPanel(new JPanel());
         buttonGroupPanel.setLayout(new GridLayout(1,2));
         buttonGroupPanel.add(addRadioButton);
         buttonGroupPanel.add(subtractRadioButton);
+    }
+
+    public void setupYearsLabel()
+    {
         setYearsLabel(new JLabel(YEAR + LOWER_CASE_S));
         yearsLabel.setFont(font2);
         yearsLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupMonthsLabel()
+    {
         setMonthLabel(new JLabel(MONTH + LOWER_CASE_S));
         monthLabel.setFont(font2);
         monthLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupWeeksLabel()
+    {
         setWeeksLabel(new JLabel(WEEK + LOWER_CASE_S));
         weeksLabel.setFont(font2);
         weeksLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupDaysLabel()
+    {
         setDaysLabel(new JLabel(DAY + LOWER_CASE_S));
         daysLabel.setFont(font2);
         daysLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupYearsTextField()
+    {
         setYearsTextField(new JTextField(EMPTY_STRING, 5));
         yearsTextField.setEditable(true);
         yearsTextField.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupMonthsTextField()
+    {
         setMonthsTextField(new JTextField(EMPTY_STRING, 5));
         monthsTextField.setEditable(true);
         monthsTextField.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupWeeksTextField()
+    {
         setWeeksTextField(new JTextField(EMPTY_STRING, 5));
         weeksTextField.setEditable(true);
         weeksTextField.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupDaysTextField()
+    {
         setDaysTextField(new JTextField(EMPTY_STRING, 5));
         daysTextField.setEditable(true);
         daysTextField.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setupTextFieldsPanel()
+    {
         setTextFieldsGroupPanel(new JPanel());
         textFieldsGroupPanel.setLayout(new GridLayout(4, 2, 5, 5));
         textFieldsGroupPanel.add(yearsLabel);
@@ -228,16 +304,32 @@ public class DatePanel extends JPanel
         textFieldsGroupPanel.add(weeksTextField);
         textFieldsGroupPanel.add(daysLabel);
         textFieldsGroupPanel.add(daysTextField);
+    }
+
+    public void setupDateLabel()
+    {
         setDateLabel(new JLabel(DATE_));
         dateLabel.setFont(font2);
         dateLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        setupResultsLabel();
-        if (chosenOption == null || chosenOption.equals(OPTIONS1))
-             setSelectedOption(OPTIONS1);
-        else setSelectedOption(OPTIONS2);
-        SwingUtilities.updateComponentTreeUI(this);
-        LOGGER.info("Finished setting up date panel");
     }
+
+    public void setupResultsLabel()
+    {
+        LocalDate todaysDate = LocalDate.now();
+        DayOfWeek dayOfWeek = todaysDate.getDayOfWeek();
+        Month month = todaysDate.getMonth();
+        setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + todaysDate.getDayOfMonth() + ", " + todaysDate.getYear()));
+        resultsLabel.setFont(font_Bold);
+        resultsLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    }
+
+    public void setTheSelectedOption(String chosenOption)
+    {
+        if (chosenOption == null || chosenOption.equals(OPTIONS1))
+            setSelectedOption(OPTIONS1);
+        else setSelectedOption(OPTIONS2);
+    }
+
 
     public void setupOptionsSelection(String chosenOption)
     {
@@ -284,16 +376,6 @@ public class DatePanel extends JPanel
         setToDatePicker(new JDatePickerImpl(toDatePanel));
         toDatePicker.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         toDatePicker.addActionListener(this::performDatePickerFunctionality); //action -> updateResultsTextBox());
-    }
-
-    public void setupResultsLabel()
-    {
-        LocalDate todaysDate = LocalDate.now();
-        DayOfWeek dayOfWeek = todaysDate.getDayOfWeek();
-        Month month = todaysDate.getMonth();
-        setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + todaysDate.getDayOfMonth() + ", " + todaysDate.getYear()));
-        resultsLabel.setFont(font_Bold);
-        resultsLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
     public void performDatePickerFunctionality(ActionEvent ae)
