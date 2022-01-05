@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>Calculator</groupId>
     <artifactId>Calculator</artifactId>
-    <version>4.1</version>
+    <version>4.2</version>
     <packaging>jar</packaging>
     <name>Calculator</name>
 
@@ -21,6 +21,7 @@
 		<maven.antrun.version>3.0.0</maven.antrun.version>
 		<maven.assembly.version>3.3.0</maven.assembly.version>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
+		<maven.surefire.version>3.0.0-M5</maven.surefire.version>
 		<maven.dependency.version>3.1.2</maven.dependency.version>
 		<maven.jar.version>3.1.0</maven.jar.version>
 		<maven.jar.plugin.version>3.1.0</maven.jar.plugin.version>
@@ -100,6 +101,14 @@
     <build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/images/*.jpg</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -109,67 +118,71 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
-
+			<!-- Compile -->
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>${properties.maven.plugin.version}</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<release>11</release>
+					<compilerArgs>
+						<!--<arg>#doubledash#enable-preview</arg>-->
+						<arg>-verbose</arg>
+						<arg>-Xlint:all,-options,-path</arg>
+					</compilerArgs>
+					<!-- for surefire plugin -->
+				</configuration>
 				<executions>
 					<execution>
-						<phase>generate-resources</phase>
+						<id>default-testCompile</id>
+						<phase>test-compile</phase>
 						<goals>
-							<goal>read-project-properties</goal>
+							<goal>testCompile</goal>
 						</goals>
-						<configuration>
-							<files>
-								<file>${basedir}/target/filter.properties</file>
-							</files>
-							<tasks>
-								<echo>BuildTime : ${build.time}</echo>
-							</tasks>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
+			<!-- Test-compile -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.version}</version>
+			</plugin>
+			<!-- Binds to Package phase, but will not run... -->
 			<!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.plugin.version}</version>
+				<version>${maven.jar.version}</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
-					<executions>
-						<execution>
-							<id>make-a-jar</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-					<includes>
-						<include>**/*.class</include>
-						<include>*.jpg</include>
-					</includes>
-					<excludes>
-						<exclude>**/*Test.class</exclude>
-					</excludes>
+					<finalName>${project.name}-${project.version}</finalName>
+					<outputDirectory>${basedir}/dist</outputDirectory>
 					<archive>
 						<index>true</index>
 						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addClasspath>true</addClasspath>
+							<mainClass>Runnables.CalculatorMain</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Implementation-Version>${project.version}</Implementation-Version>
-							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
+							<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
+							<!--suppress UnresolvedMavenProperty -->
 							<Creation-Time>${build.time}</Creation-Time>
 							<mainClass>Runnables.CalculatorMain</mainClass>
 						</manifestEntries>
 					</archive>
-					<outputDirectory>${basedir}/dist/version4</outputDirectory>
 				</configuration>
 			</plugin>
-			<!-- Builds filter.properties file -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -183,18 +196,20 @@
 							<tasks>
 								<mkdir dir="${project.build.directory}"/>
 								<tstamp>
-									<format property="last.updated" pattern="MM-dd-YYYY hh:mm:ss"/>
+									<format property="last.updated" pattern="yyyy-MM-dd HH:mm:ss"/>
 								</tstamp>
-								<!-- Places file inside dist/ -->
-								<echo file="${basedir}/dist/version4/filter.properties" message="build.time=${last.updated}"/>
+								<!--suppress UnresolvedMavenProperty -->
+								<echo file="${basedir}/dist/version4/build.properties" message="build.time=${last.updated}"/>
 							</tasks>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Can be triggered by Lifecycle: Package: Builds 'jar-with-dependencies' -->
+			<!-- Package: creates runnable jar with dependencies -->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven.assembly.version}</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -204,24 +219,26 @@
 					</execution>
 				</executions>
 				<configuration>
-					<finalName>${project.artifactId}-${project.version}</finalName>
+					<finalName>${project.name}-${project.version}</finalName>
+					<outputDirectory>${basedir}/dist/version4</outputDirectory>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 					<archive>
-						<index>>true</index>
+						<index>true</index>
 						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addClasspath>true</addClasspath>
 							<mainClass>Runnables.CalculatorMain</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Implementation-Version>${project.version}</Implementation-Version>
-							<Creation-Time-Format>MM-dd-YYYY hh:mm:ss</Creation-Time-Format>
+							<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
+							<!--suppress UnresolvedMavenProperty -->
 							<Creation-Time>${build.time}</Creation-Time>
 							<mainClass>Runnables.CalculatorMain</mainClass>
 						</manifestEntries>
 					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<outputDirectory>${basedir}/dist/version4</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
