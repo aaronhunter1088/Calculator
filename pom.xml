@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<outputDirectory>${basedir}/dist</outputDirectory>
+		<outputDirectory>${basedir}/dist/version4</outputDirectory>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
 		<apple.version>1.4</apple.version>
@@ -23,35 +23,29 @@
 		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.surefire.version>3.0.0-M5</maven.surefire.version>
 		<maven.dependency.version>3.1.2</maven.dependency.version>
-		<maven.jar.version>3.1.0</maven.jar.version>
-		<maven.jar.plugin.version>3.1.0</maven.jar.plugin.version>
+		<maven.jar.version>3.2.0</maven.jar.version>
 		<mockito.version>3.0.0</mockito.version>
 		<properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
 	</properties>
-
 	<dependencies>
-
 		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
 		<dependency>
 			<groupId>com.apple</groupId>
 			<artifactId>applejavaextensions</artifactId>
 			<version>${apple.version}</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons.lang.version}</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j2.version}</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -59,7 +53,6 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -67,37 +60,31 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-antrun-plugin</artifactId>
 			<version>${maven.antrun.version}</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-assembly-plugin</artifactId>
 			<version>${maven.assembly.version}</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-dependency-plugin</artifactId>
 			<version>${maven.dependency.version}</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
 		<dependency>
 			<groupId>net.sourceforge.jdatepicker</groupId>
 			<artifactId>jdatepicker</artifactId>
 			<version>${date.picker.version}</version>
 		</dependency>
-
 	</dependencies>
-
     <build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
@@ -110,20 +97,14 @@
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-				</configuration>
-			</plugin>
 			<!-- Compile -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.version}</version>
 				<configuration>
+					<source>11</source>
+					<target>11</target>
 					<release>11</release>
 					<compilerArgs>
 						<!--<arg>#doubledash#enable-preview</arg>-->
@@ -164,8 +145,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<finalName>${project.name}-${project.version}</finalName>
-					<outputDirectory>${basedir}/dist</outputDirectory>
+					<finalName>${finalName}</finalName>
+					<outputDirectory>${outputDirectory}</outputDirectory>
 					<archive>
 						<index>true</index>
 						<manifest>
@@ -181,6 +162,10 @@
 							<mainClass>Runnables.CalculatorMain</mainClass>
 						</manifestEntries>
 					</archive>
+					<includes>
+						<include>**/**</include>
+						<include>**/images/*</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -199,31 +184,19 @@
 									<format property="last.updated" pattern="yyyy-MM-dd HH:mm:ss"/>
 								</tstamp>
 								<!--suppress UnresolvedMavenProperty -->
-								<echo file="${basedir}/dist/version4/build.properties" message="build.time=${last.updated}"/>
+								<echo file="${outputDirectory}/build.properties" message="build.time=${last.updated}"/>
 							</tasks>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Package: creates runnable jar with dependencies -->
+			<!-- Assembly:Single creates runnable jar with dependencies
+			     Run Command: mvn clean compile assembly:single -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>${maven.assembly.version}</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
-					<finalName>${project.name}-${project.version}</finalName>
-					<outputDirectory>${basedir}/dist/version4</outputDirectory>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
 					<archive>
 						<index>true</index>
 						<manifest>
@@ -239,10 +212,21 @@
 							<mainClass>Runnables.CalculatorMain</mainClass>
 						</manifestEntries>
 					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<finalName>${finalName}</finalName>
+					<outputDirectory>${outputDirectory}</outputDirectory>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
-        
     </build>
-    
 </project>

@@ -11,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.awt.event.ActionEvent;
 
+import static Types.CalculatorType.BASIC;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static Types.CalculatorBase.BINARY;
@@ -64,7 +65,7 @@ public class CalculatorMethodsTest {
     @Test
     public void testDivisionFunctionality() {
         c.setValues(new String[]{"15", "5"});
-        c.setCalculatorType(CalculatorType.BASIC);
+        c.setCalculatorType(BASIC);
         c.divide();
         assertEquals("Did not get back expected result", "3", c.values[0]);
     }
@@ -174,28 +175,14 @@ public class CalculatorMethodsTest {
     @Test
     public void pressingDotButtonAfterNumberButtonReturnsNumberDot()
     {
-        //c.textArea.setText(c.addNewLineCharacters(1)+"5");
-        //c.values[0] = c.getTextAreaWithoutAnything();
-        //c.textareaValue = new StringBuffer(c.getTextAreaWithoutAnything());
-        //when(ae.getActionCommand()).thenReturn(".");
-        //c.performDotButtonActions(ae);
-        //assertEquals("Textarea is not as expected", ".5", c.textareaValue.toString());
-        //assertTrue("dotButtonPressed is not true", c.dotButtonPressed);
         c.valuesPosition = 0;
-        //c.textArea.setText(c.addNewLineCharacters(1)+"54");
-        //c.values[c.valuesPosition] = c.getTextAreaWithoutAnything();
-        //c.textareaValue = new StringBuffer(c.getTextAreaWithoutAnything());
-        //when(ae.getActionCommand()).thenReturn(".");
-        //c.performDotButtonActions(ae);
-        //assertEquals("Textarea is not as expected", "54.", c.textareaValue.toString());
-        //assertEquals("Values[valuesPosition]", "54.", c.values[c.valuesPosition]);
-
+        c.calcType = BASIC;
         c.textArea.setText(c.addNewLineCharacters(1)+"544");
-        c.values[c.valuesPosition] = c.getTextAreaWithoutAnything();
-        c.textareaValue = new StringBuffer(c.getTextAreaWithoutAnything());
+        c.setTextareaValue(new StringBuffer(c.getTextAreaWithoutAnything()));
+        c.setValuesToTextAreaValue();
         when(ae.getActionCommand()).thenReturn(".");
         c.performDotButtonActions(ae);
-        assertEquals("textAreaValue is not as expected", "544.", c.textareaValue.toString());
+        assertEquals("textareaValue is not as expected", "544.", c.textareaValue.toString());
         assertEquals("Values[0]", "544.", c.values[c.valuesPosition]);
     }
 

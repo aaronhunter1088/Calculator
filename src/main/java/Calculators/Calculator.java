@@ -1325,10 +1325,9 @@ public class Calculator extends JFrame
             //StringBuffer lodSB = new StringBuffer(textareaValue);
             textareaValue = new StringBuffer().append(values[valuesPosition]).append(buttonChoice);
             setValuesToTextAreaValue();
-            textareaValue = new StringBuffer(values[valuesPosition].replace(".",""));
-            textareaValue = new StringBuffer().append(buttonChoice).append(textareaValue);
+            textareaValue = new StringBuffer().append(buttonChoice).append(values[valuesPosition]);
             updateTheTextAreaBasedOnTheTypeAndBase();
-            textareaValue = new StringBuffer(values[valuesPosition].replace(".","")+".");
+            textareaValue = new StringBuffer().append(values[valuesPosition]);
             dotButtonPressed = true; // !LEAVE. dot logic should not be executed anymore for the current number
         }
         else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
