@@ -40,8 +40,8 @@ public class ConverterPanel extends JPanel
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator
-     * @param converterType
+     * @param calculator the Calculator to use
+     * @param converterType the converter type to use
      */
     public ConverterPanel(Calculator calculator, ConverterType converterType) { setupConverterPanel(calculator, converterType); }
 
@@ -49,7 +49,7 @@ public class ConverterPanel extends JPanel
     public void setupConverterPanel(Calculator calculator, ConverterType converterType)
     {
         setCalculator(calculator);
-        setConverterLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setMaximumSize(new Dimension(300,400));
         setupEditMenu();
@@ -179,6 +179,7 @@ public class ConverterPanel extends JPanel
         calculator.confirm("DotButton pushed", CONVERTER);
     }
 
+    @SuppressWarnings("Duplicates")
     private void performNumberButtonFunctionality(ActionEvent ae)
     {
         // check if we are in textField1 or textField2
@@ -277,6 +278,7 @@ public class ConverterPanel extends JPanel
         return thisUnit;
     }
 
+    @SuppressWarnings("Duplicates")
     private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
     {
         constraints.gridx = column;
@@ -335,6 +337,7 @@ public class ConverterPanel extends JPanel
         }
     }
 
+    @SuppressWarnings("Duplicates")
     public void createViewHelpMenu(String helpString)
     {
         // 4 menu options: loop through to find the Help option
@@ -354,7 +357,7 @@ public class ConverterPanel extends JPanel
                     else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("About"))
                     {
-                        // do nothing at this moment
+                        LOGGER.warn("IMPLEMENT ABOUT MENU");
                     }
                 }
                 // remove old option
@@ -402,7 +405,6 @@ public class ConverterPanel extends JPanel
                         copyItem.setName("Copy");
                         copyItem.addActionListener(this::createCopyFunctionalityForConverter);
                         menuOption.add(copyItem, 0);
-                        continue;
                     }
                     else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("Paste"))
@@ -418,7 +420,6 @@ public class ConverterPanel extends JPanel
                         pasteItem.setName("Paste");
                         pasteItem.addActionListener(this::createPasteFunctionalityForConverter);
                         menuOption.add(pasteItem, 1);
-                        continue;
                     }
                 }
             }
@@ -559,7 +560,7 @@ public class ConverterPanel extends JPanel
     }
 
     /************* All Setters ******************/
-    public void setConverterLayout(GridBagLayout converterLayout) {
+    public void setLayout(GridBagLayout converterLayout) {
         super.setLayout(converterLayout);
         this.converterLayout = converterLayout;
     }
@@ -567,9 +568,7 @@ public class ConverterPanel extends JPanel
     public void setConverterTypeName(JLabel converterTypeName) { this.converterTypeName = converterTypeName; }
     public void setConverterTypeNameAsString(String converterName) { this.converterName = converterName; }
     public void setTextField1(JTextField textField1) { this.textField1 = textField1; }
-    public void setTextField2(JTextField textField2) {
-        this.textField2 = textField2;;
-    }
+    public void setTextField2(JTextField textField2) { this.textField2 = textField2; }
     public void setUnitOptions1(JComboBox<String> unitOptions1) { this.unitOptions1 = unitOptions1; }
     public void setUnitOptions2(JComboBox<String> unitOptions2) { this.unitOptions2 = unitOptions2; }
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }

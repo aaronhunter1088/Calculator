@@ -18,8 +18,8 @@ public class CalculatorError extends Exception
     }
     /**
      * Constructor for an exception which occurs in the calculator
-     * @param message
-     * @param exception
+     * @param message the error message
+     * @param exception the exception
      */
     public CalculatorError(String message, Exception exception)
     {
@@ -31,9 +31,6 @@ public class CalculatorError extends Exception
     @Override
     public String getMessage() {
         return message;
-    }
-    public Exception getException() {
-        return exception;
     }
 
     public void setMessage(String message) {

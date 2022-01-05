@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static Calculators.Calculator.*;
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
 
@@ -55,7 +56,7 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator
+     * @param calculator the Calculator to use
      */
     public ProgrammerPanel(Calculator calculator, CalculatorBase base) { setupProgrammerPanel(calculator, base); }
 
@@ -260,6 +261,7 @@ public class ProgrammerPanel extends JPanel
         LOGGER.warn("IMPLEMENT");
     }
 
+    @SuppressWarnings("Duplicates")
     public void addComponent(Component c, int row, int column, int width, int height, int fill)
     {
         constraints.gridx = column;
@@ -276,16 +278,7 @@ public class ProgrammerPanel extends JPanel
 
     public void addComponent(Component c, int row, int column, int width, int height)
     {
-        constraints.gridx = column;
-        constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
-        constraints.weighty = 0;
-        constraints.weightx = 0;
-        programmerLayout.setConstraints(c, constraints); // set constraints
-        add(c); // add component
+        addComponent(c, row, column, width, height, GridBagConstraints.BOTH);
     }
 
     public void setupButtonBlank1()
@@ -299,9 +292,7 @@ public class ProgrammerPanel extends JPanel
         buttonMod.setFont(Calculator.font);
         buttonMod.setPreferredSize(new Dimension(35,35));
         buttonMod.setBorder(new LineBorder(Color.BLACK));
-        buttonMod.addActionListener(action -> {
-            performButtonModActions(action);
-        });
+        buttonMod.addActionListener(this::performButtonModActions);
     }
 
     public void setupButtonLPar()
@@ -309,9 +300,7 @@ public class ProgrammerPanel extends JPanel
         buttonLPar.setFont(Calculator.font);
         buttonLPar.setPreferredSize(new Dimension(35,35));
         buttonLPar.setBorder(new LineBorder(Color.BLACK));
-        buttonLPar.addActionListener(action -> {
-            LOGGER.warn("IMPLEMENT");
-        });
+        buttonLPar.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
     }
 
     public void setupButtonRPar()
@@ -319,7 +308,7 @@ public class ProgrammerPanel extends JPanel
         buttonRPar.setFont(Calculator.font);
         buttonRPar.setPreferredSize(new Dimension(35,35));
         buttonRPar.setBorder(new LineBorder(Color.BLACK));
-        buttonRPar.addActionListener(action -> { LOGGER.warn("IMPLEMENT"); });
+        buttonRPar.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
     }
 
     public void setupButtonRol()
@@ -336,9 +325,10 @@ public class ProgrammerPanel extends JPanel
         buttonRor.setBorder(new LineBorder(Color.BLACK));
     }
 
+    @SuppressWarnings("Duplicates")
     public void setupButtonOr()
     {
-        buttonOr.setFont(Calculator.font);
+        buttonOr.setFont(font);
         buttonOr.setPreferredSize(new Dimension(35,35));
         buttonOr.setBorder(new LineBorder(Color.BLACK));
         buttonOr.addActionListener(action -> {
@@ -350,9 +340,10 @@ public class ProgrammerPanel extends JPanel
         });
     }
 
+    @SuppressWarnings("Duplicates")
     public void setupButtonXor()
     {
-        buttonXor.setFont(Calculator.font);
+        buttonXor.setFont(font);
         buttonXor.setPreferredSize(new Dimension(35,35));
         buttonXor.setBorder(new LineBorder(Color.BLACK));
         buttonXor.addActionListener(action -> {
@@ -383,9 +374,7 @@ public class ProgrammerPanel extends JPanel
         buttonNot.setFont(Calculator.font);
         buttonNot.setPreferredSize(new Dimension(35,35));
         buttonNot.setBorder(new LineBorder(Color.BLACK));
-        buttonNot.addActionListener(action -> {
-            performButtonNotActions(action);
-        });
+        buttonNot.addActionListener(this::performButtonNotActions);
     }
 
     public void setupButtonAnd()
@@ -433,18 +422,23 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = action.getActionCommand();
         LOGGER.debug("buttonChoice: " + buttonChoice);
         calculator.resetProgrammerByteOperators(false);
-        if (buttonChoice.equals("Byte")) {
-            buttonByte.setEnabled(true);
-            calculator.setButtonByte(true);
-        } else if (buttonChoice.equals("Word")) {
-            buttonWord.setEnabled(true);
-            calculator.setButtonWord(true);
-        } else if (buttonChoice.equals("DWord")) {
-            buttonDWord.setEnabled(true);
-            calculator.setButtonDWord(true);
-        } else if (buttonChoice.equals("QWord")) {
-            buttonQWord.setEnabled(true);
-            calculator.setButtonQWord(true);
+        switch (buttonChoice) {
+            case "Byte":
+                buttonByte.setEnabled(true);
+                calculator.setButtonByte(true);
+                break;
+            case "Word":
+                buttonWord.setEnabled(true);
+                calculator.setButtonWord(true);
+                break;
+            case "DWord":
+                buttonDWord.setEnabled(true);
+                calculator.setButtonDWord(true);
+                break;
+            case "QWord":
+                buttonQWord.setEnabled(true);
+                calculator.setButtonQWord(true);
+                break;
         }
         calculator.confirm("Pressed: " + buttonChoice);
     }
@@ -1021,6 +1015,7 @@ public class ProgrammerPanel extends JPanel
         calculator.values[0] = String.valueOf(finalResult);
     }
 
+    @SuppressWarnings("Duplicates")
     public String performOr()
     {
         LOGGER.debug("performing Or");
@@ -1036,13 +1031,12 @@ public class ProgrammerPanel extends JPanel
                 String.valueOf(calculator.values[1].charAt(i)).equals("0") )
             { // if the characters at both values at the same position are the same and equal 0
                 letter = "0";
-                sb.append(letter);
             }
             else
             {
                 letter = "1";
-                sb.append(letter);
             }
+            sb.append(letter);
             LOGGER.info(calculator.values[0].charAt(i)+" OR "+calculator.values[1].charAt(i)+" = "+ letter);
         }
         calculator.values[3] = sb.toString();
@@ -1053,6 +1047,7 @@ public class ProgrammerPanel extends JPanel
         return String.valueOf(sb);
     }
 
+    @SuppressWarnings("Duplicates")
     public String performXor()
     {
         LOGGER.info("performing Xor");
@@ -1063,24 +1058,25 @@ public class ProgrammerPanel extends JPanel
                     String.valueOf(calculator.values[1].charAt(i)).equals("0") )
             { // if the characters at both values at the same position are the same and equal 0
                 letter = "0";
-                sb.append(letter);
             }
             else
             {
                 letter = "1";
-                sb.append(letter);
             }
-            LOGGER.info(String.valueOf(calculator.values[0].charAt(i))+" + "+String.valueOf(calculator.values[1].charAt(i))+
-                    " = "+ letter);
+            sb.append(letter);
+            LOGGER.info(calculator.values[0].charAt(i) + " + " + calculator.values[1].charAt(i)+ " = " + letter);
         }
         return String.valueOf(sb);
     }
 
-    public void performFractionButtonActions(ActionEvent action) { calculator.confirm("Button not enabled for programmer panel"); }
+    public void performFractionButtonActions(ActionEvent action)
+    { calculator.confirm("Button not enabled for programmer panel"); }
 
-    public void performPercentButtonActions(ActionEvent action) { calculator.confirm("Button not enabled for programmer panel"); }
+    public void performPercentButtonActions(ActionEvent action)
+    { calculator.confirm("Button not enabled for programmer panel"); }
 
-    public void performSquareRootButtonActions(ActionEvent action) { calculator.confirm("Button not enabled for programmer panel"); }
+    public void performSquareRootButtonActions(ActionEvent action)
+    { calculator.confirm("Button not enabled for programmer panel"); }
 
     public void setButtons2To9(boolean isEnabled)
     {
@@ -1108,10 +1104,10 @@ public class ProgrammerPanel extends JPanel
     }
 
     /************* All Setters ******************/
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
         this.programmerLayout = panelLayout;
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
 }

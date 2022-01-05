@@ -16,8 +16,8 @@ public class BasicPanel extends JPanel
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
     private static final long serialVersionUID = 1L;
 
-    private GridBagLayout basicLayout; // layout of the calculator
-    private GridBagConstraints constraints; // layout's constraints
+    private GridBagLayout basicLayout;
+    private GridBagConstraints constraints;
     private Calculator calculator;
 
     /************* Constructors ******************/
@@ -25,7 +25,7 @@ public class BasicPanel extends JPanel
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator
+     * @param calculator the Calculator to use
      */
     public BasicPanel(Calculator calculator) { setupBasicPanel(calculator); }
 
@@ -109,6 +109,7 @@ public class BasicPanel extends JPanel
         setupBasicPanel(calculator);
     }
 
+    @SuppressWarnings("Duplicates")
     private void setupHelpMenu()
     {
         String helpString = "<html>" +
@@ -173,7 +174,7 @@ public class BasicPanel extends JPanel
                     else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
                             valueForThisMenuOption.getName().equals("About"))
                     {
-                        // do nothing at this moment
+                        LOGGER.warn("IMPLEMENT ABOUT MENU");
                     }
                 }
                 // remove old option
@@ -193,14 +194,12 @@ public class BasicPanel extends JPanel
                             scrollPane, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
-                //menuOption.add(new JPopupMenu.Separator(), 1);
-                //menuOption.add(calculator.createAboutCalculatorJMenuItem(), 2);
-                //break; //?? for just changing one option could be ok. issue maybe if changing other options
             }
         }
         LOGGER.info("Finished setting up the help menu");
     }
 
+    @SuppressWarnings("Duplicates")
     public void addComponent(Component c, int row, int column, int width, int height, int fill)
     {
         constraints.gridx = column;
@@ -211,22 +210,13 @@ public class BasicPanel extends JPanel
         constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
         constraints.weighty = 0;
         constraints.weightx = 0;
-        basicLayout.setConstraints(c, constraints); // set constraints
-        add(c); // add component
+        basicLayout.setConstraints(c, constraints);
+        add(c);
     }
 
     public void addComponent(Component c, int row, int column, int width, int height)
     {
-        constraints.gridx = column;
-        constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = GridBagConstraints.BOTH;
-        //constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
-        //constraints.weighty = 0;
-        //constraints.weightx = 0;
-        basicLayout.setConstraints(c, constraints); // set constraints
-        add(c); // add component
+        addComponent(c, row, column, width, height, GridBagConstraints.BOTH);
     }
 
     /************* All Setters ******************/

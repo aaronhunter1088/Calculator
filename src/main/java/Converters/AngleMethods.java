@@ -17,6 +17,7 @@ public abstract class AngleMethods
     public static final String RADIANS = "Radians";
     public static final String GRADIANS = "Gradians";
 
+    @SuppressWarnings("Duplicates")
     public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
@@ -218,6 +219,7 @@ public abstract class AngleMethods
         }
     }
 
+    @SuppressWarnings("Duplicates")
     public static double convertingRadiansToGradians(Calculator calculator)
     {
         double radians;
@@ -311,6 +313,7 @@ public abstract class AngleMethods
         return x;
     }
 
+    @SuppressWarnings("Duplicates")
     public static double convertingRadiansToDegrees(Calculator calculator)
     {
         double radians;
