@@ -4,7 +4,8 @@ import Types.CalculatorBase;
 import Types.CalculatorType;
 import Types.ConverterType;
 import Panels.*;
-import com.apple.eawt.Application;
+//import com.apple.eawt.Application;
+import java.awt.Desktop;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -141,7 +142,7 @@ public class Calculator extends JFrame
         else if (converterType != null) setCurrentPanel(determinePanel(calcType, converterType, null));
         else                            setCurrentPanel(determinePanel(calcType, null, chosenOption));
         add(currentPanel);
-        updateJPanel(currentPanel);
+        //updateJPanel(currentPanel);
         LOGGER.info("Panel added to calculator");
         setCalculatorBase(determineCalculatorBase());
         setMaximumSize(currentPanel.getSize());
@@ -178,7 +179,9 @@ public class Calculator extends JFrame
     {
         setImageIcons();
         // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
-        Application.getApplication().setDockIconImage(windowsCalculator.getImage());
+        //Application.getApplication().setDockIconImage(windowsCalculator.getImage());
+        final Taskbar taskbar = Taskbar.getTaskbar();
+        taskbar.setIconImage(windowsCalculator.getImage());
         setIconImage(windowsCalculator.getImage());
         LOGGER.info("All images set for Calculator");
     }
@@ -568,7 +571,7 @@ public class Calculator extends JFrame
         // add options to Look menu
         lookMenu.add(metal);
         lookMenu.add(motif);
-        if (!StringUtils.contains(System.getProperty("os.name").toLowerCase(), "Mac".toLowerCase()))
+        if ( isMacOperatingSystem() )
         {
             lookMenu.add(windows);
             lookMenu.add(system);
@@ -2094,7 +2097,7 @@ public class Calculator extends JFrame
                 dotButtonPressed = false;
                 valuesPosition++; // increase valuesPosition for storing textarea
             }
-            else if (addBool && !values[1].equals("")) {
+            else if (addBool && !values[1].equals("")) { // 5 + 3 + ...
                 addition();
                 addBool = resetOperator(addBool); // sets addBool to false
                 addBool = true;
@@ -2135,7 +2138,7 @@ public class Calculator extends JFrame
                 else if (calcType == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + "Enter a Number");
                 else if (calcType == SCIENTIFIC) LOGGER.warn("SETUP");
             }
-            else if (addBool == true || subBool == true || mulBool == true || divBool == true) { //
+            else if (addBool || subBool || mulBool || divBool) { //
                 LOGGER.error("already chose an operator. choose another number.");
             }
             buttonDot.setEnabled(true);
@@ -3077,16 +3080,25 @@ public class Calculator extends JFrame
 
     public String getHelpString()
     {
-        String COPYRIGHT = "\u00a9";
-        return "<html>Apple MacBook Air "
-                + "Version 4<br>"
-                + COPYRIGHT + " 2018 Microsoft Corporation. All rights reserved.<br><br>"
-                + "Mac OS mojave and its user interface are protected by trademark and all other<br>"
+        LOGGER.info("getHelpString");
+        String message = "";
+        String COPYRIGHT = "©";
+        String os = System.getProperty("os.name");
+        String computerText = "";
+        if ( isMacOperatingSystem() )
+        { computerText = "Apple"; }
+        else
+        { computerText = "Windows"; }
+        return "<html>" + computerText + "<br>"
+                + "Calculator Version 4<br>"
+                + COPYRIGHT + " " + LocalDate.now().getYear() + " \"Microsoft Corporation\". All rights reserved.<br><br>"
+                + os + " and its user interface are protected by trademark and all other<br>"
                 + "pending or existing intellectual property right in the United States and other<br>"
                 + "countries/regions."
                 + "<br><br><br>"
                 + "This product is licensed under the License Terms to:<br>"
-                + "Michael Ball</html>";
+                + "Michael Ball<br>"
+                + "Github: https://github.com/aaronhunter1088</html>";
     }
 
     @Deprecated(since = "performed by the panel")
@@ -3112,8 +3124,9 @@ public class Calculator extends JFrame
         JPanel iconPanel = new JPanel(new GridBagLayout());
         iconLabel = new JLabel();
         iconPanel.add(iconLabel);
+        ImageIcon specificLogo = isMacOperatingSystem() ? macLogo : windowsLogo;
         textLabel = new JLabel(getHelpString(),
-                macLogo, SwingConstants.LEFT);
+                specificLogo, SwingConstants.LEFT);
         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -3123,6 +3136,11 @@ public class Calculator extends JFrame
         JOptionPane.showMessageDialog(Calculator.this,
                 mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
 
+    }
+
+    public boolean isMacOperatingSystem() {
+        LOGGER.info("OS Name: " + System.getProperty("os.name"));
+        return StringUtils.contains(System.getProperty("os.name").toLowerCase(), "mac");
     }
 
     /************* All Setters ******************/

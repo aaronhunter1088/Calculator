@@ -13,16 +13,15 @@ import static Types.ConverterType.*;
 
 public class CalculatorMain
 {
-    static { System.setProperty("appName", "Calculator"); }
     private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class);
 
 	public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting here...");
         //Start a basic calculator
-        //Calculator calculator = new Calculator(BASIC);
+        Calculator calculator = new Calculator(BASIC);
         //Start a programmer calculator
-        Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
+        //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
         //Start a date calculator with options1 selected
         //Calculator calculator = new Calculator(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected

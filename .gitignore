@@ -1,6 +1,5 @@
 .idea/
-dist/version1
-dist/version3
+dist/*
 logs/*
 target/*
 .settings/
