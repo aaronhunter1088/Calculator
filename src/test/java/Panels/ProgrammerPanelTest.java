@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.awt.event.ActionEvent;
 import java.math.BigInteger;
 
+import static junit.framework.TestCase.assertSame;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +40,7 @@ public class ProgrammerPanelTest
     public static void setup() throws Exception
     {
         calculator = new Calculator(CalculatorType.PROGRAMMER);
-        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
+        assertSame("ProgrammerCalculator has the wrong type", CalculatorType.PROGRAMMER, calculator.getCalculatorType());
         calculator.firstNumBool = true;
         programmerPanel = new ProgrammerPanel(calculator);
         calculator.setCurrentPanel(programmerPanel);
@@ -66,7 +67,6 @@ public class ProgrammerPanelTest
         assertEquals("Did not convert from Decimal to Binary", "00000100", calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
     }
 
-    // Done by BDD/TDD
     @Test
     public void pressingNotButtonReversesAllBits() {
         //Assertions

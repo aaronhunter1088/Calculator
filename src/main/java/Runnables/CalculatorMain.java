@@ -28,7 +28,7 @@ public class CalculatorMain
         //Calculator calculator = new Calculator(DATE, OPTIONS2);
         //Start a converter calculator
         //Calculator calculator = new Calculator(CONVERTER, AREA); // (CONVERTER, <ConverterType>);
-        UIManager.setLookAndFeel(new MetalLookAndFeel());
+        //UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(new MetalLookAndFeel());

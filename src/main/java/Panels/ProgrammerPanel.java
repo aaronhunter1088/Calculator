@@ -17,7 +17,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static Calculators.Calculator.*;
 import static Types.CalculatorType.*;
@@ -78,6 +81,15 @@ public class ProgrammerPanel extends JPanel
 
     public void setupProgrammerPanelComponents(CalculatorBase base)
     {
+        List<JButton> allButtons = Stream.of(
+                        calculator.getAllOtherBasicCalculatorButtons(),
+                        calculator.getBasicOperationButtons(),
+                        calculator.getBasicNumberButtons())
+                .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
+                .collect(Collectors.toList());
+
+        allButtons.forEach(button -> Stream.of(button.getActionListeners())
+                .forEach(button::removeActionListener));
         calculator.textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         calculator.textArea.setFont(Calculator.font);
         calculator.textArea.setBorder(new LineBorder(Color.BLACK));
@@ -150,7 +162,7 @@ public class ProgrammerPanel extends JPanel
         }
         else
         {
-            if (!calculator.textareaValue.toString().equals(""))
+            if (!calculator.textareaValue.toString().isEmpty())
             {
                 calculator.setCalculatorBase(DECIMAL);
                 buttonDec.setSelected(true);

@@ -71,7 +71,7 @@ public class Calculator extends JFrame
             mulBool = false, divBool = false,
             memAddBool = false, memSubBool = false,
             negatePressed = false, dotButtonPressed = false,
-    // programmer related fields
+            // programmer related fields
             isButtonBinSet = true, isButtonOctSet = false,
             isButtonDecSet = false, isButtonHexSet = false,
             isButtonByteSet = true, isButtonWordSet = false,
@@ -95,8 +95,7 @@ public class Calculator extends JFrame
      * @param calcType the type of Calculator to create, expecting Programmer
      * @param base the base to set that Calculator in
      */
-    public Calculator(CalculatorType calcType, CalculatorBase base)
-    {
+    public Calculator(CalculatorType calcType, CalculatorBase base) {
         super(calcType.getName()); // default title is Basic
         setCalculatorType(calcType);
         setupMenuBar(); // setup here for all types
@@ -132,7 +131,7 @@ public class Calculator extends JFrame
      * @param converterType the type of unit to start the Converter Calculator in
      * @param chosenOption the option to open the DateCalculator in
      */
-    public Calculator(CalculatorType calcType, ConverterType converterType, String chosenOption)  throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
+    public Calculator(CalculatorType calcType, ConverterType converterType, String chosenOption) throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
     {
         super(calcType.getName());
         setCalculatorType(calcType);
@@ -146,7 +145,7 @@ public class Calculator extends JFrame
         LOGGER.info("Panel added to calculator");
         setCalculatorBase(determineCalculatorBase());
         setMaximumSize(currentPanel.getSize());
-        pack();
+        //pack();
         setVisible(true);
         setResizable(false);
         setLocation(750, 250);
@@ -438,8 +437,6 @@ public class Calculator extends JFrame
     /**
      * This method handles the logic when we switch from any type of calculator
      * to the Programmer type
-     *
-     * TODO: Implement this method
      */
     public void setupNumberButtons(boolean isEnabled)
     {
@@ -571,7 +568,7 @@ public class Calculator extends JFrame
         // add options to Look menu
         lookMenu.add(metal);
         lookMenu.add(motif);
-        if ( isMacOperatingSystem() )
+        if ( !isMacOperatingSystem() )
         {
             lookMenu.add(windows);
             lookMenu.add(system);
@@ -771,7 +768,7 @@ public class Calculator extends JFrame
         buttonMemorySubtraction.addActionListener(this::performMemorySubtractionActions);
         LOGGER.info("Memory Subtract button configured");
         // reset buttons to enabled if memories are saved
-        if (!memoryValues[0].equals(""))
+        if (!memoryValues[0].isEmpty())
         {
             buttonMemoryClear.setEnabled(true);
             buttonMemoryRecall.setEnabled(true);
@@ -782,6 +779,7 @@ public class Calculator extends JFrame
 
     public void performInitialChecks()
     {
+        LOGGER.info("performing initial checks...");
         boolean checkFound = false;
         if (textArea1ContainsBadText())
         {
@@ -816,6 +814,7 @@ public class Calculator extends JFrame
 
     public void performNumberButtonActions(ActionEvent actionEvent)
     {
+        LOGGER.info("Performing number button actions...");
         String buttonChoice = actionEvent.getActionCommand();
         if (!firstNumBool) // do for second number
         {
@@ -832,7 +831,6 @@ public class Calculator extends JFrame
             }
         }
         performInitialChecks();
-        LOGGER.info("Performing number button actions...");
         if (isPositiveNumber(values[valuesPosition]) && !dotButtonPressed)
         {
             LOGGER.info("positive number & dot button was not pushed");
@@ -1957,11 +1955,13 @@ public class Calculator extends JFrame
         {
             BasicPanel basicPanel = new BasicPanel(this);
             updateJPanel(basicPanel);
+            updateTheTextAreaBasedOnTheTypeAndBase();
         }
         else if (viewChoice.equals("Programmer"))
         {
-            ProgrammerPanel programmerPanel = new ProgrammerPanel(this, null);
+            ProgrammerPanel programmerPanel = new ProgrammerPanel(this, DECIMAL);
             updateJPanel(programmerPanel);
+            updateTheTextAreaBasedOnTheTypeAndBase();
         }
         else if (viewChoice.equals("Scientific")) { LOGGER.warn("Setup"); }
         else if (viewChoice.equals("Date"))
@@ -2050,6 +2050,12 @@ public class Calculator extends JFrame
         return Arrays.asList(buttonAdd, buttonSubtract, buttonMultiply, buttonDivide);
     }
 
+    public Collection<JButton> getBasicNumberButtons()
+    {
+        return Arrays.asList(button0, button1, button2, button3, button4,
+                             button5, button6, button7, button8, button9);
+    }
+
     /**
      * This method clears the functions off of + - * /
      */
@@ -2059,6 +2065,13 @@ public class Calculator extends JFrame
             Arrays.stream(button.getActionListeners()).forEach(button::removeActionListener));
     }
 
+    /**
+     * Returns the "other" basic calculator buttons. This includes
+     * Clear, ClearEntry, Delete, Dot, Equals, Fraction, Negate,
+     * MemoryAddition, MemoryClear, MemoryRecall, MemorySubtraction,
+     * MemoryStore, Percent, and SquareRoot buttons.
+     * @return Collection of buttons
+     */
     public Collection<JButton> getAllOtherBasicCalculatorButtons()
     {
         return Arrays.asList(buttonEquals, buttonNegate, buttonClear, buttonClearEntry,
@@ -3175,4 +3188,297 @@ public class Calculator extends JFrame
     public void setAndButtonBool(boolean andButtonBool) { this.andButtonBool = andButtonBool; }
     public void setCalculatorBase(CalculatorBase calcBase) { this.calcBase = calcBase; }
     public void setBar(JMenuBar bar) { this.bar = bar; }
+
+    /************* All Getters ******************/
+    public JButton getButton0() {
+        return button0;
+    }
+
+    public JButton getButton1() {
+        return button1;
+    }
+
+    public JButton getButton2() {
+        return button2;
+    }
+
+    public JButton getButton3() {
+        return button3;
+    }
+
+    public JButton getButton4() {
+        return button4;
+    }
+
+    public JButton getButton5() {
+        return button5;
+    }
+
+    public JButton getButton6() {
+        return button6;
+    }
+
+    public JButton getButton7() {
+        return button7;
+    }
+
+    public JButton getButton8() {
+        return button8;
+    }
+
+    public JButton getButton9() {
+        return button9;
+    }
+
+    public JButton getButtonClear() {
+        return buttonClear;
+    }
+
+    public JButton getButtonClearEntry() {
+        return buttonClearEntry;
+    }
+
+    public JButton getButtonDelete() {
+        return buttonDelete;
+    }
+
+    public JButton getButtonDot() {
+        return buttonDot;
+    }
+
+    public JButton getButtonFraction() {
+        return buttonFraction;
+    }
+
+    public JButton getButtonPercent() {
+        return buttonPercent;
+    }
+
+    public JButton getButtonSqrt() {
+        return buttonSqrt;
+    }
+
+    public JButton getButtonMemoryClear() {
+        return buttonMemoryClear;
+    }
+
+    public JButton getButtonMemoryRecall() {
+        return buttonMemoryRecall;
+    }
+
+    public JButton getButtonMemoryStore() {
+        return buttonMemoryStore;
+    }
+
+    public JButton getButtonMemoryAddition() {
+        return buttonMemoryAddition;
+    }
+
+    public JButton getButtonMemorySubtraction() {
+        return buttonMemorySubtraction;
+    }
+
+    public JButton getButtonAdd() {
+        return buttonAdd;
+    }
+
+    public JButton getButtonSubtract() {
+        return buttonSubtract;
+    }
+
+    public JButton getButtonMultiply() {
+        return buttonMultiply;
+    }
+
+    public JButton getButtonDivide() {
+        return buttonDivide;
+    }
+
+    public JButton getButtonEquals() {
+        return buttonEquals;
+    }
+
+    public JButton getButtonNegate() {
+        return buttonNegate;
+    }
+
+    public JButton getButtonBlank1() {
+        return buttonBlank1;
+    }
+
+    public JButton getButtonBlank2() {
+        return buttonBlank2;
+    }
+
+    public String[] getValues() {
+        return values;
+    }
+
+    public String[] getMemoryValues() {
+        return memoryValues;
+    }
+
+    public int getValuesPosition() {
+        return valuesPosition;
+    }
+
+    public int getMemoryPosition() {
+        return memoryPosition;
+    }
+
+    public int getMemoryRecallPosition() {
+        return memoryRecallPosition;
+    }
+
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
+    public StringBuffer getTextareaValue() {
+        return textareaValue;
+    }
+
+    public CalculatorType getCalculatorType() {
+        return calcType;
+    }
+
+    public CalculatorBase getCalculatorBase() {
+        return calcBase;
+    }
+
+    public ConverterType getConverterType() {
+        return converterType;
+    }
+
+    public JPanel getCurrentPanel() {
+        return currentPanel;
+    }
+
+    public ImageIcon getWindowsCalculator() {
+        return windowsCalculator;
+    }
+
+    public ImageIcon getMacLogo() {
+        return macLogo;
+    }
+
+    public ImageIcon getWindowsLogo() {
+        return windowsLogo;
+    }
+
+    public ImageIcon getBlankImage() {
+        return blankImage;
+    }
+
+    public JLabel getIconLabel() {
+        return iconLabel;
+    }
+
+    public JLabel getTextLabel() {
+        return textLabel;
+    }
+
+    public JMenuBar getBar() {
+        return bar;
+    }
+
+    public boolean isFirstNumBool() {
+        return firstNumBool;
+    }
+
+    public boolean isNumberIsNegative() {
+        return numberIsNegative;
+    }
+
+    public boolean isMemorySwitchBool() {
+        return memorySwitchBool;
+    }
+
+    public boolean isAddBool() {
+        return addBool;
+    }
+
+    public boolean isSubBool() {
+        return subBool;
+    }
+
+    public boolean isMulBool() {
+        return mulBool;
+    }
+
+    public boolean isDivBool() {
+        return divBool;
+    }
+
+    public boolean isMemAddBool() {
+        return memAddBool;
+    }
+
+    public boolean isMemSubBool() {
+        return memSubBool;
+    }
+
+    public boolean isNegatePressed() {
+        return negatePressed;
+    }
+
+    public boolean isDotButtonPressed() {
+        return dotButtonPressed;
+    }
+
+    public boolean isButtonBinSet() {
+        return isButtonBinSet;
+    }
+
+    public boolean isButtonOctSet() {
+        return isButtonOctSet;
+    }
+
+    public boolean isButtonDecSet() {
+        return isButtonDecSet;
+    }
+
+    public boolean isButtonHexSet() {
+        return isButtonHexSet;
+    }
+
+    public boolean isButtonByteSet() {
+        return isButtonByteSet;
+    }
+
+    public boolean isButtonWordSet() {
+        return isButtonWordSet;
+    }
+
+    public boolean isButtonDWordSet() {
+        return isButtonDWordSet;
+    }
+
+    public boolean isButtonQWordSet() {
+        return isButtonQWordSet;
+    }
+
+    public boolean isOrButtonBool() {
+        return orButtonBool;
+    }
+
+    public boolean isModButtonBool() {
+        return modButtonBool;
+    }
+
+    public boolean isXorButtonBool() {
+        return xorButtonBool;
+    }
+
+    public boolean isNegateButtonBool() {
+        return negateButtonBool;
+    }
+
+    public boolean isNotButtonBool() {
+        return notButtonBool;
+    }
+
+    public boolean isAndButtonBool() {
+        return andButtonBool;
+    }
 }
