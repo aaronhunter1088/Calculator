@@ -31,7 +31,8 @@ public class BasicPanel extends JPanel
     private GridBagConstraints constraints;
 
     /************* Constructors ******************/
-    public BasicPanel() { LOGGER.info("Empty Basic panel created"); }
+    public BasicPanel()
+    { LOGGER.info("Empty Basic panel created"); }
 
     /**
      * MAIN CONSTRUCTOR USED
@@ -44,7 +45,7 @@ public class BasicPanel extends JPanel
     }
 
     /************* Start of methods here ******************/
-    public void setupBasicPanel(Calculator_v4 calculator)
+    private void setupBasicPanel(Calculator_v4 calculator)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout());
@@ -57,7 +58,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Finished setting up basic panel");
     }
 
-    public void setupBasicPanelComponents()
+    private void setupBasicPanelComponents()
     {
         List<JButton> allButtons = Stream.of(
                         calculator.getAllOtherBasicCalculatorButtons(),
@@ -92,7 +93,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Finished configuring the buttons");
     }
 
-    public void addComponentsToPanel()
+    private void addComponentsToPanel()
     {
         calculator.getTextArea().setBorder(new LineBorder(Color.BLACK));
         constraints.insets = new Insets(5,0,5,0);
@@ -130,11 +131,8 @@ public class BasicPanel extends JPanel
     }
 
     public void performBasicCalculatorTypeSwitchOperations(Calculator_v4 calculator)
-    {
-        setupBasicPanel(calculator);
-    }
+    { setupBasicPanel(calculator); }
 
-    @SuppressWarnings("Duplicates")
     private void setupHelpMenu()
     {
         String helpString = "<html>" +
@@ -224,7 +222,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Finished setting up the help menu");
     }
 
-    public void setupTextArea()
+    private void setupTextArea()
     {
         calculator.setTextArea(new JTextArea(2,5)); // rows, columns
         calculator.getTextArea().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -235,7 +233,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Text Area configured");
     }
 
-    public void setupMemoryButtons()
+    private void setupMemoryButtons()
     {
         calculator.getButtonMemoryStore().setFont(mainFont);
         calculator.getButtonMemoryStore().setPreferredSize(new Dimension(35, 35));
@@ -281,7 +279,6 @@ public class BasicPanel extends JPanel
             calculator.getButtonMemorySubtraction().setEnabled(true);
         }
     }
-
     public void performMemoryStoreActions(ActionEvent action)
     {
         LOGGER.info("MemoryStoreButtonHandler started");
@@ -303,7 +300,6 @@ public class BasicPanel extends JPanel
         else
         { calculator.confirm("No number added to memory. Blank entry"); }
     }
-
     public void performMemoryRecallActions(ActionEvent action)
     {
         LOGGER.info("MemoryRecallButtonHandler started");
@@ -316,7 +312,6 @@ public class BasicPanel extends JPanel
         calculator.setMemoryRecallPosition(calculator.getMemoryRecallPosition() + 1);
         calculator.confirm("Recalling number in memory: " + calculator.getMemoryValues()[(calculator.getMemoryRecallPosition()-1)] + " at position: " + (calculator.getMemoryRecallPosition()-1));
     }
-
     public void performMemoryClearActions(ActionEvent action)
     {
         LOGGER.info("MemoryClearButtonHandler started");
@@ -383,7 +378,6 @@ public class BasicPanel extends JPanel
         }
         calculator.confirm("Reset memory at position: " + (calculator.getMemoryPosition()-1) + ".");
     }
-
     public void performMemoryAddActions(ActionEvent action)
     {
         LOGGER.info("MemoryAddButtonHandler class started");
@@ -422,7 +416,6 @@ public class BasicPanel extends JPanel
             calculator.confirm("The new value in memory at position " + (calculator.getMemoryPosition()-1) + " is " + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
         }
     }
-
     public void performMemorySubtractionActions(ActionEvent action)
     {
         LOGGER.info("MemorySubButtonHandler class started");
@@ -457,7 +450,7 @@ public class BasicPanel extends JPanel
         }
     }
 
-    public void setupDeleteButton()
+    private void setupDeleteButton()
     {
         calculator.getButtonDelete().setFont(mainFont);
         calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
@@ -467,7 +460,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
         LOGGER.info("Delete button configured");
     }
-
     public void performDeleteButtonActions(ActionEvent action)
     {
         LOGGER.info("DeleteButtonHandler() started");
@@ -687,7 +679,7 @@ public class BasicPanel extends JPanel
         calculator.confirm();
     }
     
-    public void setupClearEntryButton()
+    private void setupClearEntryButton()
     {
         calculator.getButtonClearEntry().setFont(mainFont);
         calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
@@ -697,7 +689,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
         LOGGER.info("Clear Entry button configured");
     }
-    
     /**
      * The action to perform when clicking the ClearEntry button
      * @param action the click action
@@ -729,7 +720,7 @@ public class BasicPanel extends JPanel
         calculator.confirm();
     }
 
-    public void setupClearButton()
+    private void setupClearButton()
     {
         calculator.getButtonClear().setFont(mainFont);
         calculator.getButtonClear().setPreferredSize(new Dimension(35, 35));
@@ -739,7 +730,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonClear().addActionListener(this::performClearButtonActions);
         LOGGER.info("Clear button configured");
     }
-
     /**
      * When the user clicks the Clear button, everything in the
      * calculator returns to initial start mode.
@@ -775,7 +765,7 @@ public class BasicPanel extends JPanel
         calculator.confirm();
     }
     
-    public void setupNegateButton()
+    private void setupNegateButton()
     {
         calculator.getButtonNegate().setFont(mainFont);
         calculator.getButtonNegate().setPreferredSize(new Dimension(35, 35) );
@@ -815,7 +805,7 @@ public class BasicPanel extends JPanel
         }
     }
 
-    public void setupSquareRootButton()
+    private void setupSquareRootButton()
     {
         calculator.getButtonSqrt().setFont(mainFont);
         calculator.getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
@@ -823,7 +813,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonSqrt().setEnabled(true);
         calculator.getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
     }
-
     public void performSquareRootButtonActions(ActionEvent action)
     {
         LOGGER.info("SquareRoot ButtonHandler class started");
@@ -859,7 +848,7 @@ public class BasicPanel extends JPanel
      * This method handles the logic when we switch from any type of calculator
      * to the Programmer type
      */
-    public void setupNumberButtons(boolean isEnabled)
+    private void setupNumberButtons(boolean isEnabled)
     {
         AtomicInteger i = new AtomicInteger(0);
         getCalculator().getNumberButtons().forEach(button -> {
@@ -929,17 +918,19 @@ public class BasicPanel extends JPanel
         else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]))
         {
             LOGGER.info("positive number & dot button had been pushed");
-            calculator.performLogicForDotButtonPressed(buttonChoice);
+            //calculator.performLogicForDotButtonPressed(buttonChoice);
+            performDot(buttonChoice);
         }
         else
         {
             LOGGER.info("dot button was pushed");
-            calculator.performLogicForDotButtonPressed(buttonChoice);
+            //calculator.performLogicForDotButtonPressed(buttonChoice);
+            performDot(buttonChoice);
         }
         calculator.confirm("Pressed " + buttonChoice);
     }
 
-    public void setupDotButton()
+    private void setupDotButton()
     {
         calculator.getButtonDot().setFont(mainFont);
         calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
@@ -949,7 +940,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonDot().addActionListener(this::performDotButtonActions);
         LOGGER.info("Dot button configured");
     }
-
     public void performDotButtonActions(ActionEvent action)
     {
         LOGGER.info("Starting Dot button actions");
@@ -963,8 +953,7 @@ public class BasicPanel extends JPanel
         }
         calculator.confirm("Pressed the Dot button");
     }
-
-    public void performDot(String buttonChoice)
+    private void performDot(String buttonChoice)
     {
         if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
         {   // dot pushed with nothing in textArea
@@ -994,7 +983,7 @@ public class BasicPanel extends JPanel
         calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
-    public void setupAddButton()
+    private void setupAddButton()
     {
         calculator.getButtonAdd().setFont(mainFont);
         calculator.getButtonAdd().setPreferredSize(new Dimension(35, 35) );
@@ -1091,7 +1080,7 @@ public class BasicPanel extends JPanel
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
-    public void addition()
+    private void addition()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
@@ -1123,7 +1112,7 @@ public class BasicPanel extends JPanel
         calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[0]));
     }
 
-    public void setupSubtractButton()
+    private void setupSubtractButton()
     {
         calculator.getButtonSubtract().setFont(mainFont);
         calculator.getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
@@ -1201,7 +1190,7 @@ public class BasicPanel extends JPanel
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
-    public void subtract()
+    private void subtract()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
@@ -1236,7 +1225,7 @@ public class BasicPanel extends JPanel
         calculator.updateTextAreaValueFromTextArea();
     }
 
-    public void setupMultiplyButton()
+    private void setupMultiplyButton()
     {
         calculator.getButtonMultiply().setFont(mainFont);
         calculator.getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
@@ -1308,7 +1297,7 @@ public class BasicPanel extends JPanel
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
-    public void multiply()
+    private void multiply()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
@@ -1382,7 +1371,7 @@ public class BasicPanel extends JPanel
 //        updateTextAreaValueFromTextArea();
     }
 
-    public void setupDivideButton()
+    private void setupDivideButton()
     {
         calculator.getButtonDivide().setFont(mainFont);
         calculator.getButtonDivide().setPreferredSize(new Dimension(35, 35) );
@@ -1454,7 +1443,7 @@ public class BasicPanel extends JPanel
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
-    public void divide()
+    private void divide()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
@@ -1514,7 +1503,7 @@ public class BasicPanel extends JPanel
         calculator.updateTextAreaValueFromTextArea();
     }
 
-    public void setupPercentButton()
+    private void setupPercentButton()
     {
         calculator.getButtonPercent().setFont(mainFont);
         calculator.getButtonPercent().setPreferredSize(new Dimension(35, 35) );
@@ -1522,7 +1511,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonPercent().setEnabled(true);
         calculator.getButtonPercent().addActionListener(this::performPercentButtonActions);
     }
-
     public void performPercentButtonActions(ActionEvent action)
     {
         LOGGER.info("PercentStoreButtonHandler class started");
@@ -1573,7 +1561,7 @@ public class BasicPanel extends JPanel
         }
     }
 
-    public void setupFractionButton()
+    private void setupFractionButton()
     {
         calculator.getButtonFraction().setFont(mainFont);
         calculator.getButtonFraction().setPreferredSize(new Dimension(35, 35) );
@@ -1581,7 +1569,6 @@ public class BasicPanel extends JPanel
         calculator.getButtonFraction().setEnabled(true);
         calculator.getButtonFraction().addActionListener(this::performFractionButtonActions);
     }
-
     public void performFractionButtonActions(ActionEvent action)
     {
         LOGGER.info("FractionButtonHandler class started");
@@ -1604,7 +1591,7 @@ public class BasicPanel extends JPanel
         }
     }
 
-    public void setupEqualsButton()
+    private void setupEqualsButton()
     {
         calculator.getButtonEquals().setFont(mainFont);
         calculator.getButtonEquals().setPreferredSize(new Dimension(35, 70) );
@@ -1642,8 +1629,9 @@ public class BasicPanel extends JPanel
         calculator.confirm("");
     }
 
-    @SuppressWarnings("Duplicates")
-    public void addComponent(Component c, int row, int column, int width, int height, int fill)
+    private void addComponent(Component c, int row, int column, int width, int height)
+    { addComponent(c, row, column, width, height, GridBagConstraints.BOTH); }
+    private void addComponent(Component c, int row, int column, int width, int height, int fill)
     {
         constraints.gridx = column;
         constraints.gridy = row;
@@ -1655,11 +1643,6 @@ public class BasicPanel extends JPanel
         constraints.weightx = 0;
         basicLayout.setConstraints(c, constraints);
         add(c);
-    }
-
-    public void addComponent(Component c, int row, int column, int width, int height)
-    {
-        addComponent(c, row, column, width, height, GridBagConstraints.BOTH);
     }
 
     /************* All Getters ******************/
@@ -1711,5 +1694,4 @@ public class BasicPanel extends JPanel
             calculator.setDividing(calculator.resetOperator(calculator.isDividing()));
         }
     }
-    
 }

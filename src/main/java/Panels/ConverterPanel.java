@@ -1,6 +1,7 @@
 package Panels;
 
 import Calculators.Calculator_v4;
+import Converters.AreaMethods;
 import Types.ConverterType;
 import Types.ConverterUnits;
 import org.apache.commons.lang3.StringUtils;
@@ -16,12 +17,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static Calculators.Calculator_v4.*;
-import static Types.CalculatorBase.BINARY;
-import static Types.CalculatorBase.DECIMAL;
 import static Types.ConverterType.*;
 import static Types.CalculatorType.*;
-import static Converters.AngleMethods.*;
-import static Converters.AreaMethods.*;
+import static Types.ConverterUnits.*;
 
 public class ConverterPanel extends JPanel
 {
@@ -31,14 +29,14 @@ public class ConverterPanel extends JPanel
 
     private GridBagLayout converterLayout;
     private GridBagConstraints constraints;
-    public JLabel converterTypeName;
-    public ConverterType converterType;
-    public JTextField textField1, textField2;
-    public JComboBox<String> unitOptions1, unitOptions2;
-    public JTextArea bottomSpaceAboveNumbers;
-    public Calculator_v4 calculator;
-    public JPanel numbersPanel;
-    public boolean isTextField1Selected;
+    private JLabel converterTypeName;
+    private ConverterType converterType;
+    private JTextField textField1, textField2;
+    private JComboBox<ConverterUnits> unitOptions1, unitOptions2;
+    private JTextArea bottomSpaceAboveNumbers;
+    private Calculator_v4 calculator;
+    private JPanel numbersPanel;
+    private boolean isTextField1Selected;
 
     /************* Constructors ******************/
     public ConverterPanel() { LOGGER.info("Converter panel created"); }
@@ -51,13 +49,13 @@ public class ConverterPanel extends JPanel
     public ConverterPanel(Calculator_v4 calculator, ConverterType converterType) { setupConverterPanel(calculator, converterType); }
 
     /************* Start of methods here ******************/
-    public void setupConverterPanel(Calculator_v4 calculator, ConverterType converterType)
+    private void setupConverterPanel(Calculator_v4 calculator, ConverterType converterType)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setMaximumSize(new Dimension(300,400));
-        setupEditMenu();
+        //setupEditMenu();
         setupHelpMenu(converterType);
         setupConverterPanelComponents(converterType);
         addComponentsToPanel();
@@ -65,22 +63,11 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Finished setting up converter panel");
     }
 
-    public void performConverterCalculatorTypeSwitchOperations(Calculator_v4 calculator, ConverterType converterType)
-    {
-        setupConverterPanel(calculator, converterType);
-    }
-
     private void setupConverterPanelComponents(ConverterType converterType)
     {
-        setupAllConverterButtonsFunctionalities();
         calculator.setCalculatorType(CONVERTER);
         calculator.setConverterType(converterType);
-        calculator.setupButtonBlank1();
-        calculator.setupButtonBlank2();
-        setupNumberButtons(true);
-        setupClearEntryButton();
-        setupDeleteButton();
-        setupDotButton();
+        setupAllConverterButtonsFunctionalities();
         switch (calculator.getConverterType())
         {
             case ANGLE: {
@@ -114,7 +101,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Finished adding components to panel");
     }
 
-    public void setupAllConverterButtonsFunctionalities()
+    private void setupAllConverterButtonsFunctionalities()
     {
         LOGGER.info("Starting to setup all converter button functions");
         // Clear the buttons I will use of their functionality (other than numbers)
@@ -128,21 +115,28 @@ public class ConverterPanel extends JPanel
         // Number button functionalities
         // First clear all functionality assigned to them
         calculator.clearNumberButtonFunctionalities();
+        setupNumberButtons();
+        calculator.setupButtonBlank1();
+        calculator.setupButtonBlank2();
+
+        setupClearEntryButton();
+        setupDeleteButton();
+        setupDotButton();
         // Next, set up each number button. 0 is a bit different from the rest.
-        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton2().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton3().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton4().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton5().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton6().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton7().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton8().addActionListener(this::performNumberButtonFunctionality);
-        calculator.getButton9().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton2().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton3().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton4().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton5().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton6().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton7().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton8().addActionListener(this::performNumberButtonFunctionality);
+//        calculator.getButton9().addActionListener(this::performNumberButtonFunctionality);
         LOGGER.info("Finished setting up all converter button functions");
     }
 
-    private void performClearEntryButtonFunctionality(ActionEvent ae)
+    public void performClearEntryButtonFunctionality(ActionEvent ae)
     {
         LOGGER.info("ClearEntryButtonHandler() started for Converter");
         LOGGER.info("button: " + ae.getActionCommand());
@@ -151,10 +145,10 @@ public class ConverterPanel extends JPanel
         textField1.requestFocusInWindow();
         isTextField1Selected = true;
         LOGGER.info("ClearEntryButtonHandler() finished for Converter");
-        calculator.confirm("ClearEntryButton pushed", CONVERTER);
+        calculator.confirm("ClearEntryButton pushed");
     }
 
-    private void performDeleteButtonFunctionality(ActionEvent ae)
+    public void performDeleteButtonFunctionality(ActionEvent ae)
     {
         LOGGER.info("DeleteButtonHandler() started for Converter");
         LOGGER.info("button: " + ae.getActionCommand());
@@ -167,7 +161,8 @@ public class ConverterPanel extends JPanel
             else textField2.setText(textField2.getText().substring(0, textField2.getText().length()-1));
         }
         LOGGER.info("DeleteButtonHandler() finished for Converter");
-        calculator.confirm("DeleteButton pushed", CONVERTER);
+        convertAndUpdatePanel();
+        calculator.confirm("DeleteButton pushed");
     }
 
     public void performDotButtonFunctionality(ActionEvent ae)
@@ -181,20 +176,41 @@ public class ConverterPanel extends JPanel
             textField2.setText(textField2.getText() + ".");
         }
         LOGGER.info("DotButtonHandler() finished for Converter");
-        calculator.confirm("DotButton pushed", CONVERTER);
+        calculator.confirm("DotButton pushed");
     }
 
-    @SuppressWarnings("Duplicates")
-    private void performNumberButtonFunctionality(ActionEvent ae)
+    private void setupNumberButtons()
+    {
+        AtomicInteger i = new AtomicInteger(0);
+        getCalculator().getNumberButtons().forEach(button -> {
+            button.setFont(mainFont);
+            button.setEnabled(true);
+            if (button.getText().equals("0") &&
+                    getCalculator().getCalculatorType() != CONVERTER)
+            { button.setPreferredSize(new Dimension(70, 35)); }
+            else
+            { button.setPreferredSize(new Dimension(35, 35)); }
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setName(String.valueOf(i.getAndAdd(1)));
+            button.addActionListener(this::performNumberButtonActions);
+        });
+        LOGGER.info("Number buttons configured");
+    }
+    /**
+     * The action to perform when clicking any number button
+     * @param actionEvent the click event
+     */
+    public void performNumberButtonActions(ActionEvent actionEvent)
     {
         // check if we are in textField1 or textField2
         // check to see what converter we are using
-        // check to see what unit we are using
+        // check to see what unit we are using TODO: may not be necessary at this point
         // grab the number, add next number, add symbol
-        String buttonValue = ae.getActionCommand();
+        String buttonValue = actionEvent.getActionCommand();
         LOGGER.info("Pressed " + buttonValue);
-        if (isTextField1Selected) {
-            switch ((String)Objects.requireNonNull(unitOptions1.getSelectedItem())) {
+        if (isTextField1Selected)
+        {
+            switch ((ConverterUnits) Objects.requireNonNull(unitOptions1.getSelectedItem())) {
                 case DEGREES :
                 case RADIANS :
                 case GRADIANS:
@@ -206,7 +222,8 @@ public class ConverterPanel extends JPanel
                 case SQUARE_INCHES :
                 case SQUARE_FEET :
                 case SQUARE_YARD_ACRES :
-                case SQUARE_MILES : {
+                case SQUARE_MILES :
+                {
                     if (!textField1.getText().equals("0")) {
                         textField1.setText(textField1.getText() + buttonValue);
                     } else {
@@ -222,8 +239,9 @@ public class ConverterPanel extends JPanel
                 default : { LOGGER.error("Unknown unit"); break; }
             }
         }
-        else {
-            switch ((String)Objects.requireNonNull(unitOptions2.getSelectedItem())) {
+        else
+        {
+            switch ((ConverterUnits) Objects.requireNonNull(unitOptions2.getSelectedItem())) {
                 case DEGREES :
                 case RADIANS :
                 case GRADIANS:
@@ -235,7 +253,8 @@ public class ConverterPanel extends JPanel
                 case SQUARE_INCHES :
                 case SQUARE_FEET :
                 case SQUARE_YARD_ACRES :
-                case SQUARE_MILES : {
+                case SQUARE_MILES :
+                {
                     if (!textField2.getText().equals("0")) {
                         textField2.setText(textField2.getText() + buttonValue);
                     } else {
@@ -255,25 +274,7 @@ public class ConverterPanel extends JPanel
         convertAndUpdatePanel();
     }
 
-    public void setupNumberButtons(boolean isEnabled)
-    {
-        AtomicInteger i = new AtomicInteger(0);
-        getCalculator().getNumberButtons().forEach(button -> {
-            button.setFont(mainFont);
-            button.setEnabled(isEnabled);
-            if (button.getText().equals("0") &&
-                    getCalculator().getCalculatorType() != CONVERTER)
-            { button.setPreferredSize(new Dimension(70, 35)); }
-            else
-            { button.setPreferredSize(new Dimension(35, 35)); }
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setName(String.valueOf(i.getAndAdd(1)));
-            button.addActionListener(this::performNumberButtonActions);
-        });
-        LOGGER.info("Number buttons configured");
-    }
-
-    public void setupClearEntryButton()
+    private void setupClearEntryButton()
     {
         calculator.getButtonClearEntry().setFont(mainFont);
         calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
@@ -283,7 +284,6 @@ public class ConverterPanel extends JPanel
         calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
         LOGGER.info("Clear Entry button configured");
     }
-
     /**
      * The action to perform when clicking the ClearEntry button
      * @param action the click action
@@ -295,7 +295,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         calculator.getTextArea().setText("");
         calculator.updateTextAreaValueFromTextArea();
-        if (calculator.getValues()[1].equals("")) { // if temp[1] is empty, we know we are at temp[0]
+        if (calculator.getValues()[1].isEmpty()) { // if temp[1] is empty, we know we are at temp[0]
             calculator.getValues()[0] = "";
             calculator.setAdding(false);
             calculator.setSubtracting(false);
@@ -315,7 +315,7 @@ public class ConverterPanel extends JPanel
         calculator.confirm();
     }
 
-    public void setupDeleteButton()
+    private void setupDeleteButton()
     {
         calculator.getButtonDelete().setFont(mainFont);
         calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
@@ -325,31 +325,6 @@ public class ConverterPanel extends JPanel
         calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
         LOGGER.info("Delete button configured");
     }
-
-    public void setupDotButton()
-    {
-        calculator.getButtonDot().setFont(mainFont);
-        calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonDot().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonDot().setEnabled(true);
-        calculator.getButtonDot().setName(".");
-        calculator.getButtonDot().addActionListener(this::performDotButtonActions);
-        LOGGER.info("Dot button configured");
-    }
-
-    public void performDotButtonActions(ActionEvent action)
-    {
-        LOGGER.info("Starting Dot button actions");
-        String buttonChoice = action.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (calculator.getValues()[0].contains("E")) { calculator.confirm("Cannot press dot button. Number too big!"); }
-        else
-        {
-            LOGGER.warn("IMPLEMENT Dot Button Actions!");
-        }
-        calculator.confirm("Pressed the Dot button");
-    }
-
     public void performDeleteButtonActions(ActionEvent action)
     {
         LOGGER.info("DeleteButtonHandler() started");
@@ -569,95 +544,72 @@ public class ConverterPanel extends JPanel
         calculator.confirm();
     }
 
-    /**
-     * The action to perform when clicking any number button
-     * @param actionEvent the click event
-     */
-    public void performNumberButtonActions(ActionEvent actionEvent)
+    private void setupDotButton()
     {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Performing {} button{} actions...", calculator.getCurrentPanel().getName(), buttonChoice);
-        if (!calculator.isFirstNumber()) // second number
-        {
-            if (!calculator.isDotPressed())
-            {
-                calculator.getTextArea().setText("");
-                calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText()));
-                if (!calculator.isFirstNumber()) {
-                    calculator.setFirstNumber(true);
-                    calculator.setNumberNegative(false);
-                }
-                else calculator.setDotPressed(true);
-                calculator.getButtonDot().setEnabled(true);
-            }
-        }
-        calculator.performInitialChecks();
-        if (calculator.isPositiveNumber(buttonChoice) && !calculator.isDotPressed())
-        {
-            LOGGER.info("positive number & dot button was not pushed");
-            //LOGGER.debug("before: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
-            if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]))
-            {
-                calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice);
-                calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters()));
-                calculator.getValues()[calculator.getValuesPosition()] = buttonChoice;
-            }
-            else
-            {
-                calculator.getTextArea().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
-                calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice).reverse());
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().reverse().toString();
-            }
-            //LOGGER.debug("after: '" + calculator.getTextAreaValue() + "'");
-            //calculator.setValuesToTextAreaValue();
-            //calculator.getValues()[calculator.getValuesPosition()] = buttonChoice;
-            //calculator.updateTheTextAreaBasedOnTheTypeAndBase();
-            //calculator.updateTextAreaValueFromTextArea();
-        }
-        else if (calculator.isNumberNegative() && !calculator.isDotPressed())
-        { // logic for negative numbers
-            LOGGER.info("negative number & dot button had not been pushed");
-            calculator.setTextareaToValuesAtPosition(buttonChoice);
-        }
-        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]))
-        {
-            LOGGER.info("positive number & dot button had been pushed");
-            calculator.performLogicForDotButtonPressed(buttonChoice);
-        }
+        calculator.getButtonDot().setFont(mainFont);
+        calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
+        calculator.getButtonDot().setBorder(new LineBorder(Color.BLACK));
+        calculator.getButtonDot().setEnabled(true);
+        calculator.getButtonDot().setName(".");
+        calculator.getButtonDot().addActionListener(this::performDotButtonActions);
+        LOGGER.info("Dot button configured");
+    }
+    public void performDotButtonActions(ActionEvent action)
+    {
+        LOGGER.info("Starting Dot button actions");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (calculator.getValues()[0].contains("E")) { calculator.confirm("Cannot press dot button. Number too big!"); }
         else
         {
-            LOGGER.info("dot button was pushed");
-            calculator.performLogicForDotButtonPressed(buttonChoice);
+            LOGGER.warn("IMPLEMENT Dot Button Actions!");
         }
-        calculator.confirm("Pressed " + buttonChoice);
+        calculator.confirm("Pressed the Dot button");
+    }
+    private void performDot(String buttonChoice)
+    {
+        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
+        {   // dot pushed with nothing in textArea
+            calculator.setTextAreaValue(new StringBuffer().append("0").append(buttonChoice));
+            calculator.setValuesToTextAreaValue();
+            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+        }
+        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
+        {   // number and then dot is pushed ex: 5 -> .5
+            //StringBuffer lodSB = new StringBuffer(textareaValue);
+            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
+            calculator.setValuesToTextAreaValue();
+            calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
+        }
+        else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
+        {
+            calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
+            calculator.getTextAreaValue().append(buttonChoice);
+            calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextAreaValue().toString())));
+            calculator.setValuesToTextAreaValue();
+            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+        }
+        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
+        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
     private void convertAndUpdatePanel()
     {
         LOGGER.info("Performing automatic conversion after each number button");
-        AngleMethods.convertValues(calculator);
-        calculator.confirm("Conversion done", CONVERTER);
-        repaint();
-    }
-
-    public ConverterUnits convertStringUnitToConverterUnits(String unit)
-    {
-        ConverterUnits thisUnit = null;
-        switch (unit) {
-            case AngleMethods.DEGREES : {
-                thisUnit = ConverterUnits.DEGREES;
+        switch (calculator.getConverterType())
+        {
+            case ANGLE:
+                AngleMethods.convertValues(calculator);
                 break;
-            }
-            case AngleMethods.RADIANS : {
-                thisUnit = ConverterUnits.RADIANS;
+            case AREA:
+                AreaMethods.convertValues(calculator);
                 break;
-            }
-            case AngleMethods.GRADIANS : {
-                thisUnit = ConverterUnits.GRADIANS;
-                break;
-            }
         }
-        return thisUnit;
+        calculator.confirm("Conversion done");
+        repaint();
     }
 
     @SuppressWarnings("Duplicates")
@@ -815,7 +767,7 @@ public class ConverterPanel extends JPanel
         } else {
             calculator.getValues()[2] = textField2.getText();
         }
-        calculator.confirm("Copied " + calculator.getValues()[2], CONVERTER);
+        calculator.confirm("Copied " + calculator.getValues()[2]);
     }
 
     private void createPasteFunctionalityForConverter(ActionEvent ae)
@@ -825,7 +777,7 @@ public class ConverterPanel extends JPanel
         } else {
             textField2.setText(calculator.getValues()[2]);
         }
-        calculator.confirm("Pasted " + calculator.getValues()[2], CONVERTER);
+        calculator.confirm("Pasted " + calculator.getValues()[2]);
     }
 
     private void setupAngleConverter()
@@ -834,12 +786,12 @@ public class ConverterPanel extends JPanel
         setupConverter(ANGLE.getName());
         setupHelpMenu(ANGLE);
         setConverterType(ANGLE);
-        setUnitOptions1(new JComboBox<>(new String[]{AngleMethods.DEGREES, AngleMethods.RADIANS, AngleMethods.GRADIANS}));
-        setUnitOptions2(new JComboBox<>(new String[]{AngleMethods.DEGREES, AngleMethods.RADIANS, AngleMethods.GRADIANS}));
+        setUnitOptions1(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
+        setUnitOptions2(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
         bottomSpaceAboveNumbers.setEnabled(false);
-        unitOptions1.addActionListener(this::performAngleUnitsSwitch);
-        unitOptions2.addActionListener(this::performAngleUnitsSwitch);
+        getUnitOptions1().addActionListener(this::performAngleUnitsSwitch);
+        getUnitOptions2().addActionListener(this::performAngleUnitsSwitch);
         LOGGER.info("Ending Angle specific setup");
     }
 
@@ -849,12 +801,12 @@ public class ConverterPanel extends JPanel
         setupConverter(AREA.getName());
         setupHelpMenu(AREA);
         setConverterType(AREA);
-        setUnitOptions1(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
-        setUnitOptions2(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
+        setUnitOptions1(new JComboBox<>(){{ addItem(SQUARE_MILLIMETERS); addItem(SQUARE_CENTIMETERS); addItem(SQUARE_METERS); addItem(HECTARES); addItem(SQUARE_KILOMETERS); addItem(SQUARE_INCHES); addItem(SQUARE_FEET); addItem(SQUARE_YARD_ACRES); addItem(SQUARE_MILES); }});
+        setUnitOptions2(new JComboBox<>(){{ addItem(SQUARE_MILLIMETERS); addItem(SQUARE_CENTIMETERS); addItem(SQUARE_METERS); addItem(HECTARES); addItem(SQUARE_KILOMETERS); addItem(SQUARE_INCHES); addItem(SQUARE_FEET); addItem(SQUARE_YARD_ACRES); addItem(SQUARE_MILES); }});
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
         bottomSpaceAboveNumbers.setEnabled(false);
-        unitOptions1.addActionListener(this::performAreaUnitsSwitch);
-        unitOptions2.addActionListener(this::performAreaUnitsSwitch);
+        getUnitOptions1().addActionListener(this::performAreaUnitsSwitch);
+        getUnitOptions2().addActionListener(this::performAreaUnitsSwitch);
         LOGGER.info("Ending Area specific setup");
     }
 
@@ -929,18 +881,21 @@ public class ConverterPanel extends JPanel
             LOGGER.info("UnitOptions2 selected");
             isTextField1Selected = false;
         }
-        convertValues(calculator);
+        AngleMethods.convertValues(calculator);
         isTextField1Selected = !isTextField1Selected;
-        calculator.confirm("Finished performing Angle units switch", CONVERTER);
+        calculator.confirm("Finished performing Angle units switch");
     }
 
     private void performAreaUnitsSwitch(ActionEvent actionEvent)
     {
         LOGGER.info("Start performing Area units switch");
-        // do any converting
+        AreaMethods.convertValues(calculator);
         LOGGER.info("Finished performing Area units switch");
-        calculator.confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
+        calculator.confirm("IMPLEMENT: Units switched. Conversions executed");
     }
+
+    public void performConverterCalculatorTypeSwitchOperations(Calculator_v4 calculator, ConverterType converterType)
+    { setupConverterPanel(calculator, converterType); }
 
     /************* All Getters ******************/
     public GridBagLayout getConverterLayout() { return converterLayout; }
@@ -949,8 +904,8 @@ public class ConverterPanel extends JPanel
     public ConverterType getConverterType() { return converterType; }
     public JTextField getTextField1() { return textField1; }
     public JTextField getTextField2() { return textField2; }
-    public JComboBox<String> getUnitOptions1() { return unitOptions1; }
-    public JComboBox<String> getUnitOptions2() { return unitOptions2; }
+    public JComboBox<ConverterUnits> getUnitOptions1() { return unitOptions1; }
+    public JComboBox<ConverterUnits> getUnitOptions2() { return unitOptions2; }
     public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
     public Calculator_v4 getCalculator() { return calculator; }
     public JPanel getNumbersPanel() { return numbersPanel; }
@@ -966,8 +921,8 @@ public class ConverterPanel extends JPanel
     public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
     public void setTextField1(JTextField textField1) { this.textField1 = textField1; }
     public void setTextField2(JTextField textField2) { this.textField2 = textField2; }
-    public void setUnitOptions1(JComboBox<String> unitOptions1) { this.unitOptions1 = unitOptions1; }
-    public void setUnitOptions2(JComboBox<String> unitOptions2) { this.unitOptions2 = unitOptions2; }
+    public void setUnitOptions1(JComboBox<ConverterUnits> unitOptions1) { this.unitOptions1 = unitOptions1; }
+    public void setUnitOptions2(JComboBox<ConverterUnits> unitOptions2) { this.unitOptions2 = unitOptions2; }
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
     public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
     public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
