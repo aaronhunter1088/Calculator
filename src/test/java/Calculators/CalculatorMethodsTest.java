@@ -156,7 +156,7 @@ public class CalculatorMethodsTest {
         when(ae.getActionCommand()).thenReturn(".");
         //c.performDotButtonActions(ae); IN PANEL
         assertEquals("textarea is not as expected", "\n0.", "\n"+c.getTextAreaValue());
-        assertEquals("getTextArea() is not 0.", "0.", c.getTextAreaWithoutAnything());
+        assertEquals("getTextArea() is not 0.", "0.", c.getTextAreaWithoutAnyOperator());
         assertTrue("dotButtonPressed is not true", c.isDotPressed());
     }
 
@@ -181,7 +181,7 @@ public class CalculatorMethodsTest {
         c.setValuesPosition(0);
         c.setCalculatorType(BASIC);
         c.getTextArea().setText(c.addNewLineCharacters()+"544");
-        c.setTextAreaValue(new StringBuffer(c.getTextAreaWithoutAnything()));
+        c.setTextAreaValue(new StringBuffer(c.getTextAreaWithoutAnyOperator()));
         c.setValuesToTextAreaValue();
         when(ae.getActionCommand()).thenReturn(".");
         //c.performDotButtonActions(ae); IN PANEL
@@ -228,7 +228,7 @@ public class CalculatorMethodsTest {
 //        Calculator_v4.ClearEntryButtonHandler handler = c.getClearEntryButtonHandler();
         when(ae.getActionCommand()).thenReturn("CE");
 //        c.performClearEntryButtonActions(ae); IN PANEL
-        assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextAreaWithoutAnything()));
+        assertTrue("TextArea was not cleared", StringUtils.isBlank(c.getTextAreaWithoutAnyOperator()));
         assertTrue("textarea was not cleared", StringUtils.isBlank(c.getTextAreaValue()));
         assertFalse("isAddBool() expected to be false", c.isAdding());
     }

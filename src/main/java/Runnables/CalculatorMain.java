@@ -62,8 +62,8 @@ o.  HISTORY (in reverse):
 Version Four Started: August 14, 2021,
 Version Four Concluded: -
             Monday, April 29, 2024:
-            Wow, it's been quick some time. The reason I haven't been working on this for quick some
-            time has been because life happens. But today and for the past few days, I have bene working
+            Wow, it's been quite some time. The reason I haven't been working on this for some
+            time has been because life happens. But today and for the past few days, I have been working
             on fixing a few issues I've seen while playing with the Calculator in the recent past (from
             today's date). And there are still plenty of tests that can be written so I took the time
             to do a few things I've been wanting to do for some time.

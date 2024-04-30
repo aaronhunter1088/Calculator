@@ -1,8 +1,6 @@
 package Panels;
 
-import Calculators.CalculatorError;
 import Calculators.Calculator_v4;
-import Types.CalculatorType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -955,14 +953,27 @@ public class BasicPanel extends JPanel
     }
     private void performDot(String buttonChoice)
     {
+        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
+        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
+
         if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
-        {   // dot pushed with nothing in textArea
-            calculator.setTextAreaValue(new StringBuffer().append("0").append(buttonChoice));
-            calculator.setValuesToTextAreaValue();
-            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+        {
+            // dot pushed with nothing in textArea
+            calculator.getValues()[calculator.getValuesPosition()] = "0.";
+            calculator.getTextArea().setText(calculator.addNewLineCharacters() + ".0");
+        }
+        else if (StringUtils.isNotBlank(calculator.getValues()[calculator.getValuesPosition()]) && calculator.isDotPressed())
+        {
+            // pressed dot and then number ex: 0.5
+            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
+            //calculator.getTextAreaValue().append(buttonChoice);
+            String currentValue = calculator.getValues()[calculator.getValuesPosition()];
+            calculator.getValues()[calculator.getValuesPosition()] = currentValue + buttonChoice;
+            calculator.getTextArea().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
         }
         else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
-        {   // number and then dot is pushed ex: 5 -> .5
+        {
+            // number and then dot is pushed ex: 5 -> .5
             //StringBuffer lodSB = new StringBuffer(textareaValue);
             calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
             calculator.setValuesToTextAreaValue();
@@ -979,8 +990,6 @@ public class BasicPanel extends JPanel
             calculator.setValuesToTextAreaValue();
             calculator.updateTheTextAreaBasedOnTheTypeAndBase();
         }
-        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
-        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
     private void setupAddButton()
@@ -1008,15 +1017,15 @@ public class BasicPanel extends JPanel
             {
                 if (calculator.isNumberNegative())
                 {
-                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextAreaWithoutAnything() + "-");
+                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextAreaWithoutAnyOperator() + "-");
                     calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(' ').append(buttonChoice));
-                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextAreaWithoutAnything();
+                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextAreaWithoutAnyOperator();
                 }
                 else
                 {
-                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextAreaWithoutAnything());
+                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextAreaWithoutAnyOperator());
                     calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(' ').append(buttonChoice));
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaWithoutAnything();
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaWithoutAnyOperator();
                 }
                 calculator.setAdding(true); // sets logic for arithmetic
                 calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
@@ -1067,7 +1076,7 @@ public class BasicPanel extends JPanel
                 calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
-            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnything()))
+            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnyOperator()))
             {
                 LOGGER.error("The user pushed plus but there is no number");
                 calculator.getTextArea().setText(calculator.addNewLineCharacters() + "Enter a Number");
@@ -1135,7 +1144,7 @@ public class BasicPanel extends JPanel
             LOGGER.info("button: " + buttonChoice);
             if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing() &&
                     !calculator.textArea1ContainsBadText()) {
-                calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextAreaWithoutAnything());
+                calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextAreaWithoutAnyOperator());
                 //else if (calculatorType == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + buttonChoice + " " + calculator.getTextAreaWithoutAnything());
                 //else if (calculatorType == SCIENTIFIC) LOGGER.warn("SETUP");
                 calculator.updateTextAreaValueFromTextArea();
@@ -1175,7 +1184,7 @@ public class BasicPanel extends JPanel
                 calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
-            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnything())) {
+            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnyOperator())) {
                 LOGGER.warn("The user pushed subtract but there is no number.");
                 calculator.getTextArea().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
@@ -1287,7 +1296,7 @@ public class BasicPanel extends JPanel
                 calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
-            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnything())) {
+            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnyOperator())) {
                 LOGGER.warn("The user pushed multiply but there is no number.");
                 calculator.getTextArea().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
@@ -1433,7 +1442,7 @@ public class BasicPanel extends JPanel
                 calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
-            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnything())) {
+            else if (StringUtils.isBlank(calculator.getTextAreaWithoutAnyOperator())) {
                 LOGGER.warn("The user pushed divide but there is no number.");
                 calculator.getTextArea().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
