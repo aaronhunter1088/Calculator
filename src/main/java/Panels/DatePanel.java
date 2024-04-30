@@ -1,7 +1,8 @@
 package Panels;
 
-import Calculators.Calculator;
+import Calculators.Calculator_v4;
 import Types.CalculatorType;
+import Types.DateOperation;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
@@ -16,23 +17,22 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import static Calculators.Calculator.*;
+import static Calculators.Calculator_v4.*;
 import static Types.CalculatorType.*;
+import static Types.DateOperation.*;
 
 public class DatePanel extends JPanel
 {
-    private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
-    private static final long serialVersionUID = 1L;
-    public static final String OPTIONS1 = "Difference between dates";
-    public static final String OPTIONS2 = "Add or subtract days";
+    private static final Logger LOGGER = LogManager.getLogger(DatePanel.class.getSimpleName());
+    private static final long serialVersionUID = 4L;
 
     private GridBagLayout dateLayout;
     private GridBagConstraints constraints;
     public UtilCalendarModel fromModel, toModel;
     public JDatePanelImpl fromDatePanel, toDatePanel;
     public JDatePickerImpl fromDatePicker, toDatePicker;
-    public Calculator calculator;
-    public JComboBox<String> optionsBox;
+    public Calculator_v4 calculator;
+    public JComboBox<DateOperation> optionsBox;
     public JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, weeksLabel, daysLabel, resultsLabel,
                    yearsDifferenceLabel, monthsDifferenceLabel, weeksDifferenceLabel, daysDifferenceLabel;
@@ -46,52 +46,52 @@ public class DatePanel extends JPanel
     private final String YEAR = "Year";
     private final String MONTH = "Month";
     private final String WEEK = "Week";
-    private final String DATE_ = "Date";
+    private final String ADD_OR_SUB_RESULT = "Result";
     private final String DAY = "Day";
     private final String LOWER_CASE_S = "s";
     private final String EMPTY_STRING = "";
-    public String selectedOption = OPTIONS1;
+    public DateOperation dateOperation = DateOperation.DIFFERENCE_BETWEEN_DATES;
 
     /************* Constructors ******************/
     public DatePanel() { LOGGER.info("Date panel created"); }
 
-    public DatePanel(Calculator calculator) { this(calculator, null); }
+    public DatePanel(Calculator_v4 calculator) { this(calculator, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator the Calculator to use
-     * @param chosenOption the option to use
+     * @param calculator the Calculator_v4 to use
+     * @param dateOperation the option to use
      */
-    public DatePanel(Calculator calculator, String chosenOption)
+    public DatePanel(Calculator_v4 calculator, DateOperation dateOperation)
     {
-        setupDatePanel(calculator, chosenOption);
+        setupDatePanel(calculator, dateOperation);
     }
 
     /************* Start of methods here ******************/
-    public void setupDatePanel(Calculator calculator, String chosenOption)
+    public void setupDatePanel(Calculator_v4 calculator, DateOperation dateOperation)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout()); // set frame layout
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setMaximumSize(new Dimension(100,400));
+        setSize(new Dimension(100,400));
         setupHelpMenu();
-        setupDatePanelComponents(chosenOption);
-        addComponentsToPanel(chosenOption);
+        setupDatePanelComponents(dateOperation);
+        addComponentsToPanel(dateOperation);
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished constructing Date panel");
     }
 
-    public void performDateCalculatorTypeSwitchOperations(Calculator calculator, String chosenOption)
+    public void performDateCalculatorTypeSwitchOperations(Calculator_v4 calculator, DateOperation dateOperation)
     {
         LOGGER.info("Performing tasks associated to switching to the Date panel");
-        setupDatePanel(calculator, chosenOption);
+        setupDatePanel(calculator, dateOperation);
         LOGGER.info("Finished tasks associated to switching to the Date panel");
     }
 
     public void setupHelpMenu()
     {
         LOGGER.info("Creating the view help menu for date panel");
-        String helpString = "<html>How to use the " + DATE_ + " Calculator<br><br>" +
+        String helpString = "<html>How to use the " + ADD_OR_SUB_RESULT + " Calculator_v4<br><br>" +
                 "Difference Between Dates:<br>" +
                 "Enter a date into either field, From or To.<br>" +
                 "Only 1 date is required to change to show a difference.<br>" +
@@ -101,9 +101,9 @@ public class DatePanel extends JPanel
                 "Enter values in the choices: Years, Months, or Days.<br>" +
                 "Click Add or Subtract to execute that action using your values and date.</html>";
         // 4 menu options: loop through to find the Help option
-        for(int i=0; i < calculator.bar.getMenuCount(); i++)
+        for(int i=0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++)
         {
-            JMenu menuOption = calculator.bar.getMenu(i);
+            JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
                 // get the options. remove viewHelpItem
@@ -124,11 +124,11 @@ public class DatePanel extends JPanel
                 menuOption.remove(valueForThisMenuOption);
                 // set up new viewHelpItem option
                 JMenuItem viewHelpItem = new JMenuItem("View Help");
-                viewHelpItem.setFont(font);
+                viewHelpItem.setFont(mainFont);
                 viewHelpItem.setName("View Help");
                 viewHelpItem.addActionListener(action -> {
                     JLabel textLabel = new JLabel(helpString,
-                            calculator.blankImage, SwingConstants.CENTER);
+                            calculator.getBlankIcon(), SwingConstants.CENTER);
                     textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                     textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -143,11 +143,11 @@ public class DatePanel extends JPanel
         LOGGER.info("Finished creating the view help menu");
     }
 
-    private void setupDatePanelComponents(String chosenOption)
+    private void setupDatePanelComponents(DateOperation dateOperation)
     {
         calculator.setCalculatorType(DATE);
         calculator.setConverterType(null);
-        setupOptionsSelection(chosenOption);
+        setupOptionsSelection(dateOperation);
         setupFromDate();
         setupToDate();
         setupDifferenceLabel();
@@ -176,9 +176,9 @@ public class DatePanel extends JPanel
         setupWeeksTextField();
         setupDaysTextField();
         setupTextFieldsPanel();
-        setupDateLabel();
-        setupResultsLabel();
-        setTheSelectedOption(chosenOption);
+        setupAddOrSubtractResultLabel();
+        setupResultsText();
+        setTheSelectedOption(dateOperation);
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up date panel");
     }
@@ -186,7 +186,7 @@ public class DatePanel extends JPanel
     public void setupDifferenceLabel()
     {
         setDifferenceLabel(new JLabel("Difference"));
-        differenceLabel.setFont(font2);
+        differenceLabel.setFont(verdanaFontBold);
         differenceLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -250,28 +250,28 @@ public class DatePanel extends JPanel
     public void setupYearsLabel()
     {
         setYearsLabel(new JLabel(YEAR + LOWER_CASE_S));
-        yearsLabel.setFont(font2);
+        yearsLabel.setFont(verdanaFontBold);
         yearsLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
     public void setupMonthsLabel()
     {
         setMonthLabel(new JLabel(MONTH + LOWER_CASE_S));
-        monthLabel.setFont(font2);
+        monthLabel.setFont(verdanaFontBold);
         monthLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
     public void setupWeeksLabel()
     {
         setWeeksLabel(new JLabel(WEEK + LOWER_CASE_S));
-        weeksLabel.setFont(font2);
+        weeksLabel.setFont(verdanaFontBold);
         weeksLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
     public void setupDaysLabel()
     {
         setDaysLabel(new JLabel(DAY + LOWER_CASE_S));
-        daysLabel.setFont(font2);
+        daysLabel.setFont(verdanaFontBold);
         daysLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -317,36 +317,36 @@ public class DatePanel extends JPanel
         textFieldsGroupPanel.add(daysTextField);
     }
 
-    public void setupDateLabel()
+    public void setupAddOrSubtractResultLabel()
     {
-        setDateLabel(new JLabel(DATE_));
-        dateLabel.setFont(font2);
+        setDateLabel(new JLabel(ADD_OR_SUB_RESULT));
+        dateLabel.setFont(verdanaFontBold);
         dateLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    public void setupResultsLabel()
+    public void setupResultsText()
     {
         LocalDate todaysDate = LocalDate.now();
         DayOfWeek dayOfWeek = todaysDate.getDayOfWeek();
         Month month = todaysDate.getMonth();
         setResultsLabel(new JLabel(dayOfWeek + ", " + month  + " " + todaysDate.getDayOfMonth() + ", " + todaysDate.getYear()));
-        resultsLabel.setFont(font_Bold);
+        resultsLabel.setFont(mainFontBold);
         resultsLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    public void setTheSelectedOption(String chosenOption)
+    public void setTheSelectedOption(DateOperation dateOperation)
     {
-        if (chosenOption == null || chosenOption.equals(OPTIONS1))
-            setSelectedOption(OPTIONS1);
-        else setSelectedOption(OPTIONS2);
+        if (dateOperation == null || dateOperation == DateOperation.DIFFERENCE_BETWEEN_DATES)
+            setDateOperation(DateOperation.DIFFERENCE_BETWEEN_DATES);
+        else setDateOperation(DateOperation.ADD_SUBTRACT_DAYS);
     }
 
 
-    public void setupOptionsSelection(String chosenOption)
+    public void setupOptionsSelection(DateOperation dateOperation)
     {
-        setOptionsBox(new JComboBox<>(new String[]{OPTIONS1, OPTIONS2}));
-        optionsBox.setSelectedItem(chosenOption == null ? OPTIONS1 : chosenOption);
-        setSelectedOption(chosenOption);
+        setOptionsBox(new JComboBox<>(new DateOperation[]{DIFFERENCE_BETWEEN_DATES, ADD_SUBTRACT_DAYS}));
+        optionsBox.setSelectedItem(dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation);
+        setDateOperation(dateOperation);
         optionsBox.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         optionsBox.addActionListener(this::performOptionsBoxFunctionality);
     }
@@ -354,7 +354,7 @@ public class DatePanel extends JPanel
     public void setupFromDate()
     {
         setFromDateLabel(new JLabel("From Date"));
-        fromDateLabel.setFont(font2);
+        fromDateLabel.setFont(verdanaFontBold);
         fromDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
         setFromModel(new UtilCalendarModel());
@@ -374,7 +374,7 @@ public class DatePanel extends JPanel
     {
         String TO_DATE = "To Date";
         setToDateLabel(new JLabel(TO_DATE));
-        toDateLabel.setFont(font2);
+        toDateLabel.setFont(verdanaFontBold);
         toDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
         setToModel(new UtilCalendarModel());
@@ -392,11 +392,11 @@ public class DatePanel extends JPanel
 
     public void performDatePickerFunctionality(ActionEvent ae)
     {
-        if (Objects.requireNonNull(optionsBox.getSelectedItem()).toString().equals(OPTIONS1))
+        if (Objects.requireNonNull(optionsBox.getSelectedItem()) == DIFFERENCE_BETWEEN_DATES )
         {
             updateResultsTextBox();
         }
-        else if (optionsBox.getSelectedItem().toString().equals(OPTIONS2))
+        else if (optionsBox.getSelectedItem() == ADD_SUBTRACT_DAYS)
         {
             int year = getTheYearFromTheFromDatePicker();
             int month = getTheMonthFromTheFromDatePicker();
@@ -522,21 +522,21 @@ public class DatePanel extends JPanel
 
     private void performOptionsBoxFunctionality(ActionEvent actionEvent)
     {
-        if (!optionsBox.getSelectedItem().equals(OPTIONS2) &&
-            !selectedOption.equals(OPTIONS1))
+        if ( optionsBox.getSelectedItem() != ADD_SUBTRACT_DAYS &&
+            dateOperation != DIFFERENCE_BETWEEN_DATES)
         { // Only Switch to OPTIONS1 if and only if 2e are really showing OPTIONS2
             switchComponentsForDateDifference();
-            setSelectedOption(OPTIONS1);
+            setDateOperation(DateOperation.DIFFERENCE_BETWEEN_DATES);
             updateThisPanel();
-            calculator.confirm("Changing to " + OPTIONS1, CalculatorType.DATE);
+            calculator.confirm("Changing to " + DIFFERENCE_BETWEEN_DATES, CalculatorType.DATE);
         }
-        else if (!optionsBox.getSelectedItem().toString().equals(OPTIONS1) &&
-                 !selectedOption.equals(OPTIONS2))
+        else if (optionsBox.getSelectedItem() != DIFFERENCE_BETWEEN_DATES &&
+                 dateOperation != ADD_SUBTRACT_DAYS)
         { // Only Switch to OPTIONS2 if and only if we are really showing OPTIONS1
             switchComponentsForAddSubDate();
-            setSelectedOption(OPTIONS2);
+            setDateOperation(DateOperation.ADD_SUBTRACT_DAYS);
             updateThisPanel();
-            calculator.confirm("Changing to " + OPTIONS2, CalculatorType.DATE);
+            calculator.confirm("Changing to " + ADD_SUBTRACT_DAYS, CalculatorType.DATE);
         }
         else
         { calculator.confirm("Options not changed", CalculatorType.DATE); }
@@ -577,7 +577,7 @@ public class DatePanel extends JPanel
             localDateTime = localDateTime.minusDays(days);
         }
         LOGGER.info("Date is now {}", localDateTime.toLocalDate());
-        updateFromDate(localDateTime);
+        //updateFromDate(localDateTime);
         updateResultsLabel(localDateTime);
     }
 
@@ -596,14 +596,14 @@ public class DatePanel extends JPanel
     }
 
     @SuppressWarnings("Duplicates")
-    private void addComponentsToPanel(String chosenOption)
+    private void addComponentsToPanel(DateOperation dateOperation)
     {
         addComponent(optionsBox, 0,0,1,1, 0,1.0);
         addComponent(blankLabel1, 1, 0, 1, 1,0,1.0); // representing a blank space
         addComponent(fromDateLabel, 2, 0, 1,1, 0,1.0);
         addComponent(fromDatePicker, 3,0,1,1, 0,1.0);
         addComponent(blankLabel2, 4, 0, 1, 1,0,1.0); // representing a blank space
-        if (chosenOption.equals(OPTIONS1))
+        if (dateOperation == DateOperation.DIFFERENCE_BETWEEN_DATES)
         {
             addComponent(toDateLabel, 5, 0, 1,1, 0,1.0);
             addComponent(toDatePicker, 6,0,1,1, 0,1.0);
@@ -647,7 +647,7 @@ public class DatePanel extends JPanel
     @SuppressWarnings("Duplicates")
     public void performOptionsBoxFunctionality(String option) throws UnsupportedLookAndFeelException
     {
-        if (option.equals(OPTIONS1))
+        if (option.equals(DIFFERENCE_BETWEEN_DATES.getName()))
         {
             LOGGER.debug("Difference between dates selected");
             //defaultOptionFromOptionsBox = OPTIONS1 + SPACE + SELECTED;
@@ -673,7 +673,7 @@ public class DatePanel extends JPanel
             addComponent(blankLabel4, 12, 0, 1, 1,1.0,1.0); // representing a blank space
             updateResultsTextBox();
         }
-        else if (option.equals(OPTIONS2))
+        else if (option.equals(ADD_SUBTRACT_DAYS.getName()))
         {
             LOGGER.debug("Add or subtract days selected");
             //defaultOptionFromOptionsBox = OPTIONS2 + SPACE + SELECTED;
@@ -860,17 +860,66 @@ public class DatePanel extends JPanel
             yearsDifferenceLabel.setText(SAME + SPACE + YEAR);
             monthsDifferenceLabel.setText(SAME + SPACE + MONTH);
             weeksDifferenceLabel.setText(SAME + SPACE + WEEK);
-            daysDifferenceLabel.setText(SAME + SPACE + DATE_);
+            daysDifferenceLabel.setText(SAME + SPACE + ADD_OR_SUB_RESULT);
         }
         LOGGER.info("Difference Results updated");
     }
+
+    /************* All Getters ******************/
+    public GridBagLayout getDateLayout() { return dateLayout; }
+    public GridBagConstraints getConstraints() { return constraints; }
+    public UtilCalendarModel getFromModel() { return fromModel; }
+    public UtilCalendarModel getToModel() { return toModel; }
+    public JDatePanelImpl getFromDatePanel() { return fromDatePanel; }
+    public JDatePanelImpl getToDatePanel() { return toDatePanel; }
+    public JDatePickerImpl getFromDatePicker() { return fromDatePicker; }
+    public JDatePickerImpl getToDatePicker() { return toDatePicker; }
+    public Calculator_v4 getCalculator() { return calculator; }
+    public JComboBox<DateOperation> getOptionsBox() { return optionsBox; }
+    public JLabel getFromDateLabel() { return fromDateLabel; }
+    public JLabel getToDateLabel() { return toDateLabel; }
+    public JLabel getDifferenceLabel() { return differenceLabel; }
+    public JLabel getDateLabel() { return dateLabel; }
+    public JLabel getYearsLabel() { return yearsLabel; }
+    public JLabel getMonthLabel() { return monthLabel; }
+    public JLabel getWeeksLabel() { return weeksLabel; }
+    public JLabel getDaysLabel() { return daysLabel; }
+    public JLabel getResultsLabel() { return resultsLabel; }
+    public JLabel getYearsDifferenceLabel() { return yearsDifferenceLabel; }
+    public JLabel getMonthsDifferenceLabel() { return monthsDifferenceLabel; }
+    public JLabel getWeeksDifferenceLabel() { return weeksDifferenceLabel; }
+    public JLabel getDaysDifferenceLabel() { return daysDifferenceLabel; }
+    public JLabel getBlankLabel1() { return blankLabel1; }
+    public JLabel getBlankLabel2() { return blankLabel2; }
+    public JLabel getBlankLabel3() { return blankLabel3; }
+    public JLabel getBlankLabel4() { return blankLabel4; }
+    public JLabel getBlankLabel5() { return blankLabel5; }
+    public ButtonGroup getButtonGroup() { return buttonGroup; }
+    public JPanel getButtonGroupPanel() { return buttonGroupPanel; }
+    public JPanel getTextFieldsGroupPanel() { return textFieldsGroupPanel; }
+    public JRadioButton getAddRadioButton() { return addRadioButton; }
+    public JRadioButton getSubtractRadioButton() { return subtractRadioButton; }
+    public JTextField getYearsTextField() { return yearsTextField; }
+    public JTextField getMonthsTextField() { return monthsTextField; }
+    public JTextField getWeeksTextField() { return weeksTextField; }
+    public JTextField getDaysTextField() { return daysTextField; }
+    public String getSPACE() { return SPACE; }
+    public String getSAME() { return SAME; }
+    public String getYEAR() { return YEAR; }
+    public String getMONTH() { return MONTH; }
+    public String getWEEK() { return WEEK; }
+    public String getDATE_() { return ADD_OR_SUB_RESULT; }
+    public String getDAY() { return DAY; }
+    public String getLOWER_CASE_S() { return LOWER_CASE_S; }
+    public String getEMPTY_STRING() { return EMPTY_STRING; }
+    public DateOperation getDateOperation() { return dateOperation; }
 
     /************* All Setters ******************/
     public void setLayout(GridBagLayout dateLayout) {
         super.setLayout(dateLayout);
         this.dateLayout = dateLayout;
     }
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
     private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setFromModel(UtilCalendarModel fromModel) { this.fromModel = fromModel; }
     public void setToModel(UtilCalendarModel toModel) { this.toModel = toModel; }
@@ -878,7 +927,7 @@ public class DatePanel extends JPanel
     public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; }
     public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; }
     public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; }
-    private void setOptionsBox(JComboBox<String> optionsBox) { this.optionsBox = optionsBox; }
+    private void setOptionsBox(JComboBox<DateOperation> optionsBox) { this.optionsBox = optionsBox; }
     private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; }
     private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; }
     private void setWeeksDifferenceLabel(JLabel weeksDifferenceLabel) { this.weeksDifferenceLabel = weeksDifferenceLabel; }
@@ -906,5 +955,5 @@ public class DatePanel extends JPanel
     private void setWeeksTextField(JTextField weeksTextField) { this.weeksTextField = weeksTextField; }
     private void setDaysTextField(JTextField daysTextField) { this.daysTextField = daysTextField; }
     private void setResultsLabel(JLabel resultsLabel) { this.resultsLabel = resultsLabel; }
-    private void setSelectedOption(String selectedOption) { this.selectedOption = selectedOption; }
+    private void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; }
 }

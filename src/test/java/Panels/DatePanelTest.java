@@ -1,6 +1,7 @@
 package Panels;
 
-import Calculators.Calculator;
+import Calculators.Calculator_v4;
+import Types.DateOperation;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
@@ -25,7 +26,7 @@ import static Panels.DatePanel.*;
 @RunWith(MockitoJUnitRunner.class)
 public class DatePanelTest {
 
-    private static Calculator c;
+    private static Calculator_v4 c;
     private static DatePanel testTheDatePanel;
 
     @Mock
@@ -34,8 +35,8 @@ public class DatePanelTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "JPanelDateTest");
-        c = new Calculator(DATE, OPTIONS2);
-        testTheDatePanel = (DatePanel) c.currentPanel;
+        c = new Calculator_v4(DATE, DateOperation.ADD_SUBTRACT_DAYS);
+        testTheDatePanel = (DatePanel) c.getCurrentPanel();
     }
 
     @After

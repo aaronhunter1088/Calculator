@@ -1,6 +1,6 @@
 package Panels;
 
-import Calculators.Calculator;
+import Calculators.Calculator_v4;
 import Converters.AngleMethods;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -15,7 +15,7 @@ import static Types.ConverterType.*;
 
 public class ConverterPanelTest {
 
-    private static Calculator testCalculator;
+    private static Calculator_v4 testCalculator;
     private static ConverterPanel testTheConverterPanel;
 
     @Mock
@@ -24,7 +24,7 @@ public class ConverterPanelTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "BasicPanelTest");
-        testCalculator = new Calculator();
+        testCalculator = new Calculator_v4();
         testTheConverterPanel = new ConverterPanel(testCalculator, AREA);
         testCalculator.setCurrentPanel(testTheConverterPanel);
     }

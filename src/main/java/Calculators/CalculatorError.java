@@ -2,7 +2,7 @@ package Calculators;
 
 public class CalculatorError extends Exception
 {
-    final static private long serialVersionUID = 1L;
+    final static private long serialVersionUID = 4L;
     private String message;
     private Exception exception;
     public CalculatorError() { super(); }

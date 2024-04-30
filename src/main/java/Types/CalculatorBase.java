@@ -1,5 +1,6 @@
 package Types;
 
+// TODO: Rename ProgrammerBase
 public enum CalculatorBase
 {
     BINARY("Binary"),

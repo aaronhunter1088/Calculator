@@ -1,8 +1,9 @@
 package Panels;
 
-import Calculators.Calculator;
+import Calculators.Calculator_v4;
 import Types.ConverterType;
 import Types.ConverterUnits;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import Converters.AngleMethods;
@@ -12,8 +13,11 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static Calculators.Calculator.*;
+import static Calculators.Calculator_v4.*;
+import static Types.CalculatorBase.BINARY;
+import static Types.CalculatorBase.DECIMAL;
 import static Types.ConverterType.*;
 import static Types.CalculatorType.*;
 import static Converters.AngleMethods.*;
@@ -21,17 +25,18 @@ import static Converters.AreaMethods.*;
 
 public class ConverterPanel extends JPanel
 {
-    private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class);
-    private static final long serialVersionUID = 1L;
+    static { System.setProperty("appName", "ConverterPanel"); }
+    private static final Logger LOGGER = LogManager.getLogger(ConverterPanel.class.getSimpleName());
+    private static final long serialVersionUID = 4L;
 
     private GridBagLayout converterLayout;
     private GridBagConstraints constraints;
     public JLabel converterTypeName;
-    public String converterName;
+    public ConverterType converterType;
     public JTextField textField1, textField2;
     public JComboBox<String> unitOptions1, unitOptions2;
     public JTextArea bottomSpaceAboveNumbers;
-    public Calculator calculator;
+    public Calculator_v4 calculator;
     public JPanel numbersPanel;
     public boolean isTextField1Selected;
 
@@ -40,13 +45,13 @@ public class ConverterPanel extends JPanel
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator the Calculator to use
+     * @param calculator the Calculator_v4 to use
      * @param converterType the converter type to use
      */
-    public ConverterPanel(Calculator calculator, ConverterType converterType) { setupConverterPanel(calculator, converterType); }
+    public ConverterPanel(Calculator_v4 calculator, ConverterType converterType) { setupConverterPanel(calculator, converterType); }
 
     /************* Start of methods here ******************/
-    public void setupConverterPanel(Calculator calculator, ConverterType converterType)
+    public void setupConverterPanel(Calculator_v4 calculator, ConverterType converterType)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout());
@@ -60,7 +65,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Finished setting up converter panel");
     }
 
-    public void performConverterCalculatorTypeSwitchOperations(Calculator calculator, ConverterType converterType)
+    public void performConverterCalculatorTypeSwitchOperations(Calculator_v4 calculator, ConverterType converterType)
     {
         setupConverterPanel(calculator, converterType);
     }
@@ -72,11 +77,11 @@ public class ConverterPanel extends JPanel
         calculator.setConverterType(converterType);
         calculator.setupButtonBlank1();
         calculator.setupButtonBlank2();
-        calculator.setupNumberButtons(true);
-        calculator.setupClearEntryButton();
-        calculator.setupDeleteButton();
-        calculator.setupDotButton();
-        switch (calculator.converterType)
+        setupNumberButtons(true);
+        setupClearEntryButton();
+        setupDeleteButton();
+        setupDotButton();
+        switch (calculator.getConverterType())
         {
             case ANGLE: {
                 setupAngleConverter();
@@ -87,7 +92,7 @@ public class ConverterPanel extends JPanel
                 break;
             }
             default: {
-                LOGGER.error("Unknown converterType: " + calculator.converterType);
+                LOGGER.error("Unknown converterType: " + calculator.getConverterType());
             }
         }
         textField1.requestFocusInWindow();
@@ -115,25 +120,25 @@ public class ConverterPanel extends JPanel
         // Clear the buttons I will use of their functionality (other than numbers)
         calculator.clearAllOtherBasicCalculatorButtons();
         // Clear Entry button functionality
-        calculator.buttonClearEntry.addActionListener(this::performClearEntryButtonFunctionality);
+        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonFunctionality);
         // Delete button functionality
-        calculator.buttonDelete.addActionListener(this::performDeleteButtonFunctionality);
+        calculator.getButtonDelete().addActionListener(this::performDeleteButtonFunctionality);
         // Set up decimal button
-        calculator.buttonDot.addActionListener(this::performDotButtonFunctionality);
+        calculator.getButtonDot().addActionListener(this::performDotButtonFunctionality);
         // Number button functionalities
         // First clear all functionality assigned to them
         calculator.clearNumberButtonFunctionalities();
         // Next, set up each number button. 0 is a bit different from the rest.
-        calculator.button0.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button1.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button2.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button3.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button4.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button5.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button6.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button7.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button8.addActionListener(this::performNumberButtonFunctionality);
-        calculator.button9.addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton2().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton3().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton4().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton5().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton6().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton7().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton8().addActionListener(this::performNumberButtonFunctionality);
+        calculator.getButton9().addActionListener(this::performNumberButtonFunctionality);
         LOGGER.info("Finished setting up all converter button functions");
     }
 
@@ -250,6 +255,383 @@ public class ConverterPanel extends JPanel
         convertAndUpdatePanel();
     }
 
+    public void setupNumberButtons(boolean isEnabled)
+    {
+        AtomicInteger i = new AtomicInteger(0);
+        getCalculator().getNumberButtons().forEach(button -> {
+            button.setFont(mainFont);
+            button.setEnabled(isEnabled);
+            if (button.getText().equals("0") &&
+                    getCalculator().getCalculatorType() != CONVERTER)
+            { button.setPreferredSize(new Dimension(70, 35)); }
+            else
+            { button.setPreferredSize(new Dimension(35, 35)); }
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setName(String.valueOf(i.getAndAdd(1)));
+            button.addActionListener(this::performNumberButtonActions);
+        });
+        LOGGER.info("Number buttons configured");
+    }
+
+    public void setupClearEntryButton()
+    {
+        calculator.getButtonClearEntry().setFont(mainFont);
+        calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
+        calculator.getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
+        calculator.getButtonClearEntry().setEnabled(true);
+        calculator.getButtonClearEntry().setName("CE");
+        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
+        LOGGER.info("Clear Entry button configured");
+    }
+
+    /**
+     * The action to perform when clicking the ClearEntry button
+     * @param action the click action
+     */
+    public void performClearEntryButtonActions(ActionEvent action)
+    {
+        LOGGER.info("ClearEntryButtonHandler() started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        calculator.getTextArea().setText("");
+        calculator.updateTextAreaValueFromTextArea();
+        if (calculator.getValues()[1].equals("")) { // if temp[1] is empty, we know we are at temp[0]
+            calculator.getValues()[0] = "";
+            calculator.setAdding(false);
+            calculator.setSubtracting(false);
+            calculator.setMultiplying(false);
+            calculator.setDividing(false);
+            calculator.setValuesPosition(0);
+            calculator.setFirstNumber(true);
+        }
+        else {
+            calculator.getValues()[1] = "";
+        }
+        calculator.setDotPressed(false);
+        calculator.getButtonDot().setEnabled(true);
+        calculator.setNumberNegative(false);
+        calculator.getTextAreaValue().append(calculator.getTextArea().getText());
+        LOGGER.info("ClearEntryButtonHandler() finished");
+        calculator.confirm();
+    }
+
+    public void setupDeleteButton()
+    {
+        calculator.getButtonDelete().setFont(mainFont);
+        calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
+        calculator.getButtonDelete().setBorder(new LineBorder(Color.BLACK));
+        calculator.getButtonDelete().setEnabled(true);
+        calculator.getButtonDelete().setName("←");
+        calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
+        LOGGER.info("Delete button configured");
+    }
+
+    public void setupDotButton()
+    {
+        calculator.getButtonDot().setFont(mainFont);
+        calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
+        calculator.getButtonDot().setBorder(new LineBorder(Color.BLACK));
+        calculator.getButtonDot().setEnabled(true);
+        calculator.getButtonDot().setName(".");
+        calculator.getButtonDot().addActionListener(this::performDotButtonActions);
+        LOGGER.info("Dot button configured");
+    }
+
+    public void performDotButtonActions(ActionEvent action)
+    {
+        LOGGER.info("Starting Dot button actions");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (calculator.getValues()[0].contains("E")) { calculator.confirm("Cannot press dot button. Number too big!"); }
+        else
+        {
+            LOGGER.warn("IMPLEMENT Dot Button Actions!");
+        }
+        calculator.confirm("Pressed the Dot button");
+    }
+
+    public void performDeleteButtonActions(ActionEvent action)
+    {
+        LOGGER.info("DeleteButtonHandler() started");
+        String buttonChoice = action.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (calculator.getValues()[1].isEmpty())
+        { calculator.setValuesPosition(0); } // assume they just previously pressed an operator
+
+        LOGGER.info("values["+calculator.getValuesPosition()+"]: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
+        LOGGER.info("textarea: " + calculator.getTextAreaValue());
+        calculator.setNumberNegative(calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]));
+        // this check has to happen
+        calculator.setDotPressed(calculator.isDecimal(calculator.getTextAreaValue().toString()));
+        calculator.getTextArea().setText(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
+        calculator.updateTextAreaValueFromTextArea();
+        if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing())
+        {
+            if (!calculator.isNumberNegative())
+            {
+                // if no operator has been pushed; number is positive; number is whole
+                if (!calculator.isDotPressed())
+                {
+                    if (calculator.getTextAreaValue().length() == 1)
+                    {
+                        calculator.getTextArea().setText("");
+                        calculator.setTextAreaValue(new StringBuffer().append(" "));
+                        calculator.getValues()[calculator.getValuesPosition()] = "";
+                    }
+                    else if (calculator.getTextAreaValue().length() >= 2)
+                    {
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length()-1)));
+                        calculator.getTextArea().setText(calculator.addNewLineCharacters()+ calculator.getTextAreaValue());
+                        calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                    }
+                }
+                // if no operator has been pushed; number is positive; number is decimal
+                else { //if (calculator.isDotPressed()) {
+                    if (calculator.getTextAreaValue().length() == 2)
+                    { // ex: 3. .... recall textarea looks like .3
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(calculator.getTextAreaValue().length() -1 ))); // ex: 3
+                        calculator.setDotPressed(false);
+                        calculator.getButtonDot().setEnabled(true);
+                    }
+                    else if (calculator.getTextAreaValue().length() == 3) { // ex: 3.2 or 0.5
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 2))); // ex: 3 or 0
+                        calculator.setDotPressed(false);
+                        calculator.getButtonDot().setEnabled(true);
+                    }
+                    else if (calculator.getTextAreaValue().length() > 3)
+                    { // ex: 3.25 or 0.50 or 5.02 or 78.9
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1))); // inclusive
+                        if (calculator.getTextAreaValue().toString().endsWith("."))
+                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getNumberOnLeftSideOfNumber(calculator.getTextAreaValue().toString())));
+                    }
+                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + calculator.getTextAreaValue());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                }
+            }
+            else // if (calculator.isNumberNegative())
+            {
+                // if no operator has been pushed; number is negative; number is whole
+                if (!calculator.isDotPressed())
+                {
+                    if (calculator.getTextAreaValue().length() == 2)
+                    { // ex: -3
+                        calculator.setTextAreaValue(new StringBuffer());
+                        calculator.getTextArea().setText(calculator.getTextAreaValue().toString());
+                        calculator.getValues()[calculator.getValuesPosition()] = "";
+                    }
+                    else if (calculator.getTextAreaValue().length() >= 3)
+                    { // ex: -32 or + 6-
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString())));
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length())));
+                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                    }
+                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                }
+                // if no operator has been pushed; number is negative; number is decimal
+                else //if (calculator.isDotPressed())
+                {
+                    if (calculator.getTextAreaValue().length() == 4) { // -3.2
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString()))); // 3.2
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, 1))); // 3
+                        calculator.setDotPressed(false);
+                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                    }
+                    else if (calculator.getTextAreaValue().length() > 4)
+                    { // ex: -3.25 or -0.00
+                        calculator.getTextAreaValue().append(calculator.convertToPositive(calculator.getTextAreaValue().toString())); // 3.00 or 0.00
+                        calculator.getTextAreaValue().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length())); // 3.0 or 0.0
+                        calculator.getTextAreaValue().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextAreaValue().toString())); // 3 or 0
+                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                    }
+                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                }
+            }
+
+        }
+        else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+        {
+            if (!calculator.isNumberNegative())
+            {
+                // if an operator has been pushed; number is positive; number is whole
+                if (!calculator.isDotPressed())
+                {
+                    if (calculator.getTextAreaValue().length() == 1)
+                    { // ex: 5
+                        calculator.setTextAreaValue(new StringBuffer());
+                    }
+                    else if (calculator.getTextAreaValue().length() == 2)
+                    {
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1 )));
+                    }
+                    else if (calculator.getTextAreaValue().length() >= 2)
+                    { // ex: 56 or + 6-
+                        if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+                        {
+                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+                            calculator.setAdding(false);
+                            calculator.setSubtracting(false);
+                            calculator.setMultiplying(false);
+                            calculator.setDividing(false);
+                        }
+                        else {
+                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length()-1)));
+                        }
+                    }
+                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                    calculator.getTextArea().setText("\n" + calculator.getTextAreaValue());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                    calculator.confirm();
+                }
+                // if an operator has been pushed; number is positive; number is decimal
+                else //if (isDotPressed)
+                {
+                    if (calculator.getTextAreaValue().length() == 2) // ex: 3.
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1 )));
+                    else if (calculator.getTextAreaValue().length() == 3)
+                    { // ex: 3.2 0.0
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 2 ))); // 3 or 0
+                        calculator.setDotPressed(false);
+                    }
+                    else if (calculator.getTextAreaValue().length() > 3)
+                    { // ex: 3.25 or 0.50  or + 3.25-
+                        if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+                        {
+                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+                        }
+                        else {
+                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1 )));
+                            calculator.getTextAreaValue().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextAreaValue().toString()));
+                        }
+                    }
+                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                    calculator.getTextArea().setText("\n"+ calculator.getTextAreaValue());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                    calculator.confirm();
+                }
+            }
+            else //if (isNumberNegative)
+            {
+                // if an operator has been pushed; number is negative; number is whole
+                if (!calculator.isDotPressed())
+                {
+                    if (calculator.getTextAreaValue().length() == 2) { // ex: -3
+                        calculator.setTextAreaValue(new StringBuffer());
+                        calculator.getTextArea().setText(calculator.getTextAreaValue().toString());
+                        calculator.getValues()[calculator.getValuesPosition()] = "";
+                    }
+                    else if (calculator.getTextAreaValue().length() >= 3) { // ex: -32 or + 6-
+                        if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()) {
+                            calculator.getTextAreaValue().append(calculator.getValues()[calculator.getValuesPosition()]);
+                        }
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString())));
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length())));
+                        calculator.getTextArea().setText("\n" + calculator.getTextAreaValue() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                    }
+                    LOGGER.info("textarea: " + calculator.getTextAreaValue());
+                    calculator.confirm();
+                }
+                // if an operator has been pushed; number is negative; number is decimal
+                else //if (calculator.isDotPressed())
+                {
+                    if (calculator.getTextAreaValue().length() == 4) { // -3.2
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString()))); // 3.2 or 0.0
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, 1))); // 3 or 0
+                        calculator.setDotPressed(false);
+                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-"); // 3- or 0-
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue(); // -3 or -0
+                    }
+                    else if (calculator.getTextAreaValue().length() > 4) { // ex: -3.25  or -0.00
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString()))); // 3.25 or 0.00
+                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length()))); // 3.2 or 0.0
+                        calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getTextAreaValue().toString());
+                        LOGGER.info("textarea: " + calculator.getTextAreaValue());
+                        if (calculator.getTextAreaValue().toString().equals("0"))
+                        {
+                            calculator.getTextArea().setText(calculator.getTextAreaValue().toString());
+                            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                        }
+                        else {
+                            calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
+                            calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                        }
+                    }
+                    LOGGER.info("textarea: " + calculator.getTextAreaValue());
+                }
+            }
+            calculator.resetBasicOperators(false);
+        }
+        LOGGER.info("DeleteButtonHandler() finished");
+        calculator.confirm();
+    }
+
+    /**
+     * The action to perform when clicking any number button
+     * @param actionEvent the click event
+     */
+    public void performNumberButtonActions(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Performing {} button{} actions...", calculator.getCurrentPanel().getName(), buttonChoice);
+        if (!calculator.isFirstNumber()) // second number
+        {
+            if (!calculator.isDotPressed())
+            {
+                calculator.getTextArea().setText("");
+                calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText()));
+                if (!calculator.isFirstNumber()) {
+                    calculator.setFirstNumber(true);
+                    calculator.setNumberNegative(false);
+                }
+                else calculator.setDotPressed(true);
+                calculator.getButtonDot().setEnabled(true);
+            }
+        }
+        calculator.performInitialChecks();
+        if (calculator.isPositiveNumber(buttonChoice) && !calculator.isDotPressed())
+        {
+            LOGGER.info("positive number & dot button was not pushed");
+            //LOGGER.debug("before: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
+            if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]))
+            {
+                calculator.getTextArea().setText(calculator.addNewLineCharacters() + buttonChoice);
+                calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaWithoutNewLineCharacters()));
+                calculator.getValues()[calculator.getValuesPosition()] = buttonChoice;
+            }
+            else
+            {
+                calculator.getTextArea().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
+                calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice).reverse());
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().reverse().toString();
+            }
+            //LOGGER.debug("after: '" + calculator.getTextAreaValue() + "'");
+            //calculator.setValuesToTextAreaValue();
+            //calculator.getValues()[calculator.getValuesPosition()] = buttonChoice;
+            //calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+            //calculator.updateTextAreaValueFromTextArea();
+        }
+        else if (calculator.isNumberNegative() && !calculator.isDotPressed())
+        { // logic for negative numbers
+            LOGGER.info("negative number & dot button had not been pushed");
+            calculator.setTextareaToValuesAtPosition(buttonChoice);
+        }
+        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]))
+        {
+            LOGGER.info("positive number & dot button had been pushed");
+            calculator.performLogicForDotButtonPressed(buttonChoice);
+        }
+        else
+        {
+            LOGGER.info("dot button was pushed");
+            calculator.performLogicForDotButtonPressed(buttonChoice);
+        }
+        calculator.confirm("Pressed " + buttonChoice);
+    }
+
     private void convertAndUpdatePanel()
     {
         LOGGER.info("Performing automatic conversion after each number button");
@@ -341,8 +723,8 @@ public class ConverterPanel extends JPanel
     public void createViewHelpMenu(String helpString)
     {
         // 4 menu options: loop through to find the Help option
-        for(int i=0; i < calculator.bar.getMenuCount(); i++) {
-            JMenu menuOption = calculator.bar.getMenu(i);
+        for(int i=0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++) {
+            JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
                 // get the options. remove viewHelpItem
@@ -364,11 +746,11 @@ public class ConverterPanel extends JPanel
                 menuOption.remove(valueForThisMenuOption);
                 // set up new viewHelpItem option
                 JMenuItem viewHelpItem = new JMenuItem("View Help");
-                viewHelpItem.setFont(font);
+                viewHelpItem.setFont(mainFont);
                 viewHelpItem.setName("View Help");
                 viewHelpItem.addActionListener(action -> {
                     JLabel textLabel = new JLabel(helpString,
-                            calculator.blankImage, SwingConstants.CENTER);
+                            calculator.getBlankIcon(), SwingConstants.CENTER);
                     textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                     textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -384,8 +766,8 @@ public class ConverterPanel extends JPanel
 
     private void setupEditMenu()
     {
-        for(int i = 0; i < calculator.bar.getMenuCount(); i++) {
-            JMenu menuOption = calculator.bar.getMenu(i);
+        for(int i = 0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++) {
+            JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
             if (menuOption.getName() != null && menuOption.getName().equals("Edit")) {
                 LOGGER.info("Found the edit option");
@@ -401,7 +783,7 @@ public class ConverterPanel extends JPanel
                         JMenuItem copyItem = new JMenuItem("Copy");
                         copyItem.setAccelerator(KeyStroke.getKeyStroke(
                                 KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-                        copyItem.setFont(font);
+                        copyItem.setFont(mainFont);
                         copyItem.setName("Copy");
                         copyItem.addActionListener(this::createCopyFunctionalityForConverter);
                         menuOption.add(copyItem, 0);
@@ -416,7 +798,7 @@ public class ConverterPanel extends JPanel
                         JMenuItem pasteItem = new JMenuItem("Paste");
                         pasteItem.setAccelerator(KeyStroke.getKeyStroke(
                                 KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-                        pasteItem.setFont(font);
+                        pasteItem.setFont(mainFont);
                         pasteItem.setName("Paste");
                         pasteItem.addActionListener(this::createPasteFunctionalityForConverter);
                         menuOption.add(pasteItem, 1);
@@ -429,21 +811,21 @@ public class ConverterPanel extends JPanel
     private void createCopyFunctionalityForConverter(ActionEvent ae)
     {
         if (isTextField1Selected) {
-            calculator.values[2] = textField1.getText();
+            calculator.getValues()[2] = textField1.getText();
         } else {
-            calculator.values[2] = textField2.getText();
+            calculator.getValues()[2] = textField2.getText();
         }
-        calculator.confirm("Copied " + calculator.values[2], CONVERTER);
+        calculator.confirm("Copied " + calculator.getValues()[2], CONVERTER);
     }
 
     private void createPasteFunctionalityForConverter(ActionEvent ae)
     {
         if (isTextField1Selected) {
-            textField1.setText(calculator.values[2]);
+            textField1.setText(calculator.getValues()[2]);
         } else {
-            textField2.setText(calculator.values[2]);
+            textField2.setText(calculator.getValues()[2]);
         }
-        calculator.confirm("Pasted " + calculator.values[2], CONVERTER);
+        calculator.confirm("Pasted " + calculator.getValues()[2], CONVERTER);
     }
 
     private void setupAngleConverter()
@@ -451,7 +833,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Starting Angle specific setup");
         setupConverter(ANGLE.getName());
         setupHelpMenu(ANGLE);
-        setConverterTypeNameAsString(ANGLE.getName());
+        setConverterType(ANGLE);
         setUnitOptions1(new JComboBox<>(new String[]{AngleMethods.DEGREES, AngleMethods.RADIANS, AngleMethods.GRADIANS}));
         setUnitOptions2(new JComboBox<>(new String[]{AngleMethods.DEGREES, AngleMethods.RADIANS, AngleMethods.GRADIANS}));
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
@@ -466,7 +848,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Starting setup");
         setupConverter(AREA.getName());
         setupHelpMenu(AREA);
-        setConverterTypeNameAsString(AREA.getName());
+        setConverterType(AREA);
         setUnitOptions1(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
         setUnitOptions2(new JComboBox<>(new String[]{SQUARE_MILLIMETERS, SQUARE_CENTIMETERS, SQUARE_METERS, HECTARES, SQUARE_KILOMETERS, SQUARE_INCHES, SQUARE_FEET, SQUARE_YARD_ACRES, SQUARE_MILES}));
         setBottomSpaceAboveNumbers(new JTextArea(1,10));
@@ -480,14 +862,14 @@ public class ConverterPanel extends JPanel
     {
         LOGGER.info("Starting " + nameOfConverter + " Converter setup");
         setConverterTypeName(new JLabel(nameOfConverter));
-        converterTypeName.setFont(font2);
+        converterTypeName.setFont(verdanaFontBold);
 
         setupEditMenu();
-        setupHelpMenu(calculator.converterType);
+        setupHelpMenu(calculator.getConverterType());
 
         setTextField1(new JTextField());
         textField1.setText("0");
-        textField1.setFont(font2);
+        textField1.setFont(verdanaFontBold);
         textField1.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -498,7 +880,7 @@ public class ConverterPanel extends JPanel
         });
         setTextField2(new JTextField());
         textField2.setText("0");
-        textField2.setFont(font2);
+        textField2.setFont(verdanaFontBold);
         textField2.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -513,22 +895,23 @@ public class ConverterPanel extends JPanel
         numbersPanel.setLayout(new GridBagLayout());
         numbersPanel.setBackground(Color.BLACK);
         numbersPanel.setBorder(new LineBorder(Color.BLACK));
-        addComponentToNumbersPanel(calculator.buttonBlank1, 0, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.buttonClearEntry, 0, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.buttonDelete, 0, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button7, 1, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button8, 1, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button9, 1, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button4, 2, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button5, 2, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button6, 2, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button1, 3, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button2, 3, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.button3, 3, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.buttonBlank2, 4, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.buttonDot, 4, 1, 1, 1, 1.0, 1.0);
-        calculator.button0.setPreferredSize(new Dimension(35, 35));
-        addComponentToNumbersPanel(calculator.button0, 4, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0);
+        // TODO try getButtonBlank1().clone()
+        addComponentToNumbersPanel(calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0);
+        addComponentToNumbersPanel(calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
+        calculator.getButton0().setPreferredSize(new Dimension(35, 35));
+        addComponentToNumbersPanel(calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0);
         LOGGER.info("Ending " + nameOfConverter + " Converter setup");
     }
 
@@ -559,6 +942,20 @@ public class ConverterPanel extends JPanel
         calculator.confirm("IMPLEMENT: Units switched. Conversions executed", CONVERTER);
     }
 
+    /************* All Getters ******************/
+    public GridBagLayout getConverterLayout() { return converterLayout; }
+    public GridBagConstraints getConstraints() { return constraints; }
+    public JLabel getConverterTypeName() { return converterTypeName; }
+    public ConverterType getConverterType() { return converterType; }
+    public JTextField getTextField1() { return textField1; }
+    public JTextField getTextField2() { return textField2; }
+    public JComboBox<String> getUnitOptions1() { return unitOptions1; }
+    public JComboBox<String> getUnitOptions2() { return unitOptions2; }
+    public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
+    public Calculator_v4 getCalculator() { return calculator; }
+    public JPanel getNumbersPanel() { return numbersPanel; }
+    public boolean isTextField1Selected() { return isTextField1Selected; }
+
     /************* All Setters ******************/
     public void setLayout(GridBagLayout converterLayout) {
         super.setLayout(converterLayout);
@@ -566,13 +963,13 @@ public class ConverterPanel extends JPanel
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setConverterTypeName(JLabel converterTypeName) { this.converterTypeName = converterTypeName; }
-    public void setConverterTypeNameAsString(String converterName) { this.converterName = converterName; }
+    public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
     public void setTextField1(JTextField textField1) { this.textField1 = textField1; }
     public void setTextField2(JTextField textField2) { this.textField2 = textField2; }
     public void setUnitOptions1(JComboBox<String> unitOptions1) { this.unitOptions1 = unitOptions1; }
     public void setUnitOptions2(JComboBox<String> unitOptions2) { this.unitOptions2 = unitOptions2; }
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
     public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
     public void setIsTextField1Selected(boolean isTextField1Selected) { this.isTextField1Selected = isTextField1Selected; }
 }
