@@ -294,7 +294,7 @@ public class ConverterPanel extends JPanel
         String buttonChoice = action.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         calculator.getTextArea().setText("");
-        calculator.updateTextAreaValueFromTextArea();
+        //calculator.updateTextAreaValueFromTextArea();
         if (calculator.getValues()[1].isEmpty()) { // if temp[1] is empty, we know we are at temp[0]
             calculator.getValues()[0] = "";
             calculator.setAdding(false);
@@ -310,7 +310,7 @@ public class ConverterPanel extends JPanel
         calculator.setDotPressed(false);
         calculator.getButtonDot().setEnabled(true);
         calculator.setNumberNegative(false);
-        calculator.getTextAreaValue().append(calculator.getTextArea().getText());
+        //calculator.getTextArea().getText().append(calculator.getTextArea().getText());
         LOGGER.info("ClearEntryButtonHandler() finished");
         calculator.confirm();
     }
@@ -334,12 +334,12 @@ public class ConverterPanel extends JPanel
         { calculator.setValuesPosition(0); } // assume they just previously pressed an operator
 
         LOGGER.info("values["+calculator.getValuesPosition()+"]: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
-        LOGGER.info("textarea: " + calculator.getTextAreaValue());
+        LOGGER.info("textarea: " + calculator.getTextArea().getText());
         calculator.setNumberNegative(calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]));
         // this check has to happen
-        calculator.setDotPressed(calculator.isDecimal(calculator.getTextAreaValue().toString()));
+        calculator.setDotPressed(calculator.isDecimal(calculator.getTextArea().getText().toString()));
         calculator.getTextArea().setText(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        calculator.updateTextAreaValueFromTextArea();
+        //calculator.updateTextAreaValueFromTextArea();
         if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing())
         {
             if (!calculator.isNumberNegative())
@@ -347,41 +347,43 @@ public class ConverterPanel extends JPanel
                 // if no operator has been pushed; number is positive; number is whole
                 if (!calculator.isDotPressed())
                 {
-                    if (calculator.getTextAreaValue().length() == 1)
+                    if (calculator.getTextArea().getText().length() == 1)
                     {
                         calculator.getTextArea().setText("");
-                        calculator.setTextAreaValue(new StringBuffer().append(" "));
+                        //calculator.setTextAreaValue(new StringBuffer().append(" "));
                         calculator.getValues()[calculator.getValuesPosition()] = "";
                     }
-                    else if (calculator.getTextAreaValue().length() >= 2)
+                    else if (calculator.getTextArea().getText().length() >= 2)
                     {
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length()-1)));
-                        calculator.getTextArea().setText(calculator.addNewLineCharacters()+ calculator.getTextAreaValue());
-                        calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length()-1)));
+                        calculator.getTextArea().setText(calculator.addNewLineCharacters()+ calculator.getTextArea().getText());
+                        calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextArea().getText().toString();
                     }
                 }
                 // if no operator has been pushed; number is positive; number is decimal
                 else { //if (calculator.isDotPressed()) {
-                    if (calculator.getTextAreaValue().length() == 2)
-                    { // ex: 3. .... recall textarea looks like .3
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(calculator.getTextAreaValue().length() -1 ))); // ex: 3
+                    if (calculator.getTextArea().getText().length() == 2)
+                    {
+                        // ex: 3. .... recall textarea looks like .3
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(calculator.getTextArea().getText().length() -1 ))); // ex: 3
                         calculator.setDotPressed(false);
                         calculator.getButtonDot().setEnabled(true);
                     }
-                    else if (calculator.getTextAreaValue().length() == 3) { // ex: 3.2 or 0.5
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 2))); // ex: 3 or 0
+                    else if (calculator.getTextArea().getText().length() == 3) { // ex: 3.2 or 0.5
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 2))); // ex: 3 or 0
                         calculator.setDotPressed(false);
                         calculator.getButtonDot().setEnabled(true);
                     }
-                    else if (calculator.getTextAreaValue().length() > 3)
+                    else if (calculator.getTextArea().getText().length() > 3)
                     { // ex: 3.25 or 0.50 or 5.02 or 78.9
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1))); // inclusive
-                        if (calculator.getTextAreaValue().toString().endsWith("."))
-                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getNumberOnLeftSideOfNumber(calculator.getTextAreaValue().toString())));
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1))); // inclusive
+                        if (calculator.getTextArea().getText().toString().endsWith(".")) {
+                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getNumberOnLeftSideOfNumber(calculator.getTextArea().getText().toString())));
+                        }
                     }
-                    LOGGER.info("output: " + calculator.getTextAreaValue());
-                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + calculator.getTextAreaValue());
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                    LOGGER.info("output: " + calculator.getTextArea().getText());
+                    calculator.getTextArea().setText(calculator.addNewLineCharacters() + calculator.getTextArea().getText());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextArea().getText().toString();
                 }
             }
             else // if (calculator.isNumberNegative())
@@ -389,40 +391,42 @@ public class ConverterPanel extends JPanel
                 // if no operator has been pushed; number is negative; number is whole
                 if (!calculator.isDotPressed())
                 {
-                    if (calculator.getTextAreaValue().length() == 2)
-                    { // ex: -3
-                        calculator.setTextAreaValue(new StringBuffer());
-                        calculator.getTextArea().setText(calculator.getTextAreaValue().toString());
+                    if (calculator.getTextArea().getText().length() == 2)
+                    {
+                        // ex: -3
+                        //calculator.setTextAreaValue(new StringBuffer());
+                        calculator.getTextArea().setText(calculator.getTextArea().getText().toString());
                         calculator.getValues()[calculator.getValuesPosition()] = "";
                     }
-                    else if (calculator.getTextAreaValue().length() >= 3)
-                    { // ex: -32 or + 6-
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString())));
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length())));
-                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                    else if (calculator.getTextArea().getText().length() >= 3)
+                    {
+                        // ex: -32 or + 6-
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString())));
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length())));
+                        calculator.getTextArea().setText(calculator.getTextArea().getText() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextArea().getText();
                     }
-                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                    LOGGER.info("output: " + calculator.getTextArea().getText());
                 }
                 // if no operator has been pushed; number is negative; number is decimal
                 else //if (calculator.isDotPressed())
                 {
-                    if (calculator.getTextAreaValue().length() == 4) { // -3.2
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString()))); // 3.2
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, 1))); // 3
+                    if (calculator.getTextArea().getText().length() == 4) { // -3.2
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString()))); // 3.2
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, 1))); // 3
                         calculator.setDotPressed(false);
-                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                        calculator.getTextArea().setText(calculator.getTextArea().getText() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextArea().getText();
                     }
-                    else if (calculator.getTextAreaValue().length() > 4)
+                    else if (calculator.getTextArea().getText().length() > 4)
                     { // ex: -3.25 or -0.00
-                        calculator.getTextAreaValue().append(calculator.convertToPositive(calculator.getTextAreaValue().toString())); // 3.00 or 0.00
-                        calculator.getTextAreaValue().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length())); // 3.0 or 0.0
-                        calculator.getTextAreaValue().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextAreaValue().toString())); // 3 or 0
-                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                        //calculator.getTextArea().getText().append(calculator.convertToPositive(calculator.getTextArea().getText().toString())); // 3.00 or 0.00
+                        //calculator.getTextArea().getText().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length())); // 3.0 or 0.0
+                        //calculator.getTextArea().getText().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextArea().getText().toString())); // 3 or 0
+                        calculator.getTextArea().setText(calculator.getTextArea().getText() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextArea().getText();
                     }
-                    LOGGER.info("output: " + calculator.getTextAreaValue());
+                    LOGGER.info("output: " + calculator.getTextArea().getText());
                 }
             }
 
@@ -434,57 +438,60 @@ public class ConverterPanel extends JPanel
                 // if an operator has been pushed; number is positive; number is whole
                 if (!calculator.isDotPressed())
                 {
-                    if (calculator.getTextAreaValue().length() == 1)
+                    if (calculator.getTextArea().getText().length() == 1)
                     { // ex: 5
-                        calculator.setTextAreaValue(new StringBuffer());
+                        //calculator.setTextAreaValue(new StringBuffer());
                     }
-                    else if (calculator.getTextAreaValue().length() == 2)
+                    else if (calculator.getTextArea().getText().length() == 2)
                     {
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1 )));
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1 )));
                     }
-                    else if (calculator.getTextAreaValue().length() >= 2)
+                    else if (calculator.getTextArea().getText().length() >= 2)
                     { // ex: 56 or + 6-
                         if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
                         {
-                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
                             calculator.setAdding(false);
                             calculator.setSubtracting(false);
                             calculator.setMultiplying(false);
                             calculator.setDividing(false);
                         }
                         else {
-                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length()-1)));
+                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length()-1)));
                         }
                     }
-                    LOGGER.info("output: " + calculator.getTextAreaValue());
-                    calculator.getTextArea().setText("\n" + calculator.getTextAreaValue());
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                    LOGGER.info("output: " + calculator.getTextArea().getText());
+                    calculator.getTextArea().setText("\n" + calculator.getTextArea().getText());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextArea().getText().toString();
                     calculator.confirm();
                 }
                 // if an operator has been pushed; number is positive; number is decimal
                 else //if (isDotPressed)
                 {
-                    if (calculator.getTextAreaValue().length() == 2) // ex: 3.
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1 )));
-                    else if (calculator.getTextAreaValue().length() == 3)
-                    { // ex: 3.2 0.0
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 2 ))); // 3 or 0
+                    if (calculator.getTextArea().getText().length() == 2) {
+                        // ex: 3.
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1 )));
+                    }
+                    else if (calculator.getTextArea().getText().length() == 3)
+                    {
+                        // ex: 3.2 0.0
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 2 ))); // 3 or 0
                         calculator.setDotPressed(false);
                     }
-                    else if (calculator.getTextAreaValue().length() > 3)
+                    else if (calculator.getTextArea().getText().length() > 3)
                     { // ex: 3.25 or 0.50  or + 3.25-
                         if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
                         {
-                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
                         }
                         else {
-                            calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length() - 1 )));
-                            calculator.getTextAreaValue().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextAreaValue().toString()));
+                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1 )));
+                            //.getTextArea().getText().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextArea().getText().toString()));
                         }
                     }
-                    LOGGER.info("output: " + calculator.getTextAreaValue());
-                    calculator.getTextArea().setText("\n"+ calculator.getTextAreaValue());
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                    LOGGER.info("output: " + calculator.getTextArea().getText());
+                    calculator.getTextArea().setText("\n"+ calculator.getTextArea().getText());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextArea().getText().toString();
                     calculator.confirm();
                 }
             }
@@ -493,49 +500,49 @@ public class ConverterPanel extends JPanel
                 // if an operator has been pushed; number is negative; number is whole
                 if (!calculator.isDotPressed())
                 {
-                    if (calculator.getTextAreaValue().length() == 2) { // ex: -3
-                        calculator.setTextAreaValue(new StringBuffer());
-                        calculator.getTextArea().setText(calculator.getTextAreaValue().toString());
+                    if (calculator.getTextArea().getText().length() == 2) { // ex: -3
+                        //calculator.setTextAreaValue(new StringBuffer());
+                        calculator.getTextArea().setText(calculator.getTextArea().getText().toString());
                         calculator.getValues()[calculator.getValuesPosition()] = "";
                     }
-                    else if (calculator.getTextAreaValue().length() >= 3) { // ex: -32 or + 6-
+                    else if (calculator.getTextArea().getText().length() >= 3) { // ex: -32 or + 6-
                         if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()) {
-                            calculator.getTextAreaValue().append(calculator.getValues()[calculator.getValuesPosition()]);
+                            //calculator.getTextArea().getText().append(calculator.getValues()[calculator.getValuesPosition()]);
                         }
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString())));
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length())));
-                        calculator.getTextArea().setText("\n" + calculator.getTextAreaValue() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString())));
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length())));
+                        calculator.getTextArea().setText("\n" + calculator.getTextArea().getText() + "-");
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextArea().getText();
                     }
-                    LOGGER.info("textarea: " + calculator.getTextAreaValue());
+                    LOGGER.info("textarea: " + calculator.getTextArea().getText());
                     calculator.confirm();
                 }
                 // if an operator has been pushed; number is negative; number is decimal
                 else //if (calculator.isDotPressed())
                 {
-                    if (calculator.getTextAreaValue().length() == 4) { // -3.2
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString()))); // 3.2 or 0.0
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, 1))); // 3 or 0
+                    if (calculator.getTextArea().getText().length() == 4) { // -3.2
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString()))); // 3.2 or 0.0
+                        //.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, 1))); // 3 or 0
                         calculator.setDotPressed(false);
-                        calculator.getTextArea().setText(calculator.getTextAreaValue() + "-"); // 3- or 0-
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue(); // -3 or -0
+                        calculator.getTextArea().setText(calculator.getTextArea().getText() + "-"); // 3- or 0-
+                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextArea().getText(); // -3 or -0
                     }
-                    else if (calculator.getTextAreaValue().length() > 4) { // ex: -3.25  or -0.00
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextAreaValue().toString()))); // 3.25 or 0.00
-                        calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextAreaValue().substring(0, calculator.getTextAreaValue().length()))); // 3.2 or 0.0
-                        calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getTextAreaValue().toString());
-                        LOGGER.info("textarea: " + calculator.getTextAreaValue());
-                        if (calculator.getTextAreaValue().toString().equals("0"))
+                    else if (calculator.getTextArea().getText().length() > 4) { // ex: -3.25  or -0.00
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString()))); // 3.25 or 0.00
+                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length()))); // 3.2 or 0.0
+                        calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getTextArea().getText().toString());
+                        LOGGER.info("textarea: " + calculator.getTextArea().getText());
+                        if (calculator.getTextArea().getText().toString().equals("0"))
                         {
-                            calculator.getTextArea().setText(calculator.getTextAreaValue().toString());
-                            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextAreaValue().toString();
+                            calculator.getTextArea().setText(calculator.getTextArea().getText().toString());
+                            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextArea().getText().toString();
                         }
                         else {
-                            calculator.getTextArea().setText(calculator.getTextAreaValue() + "-");
-                            calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextAreaValue();
+                            calculator.getTextArea().setText(calculator.getTextArea().getText() + "-");
+                            calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextArea().getText();
                         }
                     }
-                    LOGGER.info("textarea: " + calculator.getTextAreaValue());
+                    LOGGER.info("textarea: " + calculator.getTextArea().getText());
                 }
             }
             calculator.resetBasicOperators(false);
@@ -569,26 +576,28 @@ public class ConverterPanel extends JPanel
     private void performDot(String buttonChoice)
     {
         if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
-        {   // dot pushed with nothing in textArea
-            calculator.setTextAreaValue(new StringBuffer().append("0").append(buttonChoice));
+        {
+            // dot pushed with nothing in textArea
+            //calculator.setTextAreaValue(new StringBuffer().append("0").append(buttonChoice));
             calculator.setValuesToTextAreaValue();
             calculator.updateTheTextAreaBasedOnTheTypeAndBase();
         }
         else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
-        {   // number and then dot is pushed ex: 5 -> .5
+        {
+            // number and then dot is pushed ex: 5 -> .5
             //StringBuffer lodSB = new StringBuffer(textareaValue);
-            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
+            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
             calculator.setValuesToTextAreaValue();
-            calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
+            //calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.updateTheTextAreaBasedOnTheTypeAndBase();
-            calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
         }
         else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
         {
-            calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
-            calculator.getTextAreaValue().append(buttonChoice);
-            calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextAreaValue().toString())));
+            //.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
+            //calculator.getTextArea().getText().append(buttonChoice);
+            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextArea().getText().toString())));
             calculator.setValuesToTextAreaValue();
             calculator.updateTheTextAreaBasedOnTheTypeAndBase();
         }
