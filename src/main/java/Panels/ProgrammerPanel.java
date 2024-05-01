@@ -1,6 +1,6 @@
 package Panels;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import Types.CalculatorBase;
 import Types.CalculatorType;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static Calculators.Calculator_v4.*;
+import static Calculators.Calculator.*;
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
 
@@ -61,27 +61,27 @@ public class ProgrammerPanel extends JPanel
             isOrPressed = false, isModulusPressed = false,
             isXorPressed = false, negateButtonBool = false, // TODO: REMOVE negateButtonBool
             isNotPressed = false, isAndPressed = false;
-    private Calculator_v4 calculator;
+    private Calculator calculator;
 
     /************* Constructors ******************/
     public ProgrammerPanel()
     { LOGGER.info("Empty Programmer panel created"); }
 
-    public ProgrammerPanel(Calculator_v4 calculator)
+    public ProgrammerPanel(Calculator calculator)
     { this(calculator, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator the Calculator_v4 to use
+     * @param calculator the Calculator to use
      */
-    public ProgrammerPanel(Calculator_v4 calculator, CalculatorBase base)
+    public ProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         setupProgrammerPanel(calculator, base);
         LOGGER.info("Programmer panel created");
     }
 
     /************* Start of methods here ******************/
-    private void setupProgrammerPanel(Calculator_v4 calculator, CalculatorBase base)
+    private void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout()); // set frame layout
@@ -106,6 +106,7 @@ public class ProgrammerPanel extends JPanel
         allButtons.forEach(button -> Stream.of(button.getActionListeners())
                 .forEach(button::removeActionListener));
 
+        setupNumberButtons(true);
         calculator.setCalculatorType(PROGRAMMER);
         setProgrammerBase(base);
         calculator.setConverterType(null);
@@ -130,7 +131,7 @@ public class ProgrammerPanel extends JPanel
         setupClearButton();
         setupNegateButton();
         setupSquareRootButton();
-        setupNumberButtons(true);
+
         setupDotButton();
         setupAddButton();
         setupSubtractButton();
@@ -278,7 +279,7 @@ public class ProgrammerPanel extends JPanel
 
     private void setupButtonModulus()
     {
-        buttonModulus.setFont(Calculator_v4.mainFont);
+        buttonModulus.setFont(Calculator.mainFont);
         buttonModulus.setPreferredSize(new Dimension(35,35));
         buttonModulus.setBorder(new LineBorder(Color.BLACK));
         buttonModulus.addActionListener(this::performButtonModActions);
@@ -332,7 +333,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonLPar()
     {
-        buttonLPar.setFont(Calculator_v4.mainFont);
+        buttonLPar.setFont(Calculator.mainFont);
         buttonLPar.setPreferredSize(new Dimension(35,35));
         buttonLPar.setBorder(new LineBorder(Color.BLACK));
         buttonLPar.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
@@ -341,7 +342,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonRPar()
     {
-        buttonRPar.setFont(Calculator_v4.mainFont);
+        buttonRPar.setFont(Calculator.mainFont);
         buttonRPar.setPreferredSize(new Dimension(35,35));
         buttonRPar.setBorder(new LineBorder(Color.BLACK));
         buttonRPar.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
@@ -350,7 +351,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonRol()
     {
-        buttonRol.setFont(Calculator_v4.mainFont);
+        buttonRol.setFont(Calculator.mainFont);
         buttonRol.setPreferredSize(new Dimension(35,35));
         buttonRol.setBorder(new LineBorder(Color.BLACK));
         buttonRol.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
@@ -359,7 +360,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonRor()
     {
-        buttonRor.setFont(Calculator_v4.mainFont);
+        buttonRor.setFont(Calculator.mainFont);
         buttonRor.setPreferredSize(new Dimension(35,35));
         buttonRor.setBorder(new LineBorder(Color.BLACK));
         buttonRor.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
@@ -494,7 +495,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonLSh()
     {
-        buttonLSh.setFont(Calculator_v4.mainFont);
+        buttonLSh.setFont(Calculator.mainFont);
         buttonLSh.setPreferredSize(new Dimension(35,35));
         buttonLSh.setBorder(new LineBorder(Color.BLACK));
         buttonLSh.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
@@ -503,7 +504,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonRSh()
     {
-        buttonRSh.setFont(Calculator_v4.mainFont);
+        buttonRSh.setFont(Calculator.mainFont);
         buttonRSh.setPreferredSize(new Dimension(35,35));
         buttonRSh.setBorder(new LineBorder(Color.BLACK));
         buttonRSh.addActionListener(action -> LOGGER.warn("IMPLEMENT"));
@@ -511,7 +512,7 @@ public class ProgrammerPanel extends JPanel
 
     private void setupButtonNot()
     {
-        buttonNot.setFont(Calculator_v4.mainFont);
+        buttonNot.setFont(Calculator.mainFont);
         buttonNot.setPreferredSize(new Dimension(35,35));
         buttonNot.setBorder(new LineBorder(Color.BLACK));
         buttonNot.addActionListener(this::performButtonNotActions);
@@ -540,7 +541,7 @@ public class ProgrammerPanel extends JPanel
     //TODO: Add actionListener
     private void setupButtonAnd()
     {
-        buttonAnd.setFont(Calculator_v4.mainFont);
+        buttonAnd.setFont(Calculator.mainFont);
         buttonAnd.setPreferredSize(new Dimension(35,35));
         buttonAnd.setBorder(new LineBorder(Color.BLACK));
         //buttonAnd.addActionListener(this::performButtonAndActions);
@@ -781,7 +782,7 @@ public class ProgrammerPanel extends JPanel
     {
         AtomicInteger i = new AtomicInteger(0);
         calculator.getNumberButtons().forEach(button -> {
-            button.setFont(Calculator_v4.mainFont);
+            button.setFont(Calculator.mainFont);
             button.setEnabled(isEnabled);
             if (button.getText().equals("0")) { button.setPreferredSize(new Dimension(70, 35)); }
             else { button.setPreferredSize(new Dimension(35, 35)); }
@@ -795,7 +796,7 @@ public class ProgrammerPanel extends JPanel
     {
         for(JButton hexidecimalButton : getAToFButtons())
         {
-            hexidecimalButton.setFont(Calculator_v4.mainFont);
+            hexidecimalButton.setFont(Calculator.mainFont);
             hexidecimalButton.setPreferredSize(new Dimension(35, 35));
             hexidecimalButton.setBorder(new LineBorder(Color.BLACK));
             hexidecimalButton.addActionListener(this::performProgrammerCalculatorNumberButtonActions);
@@ -2386,7 +2387,7 @@ public class ProgrammerPanel extends JPanel
             catch (CalculatorError c) { calculator.logException(c); }
             if (StringUtils.isNotBlank(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()))
             {
-                if (operatorWasPushed) // check all appropriate operators from Programmer calculator that are applicable for Basic Calculator_v4
+                if (operatorWasPushed) // check all appropriate operators from Programmer calculator that are applicable for Basic Calculator
                 {
                     if (calculator.isAdding())
                     {
@@ -2583,7 +2584,7 @@ public class ProgrammerPanel extends JPanel
         }
     }
 
-    public void performProgrammerCalculatorTypeSwitchOperations(Calculator_v4 calculator, CalculatorBase base )
+    public void performProgrammerCalculatorTypeSwitchOperations(Calculator calculator, CalculatorBase base )
     { setupProgrammerPanel(calculator, base); }
 
     /************* All Getters ******************/
@@ -2608,7 +2609,7 @@ public class ProgrammerPanel extends JPanel
         this.programmerLayout = panelLayout;
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setByte(boolean buttonByteSet) { isByte = buttonByteSet; }
     public void setWord(boolean buttonWordSet) { isWord = buttonWordSet; }
     public void setDWord(boolean buttonDwordSet) { isDWord = buttonDwordSet; }

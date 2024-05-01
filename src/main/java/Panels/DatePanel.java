@@ -1,6 +1,6 @@
 package Panels;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import Types.CalculatorType;
 import Types.DateOperation;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -17,7 +17,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import static Calculators.Calculator_v4.*;
+import static Calculators.Calculator.*;
 import static Types.CalculatorType.*;
 import static Types.DateOperation.*;
 
@@ -32,7 +32,7 @@ public class DatePanel extends JPanel
     private UtilCalendarModel fromModel, toModel;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator_v4 calculator;
+    private Calculator calculator;
     private JComboBox<DateOperation> optionsBox;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, weeksLabel, daysLabel, resultsLabel,
@@ -57,19 +57,19 @@ public class DatePanel extends JPanel
     public DatePanel()
     { LOGGER.info("Date panel created"); }
 
-    public DatePanel(Calculator_v4 calculator)
+    public DatePanel(Calculator calculator)
     { this(calculator, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator the Calculator_v4 to use
+     * @param calculator the Calculator to use
      * @param dateOperation the option to use
      */
-    public DatePanel(Calculator_v4 calculator, DateOperation dateOperation)
+    public DatePanel(Calculator calculator, DateOperation dateOperation)
     { setupDatePanel(calculator, dateOperation); }
 
     /************* Start of methods here ******************/
-    private void setupDatePanel(Calculator_v4 calculator, DateOperation dateOperation)
+    private void setupDatePanel(Calculator calculator, DateOperation dateOperation)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout()); // set frame layout
@@ -85,7 +85,7 @@ public class DatePanel extends JPanel
     private void setupHelpMenu()
     {
         LOGGER.info("Creating the view help menu for date panel");
-        String helpString = "<html>How to use the " + ADD_OR_SUB_RESULT + " Calculator_v4<br><br>" +
+        String helpString = "<html>How to use the " + ADD_OR_SUB_RESULT + " Calculator<br><br>" +
                 "Difference Between Dates:<br>" +
                 "Enter a date into either field, From or To.<br>" +
                 "Only 1 date is required to change to show a difference.<br>" +
@@ -406,7 +406,7 @@ public class DatePanel extends JPanel
     { return fromDatePicker.getModel().getYear(); }
 
     public int getTheMonthFromTheFromDatePicker()
-    { return fromDatePicker.getModel().getMonth()+1; }
+    { return fromDatePicker.getModel().getMonth(); }
 
     public int getTheWeekFromTheFromDatePicker()
     {
@@ -432,7 +432,7 @@ public class DatePanel extends JPanel
     { return toDatePicker.getModel().getYear(); }
 
     public int getTheMonthFromTheToDatePicker()
-    { return toDatePicker.getModel().getMonth()+1; }
+    { return toDatePicker.getModel().getMonth(); }
 
     public int getTheWeekFromTheToDatePicker()
     {
@@ -534,10 +534,10 @@ public class DatePanel extends JPanel
     public void performRadioButtonFunctionality(ActionEvent actionEvent)
     {
         int year = fromDatePicker.getModel().getYear();
-        int month = fromDatePicker.getModel().getMonth()+1;
+        int month = fromDatePicker.getModel().getMonth();
         int dayOfMonth = fromDatePicker.getModel().getDay();
         LocalDateTime localDateTime = LocalDateTime.of(LocalDate.of(year, month, dayOfMonth), LocalTime.now());
-        LOGGER.debug("Date is {}", localDateTime.toLocalDate());
+        LOGGER.debug("FromDate is {}", localDateTime.toLocalDate());
 
         int years = Integer.parseInt(StringUtils.isBlank(yearsTextField.getText()) ? "0" : yearsTextField.getText());
         int months = Integer.parseInt(StringUtils.isEmpty(monthsTextField.getText()) ? "0" : monthsTextField.getText());
@@ -560,13 +560,17 @@ public class DatePanel extends JPanel
         else
         {
             LOGGER.info("Subtracting values from the date");
-            localDateTime = localDateTime.minusYears(years);
+            localDateTime = localDateTime.minusDays(days);
             localDateTime = localDateTime.minusWeeks(weeks);
             localDateTime = localDateTime.minusMonths(months);
-            localDateTime = localDateTime.minusDays(days);
+            localDateTime = localDateTime.minusYears(years);
+
+
+
         }
         LOGGER.info("Date is now {}", localDateTime.toLocalDate());
         //updateFromDate(localDateTime);
+        updateToDate(localDateTime);
         updateResultsLabel(localDateTime);
     }
 
@@ -763,14 +767,14 @@ public class DatePanel extends JPanel
     private void updateFromDate(LocalDateTime ldt)
     {
         fromDatePicker.getModel().setYear(ldt.getYear());
-        fromDatePicker.getModel().setMonth(ldt.getMonthValue()-1);
+        fromDatePicker.getModel().setMonth(ldt.getMonth().getValue());
         fromDatePicker.getModel().setDay(ldt.getDayOfMonth());
     }
 
     private void updateToDate(LocalDateTime ldt)
     {
         toDatePicker.getModel().setYear(ldt.getYear());
-        toDatePicker.getModel().setMonth(ldt.getMonthValue()-1);
+        toDatePicker.getModel().setMonth(ldt.getMonth().getValue());
         toDatePicker.getModel().setDay(ldt.getDayOfMonth());
     }
 
@@ -855,7 +859,7 @@ public class DatePanel extends JPanel
         LOGGER.info("Difference Results updated");
     }
 
-    public void performDateCalculatorTypeSwitchOperations(Calculator_v4 calculator, DateOperation dateOperation)
+    public void performDateCalculatorTypeSwitchOperations(Calculator calculator, DateOperation dateOperation)
     {
         LOGGER.info("Performing tasks associated to switching to the Date panel");
         setupDatePanel(calculator, dateOperation);
@@ -871,7 +875,7 @@ public class DatePanel extends JPanel
     public JDatePanelImpl getToDatePanel() { return toDatePanel; }
     public JDatePickerImpl getFromDatePicker() { return fromDatePicker; }
     public JDatePickerImpl getToDatePicker() { return toDatePicker; }
-    public Calculator_v4 getCalculator() { return calculator; }
+    public Calculator getCalculator() { return calculator; }
     public JComboBox<DateOperation> getOptionsBox() { return optionsBox; }
     public JLabel getFromDateLabel() { return fromDateLabel; }
     public JLabel getToDateLabel() { return toDateLabel; }
@@ -916,7 +920,7 @@ public class DatePanel extends JPanel
         super.setLayout(dateLayout);
         this.dateLayout = dateLayout;
     }
-    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setFromModel(UtilCalendarModel fromModel) { this.fromModel = fromModel; }
     public void setToModel(UtilCalendarModel toModel) { this.toModel = toModel; }

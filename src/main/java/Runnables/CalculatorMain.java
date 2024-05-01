@@ -1,9 +1,8 @@
 package Runnables;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import Calculators.Calculator;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -22,13 +21,13 @@ public class CalculatorMain
     {
         LOGGER.info("Starting calculator...");
         //Start a basic calculator
-        Calculator_v4 calculator = new Calculator_v4(BASIC);
+        Calculator calculator = new Calculator(BASIC);
         //Start a programmer calculator
         //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
         //Start a date calculator with options1 selected
         //Calculator calculator = new Calculator(DATE, OPTIONS1); //(DATE);
         //Start a date calculator with options2 selected
-        //Calculator_v4 calculator = new Calculator_v4(DATE, ADD_SUBTRACT_DAYS);
+        //Calculator calculator = new Calculator(DATE, ADD_SUBTRACT_DAYS);
         //Start a converter calculator
         //Calculator calculator = new Calculator(CONVERTER, AREA); // (CONVERTER, <ConverterType>);
         //UIManager.setLookAndFeel(new MetalLookAndFeel());

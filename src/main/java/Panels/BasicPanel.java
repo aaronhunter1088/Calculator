@@ -1,6 +1,6 @@
 package Panels;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static Calculators.Calculator_v4.mainFont;
+import static Calculators.Calculator.mainFont;
 import static Types.CalculatorBase.*;
 import static Types.CalculatorType.*;
 
@@ -25,7 +25,7 @@ public class BasicPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class.getSimpleName());
     private static final long serialVersionUID = 4L;
-    private Calculator_v4 calculator;
+    private Calculator calculator;
 
     private GridBagLayout basicLayout;
     private GridBagConstraints constraints;
@@ -36,16 +36,16 @@ public class BasicPanel extends JPanel
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator the Calculator_v4 to use
+     * @param calculator the Calculator to use
      */
-    public BasicPanel(Calculator_v4 calculator)
+    public BasicPanel(Calculator calculator)
     {
         setupBasicPanel(calculator);
         LOGGER.info("Basic panel created");
     }
 
     /************* Start of methods here ******************/
-    private void setupBasicPanel(Calculator_v4 calculator)
+    private void setupBasicPanel(Calculator calculator)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout());
@@ -130,13 +130,13 @@ public class BasicPanel extends JPanel
         LOGGER.info("Buttons added to basic panel");
     }
 
-    public void performBasicCalculatorTypeSwitchOperations(Calculator_v4 calculator)
+    public void performBasicCalculatorTypeSwitchOperations(Calculator calculator)
     { setupBasicPanel(calculator); }
 
     private void setupHelpMenu()
     {
         String helpString = "<html>" +
-                "How to use the " + BASIC.getName() + " Calculator_v4<br><br>" +
+                "How to use the " + BASIC.getName() + " Calculator<br><br>" +
                 "For basic usage: <br>" +
                 "Step 1.<br> Enter your first number followed by<br> an operator. Both will be visible in<br>" +
                 "the text area.<br>" +
@@ -1622,7 +1622,7 @@ public class BasicPanel extends JPanel
     public void performButtonEqualsActions(ActionEvent actionEvent)
     {
         LOGGER.info("Performing Equal Button actions");
-        String buttonChoice = "=";
+        String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
         String operator = determineIfBasicPanelOperatorWasPushed();
         determineAndPerformBasicCalculatorOperation();
@@ -1658,7 +1658,7 @@ public class BasicPanel extends JPanel
     /************* All Getters ******************/
     public GridBagLayout getBasicLayout() { return basicLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
-    public Calculator_v4 getCalculator() { return calculator; }
+    public Calculator getCalculator() { return calculator; }
 
     /************* All Setters ******************/
     public void setLayout(GridBagLayout panelLayout) {
@@ -1666,7 +1666,7 @@ public class BasicPanel extends JPanel
         this.basicLayout = panelLayout;
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     
     /* Helper functions */
 

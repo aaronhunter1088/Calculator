@@ -1,6 +1,6 @@
 package Converters;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import Panels.ConverterPanel;
 import Types.ConverterUnits;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +11,7 @@ public abstract class AreaMethods
 {
     private final static Logger LOGGER = LogManager.getLogger(AreaMethods.class.getSimpleName());
 
-    public static void convertValues(Calculator_v4 calculator)
+    public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
         ConverterUnits unit1 = (ConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();

@@ -1,6 +1,6 @@
 package Converters;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import Types.ConverterUnits;
 import Panels.ConverterPanel;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +14,7 @@ public abstract class AngleMethods
 {
     private final static Logger LOGGER = LogManager.getLogger(AngleMethods.class.getSimpleName());
 
-    public static void convertValues(Calculator_v4 calculator)
+    public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
         ConverterUnits unit1 = (ConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
@@ -215,7 +215,7 @@ public abstract class AngleMethods
         }
     }
 
-    public static double convertingRadiansToGradians(Calculator_v4 calculator)
+    public static double convertingRadiansToGradians(Calculator calculator)
     {
         double radians;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
@@ -234,7 +234,7 @@ public abstract class AngleMethods
         return x;
     }
 
-    public static double convertingGradiansToRadians(Calculator_v4 calculator)
+    public static double convertingGradiansToRadians(Calculator calculator)
     {
         double gradians;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
@@ -253,7 +253,7 @@ public abstract class AngleMethods
         return x;
     }
 
-    public static double convertingDegreesToGradians(Calculator_v4 calculator)
+    public static double convertingDegreesToGradians(Calculator calculator)
     {
         double degrees;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
@@ -272,7 +272,7 @@ public abstract class AngleMethods
         return x;
     }
 
-    public static double convertingGradiansToDegrees(Calculator_v4 calculator)
+    public static double convertingGradiansToDegrees(Calculator calculator)
     {
         double gradians;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
@@ -290,7 +290,7 @@ public abstract class AngleMethods
         return x;
     }
 
-    public static double convertingDegreesToRadians(Calculator_v4 calculator)
+    public static double convertingDegreesToRadians(Calculator calculator)
     {
         double degrees;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
@@ -308,7 +308,7 @@ public abstract class AngleMethods
         return x;
     }
 
-    public static double convertingRadiansToDegrees(Calculator_v4 calculator)
+    public static double convertingRadiansToDegrees(Calculator calculator)
     {
         double radians;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())

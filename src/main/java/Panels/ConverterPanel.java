@@ -1,6 +1,6 @@
 package Panels;
 
-import Calculators.Calculator_v4;
+import Calculators.Calculator;
 import Converters.AreaMethods;
 import Types.ConverterType;
 import Types.ConverterUnits;
@@ -16,7 +16,7 @@ import java.awt.event.*;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static Calculators.Calculator_v4.*;
+import static Calculators.Calculator.*;
 import static Types.ConverterType.*;
 import static Types.CalculatorType.*;
 import static Types.ConverterUnits.*;
@@ -34,7 +34,7 @@ public class ConverterPanel extends JPanel
     private JTextField textField1, textField2;
     private JComboBox<ConverterUnits> unitOptions1, unitOptions2;
     private JTextArea bottomSpaceAboveNumbers;
-    private Calculator_v4 calculator;
+    private Calculator calculator;
     private JPanel numbersPanel;
     private boolean isTextField1Selected;
 
@@ -43,13 +43,13 @@ public class ConverterPanel extends JPanel
 
     /**
      * MAIN CONSTRUCTOR USED
-     * @param calculator the Calculator_v4 to use
+     * @param calculator the Calculator to use
      * @param converterType the converter type to use
      */
-    public ConverterPanel(Calculator_v4 calculator, ConverterType converterType) { setupConverterPanel(calculator, converterType); }
+    public ConverterPanel(Calculator calculator, ConverterType converterType) { setupConverterPanel(calculator, converterType); }
 
     /************* Start of methods here ******************/
-    private void setupConverterPanel(Calculator_v4 calculator, ConverterType converterType)
+    private void setupConverterPanel(Calculator calculator, ConverterType converterType)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout());
@@ -903,7 +903,7 @@ public class ConverterPanel extends JPanel
         calculator.confirm("IMPLEMENT: Units switched. Conversions executed");
     }
 
-    public void performConverterCalculatorTypeSwitchOperations(Calculator_v4 calculator, ConverterType converterType)
+    public void performConverterCalculatorTypeSwitchOperations(Calculator calculator, ConverterType converterType)
     { setupConverterPanel(calculator, converterType); }
 
     /************* All Getters ******************/
@@ -916,7 +916,7 @@ public class ConverterPanel extends JPanel
     public JComboBox<ConverterUnits> getUnitOptions1() { return unitOptions1; }
     public JComboBox<ConverterUnits> getUnitOptions2() { return unitOptions2; }
     public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
-    public Calculator_v4 getCalculator() { return calculator; }
+    public Calculator getCalculator() { return calculator; }
     public JPanel getNumbersPanel() { return numbersPanel; }
     public boolean isTextField1Selected() { return isTextField1Selected; }
 
@@ -933,7 +933,7 @@ public class ConverterPanel extends JPanel
     public void setUnitOptions1(JComboBox<ConverterUnits> unitOptions1) { this.unitOptions1 = unitOptions1; }
     public void setUnitOptions2(JComboBox<ConverterUnits> unitOptions2) { this.unitOptions2 = unitOptions2; }
     public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
-    public void setCalculator(Calculator_v4 calculator) { this.calculator = calculator; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
     public void setIsTextField1Selected(boolean isTextField1Selected) { this.isTextField1Selected = isTextField1Selected; }
 }
