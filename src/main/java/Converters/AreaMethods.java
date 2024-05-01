@@ -11,6 +11,11 @@ public abstract class AreaMethods
 {
     private final static Logger LOGGER = LogManager.getLogger(AreaMethods.class.getSimpleName());
 
+    /**
+     * The main method used to determine from
+     * what unit to convert to
+     * @param calculator the Calculator object
+     */
     public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");

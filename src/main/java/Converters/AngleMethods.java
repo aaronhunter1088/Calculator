@@ -14,6 +14,11 @@ public abstract class AngleMethods
 {
     private final static Logger LOGGER = LogManager.getLogger(AngleMethods.class.getSimpleName());
 
+    /**
+     * The main method used to determine from
+     * what unit to convert to
+     * @param calculator the Calculator object
+     */
     public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
@@ -215,6 +220,11 @@ public abstract class AngleMethods
         }
     }
 
+    /**
+     * Converts radians to gradians
+     * @param calculator the Calculator object
+     * @return the conversion
+     */
     public static double convertingRadiansToGradians(Calculator calculator)
     {
         double radians;
@@ -234,6 +244,11 @@ public abstract class AngleMethods
         return x;
     }
 
+    /**
+     * Converts gradians to radians
+     * @param calculator the Calculator object
+     * @return the conversion
+     */
     public static double convertingGradiansToRadians(Calculator calculator)
     {
         double gradians;
@@ -253,6 +268,11 @@ public abstract class AngleMethods
         return x;
     }
 
+    /**
+     * Converts degrees to gradians
+     * @param calculator the Calculator object
+     * @return the conversion
+     */
     public static double convertingDegreesToGradians(Calculator calculator)
     {
         double degrees;
@@ -272,6 +292,11 @@ public abstract class AngleMethods
         return x;
     }
 
+    /**
+     * Converts gradians to degrees
+     * @param calculator the Calculator object
+     * @return the conversion
+     */
     public static double convertingGradiansToDegrees(Calculator calculator)
     {
         double gradians;
@@ -290,6 +315,11 @@ public abstract class AngleMethods
         return x;
     }
 
+    /**
+     * Converts degrees to radians
+     * @param calculator the Calculator object
+     * @return the conversion
+     */
     public static double convertingDegreesToRadians(Calculator calculator)
     {
         double degrees;
@@ -308,6 +338,11 @@ public abstract class AngleMethods
         return x;
     }
 
+    /**
+     * Converts radians to degrees
+     * @param calculator the Calculator object
+     * @return the conversion
+     */
     public static double convertingRadiansToDegrees(Calculator calculator)
     {
         double radians;

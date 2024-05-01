@@ -12,6 +12,9 @@ import static Types.CalculatorType.*;
 import static Types.ConverterType.*;
 import static Types.DateOperation.*;
 
+/**
+ * Main Class. Start here!
+ */
 public class CalculatorMain
 {
     static { System.setProperty("appName", "CalculatorMain"); }

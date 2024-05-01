@@ -1,5 +1,9 @@
 package Types;
 
+/**
+ * The different units available when using the
+ * ConverterPanel in a specific ConverterType
+ */
 public enum ConverterUnits
 {
     // Angle converter units

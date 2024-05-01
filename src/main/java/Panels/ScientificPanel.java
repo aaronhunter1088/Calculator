@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 
+//TODO: IMPLEMENT
 public class ScientificPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(ScientificPanel.class.getSimpleName());

@@ -1,6 +1,8 @@
 package Types;
 
-// TODO: Rename ProgrammerBase
+/**
+ * The CalculatorBases to use primarily in ProgrammerPanel
+ */
 public enum CalculatorBase
 {
     BINARY("Binary"),

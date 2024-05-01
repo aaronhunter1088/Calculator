@@ -28,7 +28,6 @@ import static Types.CalculatorType.*;
 import static Types.ConverterType.*;
 import static Types.DateOperation.*;
 
-// TODO: Rename Calculator
 public class Calculator extends JFrame
 {
     static { System.setProperty("appName", "Calculator"); }
@@ -68,7 +67,7 @@ public class Calculator extends JFrame
             memoryPosition = 0,
             memoryRecallPosition = 0;
     //TODO: Rename textPane
-    private JTextPane textArea;
+    private JTextPane textPane;
 
     private CalculatorType calculatorType;
     private CalculatorBase calculatorBase;
@@ -594,15 +593,26 @@ public class Calculator extends JFrame
         return result;
     }
 
-    public Collection<JButton> getBasicOperationButtons()
-    {
-        return Arrays.asList(buttonAdd, buttonSubtract, buttonMultiply, buttonDivide);
-    }
+    /**
+     * Returns all the basicPanel main operator buttons
+     * @return Collection of all basicPanel main operators
+     */
+    public Collection<JButton> getAllBasicPanelOperatorButtons()
+    { return Arrays.asList(buttonAdd, buttonSubtract, buttonMultiply, buttonDivide); }
 
-    public Collection<JButton> getBasicNumberButtons()
-    {
-        return Arrays.asList(button0, button1, button2, button3, button4, button5, button6, button7, button8, button9);
-    }
+    /**
+     * Returns all the number buttons
+     * @return Collection of all number buttons
+     */
+    public Collection<JButton> getAllNumberButtons()
+    { return Arrays.asList(button0, button1, button2, button3, button4, button5, button6, button7, button8, button9); }
+
+    /**
+     * Returns all the memory buttons
+     * @return Collection of all memory buttons
+     */
+    public Collection<JButton> getAllMemoryButtons()
+    { return Arrays.asList(buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall, buttonMemoryAddition, buttonMemorySubtraction); }
 
     /**
      * Returns the "other" basic calculator buttons. This includes
@@ -652,7 +662,7 @@ public class Calculator extends JFrame
         LOGGER.info("Performing initial checks...");
         boolean checkFound = false;
         if (textArea1ContainsBadText()) {
-            textArea.setText("");
+            textPane.setText("");
             valuesPosition = 0;
             isFirstNumber = true;
             isDotPressed = false;
@@ -662,7 +672,7 @@ public class Calculator extends JFrame
                 (calculatorType.equals(BASIC) ||
                         (calculatorType == PROGRAMMER && calculatorBase == DECIMAL))) {
             LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
-            textArea.setText("");
+            textPane.setText("");
             //textAreaValue = new StringBuffer();
             values[valuesPosition] = "";
             isFirstNumber = true;
@@ -695,7 +705,7 @@ public class Calculator extends JFrame
 
     public void setValuesToTextAreaValue()
     {
-        values[valuesPosition] = getTextArea().getText();
+        values[valuesPosition] = getTextPane().getText();
 //        if (values[valuesPosition].startsWith(".")) {
 //            values[valuesPosition] = values[valuesPosition].replace(".", "") + ".";
 //        }
@@ -709,8 +719,8 @@ public class Calculator extends JFrame
         //LOGGER.debug("textarea: '{}'", textAreaValue);
         values[valuesPosition] += buttonChoice; // store textarea
         //textArea.setText(addNewLineCharacters() + convertToPositive(textAreaValue.toString()) + "-");
-        textArea.setText(addNewLineCharacters() + values[valuesPosition]);
-        LOGGER.debug("textArea: '" + textArea.getText() + "'");
+        textPane.setText(addNewLineCharacters() + values[valuesPosition]);
+        LOGGER.debug("textArea: '" + textPane.getText() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
@@ -755,7 +765,7 @@ public class Calculator extends JFrame
         String oldPanelName = currentPanel.getClass().getSimpleName();
         String selectedPanel = actionEvent.getActionCommand();
         LOGGER.info("oldPanel: {}", oldPanelName);
-        LOGGER.info("newPanel: {}", selectedPanel);
+        LOGGER.info("newPanel: {}Panel", selectedPanel);
         if (oldPanelName.equals(selectedPanel))
         { confirm("Not changing to " + selectedPanel + " when already showing " + oldPanelName); }
         else if (converterType != null && converterType.getName().equals(selectedPanel))
@@ -764,12 +774,20 @@ public class Calculator extends JFrame
             case "Basic":
                 BasicPanel basicPanel = new BasicPanel(this);
                 performTasksWhenChangingJPanels(basicPanel);
-                updateTheTextAreaBasedOnTheTypeAndBase();
+                if (!values[0].isEmpty())
+                {
+                    textPane.setText(addNewLineCharacters() + values[0]);
+                }
                 break;
             case "Programmer":
-                ProgrammerPanel programmerPanel = new ProgrammerPanel(this, DECIMAL);
+                ProgrammerPanel programmerPanel;
+                if (values[0].isEmpty()) programmerPanel = new ProgrammerPanel(this, BINARY);
+                else                     programmerPanel = new ProgrammerPanel(this, DECIMAL);
                 performTasksWhenChangingJPanels(programmerPanel);
-                updateTheTextAreaBasedOnTheTypeAndBase();
+                if (!values[0].isEmpty())
+                {
+                    textPane.setText(addNewLineCharacters() + values[0]);
+                }
                 break;
             case "Scientific":
                 LOGGER.warn("Setup");
@@ -835,10 +853,11 @@ public class Calculator extends JFrame
         }
     }
 
+    @Deprecated(since = "No longer wish to use")
     public void updateTheTextAreaBasedOnTheTypeAndBase()
     {
         LOGGER.info("Updating the textArea");
-        textArea.setText(addNewLineCharacters() + textArea.getText());
+        textPane.setText(addNewLineCharacters() + textPane.getText());
     }
 
     public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String strings) throws CalculatorError
@@ -1020,7 +1039,7 @@ public class Calculator extends JFrame
 
     public String getTextAreaWithoutAnyOperator()
     {
-        return textArea.getText()
+        return textPane.getText()
                 .replaceAll("\n", "")
                 .replace("+", "")
                 .replace("-", "")
@@ -1039,13 +1058,13 @@ public class Calculator extends JFrame
 
     public String getTextAreaWithoutNewLineCharactersOrWhiteSpace()
     {
-        return textArea.getText()
+        return textPane.getText()
                 .replaceAll("\n", "")
                 .strip();
     }
 
     public String getTextAreaWithoutNewLineCharacters()
-    { return textArea.getText().replaceAll("\n", ""); }
+    { return textPane.getText().replaceAll("\n", ""); }
 
 //    public StringBuffer getTextAreaValueWithoutAnything()
 //    {
@@ -1081,7 +1100,7 @@ public class Calculator extends JFrame
                     LOGGER.info("memoryRecallPosition: '{}'", memoryRecallPosition);
                     for (int i = 0; i < 10; i++) {
                         if (StringUtils.isNotBlank(memoryValues[i])) {
-                            LOGGER.info("memoryValues[{}]: ", memoryValues[i]);
+                            LOGGER.info("memoryValues[{}] : {}", i, memoryValues[i]);
                         }
                     }
                 }
@@ -1432,7 +1451,7 @@ public class Calculator extends JFrame
             LOGGER.info("Values[2] is empty and blank");
         } else {
             LOGGER.info("Values[2]: " + values[2]);
-            textArea.setText(addNewLineCharacters() + values[2]); // to paste
+            textPane.setText(addNewLineCharacters() + values[2]); // to paste
             values[valuesPosition] = getTextAreaWithoutNewLineCharactersOrWhiteSpace();
             //textAreaValue = new StringBuffer().append(getTextAreaWithoutNewLineCharactersOrWhiteSpace());
         }
@@ -1499,7 +1518,7 @@ public class Calculator extends JFrame
     public int getValuesPosition() { return valuesPosition; }
     public int getMemoryPosition() { return memoryPosition; }
     public int getMemoryRecallPosition() { return memoryRecallPosition; }
-    public JTextPane getTextArea() { return textArea; }
+    public JTextPane getTextPane() { return textPane; }
     public CalculatorType getCalculatorType() { return calculatorType; }
     public CalculatorBase getCalculatorBase() { return calculatorBase; }
     public ConverterType getConverterType() { return converterType; }
@@ -1530,7 +1549,7 @@ public class Calculator extends JFrame
     private void setMemoryValues(String[] memoryValues) { this.memoryValues = memoryValues; }
     public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
     public void setMemoryRecallPosition(int memoryRecallPosition) { this.memoryRecallPosition = memoryRecallPosition; }
-    public void setTextArea(JTextPane textArea) { this.textArea = textArea; }
+    public void setTextPane(JTextPane textPane) { this.textPane = textPane; }
     public void setCalculatorType(CalculatorType calculatorType) { this.calculatorType = calculatorType; }
     public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
     public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }

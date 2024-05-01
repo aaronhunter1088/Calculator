@@ -1,5 +1,8 @@
 package Types;
 
+/**
+ * The different types of DatePanels possible
+ */
 public enum DateOperation
 {
     DIFFERENCE_BETWEEN_DATES("Difference between dates"),

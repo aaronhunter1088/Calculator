@@ -1,5 +1,8 @@
 package Types;
 
+/**
+ * The different types of Calculators available
+ */
 public enum CalculatorType
 {
 	BASIC("Basic"),

@@ -115,7 +115,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator.getValues()[0] = "";
-        calculator.getTextArea().setText("");
+        calculator.getTextPane().setText("");
         basicPanel.performDotButtonActions(actionEvent);
         assertEquals("textArea is not as expected", "0.", calculator.getTextAreaWithoutNewLineCharacters());
         assertTrue("buttonDot should be pressed", calculator.isDotPressed());
@@ -126,7 +126,7 @@ public class BasicPanelTest {
     public void pressingDotButtonAfterNumberButtonReturnsNumberDot()
     {
         when(actionEvent.getActionCommand()).thenReturn(".");
-        calculator.getTextArea().setText("544");
+        calculator.getTextPane().setText("544");
         calculator.getValues()[0] = "544";
         basicPanel.performDotButtonActions(actionEvent);
         assertEquals("textArea is not as expected", "544.", calculator.getTextAreaWithoutNewLineCharacters());
@@ -370,7 +370,7 @@ public class BasicPanelTest {
     public void testDeleteButtonFunctionality()
     {
         when(actionEvent.getActionCommand()).thenReturn("←");
-        calculator.getTextArea().setText("35");
+        calculator.getTextPane().setText("35");
         calculator.getValues()[0] = "35";
         basicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 3", 3, Integer.parseInt(calculator.getValues()[0]));
@@ -400,7 +400,7 @@ public class BasicPanelTest {
     public void pressingClearEntryClearsJustTheTextArea()
     {
         when(actionEvent.getActionCommand()).thenReturn("CE");
-        calculator.getTextArea().setText("1088");
+        calculator.getTextPane().setText("1088");
         calculator.getValues()[0] = "1088";
         basicPanel.performClearEntryButtonActions(actionEvent);
 
@@ -411,7 +411,7 @@ public class BasicPanelTest {
     public void pressingClearEntryAfterPressingAnOperatorResetsTextAreaAndOperator()
     {
         when(actionEvent.getActionCommand()).thenReturn("CE");
-        calculator.getTextArea().setText("1088 +");
+        calculator.getTextPane().setText("1088 +");
         basicPanel.performClearEntryButtonActions(actionEvent);
 
         assertTrue("TextArea was not cleared", StringUtils.isBlank(calculator.getTextAreaWithoutAnyOperator()));
