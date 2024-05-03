@@ -12,6 +12,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<outputDirectory>${basedir}/dist/version4</outputDirectory>
 		<finalName>${project.artifactId}-${project.version}</finalName>
+		<maven.compiler.source>18</maven.compiler.source>
+		<maven.compiler.target>18</maven.compiler.target>
 
 		<apple.version>1.4</apple.version>
 		<commons.lang.version>3.9</commons.lang.version>
@@ -108,9 +110,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.version}</version>
 				<configuration>
-					<source>11</source>
-					<target>11</target>
-					<release>11</release>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<release>18</release>
 					<compilerArgs>
 						<!--<arg>#doubledash#enable-preview</arg>-->
 						<arg>-verbose</arg>

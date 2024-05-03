@@ -14,6 +14,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serial;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -32,14 +33,13 @@ public class Calculator extends JFrame
 {
     static { System.setProperty("appName", "Calculator"); }
     private static final Logger LOGGER = LogManager.getLogger(Calculator.class.getSimpleName());
+    @Serial
     private static final long serialVersionUID = 4L;
-
     // Fonts
     public static final Font
             mainFont = new Font("Segoe UI", Font.PLAIN, 12), // all panels
             mainFontBold = new Font("Segoe UI", Font.BOLD, 12), // Date panel
             verdanaFontBold = new Font("Verdana", Font.BOLD, 20); // Converter, Date panels
-
     // Basic Buttons
     private final JButton
             button0 = new JButton("0"), button1 = new JButton("1"),
@@ -66,7 +66,6 @@ public class Calculator extends JFrame
             valuesPosition = 0,
             memoryPosition = 0,
             memoryRecallPosition = 0;
-    //TODO: Rename textPane
     private JTextPane textPane;
 
     private CalculatorType calculatorType;
@@ -78,6 +77,8 @@ public class Calculator extends JFrame
     private JLabel iconLabel, textLabel;
     // Menubar
     private JMenuBar menuBar;
+    // Menubar Items
+    private JMenu lookMenu, viewMenu, editMenu, helpMenu;
     // Flags
     private boolean
             isFirstNumber = true,
@@ -94,9 +95,7 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        this(BASIC, null, null, null);
-    }
+    { this(BASIC, null, null, null); }
 
     /**
      * Starts the Calculator with a specific CalculatorType
@@ -105,9 +104,7 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator(CalculatorType calculatorType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        this(calculatorType, null, null, null);
-    }
+    { this(calculatorType, null, null, null); }
 
     /**
      * Starts the calculator with the PROGRAMMER CalculatorType with a specified CalculatorBase
@@ -117,9 +114,7 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator(CalculatorType calculatorType, CalculatorBase calculatorBase) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        this(calculatorType, calculatorBase, null, null);
-    }
+    { this(calculatorType, calculatorBase, null, null); }
 
     /**
      * This constructor is used to create a Date Calculator with a specific DateOperation
@@ -129,9 +124,7 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator(CalculatorType calculatorType, DateOperation dateOperation) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        this(calculatorType, null, null, dateOperation);
-    }
+    { this(calculatorType, null, null, dateOperation); }
 
     /**
      * This constructor is used to create a Converter Calculator starting with a specific ConverterType
@@ -141,9 +134,7 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator(CalculatorType calculatorType, ConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        this(calculatorType, null, converterType, null);
-    }
+    { this(calculatorType, null, converterType, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
@@ -173,7 +164,7 @@ public class Calculator extends JFrame
         LOGGER.info("Finished constructing the calculator");
     }
 
-    /* Creation methods */
+    /************* Creation methods ******************/
 
     /**
      * Sets the menu bar used across the entire Calculator
@@ -184,197 +175,207 @@ public class Calculator extends JFrame
         // Menu Bar and Menu Choices and each menu options
         setCalculatorMenuBar(new JMenuBar());
         setJMenuBar(menuBar); // add menu bar to application
-
         // Start 4 Menu Choices
-        JMenu lookMenu = new JMenu("Look");
-        JMenu viewMenu = new JMenu("View");
-        JMenu editMenu = new JMenu("Edit");
-        JMenu helpMenu = new JMenu("Help");
+        setupLookMenu(new JMenu("Look"));
+        setupViewMenu(new JMenu("View"));
+        setupEditMenu(new JMenu("Edit"));
+        setupHelpMenu(new JMenu("Help"));
+        LOGGER.info("menuBar created");
+    }
 
-        // commonalities
-        lookMenu.setFont(mainFont);
-        lookMenu.setName("Look");
-        viewMenu.setFont(mainFont);
-        viewMenu.setName("View");
-        editMenu.setFont(mainFont);
-        editMenu.setName("Edit");
-        helpMenu.setFont(mainFont);
-        helpMenu.setName("Help");
-
-        // Look menu options
+    /**
+     * The main operations to perform to set up
+     * the Look Menu item
+     * @param lookMenu the look menu to configure
+     */
+    private void setupLookMenu(JMenu lookMenu)
+    {
         JMenuItem metal = new JMenuItem("Metal");
-        JMenuItem system = new JMenuItem("System");
-        JMenuItem windows = new JMenuItem("Windows");
-        JMenuItem motif = new JMenuItem("Motif");
-        JMenuItem gtk = new JMenuItem("GTK");
-
         metal.setFont(mainFont);
-        system.setFont(mainFont);
-        windows.setFont(mainFont);
-        motif.setFont(mainFont);
-        gtk.setFont(mainFont);
-
-        // Setup Look and Feel
+        metal.setName("Metal");
         metal.addActionListener(action -> {
-            try {
+            try
+            {
                 UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
                 super.pack();
             } catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
-            }
+                     IllegalAccessException | UnsupportedLookAndFeelException e)
+            { logException(e); }
         });
+        JMenuItem system = new JMenuItem("System");
+        system.setFont(mainFont);
+        system.setName("System");
         system.addActionListener(action -> {
-            try {
+            try
+            {
                 UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
                 super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
             }
+            catch (ClassNotFoundException | InstantiationException |
+                   IllegalAccessException | UnsupportedLookAndFeelException e)
+            { logException(e); }
         });
+        JMenuItem windows = new JMenuItem("Windows");
+        windows.setFont(mainFont);
+        windows.setName("Windows");
         windows.addActionListener(action -> {
-            try {
+            try
+            {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
-            } catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
             }
+            catch (ClassNotFoundException | InstantiationException |
+                   IllegalAccessException | UnsupportedLookAndFeelException e)
+            { logException(e); }
         });
+        JMenuItem motif = new JMenuItem("Motif");
+        motif.setFont(mainFont);
+        motif.setName("Motif");
         motif.addActionListener(action -> {
-            try {
+            try
+            {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
                 super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
             }
+            catch (ClassNotFoundException | InstantiationException |
+                   IllegalAccessException | UnsupportedLookAndFeelException e)
+            { logException(e); }
         });
+        JMenuItem gtk = new JMenuItem("GTK");
+        gtk.setFont(mainFont);
+        gtk.setName("GTK");
         gtk.addActionListener(action -> {
-            try {
+            try
+            {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
                 super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage());
             }
+            catch (ClassNotFoundException | InstantiationException |
+                     IllegalAccessException | UnsupportedLookAndFeelException e)
+            { logException(e); }
         });
-
-        // add options to Look menu
         lookMenu.add(metal);
         lookMenu.add(motif);
-        if (!isMacOperatingSystem()) {
+        if (!isMacOperatingSystem()) // add more options if using Windows
+        {
             lookMenu.add(windows);
             lookMenu.add(system);
             lookMenu.add(gtk);
-        } // add more options if using Windows
+        }
+        lookMenu.setFont(mainFont);
+        lookMenu.setName("Look");
+        setLookMenu(lookMenu);
         menuBar.add(lookMenu);
+    }
 
-        // View menu options, the converterMenu is an option which is a menu of more choices
+    /**
+     * The main operations to perform to set up
+     * the View Menu item
+     * @param viewMenu the view menu to configure
+     */
+    private void setupViewMenu(JMenu viewMenu)
+    {
         JMenuItem basic = new JMenuItem(CalculatorType.BASIC.getName());
         JMenuItem programmer = new JMenuItem(CalculatorType.PROGRAMMER.getName());
         JMenuItem date = new JMenuItem(CalculatorType.DATE.getName());
         JMenu converterMenu = new JMenu(CONVERTER.getName());
-
-        // commonalities
         basic.setFont(mainFont);
         basic.setName(BASIC.getName());
-        basic.addActionListener(this::performTasksWhenChangingJPanels);
-
+        basic.addActionListener(this::switchPanels);
         programmer.setFont(mainFont);
         programmer.setName(PROGRAMMER.getName());
-        programmer.addActionListener(this::performTasksWhenChangingJPanels);
-
+        programmer.addActionListener(this::switchPanels);
         date.setFont(mainFont);
         date.setName(DATE.getName());
-        date.addActionListener(this::performTasksWhenChangingJPanels);
-
-        converterMenu.setFont(mainFont);
-        converterMenu.setName(CONVERTER.getName());
-        // options for converterMenu
+        date.addActionListener(this::switchPanels);
         JMenuItem angleConverter = new JMenuItem(ANGLE.getName());
-        JMenuItem areaConverter = new JMenuItem(AREA.getName());
-
-        // commonalities
         angleConverter.setFont(mainFont);
         angleConverter.setName(ANGLE.getName());
+        angleConverter.addActionListener(this::switchPanels);
+        JMenuItem areaConverter = new JMenuItem(AREA.getName()); // The converterMenu is an "item" which is a menu of more choices
         areaConverter.setFont(mainFont);
         areaConverter.setName(AREA.getName());
-
-        // functions
-        angleConverter.addActionListener(this::performTasksWhenChangingJPanels);
-        areaConverter.addActionListener(this::performTasksWhenChangingJPanels);
-
-        // add JMenuItems to converterMenu
+        areaConverter.addActionListener(this::switchPanels);
+        converterMenu.setFont(mainFont);
+        converterMenu.setName(CONVERTER.getName());
         converterMenu.add(angleConverter);
         converterMenu.add(areaConverter);
-
-        // add view options to viewMenu
         viewMenu.add(basic);
         viewMenu.add(programmer);
         viewMenu.add(date);
         viewMenu.addSeparator();
         viewMenu.add(converterMenu);
-        // END NEW OPTION: Converter
+        viewMenu.setFont(mainFont);
+        viewMenu.setName("View");
+        setViewMenu(viewMenu);
         menuBar.add(viewMenu); // add viewMenu to menu bar
+    }
 
-        // Edit Menu options
+    /**
+     * The main operations to perform to set up
+     * the Edit Menu item
+     * @param editMenu the edit menu to configure
+     */
+    private void setupEditMenu(JMenu editMenu)
+    {
         JMenuItem copyItem = new JMenuItem("Copy");
-        JMenuItem pasteItem = new JMenuItem("Paste");
-
-        // commonalities
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
         copyItem.setFont(mainFont);
         copyItem.setName("Copy");
         copyItem.addActionListener(this::performCopyFunctionality);
-
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem pasteItem = new JMenuItem("Paste");
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
         pasteItem.setFont(mainFont);
         pasteItem.setName("Paste");
         pasteItem.addActionListener(this::performPasteFunctionality);
-
         editMenu.add(copyItem);
         editMenu.add(pasteItem);
+        editMenu.setFont(mainFont);
+        editMenu.setName("Edit");
+        setEditMenu(editMenu);
         menuBar.add(editMenu); // add editMenu to menu bar
+    }
 
-        // Help Options
+    /**
+     * The main operations to perform to set up
+     * the Help Menu item
+     * @param helpMenu the help menu to configure
+     */
+    private void setupHelpMenu(JMenu helpMenu)
+    {
         JMenuItem viewHelpItem = createViewHelpJMenuItem();
         JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
-
         helpMenu.add(viewHelpItem, 0);
         helpMenu.addSeparator();
         helpMenu.add(aboutCalculatorItem, 2);
+        helpMenu.setFont(mainFont);
+        helpMenu.setName("Help");
+        setHelpMenu(helpMenu);
         menuBar.add(helpMenu); // add helpMenu to menu bar
-        // End All Menu Choices
-        LOGGER.info("menuBar created");
     }
 
     /**
      * Sets the images used in the Calculator
      */
-    public void setupCalculatorImages()
+    private void setupCalculatorImages()
     {
         LOGGER.info("Creating images...");
         setImageIcons();
-        // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
-        //Application.getApplication().setDockIconImage(windowsCalculator.getImage());
-        final Taskbar taskbar = Taskbar.getTaskbar();
-        taskbar.setIconImage(calculatorIcon.getImage());
-        setIconImage(calculatorIcon.getImage());
         LOGGER.info("Creating images completed");
+        final Taskbar taskbar = Taskbar.getTaskbar();
+        taskbar.setIconImage(calculatorIcon.getImage()); // This sets the icon we see when we run the GUI. If not set, we will see the jar icon.
+        setIconImage(calculatorIcon.getImage());
+        LOGGER.info("Taskbar icon set");
     }
 
     /**
      * Sets the image icons
      */
-    public void setImageIcons()
+    private void setImageIcons()
     {
         LOGGER.info("Setting imageIcons...");
         setBlankIcon(null);
@@ -412,7 +413,7 @@ public class Calculator extends JFrame
      *
      * @param path the path of the image
      */
-    public ImageIcon createImageIcon(String path)
+    private ImageIcon createImageIcon(String path)
     {
         LOGGER.info("Creating imageIcon using path: " + path);
         ImageIcon imageIcon = null;
@@ -431,17 +432,9 @@ public class Calculator extends JFrame
     /**
      * @param calculatorType the CalculatorType to use
      * @return JPanel, the Panel to use
-     * @throws CalculatorError if we fail to return a Panel
      */
-    public JPanel determinePanel(CalculatorType calculatorType) throws CalculatorError
-    {
-        return determinePanel(calculatorType, null, null, null);
-    }
-
-    public JPanel determinePanel(CalculatorType calculatorType, CalculatorBase calculatorBase)
-    {
-        return determinePanel(calculatorType, calculatorBase, null, null);
-    }
+    private JPanel determinePanel(CalculatorType calculatorType, CalculatorBase calculatorBase)
+    { return determinePanel(calculatorType, calculatorBase, null, null); }
 
     /**
      * @param calculatorType the CalculatorType to use
@@ -450,25 +443,16 @@ public class Calculator extends JFrame
      * @param dateOperation  the DateOperation to use
      * @return JPanel, the Panel to use
      */
-    public JPanel determinePanel(CalculatorType calculatorType, CalculatorBase calculatorBase, ConverterType converterType, DateOperation dateOperation)
+    private JPanel determinePanel(CalculatorType calculatorType, CalculatorBase calculatorBase, ConverterType converterType, DateOperation dateOperation)
     {
-        if (calculatorType == BASIC || null == calculatorType) {
-            return new BasicPanel(this);
-        } else if (calculatorType == PROGRAMMER) {
-            if (null != calculatorBase) return new ProgrammerPanel(this, calculatorBase);
-            else                        return new ProgrammerPanel(this);
-        } else if (calculatorType == SCIENTIFIC) {
-            return new ScientificPanel();
-        } else if (calculatorType == DATE) {
-            return new DatePanel(this, dateOperation);
-        } else //if (calculatorType == CONVERTER)
+        return switch (calculatorType)
         {
-            if (null == converterType) {
-                return new ConverterPanel(this, ANGLE);
-            } else {
-                return new ConverterPanel(this, converterType);
-            }
-        }
+            case BASIC -> new BasicPanel(this);
+            case PROGRAMMER -> new ProgrammerPanel(this, calculatorBase);
+            case SCIENTIFIC -> new ScientificPanel();
+            case DATE -> new DatePanel(this, dateOperation);
+            case CONVERTER -> new ConverterPanel(this, converterType);
+        };
     }
 
     /**
@@ -495,6 +479,9 @@ public class Calculator extends JFrame
         return aboutCalculatorItem;
     }
 
+    /**
+     * The main method to set up the Blank1 button
+     */
     public void setupButtonBlank1()
     {
         buttonBlank1.setFont(mainFont);
@@ -502,10 +489,12 @@ public class Calculator extends JFrame
         buttonBlank1.setBorder(new LineBorder(Color.BLACK));
         buttonBlank1.setEnabled(true);
         buttonBlank1.setName("x");
-        //buttonBlank1.addActionListener(this::performClearEntryButtonActions);
         LOGGER.info("Blank button 1 configured");
     }
 
+    /**
+     * The main method to set up the Blank2 button
+     */
     public void setupButtonBlank2()
     {
         buttonBlank2.setFont(mainFont);
@@ -513,11 +502,10 @@ public class Calculator extends JFrame
         buttonBlank2.setBorder(new LineBorder(Color.BLACK));
         buttonBlank2.setEnabled(true);
         buttonBlank2.setName("x");
-        //buttonBlank2.addActionListener(this::performClearEntryButtonActions);
         LOGGER.info("Blank button 2 configured");
     }
 
-    /* Calculator helper methods */
+    /************* Calculator helper methods ******************/
 
     /**
      * This method resets default values
@@ -533,7 +521,10 @@ public class Calculator extends JFrame
         resetBasicOperators(false);
     }
 
-    public void clearNumberButtonFunctionalities()
+    /**
+     * Clears all actions from the number buttons
+     */
+    public void clearNumberButtonActions()
     {
         LOGGER.debug("Number buttons cleared of action listeners");
         getNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(al -> {
@@ -547,20 +538,18 @@ public class Calculator extends JFrame
      *
      * @return the result
      */
-    @Deprecated(since = "Use String return method")
-    public boolean determineIfMainOperatorWasPushedBoolean()
-    {
-        return isAdding || isSubtracting || isMultiplying || isDividing;
-    }
+    public boolean determineIfAnyBasicOperatorWasPushed()
+    { return isAdding || isSubtracting || isMultiplying || isDividing; }
 
-    //TODO: Determine how this was originally used. It does too much
+    //TODO: Rethink name. It does too much
     /**
-     * Resets all operators to the given boolean argument
+     * Sets values[1] to be blank, updates valuesPosition accordingly,
+     * updates the Dot button and boolean, resets firstNumber and returns
+     * true if no operator was pushed or false otherwise
      *
-     * @param operatorBool the operator to reset (add, sub, mul, or div)
-     * @return boolean the operatorBool value
+     * @param operatorBool the operator to pressed
+     * @return boolean the operatorBool opposite value
      */
-    @Deprecated(since = "use resetBasicOperators")
     public boolean resetOperator(boolean operatorBool)
     {
         LOGGER.info("resetting operator...");
@@ -568,12 +557,14 @@ public class Calculator extends JFrame
             values[1] = "";
             valuesPosition = 1;
             isDotPressed = false;
+            buttonDot.setEnabled(true);
             isFirstNumber = false;
             return false;
         } else {
             values[1] = "";
             valuesPosition = 0;
             isDotPressed = false;
+            buttonDot.setEnabled(true);
             isFirstNumber = true;
             return true;
         }
@@ -650,33 +641,31 @@ public class Calculator extends JFrame
     }
 
     /**
-     * Sets the textAreaValue to getTextAreaWithoutNewLineCharactersOrWhiteSpace
+     * When we hit a number button this method is called
+     * to ensure valid entries are allowed and any previous
+     * errors or unexpected conditions are cleared
      */
-//    public void updateTextAreaValueFromTextArea()
-//    {
-//        setTextAreaValue(new StringBuffer().append(getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
-//    }
-
     public void performInitialChecks()
     {
         LOGGER.info("Performing initial checks...");
         boolean checkFound = false;
-        if (textArea1ContainsBadText()) {
+        if (textPaneContainsBadText()) {
             textPane.setText("");
             valuesPosition = 0;
             isFirstNumber = true;
             isDotPressed = false;
+            buttonDot.setEnabled(true);
             isNumberNegative = false;
             checkFound = true;
-        } else if (getTextAreaWithoutAnyOperator().equals("0") &&
+        } else if (getTextPaneWithoutAnyOperator().equals("0") &&
                 (calculatorType.equals(BASIC) ||
                         (calculatorType == PROGRAMMER && calculatorBase == DECIMAL))) {
-            LOGGER.debug("textArea equals 0 no matter the form. setting to blank.");
+            LOGGER.debug("textArea equals 0 no matter the CalculatorType. setting to blank.");
             textPane.setText("");
-            //textAreaValue = new StringBuffer();
             values[valuesPosition] = "";
             isFirstNumber = true;
             isDotPressed = false;
+            buttonDot.setEnabled(true);
             checkFound = true;
         } else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1])) {
             values[0] = values[1];
@@ -693,34 +682,26 @@ public class Calculator extends JFrame
      *
      * @return boolean if textArea contains more than just a number
      */
-    public boolean textArea1ContainsBadText()
+    public boolean textPaneContainsBadText()
     {
-        return getTextAreaWithoutAnyOperator().equals("Invalid textarea") ||
-                getTextAreaWithoutAnyOperator().equals("Cannot divide by 0") ||
-                getTextAreaWithoutAnyOperator().equals("Not a Number") ||
-                getTextAreaWithoutAnyOperator().equals("Enter a Number") ||
-                getTextAreaWithoutAnyOperator().equals("Only positive numbers") ||
-                getTextAreaWithoutAnyOperator().contains("E");
+        return getTextPaneWithoutAnyOperator().equals("Cannot divide by 0") ||
+               getTextPaneWithoutAnyOperator().equals("Not a Number") ||
+               getTextPaneWithoutAnyOperator().equals("Enter a Number") ||
+               getTextPaneWithoutAnyOperator().equals("Only positive numbers") ||
+               getTextPaneWithoutAnyOperator().contains("E");
     }
 
-    public void setValuesToTextAreaValue()
+    /**
+     * This method appends the button choice to the values array
+     * at the current valuesPosition and then sets the textPane
+     * to the new value
+     * @param buttonChoice the chosen button
+     */
+    public void setTextPaneToValuesAtPosition(String buttonChoice)
     {
-        values[valuesPosition] = getTextPane().getText();
-//        if (values[valuesPosition].startsWith(".")) {
-//            values[valuesPosition] = values[valuesPosition].replace(".", "") + ".";
-//        }
-    }
-
-    public void setTextareaToValuesAtPosition(String buttonChoice)
-    {
-        //textAreaValue.append(values[valuesPosition]);
-        //LOGGER.debug("textAreaValue: '{}'", textAreaValue);
-        //textAreaValue.append(textAreaValue).append(buttonChoice); // update textArea
-        //LOGGER.debug("textarea: '{}'", textAreaValue);
         values[valuesPosition] += buttonChoice; // store textarea
-        //textArea.setText(addNewLineCharacters() + convertToPositive(textAreaValue.toString()) + "-");
         textPane.setText(addNewLineCharacters() + values[valuesPosition]);
-        LOGGER.debug("textArea: '" + textPane.getText() + "'");
+        LOGGER.debug("textPane: '" + textPane.getText() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
@@ -759,105 +740,75 @@ public class Calculator extends JFrame
         return StringUtils.contains(System.getProperty("os.name").toLowerCase(), "mac");
     }
 
-    public void performTasksWhenChangingJPanels(ActionEvent actionEvent)
+    /**
+     * The main actions to perform when switch panels
+     * @param actionEvent the click action
+     */
+    public void switchPanels(ActionEvent actionEvent)
     {
         LOGGER.info("Starting to changing jPanels");
-        String oldPanelName = currentPanel.getClass().getSimpleName();
+        String oldPanelName = currentPanel.getClass().getSimpleName().replace("Panel", "");
         String selectedPanel = actionEvent.getActionCommand();
         LOGGER.info("oldPanel: {}", oldPanelName);
-        LOGGER.info("newPanel: {}Panel", selectedPanel);
+        LOGGER.info("newPanel: {}", selectedPanel);
         if (oldPanelName.equals(selectedPanel))
         { confirm("Not changing to " + selectedPanel + " when already showing " + oldPanelName); }
         else if (converterType != null && converterType.getName().equals(selectedPanel))
         { confirm("Not changing panels when the conversion type is the same"); }
-        switch (selectedPanel) {
-            case "Basic":
-                BasicPanel basicPanel = new BasicPanel(this);
-                performTasksWhenChangingJPanels(basicPanel);
-                if (!values[0].isEmpty())
-                {
-                    textPane.setText(addNewLineCharacters() + values[0]);
-                }
-                break;
-            case "Programmer":
-                ProgrammerPanel programmerPanel;
-                if (values[0].isEmpty()) programmerPanel = new ProgrammerPanel(this, BINARY);
-                else                     programmerPanel = new ProgrammerPanel(this, DECIMAL);
-                performTasksWhenChangingJPanels(programmerPanel);
-                if (!values[0].isEmpty())
-                {
-                    textPane.setText(addNewLineCharacters() + values[0]);
-                }
-                break;
-            case "Scientific":
-                LOGGER.warn("Setup");
-                break;
-            case "Date":
-                DatePanel datePanel = new DatePanel(this, DIFFERENCE_BETWEEN_DATES);
-                performTasksWhenChangingJPanels(datePanel);
-                break;
-            case "Angle": {
-                ConverterPanel converterPanel = new ConverterPanel(this, ANGLE);
-                performTasksWhenChangingJPanels(converterPanel, ANGLE);
-                break;
-            }
-            case "Area": {
-                ConverterPanel converterPanel = new ConverterPanel(this, AREA);
-                performTasksWhenChangingJPanels(converterPanel, AREA);
-                break;
-            }
-        }
-        setTitle(selectedPanel);
-        pack();
-        LOGGER.info("Finished changing jPanels\n");
-        confirm("Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
-    }
-    private void performTasksWhenChangingJPanels(JPanel newPanel)
-    { performTasksWhenChangingJPanels(newPanel, null);}
-    private void performTasksWhenChangingJPanels(JPanel newPanel, ConverterType converterType)
-    {
-        LOGGER.info("Performing JPanel switch...");
-        JPanel oldPanel = updateJPanel(newPanel);
-        // if oldPanel is same as newPanel, don't change
-        if (oldPanel.getClass().getSimpleName().equals(currentPanel.getClass().getSimpleName()) ||
-                (oldPanel.getClass().getSimpleName().equals("Panels.ConverterPanel") && newPanel.getClass().getSimpleName().equals("Panels.ConverterPanel"))) {
-            //confirm("Not changing when " + oldPanel.getClass().getName() + " == " + currentPanel.getClass().getName());
-        }
-        else if (converterType == this.converterType) {
-            //confirm("Not changing panels when the conversion type is the same");
-        }
-        else if (currentPanel instanceof BasicPanel) {
-            ((BasicPanel) currentPanel).performBasicCalculatorTypeSwitchOperations(this);
-            setTitle(calculatorType.getName());
-            setCurrentPanel(newPanel);
-            pack();
-        }
-        else if (currentPanel instanceof ProgrammerPanel) {
-            ((ProgrammerPanel) currentPanel).performProgrammerCalculatorTypeSwitchOperations(this, null);
-            setTitle(calculatorType.getName());
-            setCurrentPanel(newPanel);
-            pack();
-        }
-        else if (currentPanel instanceof DatePanel) {
-            ((DatePanel) currentPanel).performDateCalculatorTypeSwitchOperations(this, DIFFERENCE_BETWEEN_DATES);
-            setTitle(calculatorType.getName());
-            setCurrentPanel(newPanel);
-            pack();
-        }
-        else // if (currentPanel instanceof ConverterPanel)
+        else
         {
-            ((ConverterPanel) newPanel).performConverterCalculatorTypeSwitchOperations(this, converterType);
-            setTitle(calculatorType.getName());
-            setCurrentPanel(newPanel);
+            switch (selectedPanel) {
+                case "Basic":
+                    BasicPanel basicPanel = new BasicPanel(this);
+                    switchPanelsInner(basicPanel);
+                    if (!values[0].isEmpty())
+                    { textPane.setText(addNewLineCharacters() + values[0]); }
+                    break;
+                case "Programmer":
+                    ProgrammerPanel programmerPanel;
+                    if (values[0].isEmpty()) programmerPanel = new ProgrammerPanel(this, BINARY);
+                    else                     programmerPanel = new ProgrammerPanel(this, DECIMAL);
+                    switchPanelsInner(programmerPanel);
+                    if (!values[0].isEmpty())
+                    {
+                        textPane.setText(addNewLineCharacters() + values[0]);
+                    }
+                    break;
+                case "Scientific":
+                    LOGGER.warn("Setup");
+                    break;
+                case "Date":
+                    DatePanel datePanel = new DatePanel(this, DIFFERENCE_BETWEEN_DATES);
+                    switchPanelsInner(datePanel);
+                    break;
+                case "Angle": {
+                    ConverterPanel converterPanel = new ConverterPanel(this, ANGLE);
+                    switchPanelsInner(converterPanel);
+                    break;
+                }
+                case "Area": {
+                    ConverterPanel converterPanel = new ConverterPanel(this, AREA);
+                    switchPanelsInner(converterPanel);
+                    break;
+                }
+            }
+            setTitle(selectedPanel);
             pack();
+            LOGGER.info("Finished changing jPanels\n");
+            confirm("Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
         }
     }
 
-    @Deprecated(since = "No longer wish to use")
-    public void updateTheTextAreaBasedOnTheTypeAndBase()
+    /**
+     * The inner logic to perform when switching panels
+     * @param newPanel the new panel to switch to
+     */
+    private void switchPanelsInner(JPanel newPanel)
     {
-        LOGGER.info("Updating the textArea");
-        textPane.setText(addNewLineCharacters() + textPane.getText());
+        LOGGER.info("Performing switchPanelsInner...");
+        setTitle(calculatorType.getName());
+        updateJPanel(newPanel);
+        pack();
     }
 
     public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String strings) throws CalculatorError
@@ -973,11 +924,9 @@ public class Calculator extends JFrame
         else if (fromType == BINARY && toType == DECIMAL)
         {
             LOGGER.debug("Converting str(" + sb + ")");
-
             int appropriateLength = ((ProgrammerPanel)currentPanel).getBytes();
             LOGGER.debug("sb: " + sb);
             LOGGER.debug("appropriateLength: " + appropriateLength);
-
             if (sb.length() != appropriateLength) {
                 LOGGER.error("sb, '" + sb + "', is too short. adding missing zeroes");
                 // user had entered 101, which really is 00000101, but they aren't showing the first 5 zeroes
@@ -988,7 +937,6 @@ public class Calculator extends JFrame
                 sb = new StringBuffer(missingZeroes);
                 LOGGER.debug("sb: " + sb);
             }
-
             double result = 0.0;
             double num1;
             double num2;
@@ -997,20 +945,16 @@ public class Calculator extends JFrame
                 num2 = Math.pow(2, k);
                 result = (num1 * num2) + result;
             }
-
             convertedValue = String.valueOf(Double.valueOf(result));
-
-
-            if (isPositiveNumber(convertedValue)) {
-                convertedValue = String.valueOf(clearZeroesAndDecimalAtEnd(convertedValue));
-            }
+            if (isPositiveNumber(convertedValue))
+            { convertedValue = String.valueOf(clearZeroesAndDecimalAtEnd(convertedValue)); }
             LOGGER.debug("convertedValue: {}", convertedValue);
         }
         else if (fromType == BINARY && toType == OCTAL) {
             confirm("IMPLEMENT");
         }
 
-        LOGGER.info("base set to: " + calculatorBase + addNewLineCharacters(1));
+        LOGGER.info("base set to: {}", calculatorBase);
         return convertedValue;
     }
 
@@ -1037,7 +981,7 @@ public class Calculator extends JFrame
         return currentNumber;
     }
 
-    public String getTextAreaWithoutAnyOperator()
+    public String getTextPaneWithoutAnyOperator()
     {
         return textPane.getText()
                 .replaceAll("\n", "")
@@ -1056,28 +1000,15 @@ public class Calculator extends JFrame
                 .strip();
     }
 
-    public String getTextAreaWithoutNewLineCharactersOrWhiteSpace()
+    public String getTextPaneWithoutNewLineCharactersOrWhiteSpace()
     {
         return textPane.getText()
                 .replaceAll("\n", "")
                 .strip();
     }
 
-    public String getTextAreaWithoutNewLineCharacters()
+    public String getTextPaneWithoutNewLineCharacters()
     { return textPane.getText().replaceAll("\n", ""); }
-
-//    public StringBuffer getTextAreaValueWithoutAnything()
-//    {
-//        return new StringBuffer().append(textAreaValue.toString().replaceAll("\n", ""));
-//    }
-
-    /**
-     * This method is used after any result to verify
-     * the result of the previous method and see the
-     * values of the entire Calculator object
-     */
-    public void confirm()
-    { confirm(""); }
 
     /**
      * This method is used after any result to verify
@@ -1088,12 +1019,12 @@ public class Calculator extends JFrame
      */
     public void confirm(String message)
     {
-        LOGGER.info("Confirm Results {}", StringUtils.isNotEmpty(message) ? ": " + message : "");
+        LOGGER.info("Confirm Results: {}", message);
         LOGGER.info("---------------- ");
         switch (calculatorType) {
             case BASIC: {
-                LOGGER.info("textArea: '{}'", getTextAreaWithoutNewLineCharacters());
-                if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition])) {
+                LOGGER.info("textPane: '{}'", getTextPaneWithoutNewLineCharacters());
+                if (isMemoryValuesEmpty()) {
                     LOGGER.info("no memories stored!");
                 } else {
                     LOGGER.info("memoryPosition: '{}'", memoryPosition);
@@ -1121,7 +1052,7 @@ public class Calculator extends JFrame
                 break;
             }
             case PROGRAMMER: {
-                LOGGER.info("textArea: '{}'", getTextAreaWithoutNewLineCharacters());
+                LOGGER.info("textPane: '{}'", getTextPaneWithoutNewLineCharacters());
                 if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition])) {
                     LOGGER.info("no memories stored!");
                 } else {
@@ -1206,6 +1137,10 @@ public class Calculator extends JFrame
         LOGGER.info("-------- End Confirm Results --------\n");
     }
 
+    /**
+     * Adds new lines based on the given input
+     * @param number the number of '\n' characters to add
+     */
     @Deprecated(since = "Use zero argument method")
     public String addNewLineCharacters(int number)
     { return "\n".repeat(Math.max(0, number)); }
@@ -1244,9 +1179,10 @@ public class Calculator extends JFrame
                 + "<br><br><br>"
                 + "This product is licensed under the License Terms to:<br>"
                 + "Michael Ball<br>"
-                + "Github: https://github.com/aaronhunter1088/calculator</html>";
+                + "Github: https://github.com/aaronhunter1088/Calculator</html>";
     }
 
+    @SuppressWarnings("all")
     /**
      * This method updates the JPanel to the one provided
      * and returns the oldPanel
@@ -1319,7 +1255,6 @@ public class Calculator extends JFrame
         LOGGER.debug("Old: " + number.replaceAll("\n", ""));
         number = number.replaceAll("-", "").trim();
         LOGGER.debug("New: " + number);
-
         isNumberNegative = false;
         return number;
     }
@@ -1375,6 +1310,11 @@ public class Calculator extends JFrame
         return rightSide;
     }
 
+    /**
+     * Formats the number based on the length
+     * @param num the number to format
+     * @return String representation of the formatted number
+     */
     public String formatNumber(String num)
     {
         DecimalFormat df = null;
@@ -1414,18 +1354,15 @@ public class Calculator extends JFrame
             return calculatorBase;
         } else {
             if (currentPanel instanceof BasicPanel) return DECIMAL;
-            else if (currentPanel instanceof ProgrammerPanel) {
-                if ((((ProgrammerPanel) currentPanel).isBaseBinary())) return BINARY;
-                else if (((((ProgrammerPanel) currentPanel).isBaseDecimal()))) return DECIMAL;
-                else if (((((ProgrammerPanel) currentPanel).isBaseOctal()))) return OCTAL;
-                else return HEXADECIMAL;
-            } else if (currentPanel instanceof ScientificPanel) return BINARY;
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isBinaryBase()) return BINARY;
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isDecimalBase()) return DECIMAL;
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isOctalBase()) return OCTAL;
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isHexadecimalBase()) return HEXADECIMAL;
+            else if (currentPanel instanceof ScientificPanel) return BINARY;
             else if (currentPanel instanceof DatePanel) return null;
             else return null;
         }
     }
-
-    // Action Listeners
 
     /**
      * Takes the value in the textArea and saves it in values[2]
@@ -1434,8 +1371,7 @@ public class Calculator extends JFrame
      */
     public void performCopyFunctionality(ActionEvent actionEvent)
     {
-        values[2] = getTextAreaWithoutNewLineCharactersOrWhiteSpace();
-        //textAreaValue = new StringBuffer().append(getTextAreaWithoutNewLineCharactersOrWhiteSpace());
+        values[2] = getTextPaneWithoutNewLineCharactersOrWhiteSpace();
         confirm("Pressed Copy");
     }
 
@@ -1447,13 +1383,13 @@ public class Calculator extends JFrame
      */
     public void performPasteFunctionality(ActionEvent actionEvent)
     {
-        if (StringUtils.isEmpty(values[2]) && StringUtils.isBlank(values[2])) {
-            LOGGER.info("Values[2] is empty and blank");
-        } else {
+        if (StringUtils.isEmpty(values[2]) && StringUtils.isBlank(values[2]))
+        { LOGGER.info("Values[2] is empty and blank"); }
+        else
+        {
             LOGGER.info("Values[2]: " + values[2]);
             textPane.setText(addNewLineCharacters() + values[2]); // to paste
-            values[valuesPosition] = getTextAreaWithoutNewLineCharactersOrWhiteSpace();
-            //textAreaValue = new StringBuffer().append(getTextAreaWithoutNewLineCharactersOrWhiteSpace());
+            values[valuesPosition] = getTextPaneWithoutNewLineCharactersOrWhiteSpace();
         }
         confirm("Pressed Paste");
     }
@@ -1469,16 +1405,13 @@ public class Calculator extends JFrame
         iconLabel = new JLabel();
         iconPanel.add(iconLabel);
         ImageIcon specificLogo = isMacOperatingSystem() ? macIcon : windowsIcon;
-        textLabel = new JLabel(getHelpString(),
-                specificLogo, SwingConstants.LEFT);
+        textLabel = new JLabel(getHelpString(), specificLogo, SwingConstants.LEFT);
         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
         JPanel mainPanel = new JPanel();
         mainPanel.add(iconLabel);
         mainPanel.add(textLabel);
-        JOptionPane.showMessageDialog(this,
-                mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(this, mainPanel, "About Calculator", JOptionPane.PLAIN_MESSAGE);
         confirm("Pressed About Calculator");
     }
 
@@ -1541,7 +1474,10 @@ public class Calculator extends JFrame
     //public boolean isMemorySubtracting() { return isMemorySubtracting; }
     public boolean isNegating() { return isNegating; }
     public boolean isDotPressed() { return isDotPressed; }
-
+    public JMenu getLookMenu() { return lookMenu; }
+    public JMenu getViewMenu() { return viewMenu; }
+    public JMenu getEditMenu() { return editMenu; }
+    public JMenu getHelpMenu() { return helpMenu; }
 
     /************* All Setters ******************/
     private void setValues(String[] values) { this.values = values; }
@@ -1567,4 +1503,8 @@ public class Calculator extends JFrame
     public void setDotPressed(boolean dotPressed) { this.isDotPressed = dotPressed; }
     public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; }
     public void setCalculatorMenuBar(JMenuBar menuBar) { this.menuBar = menuBar; }
+    public void setLookMenu(JMenu jMenu) { this.lookMenu = jMenu; }
+    public void setViewMenu(JMenu jMenu) { this.viewMenu = jMenu; }
+    public void setEditMenu(JMenu jMenu) { this.editMenu = jMenu; }
+    public void setHelpMenu(JMenu jMenu) { this.helpMenu = jMenu; }
 }

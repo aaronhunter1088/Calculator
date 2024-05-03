@@ -81,6 +81,7 @@ Version Four Concluded: -
             with each other so less "searching for code" in needed.
             [e] I've added JavaDocs to all methods to allow quick access to know what each method does.
             [f] Fix the 'textArea' to not rely on alignment to be Right_to_Left, and enforce right alignment
+            [g] Upgraded Java to 18
 
             Saturday, Aug 14, 2021:
             I started the Converter version. It should be relatively easy to implement seeing as they all have a

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import static Types.DateOperation.*;
 public class DatePanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(DatePanel.class.getSimpleName());
+    @Serial
     private static final long serialVersionUID = 4L;
 
     private GridBagLayout dateLayout;

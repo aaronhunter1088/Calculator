@@ -1,7 +1,7 @@
 package Types;
 
 /**
- * The different types of DatePanels possible
+ * The different types of DatePanels
  */
 public enum DateOperation
 {

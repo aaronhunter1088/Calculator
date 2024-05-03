@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,6 +25,7 @@ import static Types.ConverterUnits.*;
 public class ConverterPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(ConverterPanel.class.getSimpleName());
+    @Serial
     private static final long serialVersionUID = 4L;
 
     private GridBagLayout converterLayout;
@@ -68,8 +70,8 @@ public class ConverterPanel extends JPanel
         setConstraints(new GridBagConstraints()); // instantiate constraints
         setMaximumSize(new Dimension(300,400));
         //setupEditMenu();
-        setupHelpMenu(converterType);
-        setupConverterPanelComponents(converterType);
+        setupConverterPanelComponents(converterType != null ? converterType: ANGLE);
+        setupHelpMenu(getConverterType());
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up converter panel");
@@ -136,7 +138,7 @@ public class ConverterPanel extends JPanel
         calculator.getButtonDot().addActionListener(this::performDotButtonFunctionality);
         // Number button functionalities
         // First clear all functionality assigned to them
-        calculator.clearNumberButtonFunctionalities();
+        calculator.clearNumberButtonActions();
         setupNumberButtons();
         calculator.setupButtonBlank1();
         calculator.setupButtonBlank2();
@@ -371,18 +373,19 @@ public class ConverterPanel extends JPanel
         if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
         {
             // dot pushed with nothing in textArea
-            //calculator.setTextAreaValue(new StringBuffer().append("0").append(buttonChoice));
-            calculator.setValuesToTextAreaValue();
-            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+            calculator.getTextPane().setText("0" + buttonChoice);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
         }
         else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
         {
             // number and then dot is pushed ex: 5 -> .5
+            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
             //StringBuffer lodSB = new StringBuffer(textareaValue);
             //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
-            calculator.setValuesToTextAreaValue();
+            //calculator.setValuesToTextAreaValue();
             //calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+            //calculator.updateTheTextAreaBasedOnTheTypeAndBase();
             //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
         }
@@ -391,8 +394,8 @@ public class ConverterPanel extends JPanel
             //.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
             //calculator.getTextArea().getText().append(buttonChoice);
             //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextArea().getText().toString())));
-            calculator.setValuesToTextAreaValue();
-            calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
         }
         calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
         calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
