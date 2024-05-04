@@ -1384,7 +1384,7 @@ public class ProgrammerPanel extends JPanel
         calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
         calculator.getButtonDelete().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonDelete().setEnabled(true);
-        calculator.getButtonDelete().setName("←");
+        calculator.getButtonDelete().setName("Delete");
         calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
         LOGGER.info("Delete button configured");
     }

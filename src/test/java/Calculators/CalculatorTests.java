@@ -474,6 +474,21 @@ public class CalculatorTests
     }
 
     @Test
+    public void testClearAllOtherBasicCalculatorButtons() throws Exception
+    {
+        calculator = new Calculator();
+        calculator.getAllOtherBasicCalculatorButtons().forEach(otherButton -> {
+            assertSame("Expecting only 1 action on " + otherButton.getName(), 1, otherButton.getActionListeners().length);
+        });
+
+        calculator.clearAllOtherBasicCalculatorButtons();
+
+        calculator.getAllOtherBasicCalculatorButtons().forEach(otherButton -> {
+            assertSame("Expecting no actions on " + otherButton.getName(), 0, otherButton.getActionListeners().length);
+        });
+    }
+
+    @Test
     public void testDetermineIfAddingOperatorWasPushed() throws Exception
     {
         calculator = new Calculator();

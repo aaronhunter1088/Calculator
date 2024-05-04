@@ -819,6 +819,7 @@ public class BasicPanel extends JPanel
                 calculator.getButtonDot().setEnabled(false);
             }
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+            calculator.setNumberNegative(false);
             LOGGER.info("Squared button finished");
             calculator.confirm("Pressed " + buttonChoice);
         }

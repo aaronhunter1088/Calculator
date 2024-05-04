@@ -573,6 +573,36 @@ public class BasicPanelTest {
     }
 
     @Test
+    public void pressed5ThenNegateThenSquaredThenNegate()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("5").thenReturn("±")
+                .thenReturn("x²").thenReturn("±");
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertEquals("Values[0] is not 5", 5, Integer.parseInt(calculator.getValues()[0]));
+        assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
+
+        basicPanel.performNegateButtonActions(actionEvent);
+        assertEquals("Values[0] is not -5", -5, Integer.parseInt(calculator.getValues()[0]));
+        assertEquals("textPane should be -5", "-5", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("Expected isNumberNegative to be true", calculator.isNumberNegative());
+        assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
+
+        basicPanel.performSquaredButtonActions(actionEvent);
+        assertEquals("Values[0] is not 25", 25, Integer.parseInt(calculator.getValues()[0]));
+        assertEquals("textPane should be 25", "25", calculator.getTextPaneWithoutNewLineCharacters());
+        assertFalse("Expected isNumberNegative to be false", calculator.isNumberNegative());
+        assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
+
+        basicPanel.performNegateButtonActions(actionEvent);
+        assertEquals("Values[0] is not -25", -25, Integer.parseInt(calculator.getValues()[0]));
+        assertEquals("textPane should be -25", "-25", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("Expected isNumberNegative to be true", calculator.isNumberNegative());
+        assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
+
+    }
+
+    @Test
     public void testingMathPow() {
         double delta = 0.000001d;
         Number num = 8.0;

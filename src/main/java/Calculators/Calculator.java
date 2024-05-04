@@ -638,8 +638,8 @@ public class Calculator extends JFrame
      * Returns the "other" basic calculator buttons. This includes
      * Clear, ClearEntry, Delete, Dot, Equals, Fraction, Negate,
      * MemoryAddition, MemoryClear, MemoryRecall, MemorySubtraction,
-     * MemoryStore, Percent, and SquareRoot buttons. It does not
-     * include the main Basic operators
+     * MemoryStore, Percent, SquareRoot, and Squared buttons.
+     * It does not include the main Basic operators.
      *
      * @return Collection of buttons
      */
@@ -647,7 +647,7 @@ public class Calculator extends JFrame
     {
         return Arrays.asList(buttonEquals, buttonNegate, buttonClear, buttonClearEntry,
                 buttonDelete, buttonDot, buttonFraction, buttonPercent, buttonSqrt,
-                buttonMemoryAddition, buttonMemorySubtraction,
+                buttonSquared, buttonMemoryAddition, buttonMemorySubtraction,
                 buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall);
     }
 
@@ -800,7 +800,14 @@ public class Calculator extends JFrame
                     BasicPanel basicPanel = new BasicPanel(this);
                     switchPanelsInner(basicPanel);
                     if (!values[0].isEmpty())
-                    { textPane.setText(addNewLineCharacters() + values[0]); }
+                    {
+                        textPane.setText(addNewLineCharacters() + values[0]);
+                        if (isDecimal(values[0]))
+                        {
+                            setDotPressed(true);
+                            buttonDot.setEnabled(false);
+                        }
+                    }
                     break;
                 case "Programmer":
                     ProgrammerPanel programmerPanel;
@@ -810,6 +817,11 @@ public class Calculator extends JFrame
                     if (!values[0].isEmpty())
                     {
                         textPane.setText(addNewLineCharacters() + values[0]);
+                        if (isDecimal(values[0]))
+                        {
+                            setDotPressed(true);
+                            buttonDot.setEnabled(false);
+                        }
                     }
                     break;
                 case "Scientific":
