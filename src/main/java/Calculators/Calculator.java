@@ -8,7 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.SoftBevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -59,8 +62,9 @@ public class Calculator extends JFrame
             buttonAdd = new JButton("+"), buttonSubtract = new JButton("-"),
             buttonMultiply = new JButton("*"), buttonDivide = new JButton("/"),
             buttonEquals = new JButton("="), buttonNegate = new JButton("±"),
-    // Used in programmer and converter... until a button is determined
-    buttonBlank1 = new JButton(""), buttonBlank2 = new JButton("");
+            // Used in programmer and converter... until a button is determined
+            buttonBlank1 = new JButton(""), buttonBlank2 = new JButton(""),
+            buttonSquared = new JButton("x²");
     // Values used to store input
     protected String[]
             values = new String[]{"", "", "", ""}; // firstNum or total, secondNum, copy, temporary storage
@@ -86,11 +90,14 @@ public class Calculator extends JFrame
     private boolean
             isFirstNumber = true,
             isNumberNegative = false,
-    //memorySwitchBool = false,
-    isAdding = false, isSubtracting = false,
+            //memorySwitchBool = false,
+            isAdding = false, isSubtracting = false,
             isMultiplying = false, isDividing = false,
-    //isMemoryAdding = false, isMemorySubtracting = false,
-    isNegating = false, isDotPressed = false;
+            //isMemoryAdding = false, isMemorySubtracting = false,
+            isNegating = false, isDotPressed = false,
+            isMetal = false, isSystem = false,
+            isWindows = false, isMotif = false,
+            isGtk = false;
 
     /**
      * Starts the calculator with the BASIC CalculatorType
@@ -200,9 +207,14 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                textPane.setBackground(Color.WHITE);
+                textPane.setBorder(new LineBorder(Color.BLACK));
                 SwingUtilities.updateComponentTreeUI(this);
+                resetLook();
+                setMetal(true);
                 super.pack();
-            } catch (ClassNotFoundException | InstantiationException |
+            }
+            catch (ClassNotFoundException | InstantiationException |
                      IllegalAccessException | UnsupportedLookAndFeelException e)
             { logException(e); }
         });
@@ -214,6 +226,8 @@ public class Calculator extends JFrame
             {
                 UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
+                resetLook();
+                setSystem(true);
                 super.pack();
             }
             catch (ClassNotFoundException | InstantiationException |
@@ -228,6 +242,8 @@ public class Calculator extends JFrame
             {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
+                resetLook();
+                setWindows(true);
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -240,6 +256,10 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                textPane.setBackground(new Color(174,178,195));
+                textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+                resetLook();
+                setMotif(true);
                 SwingUtilities.updateComponentTreeUI(this);
                 super.pack();
             }
@@ -255,6 +275,8 @@ public class Calculator extends JFrame
             {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(this);
+                resetLook();
+                setGtk(true);
                 super.pack();
             }
             catch (ClassNotFoundException | InstantiationException |
@@ -573,6 +595,10 @@ public class Calculator extends JFrame
         }
     }
 
+    /**
+     * Determines if any value is saved in memory
+     * @return boolean if any memory value has a value
+     */
     public boolean isMemoryValuesEmpty()
     {
         boolean result = false;
@@ -612,7 +638,8 @@ public class Calculator extends JFrame
      * Returns the "other" basic calculator buttons. This includes
      * Clear, ClearEntry, Delete, Dot, Equals, Fraction, Negate,
      * MemoryAddition, MemoryClear, MemoryRecall, MemorySubtraction,
-     * MemoryStore, Percent, and SquareRoot buttons.
+     * MemoryStore, Percent, and SquareRoot buttons. It does not
+     * include the main Basic operators
      *
      * @return Collection of buttons
      */
@@ -624,6 +651,10 @@ public class Calculator extends JFrame
                 buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall);
     }
 
+    /**
+     * Clears all actions from the buttons
+     * other than the numbers buttons
+     */
     public void clearAllOtherBasicCalculatorButtons()
     {
         getAllOtherBasicCalculatorButtons().forEach(button ->
@@ -708,6 +739,10 @@ public class Calculator extends JFrame
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
+    /**
+     * Returns all the number buttons
+     * @return Collection of number buttons
+     */
     public Collection<JButton> getNumberButtons()
     {
         return new LinkedList<>() {{
@@ -795,8 +830,8 @@ public class Calculator extends JFrame
                     break;
                 }
             }
-            setTitle(selectedPanel);
-            pack();
+//            setTitle(selectedPanel);
+//            pack();
             LOGGER.info("Finished changing jPanels\n");
             confirm("Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
         }
@@ -814,22 +849,32 @@ public class Calculator extends JFrame
         pack();
     }
 
-    public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String strings) throws CalculatorError
+    // TODO: Rework
+    /**
+     * Converts the current value from one CalculatorBase
+     * to another CalculatorBase
+     * @param fromType the current CalculatorBase
+     * @param toType the CalculatorBase to convert to
+     * @param currentValue the value to convert
+     * @return String the converted value
+     * @throws CalculatorError throws a conversion error
+     */
+    public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String currentValue) throws CalculatorError
     {
         LOGGER.debug("convert from {} to {}", fromType, toType);
-        LOGGER.debug("on value: {}", strings);
+        LOGGER.debug("on value: {}", currentValue);
         StringBuffer sb = new StringBuffer();
-        if (strings.contains(" ")) {
-            String[] strs = strings.split(" ");
+        if (currentValue.contains(" ")) {
+            String[] strs = currentValue.split(" ");
             for (String s : strs) {
                 sb.append(s);
             }
         } else {
-            sb.append(strings);
+            sb.append(currentValue);
         }
         LOGGER.info("sb: " + sb);
         String convertedValue = "";
-        if (StringUtils.isEmpty(strings)) return "";
+        if (StringUtils.isEmpty(currentValue)) return "";
         // All from HEXADECIMAL to any other option
         if (fromType == HEXADECIMAL && toType == DECIMAL) {
             confirm("IMPLEMENT");
@@ -853,7 +898,7 @@ public class Calculator extends JFrame
             sb = new StringBuffer();
             int number;
             try {
-                number = Integer.parseInt(strings);
+                number = Integer.parseInt(currentValue);
                 LOGGER.debug("number: " + number);
                 int i = 0;
                 if (number == 0) sb.append("00000000");
@@ -984,34 +1029,47 @@ public class Calculator extends JFrame
         return currentNumber;
     }
 
+    /**
+     * Returns the text in the textPane without
+     * any new line characters or operator text
+     * @return the plain textPane text
+     */
     public String getTextPaneWithoutAnyOperator()
     {
-        return textPane.getText()
-                .replaceAll("\n", "")
-                .replace("+", "")
-                .replace("-", "")
-                .replace("*", "")
-                .replace("/", "")
-                .replace("MOD", "")
-                .replace("(", "")
-                .replace(")", "")
-                .replace("RoL", "")
-                .replace("RoR", "")
-                .replace("OR", "")
-                .replace("XOR", "")
-                .replace("AND", "")
-                .strip();
+        return getTextPaneWithoutNewLineCharactersOrWhiteSpace()
+               .replace("+", "")
+               .replace("-", "")
+               .replace("*", "")
+               .replace("/", "")
+               .replace("MOD", "")
+               .replace("(", "")
+               .replace(")", "")
+               .replace("RoL", "")
+               .replace("RoR", "")
+               .replace("OR", "")
+               .replace("XOR", "")
+               .replace("AND", "")
+               .strip();
     }
 
+    /**
+     * Returns the text in the textPane without
+     * any new line characters or white space
+     * @return the textPane text without new lines or whitespace
+     */
     public String getTextPaneWithoutNewLineCharactersOrWhiteSpace()
     {
-        return textPane.getText()
-                .replaceAll("\n", "")
-                .strip();
+        return getTextPaneWithoutNewLineCharacters()
+               .strip();
     }
 
+    /**
+     * Returns the text in the textPane without
+     * any new line characters
+     * @return the textPane text without new lines or whitespace
+     */
     public String getTextPaneWithoutNewLineCharacters()
-    { return textPane.getText().replaceAll("\n", ""); }
+    { return textPane.getText().replaceAll("\n", "").strip(); }
 
     /**
      * This method is used after any result to verify
@@ -1163,6 +1221,10 @@ public class Calculator extends JFrame
         return newLines;
     }
 
+    /**
+     * Returns the text to display in About Calculator
+     * @return String the About Calculator text
+     */
     public String getAboutCalculatorString()  {
         LOGGER.info("About Calculator");
         String computerText, version = "";
@@ -1423,6 +1485,18 @@ public class Calculator extends JFrame
         confirm("Pressed About Calculator");
     }
 
+    /**
+     * Resets the look and feel booleans to false
+     */
+    public void resetLook()
+    {
+        isMetal = false;
+        isSystem = false;
+        isWindows = false;
+        isMotif = false;
+        isGtk = false;
+    }
+
     /************* All Getters ******************/
     public JButton getButton0() { return button0; }
     public JButton getButton1() { return button1; }
@@ -1437,6 +1511,7 @@ public class Calculator extends JFrame
     public JButton getButtonClear() { return buttonClear; }
     public JButton getButtonClearEntry() { return buttonClearEntry; }
     public JButton getButtonDelete() { return buttonDelete; }
+    public JButton getButtonSquared() { return buttonSquared; }
     public JButton getButtonDot() { return buttonDot; }
     public JButton getButtonFraction() { return buttonFraction; }
     public JButton getButtonPercent() { return buttonPercent; }
@@ -1486,6 +1561,11 @@ public class Calculator extends JFrame
     public JMenu getViewMenu() { return viewMenu; }
     public JMenu getEditMenu() { return editMenu; }
     public JMenu getHelpMenu() { return helpMenu; }
+    public boolean isMetal() { return isMetal; }
+    public boolean isSystem() { return isSystem; }
+    public boolean isWindows() { return isWindows; }
+    public boolean isMotif() { return isMotif; }
+    public boolean isGtk() { return isGtk; }
 
     /************* All Setters ******************/
     private void setValues(String[] values) { this.values = values; }
@@ -1515,4 +1595,9 @@ public class Calculator extends JFrame
     public void setViewMenu(JMenu jMenu) { this.viewMenu = jMenu; }
     public void setEditMenu(JMenu jMenu) { this.editMenu = jMenu; }
     public void setHelpMenu(JMenu jMenu) { this.helpMenu = jMenu; }
+    public void setMetal(boolean isMetal) { this.isMetal = isMetal; }
+    public void setSystem(boolean isSystem) { this.isSystem = isSystem; }
+    public void setWindows(boolean isWindows) { this.isWindows = isWindows; }
+    public void setMotif(boolean isMotif) { this.isMotif = isMotif; }
+    public void setGtk(boolean isGtk) { this.isGtk = isGtk; }
 }

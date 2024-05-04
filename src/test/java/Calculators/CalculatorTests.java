@@ -310,7 +310,7 @@ public class CalculatorTests
 
         calculator.switchPanels(actionEvent);
         assertEquals("Expected CONVERTER CalculatorType", CONVERTER, calculator.getCalculatorType());
-        assertEquals("Expected name to be AREA", AREA.getName(), calculator.getTitle());
+        assertEquals("Expected name to be CONVERTER", CONVERTER.getName(), calculator.getTitle());
         assertTrue("Expected ConverterPanel", calculator.getCurrentPanel() instanceof ConverterPanel);
     }
 

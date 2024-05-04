@@ -216,7 +216,7 @@ public class ConverterPanel extends JPanel
             button.setEnabled(true);
             if (button.getText().equals("0") &&
                     getCalculator().getCalculatorType() != CONVERTER)
-            { button.setPreferredSize(new Dimension(70, 35)); }
+            { button.setPreferredSize(new Dimension(35, 35)); }
             else
             { button.setPreferredSize(new Dimension(35, 35)); }
             button.setBorder(new LineBorder(Color.BLACK));
@@ -696,8 +696,8 @@ public class ConverterPanel extends JPanel
         textField1.grabFocus();
         setNumbersPanel(new JPanel());
         numbersPanel.setLayout(new GridBagLayout());
-        numbersPanel.setBackground(Color.BLACK);
-        numbersPanel.setBorder(new LineBorder(Color.BLACK));
+        //numbersPanel.setBackground(Color.BLACK);
+        //numbersPanel.setBorder(new LineBorder(Color.BLACK));
         addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
         addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
         addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);

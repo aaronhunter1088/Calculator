@@ -80,7 +80,7 @@ public class BasicPanel extends JPanel
                         calculator.getAllBasicPanelOperatorButtons(),
                         calculator.getAllNumberButtons())
                 .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
-                .collect(Collectors.toList());
+                .toList();
 
         allButtons.forEach(button -> Stream.of(button.getActionListeners())
                 .forEach(button::removeActionListener));
@@ -92,6 +92,7 @@ public class BasicPanel extends JPanel
         setupTextPane();
         setupMemoryButtons(); // MS, MC, MR, M+, M-
         setupDeleteButton();
+        setupSquaredButton();
         setupClearEntryButton();
         setupClearButton();
         setupNegateButton();
@@ -113,9 +114,8 @@ public class BasicPanel extends JPanel
      */
     private void addComponentsToPanel()
     {
-        constraints.insets = new Insets(5,0,5,0);
+        constraints.insets = new Insets(5,5,5,5); //5,0,5,0
         addComponent(calculator.getTextPane(), 0, 0, 5, 2);
-        constraints.insets = new Insets(5,5,5,5);
         addComponent(calculator.getButtonMemoryStore(), 2, 0, 1, 1);
         addComponent(calculator.getButtonMemoryClear(), 2, 1, 1, 1);
         addComponent(calculator.getButtonMemoryRecall(), 2, 2, 1, 1);
@@ -140,10 +140,11 @@ public class BasicPanel extends JPanel
         addComponent(calculator.getButton2(), 6, 1, 1, 1);
         addComponent(calculator.getButton3(), 6, 2, 1, 1);
         addComponent(calculator.getButtonSubtract(), 6, 3, 1, 1);
-        addComponent(calculator.getButtonEquals(), 6, 4, 1, 2);
+        addComponent(calculator.getButtonSquared(), 6, 4, 1, 1);
         addComponent(calculator.getButton0(), 7, 0, 2, 1, GridBagConstraints.HORIZONTAL);
         addComponent(calculator.getButtonDot(), 7, 2, 1, 1);
         addComponent(calculator.getButtonAdd(), 7, 3, 1, 1);
+        addComponent(calculator.getButtonEquals(), 7, 4, 1, 1);
         LOGGER.info("Buttons added to basic panel");
     }
     /**
@@ -295,7 +296,13 @@ public class BasicPanel extends JPanel
         calculator.setTextPane(new JTextPane());
         calculator.getTextPane().setParagraphAttributes(attribs, true);
         calculator.getTextPane().setFont(mainFont);
-        calculator.getTextPane().setBorder(new LineBorder(Color.BLACK));
+        if (calculator.isMotif())
+        {
+            calculator.getTextPane().setBackground(new Color(174,178,195));
+            calculator.getTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
+        }
+        else
+        { calculator.getTextPane().setBorder(new LineBorder(Color.BLACK)); }
         calculator.getTextPane().setEditable(false);
         calculator.getTextPane().setPreferredSize(new Dimension(70, 30));
         LOGGER.info("TextArea configured");
@@ -533,7 +540,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
         calculator.getButtonDelete().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonDelete().setEnabled(true);
-        calculator.getButtonDelete().setName("←");
+        calculator.getButtonDelete().setName("Delete");
         calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
         LOGGER.info("Delete button configured");
     }
@@ -767,6 +774,57 @@ public class BasicPanel extends JPanel
     }
 
     /**
+     * The main method to set up the Squared x² button
+     */
+    private void setupSquaredButton()
+    {
+        calculator.getButtonSquared().setFont(mainFont);
+        calculator.getButtonSquared().setPreferredSize(new Dimension(35, 35));
+        calculator.getButtonSquared().setBorder(new LineBorder(Color.BLACK));
+        calculator.getButtonSquared().setEnabled(true);
+        calculator.getButtonSquared().setName("Squared");
+        calculator.getButtonSquared().addActionListener(this::performSquaredButtonActions);
+        LOGGER.info("Delete button configured");
+    }
+    /**
+     * The actions to perform when the Squared button is clicked
+     * @param actionEvent the click action
+     */
+    public void performSquaredButtonActions(ActionEvent actionEvent)
+    {
+        LOGGER.info("Performing Squared button started");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: {}", buttonChoice); // print out button confirmation
+        if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            LOGGER.info("Squared button finished");
+            calculator.confirm("No number to square");
+        }
+        else
+        {
+            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+            result = Math.pow(result, 2);
+            if (result % 1 == 0)
+            {
+                LOGGER.info("We have a whole number");
+                calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
+                calculator.setDotPressed(false);
+                calculator.getButtonDot().setEnabled(true);
+            }
+            else
+            {
+                LOGGER.info("We have a decimal number");
+                calculator.getValues()[0] = String.valueOf(result);
+                calculator.setDotPressed(true);
+                calculator.getButtonDot().setEnabled(false);
+            }
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+            LOGGER.info("Squared button finished");
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+    }
+
+    /**
      * The main method to set up the ClearEntry button
      */
     private void setupClearEntryButton()
@@ -906,6 +964,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonSqrt().setEnabled(true);
+        calculator.getButtonSqrt().setName("SquareRoot");
         calculator.getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
     }
     /**
@@ -951,7 +1010,7 @@ public class BasicPanel extends JPanel
             button.setEnabled(isEnabled);
             if (button.getText().equals("0") &&
                     getCalculator().getCalculatorType() != CONVERTER)
-            { button.setPreferredSize(new Dimension(70, 35)); }
+            { button.setPreferredSize(new Dimension(70, 35)); } //70,35
             else
             { button.setPreferredSize(new Dimension(35, 35)); }
             button.setBorder(new LineBorder(Color.BLACK));
@@ -1559,12 +1618,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isNumberNegative())
                 {
                     calculator.getTextPane().setText(calculator.addNewLineCharacters() + "-" + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextPaneWithoutAnyOperator();
+                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextPaneWithoutNewLineCharacters();
                 }
                 else
                 {
                     calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
                 }
                 calculator.setDividing(true); // sets logic for arithmetic
                 calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
@@ -1754,7 +1813,7 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("FractionButtonHandler class started");
         String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.getValues()[0].contains("E"))
+        if (calculator.textPaneContainsBadText()) //calculator.getValues()[0].contains("E")
         { calculator.confirm("Cannot perform fraction operation. Number too big!"); }
         else
         {
@@ -1764,6 +1823,8 @@ public class BasicPanel extends JPanel
                 double result = Double.parseDouble(calculator.getValues()[calculator.getValuesPosition()]);
                 result = 1 / result;
                 LOGGER.info("result: " + result);
+                calculator.setDotPressed(true);
+                calculator.getButtonDot().setEnabled(false);
                 calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
             }
@@ -1777,7 +1838,7 @@ public class BasicPanel extends JPanel
     private void setupEqualsButton()
     {
         calculator.getButtonEquals().setFont(mainFont);
-        calculator.getButtonEquals().setPreferredSize(new Dimension(35, 70) );
+        calculator.getButtonEquals().setPreferredSize(new Dimension(35, 35) ); // 35,70
         calculator.getButtonEquals().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonEquals().setEnabled(true);
         calculator.getButtonEquals().addActionListener(this::performButtonEqualsActions);

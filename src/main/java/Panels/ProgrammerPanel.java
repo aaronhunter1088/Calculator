@@ -13,6 +13,8 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
@@ -121,7 +123,7 @@ public class ProgrammerPanel extends JPanel
                         calculator.getAllBasicPanelOperatorButtons(),
                         calculator.getAllNumberButtons())
                 .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
-                .collect(Collectors.toList());
+                .toList();
 
         allButtons.forEach(button -> Stream.of(button.getActionListeners())
                 .forEach(button::removeActionListener));
@@ -214,9 +216,8 @@ public class ProgrammerPanel extends JPanel
      */
     private void addComponentsToPanel()
     {
-        constraints.insets = new Insets(5,0,5,0);
-        addComponent(calculator.getTextPane(), 0, 0, 9, 2);
         constraints.insets = new Insets(5,5,5,5);
+        addComponent(calculator.getTextPane(), 0, 0, 9, 2);
         addComponent(btnGroupOnePanel, 4, 0, 1, 4, GridBagConstraints.HORIZONTAL);
         addComponent(btnGroupTwoPanel, 7, 0, 1, 4, GridBagConstraints.HORIZONTAL);
         constraints.insets = new Insets(5,0,1,5);
@@ -321,10 +322,18 @@ public class ProgrammerPanel extends JPanel
      */
     private void setupTextPane()
     {
+        SimpleAttributeSet attribs = new SimpleAttributeSet();
+        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
         calculator.setTextPane(new JTextPane());
-        calculator.getTextPane().setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        calculator.getTextPane().setParagraphAttributes(attribs, true);
         calculator.getTextPane().setFont(mainFont);
-        calculator.getTextPane().setBorder(new LineBorder(Color.BLACK));
+        if (calculator.isMotif())
+        {
+            calculator.getTextPane().setBackground(new Color(174,178,195));
+            calculator.getTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
+        }
+        else
+        { calculator.getTextPane().setBorder(new LineBorder(Color.BLACK)); }
         calculator.getTextPane().setEditable(false);
         calculator.getTextPane().setPreferredSize(new Dimension(105, 60));
         LOGGER.info("Text Area configured");
