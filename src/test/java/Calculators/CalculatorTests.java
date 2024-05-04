@@ -4,7 +4,6 @@ import Panels.BasicPanel;
 import Panels.ConverterPanel;
 import Panels.DatePanel;
 import Panels.ProgrammerPanel;
-import Types.DateOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
@@ -15,11 +14,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.EventListener;
 
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
@@ -710,34 +707,34 @@ public class CalculatorTests
     }
 
     @Test
-    public void testGetHelpStringReturnsHelpText() throws Exception
+    public void testGetAboutCalculatorStringReturnsText() throws Exception
     {
-        String helpMe = new Calculator().getHelpString();
-        assertNotNull("Help text is not set on Basic Calculator", helpMe);
+        String helpMe = new Calculator().getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Basic Calculator", helpMe);
 
-        helpMe = new Calculator(PROGRAMMER).getHelpString();
-        assertNotNull("Help text is not set on Programmer Calculator Type:"+BINARY.getName(), helpMe);
+        helpMe = new Calculator(PROGRAMMER).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+BINARY.getName(), helpMe);
 
-        helpMe = new Calculator(PROGRAMMER, OCTAL).getHelpString();
-        assertNotNull("Help text is not set on Programmer Calculator Type:"+OCTAL.getName(), helpMe);
+        helpMe = new Calculator(PROGRAMMER, OCTAL).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+OCTAL.getName(), helpMe);
 
-        helpMe = new Calculator(PROGRAMMER, DECIMAL).getHelpString();
-        assertNotNull("Help text is not set on Programmer Calculator Type:"+DECIMAL.getName(), helpMe);
+        helpMe = new Calculator(PROGRAMMER, DECIMAL).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+DECIMAL.getName(), helpMe);
 
-        helpMe = new Calculator(PROGRAMMER, HEXADECIMAL).getHelpString();
-        assertNotNull("Help text is not set on Programmer Calculator Type:"+HEXADECIMAL.getName(), helpMe);
+        helpMe = new Calculator(PROGRAMMER, HEXADECIMAL).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+HEXADECIMAL.getName(), helpMe);
 
-        helpMe = new Calculator(DATE).getHelpString();
-        assertNotNull("Help text is not set on Date Calculator Type:"+DIFFERENCE_BETWEEN_DATES, helpMe);
+        helpMe = new Calculator(DATE).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Date Calculator Type:"+DIFFERENCE_BETWEEN_DATES, helpMe);
 
-        helpMe = new Calculator(DATE, ADD_SUBTRACT_DAYS).getHelpString();
-        assertNotNull("Help text is not set on Date Calculator Type:"+ADD_SUBTRACT_DAYS, helpMe);
+        helpMe = new Calculator(DATE, ADD_SUBTRACT_DAYS).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Date Calculator Type:"+ADD_SUBTRACT_DAYS, helpMe);
 
-        helpMe = new Calculator(CONVERTER).getHelpString();
-        assertNotNull("Help text is not set on Converter Calculator Type:"+ANGLE, helpMe);
+        helpMe = new Calculator(CONVERTER).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Converter Calculator Type:"+ANGLE, helpMe);
 
-        helpMe = new Calculator(CONVERTER, AREA).getHelpString();
-        assertNotNull("Help text is not set on Converter Calculator Type:"+AREA.getName(), helpMe);
+        helpMe = new Calculator(CONVERTER, AREA).getAboutCalculatorString();
+        assertNotNull("About Calculator is not set on Converter Calculator Type:"+AREA.getName(), helpMe);
     }
 
     @Test

@@ -1,3 +1,5 @@
+package Runnables;
+
 import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +14,7 @@ import static Types.CalculatorType.*;
  */
 public class CalculatorMain
 {
-    static { System.setProperty("appName", "CalculatorMain"); }
+    static { System.setProperty("appName", "Runnables.CalculatorMain"); }
     private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class.getSimpleName());
 
 	public static void main(String[] args) throws Exception
@@ -68,7 +70,7 @@ Version Four Concluded: -
             ultimately performing the logic. This allows me to separate the logic and perform less checks.
             I've also moved specific properties into the appropriate panel (booleans specific for Programmer
             don't need to be a part of the overall Calculator object).
-            [b] I have updated the logging files so that the main log will now be named CalculatorMain,
+            [b] I have updated the logging files so that the main log will now be named Runnables.CalculatorMain,
             instead of just 'calculator'.
             [c] I've also adjusted several accessors to use private where needed.
             [d] I've rearranged the code in such a way to allow a natural pattern to be seen for methods.

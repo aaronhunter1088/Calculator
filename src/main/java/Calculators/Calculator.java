@@ -1,6 +1,7 @@
 package Calculators;
 
 import Panels.*;
+import Runnables.CalculatorMain;
 import Types.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serial;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static Types.CalculatorBase.*;
@@ -1160,26 +1163,31 @@ public class Calculator extends JFrame
         return newLines;
     }
 
-    public String getHelpString()
-    {
-        LOGGER.debug("getHelpString");
-        String os = System.getProperty("os.name");
-        String computerText = "";
-        if (isMacOperatingSystem()) {
-            computerText = "Apple";
-        } else {
-            computerText = "Windows";
-        }
-        return "<html>" + computerText + "<br>"
-                + "Calculator Version 4<br>"
-                + "©" + LocalDate.now().getYear() + " All rights reserved.<br><br>"
-                + os + " and its user interface are protected by trademark and all other<br>"
-                + "pending or existing intellectual property right in the United States and other<br>"
-                + "countries/regions."
-                + "<br><br><br>"
-                + "This product is licensed under the License Terms to:<br>"
-                + "Michael Ball<br>"
-                + "Github: https://github.com/aaronhunter1088/Calculator</html>";
+    public String getAboutCalculatorString()  {
+        LOGGER.info("About Calculator");
+        String computerText, version = "";
+        if (isMacOperatingSystem()) { computerText = "Apple"; }
+        else                        { computerText = "Windows"; }
+        try(InputStream is = CalculatorMain.class.getResourceAsStream("/pom.properties"))
+        {
+            Properties p = new Properties();
+            p.load(is);
+            version = p.getProperty("project.version");
+        } catch (IOException | NullPointerException e) { logException(e); }
+        return """
+                <html> %s <br>
+                Calculator Version %s<br>
+                © %d All rights reserved.<br><br>
+                %s and its user interface are protected by trademark and all other<br>
+                pending or existing intellectual property right in the United States and other<br>
+                countries/regions.
+                <br><br><br>
+                This product is licensed under the License Terms to:<br>
+                Michael Ball<br>
+                Github: https://github.com/aaronhunter1088/Calculator</html>"
+                """
+                .formatted(computerText, version,
+                        LocalDate.now().getYear(), System.getProperty("os.name"));
     }
 
     @SuppressWarnings("all")
@@ -1405,7 +1413,7 @@ public class Calculator extends JFrame
         iconLabel = new JLabel();
         iconPanel.add(iconLabel);
         ImageIcon specificLogo = isMacOperatingSystem() ? macIcon : windowsIcon;
-        textLabel = new JLabel(getHelpString(), specificLogo, SwingConstants.LEFT);
+        textLabel = new JLabel(getAboutCalculatorString(), specificLogo, SwingConstants.LEFT);
         textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
         JPanel mainPanel = new JPanel();
