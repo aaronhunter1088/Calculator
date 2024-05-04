@@ -1181,7 +1181,7 @@ public class Calculator extends JFrame
                 %s and its user interface are protected by trademark and all other<br>
                 pending or existing intellectual property right in the United States and other<br>
                 countries/regions.
-                <br><br><br>
+                <br><br>
                 This product is licensed under the License Terms to:<br>
                 Michael Ball<br>
                 Github: https://github.com/aaronhunter1088/Calculator</html>"
