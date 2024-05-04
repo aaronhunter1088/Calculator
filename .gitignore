@@ -1,5 +1,7 @@
 .idea/
-dist/*
+dist/version1
+dist/version3
+dist/.DS_Store
 logs/*
 target/*
 .settings/

@@ -1,5 +1,3 @@
-package Runnables;
-
 import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,10 +5,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import static Types.CalculatorBase.*;
 import static Types.CalculatorType.*;
-import static Types.ConverterType.*;
-import static Types.DateOperation.*;
 
 /**
  * Main Class. Start here!
