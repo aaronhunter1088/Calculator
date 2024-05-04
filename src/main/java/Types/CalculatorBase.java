@@ -1,5 +1,8 @@
 package Types;
 
+/**
+ * The CalculatorBases to use primarily in ProgrammerPanel
+ */
 public enum CalculatorBase
 {
     BINARY("Binary"),

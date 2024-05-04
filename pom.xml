@@ -2,9 +2,9 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>Calculator</groupId>
+    <groupId>org.example</groupId>
     <artifactId>Calculator</artifactId>
-    <version>4.2</version>
+    <version>4.3</version>
     <packaging>jar</packaging>
     <name>Calculator</name>
 
@@ -12,6 +12,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<outputDirectory>${basedir}/dist/version4</outputDirectory>
 		<finalName>${project.artifactId}-${project.version}</finalName>
+		<project.version>${project.version}</project.version>
+		<maven.compiler.source>18</maven.compiler.source>
+		<maven.compiler.target>18</maven.compiler.target>
 
 		<apple.version>1.4</apple.version>
 		<commons.lang.version>3.9</commons.lang.version>
@@ -19,7 +22,7 @@
 		<junit.version>4.13.1</junit.version>
 		<log4j2.version>2.17.1</log4j2.version>
 		<maven.antrun.version>3.0.0</maven.antrun.version>
-		<maven.assembly.version>3.3.0</maven.assembly.version>
+		<maven.assembly.version>3.7.1</maven.assembly.version>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.surefire.version>3.0.0-M5</maven.surefire.version>
 		<maven.dependency.version>3.1.2</maven.dependency.version>
@@ -83,6 +86,12 @@
 			<artifactId>maven-dependency-plugin</artifactId>
 			<version>${maven.dependency.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/properties-maven-plugin -->
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.0-alpha-2</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
 		<dependency>
 			<groupId>net.sourceforge.jdatepicker</groupId>
@@ -96,6 +105,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
 				<includes>
 					<include>**/**</include>
 				</includes>
@@ -108,9 +118,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.version}</version>
 				<configuration>
-					<source>11</source>
-					<target>11</target>
-					<release>11</release>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<release>18</release>
 					<compilerArgs>
 						<!--<arg>#doubledash#enable-preview</arg>-->
 						<arg>-verbose</arg>
@@ -134,45 +144,25 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.version}</version>
 			</plugin>
-			<!-- Binds to Package phase, but will not run... -->
-			<!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory -->
+			<!-- Generate resources -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.version}</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0-alpha-2</version>
 				<executions>
 					<execution>
-						<id>default-jar</id>
-						<phase>compile</phase>
+						<phase>generate-resources</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>write-project-properties</goal>
 						</goals>
+						<configuration>
+							<outputFile>${basedir}/src/main/resources/pom.properties</outputFile>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<finalName>${finalName}</finalName>
-					<outputDirectory>${outputDirectory}</outputDirectory>
-					<archive>
-						<index>true</index>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<addClasspath>true</addClasspath>
-							<mainClass>Runnables.CalculatorMain</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Version>${project.version}</Implementation-Version>
-							<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
-							<!--suppress UnresolvedMavenProperty -->
-							<Creation-Time>${build.time}</Creation-Time>
-							<mainClass>Runnables.CalculatorMain</mainClass>
-						</manifestEntries>
-					</archive>
-					<includes>
-						<include>**/log4j2.properties</include>
-						<include>**/images/*</include>
-					</includes>
-				</configuration>
 			</plugin>
+			<!-- Binds to Package phase, but will not run... -->
+			<!-- When creating a jar, create build.properties file -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -196,35 +186,35 @@
 				</executions>
 			</plugin>
 			<!-- Assembly:Single creates runnable jar with dependencies
-			     Run Command: mvn clean compile assembly:single -->
+			     Run Command: mvn clean package (-Dmaven.test.skip=true) -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
+				<!-- don't need group id since org.apache.maven.plugins is assumed -->
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>${maven.assembly.version}</version>
-				<configuration>
-					<archive>
-						<index>true</index>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<addClasspath>true</addClasspath>
-							<mainClass>Runnables.CalculatorMain</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Version>${project.version}</Implementation-Version>
-							<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
-							<!--suppress UnresolvedMavenProperty -->
-							<Creation-Time>${build.time}</Creation-Time>
-							<mainClass>Runnables.CalculatorMain</mainClass>
-						</manifestEntries>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<finalName>${finalName}</finalName>
-					<outputDirectory>${outputDirectory}</outputDirectory>
-				</configuration>
 				<executions>
 					<execution>
+						<id>build-calculator</id>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<appendAssemblyId>true</appendAssemblyId> <!-- If false, jar-with-dependencies is not appended to jar name -->
+							<!-- archive required to create executable jar -->
+							<archive>
+								<index>true</index>
+								<manifest>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<addClasspath>true</addClasspath>
+									<mainClass>Runnables.CalculatorMain</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Creation-Time>${maven.build.timestamp}</Creation-Time>
+									<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
+								</manifestEntries>
+							</archive>
+							<finalName>${finalName}</finalName>
+							<outputDirectory>${outputDirectory}</outputDirectory>
+						</configuration>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>

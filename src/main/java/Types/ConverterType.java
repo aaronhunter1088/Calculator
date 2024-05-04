@@ -1,5 +1,9 @@
 package Types;
 
+/**
+ * The different types of Conversions possible when
+ * using the ConverterPanel
+ */
 public enum ConverterType
 {
     ANGLE("Angle"),
