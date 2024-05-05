@@ -106,7 +106,7 @@ public class DatePanel extends JPanel
     private void setupHelpMenu()
     {
         LOGGER.info("Creating the view help menu for date panel");
-        String helpString = "<html>How to use the " + ADD_OR_SUB_RESULT + " Calculator<br><br>" +
+        String helpString = "<html>How to use the "+ ADD_OR_SUB_RESULT + " Calculator<br><br>" +
                 "Difference Between Dates:<br>" +
                 "Enter a date into either field, From or To.<br>" +
                 "Only 1 date is required to change to show a difference.<br>" +

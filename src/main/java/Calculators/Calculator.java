@@ -8,10 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.SoftBevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -581,15 +578,31 @@ public class Calculator extends JFrame
         if (operatorBool) {
             values[1] = "";
             valuesPosition = 1;
-            isDotPressed = false;
-            buttonDot.setEnabled(true);
+            if (isDecimal(values[0]))
+            {
+                isDotPressed = true;
+                buttonDot.setEnabled(false);
+            }
+            else
+            {
+                isDotPressed = false;
+                buttonDot.setEnabled(true);
+            }
             isFirstNumber = false;
             return false;
         } else {
             values[1] = "";
             valuesPosition = 0;
-            isDotPressed = false;
-            buttonDot.setEnabled(true);
+            if (isDecimal(values[0]))
+            {
+                isDotPressed = true;
+                buttonDot.setEnabled(false);
+            }
+            else
+            {
+                isDotPressed = false;
+                buttonDot.setEnabled(true);
+            }
             isFirstNumber = true;
             return true;
         }
@@ -601,16 +614,30 @@ public class Calculator extends JFrame
      */
     public boolean isMemoryValuesEmpty()
     {
-        boolean result = false;
+        boolean result = true;
         for (int i = 0; i < 10; i++) {
-            if (StringUtils.isBlank(memoryValues[i])) {
-                result = true;
-            } else {
+            if (!StringUtils.isBlank(memoryValues[i])) {
                 result = false;
                 break;
             }
         }
         return result;
+    }
+
+    /**
+     * Returns the lowest position in memory that contains a value
+     */
+    public int getLowestMemoryPosition()
+    {
+        var lowestMemory = 0;
+        for (int i = 0; i < 10; i++) {
+            if (!StringUtils.isBlank(memoryValues[i])) {
+                lowestMemory = i;
+                break;
+            }
+        }
+        LOGGER.info("Lowest position in memory is {}", lowestMemory);
+        return lowestMemory;
     }
 
     /**
@@ -691,7 +718,8 @@ public class Calculator extends JFrame
             buttonDot.setEnabled(true);
             isNumberNegative = false;
             checkFound = true;
-        } else if (getTextPaneWithoutAnyOperator().equals("0") &&
+        }
+        else if (getTextPaneWithoutAnyOperator().equals("0") &&
                 (calculatorType.equals(BASIC) ||
                         (calculatorType == PROGRAMMER && calculatorBase == DECIMAL))) {
             LOGGER.debug("textArea equals 0 no matter the CalculatorType. setting to blank.");
@@ -701,7 +729,8 @@ public class Calculator extends JFrame
             isDotPressed = false;
             buttonDot.setEnabled(true);
             checkFound = true;
-        } else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1])) {
+        }
+        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1])) {
             values[0] = values[1];
             values[1] = "";
             valuesPosition = 0;
@@ -720,9 +749,19 @@ public class Calculator extends JFrame
     {
         return getTextPaneWithoutAnyOperator().equals("Cannot divide by 0") ||
                getTextPaneWithoutAnyOperator().equals("Not a Number") ||
+               getTextPaneWithoutAnyOperator().equals("Number too big!") ||
                getTextPaneWithoutAnyOperator().equals("Enter a Number") ||
                getTextPaneWithoutAnyOperator().equals("Only positive numbers") ||
-               getTextPaneWithoutAnyOperator().contains("E");
+               getTextPaneWithoutAnyOperator().contains("E") ||
+               getTextPaneWithoutAnyOperator().contains("Infinity");
+    }
+
+    public void setValuesAtPositionThenUpdateTextPane(String value)
+    {
+        values[valuesPosition] = value; // store textarea
+        textPane.setText(addNewLineCharacters() + values[valuesPosition]);
+        LOGGER.debug("textPane: '" + getTextPaneWithoutNewLineCharacters() + "'");
+        LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
     /**
@@ -731,11 +770,17 @@ public class Calculator extends JFrame
      * to the new value
      * @param buttonChoice the chosen button
      */
-    public void setTextPaneToValuesAtPosition(String buttonChoice)
+    public void updateValuesAtPositionThenUpdateTextPane(String buttonChoice)
     {
-        values[valuesPosition] += buttonChoice; // store textarea
-        textPane.setText(addNewLineCharacters() + values[valuesPosition]);
-        LOGGER.debug("textPane: '" + textPane.getText() + "'");
+        values[valuesPosition] += buttonChoice; // store in values
+        if (isNegating) {
+            values[valuesPosition] = convertToNegative(values[valuesPosition]);
+            textPane.setText(addNewLineCharacters() + values[valuesPosition]);
+            setNegating(false);
+        } else {
+            textPane.setText(addNewLineCharacters() + values[valuesPosition]);
+        }
+        LOGGER.debug("textPane: '" + getTextPaneWithoutNewLineCharacters() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
@@ -1029,7 +1074,6 @@ public class Calculator extends JFrame
     {
         LOGGER.info("Starting clear zeroes at the end");
         LOGGER.debug("currentNumber: " + currentNumber);
-        //textAreaValue = new StringBuffer().append(textAreaValue.toString().replaceAll("\n", ""));
         int index;
         index = currentNumber.indexOf(".");
         LOGGER.debug("index: " + index);
@@ -1258,7 +1302,7 @@ public class Calculator extends JFrame
                 <br><br>
                 This product is licensed under the License Terms to:<br>
                 Michael Ball<br>
-                Github: https://github.com/aaronhunter1088/Calculator</html>"
+                Github: https://github.com/aaronhunter1088/Calculator</html>
                 """
                 .formatted(computerText, version,
                         LocalDate.now().getYear(), System.getProperty("os.name"));

@@ -11,10 +11,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static Calculators.Calculator.mainFont;
@@ -24,6 +24,7 @@ import static Types.CalculatorType.*;
 public class BasicPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class.getSimpleName());
+    @Serial
     private static final long serialVersionUID = 4L;
     private Calculator calculator;
 
@@ -88,7 +89,6 @@ public class BasicPanel extends JPanel
         calculator.setCalculatorBase(DECIMAL);
         calculator.setCalculatorType(BASIC);
         calculator.setConverterType(null);
-        setupHelpMenu();
         setupTextPane();
         setupMemoryButtons(); // MS, MC, MR, M+, M-
         setupDeleteButton();
@@ -106,6 +106,7 @@ public class BasicPanel extends JPanel
         setupPercentButton();
         setupFractionButton();
         setupEqualsButton();
+        setupHelpMenu();
         LOGGER.info("Finished configuring the buttons");
     }
 
@@ -185,8 +186,8 @@ public class BasicPanel extends JPanel
      * from another panel to the BasicPanel
      * @param calculator the Calculator object
      */
-    public void performBasicCalculatorTypeSwitchOperations(Calculator calculator)
-    { setupBasicPanel(calculator); }
+//    public void performBasicCalculatorTypeSwitchOperations(Calculator calculator)
+//    { setupBasicPanel(calculator); }
 
     /**
      * The main method to set up the Help menu item.
@@ -194,51 +195,109 @@ public class BasicPanel extends JPanel
      */
     private void setupHelpMenu()
     {
-        String helpString = "<html>" +
-                "How to use the " + BASIC.getName() + " Calculator<br><br>" +
-                "For basic usage: <br>" +
-                "Step 1.<br> Enter your first number followed by<br> an operator. Both will be visible in<br>" +
-                "the text area.<br>" +
-                "Step 2.<br> Enter the second number.<br>Entering the second number clears<br> the text area. <br>" +
-                "Step 3.<br> Push the Equals button to see the<br> result. <br><br>" +
-                "See button specific info below. <br>" +
-                "The Dot Button: <br>" +
-                "Pressing the dot button adds a<br> decimal to the number.<br> The button will become inactive<br>" +
-                "until the next number is ready for<br> entry or the text area is cleared. <br><br>" +
-                "The 1/x Button: <br>" +
-                "This is the fraction button. It is<br> specific to say that when pushed,<br> it will take the number in the<br>" +
-                "text area, rewrite it as 1 over the<br> number, and return the result.<br> For example, with 4 " +
-                "in the text area,<br> pushing the fraction button<br> would return 0.25. <br><br>" +
-                "The Percent button: <br>"+
-                "The percent button takes the<br> number in the text area and returns<br> the percentage equivalent. " +
-                "For example, with 10 in the text area, pushing the percent button would return 0.1. <br><br>" +
-                "The Delete Button: <br>"+
-                "The delete button removes the last<br> digit from the right until the entire<br> number is removed. <br><br>" +
-                "The CE Button: <br>"+
-                "The clear entry button clears the<br> text area. It does not clear what is<br> copied. <br><br>"+
-                "The C Button: <br>"+
-                "The clear button clears the text area,<br> and what is saved in copy. <br><br>"+
-                "The Negate Button <br>"+
-                "The negate button makes a positive number<br> a negative and a negative number a<br> positive one. <br><br>"+
-                "The Square Root Button: <br>"+
-                "The square root button will take<br> the number in the text area and<br> return the square root of it. <br><br>"+
-                "Memory Suite: <br>"+
-                "The MC Button: <br>"+
-                "The memory clear button clears the<br> first number saved in memory,<br> until all numbers are erased. <br><br>"+
-                "The MR Button: <br>"+
-                "The memory recall button recalls<br> the the last number saved in<br> memory, looping through them<br>"+
-                "all, and starts over. <br><br>"+
-                "The MS Button: <br>"+
-                "The memory store button saved the<br> current number in the text area into<br> memory. You can"+
-                "save up to 10<br> different numbers. <br><br>"+
-                "The Memory Add Button: <br>"+
-                "The memory add button will add<br> the number in the text area to the<br> last saved value in memory."+
-                "The text<br> area will update to show the result. <br><br>"+
-                "The Memory Subtract Button: <br>"+
-                "The memory subtract button will<br> subtract the number in the text area<br> to the last saved value "+
-                "in memory.<br> The text area will update to show<br> the result. <br><br>"+
+        String helpString = """
+                How to use the %s Calculator
+                
+                Step 1. Enter the first number.
+                Step 2. Enter an main basic operator (%s, %s, %s, %s). The operator will be visible alongside the first number.
+                Step 3. Enter the second number.
+                Step 4. Push the Equals (%s) button to see the result.
+                
+                Described below are how each button works from the top left down.
+                
+                MemoryStore: %s
+                Pressing this button will save the current value in the textPane to the calculators memory.
+                You can save up to %d different numbers in memory.
+                The memoryPosition starts at 0 and goes to 9. Once you save a number, the position will increment by 1.
+                While no memories are saved, the other memory buttons will be disabled. If all slots are full, you will begin to overwrite values starting at position 0.
+                
+                MemoryClear: %s
+                Pressing this button will clear the value in memory, starting from position 0, and increment over all positions until all memories are cleared.
+                
+                MemoryRecall: %s
+                Pressing this button will recall the first value saved in memory, starting from position 0, and increment over all values.
+                Once the last number is reached, it starts over.
+                
+                MemoryAdd: %s
+                Pressing this button will add the current value in the textPane to the previously saved value.
+                
+                MemorySubtract: %s
+                Pressing this button will subtract the current value in the textPane to the previously saved value.
+                
+                Delete: %s
+                Pressing this button will remove the right most value from the textPane until the entire number is gone.
+                It will only remove a single value, so 15.2 will become 15.2, allowing for exact replacement or deletion.
+                
+                ClearEntry: %s
+                Pressing this button will clear the value in textPane, the stored value, and any main basic operators pushed if still obtaining the first number.
+                If the second number is currently being obtained, clear the textPane and move the values position back to zero.
+                
+                Clear: %s
+                Pressing this button will clear the value presented in the textPane, replace it with 0, and clear all values, memory values, and copied values.
+                The 0 placed in the textPane is the indicator to state that everything is starting over.
+                
+                Negate: %s
+                Pressing this button will negate the current number. If the current number is already negative, it will make it positive.
+                
+                SquareRoot: %s
+                Pressing this button will take the current value in the textPane and return the square root of that value. It will return the result in decimal form. If there is no value available in the textPane it will return a message '%s'.
+                
+                Numbers: %s
+                Pressing a number button will place that value in the textPane.
+                
+                Divide: %s
+                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
+                
+                Percent: %s
+                Pressing this button will return the value in the textPane as a percentage, or a message '%s', if no value is available in the textPane.
+                Ex: 25 -> %s -> 0.25
+                
+                Multiply: %s
+                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
+                
+                Fraction: %s
+                Pressing this button will return the value in the textPane as a fraction, performing 1 divided by the value in the textPane. If no value is available, it will display a message '%s'.
+                Ex: 4 -> %s -> 0.25.
+                
+                Subtract: %s
+                Pressing this button will append the %s sign to the value in the the textPane, or enforce that the current number will be negative.
+                
+                Squared: %s
+                Pressing this button will return the value in the textPane squared, or a message '%s', if no value is available in the textPane.
+                
+                Dot: %s
+                Pressing this button will append the %s symbol to the value in the textPane. Once pressed the button will be disabled until an operator is pressed, unless the result includes the symbol. If the %s button is pressed or present in the textPane, this button will be disabled. Pressing the %s button once will append a zero before adding the dot.
+                
+                Addition: %s
+                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
+                
+                Equals: %s
+                Pressing this button will perform the operation chosen or nothing if no main, basic, operator was pressed.
+                """
+                .formatted(BASIC.getName(),
+                        calculator.getButtonAdd().getText(), calculator.getButtonSubtract().getText(), calculator.getButtonMultiply().getText(), calculator.getButtonDivide().getText(),
+                        calculator.getButtonEquals().getText(), // Step 4
+                        calculator.getButtonMemoryStore().getText(), calculator.getMemoryValues().length, // MemoryStore,
+                        calculator.getButtonMemoryClear().getText(),
+                        calculator.getButtonMemoryRecall().getText(),
+                        calculator.getButtonMemoryAddition().getText(),
+                        calculator.getButtonMemorySubtraction().getText(),
+                        calculator.getButtonDelete().getText(),
+                        calculator.getButtonClearEntry().getText(),
+                        calculator.getButtonClear().getText(),
+                        calculator.getButtonNegate().getText(),
+                        calculator.getButtonSqrt().getText(), "Not a Number", // SquareRoot
+                        "0, 1, 2, 3, 4, 5, 6, 7, 8, 9",
+                        calculator.getButtonDivide().getText(), calculator.getButtonDivide().getText(), "Enter a Number", // Divide
+                        calculator.getButtonPercent().getText(), "Enter a Number", calculator.getButtonPercent().getText(), // Percent
+                        calculator.getButtonMultiply().getText(), calculator.getButtonMultiply().getText(), "Enter a Number",
+                        calculator.getButtonFraction().getText(), "Enter a Number", calculator.getButtonFraction().getText(),
+                        calculator.getButtonSubtract().getText(), calculator.getButtonSubtract().getText(), "Enter a Number",
+                        calculator.getButtonSquared().getText(), "Enter a Number",
+                        calculator.getButtonDot().getText(), calculator.getButtonDot().getText(), calculator.getButtonDot().getName(), calculator.getButtonDot().getName(), // Dot
+                        calculator.getButtonAdd().getText(), calculator.getButtonAdd().getText(), "Enter a Number",
+                        calculator.getButtonEquals().getText());
 
-                "</html>";
         for(int i=0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++) {
             JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
             JMenuItem valueForThisMenuOption = null;
@@ -252,11 +311,6 @@ public class BasicPanel extends JPanel
                         LOGGER.debug("Found the current View Help option");
                         break;
                     }
-                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("About"))
-                    {
-                        LOGGER.warn("IMPLEMENT ABOUT MENU");
-                    }
                 }
                 // remove old option
                 menuOption.remove(valueForThisMenuOption);
@@ -265,20 +319,22 @@ public class BasicPanel extends JPanel
                 viewHelpItem.setFont(mainFont);
                 viewHelpItem.setName("View Help");
                 viewHelpItem.addActionListener(action -> {
-                    JLabel text = new JLabel(helpString);
+                    JTextArea message = new JTextArea(helpString,20,40);
+                    // make it look & act like a label
+                    message.setWrapStyleWord(true);
+                    message.setLineWrap(true);
+                    message.setEditable(false);
+                    message.setFocusable(false);
+                    message.setOpaque(false);
 
-                    JScrollPane scrollPane = new JScrollPane(text);
-                    scrollPane.setPreferredSize(new Dimension(150, 200));
-                    //TODO: rework to allow text to fit
-                    if (!UIManager.getSystemLookAndFeelClassName().equals("javax.swing.plaf.metal.MetalLookAndFeel"))
-                    {
-                        scrollPane.setSize(new Dimension(250, 200));
-                        SwingUtilities.updateComponentTreeUI(calculator);
-                    }
-                    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                    JScrollPane scrollPane =  new JScrollPane(message,
+                            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+                    );
+                    scrollPane.setSize(new Dimension(400, 300));
+                    SwingUtilities.updateComponentTreeUI(calculator);
                     JOptionPane.showMessageDialog(calculator,
-                            scrollPane, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+                            scrollPane, "Viewing " + BASIC.getName() +" Calculator Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
             }
@@ -354,15 +410,20 @@ public class BasicPanel extends JPanel
         LOGGER.info("button: {}", actionEvent.getActionCommand());
         if (StringUtils.isNotBlank(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace())) // if there is a number in the textArea
         {
-            if (calculator.getMemoryPosition() == 10) // reset to 0
-            { calculator.setMemoryPosition(0); }
-            calculator.getMemoryValues()[calculator.getMemoryPosition()] = calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace();
-            calculator.setMemoryPosition(calculator.getMemoryPosition() + 1);
-            calculator.getButtonMemoryRecall().setEnabled(true);
-            calculator.getButtonMemoryClear().setEnabled(true);
-            calculator.getButtonMemoryAddition().setEnabled(true);
-            calculator.getButtonMemorySubtraction().setEnabled(true);
-            calculator.confirm(calculator.getValues()[calculator.getValuesPosition()] + " is stored in memory at position: " + (calculator.getMemoryPosition()-1));
+            if (calculator.textPaneContainsBadText())
+            { calculator.confirm("Not saving " + calculator.getTextPaneWithoutNewLineCharacters() + " in Memory"); }
+            else
+            {
+                if (calculator.getMemoryPosition() == 10) // reset to 0
+                { calculator.setMemoryPosition(0); }
+                calculator.getMemoryValues()[calculator.getMemoryPosition()] = calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace();
+                calculator.setMemoryPosition(calculator.getMemoryPosition() + 1);
+                calculator.getButtonMemoryRecall().setEnabled(true);
+                calculator.getButtonMemoryClear().setEnabled(true);
+                calculator.getButtonMemoryAddition().setEnabled(true);
+                calculator.getButtonMemorySubtraction().setEnabled(true);
+                calculator.confirm(calculator.getMemoryValues()[calculator.getMemoryPosition()] + " is stored in memory at position: " + (calculator.getMemoryPosition()-1));
+            }
         }
         else
         { calculator.confirm("No number added to memory. Blank entry"); }
@@ -376,7 +437,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("MemoryRecallButtonHandler started");
         LOGGER.info("button: {}", actionEvent.getActionCommand());
         if (calculator.getMemoryRecallPosition() == 10 || StringUtils.isBlank(calculator.getMemoryValues()[calculator.getMemoryRecallPosition()]))
-        { calculator.setMemoryRecallPosition(0); }
+        { calculator.setMemoryRecallPosition(calculator.getLowestMemoryPosition()); }
         calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getMemoryValues()[calculator.getMemoryRecallPosition()]);
         calculator.setMemoryRecallPosition(calculator.getMemoryRecallPosition() + 1);
         calculator.confirm("Recalling number in memory: " + calculator.getMemoryValues()[(calculator.getMemoryRecallPosition()-1)] + " at position: " + (calculator.getMemoryRecallPosition()-1));
@@ -389,13 +450,14 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("MemoryClearButtonHandler started");
         LOGGER.info("button: {}", actionEvent.getActionCommand());
-        if (calculator.getMemoryPosition() == 10 || StringUtils.isBlank(calculator.getMemoryValues()[calculator.getMemoryPosition()]))
+        if (calculator.getMemoryPosition() == 10)
         {
             LOGGER.debug("Resetting memoryPosition to 0");
             calculator.setMemoryPosition(0);
         }
         if (!calculator.isMemoryValuesEmpty())
         {
+            calculator.setMemoryPosition(calculator.getLowestMemoryPosition());
             LOGGER.info("Clearing memoryValue["+calculator.getMemoryPosition()+"] = " + calculator.getMemoryValues()[calculator.getMemoryPosition()]);
             calculator.getMemoryValues()[calculator.getMemoryPosition()] = "";
             calculator.setMemoryRecallPosition(calculator.getMemoryRecallPosition() + 1);
@@ -409,63 +471,68 @@ public class BasicPanel extends JPanel
                 calculator.getButtonMemoryAddition().setEnabled(false);
                 calculator.getButtonMemorySubtraction().setEnabled(false);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters()+"0");
-                //calculator.setTextAreaValue(new StringBuffer(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
                 calculator.confirm("MemorySuite is blank");
-                return;
+                calculator.confirm("No saved values");
             }
-            // MemorySuite now could potentially have gaps in front
-            // {"5", "7", "", ""...} ... {"", "7", "", ""...}
-            // If the first is a gap, then we have 1 too many gaps
-            // TODO: fix for gap being in the middle of the memory calculator.getValues()
-            if(calculator.getMemoryValues()[0].isEmpty())
-            {
-                // Determine where the first number is that is not a gap
-                int alpha = 0;
-                for(int i = 0; i < 9; i++)
-                {
-                    if (!calculator.getMemoryValues()[i].isEmpty())
-                    {
-                        alpha = i;
-                        calculator.getTextPane().setText(calculator.addNewLineCharacters()+calculator.getMemoryValues()[alpha]);
-                        //calculator.setTextAreaValue(new StringBuffer(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
-                        break;
-                    }
-                    else
-                    {
-                        calculator.getTextPane().setText(calculator.addNewLineCharacters()+"0");
-                    }
-                }
-                // Move the first found value to the first position
-                // and so on until the end
-                String[] newMemoryValues = new String[10];
-                for(int i = 0; i <= alpha; i++)
-                {
-                    if (calculator.getMemoryValues()[alpha].isEmpty()) break;
-                    newMemoryValues[i] = calculator.getMemoryValues()[alpha];
-                    alpha++;
-                    if (alpha == calculator.getMemoryValues().length) break;
-                }
-                //setMemoryValues(newMemoryValues);
-                calculator.setMemoryPosition(alpha); // next blank spot
-            }
+            calculator.confirm("Reset memory at position: " + (calculator.getMemoryPosition()-1) + ".");
+//            // MemorySuite now could potentially have gaps in front
+//            // {"5", "7", "", ""...} ... {"", "7", "", ""...}
+//            // If the first is a gap, then we have 1 too many gaps
+//            // TODO: fix for gap being in the middle of the memory calculator.getValues()
+//            if(calculator.getMemoryValues()[0].isEmpty())
+//            {
+//                // Determine where the first number is that is not a gap
+//                int alpha = 0;
+//                for(int i = 0; i < 9; i++)
+//                {
+//                    if (!calculator.getMemoryValues()[i].isEmpty())
+//                    {
+//                        alpha = i;
+//                        calculator.getTextPane().setText(calculator.addNewLineCharacters()+calculator.getMemoryValues()[alpha]);
+//                        //calculator.setTextAreaValue(new StringBuffer(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
+//                        break;
+//                    }
+//                    else
+//                    {
+//                        calculator.getTextPane().setText(calculator.addNewLineCharacters()+"0");
+//                    }
+//                }
+//                // Move the first found value to the first position
+//                // and so on until the end
+//                String[] newMemoryValues = new String[10];
+//                for(int i = 0; i <= alpha; i++)
+//                {
+//                    if (calculator.getMemoryValues()[alpha].isEmpty()) break;
+//                    newMemoryValues[i] = calculator.getMemoryValues()[alpha];
+//                    alpha++;
+//                    if (alpha == calculator.getMemoryValues().length) break;
+//                }
+//                //setMemoryValues(newMemoryValues);
+//                calculator.setMemoryPosition(alpha); // next blank spot
+//            }
         }
-        calculator.confirm("Reset memory at position: " + (calculator.getMemoryPosition()-1) + ".");
+//        else
+//        {
+//            LOGGER.debug("No more values stored in Memory");
+//            calculator.getButtonMemoryRecall().setEnabled(false);
+//            calculator.getButtonMemoryClear().setEnabled(false);
+//            calculator.getButtonMemoryAddition().setEnabled(false);
+//            calculator.getButtonMemorySubtraction().setEnabled(false);
+//        }
     }
     /**
      * The actions to perform when MemoryAdd is clicked
+     * Will add the current number in the textPane to the previously
+     * save value in Memory. Finally displays that result in the
+     * textPane as confirmation.
      * @param actionEvent the click action
      */
     public void performMemoryAddActions(ActionEvent actionEvent)
     {
         LOGGER.info("MemoryAddButtonHandler class started");
-        LOGGER.info("button: " + actionEvent.getActionCommand()); // print out button confirmation
-        // if there is a number in the textArea, and we have A number stored in memory, add the
-        // number in the textArea to the value in memory. value in memory should be the last number
-        // added to memory
+        LOGGER.info("button: " + actionEvent.getActionCommand());
         if (calculator.isMemoryValuesEmpty())
-        {
-            calculator.confirm("No memories saved. Not adding.");
-        }
+        { calculator.confirm("No memories saved. Not adding."); }
         else if (StringUtils.isNotBlank(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace())
                 && StringUtils.isNotBlank(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]))
         {
@@ -475,23 +542,13 @@ public class BasicPanel extends JPanel
                     + Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]); // create result forced double
             LOGGER.info(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace() + " + " + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] + " = " + result);
             calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = Double.toString(result);
-            if (Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]) % 1 == 0 && calculator.isPositiveNumber(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]))
-            {
-                // whole positive number
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.clearZeroesAndDecimalAtEnd(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-            }
-            else if (Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]) % 1 == 0 && calculator.isNegativeNumber(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]))
-            {
-                // whole negative number
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.convertToPositive(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.clearZeroesAndDecimalAtEnd(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.convertToNegative(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-            }
-            // update result in text area
+            if (Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]) % 1 == 0)
+            { calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.clearZeroesAndDecimalAtEnd(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]); }
             calculator.getTextPane().setText(calculator.addNewLineCharacters()+calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-            //calculator.setTextAreaValue(new StringBuffer(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
             calculator.confirm("The new value in memory at position " + (calculator.getMemoryPosition()-1) + " is " + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
         }
+        else
+        { calculator.confirm("No number in textPane to add to memory"); }
     }
     /**
      * The actions to perform when MemorySubtraction is clicked
@@ -499,36 +556,26 @@ public class BasicPanel extends JPanel
      */
     public void performMemorySubtractionActions(ActionEvent actionEvent)
     {
-        LOGGER.info("MemorySubButtonHandler class started");
-        LOGGER.info("button: {}", actionEvent.getActionCommand()); // print out button confirmation
+        LOGGER.info("MemorySubtractButtonHandler class started");
+        LOGGER.info("button: " + actionEvent.getActionCommand());
         if (calculator.isMemoryValuesEmpty())
         { calculator.confirm("No memories saved. Not subtracting."); }
         else if (StringUtils.isNotBlank(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace())
                 && StringUtils.isNotBlank(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]))
         {
             LOGGER.info("textArea: '" + calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace() + "'");
-            LOGGER.info("memoryValues["+(calculator.getMemoryPosition()-1)+": '" + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] + "'");
+            LOGGER.info("memoryValues["+(calculator.getMemoryPosition()-1)+"]: '" + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] + "'");
             double result = Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)])
-                    - Double.parseDouble(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace()); // create result forced double
-            LOGGER.info(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] + " - " + calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace() + " = " + result);
+                    - Double.parseDouble(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+            LOGGER.info(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace() + " - " + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] + " = " + result);
             calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = Double.toString(result);
-            if (Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]) % 1 == 0 && calculator.isPositiveNumber(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]))
-            {
-                // whole positive number
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.clearZeroesAndDecimalAtEnd(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-            }
-            else if (Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]) % 1 == 0 && calculator.isNegativeNumber(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]))
-            {
-                // whole negative number
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.convertToPositive(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.clearZeroesAndDecimalAtEnd(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-                calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.convertToNegative(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-            }
-            // update result in text area
+            if (Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]) % 1 == 0)
+            { calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)] = calculator.clearZeroesAndDecimalAtEnd(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]); }
             calculator.getTextPane().setText(calculator.addNewLineCharacters()+calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
-            //calculator.setTextAreaValue(new StringBuffer(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
             calculator.confirm("The new value in memory at position " + (calculator.getMemoryPosition()-1) + " is " + calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
         }
+        else
+        { calculator.confirm("No number in textPane to subtract to memory"); }
     }
 
     /**
@@ -554,220 +601,31 @@ public class BasicPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("button: {}", buttonChoice); // print out button confirmation
         if (calculator.getValues()[1].isEmpty())
-        { calculator.setValuesPosition(0); } // assume they could have pressed an operator
+        { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
 
         LOGGER.info("calculator.getValues()["+calculator.getValuesPosition()+"]: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
-        LOGGER.info("textArea: " + calculator.getTextPaneWithoutNewLineCharacters());
-        calculator.setNumberNegative(calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]));
-        // this check has to happen
-        calculator.setDotPressed(calculator.isDecimal(calculator.getTextPane().getText()));
-        //calculator.getTextArea().setText(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace());
-        //calculator.updateTextAreaValueFromTextArea();
+        LOGGER.info("textPane: " + calculator.getTextPaneWithoutNewLineCharacters());
         if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing())
         {
-            if (!calculator.isNumberNegative())
-            {
-                // if no operator has been pushed; number is positive; number is whole
-                if (!calculator.isDotPressed())
-                {
-                    if (calculator.getTextPane().getText().length() == 1)
-                    {
-                        calculator.getTextPane().setText("");
-                        calculator.getValues()[calculator.getValuesPosition()] = "";
-                    }
-                    else if (calculator.getTextPane().getText().length() >= 2)
-                    {
-                        calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1));
-                        calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-                    }
-                }
-                // if no operator has been pushed; number is positive; number is decimal
-                else
-                {
-                    if (calculator.getTextPaneWithoutNewLineCharacters().length() > 1) // ex: 3. or 3.2 or 0.5 or 3.25 or 0.50 or 5.02 or 78.9
-                    { calculator.getTextPane().setText(calculator.addNewLineCharacters() +
-                            calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1)); }
-                    else // 3
-                    {
-                        calculator.getTextPane().setText("");
-                        calculator.getValues()[calculator.getValuesPosition()] = "";
-                    }
-                    if (!calculator.getTextPaneWithoutNewLineCharacters().contains("."))
-                    {
-                        calculator.setDotPressed(false);
-                        calculator.getButtonDot().setEnabled(true);
-                    }
-                    else
-                    {
-                        calculator.setDotPressed(true);
-                        calculator.getButtonDot().setEnabled(false);
-                    }
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-                }
-            }
-            else // if (calculator.isNumberNegative())
-            {
-                // if no operator has been pushed; number is negative; number is whole
-                if (!calculator.isDotPressed())
-                {
-                    if (calculator.getTextPane().getText().length() == 2)
-                    { // ex: -3
-                        //calculator.setTextAreaValue(new StringBuffer());
-                        calculator.getTextPane().setText(calculator.getTextPane().getText());
-                        calculator.getValues()[calculator.getValuesPosition()] = "";
-                    }
-                    else if (calculator.getTextPane().getText().length() >= 3)
-                    { // ex: -32 or + 6-
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString())));
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length())));
-                        calculator.getTextPane().setText(calculator.getTextPane().getText() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextPane().getText();
-                    }
-                    LOGGER.info("output: " + calculator.getTextPane().getText());
-                }
-                // if no operator has been pushed; number is negative; number is decimal
-                else //if (calculator.isDotPressed())
-                {
-                    if (calculator.getTextPane().getText().length() == 4) { // -3.2
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString()))); // 3.2
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, 1))); // 3
-                        calculator.setDotPressed(false);
-                        calculator.getTextPane().setText(calculator.getTextPane().getText() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextPane().getText();
-                    }
-                    else if (calculator.getTextPane().getText().length() > 4)
-                    { // ex: -3.25 or -0.00
-                        //calculator.getTextArea().getText().append(calculator.convertToPositive(calculator.getTextArea().getText().toString())); // 3.00 or 0.00
-                        //.getTextArea().getText().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length())); // 3.0 or 0.0
-                        //calculator.getTextArea().getText().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextArea().getText().toString())); // 3 or 0
-                        calculator.getTextPane().setText(calculator.getTextPane().getText() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextPane().getText();
-                    }
-                    LOGGER.info("output: " + calculator.getTextPane().getText());
-                }
-            }
-
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1));
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
         }
         else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
         {
-            if (!calculator.isNumberNegative())
+            if (calculator.getValuesPosition() == 0)
             {
-                // if an operator has been pushed; number is positive; number is whole
-                if (!calculator.isDotPressed())
-                {
-                    if (calculator.getTextPane().getText().length() == 1)
-                    {
-                        // ex: 5
-                        //calculator.setTextAreaValue(new StringBuffer());
-                    }
-                    else if (calculator.getTextPane().getText().length() == 2)
-                    {
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1 )));
-                    }
-                    else if (calculator.getTextPane().getText().length() >= 2)
-                    { // ex: 56 or + 6-
-                        if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
-                        {
-                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
-                            calculator.setAdding(false);
-                            calculator.setSubtracting(false);
-                            calculator.setMultiplying(false);
-                            calculator.setDividing(false);
-                        }
-                        else
-                        {
-                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length()-1)));
-                        }
-                    }
-                    LOGGER.info("output: " + calculator.getTextPane().getText());
-                    calculator.getTextPane().setText("\n" + calculator.getTextPane().getText());
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPane().getText();
-                    calculator.confirm("Pressed: " + buttonChoice);
-                }
-                // if an operator has been pushed; number is positive; number is decimal
-                else //if (isDotPressed)
-                {
-                    if (calculator.getTextPane().getText().length() == 2)
-                    {
-                        // ex: 3.
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1 )));
-                    }
-                    else if (calculator.getTextPane().getText().length() == 3)
-                    {
-                        // ex: 3.2 0.0
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 2 ))); // 3 or 0
-                        calculator.setDotPressed(false);
-                    }
-                    else if (calculator.getTextPane().getText().length() > 3)
-                    { // ex: 3.25 or 0.50  or + 3.25-
-                        if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
-                        {
-                            //.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
-                        }
-                        else {
-                            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length() - 1 )));
-                            //calculator.getTextArea().getText().append(calculator.clearZeroesAndDecimalAtEnd(calculator.getTextArea().getText().toString()));
-                        }
-                    }
-                    LOGGER.info("output: " + calculator.getTextPane().getText());
-                    calculator.getTextPane().setText("\n"+ calculator.getTextPane().getText());
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPane().getText();
-                    calculator.confirm("Pressed: " + buttonChoice);
-                }
+                if (calculator.isAdding()) calculator.setAdding(false);
+                if (calculator.isSubtracting()) calculator.setSubtracting(false);
+                if (calculator.isMultiplying()) calculator.setMultiplying(false);
+                if (calculator.isDividing()) calculator.setDividing(false);
             }
-            else //if (isNumberNegative)
-            {
-                // if an operator has been pushed; number is negative; number is whole
-                if (!calculator.isDotPressed())
-                {
-                    if (calculator.getTextPane().getText().length() == 2) { // ex: -3
-                        //calculator.setTextAreaValue(new StringBuffer());
-                        calculator.getTextPane().setText(calculator.getTextPane().getText());
-                        calculator.getValues()[calculator.getValuesPosition()] = "";
-                    }
-                    else if (calculator.getTextPane().getText().length() >= 3)
-                    {
-                        // ex: -32 or + 6-
-                        if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()) {
-                            //calculator.getTextArea().getText().append(calculator.getValues()[calculator.getValuesPosition()]);
-                        }
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString())));
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length())));
-                        calculator.getTextPane().setText("\n" + calculator.getTextPane().getText() + "-");
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextPane().getText();
-                    }
-                    LOGGER.info("textarea: " + calculator.getTextPane().getText());
-                    calculator.confirm("Pressed: " + buttonChoice);
-                }
-                // if an operator has been pushed; number is negative; number is decimal
-                else //if (calculator.isDotPressed())
-                {
-                    if (calculator.getTextPane().getText().length() == 4) { // -3.2
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString()))); // 3.2 or 0.0
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, 1))); // 3 or 0
-                        calculator.setDotPressed(false);
-                        calculator.getTextPane().setText(calculator.getTextPane().getText() + "-"); // 3- or 0-
-                        calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextPane().getText(); // -3 or -0
-                    }
-                    else if (calculator.getTextPane().getText().length() > 4) { // ex: -3.25  or -0.00
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getTextArea().getText().toString()))); // 3.25 or 0.00
-                        //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(0, calculator.getTextArea().getText().length()))); // 3.2 or 0.0
-                        calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getTextPane().getText());
-                        LOGGER.info("textarea: " + calculator.getTextPane().getText());
-                        if (calculator.getTextPane().getText().equals("0"))
-                        {
-                            calculator.getTextPane().setText(calculator.getTextPane().getText());
-                            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPane().getText();
-                        }
-                        else {
-                            calculator.getTextPane().setText(calculator.getTextPane().getText() + "-");
-                            calculator.getValues()[calculator.getValuesPosition()] = "-" + calculator.getTextPane().getText();
-                        }
-                    }
-                    LOGGER.info("textarea: " + calculator.getTextPane().getText());
-                }
-            }
-            calculator.resetBasicOperators(false);
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1).trim());
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
+        }
+        if (!calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]))
+        {
+            calculator.setDotPressed(false);
+            calculator.getButtonDot().setEnabled(true);
         }
         LOGGER.info("DeleteButtonHandler() finished");
         calculator.confirm("Pressed " + buttonChoice);
@@ -798,6 +656,7 @@ public class BasicPanel extends JPanel
         if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
         {
             LOGGER.info("Squared button finished");
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
             calculator.confirm("No number to square");
         }
         else
@@ -834,7 +693,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
         calculator.getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonClearEntry().setEnabled(true);
-        calculator.getButtonClearEntry().setName("CE");
+        calculator.getButtonClearEntry().setName("ClearEntry");
         calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
         LOGGER.info("Clear Entry button configured");
     }
@@ -848,23 +707,20 @@ public class BasicPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("button: {}", buttonChoice); // print out button confirmation
         calculator.getTextPane().setText("");
-        //calculator.updateTextAreaValueFromTextArea();
-        if (calculator.getValues()[1].isEmpty()) { // if temp[1] is empty, we know we are at temp[0]
+        if (calculator.getValuesPosition() == 0)
+        {
             calculator.getValues()[0] = "";
-            calculator.setAdding(false);
-            calculator.setSubtracting(false);
-            calculator.setMultiplying(false);
-            calculator.setDividing(false);
-            calculator.setValuesPosition(0);
+            calculator.resetBasicOperators(false);
             calculator.setFirstNumber(true);
         } 
-        else {
+        else
+        {
             calculator.getValues()[1] = "";
+            calculator.setValuesPosition(0);
         }
         calculator.setDotPressed(false);
         calculator.getButtonDot().setEnabled(true);
         calculator.setNumberNegative(false);
-        //calculator.getTextArea().getText().append(calculator.getTextArea().getText());
         LOGGER.info("ClearEntryButtonHandler() finished");
         calculator.confirm("Pressed: " + buttonChoice);
     }
@@ -878,7 +734,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonClear().setPreferredSize(new Dimension(35, 35));
         calculator.getButtonClear().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonClear().setEnabled(true);
-        calculator.getButtonClear().setName("C");
+        calculator.getButtonClear().setName("Clear");
         calculator.getButtonClear().addActionListener(this::performClearButtonActions);
         LOGGER.info("Clear button configured");
     }
@@ -911,6 +767,8 @@ public class BasicPanel extends JPanel
         calculator.setNumberNegative(false);
         calculator.getButtonMemoryRecall().setEnabled(false);
         calculator.getButtonMemoryClear().setEnabled(false);
+        calculator.getButtonMemoryAddition().setEnabled(false);
+        calculator.getButtonMemorySubtraction().setEnabled(false);
         calculator.getButtonDot().setEnabled(true);
         LOGGER.info("ClearButtonHandler() finished");
         calculator.confirm("Pressed: " + buttonChoice);
@@ -925,6 +783,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonNegate().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonNegate().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonNegate().setEnabled(true);
+        calculator.getButtonNegate().setName("Negate");
         calculator.getButtonNegate().addActionListener(this::performNegateButtonActions);
     }
     /**
@@ -935,10 +794,16 @@ public class BasicPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Performing {} Button actions", buttonChoice);
-        if (calculator.getValues()[calculator.getValuesPosition()].contains("E"))
-        { calculator.confirm("Number too big!"); }
-        else if (calculator.getValues()[calculator.getValuesPosition()].isEmpty())
-        { calculator.confirm("No value to negate"); }
+        if (calculator.getTextPaneWithoutNewLineCharacters().equals("E"))
+        {
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Number too big!");
+            calculator.confirm("Number too big!");
+        }
+        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+            calculator.confirm("No value to negate");
+        }
         else
         {
             if (calculator.isNumberNegative())
@@ -977,17 +842,23 @@ public class BasicPanel extends JPanel
         LOGGER.info("SquareRoot ButtonHandler class started");
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("button: " + buttonChoice);
-        String errorStringNaN = "Not a Number";
         LOGGER.debug("text: " + calculator.getTextPaneWithoutNewLineCharacters());
-        if (calculator.getValues()[0].contains("E"))
-        { calculator.confirm("Cannot perform square root operation. Number too big!"); }
+        if (calculator.textPaneContainsBadText())
+        {
+            calculator.getTextPane().setText("");
+            calculator.confirm("Showing bad text. Reset textPane");
+        }
         else
         {
-            if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty() || calculator.isNegativeNumber(calculator.getTextPaneWithoutNewLineCharacters()))
+            if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
             {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + errorStringNaN);
-                //calculator.setTextAreaValue(new StringBuffer().append("\n").append(errorStringNaN));
-                calculator.confirm("Cannot perform square root operation on blank/negative number");
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Not a Number");
+                calculator.confirm("Cannot perform square root operation when textPane blank");
+            }
+            else if (calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]))
+            {
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "E");
+                calculator.confirm("Cannot perform square root operation on negative number");
             }
             else
             {
@@ -1030,48 +901,24 @@ public class BasicPanel extends JPanel
         LOGGER.info("Performing {} button{} actions...", calculator.getCurrentPanel().getName(), buttonChoice);
         if (!calculator.isFirstNumber()) // second number
         {
-            if (!calculator.isDotPressed())
+            calculator.getTextPane().setText("");
+            calculator.setFirstNumber(true);
+            if (!calculator.isNegating()) calculator.setNumberNegative(false);
+            if (calculator.isDotPressed())
             {
-                calculator.getTextPane().setText("");
-                //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText()));
-                if (!calculator.isFirstNumber()) {
-                    calculator.setFirstNumber(true);
-                    calculator.setNumberNegative(false);
-                }
-                else calculator.setDotPressed(true);
+                calculator.setDotPressed(false);
                 calculator.getButtonDot().setEnabled(true);
             }
         }
         calculator.performInitialChecks();
-        if (calculator.isPositiveNumber(buttonChoice) && !calculator.isDotPressed())
+        if (!calculator.isDotPressed())
         {
-            LOGGER.info("positive number & dot button was not pushed");
-            if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]))
-            {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + buttonChoice);
-                calculator.getValues()[calculator.getValuesPosition()] = buttonChoice;
-            }
-            else
-            {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
-            }
-        }
-        else if (calculator.isNumberNegative() && !calculator.isDotPressed())
-        { // logic for negative numbers
-            LOGGER.info("negative number & dot button had not been pushed");
-            calculator.setTextPaneToValuesAtPosition(buttonChoice);
-        }
-        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]))
-        {
-            LOGGER.info("positive number & dot button had been pushed");
-            //calculator.performLogicForDotButtonPressed(buttonChoice);
-            performDot(buttonChoice);
+            LOGGER.debug("dot button was not pushed");
+            calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
         }
         else
         {
             LOGGER.info("dot button was pushed");
-            //calculator.performLogicForDotButtonPressed(buttonChoice);
             performDot(buttonChoice);
         }
         calculator.confirm("Pressed " + buttonChoice);
@@ -1086,7 +933,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
         calculator.getButtonDot().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonDot().setEnabled(true);
-        calculator.getButtonDot().setName(".");
+        calculator.getButtonDot().setName("Dot");
         calculator.getButtonDot().addActionListener(this::performDotButtonActions);
         LOGGER.info("Dot button configured");
     }
@@ -1099,7 +946,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Starting Dot button actions");
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (calculator.getValues()[0].contains("E")) { calculator.confirm("Cannot press dot button. Number too big!"); }
+        if (calculator.textPaneContainsBadText()) { calculator.confirm("Cannot press dot button. Number too big!"); }
         else
         {
             LOGGER.info("Basic dot operations");
@@ -1113,44 +960,17 @@ public class BasicPanel extends JPanel
      */
     private void performDot(String buttonChoice)
     {
-        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
-        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
-
-        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
+        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]))
         {
-            // dot pushed with nothing in textArea
             calculator.getValues()[calculator.getValuesPosition()] = "0.";
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0.");
         }
-        else if (StringUtils.isNotBlank(calculator.getValues()[calculator.getValuesPosition()]) && calculator.isDotPressed())
+        else
         {
-            // pressed dot and then number ex: 0.5
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
-            //calculator.getTextArea().getText().append(buttonChoice);
-            String currentValue = calculator.getValues()[calculator.getValuesPosition()];
-            calculator.getValues()[calculator.getValuesPosition()] = currentValue + buttonChoice;
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+            calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
         }
-        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
-        {
-            // number and then dot is pushed ex: 5 -> .5
-            //StringBuffer lodSB = new StringBuffer(textareaValue);
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
-            //calculator.setValuesToTextAreaValue();
-            //calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
-        }
-        else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
-        {
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
-            //calculator.getTextArea().getText().append(buttonChoice);
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextArea().getText().toString())));
-            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-        }
+        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
+        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
     /**
@@ -1162,6 +982,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonAdd().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonAdd().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonAdd().setEnabled(true);
+        calculator.getButtonAdd().setName("Addition");
         calculator.getButtonAdd().addActionListener(this::performAdditionButtonActions);
         LOGGER.info("Add button configured");
     }
@@ -1173,29 +994,16 @@ public class BasicPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Performing {} Button actions", buttonChoice);
-        if (calculator.getValues()[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform addition. Number too big!";
-            calculator.confirm(errorMsg);
-        }
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform addition"); }
         else
         {
-            if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
-                    && StringUtils.isNotBlank(calculator.getTextPane().getText()) && !calculator.textPaneContainsBadText())
+            if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
+                    && StringUtils.isNotBlank(calculator.getTextPane().getText()))
             {
-                if (calculator.isNumberNegative())
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + "-" + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextPaneWithoutAnyOperator();
-                }
-                else
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
-                }
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
                 calculator.setAdding(true); // sets logic for arithmetic
                 calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
             else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty()) // 5 + 3 + ...
@@ -1203,44 +1011,28 @@ public class BasicPanel extends JPanel
                 addition();
                 calculator.resetOperator(calculator.isAdding());
                 calculator.setAdding(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + " " + calculator.getTextPane().getText() + buttonChoice);
-                //if (calculatorType == BASIC) calculator.getTextArea().setText(addNewLineCharacters(1) + buttonChoice + " " + textAreaValue);
-                //else if (calculatorType == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + buttonChoice + " " + textAreaValue);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
             {
                 subtract();
                 calculator.setSubtracting(calculator.resetOperator(calculator.isSubtracting()));
                 calculator.setAdding(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + " " + calculator.getTextPane().getText() + buttonChoice);
-                //if (calculatorType == BASIC) textArea.setText(addNewLineCharacters(1) + buttonChoice + " " + textAreaValue);
-                //else if (calculatorType == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + buttonChoice + " " + textAreaValue);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
             {
                 multiply();
                 calculator.setMultiplying(calculator.resetOperator(calculator.isMultiplying()));
                 calculator.setAdding(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + " " + calculator.getTextPane().getText() + buttonChoice);
-                //if (calculatorType == BASIC) textArea.setText(addNewLineCharacters(1) + buttonChoice + " " + textAreaValue);
-                //else if (calculatorType == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + buttonChoice + " " + textAreaValue);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty())
             {
                 divide();
                 calculator.setDividing(calculator.resetOperator(calculator.isDividing()));
                 calculator.setAdding(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + " " + calculator.getTextPane().getText() + buttonChoice);
-                //if (calculatorType == BASIC) textArea.setText(addNewLineCharacters(1) + buttonChoice + " " + textAreaValue);
-                //else if (calculatorType == PROGRAMMER) textArea.setText(addNewLineCharacters(3) + buttonChoice + " " + textAreaValue);
-            }
-            else if (calculator.textPaneContainsBadText())
-            {
-                calculator.getTextPane().setText(calculator.getValues()[0] + " " + buttonChoice); // "userInput +" // calculator.getValues()[valuesPosition]
-                calculator.setAdding(true); // sets logic for arithmetic
-                calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
-                calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
             {
@@ -1249,9 +1041,6 @@ public class BasicPanel extends JPanel
             }
             else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
             { LOGGER.error("Already chose an operator. Choose another number."); }
-            calculator.getButtonDot().setEnabled(true);
-            calculator.setDotPressed(false);
-            calculator.setNumberNegative(false);
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
@@ -1268,26 +1057,18 @@ public class BasicPanel extends JPanel
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
         double result = Double.parseDouble(calculator.getValues()[0]) + Double.parseDouble(calculator.getValues()[1]); // create result forced double
         LOGGER.info(calculator.getValues()[0] + " + " + calculator.getValues()[1] + " = " + result);
-        //calculator.getValues()[0] = Double.toString(result);
-        if (calculator.isPositiveNumber(String.valueOf(result)) && result % 1 == 0)
+        if (result % 1 == 0)
         {
-            LOGGER.info("We have a whole positive number");
+            LOGGER.info("We have a whole number");
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
             calculator.setDotPressed(false);
             calculator.getButtonDot().setEnabled(true);
         }
-        else if (calculator.isNegativeNumber(String.valueOf(result)) && result % 1 == 0)
-        {
-            LOGGER.info("We have a whole negative number");
-            String positive = calculator.clearZeroesAndDecimalAtEnd(calculator.convertToPositive(String.valueOf(result)));
-            calculator.getValues()[0] = calculator.convertToNegative(positive);
-            calculator.setDotPressed(false);
-            calculator.getButtonDot().setEnabled(true);
-            calculator.setNumberNegative(true);
-        }
         else
-        { // if double == double, keep decimal and number afterwards
+        {
             LOGGER.info("We have a decimal");
+            calculator.setDotPressed(true);
+            calculator.getButtonDot().setEnabled(false);
             calculator.getValues()[0] = String.valueOf(result);
         }
     }
@@ -1301,6 +1082,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonSubtract().setEnabled(true);
+        calculator.getButtonSubtract().setName("Subtract");
         calculator.getButtonSubtract().addActionListener(this::performSubtractionButtonActions);
         LOGGER.info("Subtract button configured");
     }
@@ -1312,75 +1094,60 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("Performing Subtract Button actions");
         String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.getValues()[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform subtraction. Number too big!";
-            calculator.confirm(errorMsg);
-        }
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform subtraction. Number too big!"); }
         else
         {
             LOGGER.info("button: " + buttonChoice);
-            if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
-                    && StringUtils.isNotBlank(calculator.getTextPane().getText()) && !calculator.textPaneContainsBadText())
+            if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
+                    && StringUtils.isNotBlank(calculator.getTextPane().getText()))
             {
-                if (calculator.isNumberNegative())
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + "-" + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextPaneWithoutAnyOperator();
-                }
-                else
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
-                }
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
                 calculator.setSubtracting(true); // sets logic for arithmetic
                 calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
             else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty()) {
                 addition();
                 calculator.setAdding(calculator.resetOperator(calculator.isAdding()));
                 calculator.setSubtracting(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextPane().getText());
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty()) {
                 subtract();
                 calculator.resetOperator(calculator.isSubtracting());
                 calculator.setSubtracting(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextPane().getText());
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty()) {
                 multiply();
                 calculator.resetOperator(calculator.isMultiplying());
                 calculator.setSubtracting(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextPane().getText());
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty()) {
                 divide();
                 calculator.resetOperator(calculator.isDividing());
                 calculator.setSubtracting(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + buttonChoice + " " + calculator.getTextPane().getText());
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
-            else if (calculator.textPaneContainsBadText()) {
-                calculator.getTextPane().setText(buttonChoice + " " +  calculator.getValues()[0]); // "userInput +" // temp[valuesPosition]
-                calculator.setSubtracting(true); // sets logic for arithmetic
-                calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
-                calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
+            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
+            {
+                LOGGER.info("The user pushed subtract but there is no number.");
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + " " + buttonChoice);
+                //calculator.setSubtracting(true);
+                calculator.setNegating(true);
             }
-            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator())) {
-                LOGGER.warn("The user pushed subtract but there is no number.");
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
-            }
-            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()) {
-                LOGGER.info("already chose an operator. next number is negative...");
-                // TODO: 5 + -4 = 1 ... answer is coming back 10! Fix
+            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()
+                    && !calculator.isNegating())
+            {
+                LOGGER.info("operator already selected. then clicked subtract button. second number will be negated");
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + buttonChoice);
                 calculator.setNegating(true);
             }
             calculator.getButtonDot().setEnabled(true);
             calculator.setDotPressed(false);
-            calculator.setNumberNegative(false);
+            if (!calculator.isNegating()) calculator.setNumberNegative(false);
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
@@ -1391,35 +1158,22 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
-        double result = Double.parseDouble(calculator.getValues()[0]) - Double.parseDouble(calculator.getValues()[1]); // create result forced double
+        double result = Double.parseDouble(calculator.getValues()[0])
+                - Double.parseDouble(calculator.getValues()[1]); // create result forced double
         LOGGER.info(calculator.getValues()[0] + " - " + calculator.getValues()[1] + " = " + result);
         calculator.getValues()[0] = Double.toString(result); // store result
         if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
         {
-            LOGGER.info("We have a whole positive number");
-            calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-            calculator.setDotPressed(false);
-            calculator.getButtonDot().setEnabled(true);
-        }
-        else if (calculator.isNegativeNumber(calculator.getValues()[0]) && result % 1 == 0)
-        {
-            LOGGER.info("We have a whole negative number");
-            calculator.getValues()[0] = calculator.convertToPositive(calculator.getValues()[0]);
+            LOGGER.info("We have a whole number");
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]);
-            calculator.getValues()[0] = calculator.convertToNegative(calculator.getValues()[0]);
             calculator.setDotPressed(false);
             calculator.getButtonDot().setEnabled(true);
         }
         else
-        { // if double == double, keep decimal and number afterwards
+        {
             LOGGER.info("We have a decimal");
             calculator.getValues()[0] = Double.toString(result);
         }
-        //calculator.setTextAreaValue(new StringBuffer(calculator.getValues()[0]));
-
-        if (calculator.isPositiveNumber(calculator.getValues()[0])) calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0]);
-        else calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToPositive(calculator.getValues()[0]) + "-");
-        //calculator.updateTextAreaValueFromTextArea();
     }
 
     /**
@@ -1431,6 +1185,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonMultiply().setEnabled(true);
+        calculator.getButtonMultiply().setName("Multiply");
         calculator.getButtonMultiply().addActionListener(this::performMultiplicationActions);
         LOGGER.info("Multiply button configured");
     }
@@ -1442,68 +1197,56 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("Performing Multiplication Button actions");
         String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.getValues()[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform multiplication. Number too big!";
-            calculator.confirm(errorMsg);
-        }
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform multiplication. Number too big!"); }
         else
         {
             LOGGER.info("button: " + buttonChoice);
-            if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
-                    && StringUtils.isNotBlank(calculator.getTextPane().getText()) && !calculator.textPaneContainsBadText())
+            if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
+                    && StringUtils.isNotBlank(calculator.getTextPane().getText()))
             {
-                if (calculator.isNumberNegative())
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + "-" + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextPaneWithoutAnyOperator();
-                }
-                else
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
-                }
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
                 calculator.setMultiplying(true); // sets logic for arithmetic
                 calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
             else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty()) {
                 addition();
                 calculator.resetOperator(calculator.isAdding());
                 calculator.setMultiplying(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty()) {
                 subtract();
                 calculator.resetOperator(calculator.isSubtracting());
                 calculator.setMultiplying(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty()) {
                 multiply();
                 calculator.resetOperator(calculator.isMultiplying()); // mulBool = resetOperator(mulBool);
                 calculator.setMultiplying(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty()) {
                 divide();
                 calculator.resetOperator(calculator.isDividing());
                 calculator.setMultiplying(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
-            else if (calculator.textPaneContainsBadText()) {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice); // "userInput +" // temp[valuesPosition]
-                calculator.setMultiplying(true); // sets logic for arithmetic
-                calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
-                calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
-            }
+//            else if (calculator.textPaneContainsBadText()) {
+//                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice); // "userInput +" // temp[valuesPosition]
+//                calculator.setMultiplying(true); // sets logic for arithmetic
+//                calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
+//                calculator.setDotPressed(false);
+//                calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
+//            }
             else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator())) {
                 LOGGER.warn("The user pushed multiply but there is no number.");
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
-            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()) { LOGGER.info("already chose an operator. choose another number."); }
+            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+            { LOGGER.info("already chose an operator. choose another number."); }
             calculator.getButtonDot().setEnabled(true);
             calculator.setDotPressed(false);
             calculator.confirm("Pressed: " + buttonChoice);
@@ -1516,73 +1259,23 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
-        double result = Double.parseDouble(calculator.getValues()[0]) * Double.parseDouble(calculator.getValues()[1]); // create result forced double
+        double result = Double.parseDouble(calculator.getValues()[0])
+                * Double.parseDouble(calculator.getValues()[1]); // create result forced double
         LOGGER.info(calculator.getValues()[0] + " * " + calculator.getValues()[1] + " = " + result);
         calculator.getValues()[0] = Double.toString(result); // store result
-        // new
         if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
         {
-            LOGGER.info("We have a whole positive number");
+            LOGGER.info("We have a whole number");
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
             calculator.setDotPressed(false);
             calculator.getButtonDot().setEnabled(true);
         }
-        else if (calculator.isNegativeNumber(calculator.getValues()[0]) && result % 1 == 0)
-        {
-            LOGGER.info("We have a whole negative number");
-            //textarea = new StringBuffer().append(convertToPositive(calculator.getValues()[0]));
-            //calculator.setTextAreaValue(new StringBuffer(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))));
-            calculator.getValues()[0] = calculator.convertToNegative(calculator.getTextPane().getText());
-            calculator.setDotPressed(false);
-            calculator.getButtonDot().setEnabled(true);
-        }
         else
-        { // if double == double, keep decimal and number afterwards
+        {
+            // if double == double, keep decimal and number afterwards
             LOGGER.info("We have a decimal");
             calculator.getValues()[0] = String.valueOf(result);
         }
-
-        if (calculator.isPositiveNumber(calculator.getValues()[0])) calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0]);
-        else calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToPositive(calculator.getValues()[0]) + "-");
-        //calculator.updateTextAreaValueFromTextArea();
-
-
-        // old
-//        if (result % 1 == 0 && !calculator.getValues()[0].contains("E") && isPositiveNumber(calculator.getValues()[0]))
-//        {
-//            calculator.getValues()[0] = textAreaValue.toString(); // update storing
-//        }
-//        else if (result % 1 == 0 && isNegativeNumber(calculator.getValues()[0]))
-//        {
-//            LOGGER.info("We have a whole negative number");
-//            calculator.getValues()[0] = convertToPositive(calculator.getValues()[0]);
-//            calculator.getValues()[0] = clearZeroesAndDecimalAtEnd(calculator.getValues()[0]);
-//            textArea.setText(addNewLineCharacters(1)+calculator.getValues()[0]+"-");
-//            updateTextAreaValueFromTextArea();
-//            calculator.getValues()[0] = textAreaValue.toString();
-//            isDotPressed = false;
-//            buttonDot.setEnabled(true);
-//        }
-//        else if (calculator.getValues()[0].contains("E"))
-//        {
-//            textArea.setText(addNewLineCharacters(1) + calculator.getValues()[0]);
-//            updateTextAreaValueFromTextArea();
-//            calculator.getValues()[0] = textAreaValue.toString(); // update storing
-//        }
-//        else if (isNegativeNumber(calculator.getValues()[0]))
-//        {
-//            textAreaValue = new StringBuffer().append(convertToPositive(calculator.getValues()[0]));
-//            textArea.setText(addNewLineCharacters(1) + textAreaValue +"-");
-//            textAreaValue = new StringBuffer().append(convertToNegative(calculator.getValues()[0]));
-//        }
-//        else
-//        {// if double == double, keep decimal and number afterwards
-//            textArea.setText(addNewLineCharacters(1) + formatNumber(calculator.getValues()[0]));
-//        }
-//
-//        if (isPositiveNumber(calculator.getValues()[0])) textArea.setText(addNewLineCharacters(1) + calculator.getValues()[0]);
-//        else textArea.setText(addNewLineCharacters(1) + convertToPositive(calculator.getValues()[0]) + "-");
-//        updateTextAreaValueFromTextArea();
     }
 
     /**
@@ -1594,6 +1287,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonDivide().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonDivide().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonDivide().setEnabled(true);
+        calculator.getButtonDivide().setName("Divide");
         calculator.getButtonDivide().addActionListener(this::performDivideButtonActions);
         LOGGER.info("Divide button configured");
     }
@@ -1605,68 +1299,57 @@ public class BasicPanel extends JPanel
     {
         LOGGER.info("Performing Divide Button actions");
         String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.getValues()[0].contains("E"))
-        {
-            String errorMsg = "Cannot perform division.";
-            calculator.confirm(errorMsg);
-        }
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform division."); }
         else
         {
             LOGGER.info("button: " + buttonChoice);
-            if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
-                    && StringUtils.isNotBlank(calculator.getTextPane().getText()) && !calculator.textPaneContainsBadText())
+            if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
+                    && StringUtils.isNotBlank(calculator.getTextPane().getText()))
             {
-                if (calculator.isNumberNegative())
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + "-" + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = '-' + calculator.getTextPaneWithoutNewLineCharacters();
-                }
-                else
-                {
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutAnyOperator() + " " + buttonChoice);
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-                }
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
                 calculator.setDividing(true); // sets logic for arithmetic
                 calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
             }
             else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty()) {
                 addition();
                 calculator.resetOperator(calculator.isAdding()); // sets addBool to false
                 calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty()) {
                 subtract();
                 calculator.resetOperator(calculator.isSubtracting());
                 calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty()) {
                 multiply();
                 calculator.resetOperator(calculator.isMultiplying());
                 calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty() & !calculator.getValues()[1].equals("0")) {
                 divide();
                 calculator.resetOperator(calculator.isDividing()); // divBool = resetOperator(divBool)
                 calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
-            else if (calculator.textPaneContainsBadText())  {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()] + " " + buttonChoice); // "userInput +" // temp[valuesPosition]
-                calculator.setDividing(true); // sets logic for arithmetic
-                calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
-                calculator.setDotPressed(false);
-                calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
-            }
-            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator())) {
+//            else if (calculator.textPaneContainsBadText())  {
+//                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice); // "userInput +" // temp[valuesPosition]
+//                calculator.setDividing(true); // sets logic for arithmetic
+//                calculator.setFirstNumber(false); // sets logic to perform operations when collecting second number
+//                calculator.setDotPressed(false);
+//                calculator.setValuesPosition(calculator.getValuesPosition() + 1); // increase valuesPosition for storing textarea
+//            }
+            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
+            {
                 LOGGER.warn("The user pushed divide but there is no number.");
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
-            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing()) { LOGGER.info("already chose an operator. choose another number."); }
+            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+            { LOGGER.info("already chose an operator. choose another number."); }
             calculator.getButtonDot().setEnabled(true);
             calculator.setDotPressed(false);
             calculator.confirm("Pressed: " + buttonChoice);
@@ -1685,54 +1368,29 @@ public class BasicPanel extends JPanel
             // if the second number is not zero, divide as usual
             result = Double.parseDouble(calculator.getValues()[0]) / Double.parseDouble(calculator.getValues()[1]); // create result forced double
             LOGGER.info(calculator.getValues()[0] + " / " + calculator.getValues()[1] + " = " + result);
-            calculator.getValues()[0] = Double.toString(result); // store result
+            if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
+            {
+                LOGGER.info("We have a whole number");
+                calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textarea changed to whole number, or int
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+                calculator.setDotPressed(false);
+                calculator.getButtonDot().setEnabled(true);
+            }
+            else
+            {
+                LOGGER.info("We have a decimal");
+                calculator.getValues()[0] = String.valueOf(result);
+            }
+            calculator.confirm("Finished dividing");
         }
         else
         {
             LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
-            calculator.getTextPane().setText("\nCannot divide by 0");
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Cannot divide by 0");
             calculator.getValues()[0] = "0";
             calculator.setFirstNumber(true);
+            calculator.confirm("Divided by 0. Values[position=0] = 0");
         }
-
-        if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
-        {
-            LOGGER.info("We have a whole positive number");
-            calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textarea changed to whole number, or int
-            calculator.setDotPressed(false);
-            calculator.getButtonDot().setEnabled(true);
-        }
-        else if (calculator.isNegativeNumber(calculator.getValues()[0]) && result % 1 == 0)
-        {
-            LOGGER.info("We have a whole negative number");
-            calculator.getValues()[0] = calculator.convertToPositive(calculator.getValues()[0]);
-            calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]);
-            calculator.getValues()[0] = calculator.convertToNegative(calculator.getValues()[0]);
-            calculator.setDotPressed(false);
-            calculator.getButtonDot().setEnabled(true);
-        }
-        else
-        { // if double == double, keep decimal and number afterwards
-            LOGGER.info("We have a decimal");
-            if (Double.parseDouble(calculator.getValues()[0]) < 0.0 )
-            {   // negative decimal
-                calculator.getValues()[0] = calculator.formatNumber(calculator.getValues()[0]);
-                LOGGER.info("textarea: '" + calculator.getTextPane().getText() + "'");
-                //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[0]));
-                LOGGER.info("textarea: '" + calculator.getTextPane().getText() + "'");
-                //calculator.setTextAreaValue(new StringBuffer().append(calculator.getTextArea().getText().substring(1, calculator.getTextArea().getText().length())));
-                LOGGER.info("textarea: '" + calculator.getTextPane().getText() + "'");
-            }
-            else
-            {   // positive decimal
-                calculator.getValues()[0] = calculator.formatNumber(calculator.getValues()[0]);
-            }
-        }
-        //calculator.setTextAreaValue(new StringBuffer(calculator.getValues()[0]));
-
-        if (calculator.isPositiveNumber(calculator.getValues()[0])) calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0]);
-        else calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToPositive(calculator.getValues()[0]) + "-");
-        //calculator.updateTextAreaValueFromTextArea();
     }
 
     /**
@@ -1744,6 +1402,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonPercent().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonPercent().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonPercent().setEnabled(true);
+        calculator.getButtonPercent().setName("Percent");
         calculator.getButtonPercent().addActionListener(this::performPercentButtonActions);
     }
     /**
@@ -1752,21 +1411,20 @@ public class BasicPanel extends JPanel
      */
     public void performPercentButtonActions(ActionEvent actionEvent)
     {
-        LOGGER.info("PercentStoreButtonHandler class started");
         String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.getValues()[0].contains("E"))
+        LOGGER.info("Starting {} button actions", buttonChoice);
+        if (calculator.textPaneContainsBadText())
         { calculator.confirm("Cannot perform percent operation. Number too big!"); }
         else
         {
-            LOGGER.info("button: " + buttonChoice); // print out button confirmation
-            if (!calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+            if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank())
             {
                 // if the number is negative
                 if (calculator.isNegativeNumber(calculator.getTextPaneWithoutNewLineCharacters()))
                 {
                     LOGGER.info("number is negative for percentage");
                     //temp[valuesPosition] = textArea.getText(); // textarea
-                    double percent = Double.parseDouble(calculator.getValues()[calculator.getValuesPosition()]);
+                    double percent = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
                     percent /= 100;
                     LOGGER.info("percent: "+percent);
                     calculator.getValues()[calculator.getValuesPosition()] = Double.toString(percent);
@@ -1784,14 +1442,19 @@ public class BasicPanel extends JPanel
                 }
                 else
                 {
-                    double percent = Double.parseDouble(calculator.getValues()[calculator.getValuesPosition()]);
+                    double percent = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
                     percent /= 100;
                     calculator.getValues()[calculator.getValuesPosition()] = Double.toString(percent);
                     calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.formatNumber(calculator.getValues()[calculator.getValuesPosition()]));
                 }
+                calculator.setDotPressed(true);
+                calculator.confirm("Pressed " + buttonChoice);
             }
-            calculator.setDotPressed(true);
-            calculator.confirm("Pressed " + buttonChoice);
+            else
+            {
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+                calculator.confirm("Pressed: " + buttonChoice);
+            }
         }
     }
 
@@ -1804,6 +1467,7 @@ public class BasicPanel extends JPanel
         calculator.getButtonFraction().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonFraction().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonFraction().setEnabled(true);
+        calculator.getButtonFraction().setName("Fraction");
         calculator.getButtonFraction().addActionListener(this::performFractionButtonActions);
     }
     /**
@@ -1812,24 +1476,34 @@ public class BasicPanel extends JPanel
      */
     public void performFractionButtonActions(ActionEvent actionEvent)
     {
-        LOGGER.info("FractionButtonHandler class started");
         String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.textPaneContainsBadText()) //calculator.getValues()[0].contains("E")
+        LOGGER.info("Starting {} button actions", buttonChoice);
+        if (calculator.textPaneContainsBadText())
         { calculator.confirm("Cannot perform fraction operation. Number too big!"); }
         else
         {
-            LOGGER.info("button: " + buttonChoice); // print out button confirmation
-            if (!calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+            if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank())
             {
-                double result = Double.parseDouble(calculator.getValues()[calculator.getValuesPosition()]);
+                double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
                 result = 1 / result;
                 LOGGER.info("result: " + result);
-                calculator.setDotPressed(true);
-                calculator.getButtonDot().setEnabled(false);
-                calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+                calculator.setValuesAtPositionThenUpdateTextPane(String.valueOf(result));
+                if (!calculator.isDecimal(calculator.getTextPaneWithoutNewLineCharacters()))
+                {
+                    calculator.setDotPressed(false);
+                    calculator.getButtonDot().setEnabled(true);
+                }
+                else {
+                    calculator.setDotPressed(true);
+                    calculator.getButtonDot().setEnabled(false);
+                }
+                calculator.confirm("Pressed " + buttonChoice);
             }
-            calculator.confirm("Pressed " + buttonChoice);
+            else
+            {
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+                calculator.confirm("Pressed: " + buttonChoice);
+            }
         }
     }
 
@@ -1842,17 +1516,17 @@ public class BasicPanel extends JPanel
         calculator.getButtonEquals().setPreferredSize(new Dimension(35, 35) ); // 35,70
         calculator.getButtonEquals().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonEquals().setEnabled(true);
-        calculator.getButtonEquals().addActionListener(this::performButtonEqualsActions);
+        calculator.getButtonEquals().setName("Equals");
+        calculator.getButtonEquals().addActionListener(this::performEqualsButtonActions);
     }
     /**
      * The actions to perform when the Equals button is clicked
      * @param actionEvent the click action
      */
-    public void performButtonEqualsActions(ActionEvent actionEvent)
+    public void performEqualsButtonActions(ActionEvent actionEvent)
     {
-        LOGGER.info("Performing Equal Button actions");
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        LOGGER.info("Starting {} button actions", buttonChoice);
         String operator = determineIfBasicPanelOperatorWasPushed();
         determineAndPerformBasicCalculatorOperation();
         if (!operator.isEmpty())
@@ -1860,10 +1534,7 @@ public class BasicPanel extends JPanel
         else if (calculator.textPaneContainsBadText())
         { calculator.getTextPane().setText(""); }
         calculator.getValues()[1] = ""; // this is not done in addition, subtraction, multiplication, or division
-        calculator.getValues()[3] = "";
-        //updateTextareaFromTextArea();
         calculator.setFirstNumber(true);
-        calculator.setDotPressed(false);
         calculator.setValuesPosition(0);
         calculator.confirm("Pushed " + buttonChoice);
     }

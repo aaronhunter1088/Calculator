@@ -555,8 +555,8 @@ public class CalculatorTests
         calculator.resetOperator(calculator.isAdding());
 
         assertSame("Expected valuesPosition to be 1",1, calculator.getValuesPosition());
-        assertFalse("Expected dot button to not be pressed", calculator.isDotPressed());
-        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
+        assertFalse("Expected dot button to not be enabled", calculator.getButtonDot().isEnabled());
         assertFalse("Expected to not be on the firstNumber", calculator.isFirstNumber());
     }
 
@@ -575,8 +575,8 @@ public class CalculatorTests
         calculator.resetOperator(calculator.isAdding());
 
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
-        assertFalse("Expected dot button to not be pressed", calculator.isDotPressed());
-        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
+        assertFalse("Expected dot button to not be enabled", calculator.getButtonDot().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
     }
 

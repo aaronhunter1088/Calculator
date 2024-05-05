@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static Calculators.Calculator.*;
@@ -1122,7 +1121,7 @@ public class ProgrammerPanel extends JPanel
             else if (calculator.isNumberNegative() && !calculator.isDotPressed())
             { // logic for negative numbers
                 LOGGER.info("negative number & dot button had not been pushed");
-                calculator.setTextPaneToValuesAtPosition(buttonChoice);
+                calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
             }
             else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]))
             {
