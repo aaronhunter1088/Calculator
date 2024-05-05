@@ -872,7 +872,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("√");
         calculator.getTextPane().setText("");
         basicPanel.performSquareRootButtonActions(actionEvent);
-        assertEquals("Expected textPane to show error message", "Not a Number", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane to show error message", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test

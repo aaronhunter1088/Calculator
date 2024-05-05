@@ -887,8 +887,6 @@ public class Calculator extends JFrame
                     break;
                 }
             }
-//            setTitle(selectedPanel);
-//            pack();
             LOGGER.info("Finished changing jPanels\n");
             confirm("Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
         }

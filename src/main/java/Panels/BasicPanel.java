@@ -11,6 +11,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
@@ -226,7 +227,7 @@ public class BasicPanel extends JPanel
                 
                 Delete: %s
                 Pressing this button will remove the right most value from the textPane until the entire number is gone.
-                It will only remove a single value, so 15.2 will become 15.2, allowing for exact replacement or deletion.
+                It will only remove a single value, so 15.2 will become 15., allowing for exact replacement or deletion.
                 
                 ClearEntry: %s
                 Pressing this button will clear the value in textPane, the stored value, and any main basic operators pushed if still obtaining the first number.
@@ -292,7 +293,7 @@ public class BasicPanel extends JPanel
                         calculator.getButtonPercent().getText(), "Enter a Number", calculator.getButtonPercent().getText(), // Percent
                         calculator.getButtonMultiply().getText(), calculator.getButtonMultiply().getText(), "Enter a Number",
                         calculator.getButtonFraction().getText(), "Enter a Number", calculator.getButtonFraction().getText(),
-                        calculator.getButtonSubtract().getText(), calculator.getButtonSubtract().getText(), "Enter a Number",
+                        calculator.getButtonSubtract().getText(), calculator.getButtonSubtract().getText(),
                         calculator.getButtonSquared().getText(), "Enter a Number",
                         calculator.getButtonDot().getText(), calculator.getButtonDot().getText(), calculator.getButtonDot().getName(), calculator.getButtonDot().getName(), // Dot
                         calculator.getButtonAdd().getText(), calculator.getButtonAdd().getText(), "Enter a Number",
@@ -340,6 +341,12 @@ public class BasicPanel extends JPanel
             }
         }
         LOGGER.info("Finished setting up the help menu");
+    }
+
+    private void showHelpPanel(ActionEvent actionEvent)
+    {
+
+
     }
 
     /**
@@ -446,79 +453,32 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemoryClear is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryClearActions(ActionEvent actionEvent)
-    {
+    public void performMemoryClearActions(ActionEvent actionEvent) {
         LOGGER.info("MemoryClearButtonHandler started");
         LOGGER.info("button: {}", actionEvent.getActionCommand());
-        if (calculator.getMemoryPosition() == 10)
-        {
+        if (calculator.getMemoryPosition() == 10) {
             LOGGER.debug("Resetting memoryPosition to 0");
             calculator.setMemoryPosition(0);
         }
-        if (!calculator.isMemoryValuesEmpty())
-        {
+        if (!calculator.isMemoryValuesEmpty()) {
             calculator.setMemoryPosition(calculator.getLowestMemoryPosition());
-            LOGGER.info("Clearing memoryValue["+calculator.getMemoryPosition()+"] = " + calculator.getMemoryValues()[calculator.getMemoryPosition()]);
+            LOGGER.info("Clearing memoryValue[" + calculator.getMemoryPosition() + "] = " + calculator.getMemoryValues()[calculator.getMemoryPosition()]);
             calculator.getMemoryValues()[calculator.getMemoryPosition()] = "";
             calculator.setMemoryRecallPosition(calculator.getMemoryRecallPosition() + 1);
             // MemorySuite now could potentially be empty
-            if (calculator.isMemoryValuesEmpty())
-            {
+            if (calculator.isMemoryValuesEmpty()) {
                 calculator.setMemoryPosition(0);
                 calculator.setMemoryRecallPosition(0);
                 calculator.getButtonMemoryClear().setEnabled(false);
                 calculator.getButtonMemoryRecall().setEnabled(false);
                 calculator.getButtonMemoryAddition().setEnabled(false);
                 calculator.getButtonMemorySubtraction().setEnabled(false);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters()+"0");
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0");
                 calculator.confirm("MemorySuite is blank");
                 calculator.confirm("No saved values");
             }
-            calculator.confirm("Reset memory at position: " + (calculator.getMemoryPosition()-1) + ".");
-//            // MemorySuite now could potentially have gaps in front
-//            // {"5", "7", "", ""...} ... {"", "7", "", ""...}
-//            // If the first is a gap, then we have 1 too many gaps
-//            // TODO: fix for gap being in the middle of the memory calculator.getValues()
-//            if(calculator.getMemoryValues()[0].isEmpty())
-//            {
-//                // Determine where the first number is that is not a gap
-//                int alpha = 0;
-//                for(int i = 0; i < 9; i++)
-//                {
-//                    if (!calculator.getMemoryValues()[i].isEmpty())
-//                    {
-//                        alpha = i;
-//                        calculator.getTextPane().setText(calculator.addNewLineCharacters()+calculator.getMemoryValues()[alpha]);
-//                        //calculator.setTextAreaValue(new StringBuffer(calculator.getTextAreaWithoutNewLineCharactersOrWhiteSpace()));
-//                        break;
-//                    }
-//                    else
-//                    {
-//                        calculator.getTextPane().setText(calculator.addNewLineCharacters()+"0");
-//                    }
-//                }
-//                // Move the first found value to the first position
-//                // and so on until the end
-//                String[] newMemoryValues = new String[10];
-//                for(int i = 0; i <= alpha; i++)
-//                {
-//                    if (calculator.getMemoryValues()[alpha].isEmpty()) break;
-//                    newMemoryValues[i] = calculator.getMemoryValues()[alpha];
-//                    alpha++;
-//                    if (alpha == calculator.getMemoryValues().length) break;
-//                }
-//                //setMemoryValues(newMemoryValues);
-//                calculator.setMemoryPosition(alpha); // next blank spot
-//            }
+            calculator.confirm("Reset memory at position: " + (calculator.getMemoryPosition() - 1) + ".");
         }
-//        else
-//        {
-//            LOGGER.debug("No more values stored in Memory");
-//            calculator.getButtonMemoryRecall().setEnabled(false);
-//            calculator.getButtonMemoryClear().setEnabled(false);
-//            calculator.getButtonMemoryAddition().setEnabled(false);
-//            calculator.getButtonMemorySubtraction().setEnabled(false);
-//        }
     }
     /**
      * The actions to perform when MemoryAdd is clicked
@@ -604,8 +564,9 @@ public class BasicPanel extends JPanel
         { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
 
         LOGGER.info("calculator.getValues()["+calculator.getValuesPosition()+"]: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
-        LOGGER.info("textPane: " + calculator.getTextPaneWithoutNewLineCharacters());
-        if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing())
+        LOGGER.info("textPane: '" + calculator.getTextPaneWithoutNewLineCharacters() + "'");
+        if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
+            && !calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1));
             calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
@@ -622,7 +583,7 @@ public class BasicPanel extends JPanel
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1).trim());
             calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
         }
-        if (!calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]))
+        if (!calculator.getTextPaneWithoutNewLineCharacters().isEmpty() && !calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]))
         {
             calculator.setDotPressed(false);
             calculator.getButtonDot().setEnabled(true);
@@ -852,7 +813,7 @@ public class BasicPanel extends JPanel
         {
             if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
             {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Not a Number");
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
                 calculator.confirm("Cannot perform square root operation when textPane blank");
             }
             else if (calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]))
