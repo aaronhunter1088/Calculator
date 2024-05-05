@@ -1162,7 +1162,7 @@ public class BasicPanel extends JPanel
                 - Double.parseDouble(calculator.getValues()[1]); // create result forced double
         LOGGER.info(calculator.getValues()[0] + " - " + calculator.getValues()[1] + " = " + result);
         calculator.getValues()[0] = Double.toString(result); // store result
-        if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
+        if (result % 1 == 0)
         {
             LOGGER.info("We have a whole number");
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]);
@@ -1263,7 +1263,7 @@ public class BasicPanel extends JPanel
                 * Double.parseDouble(calculator.getValues()[1]); // create result forced double
         LOGGER.info(calculator.getValues()[0] + " * " + calculator.getValues()[1] + " = " + result);
         calculator.getValues()[0] = Double.toString(result); // store result
-        if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
+        if (result % 1 == 0)
         {
             LOGGER.info("We have a whole number");
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
@@ -1368,7 +1368,7 @@ public class BasicPanel extends JPanel
             // if the second number is not zero, divide as usual
             result = Double.parseDouble(calculator.getValues()[0]) / Double.parseDouble(calculator.getValues()[1]); // create result forced double
             LOGGER.info(calculator.getValues()[0] + " / " + calculator.getValues()[1] + " = " + result);
-            if (calculator.isPositiveNumber(calculator.getValues()[0]) && result % 1 == 0)
+            if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textarea changed to whole number, or int
