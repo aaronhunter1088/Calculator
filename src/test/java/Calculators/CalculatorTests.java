@@ -4,6 +4,7 @@ import Panels.BasicPanel;
 import Panels.ConverterPanel;
 import Panels.DatePanel;
 import Panels.ProgrammerPanel;
+import Types.CalculatorBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
@@ -75,6 +76,8 @@ public class CalculatorTests
     {
         LOGGER.info("createProgrammerCalculator...");
         calculator = new Calculator(PROGRAMMER);
+        calculator.setMotif(true);
+        calculator.setCurrentPanel(new ProgrammerPanel(calculator, BINARY));
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
         assertSame("Base is not binary", calculator.getCalculatorBase(), BINARY);
     }
@@ -249,6 +252,17 @@ public class CalculatorTests
     }
 
     @Test
+    public void methodResetOperatorsWhenValuesAt0IsNotADecimal() throws Exception
+    {
+        calculator = new Calculator();
+        calculator.getValues()[0] = "5";
+        boolean resetResult = calculator.resetOperator(false);
+        assertTrue("Expected result to be true", resetResult);
+        assertFalse("Expected dot not to be pressed", calculator.isDotPressed());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+    }
+
+    @Test
     public void testSetImageIconsWorksAsExpected() throws Exception
     {
         calculator = new Calculator();
@@ -302,7 +316,20 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToConverterSwitchesPanels() throws Exception
+    public void switchingFromBasicToAngleConverterSwitchesPanels() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ANGLE.getName());
+        calculator = new Calculator();
+        assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
+
+        calculator.switchPanels(actionEvent);
+        assertEquals("Expected CONVERTER CalculatorType", CONVERTER, calculator.getCalculatorType());
+        assertEquals("Expected name to be CONVERTER", CONVERTER.getName(), calculator.getTitle());
+        assertTrue("Expected ConverterPanel", calculator.getCurrentPanel() instanceof ConverterPanel);
+    }
+
+    @Test
+    public void switchingFromBasicToAreaConverterSwitchesPanels() throws Exception
     {
         when(actionEvent.getActionCommand()).thenReturn(AREA.getName());
         calculator = new Calculator();
@@ -332,7 +359,7 @@ public class CalculatorTests
     @Test
     public void switchingFromSomeConverterToSameConverterDoesNotSwitchPanels() throws Exception
     {
-        when(actionEvent.getActionCommand()).thenReturn("ANGLE");
+        when(actionEvent.getActionCommand()).thenReturn("Angle");
         calculator = new Calculator(CONVERTER);
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
         assertEquals("Expected converterType to be ANGLE", ANGLE, calculator.getConverterType());
@@ -789,6 +816,7 @@ public class CalculatorTests
     public void testPaste() throws Exception
     {
         calculator = new Calculator();
+        calculator.performPasteFunctionality(actionEvent);
         assertTrue("Expected values[2] to be blank", calculator.getValues()[2].isBlank());
 
         calculator.values[2] = "10";
@@ -804,5 +832,14 @@ public class CalculatorTests
         assertEquals("Expected values[1] to be 10", "10", calculator.getValues()[0]);
 
     }
+
+    @Test
+    public void testClearingZeroesAtTheEnd() throws Exception
+    {
+        calculator = new Calculator();
+        calculator.getValues()[0] = "15.0";
+        assertEquals("Expected values[0] to be 15", "15", calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]));
+    }
+
 
 }

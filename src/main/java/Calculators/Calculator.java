@@ -549,7 +549,7 @@ public class Calculator extends JFrame
     public void clearNumberButtonActions()
     {
         LOGGER.debug("Number buttons cleared of action listeners");
-        getNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).collect(Collectors.toList()).forEach(al -> {
+        getNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).toList().forEach(al -> {
             LOGGER.debug("Removing action listener from button: " + button.getName());
             button.removeActionListener(al);
         }));
@@ -575,7 +575,8 @@ public class Calculator extends JFrame
     public boolean resetOperator(boolean operatorBool)
     {
         LOGGER.info("resetting operator...");
-        if (operatorBool) {
+        if (operatorBool)
+        {
             values[1] = "";
             valuesPosition = 1;
             if (isDecimal(values[0]))
@@ -590,7 +591,8 @@ public class Calculator extends JFrame
             }
             isFirstNumber = false;
             return false;
-        } else {
+        }
+        else {
             values[1] = "";
             valuesPosition = 0;
             if (isDecimal(values[0]))
@@ -710,7 +712,8 @@ public class Calculator extends JFrame
     {
         LOGGER.info("Performing initial checks...");
         boolean checkFound = false;
-        if (textPaneContainsBadText()) {
+        if (textPaneContainsBadText())
+        {
             textPane.setText("");
             valuesPosition = 0;
             isFirstNumber = true;
@@ -721,7 +724,8 @@ public class Calculator extends JFrame
         }
         else if (getTextPaneWithoutAnyOperator().equals("0") &&
                 (calculatorType.equals(BASIC) ||
-                        (calculatorType == PROGRAMMER && calculatorBase == DECIMAL))) {
+                        (calculatorType == PROGRAMMER && calculatorBase == DECIMAL)))
+        {
             LOGGER.debug("textArea equals 0 no matter the CalculatorType. setting to blank.");
             textPane.setText("");
             values[valuesPosition] = "";
@@ -730,7 +734,8 @@ public class Calculator extends JFrame
             buttonDot.setEnabled(true);
             checkFound = true;
         }
-        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1])) {
+        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
+        {
             values[0] = values[1];
             values[1] = "";
             valuesPosition = 0;
@@ -1279,7 +1284,8 @@ public class Calculator extends JFrame
      * Returns the text to display in About Calculator
      * @return String the About Calculator text
      */
-    public String getAboutCalculatorString()  {
+    public String getAboutCalculatorString()
+    {
         LOGGER.info("About Calculator");
         String computerText, version = "";
         if (isMacOperatingSystem()) { computerText = "Apple"; }
@@ -1289,7 +1295,8 @@ public class Calculator extends JFrame
             Properties p = new Properties();
             p.load(is);
             version = p.getProperty("project.version");
-        } catch (IOException | NullPointerException e) { logException(e); }
+        }
+        catch (IOException | NullPointerException e) { logException(e); }
         return """
                 <html> %s <br>
                 Calculator Version %s<br>
@@ -1443,10 +1450,13 @@ public class Calculator extends JFrame
     {
         DecimalFormat df = null;
         LOGGER.info("Number to format: " + num);
-        if (!isNumberNegative) {
+        if (!isNumberNegative)
+        {
             if (num.length() <= 2) df = new DecimalFormat("0.00");
             if (num.length() >= 3) df = new DecimalFormat("0.000");
-        } else {
+        }
+        else
+        {
             if (num.length() <= 3) df = new DecimalFormat("0.0");
             if (num.length() == 4) df = new DecimalFormat("0.00");
             if (num.length() >= 5) df = new DecimalFormat("0.000");
@@ -1507,15 +1517,15 @@ public class Calculator extends JFrame
      */
     public void performPasteFunctionality(ActionEvent actionEvent)
     {
-        if (StringUtils.isEmpty(values[2]) && StringUtils.isBlank(values[2]))
-        { LOGGER.info("Values[2] is empty and blank"); }
+        if (values[2].isEmpty())
+        { confirm("Values[2] is empty. Nothing to paste"); }
         else
         {
             LOGGER.info("Values[2]: " + values[2]);
-            textPane.setText(addNewLineCharacters() + values[2]); // to paste
+            textPane.setText(addNewLineCharacters() + values[2]);
             values[valuesPosition] = getTextPaneWithoutNewLineCharactersOrWhiteSpace();
+            confirm("Pressed Paste");
         }
-        confirm("Pressed Paste");
     }
 
     /**
