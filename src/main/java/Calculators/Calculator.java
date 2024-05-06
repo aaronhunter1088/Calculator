@@ -708,7 +708,7 @@ public class Calculator extends JFrame
      * to ensure valid entries are allowed and any previous
      * errors or unexpected conditions are cleared
      */
-    public void performInitialChecks()
+    public boolean performInitialChecks()
     {
         LOGGER.info("Performing initial checks...");
         boolean checkFound = false;
@@ -741,8 +741,7 @@ public class Calculator extends JFrame
             valuesPosition = 0;
             checkFound = true;
         }
-        if (checkFound) LOGGER.info("Invalid entry in textArea...");
-        else LOGGER.info("No invalid entry found");
+        return checkFound;
     }
 
     /**

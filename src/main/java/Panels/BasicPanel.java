@@ -432,7 +432,10 @@ public class BasicPanel extends JPanel
             }
         }
         else
-        { calculator.confirm("No number added to memory. Blank entry"); }
+        {
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+            calculator.confirm("No number added to memory. Blank entry");
+        }
     }
     /**
      * The actions to perform when MemoryRecall is clicked
@@ -757,11 +760,8 @@ public class BasicPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Performing {} Button actions", buttonChoice);
-        if (calculator.getTextPaneWithoutNewLineCharacters().equals("E"))
-        {
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Number too big!");
-            calculator.confirm("Number too big!");
-        }
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Number too big!"); }
         else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
@@ -808,8 +808,7 @@ public class BasicPanel extends JPanel
         LOGGER.debug("text: " + calculator.getTextPaneWithoutNewLineCharacters());
         if (calculator.textPaneContainsBadText())
         {
-            calculator.getTextPane().setText("");
-            calculator.confirm("Showing bad text. Reset textPane");
+            calculator.confirm("TextPane says: " + calculator.getTextPaneWithoutNewLineCharacters());
         }
         else
         {
@@ -827,6 +826,8 @@ public class BasicPanel extends JPanel
             {
                 String result = String.valueOf(Math.sqrt(Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters())));
                 result = calculator.formatNumber(result);
+                calculator.getButtonDot().setEnabled(false);
+                calculator.setDotPressed(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + result);
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.confirm("Pressed " + buttonChoice);
@@ -873,7 +874,16 @@ public class BasicPanel extends JPanel
                 calculator.getButtonDot().setEnabled(true);
             }
         }
-        calculator.performInitialChecks();
+        boolean initialChecks = calculator.performInitialChecks();
+        if (initialChecks)
+        {
+            LOGGER.info("Invalid entry in textPane...");
+
+        }
+        else
+        {
+            LOGGER.info("No invalid entry found");
+        }
         if (!calculator.isDotPressed())
         {
             LOGGER.debug("dot button was not pushed");
@@ -1433,8 +1443,17 @@ public class BasicPanel extends JPanel
             result = 1 / result;
             LOGGER.info("result: " + result);
             calculator.setValuesAtPositionThenUpdateTextPane(String.valueOf(result));
-            calculator.setDotPressed(true);
-            calculator.getButtonDot().setEnabled(false);
+            if ("Infinity".equals(String.valueOf(result)))
+            {
+                calculator.setDotPressed(false);
+                calculator.getButtonDot().setEnabled(true);
+                calculator.getValues()[calculator.getValuesPosition()] = "";
+            }
+            else
+            {
+                calculator.setDotPressed(true);
+                calculator.getButtonDot().setEnabled(false);
+            }
             calculator.confirm("Pressed " + buttonChoice);
         }
     }

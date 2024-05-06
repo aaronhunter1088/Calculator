@@ -1162,7 +1162,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("±");
         calculator.getTextPane().setText("E");
         basicPanel.performNegateButtonActions(actionEvent);
-        assertEquals("Expected error message in textPane", "Number too big!", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected error message in textPane", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test
@@ -1180,7 +1180,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("√");
         calculator.getTextPane().setText("E");
         basicPanel.performSquareRootButtonActions(actionEvent);
-        assertEquals("Expected textPane to be cleared", "", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane to show error", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test
@@ -1221,6 +1221,7 @@ public class BasicPanelTest {
         calculator.getTextPane().setText("");
         basicPanel.performMemoryStoreActions(actionEvent);
         assertTrue("Expected MemoryValues[0] to be blank", calculator.getMemoryValues()[0].isBlank());
+        assertEquals("Expected textPane to show Enter a Number", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test
