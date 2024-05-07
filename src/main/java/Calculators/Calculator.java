@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorType.*;
@@ -714,12 +713,12 @@ public class Calculator extends JFrame
         boolean checkFound = false;
         if (textPaneContainsBadText())
         {
-            textPane.setText("");
-            valuesPosition = 0;
-            isFirstNumber = true;
-            isDotPressed = false;
-            buttonDot.setEnabled(true);
-            isNumberNegative = false;
+//            textPane.setText("");
+//            valuesPosition = 0;
+//            isFirstNumber = true;
+//            isDotPressed = false;
+//            buttonDot.setEnabled(true);
+//            isNumberNegative = false;
             checkFound = true;
         }
         else if (getTextPaneWithoutAnyOperator().equals("0") &&
@@ -732,7 +731,7 @@ public class Calculator extends JFrame
             isFirstNumber = true;
             isDotPressed = false;
             buttonDot.setEnabled(true);
-            checkFound = true;
+            //checkFound = true;
         }
         else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
         {
@@ -742,6 +741,20 @@ public class Calculator extends JFrame
             checkFound = true;
         }
         return checkFound;
+    }
+
+    /**
+     * Checks to see if the max length of a number has been met
+     * The highest number is 9,999,999, with a length of 9. So
+     * if the current value has a length of 9, the max length
+     * has been met, and no more digits will be allowed.
+     * @return boolean if the max length has been met
+     */
+    public boolean checkValueLength()
+    {
+        LOGGER.debug("Checking if max size (9) is met... highest number is 9,999,999");
+        LOGGER.debug("Length: " + values[valuesPosition].length());
+        return values[valuesPosition].length() == 9;
     }
 
     /**
@@ -776,16 +789,82 @@ public class Calculator extends JFrame
      */
     public void updateValuesAtPositionThenUpdateTextPane(String buttonChoice)
     {
-        values[valuesPosition] += buttonChoice; // store in values
+        values[valuesPosition] = values[valuesPosition] + buttonChoice; // store in values, values[valuesPosition] + buttonChoice
         if (isNegating) {
             values[valuesPosition] = convertToNegative(values[valuesPosition]);
-            textPane.setText(addNewLineCharacters() + values[valuesPosition]);
-            setNegating(false);
+            textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); //values[valuesPosition]
+            setNegating(isSubtracting && isNumberNegative);
         } else {
-            textPane.setText(addNewLineCharacters() + values[valuesPosition]);
+            textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); //values[valuesPosition])
         }
         LOGGER.debug("textPane: '" + getTextPaneWithoutNewLineCharacters() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
+    }
+
+    public String addCourtesyCommas(String valueToAdjust)
+    {
+        String adjusted = "";
+        String toTheRight = "";
+        if (isDecimal(valueToAdjust))
+        {
+            LOGGER.debug("valueToAdjust: " + valueToAdjust);
+            var temp = valueToAdjust;
+            LOGGER.debug("temp: " + temp);
+            valueToAdjust = getNumberOnLeftSideOfDecimal(valueToAdjust);
+            LOGGER.debug("valueToAdjust: " + valueToAdjust);
+            toTheRight = getNumberOnRightSideOfDecimal(temp);
+            LOGGER.debug("toTheRight: " + toTheRight);
+            if (valueToAdjust.length() <= 3)
+            {
+                valueToAdjust = temp;
+                LOGGER.debug("valueFromTemp: " + valueToAdjust);
+                toTheRight = "";
+            }
+            setDotPressed(true);
+        }
+        if (!valueToAdjust.contains(".") && valueToAdjust.length() <= 3 || valueToAdjust.contains("_") || valueToAdjust.contains(","))
+        {
+            valueToAdjust = valueToAdjust.replace("_", "").replace(",","");
+        }
+        if (!valueToAdjust.contains(".") && valueToAdjust.length() >= 4)
+        {
+            LOGGER.debug("ValueToAdjust length: " + valueToAdjust.length());
+            StringBuffer reversed = new StringBuffer().append(valueToAdjust).reverse();
+            reversed = new StringBuffer().append(reversed.toString().replace("_","").replace(",",""));
+            // longest number is 7 digits long 9,999,999
+            LOGGER.debug("reversed: " + reversed);
+            if (reversed.length() <= 6)
+            {
+                LOGGER.debug("Length is : " + reversed.length());
+                reversed = new StringBuffer().append(reversed.substring(0,3)).append("_").append(reversed.substring(3,reversed.length()));
+                adjusted = reversed.reverse().toString();
+            }
+            else
+            {
+                LOGGER.debug("Length is : " + reversed.length());
+                reversed = new StringBuffer().append(reversed.substring(0,3)).append("_").append(reversed.substring(3,6)).append("_").append(reversed.substring(6));
+                adjusted = reversed.reverse().toString();
+            }
+        }
+        else
+        {
+            LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted);
+            /*if (!valueToAdjust.contains("."))*/ adjusted = valueToAdjust;
+            if (!isDecimal(adjusted)) isDotPressed = false;
+            else adjusted += toTheRight;
+            LOGGER.debug("'adjusted': " + adjusted);
+        }
+        if (isDotPressed && !valueToAdjust.contains("."))
+        {
+            adjusted += "." + toTheRight;
+        }
+        LOGGER.debug("adjusted: " + adjusted);
+        return adjusted;
+    }
+
+    public String showCommas(String valueToUpdate)
+    {
+        return valueToUpdate.replace("_", ",");
     }
 
     /**
@@ -1076,6 +1155,7 @@ public class Calculator extends JFrame
     {
         LOGGER.info("Starting clear zeroes at the end");
         LOGGER.debug("currentNumber: " + currentNumber);
+        if (currentNumber.contains("E")) return currentNumber;
         int index;
         index = currentNumber.indexOf(".");
         LOGGER.debug("index: " + index);
@@ -1083,7 +1163,7 @@ public class Calculator extends JFrame
         else {
             currentNumber = currentNumber.substring(0, index);
         }
-        LOGGER.info("output of clearZeroesAtEnd(): " + currentNumber);
+        LOGGER.info("output of clearZeroesAtEnd(): " + showCommas(addCourtesyCommas(currentNumber)));
         return currentNumber;
     }
 
@@ -1166,6 +1246,7 @@ public class Calculator extends JFrame
                 LOGGER.info("firstNumBool: '{}'", isFirstNumber);
                 LOGGER.info("dotButtonPressed: '{}'", isDotPressed);
                 LOGGER.info("isNegative: '{}'", isNumberNegative);
+                LOGGER.info("isNegating: '{}'", isNegating);
                 LOGGER.info("calculatorType: '{}", calculatorType);
                 LOGGER.info("calculatorBase: '{}'", calculatorBase);
                 break;
@@ -1408,7 +1489,7 @@ public class Calculator extends JFrame
      * @param currentNumber the value to split on
      * @return the value to the left of the decimal
      */
-    public String getNumberOnLeftSideOfNumber(String currentNumber)
+    public String getNumberOnLeftSideOfDecimal(String currentNumber)
     {
         String leftSide;
         int index = currentNumber.indexOf(".");
@@ -1427,7 +1508,7 @@ public class Calculator extends JFrame
      * @param currentNumber the value to split on
      * @return the value to the right of the decimal
      */
-    protected String getNumberOnRightSideOfNumber(String currentNumber)
+    protected String getNumberOnRightSideOfDecimal(String currentNumber)
     {
         String rightSide;
         int index = currentNumber.indexOf(".");

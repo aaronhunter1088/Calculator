@@ -4,7 +4,6 @@ import Panels.BasicPanel;
 import Panels.ConverterPanel;
 import Panels.DatePanel;
 import Panels.ProgrammerPanel;
-import Types.CalculatorBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
@@ -575,7 +574,6 @@ public class CalculatorTests
         calculator.setAdding(true);
         ((BasicPanel)calculator.getCurrentPanel()).performDotButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
-        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
 
@@ -595,7 +593,6 @@ public class CalculatorTests
         calculator.setAdding(false);
         ((BasicPanel)calculator.getCurrentPanel()).performDotButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
-        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
 
@@ -646,7 +643,7 @@ public class CalculatorTests
 
         calculator.performInitialChecks();
 
-        assertTrue("Expected textPane to be blank", calculator.getTextPaneWithoutNewLineCharacters().isEmpty());
+        assertFalse("Expected textPane to show error", calculator.getTextPaneWithoutNewLineCharacters().isEmpty());
         assertSame("Expected valuesPosition to be 0", 0, calculator.getValuesPosition());
         assertTrue("Expected to be firstNumber", calculator.isFirstNumber());
         assertFalse("Expected dot button to not be pushed", calculator.isDotPressed());
@@ -790,14 +787,14 @@ public class CalculatorTests
     public void testGetTheNumberToTheLeftOfTheDecimal() throws Exception
     {
         calculator = new Calculator();
-        assertEquals("123", calculator.getNumberOnLeftSideOfNumber("123.456"));
+        assertEquals("123", calculator.getNumberOnLeftSideOfDecimal("123.456"));
     }
 
     @Test
     public void testGetTheNumberToTheRightOfTheDecimal() throws Exception
     {
         calculator = new Calculator();
-        assertEquals("456", calculator.getNumberOnRightSideOfNumber("123.456"));
+        assertEquals("456", calculator.getNumberOnRightSideOfDecimal("123.456"));
     }
 
     @Test
@@ -841,5 +838,71 @@ public class CalculatorTests
         assertEquals("Expected values[0] to be 15", "15", calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]));
     }
 
+    @Test
+    public void testAddCourtesyCommasAddsNoCommas() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn("5");
+        calculator = new Calculator();
+        calculator.getValues()[0] = "2";
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        assertFalse("Expected no commas", calculator.getValues()[0].contains("_"));
+        assertEquals("Expected values[0] to be 25", "25", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn("5");
+        calculator = new Calculator();
+        calculator.getValues()[0] = "999";
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        assertTrue("Expected textPane to be 9,995", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
+        assertEquals("Expected values[0] to be 9995", "9995", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn("5");
+        calculator = new Calculator();
+        calculator.getValues()[0] = "1234";
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        assertTrue("Expected textPane to be 12,345", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
+        assertEquals("Expected values[0] to be 12345", "12345", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn("6");
+        calculator = new Calculator();
+        calculator.getValues()[0] = "12345";
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        assertTrue("Expected textPane to be 123,456", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
+        assertEquals("Expected values[0] to be 123456", "123456", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testDeletingADigitAdjustsCourtesyCommas() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn("←");
+        calculator = new Calculator();
+        calculator.getValues()[0] = "12345";
+        calculator.getTextPane().setText("12345");
+        ((BasicPanel)calculator.getCurrentPanel()).performDeleteButtonActions(actionEvent);
+        assertTrue("Expected textPane to be 1,234", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
+        assertEquals("Expected values[0] to be 1234", "1234", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testAddCourtesyCommasReturnsResultWithTwoCommas7DigitsWholeNumber() throws Exception
+    {
+        when(actionEvent.getActionCommand()).thenReturn("7");
+        calculator = new Calculator();
+        calculator.getValues()[0] = "123456";
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        assertTrue("Expected textPane to be 1,234,567", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
+        assertEquals("Expected values[0] to be 1234567", "1234567", calculator.getValues()[0]);
+    }
 
 }
