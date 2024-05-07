@@ -1477,6 +1477,55 @@ public class BasicPanelTest {
     }
 
     @Test
+    public void pressed1Then0Then6Then5ThenDotThen5Then4Then5Then7()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("0")
+                .thenReturn("6").thenReturn("5").thenReturn(".").thenReturn("5")
+                .thenReturn("4").thenReturn("5").thenReturn("7");
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertEquals("Expected values[0] to be 10", "10", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertEquals("Expected values[0] to be 106", "106", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 106", "106", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertEquals("Expected values[0] to be 1065", "1065", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1,065", "1,065", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performDotButtonActions(actionEvent);
+        assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertEquals("Expected values[0] to be 1065.", "1065.", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1,065.", "1,065.", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertEquals("Expected values[0] to be 1065.5", "1065.5", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1,065.5", "1,065.5", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertEquals("Expected values[0] to be 1065.54", "1065.54", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1,065.54", "1,065.54", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertEquals("Expected values[0] to be 1065.545", "1065.545", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1,065.545", "1,065.545", calculator.getTextPaneWithoutNewLineCharacters());
+        basicPanel.performNumberButtonActions(actionEvent);
+        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertEquals("Expected values[0] to be 1065.5457", "1065.5457", calculator.getValues()[0]);
+        assertEquals("Expected textPane to be 1,065.5457", "1,065.5457", calculator.getTextPaneWithoutNewLineCharacters());
+    }
+
+    @Test
     public void testingMathPow() {
         double delta = 0.000001d;
         Number num = 8.0;

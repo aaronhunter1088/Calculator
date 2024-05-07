@@ -875,17 +875,20 @@ public class BasicPanel extends JPanel
         LOGGER.info("Performing {} button{} actions...", calculator.getCurrentPanel().getName(), buttonChoice);
         if (!calculator.isFirstNumber()) // second number
         {
+            LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
             calculator.getTextPane().setText("");
             calculator.setFirstNumber(true);
             if (!calculator.isNegating()) calculator.setNumberNegative(false);
             if (calculator.isDotPressed())
             {
+                LOGGER.debug("dot is pressed. turning off. enabling button");
                 calculator.setDotPressed(false);
                 calculator.getButtonDot().setEnabled(true);
             }
         }
         boolean initialChecks = calculator.performInitialChecks();
         boolean maxLength = calculator.checkValueLength();
+        calculator.setDotPressed(false);
         if (initialChecks)
         {
             LOGGER.info("Invalid entry in textPane. Must clear entry...");
@@ -964,7 +967,7 @@ public class BasicPanel extends JPanel
             calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
         }
         calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
-        calculator.setDotPressed(false); // control variable used to check if we have pushed the dot button
+        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
     /**

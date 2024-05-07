@@ -790,30 +790,30 @@ public class Calculator extends JFrame
     public void updateValuesAtPositionThenUpdateTextPane(String buttonChoice)
     {
         values[valuesPosition] = values[valuesPosition] + buttonChoice; // store in values, values[valuesPosition] + buttonChoice
-        if (isNegating) {
+        if (isNegating)
+        {
             values[valuesPosition] = convertToNegative(values[valuesPosition]);
             textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); //values[valuesPosition]
             setNegating(isSubtracting && isNumberNegative);
-        } else {
-            textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); //values[valuesPosition])
         }
+        else
+        { textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); } //values[valuesPosition])
         LOGGER.debug("textPane: '" + getTextPaneWithoutNewLineCharacters() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
     public String addCourtesyCommas(String valueToAdjust)
     {
+        LOGGER.info("addingCourtesyCommas");
+        LOGGER.debug("valueToAdjust: " + valueToAdjust);
         String adjusted = "";
         String toTheRight = "";
         if (isDecimal(valueToAdjust))
         {
-            LOGGER.debug("valueToAdjust: " + valueToAdjust);
             var temp = valueToAdjust;
             LOGGER.debug("temp: " + temp);
             valueToAdjust = getNumberOnLeftSideOfDecimal(valueToAdjust);
-            LOGGER.debug("valueToAdjust: " + valueToAdjust);
             toTheRight = getNumberOnRightSideOfDecimal(temp);
-            LOGGER.debug("toTheRight: " + toTheRight);
             if (valueToAdjust.length() <= 3)
             {
                 valueToAdjust = temp;
@@ -857,6 +857,7 @@ public class Calculator extends JFrame
         if (isDotPressed && !valueToAdjust.contains("."))
         {
             adjusted += "." + toTheRight;
+            setDotPressed(false);
         }
         LOGGER.debug("adjusted: " + adjusted);
         return adjusted;
