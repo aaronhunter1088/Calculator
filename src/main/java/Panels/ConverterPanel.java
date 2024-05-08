@@ -183,7 +183,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("button: " + actionEvent.getActionCommand());
         textField1.setText("0");
         textField2.setText("0");
-        calculator.setDotPressed(false);
+        //calculator.setDotPressed(false);
         calculator.getButtonDot().setEnabled(true);
         textField1.requestFocusInWindow();
         isTextField1Selected = true;
@@ -387,7 +387,8 @@ public class ConverterPanel extends JPanel
             //calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
             //calculator.updateTheTextAreaBasedOnTheTypeAndBase();
             //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
+            calculator.getButtonDot().setEnabled(false);
+            //calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
         }
         else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
         {
@@ -398,7 +399,7 @@ public class ConverterPanel extends JPanel
             calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
         }
         calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
-        calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
+        //calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
     /**

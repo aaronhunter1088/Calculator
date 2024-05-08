@@ -37,7 +37,6 @@ public class Calculator extends JFrame
     private static final Logger LOGGER = LogManager.getLogger(Calculator.class.getSimpleName());
     @Serial
     private static final long serialVersionUID = 4L;
-    // Fonts
     public static final Font
             mainFont = new Font("Segoe UI", Font.PLAIN, 12), // all panels
             mainFontBold = new Font("Segoe UI", Font.BOLD, 12), // Date panel
@@ -86,11 +85,9 @@ public class Calculator extends JFrame
     private boolean
             isFirstNumber = true,
             isNumberNegative = false,
-            //memorySwitchBool = false,
             isAdding = false, isSubtracting = false,
             isMultiplying = false, isDividing = false,
-            //isMemoryAdding = false, isMemorySubtracting = false,
-            isNegating = false, isDotPressed = false,
+            isNegating = false,
             isMetal = false, isSystem = false,
             isWindows = false, isMotif = false,
             isGtk = false;
@@ -579,15 +576,9 @@ public class Calculator extends JFrame
             values[1] = "";
             valuesPosition = 1;
             if (isDecimal(values[0]))
-            {
-                isDotPressed = true;
-                buttonDot.setEnabled(false);
-            }
+            { buttonDot.setEnabled(false); }
             else
-            {
-                isDotPressed = false;
-                buttonDot.setEnabled(true);
-            }
+            { buttonDot.setEnabled(true); }
             isFirstNumber = false;
             return false;
         }
@@ -595,15 +586,9 @@ public class Calculator extends JFrame
             values[1] = "";
             valuesPosition = 0;
             if (isDecimal(values[0]))
-            {
-                isDotPressed = true;
-                buttonDot.setEnabled(false);
-            }
+            { buttonDot.setEnabled(false); }
             else
-            {
-                isDotPressed = false;
-                buttonDot.setEnabled(true);
-            }
+            { buttonDot.setEnabled(true); }
             isFirstNumber = true;
             return true;
         }
@@ -712,15 +697,7 @@ public class Calculator extends JFrame
         LOGGER.info("Performing initial checks...");
         boolean checkFound = false;
         if (textPaneContainsBadText())
-        {
-//            textPane.setText("");
-//            valuesPosition = 0;
-//            isFirstNumber = true;
-//            isDotPressed = false;
-//            buttonDot.setEnabled(true);
-//            isNumberNegative = false;
-            checkFound = true;
-        }
+        { checkFound = true; }
         else if (getTextPaneWithoutAnyOperator().equals("0") &&
                 (calculatorType.equals(BASIC) ||
                         (calculatorType == PROGRAMMER && calculatorBase == DECIMAL)))
@@ -729,9 +706,7 @@ public class Calculator extends JFrame
             textPane.setText("");
             values[valuesPosition] = "";
             isFirstNumber = true;
-            isDotPressed = false;
             buttonDot.setEnabled(true);
-            //checkFound = true;
         }
         else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
         {
@@ -793,79 +768,86 @@ public class Calculator extends JFrame
         if (isNegating)
         {
             values[valuesPosition] = convertToNegative(values[valuesPosition]);
-            textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); //values[valuesPosition]
+            textPane.setText(addNewLineCharacters() + addCourtesyCommas(values[valuesPosition])); //values[valuesPosition]
             setNegating(isSubtracting && isNumberNegative);
         }
         else
-        { textPane.setText(addNewLineCharacters() + showCommas(addCourtesyCommas(values[valuesPosition]))); } //values[valuesPosition])
+        { textPane.setText(addNewLineCharacters() + addCourtesyCommas(values[valuesPosition])); } //values[valuesPosition])
         LOGGER.debug("textPane: '" + getTextPaneWithoutNewLineCharacters() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
     }
 
+    /**
+     * Adds commas to the number if appropriate
+     * @param valueToAdjust the textPane value
+     * @return String the textPane value with commas
+     */
     public String addCourtesyCommas(String valueToAdjust)
     {
         LOGGER.info("addingCourtesyCommas");
         LOGGER.debug("valueToAdjust: " + valueToAdjust);
+        var temp = valueToAdjust;
         String adjusted = "";
+        String toTheLeft = "";
         String toTheRight = "";
         if (isDecimal(valueToAdjust))
         {
-            var temp = valueToAdjust;
             LOGGER.debug("temp: " + temp);
-            valueToAdjust = getNumberOnLeftSideOfDecimal(valueToAdjust);
-            toTheRight = getNumberOnRightSideOfDecimal(temp);
-            if (valueToAdjust.length() <= 3)
+            toTheLeft = getNumberOnLeftSideOfDecimal(valueToAdjust);
+            toTheRight = getNumberOnRightSideOfDecimal(valueToAdjust);
+            if (toTheLeft.length() <= 3)
             {
                 valueToAdjust = temp;
                 LOGGER.debug("valueFromTemp: " + valueToAdjust);
-                toTheRight = "";
+                getButtonDot().setEnabled(true);
+                return valueToAdjust;
             }
-            setDotPressed(true);
+            else
+            {
+                valueToAdjust = toTheLeft;
+                getButtonDot().setEnabled(true);
+            }
         }
-        if (!valueToAdjust.contains(".") && valueToAdjust.length() <= 3 || valueToAdjust.contains("_") || valueToAdjust.contains(","))
-        {
-            valueToAdjust = valueToAdjust.replace("_", "").replace(",","");
-        }
-        if (!valueToAdjust.contains(".") && valueToAdjust.length() >= 4)
+        valueToAdjust = valueToAdjust.replace("_", "").replace(",","").replace(".","");
+        LOGGER.debug("valueToAdjust: " + valueToAdjust);
+        if (valueToAdjust.length() >= 4)
         {
             LOGGER.debug("ValueToAdjust length: " + valueToAdjust.length());
             StringBuffer reversed = new StringBuffer().append(valueToAdjust).reverse();
-            reversed = new StringBuffer().append(reversed.toString().replace("_","").replace(",",""));
-            // longest number is 7 digits long 9,999,999
             LOGGER.debug("reversed: " + reversed);
             if (reversed.length() <= 6)
             {
                 LOGGER.debug("Length is : " + reversed.length());
-                reversed = new StringBuffer().append(reversed.substring(0,3)).append("_").append(reversed.substring(3,reversed.length()));
+                reversed = new StringBuffer().append(reversed.substring(0,3)).append(",").append(reversed.substring(3,reversed.length()));
                 adjusted = reversed.reverse().toString();
             }
             else
             {
                 LOGGER.debug("Length is : " + reversed.length());
-                reversed = new StringBuffer().append(reversed.substring(0,3)).append("_").append(reversed.substring(3,6)).append("_").append(reversed.substring(6));
+                reversed = new StringBuffer().append(reversed.substring(0,3)).append(",").append(reversed.substring(3,6)).append(",").append(reversed.substring(6));
                 adjusted = reversed.reverse().toString();
             }
         }
         else
         {
+            adjusted = valueToAdjust;
             LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted);
-            /*if (!valueToAdjust.contains("."))*/ adjusted = valueToAdjust;
-            if (!isDecimal(adjusted)) isDotPressed = false;
-            else adjusted += toTheRight;
+            if (isDecimal(temp)) {
+                getButtonDot().setEnabled(false);
+                adjusted += toTheRight;
+                LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted);
+            }
+            else
+            { LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted); }
             LOGGER.debug("'adjusted': " + adjusted);
         }
-        if (isDotPressed && !valueToAdjust.contains("."))
+        if (getButtonDot().isEnabled() && isDecimal(temp))
         {
             adjusted += "." + toTheRight;
-            setDotPressed(false);
+            getButtonDot().setEnabled(false);
         }
         LOGGER.debug("adjusted: " + adjusted);
         return adjusted;
-    }
-
-    public String showCommas(String valueToUpdate)
-    {
-        return valueToUpdate.replace("_", ",");
     }
 
     /**
@@ -932,10 +914,7 @@ public class Calculator extends JFrame
                     {
                         textPane.setText(addNewLineCharacters() + values[0]);
                         if (isDecimal(values[0]))
-                        {
-                            setDotPressed(true);
-                            buttonDot.setEnabled(false);
-                        }
+                        { buttonDot.setEnabled(false); }
                     }
                     break;
                 case "Programmer":
@@ -947,10 +926,7 @@ public class Calculator extends JFrame
                     {
                         textPane.setText(addNewLineCharacters() + values[0]);
                         if (isDecimal(values[0]))
-                        {
-                            setDotPressed(true);
-                            buttonDot.setEnabled(false);
-                        }
+                        { buttonDot.setEnabled(false); }
                     }
                     break;
                 case "Scientific":
@@ -1164,7 +1140,7 @@ public class Calculator extends JFrame
         else {
             currentNumber = currentNumber.substring(0, index);
         }
-        LOGGER.info("output of clearZeroesAtEnd(): " + showCommas(addCourtesyCommas(currentNumber)));
+        LOGGER.info("output of clearZeroesAtEnd(): " + addCourtesyCommas(currentNumber));
         return currentNumber;
     }
 
@@ -1245,7 +1221,7 @@ public class Calculator extends JFrame
                 LOGGER.info("values[{}]: '{}'", 3, values[3]);
                 LOGGER.info("valuesPosition: '{}'", valuesPosition);
                 LOGGER.info("firstNumBool: '{}'", isFirstNumber);
-                LOGGER.info("dotButtonPressed: '{}'", isDotPressed);
+                LOGGER.info("isDotEnabled: '{}'", getButtonDot().isEnabled());
                 LOGGER.info("isNegative: '{}'", isNumberNegative);
                 LOGGER.info("isNegating: '{}'", isNegating);
                 LOGGER.info("calculatorType: '{}", calculatorType);
@@ -1280,7 +1256,7 @@ public class Calculator extends JFrame
                 LOGGER.info("values[{}]: '{}'", 3, values[3]);
                 LOGGER.info("valuesPosition: '{}'", valuesPosition);
                 LOGGER.info("firstNumBool: '{}'", isFirstNumber);
-                LOGGER.info("dotButtonPressed: '{}'", isDotPressed);
+                LOGGER.info("isDotEnabled: '{}'", getButtonDot().isEnabled());
                 LOGGER.info("isNegative: '{}'", isNumberNegative);
                 LOGGER.info("calculatorType: '{}", calculatorType);
                 LOGGER.info("calculatorBase: '{}'", calculatorBase);
@@ -1495,7 +1471,8 @@ public class Calculator extends JFrame
         String leftSide;
         int index = currentNumber.indexOf(".");
         if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = "";
-        else {
+        else
+        {
             leftSide = currentNumber.substring(0, index);
             if (StringUtils.isEmpty(leftSide)) leftSide = "0";
         }
@@ -1514,7 +1491,8 @@ public class Calculator extends JFrame
         String rightSide;
         int index = currentNumber.indexOf(".");
         if (index == -1 || (index + 1) >= currentNumber.length()) rightSide = "";
-        else {
+        else
+        {
             rightSide = currentNumber.substring(index + 1);
             if (StringUtils.isEmpty(rightSide)) rightSide = "0";
         }
@@ -1565,9 +1543,10 @@ public class Calculator extends JFrame
      */
     public CalculatorBase determineCalculatorBase(CalculatorBase calculatorBase)
     {
-        if (calculatorBase != null) {
-            return calculatorBase;
-        } else {
+        if (calculatorBase != null)
+        { return calculatorBase; }
+        else
+        {
             if (currentPanel instanceof BasicPanel) return DECIMAL;
             else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isBinaryBase()) return BINARY;
             else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isDecimalBase()) return DECIMAL;
@@ -1693,15 +1672,12 @@ public class Calculator extends JFrame
     public JMenuBar getCalculatorMenuBar() { return menuBar; }
     public boolean isFirstNumber() { return isFirstNumber; }
     public boolean isNumberNegative() { return isNumberNegative; }
-    //public boolean isMemorySwitchBool() { return memorySwitchBool; }
     public boolean isAdding() { return isAdding; }
     public boolean isSubtracting() { return isSubtracting; }
     public boolean isMultiplying() { return isMultiplying; }
     public boolean isDividing() { return isDividing; }
-    //public boolean isMemoryAdding() { return isMemoryAdding; }
-    //public boolean isMemorySubtracting() { return isMemorySubtracting; }
     public boolean isNegating() { return isNegating; }
-    public boolean isDotPressed() { return isDotPressed; }
+    public boolean isDotPressed() { return !getButtonDot().isEnabled(); } //{ return isDotPressed; }
     public JMenu getLookMenu() { return lookMenu; }
     public JMenu getViewMenu() { return viewMenu; }
     public JMenu getEditMenu() { return editMenu; }
@@ -1733,7 +1709,6 @@ public class Calculator extends JFrame
     public void setMultiplying(boolean multiplying) { this.isMultiplying = multiplying; }
     public void setDividing(boolean dividing) { this.isDividing = dividing; }
     public void setNegating(boolean negating) { this.isNegating = negating; }
-    public void setDotPressed(boolean dotPressed) { this.isDotPressed = dotPressed; }
     public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; }
     public void setCalculatorMenuBar(JMenuBar menuBar) { this.menuBar = menuBar; }
     public void setLookMenu(JMenu jMenu) { this.lookMenu = jMenu; }

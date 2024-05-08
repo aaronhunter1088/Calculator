@@ -950,26 +950,23 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("←").thenReturn("←").thenReturn("←");
         calculator.getTextPane().setText("15.6 +");
         calculator.getValues()[0] = "15.6";
-        calculator.setDotPressed(true);
+        //calculator.setDotPressed(true);
         calculator.getButtonDot().setEnabled(false);
         calculator.setAdding(true);
         basicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15.6", 15.6, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal 15.6", "15.6", calculator.getTextPaneWithoutNewLineCharacters());
-        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertFalse("Expected isAdding to be false", calculator.isAdding());
 
         basicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15.", 15., Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal 15.", "15.", calculator.getTextPaneWithoutNewLineCharacters());
-        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
 
         basicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15", 15, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
-        assertFalse("Expected dot button to not be pressed", calculator.isDotPressed());
         assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
     }
 
@@ -981,7 +978,7 @@ public class BasicPanelTest {
         calculator.getValues()[0] = "15.6";
         calculator.getValues()[1] = "6";
         calculator.setValuesPosition(1);
-        calculator.setDotPressed(false);
+        //calculator.setDotPressed(false);
         calculator.getButtonDot().setEnabled(true);
         calculator.setAdding(true);
         assertEquals("Values[1] is not 6", 6, Integer.parseInt(calculator.getValues()[1]));
@@ -1504,22 +1501,22 @@ public class BasicPanelTest {
         assertEquals("Expected values[0] to be 1065.", "1065.", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.", "1,065.", calculator.getTextPaneWithoutNewLineCharacters());
         basicPanel.performNumberButtonActions(actionEvent);
-        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.5", "1065.5", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.5", "1,065.5", calculator.getTextPaneWithoutNewLineCharacters());
         basicPanel.performNumberButtonActions(actionEvent);
-        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.54", "1065.54", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.54", "1,065.54", calculator.getTextPaneWithoutNewLineCharacters());
         basicPanel.performNumberButtonActions(actionEvent);
-        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.545", "1065.545", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.545", "1,065.545", calculator.getTextPaneWithoutNewLineCharacters());
         basicPanel.performNumberButtonActions(actionEvent);
-        assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
+        assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.5457", "1065.5457", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.5457", "1,065.5457", calculator.getTextPaneWithoutNewLineCharacters());
