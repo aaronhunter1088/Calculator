@@ -34,18 +34,28 @@ public class ConverterPanel extends JPanel
     private ConverterType converterType;
     private JTextField textField1, textField2;
     private JComboBox<ConverterUnits> unitOptions1, unitOptions2;
-    private JTextArea bottomSpaceAboveNumbers;
+    //private JTextArea bottomSpaceAboveNumbers;
     private Calculator calculator;
-    private JPanel numbersPanel;
     private boolean isTextField1Selected;
 
     /************* Constructors ******************/
 
+    public ConverterPanel()
+    {
+        setName(CONVERTER.getName());
+        LOGGER.info("Converter panel created");
+    }
+
     /**
      * A zero argument constructor for creating a ConverterPanel
      */
-    public ConverterPanel()
-    { LOGGER.info("Converter panel created"); }
+    public ConverterPanel(ConverterType converterType)
+    {
+        setName(CONVERTER.getName());
+        if (converterType == null) setConverterType(ANGLE);
+        else setConverterType(converterType);
+        LOGGER.info("Converter panel created");
+    }
 
     /**
      * The main constructor used to create a ConverterPanel
@@ -63,17 +73,19 @@ public class ConverterPanel extends JPanel
      * @param calculator the Calculator object
      * @param converterType the ConverterType to use
      */
-    private void setupConverterPanel(Calculator calculator, ConverterType converterType)
+    public void setupConverterPanel(Calculator calculator, ConverterType converterType)
     {
         setCalculator(calculator);
+        setConverterType(converterType);
         setLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints()); // instantiate constraints
-        setMaximumSize(new Dimension(300,400));
+        setSize(new Dimension(200,400)); // keep!!
         //setupEditMenu();
         setupConverterPanelComponents(converterType != null ? converterType: ANGLE);
         setupHelpMenu(getConverterType());
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
+        setName(CONVERTER.getName());
         LOGGER.info("Finished setting up converter panel");
     }
 
@@ -111,18 +123,122 @@ public class ConverterPanel extends JPanel
      */
     private void addComponentsToPanel()
     {
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.CENTER;
-        addComponent(converterTypeName, 0,0,1,1, 1.0,1.0);
-        addComponent(textField1, 1, 0, 0, 1,1.0,1.0);
-        addComponent(unitOptions1, 3, 0, 0,1, 1.0,1.0);
-        addComponent(textField2, 4, 0, 0, 1,1.0,1.0);
-        addComponent(unitOptions2, 6, 0, 0,1, 1.0,1.0);
+//        constraints.fill = GridBagConstraints.BOTH;
+//        constraints.anchor = GridBagConstraints.CENTER;
+        JPanel converterPanel = new JPanel(new GridBagLayout());
+
+        JPanel entryPanel = new JPanel(new GridBagLayout());
+        addComponent(entryPanel, converterTypeName, 0,0,1,1, 1.0,1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        addComponent(entryPanel, textField1, 1, 0, 0, 1,1.0,1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(entryPanel, unitOptions1, 2, 0, 0,1, 1.0,1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(entryPanel, textField2, 3, 0, 0, 1,1.0,1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(entryPanel, unitOptions2, 4, 0, 0,1, 1.0,1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+
+        addComponent(converterPanel, entryPanel, 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        //
+        //setNumbersPanel(new JPanel());
+        JPanel numbersPanel = new JPanel(new GridBagLayout());
+        //numbersPanel.setBackground(Color.BLACK);
+        //numbersPanel.setBorder(new LineBorder(Color.BLACK));
+        addComponent(numbersPanel, calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         // numbers are added on top of a single panel
-        constraints.anchor = GridBagConstraints.PAGE_START;
-        addComponent(numbersPanel, 7, 0, 0, 1, 1.0, 1.0);
+        //constraints.anchor = GridBagConstraints.PAGE_START;
+        addComponent(converterPanel, numbersPanel, 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.PAGE_START);
+        addComponent(converterPanel);
         LOGGER.info("Finished adding components to panel");
     }
+
+    /**
+     * Adding a component enforcing the GridBagConstraints.BOTH
+     * @param c the component to add
+     * @param row the row to add the component to
+     * @param column the column to add the component to
+     * @param width the number of columns the component takes up
+     * @param height the number of rows the component takes up
+     */
+    private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
+    {
+        constraints.gridx = column;
+        constraints.gridy = row;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+        constraints.weighty = weighty;
+        constraints.weightx = weightx;
+        constraints.insets = new Insets(0, 0, 0, 0);
+        converterLayout.setConstraints(c, constraints); // set constraints
+        add(c); // add component
+    }
+
+    /**
+     * Adding the number button component enforcing the GridBagConstraints.BOTH
+     * @param c the component to add
+     * @param row the row to add the component to
+     * @param column the column to add the component to
+     * @param width the number of columns the component takes up
+     * @param height the number of rows the component takes up
+     */
+    private void addComponentToNumbersPanel(Component c, int row, int column, int width, int height, double weighty, double weightx)
+    {
+        constraints.gridx = column;
+        constraints.gridy = row;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.weighty = weighty;
+        constraints.weightx = weightx;
+        constraints.insets = new Insets(0, 0, 0, 0);
+        //((GridBagLayout)numbersPanel.getLayout()).setConstraints(c, constraints); // set constraints
+        //numbersPanel.add(c);
+    }
+
+    /**
+     * Adds a component to a panel
+     * @param panel the panel to add to
+     * @param c the component to add to a panel
+     * @param row the row to place the component in
+     * @param column the column to place the component in
+     * @param gridWidth the number of columns the component should use
+     * @param gridHeight the number of rows the component should use
+     * @param weightXRow set to allow the button grow horizontally
+     * @param weightYColumn set to allow the button grow horizontally
+     * @param fill set to make the component resize if any unused space
+     * @param anchor set to place the component in a specific location on the frame
+     */
+    private void addComponent(JPanel panel, Component c, int row, int column, int gridWidth, int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
+    {
+        constraints.gridy = row;
+        constraints.gridx = column;
+        constraints.gridwidth = gridWidth;
+        constraints.gridheight = gridHeight;
+        constraints.weighty = weightXRow;
+        constraints.weightx = weightYColumn;
+        constraints.insets = new Insets(0, 0, 0, 0);
+        if (fill != 0)   constraints.fill = fill;
+        if (anchor != 0) constraints.anchor = anchor;
+        if (c != null) panel.add(c, constraints);
+        else           add(panel, constraints);
+    }
+
+    /** Primarily used to add the basicPanel to the frame */
+    private void addComponent(JPanel panel)
+    { addComponent(panel, null, 0, 0, 0, 0, 1.0, 1.0, 0, GridBagConstraints.CENTER); }
 
     /**
      * The main method used to set up the component functionalities
@@ -139,13 +255,13 @@ public class ConverterPanel extends JPanel
         // Number button functionalities
         // First clear all functionality assigned to them
         calculator.clearNumberButtonActions();
-        setupNumberButtons();
+        calculator.setupNumberButtons();
         calculator.setupButtonBlank1();
         calculator.setupButtonBlank2();
 
-        setupClearEntryButton();
-        setupDeleteButton();
-        setupDotButton();
+        calculator.setupClearEntryButton();
+        calculator.setupDeleteButton();
+        calculator.setupDotButton();
         // Next, set up each number button. 0 is a bit different from the rest.
 //        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
 //        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
@@ -422,52 +538,6 @@ public class ConverterPanel extends JPanel
     }
 
     /**
-     * Adding a component enforcing the GridBagConstraints.BOTH
-     * @param c the component to add
-     * @param row the row to add the component to
-     * @param column the column to add the component to
-     * @param width the number of columns the component takes up
-     * @param height the number of rows the component takes up
-     */
-    private void addComponent(Component c, int row, int column, int width, int height, double weighty, double weightx)
-    {
-        constraints.gridx = column;
-        constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
-        constraints.weighty = weighty;
-        constraints.weightx = weightx;
-        constraints.insets = new Insets(0, 0, 0, 0);
-        converterLayout.setConstraints(c, constraints); // set constraints
-        add(c); // add component
-    }
-
-    /**
-     * Adding the number button component enforcing the GridBagConstraints.BOTH
-     * @param c the component to add
-     * @param row the row to add the component to
-     * @param column the column to add the component to
-     * @param width the number of columns the component takes up
-     * @param height the number of rows the component takes up
-     */
-    private void addComponentToNumbersPanel(Component c, int row, int column, int width, int height, double weighty, double weightx)
-    {
-        constraints.gridx = column;
-        constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weighty = weighty;
-        constraints.weightx = weightx;
-        constraints.insets = new Insets(0, 0, 0, 0);
-        ((GridBagLayout)numbersPanel.getLayout()).setConstraints(c, constraints); // set constraints
-        numbersPanel.add(c);
-    }
-
-    /**
      * Calls the main setup method when switching
      * from another panel to the ConverterPanel
      * @param calculator the Calculator object
@@ -540,7 +610,7 @@ public class ConverterPanel extends JPanel
                     JPanel mainPanel = new JPanel();
                     mainPanel.add(textLabel);
                     JOptionPane.showMessageDialog(this,
-                            mainPanel, "Viewing Help", JOptionPane.PLAIN_MESSAGE);
+                            mainPanel, "Viewing " + getConverterType().getName() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
             }
@@ -627,14 +697,14 @@ public class ConverterPanel extends JPanel
      */
     private void setupAngleConverter()
     {
-        LOGGER.info("Starting Angle specific setup");
+        LOGGER.info("Starting ANGLE specific setup");
         setupConverter(ANGLE.getName());
         setupHelpMenu(ANGLE);
         setConverterType(ANGLE);
         setUnitOptions1(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
         setUnitOptions2(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
-        setBottomSpaceAboveNumbers(new JTextArea(1,10));
-        bottomSpaceAboveNumbers.setEnabled(false);
+        //setBottomSpaceAboveNumbers(new JTextArea(1,10));
+        //bottomSpaceAboveNumbers.setEnabled(false);
         getUnitOptions1().addActionListener(this::performAngleUnitsSwitch);
         getUnitOptions2().addActionListener(this::performAngleUnitsSwitch);
         LOGGER.info("Ending Angle specific setup");
@@ -645,14 +715,14 @@ public class ConverterPanel extends JPanel
      */
     private void setupAreaConverter()
     {
-        LOGGER.info("Starting setup");
+        LOGGER.info("Starting AREA specific setup");
         setupConverter(AREA.getName());
         setupHelpMenu(AREA);
         setConverterType(AREA);
         setUnitOptions1(new JComboBox<>(){{ addItem(SQUARE_MILLIMETERS); addItem(SQUARE_CENTIMETERS); addItem(SQUARE_METERS); addItem(HECTARES); addItem(SQUARE_KILOMETERS); addItem(SQUARE_INCHES); addItem(SQUARE_FEET); addItem(SQUARE_YARD_ACRES); addItem(SQUARE_MILES); }});
         setUnitOptions2(new JComboBox<>(){{ addItem(SQUARE_MILLIMETERS); addItem(SQUARE_CENTIMETERS); addItem(SQUARE_METERS); addItem(HECTARES); addItem(SQUARE_KILOMETERS); addItem(SQUARE_INCHES); addItem(SQUARE_FEET); addItem(SQUARE_YARD_ACRES); addItem(SQUARE_MILES); }});
-        setBottomSpaceAboveNumbers(new JTextArea(1,10));
-        bottomSpaceAboveNumbers.setEnabled(false);
+        //setBottomSpaceAboveNumbers(new JTextArea(1,10));
+        //bottomSpaceAboveNumbers.setEnabled(false);
         getUnitOptions1().addActionListener(this::performAreaUnitsSwitch);
         getUnitOptions2().addActionListener(this::performAreaUnitsSwitch);
         LOGGER.info("Ending Area specific setup");
@@ -695,27 +765,27 @@ public class ConverterPanel extends JPanel
             }
         });
         textField1.grabFocus();
-        setNumbersPanel(new JPanel());
-        numbersPanel.setLayout(new GridBagLayout());
+        //setNumbersPanel(new JPanel());
+        //numbersPanel.setLayout(new GridBagLayout());
         //numbersPanel.setBackground(Color.BLACK);
         //numbersPanel.setBorder(new LineBorder(Color.BLACK));
-        addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0);
-        // TODO try getButtonBlank1().clone()
-        addComponentToNumbersPanel(calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0);
-        addComponentToNumbersPanel(calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
-        calculator.getButton0().setPreferredSize(new Dimension(35, 35));
-        addComponentToNumbersPanel(calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0);
+//        // TODO try getButtonBlank1().clone()
+//        addComponentToNumbersPanel(calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0);
+//        addComponentToNumbersPanel(calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
+//        calculator.getButton0().setPreferredSize(new Dimension(35, 35));
+//        addComponentToNumbersPanel(calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0);
         LOGGER.info("Ending " + nameOfConverter + " Converter setup");
     }
 
@@ -763,9 +833,9 @@ public class ConverterPanel extends JPanel
     public JTextField getTextField2() { return textField2; }
     public JComboBox<ConverterUnits> getUnitOptions1() { return unitOptions1; }
     public JComboBox<ConverterUnits> getUnitOptions2() { return unitOptions2; }
-    public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
+    //public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
     public Calculator getCalculator() { return calculator; }
-    public JPanel getNumbersPanel() { return numbersPanel; }
+    //public JPanel getNumbersPanel() { return numbersPanel; }
     public boolean isTextField1Selected() { return isTextField1Selected; }
 
     /************* All Setters ******************/
@@ -780,8 +850,8 @@ public class ConverterPanel extends JPanel
     public void setTextField2(JTextField textField2) { this.textField2 = textField2; }
     public void setUnitOptions1(JComboBox<ConverterUnits> unitOptions1) { this.unitOptions1 = unitOptions1; }
     public void setUnitOptions2(JComboBox<ConverterUnits> unitOptions2) { this.unitOptions2 = unitOptions2; }
-    public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
+    //public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
-    public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
+    //public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }
     public void setIsTextField1Selected(boolean isTextField1Selected) { this.isTextField1Selected = isTextField1Selected; }
 }

@@ -12,6 +12,7 @@ import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,7 +27,7 @@ public class BasicPanel extends JPanel
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class.getSimpleName());
     @Serial
     private static final long serialVersionUID = 4L;
-    private Calculator calculator;
+    private static Calculator calculator;
 
     private GridBagLayout basicLayout;
     private GridBagConstraints constraints;
@@ -37,7 +38,10 @@ public class BasicPanel extends JPanel
      * A zero argument constructor for creating a BasicPanel
      */
     public BasicPanel()
-    { LOGGER.info("Empty Basic panel created"); }
+    {
+        setName(BASIC.getName());
+        LOGGER.info("Empty Basic panel created");
+    }
 
     /**
      * The main constructor used to create a BasicPanel
@@ -56,13 +60,14 @@ public class BasicPanel extends JPanel
      * and all of its components and their actions
      * @param calculator the Calculator object
      */
-    private void setupBasicPanel(Calculator calculator)
+    public void setupBasicPanel(Calculator calculator)
     {
         setCalculator(calculator);
         setLayout(new GridBagLayout());
         constraints = new GridBagConstraints();
-        setMaximumSize(new Dimension(100,200));
+        setSize(new Dimension(200, 336));
         setupBasicPanelComponents();
+        remove(calculator.getCurrentPanel());
         addComponentsToPanel();
         setName(BASIC.getName());
         SwingUtilities.updateComponentTreeUI(this);
@@ -70,10 +75,10 @@ public class BasicPanel extends JPanel
     }
 
     /**
-    * Clears button actions, sets the CalculatorType,
-    * CalculatorBase, ConverterType, and finally
-    * sets up the basic panel and its components
-    */
+     * Clears button actions, sets the CalculatorType,
+     * CalculatorBase, ConverterType, and finally
+     * sets up the basic panel and its components
+     */
     private void setupBasicPanelComponents()
     {
         List<JButton> allButtons = Stream.of(
@@ -85,28 +90,29 @@ public class BasicPanel extends JPanel
 
         allButtons.forEach(button -> Stream.of(button.getActionListeners())
                 .forEach(button::removeActionListener));
+        LOGGER.debug("Actions removed...");
 
         calculator.setCalculatorBase(DECIMAL);
         calculator.setCalculatorType(BASIC);
         calculator.setConverterType(null);
-        setupTextPane();
-        setupMemoryButtons(); // MS, MC, MR, M+, M-
-        setupDeleteButton();
-        setupSquaredButton();
-        setupClearEntryButton();
-        setupClearButton();
-        setupNegateButton();
-        setupSquareRootButton();
-        setupNumberButtons(true);
-        setupDotButton();
-        setupAddButton();
-        setupSubtractButton();
-        setupMultiplyButton();
-        setupDivideButton();
-        setupPercentButton();
-        setupFractionButton();
-        setupEqualsButton();
         setupHelpMenu();
+        calculator.setupTextPane();
+        calculator.setupMemoryButtons(); // MS, MC, MR, M+, M-
+        calculator.setupPercentButton();
+        calculator.setupSquareRootButton();
+        calculator.setupSquaredButton();
+        calculator.setupFractionButton();
+        calculator.setupClearEntryButton();
+        calculator.setupClearButton();
+        calculator.setupDeleteButton();
+        calculator.setupDivideButton();
+        calculator.setupNumberButtons();
+        calculator.setupMultiplyButton();
+        calculator.setupSubtractButton();
+        calculator.setupAdditionButton();
+        calculator.setupNegateButton();
+        calculator.setupDotButton();
+        calculator.setupEqualsButton();
         LOGGER.info("Finished configuring the buttons");
     }
 
@@ -115,71 +121,92 @@ public class BasicPanel extends JPanel
      */
     private void addComponentsToPanel()
     {
-        constraints.insets = new Insets(5,5,5,5); //5,0,5,0
-        addComponent(calculator.getTextPane(), 0, 0, 5, 2);
-        addComponent(calculator.getButtonMemoryStore(), 2, 0, 1, 1);
-        addComponent(calculator.getButtonMemoryClear(), 2, 1, 1, 1);
-        addComponent(calculator.getButtonMemoryRecall(), 2, 2, 1, 1);
-        addComponent(calculator.getButtonMemoryAddition(), 2, 3, 1, 1);
-        addComponent(calculator.getButtonMemorySubtraction(), 2, 4, 1, 1);
-        addComponent(calculator.getButtonDelete(), 3, 0, 1, 1);
-        addComponent(calculator.getButtonClearEntry(), 3, 1, 1, 1);
-        addComponent(calculator.getButtonClear(), 3, 2, 1, 1);
-        addComponent(calculator.getButtonNegate(), 3, 3, 1, 1);
-        addComponent(calculator.getButtonSqrt(), 3, 4, 1, 1);
-        addComponent(calculator.getButton7(), 4, 0, 1, 1);
-        addComponent(calculator.getButton8(), 4, 1, 1, 1);
-        addComponent(calculator.getButton9(), 4, 2, 1, 1);
-        addComponent(calculator.getButtonDivide(), 4, 3, 1, 1);
-        addComponent(calculator.getButtonPercent(), 4, 4, 1, 1);
-        addComponent(calculator.getButton4(), 5, 0, 1, 1);
-        addComponent(calculator.getButton5(), 5, 1, 1, 1);
-        addComponent(calculator.getButton6(), 5, 2, 1, 1);
-        addComponent(calculator.getButtonMultiply(), 5, 3, 1, 1);
-        addComponent(calculator.getButtonFraction(), 5, 4, 1, 1);
-        addComponent(calculator.getButton1(), 6, 0, 1, 1);
-        addComponent(calculator.getButton2(), 6, 1, 1, 1);
-        addComponent(calculator.getButton3(), 6, 2, 1, 1);
-        addComponent(calculator.getButtonSubtract(), 6, 3, 1, 1);
-        addComponent(calculator.getButtonSquared(), 6, 4, 1, 1);
-        addComponent(calculator.getButton0(), 7, 0, 2, 1, GridBagConstraints.HORIZONTAL);
-        addComponent(calculator.getButtonDot(), 7, 2, 1, 1);
-        addComponent(calculator.getButtonAdd(), 7, 3, 1, 1);
-        addComponent(calculator.getButtonEquals(), 7, 4, 1, 1);
-        LOGGER.info("Buttons added to basic panel");
+        JPanel basicPanel = new JPanel(new GridBagLayout());
+
+        addComponent(basicPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1),
+                5, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.PAGE_START);
+
+        JPanel memoryPanel = new JPanel(new GridBagLayout());
+        addComponent(memoryPanel, calculator.getButtonMemoryStore(), 0, new Insets(0,1,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemoryRecall(), 1, new Insets(0,0,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemoryClear(), 2, new Insets(0,0,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemoryAddition(), 3, new Insets(0,0,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemorySubtraction(), 4, new Insets(0,0,0,1));
+
+        addComponent(basicPanel, memoryPanel, 0, new Insets(0,0,0,0));
+
+        JPanel buttonsPanel = new JPanel(new GridBagLayout());
+        addComponent(buttonsPanel, calculator.getButtonPercent(), 0, 0);
+        addComponent(buttonsPanel, calculator.getButtonSqrt(), 0, 1);
+        addComponent(buttonsPanel, calculator.getButtonSquared(), 0, 2);
+        addComponent(buttonsPanel, calculator.getButtonFraction(), 0, 3);
+        addComponent(buttonsPanel, calculator.getButtonClearEntry(), 1, 0);
+        addComponent(buttonsPanel, calculator.getButtonClear(), 1, 1);
+        addComponent(buttonsPanel, calculator.getButtonDelete(), 1, 2);
+        addComponent(buttonsPanel, calculator.getButtonDivide(), 1, 3);
+        addComponent(buttonsPanel, calculator.getButton7(), 2, 0);
+        addComponent(buttonsPanel, calculator.getButton8(), 2, 1);
+        addComponent(buttonsPanel, calculator.getButton9(), 2, 2);
+        addComponent(buttonsPanel, calculator.getButtonMultiply(), 2, 3);
+        addComponent(buttonsPanel, calculator.getButton4(), 3, 0);
+        addComponent(buttonsPanel, calculator.getButton5(), 3, 1);
+        addComponent(buttonsPanel, calculator.getButton6(), 3, 2);
+        addComponent(buttonsPanel, calculator.getButtonSubtract(), 3, 3);
+        addComponent(buttonsPanel, calculator.getButton1(), 4, 0);
+        addComponent(buttonsPanel, calculator.getButton2(),4, 1);
+        addComponent(buttonsPanel, calculator.getButton3(), 4, 2);
+        addComponent(buttonsPanel, calculator.getButtonAdd(),4, 3);
+        addComponent(buttonsPanel, calculator.getButtonNegate(), 5, 0);
+        addComponent(buttonsPanel, calculator.getButton0(), 5, 1);
+        addComponent(buttonsPanel, calculator.getButtonDot(), 5, 2);
+        addComponent(buttonsPanel, calculator.getButtonEquals(), 5, 3);
+
+        addComponent(basicPanel, buttonsPanel, 2, 0);
+
+        addComponent(basicPanel);
+        LOGGER.info("Buttons added to the frame");
     }
+
     /**
-     * Adding a component enforcing the GridBagConstraints.BOTH
-     * @param c the component to add
-     * @param row the row to add the component to
-     * @param column the column to add the component to
-     * @param width the number of columns the component takes up
-     * @param height the number of rows the component takes up
+     * Adds a component to a panel
+     * @param panel the panel to add to
+     * @param c the component to add to a panel
+     * @param row the row to place the component in
+     * @param column the column to place the component in
+     * @param insets the space between the component
+     * @param gridWidth the number of columns the component should use
+     * @param gridHeight the number of rows the component should use
+     * @param weightXRow set to allow the button grow horizontally
+     * @param weightYColumn set to allow the button grow horizontally
+     * @param fill set to make the component resize if any unused space
+     * @param anchor set to place the component in a specific location on the frame
      */
-    private void addComponent(Component c, int row, int column, int width, int height)
-    { addComponent(c, row, column, width, height, GridBagConstraints.BOTH); }
-    /**
-     * The main method to used to add a component to the Calculator frame
-     * @param c the component to add
-     * @param row the row to add the component to
-     * @param column the column to add the component to
-     * @param width the number of columns the component takes up
-     * @param height the number of rows the component takes up
-     * @param fill the constrains to use
-     */
-    private void addComponent(Component c, int row, int column, int width, int height, int fill)
+    private void addComponent(JPanel panel, Component c, int row, int column, Insets insets, int gridWidth, int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
     {
-        constraints.gridx = column;
         constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = fill;
-        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
-        constraints.weighty = 0;
-        constraints.weightx = 0;
-        basicLayout.setConstraints(c, constraints);
-        add(c);
+        constraints.gridx = column;
+        constraints.gridwidth = gridWidth;
+        constraints.gridheight = gridHeight;
+        constraints.weighty = weightXRow;
+        constraints.weightx = weightYColumn;
+        constraints.insets = insets == null ? new Insets(1, 1, 1, 1) : insets;
+        if (fill != 0)   constraints.fill = fill;
+        if (anchor != 0) constraints.anchor = anchor;
+        if (c != null) panel.add(c, constraints);
+        else           add(panel, constraints);
     }
+
+    /** Primarily used to add the textPane */
+    private void addComponent(JPanel panel, Component c, int column, Insets insets)
+    { addComponent(panel, c, 1, column, insets, 1, 1, 1.0, 1.0, 0, 0); }
+
+    /** Primarily used to add the buttons to a panel */
+    private void addComponent(JPanel panel, Component c, int row, int column)
+    { addComponent(panel, c, row, column, null, 1, 1, 1.0, 1.0, 0, 0); }
+
+    /** Primarily used to add the basicPanel to the frame */
+    private void addComponent(JPanel panel)
+    { addComponent(panel, null, 0, 0, new Insets(0,0,0,0), 0, 0, 1.0, 1.0, 0, GridBagConstraints.CENTER); }
 
     /**
      * The main method to set up the Help menu item.
@@ -292,30 +319,12 @@ public class BasicPanel extends JPanel
                         calculator.getButtonAdd().getText(), calculator.getButtonAdd().getText(), "Enter a Number",
                         calculator.getButtonEquals().getText());
 
-        for(int i=0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++) {
-            JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
-            JMenuItem valueForThisMenuOption = null;
-            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
-                // get the options. remove viewHelpItem
-                for(int j=0; j<menuOption.getItemCount(); j++) {
-                    valueForThisMenuOption = menuOption.getItem(j);
-                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("View Help"))
-                    {
-                        LOGGER.debug("Found the current View Help option");
-                        break;
-                    }
-                }
-                // remove old option
-                menuOption.remove(valueForThisMenuOption);
-                // set up new viewHelpItem option
-                JMenuItem viewHelpItem = new JMenuItem("View Help");
-                viewHelpItem.setFont(mainFont);
-                viewHelpItem.setName("View Help");
-                viewHelpItem.addActionListener(action -> showHelpPanel(helpString));
-                menuOption.add(viewHelpItem, 0);
-            }
-        }
+        JMenu helpMenuItem = calculator.getHelpMenu();
+        JMenuItem viewHelp = helpMenuItem.getItem(0);
+        // remove any and all other view help actions
+        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        viewHelp.addActionListener(action -> showHelpPanel(helpString));
+        helpMenuItem.add(viewHelp, 0);
         LOGGER.info("Finished setting up the help menu");
     }
 
@@ -331,77 +340,18 @@ public class BasicPanel extends JPanel
         message.setEditable(false);
         message.setFocusable(false);
         message.setOpaque(false);
-        JScrollPane scrollPane =  new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setSize(new Dimension(400, 300));
         SwingUtilities.updateComponentTreeUI(calculator);
-        JOptionPane.showMessageDialog(calculator,
-                scrollPane, "Viewing " + BASIC.getName() +" Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + BASIC.getName() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        calculator.confirm("Viewing " + BASIC.getName() + " Calculator Help");
     }
 
-    /**
-     * The main method to set up the textPane
-     */
-    private void setupTextPane()
-    {
-        SimpleAttributeSet attribs = new SimpleAttributeSet();
-        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-        calculator.setTextPane(new JTextPane());
-        calculator.getTextPane().setParagraphAttributes(attribs, true);
-        calculator.getTextPane().setFont(mainFont);
-        if (calculator.isMotif())
-        {
-            calculator.getTextPane().setBackground(new Color(174,178,195));
-            calculator.getTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
-        }
-        else
-        { calculator.getTextPane().setBorder(new LineBorder(Color.BLACK)); }
-        calculator.getTextPane().setEditable(false);
-        calculator.getTextPane().setPreferredSize(new Dimension(70, 30));
-        LOGGER.info("TextArea configured");
-    }
-
-    /**
-     * The main method to set up the Memory buttons
-     */
-    private void setupMemoryButtons()
-    {
-        calculator.getAllMemoryButtons().forEach(memoryButton -> {
-            memoryButton.setFont(mainFont);
-            memoryButton.setPreferredSize(new Dimension(35, 35));
-            memoryButton.setBorder(new LineBorder(Color.BLACK));
-            memoryButton.setEnabled(false);
-        });
-        calculator.getButtonMemoryClear().setName("MC");
-        calculator.getButtonMemoryClear().addActionListener(this::performMemoryClearActions);
-        LOGGER.info("Memory Clear button configured");
-        calculator.getButtonMemoryRecall().setName("MR");
-        calculator.getButtonMemoryRecall().addActionListener(this::performMemoryRecallActions);
-        LOGGER.info("Memory Recall button configured");
-        calculator.getButtonMemoryAddition().setName("M+");
-        calculator.getButtonMemoryAddition().addActionListener(this::performMemoryAddActions);
-        LOGGER.info("Memory Add button configured");
-        calculator.getButtonMemorySubtraction().setName("M-");
-        calculator.getButtonMemorySubtraction().addActionListener(this::performMemorySubtractionActions);
-        LOGGER.info("Memory Subtract button configured");
-        calculator.getButtonMemoryStore().setEnabled(true); // Enable memoryStore
-        calculator.getButtonMemoryStore().setName("MS");
-        calculator.getButtonMemoryStore().addActionListener(this::performMemoryStoreActions);
-        LOGGER.info("Memory Store button configured");
-        // reset buttons to enabled if memories are saved
-        if (!calculator.getMemoryValues()[0].isEmpty())
-        {
-            calculator.getButtonMemoryClear().setEnabled(true);
-            calculator.getButtonMemoryRecall().setEnabled(true);
-            calculator.getButtonMemoryAddition().setEnabled(true);
-            calculator.getButtonMemorySubtraction().setEnabled(true);
-        }
-    }
     /**
      * The actions to perform when MemoryStore is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryStoreActions(ActionEvent actionEvent)
+    public static void performMemoryStoreActions(ActionEvent actionEvent)
     {
         LOGGER.info("MemoryStoreButtonHandler started");
         LOGGER.info("button: {}", actionEvent.getActionCommand());
@@ -432,7 +382,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemoryRecall is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryRecallActions(ActionEvent actionEvent)
+    public static void performMemoryRecallActions(ActionEvent actionEvent)
     {
         LOGGER.info("MemoryRecallButtonHandler started");
         LOGGER.info("button: {}", actionEvent.getActionCommand());
@@ -446,10 +396,10 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemoryClear is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryClearActions(ActionEvent actionEvent) {
+    public static void performMemoryClearActions(ActionEvent actionEvent) {
         LOGGER.info("MemoryClearButtonHandler started");
         LOGGER.info("button: {}", actionEvent.getActionCommand());
-        if (calculator.getMemoryPosition() == 10) 
+        if (calculator.getMemoryPosition() == 10)
         {
             LOGGER.debug("Resetting memoryPosition to 0");
             calculator.setMemoryPosition(0);
@@ -461,7 +411,7 @@ public class BasicPanel extends JPanel
             calculator.getMemoryValues()[calculator.getMemoryPosition()] = "";
             calculator.setMemoryRecallPosition(calculator.getMemoryRecallPosition() + 1);
             // MemorySuite now could potentially be empty
-            if (calculator.isMemoryValuesEmpty()) 
+            if (calculator.isMemoryValuesEmpty())
             {
                 calculator.setMemoryPosition(0);
                 calculator.setMemoryRecallPosition(0);
@@ -483,7 +433,7 @@ public class BasicPanel extends JPanel
      * textPane as confirmation.
      * @param actionEvent the click action
      */
-    public void performMemoryAddActions(ActionEvent actionEvent)
+    public static void performMemoryAddActions(ActionEvent actionEvent)
     {
         LOGGER.info("MemoryAddButtonHandler class started");
         LOGGER.info("button: " + actionEvent.getActionCommand());
@@ -509,7 +459,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemorySubtraction is clicked
      * @param actionEvent the click action
      */
-    public void performMemorySubtractionActions(ActionEvent actionEvent)
+    public static void performMemorySubtractionActions(ActionEvent actionEvent)
     {
         LOGGER.info("MemorySubtractButtonHandler class started");
         LOGGER.info("button: " + actionEvent.getActionCommand());
@@ -533,258 +483,50 @@ public class BasicPanel extends JPanel
     }
 
     /**
-     * The main method to set up the Delete button
-     */
-    private void setupDeleteButton()
-    {
-        calculator.getButtonDelete().setFont(mainFont);
-        calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonDelete().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonDelete().setEnabled(true);
-        calculator.getButtonDelete().setName("Delete");
-        calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
-        LOGGER.info("Delete button configured");
-    }
-    /**
-     * The actions to perform when the Delete button is clicked
+     * The actions to perform when the Percent button is clicked
      * @param actionEvent the click action
      */
-    public void performDeleteButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("DeleteButtonHandler() started");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: {}", buttonChoice); // print out button confirmation
-        if (calculator.getValues()[1].isEmpty())
-        { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
-
-        LOGGER.debug("calculator.getValues()["+calculator.getValuesPosition()+"]: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
-        LOGGER.debug("textPane: '" + calculator.getTextPaneWithoutNewLineCharacters() + "'");
-        if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
-            && !calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
-        {
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters().substring(0,calculator.getTextPaneWithoutNewLineCharacters().length()-1);
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
-        }
-        else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
-        {
-            LOGGER.debug("An operator has been pushed");
-            if (calculator.getValuesPosition() == 0)
-            {
-                if (calculator.isAdding()) calculator.setAdding(false);
-                else if (calculator.isSubtracting()) calculator.setSubtracting(false);
-                else if (calculator.isMultiplying()) calculator.setMultiplying(false);
-                else /*if (calculator.isDividing())*/ calculator.setDividing(false);
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getTextPaneWithoutAnyOperator()));
-            }
-            else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()].substring(0,calculator.getValues()[calculator.getValuesPosition()].length()-1);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
-            }
-        }
-        if (calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]))
-        { calculator.getButtonDot().setEnabled(false); }
-        else { calculator.getButtonDot().setEnabled(true); }
-        LOGGER.info("DeleteButtonHandler() finished");
-        calculator.confirm("Pressed " + buttonChoice);
-    }
-
-    /**
-     * The main method to set up the Squared x² button
-     */
-    private void setupSquaredButton()
-    {
-        calculator.getButtonSquared().setFont(mainFont);
-        calculator.getButtonSquared().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonSquared().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonSquared().setEnabled(true);
-        calculator.getButtonSquared().setName("Squared");
-        calculator.getButtonSquared().addActionListener(this::performSquaredButtonActions);
-        LOGGER.info("Delete button configured");
-    }
-    /**
-     * The actions to perform when the Squared button is clicked
-     * @param actionEvent the click action
-     */
-    public void performSquaredButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("Performing Squared button started");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: {}", buttonChoice);
-        if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
-        {
-            LOGGER.info("Squared button finished");
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
-            calculator.confirm("No number to square");
-        }
-        else
-        {
-            double result = Double.parseDouble(calculator.getValues()[0]);
-            result = Math.pow(result, 2);
-            if (result % 1 == 0)
-            {
-                LOGGER.info("We have a whole number");
-                calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.getButtonDot().setEnabled(true);
-            }
-            else
-            {
-                LOGGER.info("We have a decimal number");
-                calculator.getValues()[0] = String.valueOf(result);
-                calculator.getButtonDot().setEnabled(false);
-            }
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
-            calculator.setNumberNegative(false);
-            LOGGER.info("Squared button finished");
-            calculator.confirm("Pressed " + buttonChoice);
-        }
-    }
-
-    /**
-     * The main method to set up the ClearEntry button
-     */
-    private void setupClearEntryButton()
-    {
-        calculator.getButtonClearEntry().setFont(mainFont);
-        calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
-        calculator.getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonClearEntry().setEnabled(true);
-        calculator.getButtonClearEntry().setName("ClearEntry");
-        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
-        LOGGER.info("Clear Entry button configured");
-    }
-    /**
-     * The action to perform when the ClearEntry button is clicked
-     * @param actionEvent the click action
-     */
-    public void performClearEntryButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("ClearEntryButtonHandler() started");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: {}", buttonChoice); // print out button confirmation
-        calculator.getTextPane().setText("");
-        if (calculator.getValuesPosition() == 0)
-        {
-            calculator.getValues()[0] = "";
-            calculator.resetBasicOperators(false);
-            calculator.setFirstNumber(true);
-        } 
-        else
-        {
-            calculator.getValues()[1] = "";
-            calculator.setValuesPosition(0);
-        }
-        calculator.getButtonDot().setEnabled(true);
-        calculator.setNumberNegative(false);
-        LOGGER.info("ClearEntryButtonHandler() finished");
-        calculator.confirm("Pressed: " + buttonChoice);
-    }
-
-    /**
-     * The main method to set up the Clear button
-     */
-    private void setupClearButton()
-    {
-        calculator.getButtonClear().setFont(mainFont);
-        calculator.getButtonClear().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonClear().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonClear().setEnabled(true);
-        calculator.getButtonClear().setName("Clear");
-        calculator.getButtonClear().addActionListener(this::performClearButtonActions);
-        LOGGER.info("Clear button configured");
-    }
-    /**
-     * The actions to perform when the Clear button is clicked
-     * @param actionEvent the action performed
-     */
-    public void performClearButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("ClearButtonHandler() started");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: {}", buttonChoice);
-        // clear calculator.getValues()
-        for (int i=0; i < 3; i++)
-        { calculator.getValues()[i] = ""; }
-        // clear memory
-        for(int i=0; i < 10; i++)
-        { calculator.getMemoryValues()[i] = ""; }
-        calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0");
-        calculator.resetBasicOperators(false);
-        calculator.setValuesPosition(0);
-        calculator.setMemoryPosition(0);
-        calculator.setFirstNumber(true);
-        calculator.setNumberNegative(false);
-        calculator.getButtonMemoryRecall().setEnabled(false);
-        calculator.getButtonMemoryClear().setEnabled(false);
-        calculator.getButtonMemoryAddition().setEnabled(false);
-        calculator.getButtonMemorySubtraction().setEnabled(false);
-        calculator.getButtonDot().setEnabled(true);
-        LOGGER.info("ClearButtonHandler() finished");
-        calculator.confirm("Pressed: " + buttonChoice);
-    }
-
-    /**
-     * The main method to set up the Negate button
-     */
-    private void setupNegateButton()
-    {
-        calculator.getButtonNegate().setFont(mainFont);
-        calculator.getButtonNegate().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonNegate().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonNegate().setEnabled(true);
-        calculator.getButtonNegate().setName("Negate");
-        calculator.getButtonNegate().addActionListener(this::performNegateButtonActions);
-    }
-    /**
-     * The actions to perform when you click Negate
-     * @param actionEvent the click action
-     */
-    public void performNegateButtonActions(ActionEvent actionEvent)
+    public static void performPercentButtonActions(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Performing {} Button actions", buttonChoice);
+        LOGGER.info("Starting {} button actions", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Number too big!"); }
+        { calculator.confirm("Cannot perform percent operation. Number too big!"); }
         else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
-            calculator.confirm("No value to negate");
+            calculator.confirm("Pressed: " + buttonChoice);
         }
         else
         {
-            if (calculator.isNumberNegative())
+            if (calculator.isNegativeNumber(calculator.getTextPaneWithoutNewLineCharacters()))
             {
-                calculator.setNumberNegative(false);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()]));
+                LOGGER.info("number is negative for percentage");
+                double percent = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+                percent /= 100;
+                LOGGER.info("percent: "+percent);
+                calculator.getValues()[calculator.getValuesPosition()] = Double.toString(percent);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]); // update textArea
+                LOGGER.info("values["+calculator.getValuesPosition()+"] is " + calculator.getValues()[calculator.getValuesPosition()]);
+                LOGGER.info("textArea: "+calculator.getTextPane().getText());
             }
             else
             {
-                calculator.setNumberNegative(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToNegative(calculator.getValues()[calculator.getValuesPosition()]));
+                double percent = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+                percent /= 100;
+                calculator.getValues()[calculator.getValuesPosition()] = Double.toString(percent);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.formatNumber(calculator.getValues()[calculator.getValuesPosition()]));
             }
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
+            calculator.getButtonDot().setEnabled(false);
             calculator.confirm("Pressed " + buttonChoice);
         }
     }
 
-    /**
-     * The main method to set up the SquareRoot button
-     */
-    private void setupSquareRootButton()
-    {
-        calculator.getButtonSqrt().setFont(mainFont);
-        calculator.getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonSqrt().setEnabled(true);
-        calculator.getButtonSqrt().setName("SquareRoot");
-        calculator.getButtonSqrt().addActionListener(this::performSquareRootButtonActions);
-    }
     /**
      * The actions to perform when the SquareRoot button is clicked
      * @param actionEvent the click action
      */
-    public void performSquareRootButtonActions(ActionEvent actionEvent)
+    public static void performSquareRootButtonActions(ActionEvent actionEvent)
     {
         LOGGER.info("SquareRoot ButtonHandler class started");
         String buttonChoice = actionEvent.getActionCommand();
@@ -817,30 +559,276 @@ public class BasicPanel extends JPanel
     }
 
     /**
-     * The main method to set up all number buttons, 0-9
+     * The actions to perform when the Squared button is clicked
+     * @param actionEvent the click action
      */
-    private void setupNumberButtons(boolean isEnabled)
+    public static void performSquaredButtonActions(ActionEvent actionEvent)
     {
-        AtomicInteger i = new AtomicInteger(0);
-        getCalculator().getNumberButtons().forEach(button -> {
-            button.setFont(mainFont);
-            button.setEnabled(isEnabled);
-            if (button.getText().equals("0") &&
-                    getCalculator().getCalculatorType() != CONVERTER)
-            { button.setPreferredSize(new Dimension(70, 35)); } //70,35
+        LOGGER.info("Performing Squared button started");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: {}", buttonChoice);
+        if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            LOGGER.info("Squared button finished");
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+            calculator.confirm("No number to square");
+        }
+        else
+        {
+            double result = Double.parseDouble(calculator.getValues()[0]);
+            result = Math.pow(result, 2);
+            if (result % 1 == 0)
+            {
+                LOGGER.info("We have a whole number");
+                calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
+                calculator.getButtonDot().setEnabled(true);
+            }
             else
-            { button.setPreferredSize(new Dimension(35, 35)); }
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setName(String.valueOf(i.getAndAdd(1)));
-            button.addActionListener(this::performNumberButtonActions);
-        });
-        LOGGER.info("Number buttons configured");
+            {
+                LOGGER.info("We have a decimal number");
+                calculator.getValues()[0] = String.valueOf(result);
+                calculator.getButtonDot().setEnabled(false);
+            }
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.setNumberNegative(false);
+            LOGGER.info("Squared button finished");
+            calculator.confirm("Pressed " + buttonChoice);
+        }
     }
+
+    /**
+     * The actions to perform when the Fraction button is clicked
+     * @param actionEvent the click action
+     */
+    public static void performFractionButtonActions(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Starting {} button actions", buttonChoice);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform fraction operation. Number too big!"); }
+        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+            calculator.confirm("Pressed: " + buttonChoice);
+        }
+        else
+        {
+            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+            result = 1 / result;
+            LOGGER.info("result: " + result);
+            calculator.setValuesAtPositionThenUpdateTextPane(String.valueOf(result));
+            if ("Infinity".equals(String.valueOf(result)))
+            {
+                calculator.getButtonDot().setEnabled(true);
+                calculator.getValues()[calculator.getValuesPosition()] = "";
+            }
+            else
+            { calculator.getButtonDot().setEnabled(false); }
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+    }
+
+    /**
+     * The action to perform when the ClearEntry button is clicked
+     * @param actionEvent the click action
+     */
+    public static void performClearEntryButtonActions(ActionEvent actionEvent)
+    {
+        LOGGER.info("ClearEntryButtonHandler() started");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: {}", buttonChoice); // print out button confirmation
+        calculator.getTextPane().setText("");
+        if (calculator.getValuesPosition() == 0)
+        {
+            calculator.getValues()[0] = "";
+            calculator.resetBasicOperators(false);
+            calculator.setFirstNumber(true);
+        }
+        else
+        {
+            calculator.getValues()[1] = "";
+            calculator.setValuesPosition(0);
+        }
+        calculator.getButtonDot().setEnabled(true);
+        calculator.setNumberNegative(false);
+        LOGGER.info("ClearEntryButtonHandler() finished");
+        calculator.confirm("Pressed: " + buttonChoice);
+    }
+
+    /**
+     * The actions to perform when the Clear button is clicked
+     * @param actionEvent the action performed
+     */
+    public static void performClearButtonActions(ActionEvent actionEvent)
+    {
+        LOGGER.info("ClearButtonHandler() started");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: {}", buttonChoice);
+        // clear calculator.getValues()
+        for (int i=0; i < 3; i++)
+        { calculator.getValues()[i] = ""; }
+        // clear memory
+        for(int i=0; i < 10; i++)
+        { calculator.getMemoryValues()[i] = ""; }
+        calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0");
+        calculator.resetBasicOperators(false);
+        calculator.setValuesPosition(0);
+        calculator.setMemoryPosition(0);
+        calculator.setFirstNumber(true);
+        calculator.setNumberNegative(false);
+        calculator.getButtonMemoryRecall().setEnabled(false);
+        calculator.getButtonMemoryClear().setEnabled(false);
+        calculator.getButtonMemoryAddition().setEnabled(false);
+        calculator.getButtonMemorySubtraction().setEnabled(false);
+        calculator.getButtonDot().setEnabled(true);
+        LOGGER.info("ClearButtonHandler() finished");
+        calculator.confirm("Pressed: " + buttonChoice);
+    }
+
+    /**
+     * The actions to perform when the Delete button is clicked
+     * @param actionEvent the click action
+     */
+    public static void performDeleteButtonActions(ActionEvent actionEvent)
+    {
+        LOGGER.info("DeleteButtonHandler() started");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: {}", buttonChoice); // print out button confirmation
+        if (calculator.getValues()[1].isEmpty())
+        { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
+
+        LOGGER.debug("calculator.getValues()["+calculator.getValuesPosition()+"]: '" + calculator.getValues()[calculator.getValuesPosition()] + "'");
+        LOGGER.debug("textPane: '" + calculator.getTextPaneWithoutNewLineCharacters() + "'");
+        if (!calculator.isAdding() && !calculator.isSubtracting() && !calculator.isMultiplying() && !calculator.isDividing()
+                && !calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()].substring(0,calculator.getValues()[calculator.getValuesPosition()].length()-1);
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+        }
+        else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+        {
+            LOGGER.debug("An operator has been pushed");
+            if (calculator.getValuesPosition() == 0)
+            {
+                if (calculator.isAdding()) calculator.setAdding(false);
+                else if (calculator.isSubtracting()) calculator.setSubtracting(false);
+                else if (calculator.isMultiplying()) calculator.setMultiplying(false);
+                else /*if (calculator.isDividing())*/ calculator.setDividing(false);
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getTextPaneWithoutAnyOperator()));
+            }
+            else
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()].substring(0,calculator.getValues()[calculator.getValuesPosition()].length()-1);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            }
+        }
+        calculator.getButtonDot().setEnabled(!calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]));
+        LOGGER.info("DeleteButtonHandler() finished");
+        calculator.confirm("Pressed " + buttonChoice);
+    }
+
+    /**
+     * The actions to perform when the Divide button is clicked
+     * @param actionEvent the click action
+     */
+    public static void performDivideButtonActions(ActionEvent actionEvent)
+    {
+        LOGGER.info("Performing Divide Button actions");
+        String buttonChoice = actionEvent.getActionCommand();
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform division."); }
+        else
+        {
+            LOGGER.info("button: " + buttonChoice);
+            if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
+                    && StringUtils.isNotBlank(calculator.getTextPane().getText()))
+            {
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                calculator.setDividing(true);
+                calculator.setFirstNumber(false);
+                calculator.setValuesPosition(calculator.getValuesPosition() + 1);
+            }
+            else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty())
+            {
+                addition();
+                calculator.resetOperator(calculator.isAdding());
+                calculator.setDividing(true);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
+            }
+            else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
+            {
+                subtract();
+                calculator.resetOperator(calculator.isSubtracting());
+                calculator.setDividing(true);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
+            }
+            else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
+            {
+                multiply();
+                calculator.resetOperator(calculator.isMultiplying());
+                calculator.setDividing(true);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
+            }
+            else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty() & !calculator.getValues()[1].equals("0"))
+            {
+                divide();
+                calculator.resetOperator(calculator.isDividing());
+                calculator.setDividing(true);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
+            }
+            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
+            {
+                LOGGER.warn("The user pushed divide but there is no number.");
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
+            }
+            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
+            { LOGGER.info("already chose an operator. choose another number."); }
+            calculator.getButtonDot().setEnabled(true);
+            calculator.confirm("Pressed: " + buttonChoice);
+        }
+    }
+    /**
+     * The inner logic for dividing
+     */
+    private static void divide()
+    {
+        LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
+        LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
+        double result = 0.0;
+        if (!calculator.getValues()[1].equals("0"))
+        {
+            result = Double.parseDouble(calculator.getValues()[0]) / Double.parseDouble(calculator.getValues()[1]); // create result forced double
+            LOGGER.info(calculator.getValues()[0] + " / " + calculator.getValues()[1] + " = " + result);
+            if (result % 1 == 0)
+            {
+                LOGGER.info("We have a whole number");
+                calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textarea changed to whole number, or int
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+                calculator.getButtonDot().setEnabled(true);
+            }
+            else
+            {
+                LOGGER.info("We have a decimal");
+                calculator.getValues()[0] = String.valueOf(result);
+            }
+            calculator.confirm("Finished dividing");
+        }
+        else
+        {
+            LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Infinity");
+            calculator.getValues()[0] = "";
+            calculator.setFirstNumber(true);
+            calculator.confirm("Attempted to divide by 0. Values[0] = 0");
+        }
+    }
+
     /**
      * The actions to perform when clicking any number button
      * @param actionEvent the click action
      */
-    public void performNumberButtonActions(ActionEvent actionEvent)
+    public static void performNumberButtonActions(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Performing {} button{} actions...", calculator.getCurrentPanel().getName(), buttonChoice);
@@ -875,14 +863,14 @@ public class BasicPanel extends JPanel
             {
                 LOGGER.debug("dot button was not pushed");
                 // TODO: check, update, if in case...
-                calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()]);
+                //calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()]);
                 calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
             }
             else
             {
                 LOGGER.info("dot button was pushed");
                 // TODO: check, update, if in case...
-                calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()]);
+                //calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()]);
                 performDot(buttonChoice);
             }
             calculator.confirm("Pressed " + buttonChoice);
@@ -890,137 +878,75 @@ public class BasicPanel extends JPanel
     }
 
     /**
-     * The main method to set up the Dot button
-     */
-    private void setupDotButton()
-    {
-        calculator.getButtonDot().setFont(mainFont);
-        calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonDot().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonDot().setEnabled(true);
-        calculator.getButtonDot().setName("Dot");
-        calculator.getButtonDot().addActionListener(this::performDotButtonActions);
-        LOGGER.info("Dot button configured");
-    }
-    /**
-     * The actions to perform when the Dot button is click
+     * The actions to perform when the Multiplication button is clicked
      * @param actionEvent the click action
      */
-    public void performDotButtonActions(ActionEvent actionEvent)
+    public static void performMultiplicationActions(ActionEvent actionEvent)
     {
-        LOGGER.info("Starting Dot button actions");
+        LOGGER.info("Performing Multiplication Button actions");
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (calculator.textPaneContainsBadText()) { calculator.confirm("Cannot press dot button. Number too big!"); }
-        else
-        {
-            LOGGER.info("Basic dot operations");
-            performDot(buttonChoice);
-        }
-        calculator.confirm("Pressed the Dot button");
-    }
-    /**
-     * The inner logic of performing Dot actions
-     * @param buttonChoice the button choice
-     */
-    private void performDot(String buttonChoice)
-    {
-        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]))
-        {
-            calculator.getValues()[calculator.getValuesPosition()] = "0.";
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0.");
-        }
-        else
-        {
-            calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
-        }
-        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
-    }
-
-    /**
-     * The main method to set up the Add button
-     */
-    private void setupAddButton()
-    {
-        calculator.getButtonAdd().setFont(mainFont);
-        calculator.getButtonAdd().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonAdd().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonAdd().setEnabled(true);
-        calculator.getButtonAdd().setName("Addition");
-        calculator.getButtonAdd().addActionListener(this::performAdditionButtonActions);
-        LOGGER.info("Add button configured");
-    }
-    /**
-     * The actions to perform when the Addition button is clicked
-     * @param actionEvent the click action
-     */
-    public void performAdditionButtonActions(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Performing {} Button actions", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform addition."); }
+        { calculator.confirm("Cannot perform multiplication. Number too big!"); }
         else
         {
+            LOGGER.info("button: " + buttonChoice);
             if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
                     && StringUtils.isNotBlank(calculator.getTextPane().getText()))
             {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.setAdding(true);
+                calculator.setMultiplying(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
             }
             else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty())
             {
-                addition();  // 5 + 3 + ...
+                addition();
                 calculator.resetOperator(calculator.isAdding());
-                calculator.setAdding(true);
+                calculator.setMultiplying(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
             {
                 subtract();
-                calculator.setSubtracting(calculator.resetOperator(calculator.isSubtracting()));
-                calculator.setAdding(true);
+                calculator.resetOperator(calculator.isSubtracting());
+                calculator.setMultiplying(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
             {
                 multiply();
-                calculator.setMultiplying(calculator.resetOperator(calculator.isMultiplying()));
-                calculator.setAdding(true);
+                calculator.resetOperator(calculator.isMultiplying());
+                calculator.setMultiplying(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty())
             {
                 divide();
-                calculator.setDividing(calculator.resetOperator(calculator.isDividing()));
-                calculator.setAdding(true);
+                calculator.resetOperator(calculator.isDividing());
+                calculator.setMultiplying(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
-            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
-            {
-                LOGGER.error("The user pushed plus but there is no number");
+            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator())) {
+                LOGGER.warn("The user pushed multiply but there is no number.");
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
             else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
-            { LOGGER.error("Already chose an operator. Choose another number."); }
+            { LOGGER.info("already chose an operator. choose another number."); }
+            calculator.getButtonDot().setEnabled(true);
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
     /**
-     * The inner logic for addition.
-     * This method performs the addition between values[0] and values[1],
-     * clears and trailing zeroes if the result is a whole number (15.0000)
-     * resets dotPressed to false, enables buttonDot and stores the result
-     * back in values[0]
+     * The inner logic for multiplying
      */
-    private void addition()
+    private static void multiply()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
-        double result = Double.parseDouble(calculator.getValues()[0]) + Double.parseDouble(calculator.getValues()[1]); // create result forced double
-        LOGGER.info(calculator.getValues()[0] + " + " + calculator.getValues()[1] + " = " + result);
+        double result = Double.parseDouble(calculator.getValues()[0])
+                * Double.parseDouble(calculator.getValues()[1]);
+        LOGGER.info(calculator.getValues()[0] + " * " + calculator.getValues()[1] + " = " + result);
+        calculator.getValues()[0] = Double.toString(result);
         if (result % 1 == 0)
         {
             LOGGER.info("We have a whole number");
@@ -1030,29 +956,15 @@ public class BasicPanel extends JPanel
         else
         {
             LOGGER.info("We have a decimal");
-            calculator.getButtonDot().setEnabled(false);
-            calculator.getValues()[0] = String.valueOf(result);
+            calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
         }
     }
 
     /**
-     * The main method to set up the Subtraction button
-     */
-    private void setupSubtractButton()
-    {
-        calculator.getButtonSubtract().setFont(mainFont);
-        calculator.getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonSubtract().setEnabled(true);
-        calculator.getButtonSubtract().setName("Subtract");
-        calculator.getButtonSubtract().addActionListener(this::performSubtractionButtonActions);
-        LOGGER.info("Subtract button configured");
-    }
-    /**
      * The actions to perform when the Subtraction button is clicked
      * @param actionEvent the click action
      */
-    public void performSubtractionButtonActions(ActionEvent actionEvent)
+    public static void performSubtractionButtonActions(ActionEvent actionEvent)
     {
         LOGGER.info("Performing Subtract Button actions");
         String buttonChoice = actionEvent.getActionCommand();
@@ -1127,7 +1039,7 @@ public class BasicPanel extends JPanel
     /**
      * The inner logic for subtracting
      */
-    private void subtract()
+    private static void subtract()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
@@ -1157,88 +1069,76 @@ public class BasicPanel extends JPanel
     }
 
     /**
-     * The main method to set up the Multiplication button
-     */
-    private void setupMultiplyButton()
-    {
-        calculator.getButtonMultiply().setFont(mainFont);
-        calculator.getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonMultiply().setEnabled(true);
-        calculator.getButtonMultiply().setName("Multiply");
-        calculator.getButtonMultiply().addActionListener(this::performMultiplicationActions);
-        LOGGER.info("Multiply button configured");
-    }
-    /**
-     * The actions to perform when the Multiplication button is clicked
+     * The actions to perform when the Addition button is clicked
      * @param actionEvent the click action
      */
-    public void performMultiplicationActions(ActionEvent actionEvent)
+    public static void performAdditionButtonActions(ActionEvent actionEvent)
     {
-        LOGGER.info("Performing Multiplication Button actions");
         String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Performing {} Button actions", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform multiplication. Number too big!"); }
+        { calculator.confirm("Cannot perform addition."); }
         else
         {
-            LOGGER.info("button: " + buttonChoice);
             if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
                     && StringUtils.isNotBlank(calculator.getTextPane().getText()))
             {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.setMultiplying(true);
+                calculator.setAdding(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
             }
             else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty())
             {
-                addition();
+                addition();  // 5 + 3 + ...
                 calculator.resetOperator(calculator.isAdding());
-                calculator.setMultiplying(true);
+                calculator.setAdding(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
             {
                 subtract();
-                calculator.resetOperator(calculator.isSubtracting());
-                calculator.setMultiplying(true);
+                calculator.setSubtracting(calculator.resetOperator(calculator.isSubtracting()));
+                calculator.setAdding(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
             {
                 multiply();
-                calculator.resetOperator(calculator.isMultiplying());
-                calculator.setMultiplying(true);
+                calculator.setMultiplying(calculator.resetOperator(calculator.isMultiplying()));
+                calculator.setAdding(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty())
             {
                 divide();
-                calculator.resetOperator(calculator.isDividing());
-                calculator.setMultiplying(true);
+                calculator.setDividing(calculator.resetOperator(calculator.isDividing()));
+                calculator.setAdding(true);
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
             }
-            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator())) {
-                LOGGER.warn("The user pushed multiply but there is no number.");
+            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
+            {
+                LOGGER.error("The user pushed plus but there is no number");
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
             }
             else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
-            { LOGGER.info("already chose an operator. choose another number."); }
-            calculator.getButtonDot().setEnabled(true);
+            { LOGGER.error("Already chose an operator. Choose another number."); }
             calculator.confirm("Pressed: " + buttonChoice);
         }
     }
     /**
-     * The inner logic for multiplying
+     * The inner logic for addition.
+     * This method performs the addition between values[0] and values[1],
+     * clears and trailing zeroes if the result is a whole number (15.0000)
+     * resets dotPressed to false, enables buttonDot and stores the result
+     * back in values[0]
      */
-    private void multiply()
+    private static void addition()
     {
         LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
         LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
-        double result = Double.parseDouble(calculator.getValues()[0])
-                * Double.parseDouble(calculator.getValues()[1]);
-        LOGGER.info(calculator.getValues()[0] + " * " + calculator.getValues()[1] + " = " + result);
-        calculator.getValues()[0] = Double.toString(result);
+        double result = Double.parseDouble(calculator.getValues()[0]) + Double.parseDouble(calculator.getValues()[1]); // create result forced double
+        LOGGER.info(calculator.getValues()[0] + " + " + calculator.getValues()[1] + " = " + result);
         if (result % 1 == 0)
         {
             LOGGER.info("We have a whole number");
@@ -1248,232 +1148,83 @@ public class BasicPanel extends JPanel
         else
         {
             LOGGER.info("We have a decimal");
-            calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
-        }
-    }
-
-    /**
-     * The main method to set up the Divide button
-     */
-    private void setupDivideButton()
-    {
-        calculator.getButtonDivide().setFont(mainFont);
-        calculator.getButtonDivide().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonDivide().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonDivide().setEnabled(true);
-        calculator.getButtonDivide().setName("Divide");
-        calculator.getButtonDivide().addActionListener(this::performDivideButtonActions);
-        LOGGER.info("Divide button configured");
-    }
-    /**
-     * The actions to perform when the Divide button is clicked
-     * @param actionEvent the click action
-     */
-    public void performDivideButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("Performing Divide Button actions");
-        String buttonChoice = actionEvent.getActionCommand();
-        if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform division."); }
-        else
-        {
-            LOGGER.info("button: " + buttonChoice);
-            if (!calculator.isAdding() && !calculator.isSubtracting()  && !calculator.isMultiplying() &&!calculator.isDividing()
-                    && StringUtils.isNotBlank(calculator.getTextPane().getText()))
-            {
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.setDividing(true);
-                calculator.setFirstNumber(false);
-                calculator.setValuesPosition(calculator.getValuesPosition() + 1);
-            }
-            else if (calculator.isAdding() && !calculator.getValues()[1].isEmpty())
-            {
-                addition();
-                calculator.resetOperator(calculator.isAdding());
-                calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-            }
-            else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
-            {
-                subtract();
-                calculator.resetOperator(calculator.isSubtracting());
-                calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-            }
-            else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
-            {
-                multiply();
-                calculator.resetOperator(calculator.isMultiplying());
-                calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-            }
-            else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty() & !calculator.getValues()[1].equals("0"))
-            {
-                divide();
-                calculator.resetOperator(calculator.isDividing());
-                calculator.setDividing(true);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-            }
-            else if (StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()))
-            {
-                LOGGER.warn("The user pushed divide but there is no number.");
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
-            }
-            else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
-            { LOGGER.info("already chose an operator. choose another number."); }
-            calculator.getButtonDot().setEnabled(true);
-            calculator.confirm("Pressed: " + buttonChoice);
-        }
-    }
-    /**
-     * The inner logic for dividing
-     */
-    private void divide()
-    {
-        LOGGER.info("value[0]: '" + calculator.getValues()[0] + "'");
-        LOGGER.info("value[1]: '" + calculator.getValues()[1] + "'");
-        double result = 0.0;
-        if (!calculator.getValues()[1].equals("0"))
-        {
-            result = Double.parseDouble(calculator.getValues()[0]) / Double.parseDouble(calculator.getValues()[1]); // create result forced double
-            LOGGER.info(calculator.getValues()[0] + " / " + calculator.getValues()[1] + " = " + result);
-            if (result % 1 == 0)
-            {
-                LOGGER.info("We have a whole number");
-                calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textarea changed to whole number, or int
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
-                calculator.getButtonDot().setEnabled(true);
-            }
-            else
-            {
-                LOGGER.info("We have a decimal");
-                calculator.getValues()[0] = String.valueOf(result);
-            }
-            calculator.confirm("Finished dividing");
-        }
-        else
-        {
-            LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Infinity");
-            calculator.getValues()[0] = "";
-            calculator.setFirstNumber(true);
-            calculator.confirm("Attempted to divide by 0. Values[0] = 0");
-        }
-    }
-
-    /**
-     * The main method to set up the Percent button
-     */
-    private void setupPercentButton()
-    {
-        calculator.getButtonPercent().setFont(mainFont);
-        calculator.getButtonPercent().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonPercent().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonPercent().setEnabled(true);
-        calculator.getButtonPercent().setName("Percent");
-        calculator.getButtonPercent().addActionListener(this::performPercentButtonActions);
-    }
-    /**
-     * The actions to perform when the Percent button is clicked
-     * @param actionEvent the click action
-     */
-    public void performPercentButtonActions(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Starting {} button actions", buttonChoice);
-        if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform percent operation. Number too big!"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
-        {
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
-            calculator.confirm("Pressed: " + buttonChoice);
-        }
-        else
-        {
-            if (calculator.isNegativeNumber(calculator.getTextPaneWithoutNewLineCharacters()))
-            {
-                LOGGER.info("number is negative for percentage");
-                double percent = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
-                percent /= 100;
-                LOGGER.info("percent: "+percent);
-                calculator.getValues()[calculator.getValuesPosition()] = Double.toString(percent);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]); // update textArea
-                LOGGER.info("values["+calculator.getValuesPosition()+"] is " + calculator.getValues()[calculator.getValuesPosition()]);
-                LOGGER.info("textArea: "+calculator.getTextPane().getText());
-            }
-            else
-            {
-                double percent = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
-                percent /= 100;
-                calculator.getValues()[calculator.getValuesPosition()] = Double.toString(percent);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.formatNumber(calculator.getValues()[calculator.getValuesPosition()]));
-            }
             calculator.getButtonDot().setEnabled(false);
-            calculator.confirm("Pressed " + buttonChoice);
+            calculator.getValues()[0] = String.valueOf(result);
         }
     }
 
     /**
-     * The main method to set up the Fraction button
-     */
-    private void setupFractionButton()
-    {
-        calculator.getButtonFraction().setFont(mainFont);
-        calculator.getButtonFraction().setPreferredSize(new Dimension(35, 35) );
-        calculator.getButtonFraction().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonFraction().setEnabled(true);
-        calculator.getButtonFraction().setName("Fraction");
-        calculator.getButtonFraction().addActionListener(this::performFractionButtonActions);
-    }
-    /**
-     * The actions to perform when the Fraction button is clicked
+     * The actions to perform when you click Negate
      * @param actionEvent the click action
      */
-    public void performFractionButtonActions(ActionEvent actionEvent)
+    public static void performNegateButtonActions(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Starting {} button actions", buttonChoice);
+        LOGGER.info("Performing {} Button actions", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform fraction operation. Number too big!"); }
+        { calculator.confirm("Number too big!"); }
         else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Enter a Number");
-            calculator.confirm("Pressed: " + buttonChoice);
+            calculator.confirm("No value to negate");
         }
         else
         {
-            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
-            result = 1 / result;
-            LOGGER.info("result: " + result);
-            calculator.setValuesAtPositionThenUpdateTextPane(String.valueOf(result));
-            if ("Infinity".equals(String.valueOf(result)))
+            if (calculator.isNumberNegative())
             {
-                calculator.getButtonDot().setEnabled(true);
-                calculator.getValues()[calculator.getValuesPosition()] = "";
+                calculator.setNumberNegative(false);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()]));
             }
             else
-            { calculator.getButtonDot().setEnabled(false); }
+            {
+                calculator.setNumberNegative(true);
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.convertToNegative(calculator.getValues()[calculator.getValuesPosition()]));
+            }
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
             calculator.confirm("Pressed " + buttonChoice);
         }
     }
 
     /**
-     * The main method to set up the Equals button
+     * The actions to perform when the Dot button is click
+     * @param actionEvent the click action
      */
-    private void setupEqualsButton()
+    public static void performDotButtonActions(ActionEvent actionEvent)
     {
-        calculator.getButtonEquals().setFont(mainFont);
-        calculator.getButtonEquals().setPreferredSize(new Dimension(35, 35) ); // 35,70
-        calculator.getButtonEquals().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonEquals().setEnabled(true);
-        calculator.getButtonEquals().setName("Equals");
-        calculator.getButtonEquals().addActionListener(this::performEqualsButtonActions);
+        LOGGER.info("Starting Dot button actions");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+        if (calculator.textPaneContainsBadText()) { calculator.confirm("Cannot press dot button. Number too big!"); }
+        else
+        {
+            LOGGER.info("Basic dot operations");
+            performDot(buttonChoice);
+        }
+        calculator.confirm("Pressed the Dot button");
     }
+    /**
+     * The inner logic of performing Dot actions
+     * @param buttonChoice the button choice
+     */
+    private static void performDot(String buttonChoice)
+    {
+        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]))
+        {
+            calculator.getValues()[calculator.getValuesPosition()] = "0.";
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0.");
+        }
+        else
+        {
+            calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
+        }
+        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
+    }
+
     /**
      * The actions to perform when the Equals button is clicked
      * @param actionEvent the click action
      */
-    public void performEqualsButtonActions(ActionEvent actionEvent)
+    public static void performEqualsButtonActions(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Starting {} button actions", buttonChoice);
@@ -1493,7 +1244,7 @@ public class BasicPanel extends JPanel
      * operator was recorded as being activated
      * @return String the basic operation that was pushed
      */
-    public String determineIfBasicPanelOperatorWasPushed()
+    public static String determineIfBasicPanelOperatorWasPushed()
     {
         String results = "";
         if (calculator.isAdding()) { results = "+"; }
@@ -1508,7 +1259,7 @@ public class BasicPanel extends JPanel
      * This method determines which basic operation to perform,
      * performs that operation, and resets the appropriate boolean
      */
-    public void determineAndPerformBasicCalculatorOperation()
+    public static void determineAndPerformBasicCalculatorOperation()
     {
         if (calculator.isAdding())
         {

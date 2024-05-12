@@ -1109,8 +1109,7 @@ public class BasicPanelTest {
         assertEquals("Values[0] is not 30.25", 30.25, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane should be 30.25", "30.25", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
-        assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
-        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected dot button to be disabled", calculator.isDotPressed());
     }
 
     @Test

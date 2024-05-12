@@ -5,9 +5,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static Types.CalculatorType.*;
+import static Types.CalculatorBase.*;
+import static Types.DateOperation.*;
+import static Types.ConverterType.*;
 
 /**
  * Main Class. Start here!
@@ -20,27 +22,32 @@ public class CalculatorMain
 	public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting calculator...");
-        //Start a basic calculator
-        Calculator calculator = new Calculator(BASIC);
-        //Start a programmer calculator
-        //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
-        //Start a date calculator with options1 selected
-        //Calculator calculator = new Calculator(DATE, OPTIONS1); //(DATE);
-        //Start a date calculator with options2 selected
-        //Calculator calculator = new Calculator(DATE, ADD_SUBTRACT_DAYS);
-        //Start a converter calculator
-        //Calculator calculator = new Calculator(CONVERTER, AREA); // (CONVERTER, <ConverterType>);
-        //UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {
-                UIManager.setLookAndFeel(new MetalLookAndFeel());
-                SwingUtilities.updateComponentTreeUI(calculator);
+                //Start a basic calculator
+                //Calculator calculator = new Calculator(/*BASIC*/);
+                //Start a programmer calculator in BINARY mode
+                //Calculator calculator = new Calculator(PROGRAMMER /*, BINARY*/ );
+                //Start a programmer calculator in DECIMAL mode
+                //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
+                //Start a date calculator with options1 selected
+                //Calculator calculator = new Calculator(DATE, DIFFERENCE_BETWEEN_DATES); //(DATE);
+                //Start a date calculator with options2 selected
+                //Calculator calculator = new Calculator(DATE, ADD_SUBTRACT_DAYS);
+                //Start an ANGLE converter calculator
+                //Calculator calculator = new Calculator(CONVERTER /*,ANGLE*/ );
+                //Start an AREA converter calculator
+                Calculator calculator = new Calculator(CONVERTER, AREA);
+                //Display the window.
                 calculator.pack();
-            } catch (UnsupportedLookAndFeelException e) {
-                calculator.logException(e);
+                calculator.setVisible(true);
+                calculator.confirm(calculator.getCalculatorType().getName() + " Calculator started");
+                LOGGER.info("size of panel: " + calculator.getSize());
+            }
+            catch (Exception e) {
+                System.err.printf("Could not create Calculator bc " + e.getMessage());
             }
         });
-        calculator.confirm("Calculator started. Initial state");
     }
 }
 /*
@@ -57,7 +64,7 @@ i. POST CONDITIONS: Most Booleans returned to initial state. Some stay switched 
 j. ALGORITHM:
 k. ERRORS: Errors are organized by Date and then by what the error was effecting.
 
-o.  HISTORY (in reverse):
+o.  HISTORY (in descending order):
 Version Four Started: August 14, 2021,
 Version Four Concluded: -
             Monday, April 29, 2024:
@@ -71,13 +78,13 @@ Version Four Concluded: -
             I've also moved specific properties into the appropriate panel (booleans specific for Programmer
             don't need to be a part of the overall Calculator object).
             [b] I have updated the logging files so that the main log will now be named Runnables.CalculatorMain,
-            instead of just 'calculator'.
+            instead of just 'calculator', and added a new separator.
             [c] I've also adjusted several accessors to use private where needed.
             [d] I've rearranged the code in such a way to allow a natural pattern to be seen for methods.
             This should make it easier to read and find methods and grouped specific methods that work
             with each other so less "searching for code" in needed.
             [e] I've added JavaDocs to all methods to allow quick access to know what each method does.
-            [f] Fix the 'textArea' to not rely on alignment to be Right_to_Left, and enforce right alignment
+            [f] Fix the 'textArea' to not rely on alignment to be Right_to_Left, and enforce right alignment (renamed to textPane)
             [g] Upgraded Java to 18
 
             Saturday, Aug 14, 2021:

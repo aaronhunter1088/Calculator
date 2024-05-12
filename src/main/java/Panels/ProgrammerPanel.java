@@ -39,6 +39,7 @@ public class ProgrammerPanel extends JPanel
     private final JPanel
             btnGroupOnePanel = new JPanel(), // contains the first button group
             btnGroupTwoPanel = new JPanel(); // contains the second button group
+    // Programmer specific buttons
     final private JButton
             buttonModulus = new JButton("MOD"),
             buttonLPar = new JButton("("), buttonRPar = new JButton(")"),
@@ -70,7 +71,10 @@ public class ProgrammerPanel extends JPanel
      * A zero argument constructor for creating a ProgrammerPanel
      */
     public ProgrammerPanel()
-    { LOGGER.info("Empty Programmer panel created"); }
+    {
+        setName(PROGRAMMER.getName());
+        LOGGER.info("Empty Programmer panel created");
+    }
 
     /**
      * A single argument constructor used to create a ProgrammerPanel
@@ -97,12 +101,13 @@ public class ProgrammerPanel extends JPanel
      * and all of its components and their actions
      * @param calculator the Calculator object
      */
-    private void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
+    public void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         setCalculator(calculator);
+        setCalculatorBase(base);
         setLayout(new GridBagLayout());
         setConstraints(new GridBagConstraints());
-        setMaximumSize(new Dimension(600,400));
+        setSize(new Dimension(425,375));
         setupProgrammerPanelComponents(base);
         addComponentsToPanel();
         setName(PROGRAMMER.getName());
@@ -126,14 +131,15 @@ public class ProgrammerPanel extends JPanel
 
         allButtons.forEach(button -> Stream.of(button.getActionListeners())
                 .forEach(button::removeActionListener));
+        LOGGER.debug("Removed actions...");
 
-        setupNumberButtons(true); //required first for setProgrammerBase()
+        calculator.setupNumberButtons(); //required first for setProgrammerBase()
         calculator.setCalculatorType(PROGRAMMER);
         setProgrammerBase(base);
         calculator.setConverterType(null);
         setupHelpMenu();
-        setupTextPane();
-        setupButtonBlank1();
+        calculator.setupTextPane();
+        calculator.setupButtonBlank1();
         setupButtonModulus();
         setupButtonLPar();
         setupButtonRPar();
@@ -146,21 +152,21 @@ public class ProgrammerPanel extends JPanel
         setupButtonNot();
         setupButtonAnd();
         setupButtonsAToF();
-        setupMemoryButtons(); // MR MC MS M+ M-
-        setupDeleteButton();
-        setupClearEntryButton();
-        setupClearButton();
-        setupNegateButton();
-        setupSquareRootButton();
-
-        setupDotButton();
-        setupAddButton();
-        setupSubtractButton();
-        setupMultiplyButton();
-        setupDivideButton();
-        setupPercentButton();
-        setupFractionButton();
-        setupEqualsButton();
+        calculator.setupMemoryButtons(); // MR MC MS M+ M-
+        calculator.setupDeleteButton();
+        calculator.setupClearEntryButton();
+        calculator.setupClearButton();
+        calculator.setupNegateButton();
+        calculator.setupSquareRootButton();
+        calculator.setupSquaredButton();
+        calculator.setupDotButton();
+        calculator.setupAdditionButton();
+        calculator.setupSubtractButton();
+        calculator.setupMultiplyButton();
+        calculator.setupDivideButton();
+        calculator.setupPercentButton();
+        calculator.setupFractionButton();
+        calculator.setupEqualsButton();
         resetProgrammerByteOperators(false);
         setByteByte(true);
         setupButtonGroupOne();
@@ -211,95 +217,187 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**
-     * Specifies where each button is placed on the ProgrammerPanel
+     * Specifies where each button is placed on the BasicPanel
      */
     private void addComponentsToPanel()
     {
-        constraints.insets = new Insets(5,5,5,5);
-        addComponent(calculator.getTextPane(), 0, 0, 9, 2);
-        addComponent(btnGroupOnePanel, 4, 0, 1, 4, GridBagConstraints.HORIZONTAL);
-        addComponent(btnGroupTwoPanel, 7, 0, 1, 4, GridBagConstraints.HORIZONTAL);
-        constraints.insets = new Insets(5,0,1,5);
-        addComponent(calculator.getButtonBlank1(), 4, 1, 1, 1);
-        addComponent(buttonModulus, 4, 2, 1, 1);
-        addComponent(buttonA, 4, 3, 1, 1);
-        addComponent(calculator.getButtonMemoryStore(), 4, 4, 1, 1);
-        addComponent(calculator.getButtonMemoryClear(), 4, 5, 1, 1);
-        addComponent(calculator.getButtonMemoryRecall(), 4, 6, 1, 1);
-        addComponent(calculator.getButtonMemoryAddition(), 4, 7, 1, 1);
-        addComponent(calculator.getButtonMemorySubtraction(), 4, 8, 1, 1);
-        addComponent(buttonLPar, 5, 1, 1, 1);
-        addComponent(buttonRPar, 5, 2, 1, 1);
-        addComponent(buttonB, 5, 3, 1, 1);
-        addComponent(calculator.getButtonDelete(), 5, 4, 1, 1);
-        addComponent(calculator.getButtonClearEntry(), 5, 5, 1, 1);
-        addComponent(calculator.getButtonClear(), 5, 6, 1, 1);
-        addComponent(calculator.getButtonNegate(), 5, 7, 1, 1);
-        addComponent(calculator.getButtonSqrt(), 5, 8, 1, 1);
-        addComponent(buttonRol, 6, 1, 1, 1);
-        addComponent(buttonRor, 6, 2, 1, 1);
-        addComponent(buttonC, 6, 3, 1, 1);
-        addComponent(calculator.getButton7(), 6, 4, 1, 1);
-        addComponent(calculator.getButton8(), 6, 5, 1, 1);
-        addComponent(calculator.getButton9(), 6, 6, 1, 1);
-        addComponent(calculator.getButtonDivide(), 6, 7, 1, 1);
-        addComponent(calculator.getButtonPercent(), 6, 8, 1, 1);
-        addComponent(buttonOr, 7, 1, 1, 1);
-        addComponent(buttonXor, 7, 2, 1, 1);
-        addComponent(buttonD, 7, 3, 1, 1);
-        addComponent(calculator.getButton4(), 7, 4, 1, 1);
-        addComponent(calculator.getButton5(), 7, 5, 1, 1);
-        addComponent(calculator.getButton6(), 7, 6, 1, 1);
-        addComponent(calculator.getButtonMultiply(), 7, 7, 1, 1);
-        addComponent(calculator.getButtonFraction(), 7, 8, 1, 1);
-        addComponent(buttonLSh, 8, 1, 1, 1);
-        addComponent(buttonRSh, 8, 2, 1, 1);
-        addComponent(buttonE, 8, 3, 1, 1);
-        addComponent(calculator.getButton1(), 8, 4, 1, 1);
-        addComponent(calculator.getButton2(), 8, 5, 1, 1);
-        addComponent(calculator.getButton3(), 8, 6, 1, 1);
-        addComponent(calculator.getButtonSubtract(), 8, 7, 1, 1);
-        addComponent(calculator.getButtonEquals(), 8, 8, 1, 2);
-        addComponent(buttonNot, 9, 1, 1, 1);
-        addComponent(buttonAnd, 9, 2, 1, 1);
-        addComponent(buttonF, 9, 3, 1, 1);
-        addComponent(calculator.getButton0(), 9, 4, 2, 1);
-        addComponent(calculator.getButtonDot(), 9, 6, 1, 1);
-        addComponent(calculator.getButtonAdd(), 9, 7, 1, 1);
-        LOGGER.info("Buttons added to programmer panel");
+        JPanel programmerPanel = new JPanel(new GridBagLayout());
+
+        addComponent(programmerPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.PAGE_START);
+
+        JPanel memoryPanel = new JPanel(new GridBagLayout());
+        addComponent(memoryPanel, calculator.getButtonMemoryStore(), 0, new Insets(0,1,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemoryRecall(), 1, new Insets(0,0,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemoryClear(), 2, new Insets(0,0,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemoryAddition(), 3, new Insets(0,0,0,0));
+        addComponent(memoryPanel, calculator.getButtonMemorySubtraction(), 4, new Insets(0,0,0,1));
+
+        addComponent(programmerPanel, memoryPanel, 0, new Insets(0,0,0,0));
+
+        JPanel buttonsPanel = new JPanel(new GridBagLayout());
+        addComponent(buttonsPanel, calculator.getButtonPercent(), 0, 0);
+        addComponent(buttonsPanel, calculator.getButtonSqrt(), 0, 1);
+        addComponent(buttonsPanel, calculator.getButtonSquared(), 0, 2);
+        addComponent(buttonsPanel, calculator.getButtonFraction(), 0, 3);
+        addComponent(buttonsPanel, calculator.getButtonClearEntry(), 1, 0);
+        addComponent(buttonsPanel, calculator.getButtonClear(), 1, 1);
+        addComponent(buttonsPanel, calculator.getButtonDelete(), 1, 2);
+        addComponent(buttonsPanel, calculator.getButtonDivide(), 1, 3);
+        addComponent(buttonsPanel, calculator.getButton7(), 2, 0);
+        addComponent(buttonsPanel, calculator.getButton8(), 2, 1);
+        addComponent(buttonsPanel, calculator.getButton9(), 2, 2);
+        addComponent(buttonsPanel, calculator.getButtonMultiply(), 2, 3);
+        addComponent(buttonsPanel, calculator.getButton4(), 3, 0);
+        addComponent(buttonsPanel, calculator.getButton5(), 3, 1);
+        addComponent(buttonsPanel, calculator.getButton6(), 3, 2);
+        addComponent(buttonsPanel, calculator.getButtonSubtract(), 3, 3);
+        addComponent(buttonsPanel, calculator.getButton1(), 4, 0);
+        addComponent(buttonsPanel, calculator.getButton2(),4, 1);
+        addComponent(buttonsPanel, calculator.getButton3(), 4, 2);
+        addComponent(buttonsPanel, calculator.getButtonAdd(),4, 3);
+        addComponent(buttonsPanel, calculator.getButtonNegate(), 5, 0);
+        addComponent(buttonsPanel, calculator.getButton0(), 5, 1);
+        addComponent(buttonsPanel, calculator.getButtonDot(), 5, 2);
+        addComponent(buttonsPanel, calculator.getButtonEquals(), 5, 3);
+
+        addComponent(programmerPanel, buttonsPanel, 2, 0);
+
+        addComponent(programmerPanel);
+        LOGGER.info("Buttons added to the frame");
     }
+
     /**
-     * Adding a component enforcing the GridBagConstraints.BOTH
-     * @param c the component to add
-     * @param row the row to add the component to
-     * @param column the column to add the component to
-     * @param width the number of columns the component takes up
-     * @param height the number of rows the component takes up
+     * Adds a component to a panel
+     * @param panel the panel to add to
+     * @param c the component to add to a panel
+     * @param row the row to place the component in
+     * @param column the column to place the component in
+     * @param insets the space between the component
+     * @param gridWidth the number of columns the component should use
+     * @param gridHeight the number of rows the component should use
+     * @param weightXRow set to allow the button grow horizontally
+     * @param weightYColumn set to allow the button grow horizontally
+     * @param fill set to make the component resize if any unused space
+     * @param anchor set to place the component in a specific location on the frame
      */
-    private void addComponent(Component c, int row, int column, int width, int height)
-    { addComponent(c, row, column, width, height, GridBagConstraints.BOTH); }
-    /**
-     * The main method to used to add a component to the Calculator frame
-     * @param c the component to add
-     * @param row the row to add the component to
-     * @param column the column to add the component to
-     * @param width the number of columns the component takes up
-     * @param height the number of rows the component takes up
-     * @param fill the constrains to use
-     */
-    private void addComponent(Component c, int row, int column, int width, int height, int fill)
+    private void addComponent(JPanel panel, Component c, int row, int column, Insets insets, int gridWidth, int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
     {
-        constraints.gridx = column;
+        constraints.insets = insets == null ? new Insets(1, 1, 1, 1) : insets;
         constraints.gridy = row;
-        constraints.gridwidth = width;
-        constraints.gridheight = height;
-        constraints.fill = fill;
-        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
-        constraints.weighty = 0;
-        constraints.weightx = 0;
-        programmerLayout.setConstraints(c, constraints); // set constraints
-        add(c); // add component
+        constraints.gridx = column;
+        constraints.gridwidth = gridWidth;
+        constraints.gridheight = gridHeight;
+        constraints.weighty = weightXRow;
+        constraints.weightx = weightYColumn;
+        if (fill != 0)   constraints.fill = fill;
+        if (anchor != 0) constraints.anchor = anchor;
+        if (c != null) panel.add(c, constraints);
+        else           add(panel, constraints);
     }
+
+    /** Primarily used to add the textPane */
+    private void addComponent(JPanel panel, Component c, int column, Insets insets)
+    { addComponent(panel, c, 1, column, insets, 1, 1, 1.0, 1.0, 0, 0); }
+
+    /** Primarily used to add the buttons to a panel */
+    private void addComponent(JPanel panel, Component c, int row, int column)
+    { addComponent(panel, c, row, column, null, 1, 1, 1.0, 1.0, 0, 0); }
+
+    /** Primarily used to add the basicPanel to the frame */
+    private void addComponent(JPanel panel)
+    { addComponent(panel, null, 0, 0, new Insets(0,0,0,0), 0, 0, 1.0, 1.0, 0, GridBagConstraints.CENTER); }
+
+
+//    /**
+//     * Specifies where each button is placed on the ProgrammerPanel
+//     */
+//    private void addComponentsToPanel()
+//    {
+//        constraints.insets = new Insets(5,5,5,5);
+//        addComponent(calculator.getTextPane(), 0, 0, 9, 2);
+//        addComponent(btnGroupOnePanel, 4, 0, 1, 4, GridBagConstraints.HORIZONTAL);
+//        addComponent(btnGroupTwoPanel, 7, 0, 1, 4, GridBagConstraints.HORIZONTAL);
+//        constraints.insets = new Insets(5,0,1,5);
+//        addComponent(calculator.getButtonBlank1(), 4, 1, 1, 1);
+//        addComponent(buttonModulus, 4, 2, 1, 1);
+//        addComponent(buttonA, 4, 3, 1, 1);
+//        addComponent(calculator.getButtonMemoryStore(), 4, 4, 1, 1);
+//        addComponent(calculator.getButtonMemoryClear(), 4, 5, 1, 1);
+//        addComponent(calculator.getButtonMemoryRecall(), 4, 6, 1, 1);
+//        addComponent(calculator.getButtonMemoryAddition(), 4, 7, 1, 1);
+//        addComponent(calculator.getButtonMemorySubtraction(), 4, 8, 1, 1);
+//        addComponent(buttonLPar, 5, 1, 1, 1);
+//        addComponent(buttonRPar, 5, 2, 1, 1);
+//        addComponent(buttonB, 5, 3, 1, 1);
+//        addComponent(calculator.getButtonDelete(), 5, 4, 1, 1);
+//        addComponent(calculator.getButtonClearEntry(), 5, 5, 1, 1);
+//        addComponent(calculator.getButtonClear(), 5, 6, 1, 1);
+//        addComponent(calculator.getButtonNegate(), 5, 7, 1, 1);
+//        addComponent(calculator.getButtonSqrt(), 5, 8, 1, 1);
+//        addComponent(buttonRol, 6, 1, 1, 1);
+//        addComponent(buttonRor, 6, 2, 1, 1);
+//        addComponent(buttonC, 6, 3, 1, 1);
+//        addComponent(calculator.getButton7(), 6, 4, 1, 1);
+//        addComponent(calculator.getButton8(), 6, 5, 1, 1);
+//        addComponent(calculator.getButton9(), 6, 6, 1, 1);
+//        addComponent(calculator.getButtonDivide(), 6, 7, 1, 1);
+//        addComponent(calculator.getButtonPercent(), 6, 8, 1, 1);
+//        addComponent(buttonOr, 7, 1, 1, 1);
+//        addComponent(buttonXor, 7, 2, 1, 1);
+//        addComponent(buttonD, 7, 3, 1, 1);
+//        addComponent(calculator.getButton4(), 7, 4, 1, 1);
+//        addComponent(calculator.getButton5(), 7, 5, 1, 1);
+//        addComponent(calculator.getButton6(), 7, 6, 1, 1);
+//        addComponent(calculator.getButtonMultiply(), 7, 7, 1, 1);
+//        addComponent(calculator.getButtonFraction(), 7, 8, 1, 1);
+//        addComponent(buttonLSh, 8, 1, 1, 1);
+//        addComponent(buttonRSh, 8, 2, 1, 1);
+//        addComponent(buttonE, 8, 3, 1, 1);
+//        addComponent(calculator.getButton1(), 8, 4, 1, 1);
+//        addComponent(calculator.getButton2(), 8, 5, 1, 1);
+//        addComponent(calculator.getButton3(), 8, 6, 1, 1);
+//        addComponent(calculator.getButtonSubtract(), 8, 7, 1, 1);
+//        addComponent(calculator.getButtonEquals(), 8, 8, 1, 2);
+//        addComponent(buttonNot, 9, 1, 1, 1);
+//        addComponent(buttonAnd, 9, 2, 1, 1);
+//        addComponent(buttonF, 9, 3, 1, 1);
+//        addComponent(calculator.getButton0(), 9, 4, 2, 1);
+//        addComponent(calculator.getButtonDot(), 9, 6, 1, 1);
+//        addComponent(calculator.getButtonAdd(), 9, 7, 1, 1);
+//        LOGGER.info("Buttons added to programmer panel");
+//    }
+//    /**
+//     * Adding a component enforcing the GridBagConstraints.BOTH
+//     * @param c the component to add
+//     * @param row the row to add the component to
+//     * @param column the column to add the component to
+//     * @param width the number of columns the component takes up
+//     * @param height the number of rows the component takes up
+//     */
+//    private void addComponent(Component c, int row, int column, int width, int height)
+//    { addComponent(c, row, column, width, height, GridBagConstraints.BOTH); }
+//    /**
+//     * The main method to used to add a component to the Calculator frame
+//     * @param c the component to add
+//     * @param row the row to add the component to
+//     * @param column the column to add the component to
+//     * @param width the number of columns the component takes up
+//     * @param height the number of rows the component takes up
+//     * @param fill the constrains to use
+//     */
+//    private void addComponent(Component c, int row, int column, int width, int height, int fill)
+//    {
+//        constraints.gridx = column;
+//        constraints.gridy = row;
+//        constraints.gridwidth = width;
+//        constraints.gridheight = height;
+//        constraints.fill = fill;
+//        constraints.anchor =  GridBagConstraints.FIRST_LINE_START;
+//        constraints.weighty = 0;
+//        constraints.weightx = 0;
+//        programmerLayout.setConstraints(c, constraints); // set constraints
+//        add(c); // add component
+//    }
 
 //    /**
 //     * Calls the main setup method when switching
@@ -314,7 +412,35 @@ public class ProgrammerPanel extends JPanel
      * Sets the help text for the the BasicPanel
      */
     private void setupHelpMenu()
-    { LOGGER.warn("IMPLEMENT Help Menu"); }
+    {
+        LOGGER.warn("IMPLEMENT Help Menu");
+        JMenu helpMenuItem = calculator.getHelpMenu();
+        JMenuItem viewHelp = helpMenuItem.getItem(0);
+        // remove any and all other view help actions
+        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        viewHelp.addActionListener(action -> showHelpPanel("IMPLEMENT " + PROGRAMMER.getName() + " Calculator Help"));
+        helpMenuItem.add(viewHelp, 0);
+        LOGGER.info("Finished setting up the help menu");
+    }
+
+    /**
+     * Displays the help text in a scrollable pane
+     * @param helpString the help text to display
+     */
+    private void showHelpPanel(String helpString)
+    {
+        JTextArea message = new JTextArea(helpString,20,40);
+        message.setWrapStyleWord(true);
+        message.setLineWrap(true);
+        message.setEditable(false);
+        message.setFocusable(false);
+        message.setOpaque(false);
+        JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setSize(new Dimension(400, 300));
+        SwingUtilities.updateComponentTreeUI(calculator);
+        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + PROGRAMMER.getName() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        calculator.confirm("Viewing " + BASIC.getName() + " Calculator Help");
+    }
 
     /**
      * The main method to set up the textPane
@@ -335,7 +461,7 @@ public class ProgrammerPanel extends JPanel
         { calculator.getTextPane().setBorder(new LineBorder(Color.BLACK)); }
         calculator.getTextPane().setEditable(false);
         calculator.getTextPane().setPreferredSize(new Dimension(105, 60));
-        LOGGER.info("Text Area configured");
+        LOGGER.info("TextPane configured");
     }
 
     /**
@@ -2439,7 +2565,7 @@ public class ProgrammerPanel extends JPanel
     private void setupEqualsButton()
     {
         calculator.getButtonEquals().setFont(mainFont);
-        calculator.getButtonEquals().setPreferredSize(new Dimension(35, 70) );
+        calculator.getButtonEquals().setPreferredSize(new Dimension(35, 35) );
         calculator.getButtonEquals().setBorder(new LineBorder(Color.BLACK));
         calculator.getButtonEquals().setEnabled(true);
         calculator.getButtonEquals().addActionListener(this::performButtonEqualsActions);
@@ -2961,6 +3087,7 @@ public class ProgrammerPanel extends JPanel
     public GridBagLayout getProgrammerLayout() { return programmerLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
     public Calculator getCalculator() { return calculator; }
+    public CalculatorBase getCalculatorBase() { return calculator.getCalculatorBase(); }
     public JPanel getBtnGroupOnePanel() { return btnGroupOnePanel; }
     public JPanel getBtnGroupTwoPanel() { return btnGroupTwoPanel; }
     public JButton getButtonModulus() { return buttonModulus; }
@@ -3010,6 +3137,7 @@ public class ProgrammerPanel extends JPanel
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
+    public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculator.setCalculatorBase(calculatorBase); }
     public void setByteByte(boolean buttonByteSet) { isByteByte = buttonByteSet; }
     public void setWordByte(boolean buttonWordSet) { isWordByte = buttonWordSet; }
     public void setDWordByte(boolean buttonDwordSet) { isDWordByte = buttonDwordSet; }

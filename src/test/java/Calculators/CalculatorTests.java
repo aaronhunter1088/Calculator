@@ -59,6 +59,7 @@ public class CalculatorTests
         LOGGER.info("createDefaultCalculator...");
         calculator = new Calculator();
         assertTrue("Cannot see basic calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + BASIC, BASIC, calculator.getCalculatorType());
     }
 
     @Test
@@ -67,6 +68,7 @@ public class CalculatorTests
         LOGGER.info("createBasicCalculator enforced...");
         calculator = new Calculator(BASIC);
         assertTrue("Cannot see basic calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + BASIC, BASIC, calculator.getCalculatorType());
     }
 
     /************* Programmer Calculator Tests ******************/
@@ -78,6 +80,7 @@ public class CalculatorTests
         calculator.setMotif(true);
         calculator.setCurrentPanel(new ProgrammerPanel(calculator, BINARY));
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
         assertSame("Base is not binary", calculator.getCalculatorBase(), BINARY);
     }
 
@@ -87,6 +90,7 @@ public class CalculatorTests
         LOGGER.info("createProgrammerCalculator in {} enforced...", BINARY);
         calculator = new Calculator(PROGRAMMER, BINARY);
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
         assertSame("Base is not binary", calculator.getCalculatorBase(), BINARY);
     }
 
@@ -96,6 +100,7 @@ public class CalculatorTests
         LOGGER.info("createProgrammerCalculator in {} enforced...", DECIMAL);
         calculator = new Calculator(PROGRAMMER, DECIMAL);
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
         assertSame("Base is not decimal", calculator.getCalculatorBase(), DECIMAL);
     }
 
@@ -132,6 +137,7 @@ public class CalculatorTests
         LOGGER.info("createDateCalculator...");
         calculator = new Calculator(DATE);
         assertTrue("Cannot see date calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + DATE, DATE, calculator.getCalculatorType());
         assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), DIFFERENCE_BETWEEN_DATES);
     }
 
@@ -141,6 +147,7 @@ public class CalculatorTests
         LOGGER.info("createDateCalculator with {} enforced...", DIFFERENCE_BETWEEN_DATES);
         calculator = new Calculator(DATE, DIFFERENCE_BETWEEN_DATES);
         assertTrue("Cannot see date calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + DATE, DATE, calculator.getCalculatorType());
         assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), DIFFERENCE_BETWEEN_DATES);
     }
 
@@ -150,6 +157,7 @@ public class CalculatorTests
         LOGGER.info("createDateCalculator with {} enforced...", ADD_SUBTRACT_DAYS);
         calculator = new Calculator(DATE, ADD_SUBTRACT_DAYS);
         assertTrue("Cannot see date calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + DATE, DATE, calculator.getCalculatorType());
         assertSame("Date operation is not " + ADD_SUBTRACT_DAYS, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), ADD_SUBTRACT_DAYS);
     }
 
@@ -160,6 +168,7 @@ public class CalculatorTests
         LOGGER.info("createConverterCalculator...");
         calculator = new Calculator(CONVERTER);
         assertTrue("Cannot see converter calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + CONVERTER, CONVERTER, calculator.getCalculatorType());
         assertSame("Converter operation is not " + ANGLE, ((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE);
     }
 
@@ -169,6 +178,7 @@ public class CalculatorTests
         LOGGER.info("createConverterCalculator with {} enforced...", ANGLE);
         calculator = new Calculator(CONVERTER, ANGLE);
         assertTrue("Cannot see converter calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + CONVERTER, CONVERTER, calculator.getCalculatorType());
         assertSame("Converter operation is not " + ANGLE, ((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE);
     }
 
@@ -178,6 +188,7 @@ public class CalculatorTests
         LOGGER.info("createConverterCalculator with {} enforced...", AREA);
         calculator = new Calculator(CONVERTER, AREA);
         assertTrue("Cannot see converter calculator", calculator.isVisible());
+        assertEquals("Expected CalculatorType to be " + CONVERTER, CONVERTER, calculator.getCalculatorType());
         assertSame("Converter operation is not " + AREA, ((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), AREA);
     }
 
@@ -572,7 +583,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator = new Calculator();
         calculator.setAdding(true);
-        ((BasicPanel)calculator.getCurrentPanel()).performDotButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
@@ -591,7 +602,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator = new Calculator();
         calculator.setAdding(false);
-        ((BasicPanel)calculator.getCurrentPanel()).performDotButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
@@ -844,7 +855,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn("5");
         calculator = new Calculator();
         calculator.getValues()[0] = "2";
-        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertFalse("Expected no commas", calculator.getValues()[0].contains("_"));
         assertEquals("Expected values[0] to be 25", "25", calculator.getValues()[0]);
     }
