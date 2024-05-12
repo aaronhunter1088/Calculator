@@ -66,11 +66,11 @@ public class DatePanel extends JPanel
     }
 
     /**
-     * The main constructor used to create a DatePanel
+     * Creates a DatePanel passing in the Calculator reference
      * @param calculator the Calculator to use
      */
-    public DatePanel(Calculator calculator)
-    { this(calculator, null); }
+//    public DatePanel(Calculator calculator)
+//    { this(calculator, null); }
 
     /**
      * The main construction used to create a DatePanel
@@ -91,9 +91,8 @@ public class DatePanel extends JPanel
     public void setupDatePanel(Calculator calculator, DateOperation dateOperation)
     {
         setCalculator(calculator);
-        setLayout(new GridBagLayout()); // set frame layout
-        setConstraints(new GridBagConstraints()); // instantiate constraints
-        setSize(new Dimension(250,400));
+        setLayout(new GridBagLayout());
+        setConstraints(new GridBagConstraints());
         setupHelpMenu();
         setupDatePanelComponents(dateOperation);
         if (DIFFERENCE_BETWEEN_DATES == dateOperation)
@@ -101,12 +100,14 @@ public class DatePanel extends JPanel
             createCommonPanel();
             createDifferenceBetweenDatesPanel();
             addComponent(datePanel1);
+            setSize(new Dimension(250,340));
         }
         else
         {
             createCommonPanel();
             createAddOrSubtractPanel();
             addComponent(datePanel2);
+            setSize(new Dimension(250,400));
         }
         SwingUtilities.updateComponentTreeUI(this);
         setName(DATE.getName());
@@ -188,14 +189,10 @@ public class DatePanel extends JPanel
         setupFromDate();
         setupToDate();
         setupDifferenceLabel();
-        String SAME_YEAR = SAME + SPACE + YEAR;
-        setYearsDifferenceLabel(new JLabel(SAME_YEAR));
-        String SAME_MONTH = SAME + SPACE + MONTH;
-        setMonthsDifferenceLabel(new JLabel(SAME_MONTH));
-        String SAME_WEEK = SAME + SPACE + WEEK;
-        setWeeksDifferenceLabel(new JLabel(SAME_WEEK));
-        String SAME_DAY = SAME + SPACE + DAY;
-        setDaysDifferenceLabel(new JLabel(SAME_DAY));
+        setYearsDifferenceLabel(new JLabel(SAME + SPACE + YEAR));
+        setMonthsDifferenceLabel(new JLabel(SAME + SPACE + MONTH));
+        setWeeksDifferenceLabel(new JLabel(SAME + SPACE + WEEK));
+        setDaysDifferenceLabel(new JLabel(SAME + SPACE + DAY));
         setupBlankLabel1();
         setupBlankLabel2();
         setupBlankLabel3();
@@ -755,19 +752,19 @@ public class DatePanel extends JPanel
     private void createDifferenceBetweenDatesPanel()
     {
         datePanel1 = new JPanel(new GridBagLayout());
-        addComponent(datePanel1, commonToBothDateCalculators, 0, 0, 1, 1, 0, 0);
+        addComponent(datePanel1, commonToBothDateCalculators, 0, 0, 0);
         JPanel differenceBetweenDates = new JPanel(new GridBagLayout());
-        addComponent(differenceBetweenDates, toDateLabel, 0, 0, 1,1, 0,1.0);
-        addComponent(differenceBetweenDates, toDatePicker, 1,0,1,1, 0,1.0);
-        addComponent(differenceBetweenDates, blankLabel3, 2, 0, 1, 1,0,1.0); // representing a blank space
-        addComponent(differenceBetweenDates, differenceLabel, 3, 0, 1, 1,0,1.0); // representing a blank space
-        addComponent(differenceBetweenDates, yearsDifferenceLabel, 4, 0, 1, 1, 0,1.0);
-        addComponent(differenceBetweenDates, monthsDifferenceLabel, 5, 0, 1, 1, 0,1.0);
-        addComponent(differenceBetweenDates, weeksDifferenceLabel, 6, 0, 1, 1, 0, 1.0);
-        addComponent(differenceBetweenDates, daysDifferenceLabel, 7, 0, 1, 1, 0,1.0);
-        addComponent(differenceBetweenDates, blankLabel4, 8, 0, 1, 1,1.0,1.0); // representing a blank space
+        addComponent(differenceBetweenDates, toDateLabel, 0, 0,1.0);
+        addComponent(differenceBetweenDates, toDatePicker, 1, 0,1.0);
+        addComponent(differenceBetweenDates, blankLabel3, 2, 0,1.0); // representing a blank space
+        addComponent(differenceBetweenDates, differenceLabel, 3, 0,1.0); // representing a blank space
+        addComponent(differenceBetweenDates, yearsDifferenceLabel, 4, 0,1.0);
+        addComponent(differenceBetweenDates, monthsDifferenceLabel, 5, 0,1.0);
+        addComponent(differenceBetweenDates, weeksDifferenceLabel, 6, 0, 1.0);
+        addComponent(differenceBetweenDates, daysDifferenceLabel, 7, 0,1.0);
+        addComponent(differenceBetweenDates, blankLabel4, 8, 1.0,1.0); // representing a blank space
         updateResultsTextBox();
-        addComponent(datePanel1, differenceBetweenDates, 1, 0, 1, 1, 0, 0);
+        addComponent(datePanel1, differenceBetweenDates, 1, 0, 0);
         //addComponent(datePanel1);
         LOGGER.info("Finished adding components to DifferenceBetweenDates panel");
     }
@@ -775,16 +772,16 @@ public class DatePanel extends JPanel
     private void createAddOrSubtractPanel()
     {
         datePanel2 = new JPanel(new GridBagLayout());
-        addComponent(datePanel2, commonToBothDateCalculators, 0, 0, 1, 1, 0, 0);
+        addComponent(datePanel2, commonToBothDateCalculators, 0, 0, 0);
         JPanel addOrSubtractDates = new JPanel(new GridBagLayout());
-        addComponent(addOrSubtractDates, buttonGroupPanel, 0, 0, 1,1, 0,1.0);
-        addComponent(addOrSubtractDates, blankLabel3, 1, 0, 1, 1,0, 1.0); // representing a blank space
-        addComponent(addOrSubtractDates, textFieldsGroupPanel, 2, 0, 1, 1, 0, 1.0);
-        addComponent(addOrSubtractDates, blankLabel4, 3, 0, 1, 1, 0.0, 1.0);
-        addComponent(addOrSubtractDates, dateLabel, 4, 0, 1, 1, 0, 1.0);
-        addComponent(addOrSubtractDates, resultsLabel, 5, 0, 1, 1, 0, 1.0);
-        addComponent(addOrSubtractDates, blankLabel5, 6, 0, 1, 1, 1.0, 1.0);
-        addComponent(datePanel2, addOrSubtractDates, 1, 0, 1, 1, 0, 0);
+        addComponent(addOrSubtractDates, buttonGroupPanel, 0, 0,1.0);
+        addComponent(addOrSubtractDates, blankLabel3, 1, 0, 1.0); // representing a blank space
+        addComponent(addOrSubtractDates, textFieldsGroupPanel, 2, 0, 1.0);
+        addComponent(addOrSubtractDates, blankLabel4, 3, 0.0, 1.0);
+        addComponent(addOrSubtractDates, dateLabel, 4, 0, 1.0);
+        addComponent(addOrSubtractDates, resultsLabel, 5, 0, 1.0);
+        addComponent(addOrSubtractDates, blankLabel5, 6, 1.0, 1.0);
+        addComponent(datePanel2, addOrSubtractDates, 1, 0, 0);
         //addComponent(datePanel2);
         LOGGER.info("Finished adding components to AddOrSubtract panel");
     }
@@ -792,26 +789,24 @@ public class DatePanel extends JPanel
     private void createCommonPanel()
     {
         commonToBothDateCalculators = new JPanel(new GridBagLayout());
-        addComponent(commonToBothDateCalculators, optionsBox, 0,0,1,1, 0,0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
-        addComponent(commonToBothDateCalculators, blankLabel1, 1, 0, 1, 1,0,1.0); // representing a blank space
-        addComponent(commonToBothDateCalculators, fromDateLabel, 2, 0, 1,1, 0,1.0);
-        addComponent(commonToBothDateCalculators, fromDatePicker, 3,0,1,1, 0,1.0);
-        addComponent(commonToBothDateCalculators, blankLabel2, 4, 0, 1, 1,0,1.0); // representing a blank space
+        addComponent(commonToBothDateCalculators, optionsBox, 0, 1,1, 0,0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        //addComponent(commonToBothDateCalculators, blankLabel1, 1, 0,1.0); // representing a blank space
+        addComponent(commonToBothDateCalculators, fromDateLabel, 1, 0,1.0);
+        addComponent(commonToBothDateCalculators, fromDatePicker, 2, 0,1.0);
+        //addComponent(commonToBothDateCalculators, blankLabel2, 4, 0,1.0); // representing a blank space
     }
 
     /**
      * Adding a component enforcing the GridBagConstraints.BOTH
-     * @param c the component to add
+     *
+     * @param c   the component to add
      * @param row the row to add the component to
-     * @param column the column to add the component to
-//     * @param width the number of columns the component takes up
-//     * @param height the number of rows the component takes up
      */
-    private void addComponent(JPanel panel, Component c, int row, int column, int gridWidth,
-              int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
+    private void addComponent(JPanel panel, Component c, int row, int gridWidth,
+                              int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
     {
         constraints.gridy = row;
-        constraints.gridx = column;
+        constraints.gridx = 0;
         constraints.gridwidth = gridWidth;
         constraints.gridheight = gridHeight;
         constraints.weighty = weightXRow;
@@ -822,15 +817,15 @@ public class DatePanel extends JPanel
         if (c != null) panel.add(c, constraints);
         else           add(panel, constraints);
     }
-    private void addComponent(JPanel panel, Component c, int row, int column, int width, int height,
+    private void addComponent(JPanel panel, Component c, int row,
                               double weighty, double weightx)
     {
-        addComponent(panel, c, row, column, width, height, weighty, weightx, 0, 0);
+        addComponent(panel, c, row, 1, 1, weighty, weightx, 0, 0);
     }
 
     /** Primarily used to add the basicPanel to the frame */
     private void addComponent(JPanel panel)
-    { addComponent(panel, null, 0, 0, 0, 0, 1.0, 1.0); }
+    { addComponent(panel, null, 0, 0, 0, 1.0, 1.0, 0, 0); }
 
     /**
      * Calls the main setup method when switching

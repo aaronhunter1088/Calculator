@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
@@ -22,10 +23,11 @@ public class CalculatorMain
 	public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting calculator...");
+        UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {
                 //Start a basic calculator
-                //Calculator calculator = new Calculator(/*BASIC*/);
+                Calculator calculator = new Calculator(/*BASIC*/);
                 //Start a programmer calculator in BINARY mode
                 //Calculator calculator = new Calculator(PROGRAMMER /*, BINARY*/ );
                 //Start a programmer calculator in DECIMAL mode
@@ -37,7 +39,7 @@ public class CalculatorMain
                 //Start an ANGLE converter calculator
                 //Calculator calculator = new Calculator(CONVERTER /*,ANGLE*/ );
                 //Start an AREA converter calculator
-                Calculator calculator = new Calculator(CONVERTER, AREA);
+                //Calculator calculator = new Calculator(CONVERTER, AREA);
                 //Display the window.
                 calculator.pack();
                 calculator.setVisible(true);
@@ -86,6 +88,7 @@ Version Four Concluded: -
             [e] I've added JavaDocs to all methods to allow quick access to know what each method does.
             [f] Fix the 'textArea' to not rely on alignment to be Right_to_Left, and enforce right alignment (renamed to textPane)
             [g] Upgraded Java to 18
+            [h] Added commas to longer numbers, displayed only in the textPane
 
             Saturday, Aug 14, 2021:
             I started the Converter version. It should be relatively easy to implement seeing as they all have a

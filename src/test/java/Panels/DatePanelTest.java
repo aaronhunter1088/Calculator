@@ -34,7 +34,7 @@ public class DatePanelTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        System.setProperty("appName", "JPanelDateTest");
+        System.setProperty("appName", "DatePanelTest");
         Calculator calculator = new Calculator(DATE, DateOperation.ADD_SUBTRACT_DAYS);
         testTheDatePanel = (DatePanel) calculator.getCurrentPanel();
     }

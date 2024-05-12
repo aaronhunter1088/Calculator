@@ -56,14 +56,26 @@ public class BasicPanelTest {
     @Test
     public void testCreatingBasicPanel()
     {
-        BasicPanel panel = new BasicPanel();
+        assertEquals("Expected panel name to be " + BASIC.getName(), BASIC.getName(), new BasicPanel().getName());
+    }
+
+    @Test
+    public void testCreatingBasicPanelWithCalculator()
+    {
+        assertEquals("Expected panel name to be " + BASIC.getName(), BASIC.getName(), new BasicPanel(calculator).getName());
+    }
+
+    @Test
+    public void testShowingHelpShowsText()
+    {
+        basicPanel.showHelpPanel("This is a test");
     }
 
     @Test
     public void pressed1()
     {
         when(actionEvent.getActionCommand()).thenReturn("1");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not 1", 1, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutAnyOperator());
@@ -75,14 +87,14 @@ public class BasicPanelTest {
     public void pressed1Then5()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("5");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not 1", 1, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("{} is not positive", calculator.isPositiveNumber(String.valueOf(calculator.getValues()[calculator.getValuesPosition()])));
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not 15", 15, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]));
         assertEquals("textPane should be 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
@@ -94,8 +106,8 @@ public class BasicPanelTest {
     public void pressed1ThenNegate()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("±");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not -1", -1, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]));
         assertEquals("textPane should be -1", "-1", calculator.getTextPaneWithoutNewLineCharacters());
@@ -107,9 +119,9 @@ public class BasicPanelTest {
     public void pressed1ThenNegateThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("±").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performNegateButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
 
         assertEquals("Values[0] is not -1", -1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be -1 +", "-1 +", calculator.getTextPaneWithoutNewLineCharacters());
@@ -124,44 +136,44 @@ public class BasicPanelTest {
                 .thenReturn("1").thenReturn("5").thenReturn("±")
                 .thenReturn("+").thenReturn("5").thenReturn("±").thenReturn("=");
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 0", 0, calculator.getValuesPosition());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 0", 0, calculator.getValuesPosition());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Values[0] is not -15", -15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be -15", "-15", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 0", 0, calculator.getValuesPosition());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Values[0] is not -15", -15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be -15 +", "-15 +", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 1", 1, calculator.getValuesPosition());
         assertTrue("Expecting isAdding to be set", calculator.isAdding());
         assertFalse("We are still on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[1] is not 5", 5, Integer.parseInt(calculator.getValues()[1]));
         assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 1", 1, calculator.getValuesPosition());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Values[1] is not -5", -5, Integer.parseInt(calculator.getValues()[1]));
         assertEquals("textPane should be -5", "-5", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 1", 1, calculator.getValuesPosition());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Values[0] is not -20", -20, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("Values[1] is not empty", "", calculator.getValues()[1]);
         assertEquals("textPane should be -20", "-20", calculator.getTextPaneWithoutNewLineCharacters());
@@ -174,7 +186,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator.getValues()[0] = "";
         calculator.getTextPane().setText("");
-        basicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertEquals("textPane is not as expected", "0.", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("buttonDot should be disabled", calculator.getButtonDot().isEnabled());
     }
@@ -185,7 +197,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator.getTextPane().setText("544");
         calculator.getValues()[0] = "544";
-        basicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertEquals("textPane is not as expected", "544.", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Values[0]", "544.", calculator.getValues()[0]);
         assertFalse("buttonDot should be disabled", calculator.getButtonDot().isEnabled());
@@ -197,11 +209,11 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("2").thenReturn("3")
                 .thenReturn("4").thenReturn(".");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertEquals("textPane is not as expected", "1,234.", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Values[0]", "1234.", calculator.getValues()[0]);
         assertFalse("buttonDot should be disabled", calculator.getButtonDot().isEnabled());
@@ -212,14 +224,14 @@ public class BasicPanelTest {
     public void pressedDotThen9()
     {
         when(actionEvent.getActionCommand()).thenReturn(".").thenReturn("9");
-        basicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 0.", "0.", calculator.getValues()[0]);
         assertEquals("textPane should be 0.", "0.", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("buttonDot should be disabled", calculator.getButtonDot().isEnabled());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         if (calculator.isNegativeNumber(calculator.getValues()[0])) fail("Number is negative");
 
         assertEquals( 0.9f, Double.parseDouble(calculator.getValues()[0]), delta); // 0.8999999761581421
@@ -233,12 +245,12 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn(".")
                 .thenReturn("5").thenReturn("+").thenReturn("2");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
     }
 
@@ -246,13 +258,13 @@ public class BasicPanelTest {
     public void pressed1ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1 +", "1 +", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expecting isAdding to be set", calculator.isAdding());
@@ -263,19 +275,19 @@ public class BasicPanelTest {
     public void pressed1Then5ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("5").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15 +", "15 +", calculator.getTextPaneWithoutNewLineCharacters());
@@ -287,13 +299,13 @@ public class BasicPanelTest {
     public void pressed1ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("-");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1 -", "1 -", calculator.getTextPaneWithoutNewLineCharacters());
@@ -305,19 +317,19 @@ public class BasicPanelTest {
     public void pressed1Then5ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("5").thenReturn("-");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15 -", "15 -", calculator.getTextPaneWithoutNewLineCharacters());
@@ -331,29 +343,29 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand())
                 .thenReturn("1").thenReturn("5").thenReturn("-")
                 .thenReturn("5").thenReturn("=");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Values[0] is not 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15 -", "15 -", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isSubtracting to be set", calculator.isSubtracting());
         assertSame("ValuesPosition should be 1", 1, calculator.getValuesPosition());
         assertFalse("We are still on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[1] is not 5", 5, Integer.parseInt(calculator.getValues()[1]));
         assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Values[0] is not 10", 10, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("Values[1] is not empty", "", calculator.getValues()[1]);
         assertEquals("textPane should be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
@@ -365,40 +377,40 @@ public class BasicPanelTest {
     @Test
     public void pressed1ThenMultiply()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
-        assertEquals("textPane should be 1 *", "1 *", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("textPane should be 1 ✕", "1 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("We are still on the firstNumber", calculator.isFirstNumber());
     }
 
     @Test
     public void pressed1Then5ThenMultiply()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("5").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("5").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
 
         assertEquals("Values[0] is not 1", 15, Integer.parseInt(calculator.getValues()[0]));
-        assertEquals("textPane should be 15 *", "15 *", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("textPane should be 15 ✕", "15 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("ValuesPosition should be 1", 1, calculator.getValuesPosition());
         assertFalse("We are still on the firstNumber", calculator.isFirstNumber());
     }
@@ -407,36 +419,36 @@ public class BasicPanelTest {
     public void pressed1Then0ThenMultiplyThen1Then0ThenEquals()
     {
         when(actionEvent.getActionCommand())
-                .thenReturn("1").thenReturn("0").thenReturn("*")
+                .thenReturn("1").thenReturn("0").thenReturn("✕")
                 .thenReturn("1").thenReturn("0").thenReturn("=");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 1", 1, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 10", 10, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertEquals("Values[0] is not 10", 10, Integer.parseInt(calculator.getValues()[0]));
-        assertEquals("textPane should be 10 *", "10 *", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("textPane should be 10 ✕", "10 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expecting isMultiplying to be set", calculator.isMultiplying());
         assertSame("ValuesPosition should be 1", 1, calculator.getValuesPosition());
         assertFalse("We are still on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[1] is not 1", 1, Integer.parseInt(calculator.getValues()[1]));
         assertEquals("textPane should be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[1] is not 10", 10, Integer.parseInt(calculator.getValues()[1]));
         assertEquals("textPane should be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Values[0] is not 100", 100, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("Values[1] is not empty", "", calculator.getValues()[1]);
         assertEquals("textPane should be 100", "100", calculator.getTextPaneWithoutNewLineCharacters());
@@ -449,7 +461,7 @@ public class BasicPanelTest {
     public void pressedAddWithNoNumberInput()
     {
         when(actionEvent.getActionCommand()).thenReturn("+");
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not empty", "", calculator.getValues()[calculator.getValuesPosition()]);
         assertEquals("textPane should display 'Enter a Number'", "Enter a Number", calculator.getTextPaneWithoutAnyOperator());
@@ -460,9 +472,9 @@ public class BasicPanelTest {
     public void pressed1ThenAddThenAddAgain()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent); // no thenReturn necessary. Uses last value sent to method
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent); // no thenReturn necessary. Uses last value sent to method
 
         assertEquals("Values[{}] is not 1", "1", calculator.getValues()[0]);
         assertTrue("Expected isAdding to be true", calculator.isAdding());
@@ -474,7 +486,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("+");
         calculator.getTextPane().setText("E");
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Expected error message in textPane", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -483,7 +495,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("+");
         calculator.getTextPane().setText("E");
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected error message in textPane", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -492,7 +504,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("+");
         calculator.getTextPane().setText("E");
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertEquals("Expected error message in textPane", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -501,7 +513,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("+");
         calculator.getTextPane().setText("E");
-        basicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         assertEquals("Expected error message in textPane", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -510,7 +522,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("+");
         calculator.getTextPane().setText("Number too big!");
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Expected error message in textPane", "Number too big!", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -519,10 +531,10 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("+")
                 .thenReturn("5").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Expected textPane shows 6 +", "6 +", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isAdd to be true", calculator.isAdding());
     }
@@ -531,7 +543,7 @@ public class BasicPanelTest {
     public void pressedSubtractWithTextPaneBlank()
     {
         when(actionEvent.getActionCommand()).thenReturn("-");
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected textPane to show - symbol", "-", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[0] to be blank", "", calculator.getValues()[0]);
         assertTrue("Expected isNegating is true", calculator.isNegating());
@@ -542,9 +554,9 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("5").thenReturn("+").thenReturn("-");
         calculator.setNegating(false);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected textPane to -", "-", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[0] to be 5", "5", calculator.getValues()[0]);
         assertTrue("Expected isNegating is true", calculator.isNegating());
@@ -555,13 +567,13 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("-")
                 .thenReturn("5").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertTrue("Expected isSubtract to be true", calculator.isSubtracting());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Expected textPane shows -4 +", "-4 +", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isAdd to be true", calculator.isAdding());
     }
@@ -571,13 +583,13 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("-")
                 .thenReturn("5").thenReturn("-");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertTrue("Expected isSubtract to be true", calculator.isSubtracting());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected textPane shows -4 -", "-4 -", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isSubtracting to be true", calculator.isSubtracting());
     }
@@ -586,30 +598,30 @@ public class BasicPanelTest {
     public void pressed1ThenSubtractThen5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("-")
-                .thenReturn("5").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
+                .thenReturn("5").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertTrue("Expected isSubtract to be true", calculator.isSubtracting());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performMultiplicationActions(actionEvent);
-        assertEquals("Expected textPane shows -4 *", "-4 *", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performMultiplicationActions(actionEvent);
+        assertEquals("Expected textPane shows -4 ✕", "-4 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
     }
 
     @Test
     public void pressed1ThenDivideThen5ThenSubtract()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("/")
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("÷")
                 .thenReturn("5").thenReturn("-");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         assertTrue("Expected isDividing to be true", calculator.isDividing());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected textPane shows 0.2 -", "0.2 -", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isDividing to be true", calculator.isDividing());
     }
@@ -618,30 +630,30 @@ public class BasicPanelTest {
     public void pressed1ThenSubtractThen5ThenDivide()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("-")
-                .thenReturn("5").thenReturn("/");
-        basicPanel.performNumberButtonActions(actionEvent);
+                .thenReturn("5").thenReturn("÷");
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertTrue("Expected isSubtract to be true", calculator.isSubtracting());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performDivideButtonActions(actionEvent);
-        assertEquals("Expected textPane shows -4 /", "-4 /", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performDivideButtonActions(actionEvent);
+        assertEquals("Expected textPane shows -4 ÷", "-4 ÷", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isDividing to be true", calculator.isDividing());
     }
 
     @Test
     public void pressed1ThenMultiplyThen5ThenAdd()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("*")
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("✕")
                 .thenReturn("5").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Expected textPane shows 5 +", "5 +", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isAdd to be true", calculator.isAdding());
     }
@@ -649,15 +661,15 @@ public class BasicPanelTest {
     @Test
     public void pressed1ThenMultiplyThen5ThenSubtract()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("*")
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("✕")
                 .thenReturn("5").thenReturn("-");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected textPane shows 5 -", "5 -", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isSubtracting to be true", calculator.isSubtracting());
     }
@@ -665,58 +677,58 @@ public class BasicPanelTest {
     @Test
     public void pressed1ThenMultiplyThen5ThenMultiply()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("*")
-                .thenReturn("5").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("✕")
+                .thenReturn("5").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performMultiplicationActions(actionEvent);
-        assertEquals("Expected textPane shows 5 *", "5 *", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performMultiplicationActions(actionEvent);
+        assertEquals("Expected textPane shows 5 ✕", "5 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
     }
 
     @Test
     public void pressed1ThenMultiplyThen5ThenDivide()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("*")
-                .thenReturn("5").thenReturn("/");
-        basicPanel.performNumberButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("✕")
+                .thenReturn("5").thenReturn("÷");
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performDivideButtonActions(actionEvent);
-        assertEquals("Expected textPane shows 5 /", "5 /", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performDivideButtonActions(actionEvent);
+        assertEquals("Expected textPane shows 5 ÷", "5 ÷", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isDividing to be true", calculator.isDividing());
     }
 
     @Test
     public void pressed1ThenDivideThen5ThenMultiply()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("/")
-                .thenReturn("5").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("÷")
+                .thenReturn("5").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         assertTrue("Expected isDividing to be true", calculator.isDividing());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performMultiplicationActions(actionEvent);
-        assertEquals("Expected textPane shows 0.2 *", "0.2 *", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performMultiplicationActions(actionEvent);
+        assertEquals("Expected textPane shows 0.2 ✕", "0.2 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
     }
 
     @Test
     public void pressed1ThenMultiplyThenMultiply()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("*").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performMultiplicationActions(actionEvent);
-        basicPanel.performMultiplicationActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("✕").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
     }
@@ -724,15 +736,15 @@ public class BasicPanelTest {
     @Test
     public void pressed1ThenDivideThen5ThenAdd()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("/")
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("÷")
                 .thenReturn("5").thenReturn("+");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         assertTrue("Expected isDividing to be true", calculator.isDividing());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
         assertEquals("Expected textPane shows 0.2 +", "0.2 +", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isAdd to be true", calculator.isAdding());
     }
@@ -740,28 +752,40 @@ public class BasicPanelTest {
     @Test
     public void pressed1ThenDivideThen5ThenDivide()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("/")
-                .thenReturn("5").thenReturn("/");
-        basicPanel.performNumberButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("÷")
+                .thenReturn("5").thenReturn("÷");
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
-        basicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         assertTrue("Expected isDividing to be true", calculator.isDividing());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Expected values[1] to be 5", "5", calculator.getValues()[1]);
-        basicPanel.performDivideButtonActions(actionEvent);
-        assertEquals("Expected textPane shows 0.2 /", "0.2 /", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performDivideButtonActions(actionEvent);
+        assertEquals("Expected textPane shows 0.2 ÷", "0.2 ÷", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isDividing to be true", calculator.isDividing());
     }
 
     @Test
     public void pressed1ThenDivideThenDivide()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("/").thenReturn("/");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performDivideButtonActions(actionEvent);
-        basicPanel.performDivideButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("÷").thenReturn("÷");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         assertTrue("Expected isDividing to be true", calculator.isDividing());
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
+    }
+    
+    @Test
+    public void pressed1ThenDivideThen0()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("÷").thenReturn("0").thenReturn("=");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
+        assertFalse("Expected isDividing to be false", calculator.isDividing());
+        assertEquals("Expected values[0] to be blank", "", calculator.getValues()[0]);
     }
 
     @Test
@@ -769,10 +793,10 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("+")
                 .thenReturn("5").thenReturn("-");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
         calculator.setValuesPosition(1);
         assertEquals("Expected textPane shows 6 -", "6 -", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isSubtract to be true", calculator.isSubtracting());
@@ -782,13 +806,13 @@ public class BasicPanelTest {
     public void pressed1ThenAddThen5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("+")
-                .thenReturn("5").thenReturn("*");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performMultiplicationActions(actionEvent);
+                .thenReturn("5").thenReturn("✕");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performMultiplicationActions(actionEvent);
         calculator.setValuesPosition(1);
-        assertEquals("Expected textPane shows 6 *", "6 *", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane shows 6 ✕", "6 ✕", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isMultiplying to be true", calculator.isMultiplying());
     }
 
@@ -796,13 +820,13 @@ public class BasicPanelTest {
     public void pressed1ThenAddThen5ThenDivide()
     {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("+")
-                .thenReturn("5").thenReturn("/");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performAdditionButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performDivideButtonActions(actionEvent);
+                .thenReturn("5").thenReturn("÷");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performDivideButtonActions(actionEvent);
         calculator.setValuesPosition(1);
-        assertEquals("Expected textPane shows 6 /", "6 /", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane shows 6 ÷", "6 ÷", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isDividing to be true", calculator.isDividing());
     }
 
@@ -810,7 +834,7 @@ public class BasicPanelTest {
     public void pressedSubtractWithNoNumberInput()
     {
         when(actionEvent.getActionCommand()).thenReturn("-");
-        basicPanel.performAdditionButtonActions(actionEvent);
+        BasicPanel.performAdditionButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not empty", "", calculator.getValues()[calculator.getValuesPosition()]);
         assertEquals("textPane should display 'Enter a Number'", "Enter a Number", calculator.getTextPaneWithoutAnyOperator());
@@ -820,8 +844,8 @@ public class BasicPanelTest {
     @Test
     public void pressedMultiplyWithNoNumberInput()
     {
-        when(actionEvent.getActionCommand()).thenReturn("*");
-        basicPanel.performMultiplicationActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("✕");
+        BasicPanel.performMultiplicationActions(actionEvent);
 
         assertEquals("Values[{}] is not empty", "", calculator.getValues()[calculator.getValuesPosition()]);
         assertEquals("textPane should display 'Enter a Number'", "Enter a Number", calculator.getTextPaneWithoutAnyOperator());
@@ -831,8 +855,8 @@ public class BasicPanelTest {
     @Test
     public void pressedDivideWithNoNumberInput()
     {
-        when(actionEvent.getActionCommand()).thenReturn("/");
-        basicPanel.performDivideButtonActions(actionEvent);
+        when(actionEvent.getActionCommand()).thenReturn("÷");
+        BasicPanel.performDivideButtonActions(actionEvent);
 
         assertEquals("Values[{}] is not empty", "", calculator.getValues()[calculator.getValuesPosition()]);
         assertEquals("textPane should display 'Enter a Number'", "Enter a Number", calculator.getTextPaneWithoutAnyOperator());
@@ -845,7 +869,7 @@ public class BasicPanelTest {
         calculator.setAdding(true);
         calculator.getValues()[0] = "5";
         calculator.getValues()[1] = "10";
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "15", calculator.getValues()[0]);
     }
 
@@ -855,7 +879,7 @@ public class BasicPanelTest {
         calculator.setAdding(true);
         calculator.getValues()[0] = "5.5";
         calculator.getValues()[1] = "10";
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "15.5", calculator.getValues()[0]);
     }
 
@@ -865,7 +889,7 @@ public class BasicPanelTest {
         calculator.setSubtracting(true);
         calculator.getValues()[0] = "15";
         calculator.getValues()[1] = "10";
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "5", calculator.getValues()[0]);
     }
 
@@ -875,7 +899,7 @@ public class BasicPanelTest {
         calculator.setSubtracting(true);
         calculator.getValues()[0] = "15.5";
         calculator.getValues()[1] = "10";
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "5.5", calculator.getValues()[0]);
     }
 
@@ -885,7 +909,7 @@ public class BasicPanelTest {
         calculator.setMultiplying(true);
         calculator.getValues()[0] = "15";
         calculator.getValues()[1] = "10";
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "150", calculator.getValues()[0]);
     }
 
@@ -895,7 +919,7 @@ public class BasicPanelTest {
         calculator.setMultiplying(true);
         calculator.getValues()[0] = "5.5";
         calculator.getValues()[1] = "10.2";
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "56.1", calculator.getValues()[0]);
     }
 
@@ -906,7 +930,7 @@ public class BasicPanelTest {
         calculator.getValues()[0] = "15";
         calculator.getValues()[1] = "5";
         calculator.setCalculatorType(BASIC);
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "3", calculator.getValues()[0]);
     }
 
@@ -917,7 +941,7 @@ public class BasicPanelTest {
         calculator.getValues()[0] = "15.5";
         calculator.getValues()[1] = "5";
         calculator.setCalculatorType(BASIC);
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Did not get back expected result", "3.1", calculator.getValues()[0]);
     }
 
@@ -928,7 +952,7 @@ public class BasicPanelTest {
         calculator.getValues()[0] = "15.5";
         calculator.getValues()[1] = "0";
         calculator.setCalculatorType(BASIC);
-        basicPanel.performEqualsButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
         assertEquals("Expected values[0] to be blank", "", calculator.getValues()[0]);
         assertEquals("Expected textPane to show error", "Infinity", calculator.getTextPaneWithoutNewLineCharacters());
     }
@@ -936,10 +960,10 @@ public class BasicPanelTest {
     @Test
     public void pressedDelete()
     {
-        when(actionEvent.getActionCommand()).thenReturn("←");
+        when(actionEvent.getActionCommand()).thenReturn("⌫");
         calculator.getTextPane().setText("35");
         calculator.getValues()[0] = "35";
-        basicPanel.performDeleteButtonActions(actionEvent);
+        BasicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 3", 3, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane does not equal 3", "3", calculator.getTextPaneWithoutNewLineCharacters());
     }
@@ -947,33 +971,114 @@ public class BasicPanelTest {
     @Test
     public void pressed1Then5ThenDotThen6ThenAddThenDelete()
     {
-        when(actionEvent.getActionCommand()).thenReturn("←").thenReturn("←").thenReturn("←");
+        when(actionEvent.getActionCommand()).thenReturn("⌫").thenReturn("⌫").thenReturn("⌫");
         calculator.getTextPane().setText("15.6 +");
         calculator.getValues()[0] = "15.6";
         //calculator.setDotPressed(true);
         calculator.getButtonDot().setEnabled(false);
         calculator.setAdding(true);
-        basicPanel.performDeleteButtonActions(actionEvent);
+        BasicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15.6", 15.6, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal 15.6", "15.6", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertFalse("Expected isAdding to be false", calculator.isAdding());
 
-        basicPanel.performDeleteButtonActions(actionEvent);
+        BasicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15.", 15., Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal 15.", "15.", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
 
-        basicPanel.performDeleteButtonActions(actionEvent);
+        BasicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15", 15, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
     }
 
     @Test
+    public void pressed1ThenSubtractThenDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("⌫");
+        calculator.getTextPane().setText("1 -");
+        calculator.getValues()[0] = "1";
+        calculator.getButtonDot().setEnabled(false);
+        calculator.setSubtracting(true);
+        BasicPanel.performDeleteButtonActions(actionEvent);
+        assertEquals("Values[0] is not 1", 1, Double.parseDouble(calculator.getValues()[0]), delta);
+        assertEquals("textPane does not equal 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected isSubtracting to be false", calculator.isSubtracting());
+    }
+
+    @Test
+    public void pressedSubtractThen5ThenSubtractThen6ThenEquals()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("=");
+        calculator.getTextPane().setText("-6");
+        calculator.getValues()[0] = "-5";
+        calculator.getValues()[1] = "-6";
+        calculator.setNegating(true);
+        calculator.setSubtracting(true);
+        BasicPanel.performEqualsButtonActions(actionEvent);
+        assertEquals("Values[0] is not 1", 1, Double.parseDouble(calculator.getValues()[0]), delta);
+        assertEquals("textPane does not equal 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected isSubtracting to be false", calculator.isSubtracting());
+    }
+
+    @Test
+    public void pressedSubtractWithBlankTextPaneThen5ThenSubtractThen5()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("-").thenReturn("5").thenReturn("-").thenReturn("-").thenReturn("5").thenReturn("=");
+        BasicPanel.performSubtractionButtonActions(actionEvent);
+        assertTrue("Expected isNegating to be true", calculator.isNegating());
+        BasicPanel.performNumberButtonActions(actionEvent);
+        assertEquals("Values[0] is not -5", -5, Double.parseDouble(calculator.getValues()[0]), delta);
+        assertEquals("textPane does not equal -5", "-5", calculator.getTextPaneWithoutNewLineCharacters());
+        BasicPanel.performSubtractionButtonActions(actionEvent);
+        assertFalse("Expected isNegating to be false", calculator.isNegating());
+        assertTrue("Expected isSubtracting to be true", calculator.isSubtracting());
+        BasicPanel.performSubtractionButtonActions(actionEvent);
+        assertTrue("Expected isNegating to be true", calculator.isNegating());
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performEqualsButtonActions(actionEvent);
+        assertEquals("Values[0] is not 0", 0, Double.parseDouble(calculator.getValues()[0]), delta);
+        assertEquals("textPane does not equal 0", "0", calculator.getTextPaneWithoutNewLineCharacters());
+    }
+
+    @Test
+    public void pressed1ThenMultiplyThenDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("⌫");
+        calculator.getTextPane().setText("1 ✕");
+        calculator.getValues()[0] = "1";
+        calculator.getButtonDot().setEnabled(false);
+        calculator.setMultiplying(true);
+        BasicPanel.performDeleteButtonActions(actionEvent);
+        assertEquals("Values[0] is not 1", 1, Double.parseDouble(calculator.getValues()[0]), delta);
+        assertEquals("textPane does not equal 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected isMultiplying to be false", calculator.isMultiplying());
+    }
+
+    @Test
+    public void pressed1ThenDivideThenDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("⌫");
+        calculator.getTextPane().setText("1 ÷");
+        calculator.getValues()[0] = "1";
+        calculator.getButtonDot().setEnabled(false);
+        calculator.setDividing(true);
+        BasicPanel.performDeleteButtonActions(actionEvent);
+        assertEquals("Values[0] is not 1", 1, Double.parseDouble(calculator.getValues()[0]), delta);
+        assertEquals("textPane does not equal 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected isDividing to be false", calculator.isDividing());
+    }
+
+    @Test
     public void pressed1Then5ThenDotThen6ThenAddThen6DeleteThen5()
     {
-        when(actionEvent.getActionCommand()).thenReturn("←").thenReturn("5");
+        when(actionEvent.getActionCommand()).thenReturn("⌫").thenReturn("5");
         calculator.getTextPane().setText("6");
         calculator.getValues()[0] = "15.6";
         calculator.getValues()[1] = "6";
@@ -983,14 +1088,14 @@ public class BasicPanelTest {
         calculator.setAdding(true);
         assertEquals("Values[1] is not 6", 6, Integer.parseInt(calculator.getValues()[1]));
 
-        basicPanel.performDeleteButtonActions(actionEvent);
+        BasicPanel.performDeleteButtonActions(actionEvent);
         assertEquals("Values[0] is not 15.6", 15.6, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane does not equal blank", "", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("Expected dot button not to be pressed", calculator.isDotPressed());
         assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
         assertTrue("Expected isAdding to be true", calculator.isAdding());
 
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[1] is not 5", 5, Integer.parseInt(calculator.getValues()[1]));
         assertEquals("textPane does not equal blank", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("Expected dot button not to be pressed", calculator.isDotPressed());
@@ -1002,7 +1107,7 @@ public class BasicPanelTest {
     public void pressingClearRestoresCalculatorToStartFunctionality()
     {
         when(actionEvent.getActionCommand()).thenReturn("calculator");
-        basicPanel.performClearButtonActions(actionEvent);
+        BasicPanel.performClearButtonActions(actionEvent);
         for ( int i=0; i<3; i++) {
             assertTrue("Values@"+i+" is not blank", StringUtils.isBlank(calculator.getValues()[i]));
         }
@@ -1024,7 +1129,7 @@ public class BasicPanelTest {
         calculator.getTextPane().setText("1088");
         calculator.setValuesPosition(0);
         calculator.getValues()[0] = "1088";
-        basicPanel.performClearEntryButtonActions(actionEvent);
+        BasicPanel.performClearEntryButtonActions(actionEvent);
 
         assertTrue("textPane was not cleared", StringUtils.isBlank(calculator.getTextPaneWithoutNewLineCharacters()));
         assertFalse("Expected isAdding to be false", calculator.isAdding());
@@ -1045,7 +1150,7 @@ public class BasicPanelTest {
         calculator.setValuesPosition(1);
         calculator.getValues()[0] = "100";
         calculator.getValues()[1] = "1088";
-        basicPanel.performClearEntryButtonActions(actionEvent);
+        BasicPanel.performClearEntryButtonActions(actionEvent);
 
         assertTrue("textPane was not cleared", StringUtils.isBlank(calculator.getTextPaneWithoutNewLineCharacters()));
         assertTrue("Expected isAdding to be true", calculator.isAdding());
@@ -1063,7 +1168,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("CE");
         calculator.getTextPane().setText("1088 +");
-        basicPanel.performClearEntryButtonActions(actionEvent);
+        BasicPanel.performClearEntryButtonActions(actionEvent);
 
         assertTrue("textPane was not cleared", StringUtils.isBlank(calculator.getTextPaneWithoutAnyOperator()));
         assertFalse("isAdding() expected to be false", calculator.isAdding());
@@ -1073,7 +1178,7 @@ public class BasicPanelTest {
     public void pressedSquaredButtonWithNoEntry()
     {
         when(actionEvent.getActionCommand()).thenReturn("x²");
-        basicPanel.performSquaredButtonActions(actionEvent);
+        BasicPanel.performSquaredButtonActions(actionEvent);
         assertEquals("Expected textPane to contain message", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected values[0] to be empty", calculator.getValues()[0].isEmpty());
     }
@@ -1082,12 +1187,12 @@ public class BasicPanelTest {
     public void pressed5ThenSquaredButton()
     {
         when(actionEvent.getActionCommand()).thenReturn("5").thenReturn("x²");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 5", 5, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performSquaredButtonActions(actionEvent);
+        BasicPanel.performSquaredButtonActions(actionEvent);
         assertEquals("Values[0] is not 25", 25, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 25", "25", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
@@ -1098,14 +1203,14 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("5").thenReturn(".")
                 .thenReturn("5").thenReturn("x²");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performDotButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 5.5", 5.5, Double.parseDouble(calculator.getValues()[0]), delta); // 0.0
         assertEquals("textPane should be 5.5", "5.5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performSquaredButtonActions(actionEvent);
+        BasicPanel.performSquaredButtonActions(actionEvent);
         assertEquals("Values[0] is not 30.25", 30.25, Double.parseDouble(calculator.getValues()[0]), delta);
         assertEquals("textPane should be 30.25", "30.25", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
@@ -1117,24 +1222,24 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("5").thenReturn("±")
                 .thenReturn("x²").thenReturn("±");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 5", 5, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Values[0] is not -5", -5, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be -5", "-5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isNumberNegative to be true", calculator.isNumberNegative());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performSquaredButtonActions(actionEvent);
+        BasicPanel.performSquaredButtonActions(actionEvent);
         assertEquals("Values[0] is not 25", 25, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 25", "25", calculator.getTextPaneWithoutNewLineCharacters());
         assertFalse("Expected isNumberNegative to be false", calculator.isNumberNegative());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Values[0] is not -25", -25, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be -25", "-25", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("Expected isNumberNegative to be true", calculator.isNumberNegative());
@@ -1146,18 +1251,18 @@ public class BasicPanelTest {
     public void pressed5ThenNegateThenNegate()
     {
         when(actionEvent.getActionCommand()).thenReturn("5").thenReturn("±").thenReturn("±");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertEquals("Values[0] is not 5", 5, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
 
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Values[0] is not -5", -5, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be -5", "-5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
         assertTrue("Expected number to be negative", calculator.isNumberNegative());
 
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Values[0] is not 5", 5, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("textPane should be 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertTrue("We are not on the firstNumber", calculator.isFirstNumber());
@@ -1169,7 +1274,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("±");
         calculator.getTextPane().setText("E");
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Expected error message in textPane", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1178,7 +1283,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("±");
         calculator.getTextPane().setText("");
-        basicPanel.performNegateButtonActions(actionEvent);
+        BasicPanel.performNegateButtonActions(actionEvent);
         assertEquals("Expected error message in textPane", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1187,7 +1292,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("√");
         calculator.getTextPane().setText("E");
-        basicPanel.performSquareRootButtonActions(actionEvent);
+        BasicPanel.performSquareRootButtonActions(actionEvent);
         assertEquals("Expected textPane to show error", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1196,7 +1301,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("√");
         calculator.getTextPane().setText("");
-        basicPanel.performSquareRootButtonActions(actionEvent);
+        BasicPanel.performSquareRootButtonActions(actionEvent);
         assertEquals("Expected textPane to show error message", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1207,7 +1312,7 @@ public class BasicPanelTest {
         calculator.getTextPane().setText("-5");
         calculator.getValues()[0] = "-5;";
         calculator.setValuesPosition(0);
-        basicPanel.performSquareRootButtonActions(actionEvent);
+        BasicPanel.performSquareRootButtonActions(actionEvent);
         assertEquals("Expected textPane to show error message", "E", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1218,7 +1323,7 @@ public class BasicPanelTest {
         calculator.getTextPane().setText("25");
         calculator.getValues()[0] = "25";
         calculator.setValuesPosition(0);
-        basicPanel.performSquareRootButtonActions(actionEvent);
+        BasicPanel.performSquareRootButtonActions(actionEvent);
         assertEquals("Expected result to be 5.0", 5.0, Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters()), delta);
     }
 
@@ -1227,7 +1332,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("MS");
         calculator.getTextPane().setText("");
-        basicPanel.performMemoryStoreActions(actionEvent);
+        BasicPanel.performMemoryStoreActions(actionEvent);
         assertTrue("Expected MemoryValues[0] to be blank", calculator.getMemoryValues()[0].isBlank());
         assertEquals("Expected textPane to show Enter a Number", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
@@ -1237,7 +1342,7 @@ public class BasicPanelTest {
     {
         when(actionEvent.getActionCommand()).thenReturn("MS");
         calculator.getTextPane().setText("5");
-        basicPanel.performMemoryStoreActions(actionEvent);
+        BasicPanel.performMemoryStoreActions(actionEvent);
         assertEquals("Expected textPane to still show 5", "5", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected MemoryValues[0] to be 5", "5", calculator.getMemoryValues()[0]);
         assertSame("Expected MemoryPosition to be 1", 1, calculator.getMemoryPosition());
@@ -1251,7 +1356,7 @@ public class BasicPanelTest {
         calculator.getMemoryValues()[0] = "15";
         calculator.setMemoryPosition(10);
         assertEquals("Expected memoryValues[0] to be 15", "15", calculator.getMemoryValues()[0]);
-        basicPanel.performMemoryStoreActions(actionEvent);
+        BasicPanel.performMemoryStoreActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be 2", "2", calculator.getMemoryValues()[0]);
     }
 
@@ -1261,7 +1366,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("MS");
         calculator.getTextPane().setText("E");
         assertTrue("Expected textPane to contain bad text", calculator.textPaneContainsBadText());
-        basicPanel.performMemoryStoreActions(actionEvent);
+        BasicPanel.performMemoryStoreActions(actionEvent);
         assertTrue("Expected MemoryValues[0] to be blank", calculator.getMemoryValues()[0].isBlank());
     }
 
@@ -1278,20 +1383,20 @@ public class BasicPanelTest {
         calculator.getMemoryValues()[5] = "1080";
         calculator.setMemoryPosition(6);
         calculator.setMemoryRecallPosition(0);
-        basicPanel.performMemoryRecallActions(actionEvent);
+        BasicPanel.performMemoryRecallActions(actionEvent);
         assertEquals("Expected textPane to show 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("Expected memoryRecallPosition to be 1", 1, calculator.getMemoryRecallPosition());
         assertSame("Expected memoryPosition to be 6", 6, calculator.getMemoryPosition());
-        basicPanel.performMemoryRecallActions(actionEvent);
+        BasicPanel.performMemoryRecallActions(actionEvent);
         assertEquals("Expected textPane to show 534", "534", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("Expected memoryRecallPosition to be 2", 2, calculator.getMemoryRecallPosition());
         assertSame("Expected memoryPosition to be 6", 6, calculator.getMemoryPosition());
-        basicPanel.performMemoryRecallActions(actionEvent);
+        BasicPanel.performMemoryRecallActions(actionEvent);
         assertEquals("Expected textPane to show -9", "-9", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("Expected memoryRecallPosition to be 3", 3, calculator.getMemoryRecallPosition());
         assertSame("Expected memoryPosition to be 6", 6, calculator.getMemoryPosition());
         calculator.setMemoryRecallPosition(10);
-        basicPanel.performMemoryRecallActions(actionEvent);
+        BasicPanel.performMemoryRecallActions(actionEvent);
         assertEquals("Expected textPane to show 15", "15", calculator.getTextPaneWithoutNewLineCharacters());
         assertSame("Expected memoryRecallPosition to be 1", 1, calculator.getMemoryRecallPosition());
         assertSame("Expected memoryPosition to be 6", 6, calculator.getMemoryPosition());
@@ -1303,7 +1408,7 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("MC");
         calculator.getMemoryValues()[9] = "15";
         calculator.setMemoryPosition(10);
-        basicPanel.performMemoryClearActions(actionEvent);
+        BasicPanel.performMemoryClearActions(actionEvent);
         assertTrue("Expected memoryValues[9] to be empty", calculator.getMemoryValues()[9].isBlank());
         assertSame("Expected memoryPosition to be 0",0, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1321,7 +1426,7 @@ public class BasicPanelTest {
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText("5");
         calculator.setValuesPosition(0);
-        basicPanel.performMemoryAddActions(actionEvent);
+        BasicPanel.performMemoryAddActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be 15", "15", calculator.getMemoryValues()[0]);
         assertSame("Expected memoryPosition to be 1", 1, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1336,7 +1441,7 @@ public class BasicPanelTest {
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText("");
         calculator.setValuesPosition(0);
-        basicPanel.performMemoryAddActions(actionEvent);
+        BasicPanel.performMemoryAddActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be 10", "10", calculator.getMemoryValues()[0]);
         assertSame("Expected memoryPosition to be 1", 1, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1351,7 +1456,7 @@ public class BasicPanelTest {
         calculator.setMemoryPosition(0);
         calculator.getTextPane().setText("10");
         calculator.setValuesPosition(0);
-        basicPanel.performMemoryAddActions(actionEvent);
+        BasicPanel.performMemoryAddActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be blank", "", calculator.getMemoryValues()[0]);
         assertSame("Expected memoryPosition to be 0", 0, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1366,7 +1471,7 @@ public class BasicPanelTest {
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText("5");
         calculator.setValuesPosition(0);
-        basicPanel.performMemorySubtractionActions(actionEvent);
+        BasicPanel.performMemorySubtractionActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be 10", "10", calculator.getMemoryValues()[0]);
         assertSame("Expected memoryPosition to be 1", 1, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1381,7 +1486,7 @@ public class BasicPanelTest {
         calculator.setMemoryPosition(0);
         calculator.getTextPane().setText("5");
         calculator.setValuesPosition(0);
-        basicPanel.performMemorySubtractionActions(actionEvent);
+        BasicPanel.performMemorySubtractionActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be blank", "", calculator.getMemoryValues()[0]);
         assertSame("Expected memoryPosition to be 0", 0, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1396,7 +1501,7 @@ public class BasicPanelTest {
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText("");
         calculator.setValuesPosition(0);
-        basicPanel.performMemorySubtractionActions(actionEvent);
+        BasicPanel.performMemorySubtractionActions(actionEvent);
         assertEquals("Expected memoryValues[0] to be 15", "15", calculator.getMemoryValues()[0]);
         assertSame("Expected memoryPosition to be 1", 1, calculator.getMemoryPosition());
         assertSame("Expected memoryRecallPosition to be 0", 0, calculator.getMemoryRecallPosition());
@@ -1407,24 +1512,34 @@ public class BasicPanelTest {
     public void pressedFractionWhenTextPaneContainsBadText()
     {
         calculator.getTextPane().setText("Enter a Number");
-        basicPanel.performFractionButtonActions(actionEvent);
+        BasicPanel.performFractionButtonActions(actionEvent);
         assertEquals("Expected textPane to show bad text", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
+    }
+
+    @Test
+    public void pressed0ThenFraction()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("0").thenReturn("⅟x");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performFractionButtonActions(actionEvent);
+        assertEquals("Expected textPane to be Infinity", "Infinity", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected values[0] to be blank", "", calculator.getValues()[0]);
     }
 
     @Test
     public void pressedFractionWhenTextPaneIsBlank()
     {
         calculator.getTextPane().setText("");
-        basicPanel.performFractionButtonActions(actionEvent);
+        BasicPanel.performFractionButtonActions(actionEvent);
         assertEquals("Expected textPane to show bad text", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test
     public void pressed5ThenFraction()
     {
-        when(actionEvent.getActionCommand()).thenReturn("1/x");
+        when(actionEvent.getActionCommand()).thenReturn("⅟x");
         calculator.getTextPane().setText("5");
-        basicPanel.performFractionButtonActions(actionEvent);
+        BasicPanel.performFractionButtonActions(actionEvent);
         assertEquals("Expected textPane to be 0.2", "0.2", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[0] to be 0.2", "0.2", calculator.getValues()[0]);
         assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
@@ -1435,7 +1550,7 @@ public class BasicPanelTest {
     public void pressedPercentWhenTextPaneContainsBadText()
     {
         calculator.getTextPane().setText("Enter a Number");
-        basicPanel.performPercentButtonActions(actionEvent);
+        BasicPanel.performPercentButtonActions(actionEvent);
         assertEquals("Expected textPane to show bad text", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1443,7 +1558,7 @@ public class BasicPanelTest {
     public void pressedPercentWhenTextPaneIsBlank()
     {
         calculator.getTextPane().setText("");
-        basicPanel.performPercentButtonActions(actionEvent);
+        BasicPanel.performPercentButtonActions(actionEvent);
         assertEquals("Expected textPane to show bad text", "Enter a Number", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
@@ -1451,8 +1566,8 @@ public class BasicPanelTest {
     public void pressedPercentWithPositiveNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn("5").thenReturn("%");
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performPercentButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performPercentButtonActions(actionEvent);
         assertEquals("Expected textPane to be 0.05", "0.05", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[0] to be 0.05", "0.05", calculator.getValues()[0]);
         assertTrue("Expected dot to be pressed", calculator.isDotPressed());
@@ -1463,9 +1578,9 @@ public class BasicPanelTest {
     public void pressedPercentWithNegativeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn("-").thenReturn("5").thenReturn("%");
-        basicPanel.performSubtractionButtonActions(actionEvent);
-        basicPanel.performNumberButtonActions(actionEvent);
-        basicPanel.performPercentButtonActions(actionEvent);
+        BasicPanel.performSubtractionButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performPercentButtonActions(actionEvent);
         assertEquals("Expected textPane to be -0.05", "-0.05", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[0] to be -0.05", "-0.05", calculator.getValues()[0]);
         assertTrue("Expected dot to be pressed", calculator.isDotPressed());
@@ -1478,47 +1593,57 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn("1").thenReturn("0")
                 .thenReturn("6").thenReturn("5").thenReturn(".").thenReturn("5")
                 .thenReturn("4").thenReturn("5").thenReturn("7");
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
         assertEquals("Expected values[0] to be 1", "1", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1", "1", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
         assertEquals("Expected values[0] to be 10", "10", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
         assertEquals("Expected values[0] to be 106", "106", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 106", "106", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertFalse("Expected isDotPressed to be false", calculator.isDotPressed());
         assertEquals("Expected values[0] to be 1065", "1065", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065", "1,065", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performDotButtonActions(actionEvent);
+        BasicPanel.performDotButtonActions(actionEvent);
         assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.", "1065.", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.", "1,065.", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.5", "1065.5", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.5", "1,065.5", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.54", "1065.54", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.54", "1,065.54", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.545", "1065.545", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.545", "1,065.545", calculator.getTextPaneWithoutNewLineCharacters());
-        basicPanel.performNumberButtonActions(actionEvent);
+        BasicPanel.performNumberButtonActions(actionEvent);
         assertTrue("Expected isDotPressed to be true", calculator.isDotPressed());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
         assertEquals("Expected values[0] to be 1065.5457", "1065.5457", calculator.getValues()[0]);
         assertEquals("Expected textPane to be 1,065.5457", "1,065.5457", calculator.getTextPaneWithoutNewLineCharacters());
+    }
+
+    @Test
+    public void pressed0WhenTextPaneHasBadText()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("0");
+        calculator.getTextPane().setText("Infinity");
+        BasicPanel.performNumberButtonActions(actionEvent);
+        assertEquals("Expected values[0] to be blank", "", calculator.getValues()[0]);
+        assertEquals("Expected textPane to show Infinity", "Infinity", calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test

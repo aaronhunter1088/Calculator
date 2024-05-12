@@ -29,7 +29,7 @@ public class BasicPanel extends JPanel
     private static final long serialVersionUID = 4L;
     private static Calculator calculator;
 
-    private GridBagLayout basicLayout;
+//    private GridBagLayout basicLayout;
     private GridBagConstraints constraints;
 
     /************* Constructors ******************/
@@ -217,12 +217,19 @@ public class BasicPanel extends JPanel
         String helpString = """
                 How to use the %s Calculator
                 
+                Using the basic operators:
                 Step 1. Enter the first number.
-                Step 2. Enter an main basic operator (%s, %s, %s, %s). The operator will be visible alongside the first number.
+                Step 2. Press a basic operator (%s, %s, %s, %s). The operator will be visible alongside the first number.
                 Step 3. Enter the second number.
                 Step 4. Push the Equals (%s) button to see the result.
                 
-                Described below are how each button works from the top left down.
+                Using the function operators:
+                Step 1. Enter the first number.
+                Step 2. Press a function operator (%s, %s, %s, %s). The operator will not be visible alongside the first number.
+                Step 3. Observe the output.
+                Note: Attempting to use a function operator without first entering a number will yield an error message '%s'.
+                
+                Described below are how each button works from the top left down in detail.
                 
                 MemoryStore: %s
                 Pressing this button will save the current value in the textPane to the calculators memory.
@@ -243,80 +250,97 @@ public class BasicPanel extends JPanel
                 MemorySubtract: %s
                 Pressing this button will subtract the current value in the textPane to the previously saved value.
                 
-                Delete: %s
-                Pressing this button will remove the right most value from the textPane until the entire number is gone.
-                It will only remove a single value, so 15.2 will become 15., allowing for exact replacement or deletion.
-                
-                ClearEntry: %s
-                Pressing this button will clear the value in textPane, the stored value, and any main basic operators pushed if still obtaining the first number.
-                If the second number is currently being obtained, clear the textPane and move the values position back to zero.
-                
-                Clear: %s
-                Pressing this button will clear the value presented in the textPane, replace it with 0, and clear all values, memory values, and copied values.
-                The 0 placed in the textPane is the indicator to state that everything is starting over.
-                
-                Negate: %s
-                Pressing this button will negate the current number. If the current number is already negative, it will make it positive.
+                Percent: %s
+                Pressing this button will return the value in the textPane as a percentage, or a message '%s', if no value is available in the textPane.
+                Ex: 25 -> %s -> 0.25
                 
                 SquareRoot: %s
                 Pressing this button will take the current value in the textPane and return the square root of that value. It will return the result in decimal form.
                 If there is no value available in the textPane it will return a message '%s'. Attempting to get the square root of a negative number will return '%s'.
                 
-                Numbers: %s
-                Pressing a number button will place that value in the textPane.
-                
-                Divide: %s
-                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
-                
-                Percent: %s
-                Pressing this button will return the value in the textPane as a percentage, or a message '%s', if no value is available in the textPane.
-                Ex: 25 -> %s -> 0.25
-                
-                Multiply: %s
-                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
+                Squared: %s
+                Pressing this button will return the value in the textPane squared, or a message '%s', if no value is available in the textPane.
                 
                 Fraction: %s
                 Pressing this button will return the value in the textPane as a fraction, performing 1 divided by the value in the textPane. If no value is available, it will display a message '%s'.
                 Ex: 4 -> %s -> 0.25.
                 
+                ClearEntry: %s
+                Pressing this button will clear the value in textPane, the stored value, and any main basic operators pushed if still obtaining the first number.
+                If the second number is currently being obtained, only the textPane will clear. You will still have your first number available.
+                
+                Clear: %s
+                Pressing this button will clear the value presented in the textPane, replace it with 0, and clear all values, memory values, and copied values.
+                The 0 placed in the textPane is the indicator to state that everything is starting over.
+                
+                Delete: %s
+                Pressing this button will remove the right most value from the textPane until the entire number is gone.
+                It will only remove a single value, so 15.2 will become 15., allowing for exact replacement or deletion.
+                
+                Divide: %s
+                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
+                
+                Numbers: %s
+                Pressing a number button will place that value in the textPane.
+                
+                Multiply: %s
+                Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
+                
                 Subtract: %s
-                Pressing this button will append the %s sign to the value in the the textPane, or enforce that the current number will be negative.
-                
-                Squared: %s
-                Pressing this button will return the value in the textPane squared, or a message '%s', if no value is available in the textPane.
-                
-                Dot: %s
-                Pressing this button will append the %s symbol to the value in the textPane. Once pressed the button will be disabled until an operator is pressed, unless the result includes the symbol.
-                If the %s button is pressed or present in the textPane, this button will be disabled. Pressing the %s button once will append a zero before adding the dot.
+                Pressing this button will append the %s sign to the value in the the textPane. If you press the subtract button before entering a number,
+                that number will become negative.
                 
                 Addition: %s
                 Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
                 
+                Negate: %s
+                Pressing this button will negate the current number. If the current number is already negative, it will make it positive.
+                
+                Dot: %s
+                Pressing this button will append the %s symbol to the value in the textPane. Once pressed the button will be disabled until an operator is pressed, unless the result includes the symbol.
+                If the %s button is pressed or present in the textPane, this button will be disabled. Pressing the %s button before any number entry will add a zero before the dot.
+                
                 Equals: %s
-                Pressing this button will perform the operation chosen or nothing if no main, basic, operator was pressed.
+                Pressing this button will perform the operation chosen or nothing if no basic operator was pressed.
+                
+                The remaining menu options are described below, read left to right.
+                
+                Look Menu:
+                Choosing a new Look will affect how you see the Calculator. The choices are dependent on your operating system.
+                
+                View Menu:
+                Here you can change the type of Calculator to use.
+                
+                Edit Menu:
+                Copy: Selecting Copy will copy the current value in the textPane. Copy your value and use it anywhere.
+                Paste: Selecting Paste will only paste the last copied from the Calculator value into the textPane.
+                
+                Help Menu:
+                Choosing the View Help will describe how to use the currently selected view.
+                Choosing the About Calculator will describe the current version and licensing information about the Calculator.
                 """
                 .formatted(BASIC.getName(),
-                        calculator.getButtonAdd().getText(), calculator.getButtonSubtract().getText(), calculator.getButtonMultiply().getText(), calculator.getButtonDivide().getText(),
-                        calculator.getButtonEquals().getText(), // Step 4
+                        calculator.getButtonAdd().getText(), calculator.getButtonSubtract().getText(), calculator.getButtonMultiply().getText(), calculator.getButtonDivide().getText(), calculator.getButtonEquals().getText(),
+                        calculator.getButtonPercent().getText(), calculator.getButtonSqrt().getText(), calculator.getButtonSquared().getText(), calculator.getButtonFraction().getText(), "Enter a Number",
                         calculator.getButtonMemoryStore().getText(), calculator.getMemoryValues().length, // MemoryStore,
                         calculator.getButtonMemoryClear().getText(),
                         calculator.getButtonMemoryRecall().getText(),
                         calculator.getButtonMemoryAddition().getText(),
                         calculator.getButtonMemorySubtraction().getText(),
-                        calculator.getButtonDelete().getText(),
+                        calculator.getButtonPercent().getText(), "Enter a Number", calculator.getButtonPercent().getText(), // Percent
+                        calculator.getButtonSqrt().getText(), "Not a Number", "E",
+                        calculator.getButtonSquared().getText(), "Enter a Number",
+                        calculator.getButtonFraction().getText(), "Enter a Number", calculator.getButtonFraction().getText(),
                         calculator.getButtonClearEntry().getText(),
                         calculator.getButtonClear().getText(),
-                        calculator.getButtonNegate().getText(),
-                        calculator.getButtonSqrt().getText(), "Not a Number", "E",
-                        "0, 1, 2, 3, 4, 5, 6, 7, 8, 9",
+                        calculator.getButtonDelete().getText(),
                         calculator.getButtonDivide().getText(), calculator.getButtonDivide().getText(), "Enter a Number", // Divide
-                        calculator.getButtonPercent().getText(), "Enter a Number", calculator.getButtonPercent().getText(), // Percent
+                        "0, 1, 2, 3, 4, 5, 6, 7, 8, 9",
                         calculator.getButtonMultiply().getText(), calculator.getButtonMultiply().getText(), "Enter a Number",
-                        calculator.getButtonFraction().getText(), "Enter a Number", calculator.getButtonFraction().getText(),
                         calculator.getButtonSubtract().getText(), calculator.getButtonSubtract().getText(),
-                        calculator.getButtonSquared().getText(), "Enter a Number",
-                        calculator.getButtonDot().getText(), calculator.getButtonDot().getText(), calculator.getButtonDot().getName(), calculator.getButtonDot().getName(), // Dot
                         calculator.getButtonAdd().getText(), calculator.getButtonAdd().getText(), "Enter a Number",
+                        calculator.getButtonNegate().getText(),
+                        calculator.getButtonDot().getText(), calculator.getButtonDot().getText(), calculator.getButtonDot().getText(), calculator.getButtonDot().getText(), // Dot
                         calculator.getButtonEquals().getText());
 
         JMenu helpMenuItem = calculator.getHelpMenu();
@@ -332,7 +356,7 @@ public class BasicPanel extends JPanel
      * Displays the help text in a scrollable pane
      * @param helpString the help text to display
      */
-    private void showHelpPanel(String helpString)
+    public void showHelpPanel(String helpString)
     {
         JTextArea message = new JTextArea(helpString,20,40);
         message.setWrapStyleWord(true);
@@ -799,7 +823,7 @@ public class BasicPanel extends JPanel
         if (!calculator.getValues()[1].equals("0"))
         {
             result = Double.parseDouble(calculator.getValues()[0]) / Double.parseDouble(calculator.getValues()[1]); // create result forced double
-            LOGGER.info(calculator.getValues()[0] + " / " + calculator.getValues()[1] + " = " + result);
+            LOGGER.info(calculator.getValues()[0] + " ÷ " + calculator.getValues()[1] + " = " + result);
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
@@ -819,6 +843,7 @@ public class BasicPanel extends JPanel
             LOGGER.warn("Attempting to divide by zero. Cannot divide by 0!");
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + "Infinity");
             calculator.getValues()[0] = "";
+            calculator.getValues()[1] = "";
             calculator.setFirstNumber(true);
             calculator.confirm("Attempted to divide by 0. Values[0] = 0");
         }
@@ -844,14 +869,12 @@ public class BasicPanel extends JPanel
                 calculator.getButtonDot().setEnabled(true);
             }
         }
-        boolean initialChecks = calculator.performInitialChecks();
-        boolean maxLength = calculator.checkValueLength();
-        if (initialChecks)
+        if (calculator.performInitialChecks())
         {
             LOGGER.info("Invalid entry in textPane. Must clear entry...");
             calculator.confirm("Pressed " + buttonChoice);
         }
-        else if (maxLength)
+        else if (calculator.checkValueLength() ) // TODO: && calculator.maximumValue / calculator.minimumValue
         {
             LOGGER.info("Highest size of value has been met");
             calculator.confirm("Max length of 7 digit number met");
@@ -1249,8 +1272,8 @@ public class BasicPanel extends JPanel
         String results = "";
         if (calculator.isAdding()) { results = "+"; }
         else if (calculator.isSubtracting()) { results = "-"; }
-        else if (calculator.isMultiplying()) { results = "*"; }
-        else if (calculator.isDividing()) { results = "/"; }
+        else if (calculator.isMultiplying()) { results = "✕"; }
+        else if (calculator.isDividing()) { results = "÷"; }
         LOGGER.info("operator: " + (results.isEmpty() ? "no basic operator pushed" : results));
         return results;
     }
@@ -1289,7 +1312,7 @@ public class BasicPanel extends JPanel
     /************* All Setters ******************/
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
-        this.basicLayout = panelLayout;
+//        this.basicLayout = panelLayout;
     }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
 }

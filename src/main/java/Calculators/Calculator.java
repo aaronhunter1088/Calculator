@@ -12,6 +12,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -49,13 +51,13 @@ public class Calculator extends JFrame
             button6 = new JButton("6"), button7 = new JButton("7"),
             button8 = new JButton("8"), button9 = new JButton("9"),
             buttonClear = new JButton("C"), buttonClearEntry = new JButton("CE"),
-            buttonDelete = new JButton("←"), buttonDot = new JButton("."),
-            buttonFraction = new JButton("1/x"), buttonPercent = new JButton("%"),
+            buttonDelete = new JButton("⌫"), buttonDot = new JButton("."),
+            buttonFraction = new JButton("⅟x"), buttonPercent = new JButton("%"),
             buttonSqrt = new JButton("√"), buttonMemoryClear = new JButton("MC"),
             buttonMemoryRecall = new JButton("MR"), buttonMemoryStore = new JButton("MS"),
             buttonMemoryAddition = new JButton("M+"), buttonMemorySubtraction = new JButton("M-"),
             buttonAdd = new JButton("+"), buttonSubtract = new JButton("-"),
-            buttonMultiply = new JButton("*"), buttonDivide = new JButton("/"),
+            buttonMultiply = new JButton("✕"), buttonDivide = new JButton("÷"),
             buttonEquals = new JButton("="), buttonNegate = new JButton("±"),
             // Used in programmer and converter... until a button is determined
             buttonBlank1 = new JButton(""), buttonBlank2 = new JButton(""),
@@ -166,7 +168,11 @@ public class Calculator extends JFrame
         setCalculatorBase(determineCalculatorBase(calculatorBase)); // update
         setPreferredSize(currentPanel.getSize());
         setVisible(true);
-        setResizable(true);
+        if (DATE.equals(getCalculatorType())) {
+            setResizable(false);
+        } else {
+            setResizable(true);
+        }
         setLocation(750, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         LOGGER.info("Finished constructing the calculator");
@@ -205,8 +211,11 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                textPane.setBackground(Color.WHITE);
-                textPane.setBorder(new LineBorder(Color.BLACK));
+                if (null != textPane) // not used in all Calculators
+                {
+                    textPane.setBackground(Color.WHITE);
+                    textPane.setBorder(new LineBorder(Color.BLACK));
+                }
                 SwingUtilities.updateComponentTreeUI(this);
                 resetLook();
                 setMetal(true);
@@ -226,7 +235,7 @@ public class Calculator extends JFrame
                 SwingUtilities.updateComponentTreeUI(this);
                 resetLook();
                 setSystem(true);
-                super.pack();
+                pack();
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -254,12 +263,15 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-                textPane.setBackground(new Color(174,178,195));
-                textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+                if (null != textPane) // not used in all Calculators
+                {
+                    textPane.setBackground(new Color(174,178,195));
+                    textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+                }
                 resetLook();
                 setMotif(true);
                 SwingUtilities.updateComponentTreeUI(this);
-                super.pack();
+                pack();
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -281,13 +293,31 @@ public class Calculator extends JFrame
                      IllegalAccessException | UnsupportedLookAndFeelException e)
             { logException(e); }
         });
+        JMenuItem apple = new JMenuItem(("Apple"));
+        apple.setFont(mainFont);
+        apple.setName("Apple");
+        apple.addActionListener(action -> {
+            try
+            {
+                UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(this);
+                resetLook();
+                setGtk(true);
+                super.pack();
+            }
+            catch (ClassNotFoundException | InstantiationException |
+                   IllegalAccessException | UnsupportedLookAndFeelException e)
+            { logException(e); }
+        });
         lookMenu.add(metal);
         lookMenu.add(motif);
+        lookMenu.add(apple);
         if (!isMacOperatingSystem()) // add more options if using Windows
         {
             lookMenu.add(windows);
             lookMenu.add(system);
             lookMenu.add(gtk);
+            lookMenu.remove(apple);
         }
         lookMenu.setFont(mainFont);
         lookMenu.setName("Look");
@@ -1296,6 +1326,12 @@ public class Calculator extends JFrame
         setTitle(newPanel.getName());
         updateJPanel(newPanel);
         setPreferredSize(currentPanel.getSize());
+        setMinimumSize(currentPanel.getSize());
+        if (DATE.equals(getCalculatorType())) {
+            setResizable(false);
+        } else {
+            setResizable(true);
+        }
         pack();
     }
 
@@ -1489,8 +1525,8 @@ public class Calculator extends JFrame
         return getTextPaneWithoutNewLineCharactersOrWhiteSpace()
                .replace("+", "")
                .replace("-", "")
-               .replace("*", "")
-               .replace("/", "")
+               .replace("✕", "")
+               .replace("÷", "")
                .replace("MOD", "")
                .replace("(", "")
                .replace(")", "")
@@ -1902,6 +1938,9 @@ public class Calculator extends JFrame
     public void performCopyFunctionality(ActionEvent actionEvent)
     {
         values[2] = getTextPaneWithoutNewLineCharactersOrWhiteSpace();
+        StringSelection selection = new StringSelection(values[2]);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, selection);
         confirm("Pressed Copy");
     }
 
