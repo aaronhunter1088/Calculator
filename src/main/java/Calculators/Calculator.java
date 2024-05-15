@@ -51,11 +51,12 @@ public class Calculator extends JFrame
             button6 = new JButton("6"), button7 = new JButton("7"),
             button8 = new JButton("8"), button9 = new JButton("9"),
             buttonClear = new JButton("C"), buttonClearEntry = new JButton("CE"),
-            buttonDelete = new JButton("⌫"), buttonDot = new JButton("."),
+            buttonDelete = new JButton("⌫"), buttonDecimal = new JButton("."),
             buttonFraction = new JButton("⅟x"), buttonPercent = new JButton("%"),
-            buttonSqrt = new JButton("√"), buttonMemoryClear = new JButton("MC"),
+            buttonSquareRoot = new JButton("√"), buttonMemoryClear = new JButton("MC"),
             buttonMemoryRecall = new JButton("MR"), buttonMemoryStore = new JButton("MS"),
             buttonMemoryAddition = new JButton("M+"), buttonMemorySubtraction = new JButton("M-"),
+            buttonHistory = new JButton("H▼"),
             buttonAdd = new JButton("+"), buttonSubtract = new JButton("-"),
             buttonMultiply = new JButton("✕"), buttonDivide = new JButton("÷"),
             buttonEquals = new JButton("="), buttonNegate = new JButton("±"),
@@ -70,7 +71,7 @@ public class Calculator extends JFrame
             valuesPosition = 0,
             memoryPosition = 0,
             memoryRecallPosition = 0;
-    private JTextPane textPane;
+    private JTextPane textPane, basicHistoryTextPane;
 
     private CalculatorType calculatorType;
     private CalculatorBase calculatorBase;
@@ -93,7 +94,7 @@ public class Calculator extends JFrame
             isNegating = false,
             isMetal = false, isSystem = false,
             isWindows = false, isMotif = false,
-            isGtk = false;
+            isGtk = false, isApple = false;
 
     /**
      * Starts the calculator with the BASIC CalculatorType
@@ -166,13 +167,9 @@ public class Calculator extends JFrame
         add(currentPanel);
         LOGGER.info("Panel added to calculator");
         setCalculatorBase(determineCalculatorBase(calculatorBase)); // update
-        setPreferredSize(currentPanel.getSize());
+        setMinimumSize(currentPanel.getSize());
         setVisible(true);
-        if (DATE.equals(getCalculatorType())) {
-            setResizable(false);
-        } else {
-            setResizable(true);
-        }
+        setResizable(false);
         setLocation(750, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         LOGGER.info("Finished constructing the calculator");
@@ -216,6 +213,12 @@ public class Calculator extends JFrame
                     textPane.setBackground(Color.WHITE);
                     textPane.setBorder(new LineBorder(Color.BLACK));
                 }
+                if (null != basicHistoryTextPane)
+                {
+                    basicHistoryTextPane.setBackground(Color.WHITE);
+                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
+                }
+                // TODO: add more history panes here
                 SwingUtilities.updateComponentTreeUI(this);
                 resetLook();
                 setMetal(true);
@@ -248,6 +251,16 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                if (null != textPane) // not used in all Calculators
+                {
+                    textPane.setBackground(Color.WHITE);
+                    textPane.setBorder(new LineBorder(Color.BLACK));
+                }
+                if (null != basicHistoryTextPane)
+                {
+                    basicHistoryTextPane.setBackground(Color.WHITE);
+                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
+                }
                 SwingUtilities.updateComponentTreeUI(this);
                 resetLook();
                 setWindows(true);
@@ -268,6 +281,11 @@ public class Calculator extends JFrame
                     textPane.setBackground(new Color(174,178,195));
                     textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
                 }
+                if (null != basicHistoryTextPane)
+                {
+                    basicHistoryTextPane.setBackground(new Color(174,178,195));
+                    basicHistoryTextPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+                }
                 resetLook();
                 setMotif(true);
                 SwingUtilities.updateComponentTreeUI(this);
@@ -284,6 +302,16 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                if (null != textPane) // not used in all Calculators
+                {
+                    textPane.setBackground(Color.WHITE);
+                    textPane.setBorder(new LineBorder(Color.BLACK));
+                }
+                if (null != basicHistoryTextPane)
+                {
+                    basicHistoryTextPane.setBackground(Color.WHITE);
+                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
+                }
                 SwingUtilities.updateComponentTreeUI(this);
                 resetLook();
                 setGtk(true);
@@ -300,9 +328,19 @@ public class Calculator extends JFrame
             try
             {
                 UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+                if (null != textPane) // not used in all Calculators
+                {
+                    textPane.setBackground(Color.WHITE);
+                    textPane.setBorder(new LineBorder(Color.BLACK));
+                }
+                if (null != basicHistoryTextPane)
+                {
+                    basicHistoryTextPane.setBackground(Color.WHITE);
+                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
+                }
                 SwingUtilities.updateComponentTreeUI(this);
                 resetLook();
-                setGtk(true);
+                setApple(true);
                 super.pack();
             }
             catch (ClassNotFoundException | InstantiationException |
@@ -508,6 +546,9 @@ public class Calculator extends JFrame
         };
     }
 
+    /**
+     * The main method that calls the setup method for a specific panel
+     */
     private void setupPanel()
     {
         switch (currentPanel.getName())
@@ -560,10 +601,49 @@ public class Calculator extends JFrame
             getTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
         }
         else
-        { getTextPane().setBorder(new LineBorder(Color.BLACK)); }
+        {
+            getTextPane().setBackground(Color.WHITE);
+            getTextPane().setBorder(new LineBorder(Color.BLACK));
+        }
         getTextPane().setEditable(false);
         getTextPane().setPreferredSize(new Dimension(70, 30));
         LOGGER.info("TextPane configured");
+    }
+
+    /**
+     * The main method to set up the Basic History Pane
+     */
+    public void setupBasicHistoryTextPane()
+    {
+        SimpleAttributeSet attribs = new SimpleAttributeSet();
+        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
+        basicHistoryTextPane = new JTextPane();
+        basicHistoryTextPane.setParagraphAttributes(attribs, true);
+        basicHistoryTextPane.setFont(mainFont);
+        if (isMotif())
+        {
+            basicHistoryTextPane.setBackground(new Color(174,178,195));
+            basicHistoryTextPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+        }
+        else
+        {
+            basicHistoryTextPane.setBackground(Color.WHITE);
+            basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
+        }
+        basicHistoryTextPane.setEditable(true);
+        basicHistoryTextPane.setSize(new Dimension(70, 200)); // sets size at start
+        basicHistoryTextPane.setMinimumSize(basicHistoryTextPane.getSize()); // keeps size throughout
+        LOGGER.info("BasicHistoryTextPane configured");
+    }
+
+    /**
+     * Updates the history pane for the basic Calculator
+     * @param buttonChoice String the button choice
+     */
+    public void updateBasicHistoryPane(String buttonChoice)
+    {
+        // TODO: Add conditions for operators, functions, and memory buttons
+        getBasicHistoryTextPane().setText(getBasicHistoryTextPane().getText() + addNewLineCharacters() + "Pressed " + buttonChoice);
     }
 
     /**
@@ -583,6 +663,8 @@ public class Calculator extends JFrame
         getButtonMemorySubtraction().setName("M-");
         getButtonMemoryStore().setEnabled(true); // Enable memoryStore
         getButtonMemoryStore().setName("MS");
+        getButtonHistory().setEnabled(true);
+        getButtonHistory().setName("History");
 //      reset buttons to enabled if memories are saved
 //        if (!getMemoryValues()[0].isEmpty())
 //        {
@@ -593,151 +675,256 @@ public class Calculator extends JFrame
 //        }
         if (BASIC.getName().equals(currentPanel.getName()))
         {
-            getButtonMemoryClear().addActionListener(BasicPanel::performMemoryClearActions);
-            getButtonMemoryRecall().addActionListener(BasicPanel::performMemoryRecallActions);
-            getButtonMemoryAddition().addActionListener(BasicPanel::performMemoryAddActions);
-            getButtonMemorySubtraction().addActionListener(BasicPanel::performMemorySubtractionActions);
-            getButtonMemoryStore().addActionListener(BasicPanel::performMemoryStoreActions);
+            getButtonMemoryStore().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryStoreActions(actionEvent));
+            getButtonMemoryRecall().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryRecallActions(actionEvent));
+            getButtonMemoryClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryClearActions(actionEvent));
+            getButtonMemoryAddition().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryAddActions(actionEvent));
+            getButtonMemorySubtraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemorySubtractionActions(actionEvent));
+            getButtonHistory().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performHistoryActions(actionEvent));
         }
         LOGGER.info("Memory buttons configured");
     }
 
     /**
-     * The main method to set up the Percent button
+     * The main method to set up the remaining
+     * Basic button panels
      */
-    public void setupPercentButton()
+    public void setupRemainingBasicButtons()
     {
-        getButtonPercent().setFont(mainFont);
-        getButtonPercent().setPreferredSize(new Dimension(35, 35) );
-        getButtonPercent().setBorder(new LineBorder(Color.BLACK));
-        getButtonPercent().setEnabled(true);
+        Collection<JButton> allBasicOperatorButtons = new ArrayList<>(getAllBasicOperatorButtons());
+        Collection<JButton> allNumberButtons = new ArrayList<>(getAllNumberButtons());
+        allBasicOperatorButtons.addAll(allNumberButtons);
+        getAllBasicOperatorButtons().forEach(button -> {
+            button.setFont(mainFont);
+            button.setPreferredSize(new Dimension(35, 35) );
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setEnabled(true);
+        });
         getButtonPercent().setName("Percent");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonPercent().addActionListener(BasicPanel::performPercentButtonActions);
-        }
+        { getButtonPercent().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performPercentButtonActions(actionEvent)); }
         LOGGER.info("Percent button configured");
-    }
-
-    /**
-     * The main method to set up the SquareRoot button
-     */
-    public void setupSquareRootButton()
-    {
-        getButtonSqrt().setFont(mainFont);
-        getButtonSqrt().setPreferredSize(new Dimension(35, 35) );
-        getButtonSqrt().setBorder(new LineBorder(Color.BLACK));
-        getButtonSqrt().setEnabled(true);
-        getButtonSqrt().setName("SquareRoot");
+        getButtonSquareRoot().setName("SquareRoot");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonSqrt().addActionListener(BasicPanel::performSquareRootButtonActions);
-        }
+        { getButtonSquareRoot().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquareRootButtonActions(actionEvent)); }
         LOGGER.info("SquareRoot button configured");
-    }
-
-    /**
-     * The main method to set up the Squared x² button
-     */
-    public void setupSquaredButton()
-    {
-        getButtonSquared().setFont(mainFont);
-        getButtonSquared().setPreferredSize(new Dimension(35, 35));
-        getButtonSquared().setBorder(new LineBorder(Color.BLACK));
-        getButtonSquared().setEnabled(true);
         getButtonSquared().setName("Squared");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonSquared().addActionListener(BasicPanel::performSquaredButtonActions);
-        }
+        { getButtonSquared().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquaredButtonActions(actionEvent)); }
         LOGGER.info("Delete button configured");
-    }
-
-    /**
-     * The main method to set up the Fraction button
-     */
-    public void setupFractionButton()
-    {
-        getButtonFraction().setFont(mainFont);
-        getButtonFraction().setPreferredSize(new Dimension(35, 35) );
-        getButtonFraction().setBorder(new LineBorder(Color.BLACK));
-        getButtonFraction().setEnabled(true);
         getButtonFraction().setName("Fraction");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonFraction().addActionListener(BasicPanel::performFractionButtonActions);
-        }
+        { getButtonFraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performFractionButtonActions(actionEvent)); }
         LOGGER.info("Fraction button configured");
-    }
-
-    /**
-     * The main method to set up the ClearEntry button
-     */
-    public void setupClearEntryButton()
-    {
-        getButtonClearEntry().setFont(mainFont);
-        getButtonClearEntry().setPreferredSize(new Dimension(35, 35));
-        getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
-        getButtonClearEntry().setEnabled(true);
         getButtonClearEntry().setName("ClearEntry");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonClearEntry().addActionListener(BasicPanel::performClearEntryButtonActions);
-        }
+        { getButtonClearEntry().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearEntryButtonActions(actionEvent)); }
         LOGGER.info("ClearEntry button configured");
-    }
-
-    /**
-     * The main method to set up the Clear button
-     */
-    public void setupClearButton()
-    {
-        getButtonClear().setFont(mainFont);
-        getButtonClear().setPreferredSize(new Dimension(35, 35));
-        getButtonClear().setBorder(new LineBorder(Color.BLACK));
-        getButtonClear().setEnabled(true);
         getButtonClear().setName("Clear");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonClear().addActionListener(BasicPanel::performClearButtonActions);
-        }
+        { getButtonClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearButtonActions(actionEvent)); }
         LOGGER.info("Clear button configured");
-    }
-
-    /**
-     * The main method to set up the Delete button
-     */
-    public void setupDeleteButton()
-    {
-        getButtonDelete().setFont(mainFont);
-        getButtonDelete().setPreferredSize(new Dimension(35, 35));
-        getButtonDelete().setBorder(new LineBorder(Color.BLACK));
-        getButtonDelete().setEnabled(true);
         getButtonDelete().setName("Delete");
         if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonDelete().addActionListener(BasicPanel::performDeleteButtonActions);
-        }
+        { getButtonDelete().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDeleteButtonActions(actionEvent)); }
         LOGGER.info("Delete button configured");
+        getButtonDivide().setName("Divide");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonDivide().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDivideButtonActions(actionEvent)); }
+        LOGGER.info("Divide button configured");
+        getButtonMultiply().setName("Multiply");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonMultiply().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMultiplicationActions(actionEvent)); }
+        LOGGER.info("Multiply button configured");
+        getButtonSubtract().setName("Subtract");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonSubtract().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSubtractionButtonActions(actionEvent)); }
+        LOGGER.info("Subtract button configured");
+        getButtonAdd().setName("Addition");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonAdd().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performAdditionButtonActions(actionEvent)); }
+        LOGGER.info("Addition button configured");
+        getButtonNegate().setName("Negate");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonNegate().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNegateButtonActions(actionEvent)); }
+        LOGGER.info("Add button configured");
+        getButtonDecimal().setName("Decimal");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonDecimal().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDecimalButtonActions(actionEvent)); }
+        LOGGER.info("Decimal button configured");
+        getButtonEquals().setName("Equals");
+        if (BASIC.getName().equals(currentPanel.getName()))
+        { getButtonEquals().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performEqualsButtonActions(actionEvent)); }
+        LOGGER.info("Equals button configured");
     }
 
     /**
-     * The main method to set up the Divide button
+     * The main method to set up the buttons
+     * used on the Converter panel
      */
-    public void setupDivideButton()
+    public void setupConverterButtons()
     {
-        getButtonDivide().setFont(mainFont);
-        getButtonDivide().setPreferredSize(new Dimension(35, 35) );
-        getButtonDivide().setBorder(new LineBorder(Color.BLACK));
-        getButtonDivide().setEnabled(true);
-        getButtonDivide().setName("Divide");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonDivide().addActionListener(BasicPanel::performDivideButtonActions);
-        }
-        LOGGER.info("Divide button configured");
+        Arrays.asList(buttonBlank1, buttonBlank2, buttonClearEntry, buttonDelete, buttonDecimal).forEach(button -> {
+            button.setFont(mainFont);
+            button.setPreferredSize(new Dimension(35, 35));
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setEnabled(true);
+        });
+        buttonBlank1.setName("Blank1");
+        LOGGER.info("Blank button 1 configured");
+        buttonBlank2.setName("Blank2");
+        LOGGER.info("Blank button 2 configured");
+        getButtonClearEntry().setName("ClearEntry");
+        if (CONVERTER.getName().equals(currentPanel.getName()))
+        { getButtonClearEntry().addActionListener(ConverterPanel::performClearEntryButtonActions); }
+        LOGGER.info("ClearEntry button configured");
+        getButtonDelete().setName("Delete");
+        if (CONVERTER.getName().equals(currentPanel.getName()))
+        { getButtonDelete().addActionListener(ConverterPanel::performDeleteButtonActions); }
+        LOGGER.info("Delete button configured");
+        getButtonDecimal().setName("Decimal");
+        if (CONVERTER.getName().equals(currentPanel.getName()))
+        { getButtonDecimal().addActionListener(ConverterPanel::performDecimalButtonActions); }
+        LOGGER.info("Decimal button configured");
     }
 
+//
+//    /**
+//     * The main method to set up the Percent button
+//     */
+//    public void setupPercentButton()
+//    {
+//        getButtonPercent().setFont(mainFont);
+//        getButtonPercent().setPreferredSize(new Dimension(35, 35) );
+//        getButtonPercent().setBorder(new LineBorder(Color.BLACK));
+//        getButtonPercent().setEnabled(true);
+//        getButtonPercent().setName("Percent");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonPercent().addActionListener(BasicPanel::performPercentButtonActions);
+//        }
+//        LOGGER.info("Percent button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the SquareRoot button
+//     */
+//    public void setupSquareRootButton()
+//    {
+//        getButtonSquareRoot().setFont(mainFont);
+//        getButtonSquareRoot().setPreferredSize(new Dimension(35, 35) );
+//        getButtonSquareRoot().setBorder(new LineBorder(Color.BLACK));
+//        getButtonSquareRoot().setEnabled(true);
+//        getButtonSquareRoot().setName("SquareRoot");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonSquareRoot().addActionListener(BasicPanel::performSquareRootButtonActions);
+//        }
+//        LOGGER.info("SquareRoot button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Squared x² button
+//     */
+//    public void setupSquaredButton()
+//    {
+//        getButtonSquared().setFont(mainFont);
+//        getButtonSquared().setPreferredSize(new Dimension(35, 35));
+//        getButtonSquared().setBorder(new LineBorder(Color.BLACK));
+//        getButtonSquared().setEnabled(true);
+//        getButtonSquared().setName("Squared");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonSquared().addActionListener(BasicPanel::performSquaredButtonActions);
+//        }
+//        LOGGER.info("Squared button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Fraction button
+//     */
+//    public void setupFractionButton()
+//    {
+//        getButtonFraction().setFont(mainFont);
+//        getButtonFraction().setPreferredSize(new Dimension(35, 35) );
+//        getButtonFraction().setBorder(new LineBorder(Color.BLACK));
+//        getButtonFraction().setEnabled(true);
+//        getButtonFraction().setName("Fraction");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonFraction().addActionListener(BasicPanel::performFractionButtonActions);
+//        }
+//        LOGGER.info("Fraction button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the ClearEntry button
+//     */
+//    public void setupClearEntryButton()
+//    {
+//        getButtonClearEntry().setFont(mainFont);
+//        getButtonClearEntry().setPreferredSize(new Dimension(35, 35));
+//        getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
+//        getButtonClearEntry().setEnabled(true);
+//        getButtonClearEntry().setName("ClearEntry");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonClearEntry().addActionListener(BasicPanel::performClearEntryButtonActions);
+//        }
+//        LOGGER.info("ClearEntry button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Clear button
+//     */
+//    public void setupClearButton()
+//    {
+//        getButtonClear().setFont(mainFont);
+//        getButtonClear().setPreferredSize(new Dimension(35, 35));
+//        getButtonClear().setBorder(new LineBorder(Color.BLACK));
+//        getButtonClear().setEnabled(true);
+//        getButtonClear().setName("Clear");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonClear().addActionListener(BasicPanel::performClearButtonActions);
+//        }
+//        LOGGER.info("Clear button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Delete button
+//     */
+//    public void setupDeleteButton()
+//    {
+//        getButtonDelete().setFont(mainFont);
+//        getButtonDelete().setPreferredSize(new Dimension(35, 35));
+//        getButtonDelete().setBorder(new LineBorder(Color.BLACK));
+//        getButtonDelete().setEnabled(true);
+//        getButtonDelete().setName("Delete");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonDelete().addActionListener(BasicPanel::performDeleteButtonActions);
+//        }
+//        LOGGER.info("Delete button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Divide button
+//     */
+//    public void setupDivideButton()
+//    {
+//        getButtonDivide().setFont(mainFont);
+//        getButtonDivide().setPreferredSize(new Dimension(35, 35) );
+//        getButtonDivide().setBorder(new LineBorder(Color.BLACK));
+//        getButtonDivide().setEnabled(true);
+//        getButtonDivide().setName("Divide");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonDivide().addActionListener(BasicPanel::performDivideButtonActions);
+//        }
+//        LOGGER.info("Divide button configured");
+//    }
+//
     /**
      * The main method to set up all number buttons, 0-9
      */
@@ -751,114 +938,118 @@ public class Calculator extends JFrame
             button.setBorder(new LineBorder(Color.BLACK));
             button.setName(String.valueOf(i.getAndAdd(1)));
             if (BASIC.getName().equals(currentPanel.getName()))
-            {
-                button.addActionListener(BasicPanel::performNumberButtonActions);
-            }
+            { button.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNumberButtonActions(actionEvent)); }
+            else if (PROGRAMMER.getName().equals(currentPanel.getName()))
+            { button.addActionListener(ProgrammerPanel::performProgrammerCalculatorNumberButtonActions); }
+            else if (CONVERTER.getName().equals(currentPanel.getName()))
+            { button.addActionListener(ConverterPanel::performNumberButtonActions); }
+            else
+            { LOGGER.info("Add other options here"); }
         });
         LOGGER.info("Number buttons configured");
     }
-
-    /**
-     * The main method to set up the Multiplication button
-     */
-    public void setupMultiplyButton()
-    {
-        getButtonMultiply().setFont(mainFont);
-        getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
-        getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
-        getButtonMultiply().setEnabled(true);
-        getButtonMultiply().setName("Multiply");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonMultiply().addActionListener(BasicPanel::performMultiplicationActions);
-        }
-        LOGGER.info("Multiply button configured");
-    }
-
-    /**
-     * The main method to set up the Subtraction button
-     */
-    public void setupSubtractButton()
-    {
-        getButtonSubtract().setFont(mainFont);
-        getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
-        getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
-        getButtonSubtract().setEnabled(true);
-        getButtonSubtract().setName("Subtract");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonSubtract().addActionListener(BasicPanel::performSubtractionButtonActions);
-        }
-        LOGGER.info("Subtract button configured");
-    }
-
-    /**
-     * The main method to set up the Add button
-     */
-    public void setupAdditionButton()
-    {
-        getButtonAdd().setFont(mainFont);
-        getButtonAdd().setPreferredSize(new Dimension(35, 35) );
-        getButtonAdd().setBorder(new LineBorder(Color.BLACK));
-        getButtonAdd().setEnabled(true);
-        getButtonAdd().setName("Addition");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonAdd().addActionListener(BasicPanel::performAdditionButtonActions);
-        }
-        LOGGER.info("Add button configured");
-    }
-
-    /**
-     * The main method to set up the Negate button
-     */
-    public void setupNegateButton()
-    {
-        getButtonNegate().setFont(mainFont);
-        getButtonNegate().setPreferredSize(new Dimension(35, 35) );
-        getButtonNegate().setBorder(new LineBorder(Color.BLACK));
-        getButtonNegate().setEnabled(true);
-        getButtonNegate().setName("Negate");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonNegate().addActionListener(BasicPanel::performNegateButtonActions);
-        }
-        LOGGER.info("Add button configured");
-    }
-
-    /**
-     * The main method to set up the Dot button
-     */
-    public void setupDotButton()
-    {
-        getButtonDot().setFont(mainFont);
-        getButtonDot().setPreferredSize(new Dimension(35, 35));
-        getButtonDot().setBorder(new LineBorder(Color.BLACK));
-        getButtonDot().setEnabled(true);
-        getButtonDot().setName("Dot");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonDot().addActionListener(BasicPanel::performDotButtonActions);
-        }
-        LOGGER.info("Dot button configured");
-    }
-
-    /**
-     * The main method to set up the Equals button
-     */
-    public void setupEqualsButton()
-    {
-        getButtonEquals().setFont(mainFont);
-        getButtonEquals().setPreferredSize(new Dimension(35, 35) ); // 35,70
-        getButtonEquals().setBorder(new LineBorder(Color.BLACK));
-        getButtonEquals().setEnabled(true);
-        getButtonEquals().setName("Equals");
-        if (BASIC.getName().equals(currentPanel.getName()))
-        {
-            getButtonEquals().addActionListener(BasicPanel::performEqualsButtonActions);
-        }
-        LOGGER.info("Equals button configured");
-    }
+//
+//    /**
+//     * The main method to set up the Multiplication button
+//     */
+//    public void setupMultiplyButton()
+//    {
+//        getButtonMultiply().setFont(mainFont);
+//        getButtonMultiply().setPreferredSize(new Dimension(35, 35) );
+//        getButtonMultiply().setBorder(new LineBorder(Color.BLACK));
+//        getButtonMultiply().setEnabled(true);
+//        getButtonMultiply().setName("Multiply");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonMultiply().addActionListener(BasicPanel::performMultiplicationActions);
+//        }
+//        LOGGER.info("Multiply button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Subtraction button
+//     */
+//    public void setupSubtractButton()
+//    {
+//        getButtonSubtract().setFont(mainFont);
+//        getButtonSubtract().setPreferredSize(new Dimension(35, 35) );
+//        getButtonSubtract().setBorder(new LineBorder(Color.BLACK));
+//        getButtonSubtract().setEnabled(true);
+//        getButtonSubtract().setName("Subtract");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonSubtract().addActionListener(BasicPanel::performSubtractionButtonActions);
+//        }
+//        LOGGER.info("Subtract button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Add button
+//     */
+//    public void setupAdditionButton()
+//    {
+//        getButtonAdd().setFont(mainFont);
+//        getButtonAdd().setPreferredSize(new Dimension(35, 35) );
+//        getButtonAdd().setBorder(new LineBorder(Color.BLACK));
+//        getButtonAdd().setEnabled(true);
+//        getButtonAdd().setName("Addition");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonAdd().addActionListener(BasicPanel::performAdditionButtonActions);
+//        }
+//        LOGGER.info("Add button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Negate button
+//     */
+//    public void setupNegateButton()
+//    {
+//        getButtonNegate().setFont(mainFont);
+//        getButtonNegate().setPreferredSize(new Dimension(35, 35) );
+//        getButtonNegate().setBorder(new LineBorder(Color.BLACK));
+//        getButtonNegate().setEnabled(true);
+//        getButtonNegate().setName("Negate");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonNegate().addActionListener(BasicPanel::performNegateButtonActions);
+//        }
+//        LOGGER.info("Add button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Dot button
+//     */
+//    public void setupDotButton()
+//    {
+//        getButtonDecimal().setFont(mainFont);
+//        getButtonDecimal().setPreferredSize(new Dimension(35, 35));
+//        getButtonDecimal().setBorder(new LineBorder(Color.BLACK));
+//        getButtonDecimal().setEnabled(true);
+//        getButtonDecimal().setName("Dot");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonDecimal().addActionListener(BasicPanel::performDotButtonActions);
+//        }
+//        LOGGER.info("Dot button configured");
+//    }
+//
+//    /**
+//     * The main method to set up the Equals button
+//     */
+//    public void setupEqualsButton()
+//    {
+//        getButtonEquals().setFont(mainFont);
+//        getButtonEquals().setPreferredSize(new Dimension(35, 35) ); // 35,70
+//        getButtonEquals().setBorder(new LineBorder(Color.BLACK));
+//        getButtonEquals().setEnabled(true);
+//        getButtonEquals().setName("Equals");
+//        if (BASIC.getName().equals(currentPanel.getName()))
+//        {
+//            getButtonEquals().addActionListener(BasicPanel::performEqualsButtonActions);
+//        }
+//        LOGGER.info("Equals button configured");
+//    }
 
     /**
      * The main method to set up the Blank1 button
@@ -933,25 +1124,26 @@ public class Calculator extends JFrame
      */
     public boolean resetOperator(boolean operatorBool)
     {
-        LOGGER.info("resetting operator...");
+        LOGGER.debug("resetting operator...");
         if (operatorBool)
         {
             values[1] = "";
             valuesPosition = 1;
             if (isDecimal(values[0]))
-            { buttonDot.setEnabled(false); }
+            { buttonDecimal.setEnabled(false); }
             else
-            { buttonDot.setEnabled(true); }
+            { buttonDecimal.setEnabled(true); }
             isFirstNumber = false;
             return false;
         }
-        else {
+        else
+        {
             values[1] = "";
             valuesPosition = 0;
             if (isDecimal(values[0]))
-            { buttonDot.setEnabled(false); }
+            { buttonDecimal.setEnabled(false); }
             else
-            { buttonDot.setEnabled(true); }
+            { buttonDecimal.setEnabled(true); }
             isFirstNumber = true;
             return true;
         }
@@ -1008,23 +1200,22 @@ public class Calculator extends JFrame
      * @return Collection of all memory buttons
      */
     public Collection<JButton> getAllMemoryButtons()
-    { return Arrays.asList(buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall, buttonMemoryAddition, buttonMemorySubtraction); }
+    { return Arrays.asList(buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall, buttonMemoryAddition, buttonMemorySubtraction, buttonHistory); }
 
     /**
      * Returns the "other" basic calculator buttons. This includes
-     * Clear, ClearEntry, Delete, Dot, Equals, Fraction, Negate,
-     * MemoryAddition, MemoryClear, MemoryRecall, MemorySubtraction,
-     * MemoryStore, Percent, SquareRoot, and Squared buttons.
-     * It does not include the main Basic operators.
+     * Percent, SquareRoot, Squared, Fraction, ClearEntry, Clear,
+     * Delete, Divide, Multiply, Subtract, Addition, Negate, Dot,
+     * and Equals.
+     * It does not include the number buttons.
      *
      * @return Collection of buttons
      */
-    public Collection<JButton> getAllOtherBasicCalculatorButtons()
+    public Collection<JButton> getAllBasicOperatorButtons()
     {
-        return Arrays.asList(buttonEquals, buttonNegate, buttonClear, buttonClearEntry,
-                buttonDelete, buttonDot, buttonFraction, buttonPercent, buttonSqrt,
-                buttonSquared, buttonMemoryAddition, buttonMemorySubtraction,
-                buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall);
+        return Arrays.asList(buttonPercent, buttonSquareRoot, buttonSquared, buttonFraction,
+                buttonClearEntry, buttonClear, buttonDelete, buttonDivide, buttonMultiply,
+                buttonSubtract, buttonAdd, buttonNegate, buttonDecimal, buttonEquals);
     }
 
     /**
@@ -1033,7 +1224,7 @@ public class Calculator extends JFrame
      */
     public void clearAllOtherBasicCalculatorButtons()
     {
-        getAllOtherBasicCalculatorButtons().forEach(button ->
+        getAllBasicOperatorButtons().forEach(button ->
                 Arrays.stream(button.getActionListeners()).forEach(button::removeActionListener));
     }
 
@@ -1045,9 +1236,8 @@ public class Calculator extends JFrame
      */
     public boolean isDecimal(String number)
     {
-        boolean answer = number.contains(".");
-        LOGGER.info("isDecimal(" + number.replaceAll("\n", "") + ") == " + answer);
-        return answer;
+        LOGGER.info("isDecimal(" + number.replaceAll("\n", "") + ") == " + number.contains("."));
+        return number.contains(".");
     }
 
     /**
@@ -1069,7 +1259,7 @@ public class Calculator extends JFrame
             textPane.setText("");
             values[valuesPosition] = "";
             isFirstNumber = true;
-            buttonDot.setEnabled(true);
+            buttonDecimal.setEnabled(true);
         }
         else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
         {
@@ -1078,21 +1268,24 @@ public class Calculator extends JFrame
             valuesPosition = 0;
             checkFound = true;
         }
+        LOGGER.info("Initial checks result: " + checkFound);
         return checkFound;
     }
 
     /**
-     * Checks to see if the max length of a number has been met
-     * The highest number is 9,999,999, with a length of 9. So
-     * if the current value has a length of 9, the max length
-     * has been met, and no more digits will be allowed.
+     * Checks to see if the max length of a value[position] has been met.
+     * The highest number is 9,999,999, with a length of 7 and the
+     * lowest number is 0.0000001. So if the current value has a
+     * length of 7, the max length has been met, and no more
+     * digits will be allowed.
      * @return boolean if the max length has been met
      */
     public boolean checkValueLength()
     {
         LOGGER.debug("Checking if max size (9) is met... highest number is 9,999,999");
         LOGGER.debug("Length: " + values[valuesPosition].length());
-        return values[valuesPosition].length() == 9;
+        return getNumberOnLeftSideOfDecimal(values[valuesPosition]).length() >= 7 ||
+               getNumberOnRightSideOfDecimal(values[valuesPosition]).length() >= 7 ;
     }
 
     /**
@@ -1111,9 +1304,15 @@ public class Calculator extends JFrame
                getTextPaneWithoutAnyOperator().contains("Infinity");
     }
 
+    // TODO: Use or remove. Currently only used in Fraction button action
+    /**
+     * Updates values at the current valuesPosition and
+     * then updates the textPane with the chosen button
+     * @param value String the value to set values to
+     */
     public void setValuesAtPositionThenUpdateTextPane(String value)
     {
-        values[valuesPosition] = value; // store textarea
+        values[valuesPosition] = value; // store value
         textPane.setText(addNewLineCharacters() + values[valuesPosition]);
         LOGGER.debug("textPane: '" + getTextPaneWithoutNewLineCharacters() + "'");
         LOGGER.debug("values[" + valuesPosition + "]: '" + values[valuesPosition] + "'");
@@ -1162,13 +1361,13 @@ public class Calculator extends JFrame
             {
                 valueToAdjust = temp;
                 LOGGER.debug("valueFromTemp: " + valueToAdjust);
-                getButtonDot().setEnabled(true);
+                getButtonDecimal().setEnabled(true);
                 return valueToAdjust;
             }
             else
             {
                 valueToAdjust = toTheLeft;
-                getButtonDot().setEnabled(true);
+                getButtonDecimal().setEnabled(true);
             }
         }
         valueToAdjust = valueToAdjust.replace("_", "").replace(",","").replace(".","");
@@ -1196,7 +1395,7 @@ public class Calculator extends JFrame
             adjusted = valueToAdjust;
             LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted);
             if (isDecimal(temp)) {
-                getButtonDot().setEnabled(false);
+                getButtonDecimal().setEnabled(false);
                 adjusted += toTheRight;
                 LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted);
             }
@@ -1204,10 +1403,10 @@ public class Calculator extends JFrame
             { LOGGER.debug("'adjusted' = valueToAdjust: " + adjusted); }
             LOGGER.debug("'adjusted': " + adjusted);
         }
-        if (getButtonDot().isEnabled() && isDecimal(temp))
+        if (getButtonDecimal().isEnabled() && isDecimal(temp))
         {
             adjusted += "." + toTheRight;
-            getButtonDot().setEnabled(false);
+            getButtonDecimal().setEnabled(false);
         }
         LOGGER.debug("adjusted: " + adjusted);
         return adjusted;
@@ -1219,18 +1418,8 @@ public class Calculator extends JFrame
      */
     public Collection<JButton> getNumberButtons()
     {
-        return new LinkedList<>() {{
-            add(button0);
-            add(button1);
-            add(button2);
-            add(button3);
-            add(button4);
-            add(button5);
-            add(button6);
-            add(button7);
-            add(button8);
-            add(button9);
-        }};
+        return Arrays.asList(button0, button1, button2, button3, button4,
+                button5, button6, button7, button8, button9);
     }
 
     /**
@@ -1277,7 +1466,7 @@ public class Calculator extends JFrame
                     {
                         textPane.setText(addNewLineCharacters() + values[0]);
                         if (isDecimal(values[0]))
-                        { buttonDot.setEnabled(false); }
+                        { buttonDecimal.setEnabled(false); }
                     }
                     break;
                 case "Programmer":
@@ -1288,7 +1477,7 @@ public class Calculator extends JFrame
                         textPane.setText(addNewLineCharacters() + values[0]);
                         programmerPanel.setCalculatorBase(DECIMAL);
                         if (isDecimal(values[0]))
-                        { buttonDot.setEnabled(false); }
+                        { buttonDecimal.setEnabled(false); }
                     }
                     break;
                 case "Scientific":
@@ -1327,11 +1516,10 @@ public class Calculator extends JFrame
         updateJPanel(newPanel);
         setPreferredSize(currentPanel.getSize());
         setMinimumSize(currentPanel.getSize());
-        if (DATE.equals(getCalculatorType())) {
-            setResizable(false);
-        } else {
-            setResizable(true);
-        }
+        if (DATE.equals(getCalculatorType()))
+        { setResizable(false); }
+        else
+        { setResizable(true); }
         pack();
     }
 
@@ -1592,7 +1780,7 @@ public class Calculator extends JFrame
                 LOGGER.info("values[{}]: '{}'", 3, values[3]);
                 LOGGER.info("valuesPosition: '{}'", valuesPosition);
                 LOGGER.info("firstNumBool: '{}'", isFirstNumber);
-                LOGGER.info("isDotEnabled: '{}'", getButtonDot().isEnabled());
+                LOGGER.info("isDotEnabled: '{}'", getButtonDecimal().isEnabled());
                 LOGGER.info("isNegative: '{}'", isNumberNegative);
                 LOGGER.info("isNegating: '{}'", isNegating);
                 LOGGER.info("calculatorType: '{}", calculatorType);
@@ -1627,7 +1815,7 @@ public class Calculator extends JFrame
                 LOGGER.info("values[{}]: '{}'", 3, values[3]);
                 LOGGER.info("valuesPosition: '{}'", valuesPosition);
                 LOGGER.info("firstNumBool: '{}'", isFirstNumber);
-                LOGGER.info("isDotEnabled: '{}'", getButtonDot().isEnabled());
+                LOGGER.info("isDotEnabled: '{}'", getButtonDecimal().isEnabled());
                 LOGGER.info("isNegative: '{}'", isNumberNegative);
                 LOGGER.info("calculatorType: '{}", calculatorType);
                 LOGGER.info("calculatorBase: '{}'", calculatorBase);
@@ -1741,7 +1929,6 @@ public class Calculator extends JFrame
                         LocalDate.now().getYear(), System.getProperty("os.name"));
     }
 
-    @SuppressWarnings("all")
     /**
      * This method updates the panel removes the old panel,
      * sets up the new panel, and adds it to the frame
@@ -1749,6 +1936,7 @@ public class Calculator extends JFrame
      * @param newPanel the panel to update on the Calculator
      * @return the old panel
      */
+    //TODO: Determine if necessary or change to void return @SuppressWarnings("all")
     public JPanel updateJPanel(JPanel newPanel)
     {
         JPanel oldPanel = currentPanel;
@@ -1841,6 +2029,7 @@ public class Calculator extends JFrame
     public String getNumberOnLeftSideOfDecimal(String currentNumber)
     {
         String leftSide;
+        if (!isDecimal(currentNumber)) return currentNumber;
         int index = currentNumber.indexOf(".");
         if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = "";
         else
@@ -1994,6 +2183,29 @@ public class Calculator extends JFrame
         isWindows = false;
         isMotif = false;
         isGtk = false;
+        isApple = false;
+    }
+
+    /**
+     * Returns true if the minimum value has
+     * been met or false otherwise
+     * @return boolean is minimum value has been met
+     */
+    public boolean isMinimumValue()
+    {
+        return values[0].equals("0.0000001") ||
+               values[1].equals("0.0000001"); // 10^-7
+    }
+
+    /**
+     * Returns true if the maximum value has
+     * been met or false otherwise
+     * @return boolean if maximum value has been met
+     */
+    public boolean isMaximumValue()
+    {
+        return values[0].equals("9999999") || values[0].contains("E") ||
+               values[1].equals("9999999") || values[1].contains("E");  // 9,999,999 or (10^8) -1
     }
 
     /************* All Getters ******************/
@@ -2011,15 +2223,16 @@ public class Calculator extends JFrame
     public JButton getButtonClearEntry() { return buttonClearEntry; }
     public JButton getButtonDelete() { return buttonDelete; }
     public JButton getButtonSquared() { return buttonSquared; }
-    public JButton getButtonDot() { return buttonDot; }
+    public JButton getButtonDecimal() { return buttonDecimal; }
     public JButton getButtonFraction() { return buttonFraction; }
     public JButton getButtonPercent() { return buttonPercent; }
-    public JButton getButtonSqrt() { return buttonSqrt; }
+    public JButton getButtonSquareRoot() { return buttonSquareRoot; }
     public JButton getButtonMemoryClear() { return buttonMemoryClear; }
     public JButton getButtonMemoryRecall() { return buttonMemoryRecall; }
     public JButton getButtonMemoryStore() { return buttonMemoryStore; }
     public JButton getButtonMemoryAddition() { return buttonMemoryAddition; }
     public JButton getButtonMemorySubtraction() { return buttonMemorySubtraction; }
+    public JButton getButtonHistory() { return buttonHistory; }
     public JButton getButtonAdd() { return buttonAdd; }
     public JButton getButtonSubtract() { return buttonSubtract; }
     public JButton getButtonMultiply() { return buttonMultiply; }
@@ -2034,6 +2247,7 @@ public class Calculator extends JFrame
     public int getMemoryPosition() { return memoryPosition; }
     public int getMemoryRecallPosition() { return memoryRecallPosition; }
     public JTextPane getTextPane() { return textPane; }
+    public JTextPane getBasicHistoryTextPane() { return basicHistoryTextPane; }
     public CalculatorType getCalculatorType() { return calculatorType; }
     public CalculatorBase getCalculatorBase() { return calculatorBase; }
     public DateOperation getDateOperation() { return dateOperation; }
@@ -2053,7 +2267,7 @@ public class Calculator extends JFrame
     public boolean isMultiplying() { return isMultiplying; }
     public boolean isDividing() { return isDividing; }
     public boolean isNegating() { return isNegating; }
-    public boolean isDotPressed() { return !getButtonDot().isEnabled(); } //{ return isDotPressed; }
+    public boolean isDotPressed() { return !getButtonDecimal().isEnabled(); } //{ return isDotPressed; }
     public JMenu getLookMenu() { return lookMenu; }
     public JMenu getViewMenu() { return viewMenu; }
     public JMenu getEditMenu() { return editMenu; }
@@ -2063,6 +2277,7 @@ public class Calculator extends JFrame
     public boolean isWindows() { return isWindows; }
     public boolean isMotif() { return isMotif; }
     public boolean isGtk() { return isGtk; }
+    public boolean isApple() { return isApple; }
 
     /************* All Setters ******************/
     private void setValues(String[] values) { this.values = values; }
@@ -2071,6 +2286,7 @@ public class Calculator extends JFrame
     public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
     public void setMemoryRecallPosition(int memoryRecallPosition) { this.memoryRecallPosition = memoryRecallPosition; }
     public void setTextPane(JTextPane textPane) { this.textPane = textPane; }
+    public void setBasicHistoryTextPane(JTextPane basicHistoryTextPane) { this.basicHistoryTextPane = basicHistoryTextPane; }
     public void setCalculatorType(CalculatorType calculatorType) { this.calculatorType = calculatorType; }
     public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; }
     public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
@@ -2097,4 +2313,5 @@ public class Calculator extends JFrame
     public void setWindows(boolean isWindows) { this.isWindows = isWindows; }
     public void setMotif(boolean isMotif) { this.isMotif = isMotif; }
     public void setGtk(boolean isGtk) { this.isGtk = isGtk; }
+    public void setApple(boolean isApple) { this.isApple = isApple; }
 }

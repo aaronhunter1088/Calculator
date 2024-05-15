@@ -269,7 +269,7 @@ public class CalculatorTests
         boolean resetResult = calculator.resetOperator(false);
         assertTrue("Expected result to be true", resetResult);
         assertFalse("Expected dot not to be pressed", calculator.isDotPressed());
-        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDecimal().isEnabled());
     }
 
     @Test
@@ -514,13 +514,13 @@ public class CalculatorTests
     public void testClearAllOtherBasicCalculatorButtons() throws Exception
     {
         calculator = new Calculator();
-        calculator.getAllOtherBasicCalculatorButtons().forEach(otherButton -> {
+        calculator.getAllBasicOperatorButtons().forEach(otherButton -> {
             assertSame("Expecting only 1 action on " + otherButton.getName(), 1, otherButton.getActionListeners().length);
         });
 
         calculator.clearAllOtherBasicCalculatorButtons();
 
-        calculator.getAllOtherBasicCalculatorButtons().forEach(otherButton -> {
+        calculator.getAllBasicOperatorButtons().forEach(otherButton -> {
             assertSame("Expecting no actions on " + otherButton.getName(), 0, otherButton.getActionListeners().length);
         });
     }
@@ -583,16 +583,16 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator = new Calculator();
         calculator.setAdding(true);
-        BasicPanel.performDotButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
-        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDecimal().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
 
         calculator.resetOperator(calculator.isAdding());
 
         assertSame("Expected valuesPosition to be 1",1, calculator.getValuesPosition());
         assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
-        assertFalse("Expected dot button to not be enabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected dot button to not be enabled", calculator.getButtonDecimal().isEnabled());
         assertFalse("Expected to not be on the firstNumber", calculator.isFirstNumber());
     }
 
@@ -602,16 +602,16 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(".");
         calculator = new Calculator();
         calculator.setAdding(false);
-        BasicPanel.performDotButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
-        assertFalse("Expected dot button to be disabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected dot button to be disabled", calculator.getButtonDecimal().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
 
         calculator.resetOperator(calculator.isAdding());
 
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertTrue("Expected dot button to be pressed", calculator.isDotPressed());
-        assertFalse("Expected dot button to not be enabled", calculator.getButtonDot().isEnabled());
+        assertFalse("Expected dot button to not be enabled", calculator.getButtonDecimal().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
     }
 
@@ -658,7 +658,7 @@ public class CalculatorTests
         assertSame("Expected valuesPosition to be 0", 0, calculator.getValuesPosition());
         assertTrue("Expected to be firstNumber", calculator.isFirstNumber());
         assertFalse("Expected dot button to not be pushed", calculator.isDotPressed());
-        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDecimal().isEnabled());
         assertFalse("Expecting isNumberNegative to be false", calculator.isNumberNegative());
     }
 
@@ -679,7 +679,7 @@ public class CalculatorTests
         assertTrue("Expected values[0] to be blank", calculator.getValues()[0].isBlank());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
         assertFalse("Expected dot button to not be pressed", calculator.isDotPressed());
-        assertTrue("Expected dot button to be enabled", calculator.getButtonDot().isEnabled());
+        assertTrue("Expected dot button to be enabled", calculator.getButtonDecimal().isEnabled());
     }
 
     @Test
@@ -855,7 +855,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn("5");
         calculator = new Calculator();
         calculator.getValues()[0] = "2";
-        BasicPanel.performNumberButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertFalse("Expected no commas", calculator.getValues()[0].contains("_"));
         assertEquals("Expected values[0] to be 25", "25", calculator.getValues()[0]);
     }
@@ -914,6 +914,31 @@ public class CalculatorTests
         ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertTrue("Expected textPane to be 1,234,567", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
         assertEquals("Expected values[0] to be 1234567", "1234567", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testCheckValueLength() throws Exception
+    {
+        calculator = new Calculator();
+        calculator.values[0] = "9999998";
+        assertTrue("Expected max length to be met", calculator.checkValueLength());
+        assertFalse("Expected max number to not be met", calculator.isMaximumValue());
+    }
+
+    @Test
+    public void testIsMinimumNumber() throws Exception
+    {
+        calculator = new Calculator();
+        calculator.values[0] = "0.0000001";
+        assertTrue("Expected maximum number to be met", calculator.isMinimumValue());
+    }
+
+    @Test
+    public void testIsMaximumNumber() throws Exception
+    {
+        calculator = new Calculator();
+        calculator.values[0] = "9999999";
+        assertTrue("Expected maximum number to be met", calculator.isMaximumValue());
     }
 
 }

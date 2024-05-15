@@ -4,18 +4,15 @@ import Calculators.Calculator;
 import Converters.AreaMethods;
 import Types.ConverterType;
 import Types.ConverterUnits;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import Converters.AngleMethods;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serial;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static Calculators.Calculator.*;
 import static Types.ConverterType.*;
@@ -32,11 +29,11 @@ public class ConverterPanel extends JPanel
     private GridBagConstraints constraints;
     private JLabel converterTypeName;
     private ConverterType converterType;
-    private JTextField textField1, textField2;
-    private JComboBox<ConverterUnits> unitOptions1, unitOptions2;
+    private static JTextField textField1, textField2;
+    private static JComboBox<ConverterUnits> unitOptions1, unitOptions2;
     //private JTextArea bottomSpaceAboveNumbers;
-    private Calculator calculator;
-    private boolean isTextField1Selected;
+    private static Calculator calculator;
+    private static boolean isTextField1Selected;
 
     /************* Constructors ******************/
 
@@ -97,7 +94,6 @@ public class ConverterPanel extends JPanel
     private void setupConverterPanelComponents(ConverterType converterType)
     {
         calculator.setCalculatorType(CONVERTER);
-        calculator.setCalculatorBase(null);
         calculator.setConverterType(converterType);
         setupAllConverterButtonsFunctionalities();
         switch (converterType)
@@ -153,7 +149,7 @@ public class ConverterPanel extends JPanel
         addComponent(numbersPanel, calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         addComponent(numbersPanel, calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         addComponent(numbersPanel, calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-        addComponent(numbersPanel, calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
+        addComponent(numbersPanel, calculator.getButtonDecimal(), 4, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         addComponent(numbersPanel, calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         // numbers are added on top of a single panel
         //constraints.anchor = GridBagConstraints.PAGE_START;
@@ -248,20 +244,15 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Starting to setup all converter button functions");
         // Clear the buttons I will use of their functionality (other than numbers)
         calculator.clearAllOtherBasicCalculatorButtons();
-        setupClearEntryButton();
-        setupDeleteButton();
-        setupDotButton();
-        calculator.getButtonDot().addActionListener(this::performDotButtonFunctionality);
+        //setupClearEntryButton();
+        //setupDeleteButton();
+        //setupDotButton();
+        //calculator.getButtonDecimal().addActionListener(this::performDotButtonFunctionality);
         // Number button functionalities
         // First clear all functionality assigned to them
         calculator.clearNumberButtonActions();
         calculator.setupNumberButtons();
-        calculator.setupButtonBlank1();
-        calculator.setupButtonBlank2();
-
-        calculator.setupClearEntryButton();
-        calculator.setupDeleteButton();
-        calculator.setupDotButton();
+        calculator.setupConverterButtons();
         // Next, set up each number button. 0 is a bit different from the rest.
 //        calculator.getButton0().addActionListener(this::performNumberButtonFunctionality);
 //        calculator.getButton1().addActionListener(this::performNumberButtonFunctionality);
@@ -275,41 +266,45 @@ public class ConverterPanel extends JPanel
 //        calculator.getButton9().addActionListener(this::performNumberButtonFunctionality);
         LOGGER.info("Finished setting up all converter button functions");
     }
-
-    /**
-     * The main method to set up the ClearEntry button
-     */
-    private void setupClearEntryButton()
-    {
-        calculator.getButtonClearEntry().setFont(mainFont);
-        calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
-        calculator.getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonClearEntry().setEnabled(true);
-        calculator.getButtonClearEntry().setName("CE");
-        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
-        LOGGER.info("Clear Entry button configured");
-    }
+//
+//    /**
+//     * The main method to set up the ClearEntry button
+//     */
+//    private void setupClearEntryButton()
+//    {
+//        calculator.getButtonClearEntry().setFont(mainFont);
+//        calculator.getButtonClearEntry().setMaximumSize(new Dimension(35, 35));
+//        calculator.getButtonClearEntry().setBorder(new LineBorder(Color.BLACK));
+//        calculator.getButtonClearEntry().setEnabled(true);
+//        calculator.getButtonClearEntry().setName("CE");
+//        calculator.getButtonClearEntry().addActionListener(this::performClearEntryButtonActions);
+//        LOGGER.info("Clear Entry button configured");
+//    }
     /**
      * The action to perform when the ClearEntry button is clicked
      * @param actionEvent the click action
      */
-    public void performClearEntryButtonActions(ActionEvent actionEvent)
+    public static void performClearEntryButtonActions(ActionEvent actionEvent)
     {
         LOGGER.info("ClearEntryButtonHandler started for Converter");
         LOGGER.info("button: " + actionEvent.getActionCommand());
         textField1.setText("0");
         textField2.setText("0");
         //calculator.setDotPressed(false);
-        calculator.getButtonDot().setEnabled(true);
+        calculator.getButtonDecimal().setEnabled(true);
         textField1.requestFocusInWindow();
         isTextField1Selected = true;
         LOGGER.info("ClearEntryButtonHandler finished for Converter");
         calculator.confirm("ClearEntryButton pushed");
     }
 
-    public void performDotButtonFunctionality(ActionEvent actionEvent)
+    /**
+     * The action to perform when the Decimal button is clicked
+     * @param actionEvent the click action
+     */
+    public static void performDecimalButtonActions(ActionEvent actionEvent)
     {
-        LOGGER.info("DotButtonHandler() started for Converter");
+        LOGGER.info("Decimal button pushed");
         LOGGER.info("button: " + actionEvent.getActionCommand());
         if (isTextField1Selected) {
             textField1.setText(textField1.getText() + ".");
@@ -317,35 +312,36 @@ public class ConverterPanel extends JPanel
         else {
             textField2.setText(textField2.getText() + ".");
         }
+        calculator.getButtonDecimal().setEnabled(false);
         LOGGER.info("DotButtonHandler() finished for Converter");
         calculator.confirm("DotButton pushed");
     }
 
-    /**
-     * The main method to set up all number buttons, 0-9
-     */
-    private void setupNumberButtons()
-    {
-        AtomicInteger i = new AtomicInteger(0);
-        getCalculator().getNumberButtons().forEach(button -> {
-            button.setFont(mainFont);
-            button.setEnabled(true);
-            if (button.getText().equals("0") &&
-                    getCalculator().getCalculatorType() != CONVERTER)
-            { button.setPreferredSize(new Dimension(35, 35)); }
-            else
-            { button.setPreferredSize(new Dimension(35, 35)); }
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setName(String.valueOf(i.getAndAdd(1)));
-            button.addActionListener(this::performNumberButtonActions);
-        });
-        LOGGER.info("Number buttons configured");
-    }
+//    /**
+//     * The main method to set up all number buttons, 0-9
+//     */
+//    private void setupNumberButtons()
+//    {
+//        AtomicInteger i = new AtomicInteger(0);
+//        getCalculator().getNumberButtons().forEach(button -> {
+//            button.setFont(mainFont);
+//            button.setEnabled(true);
+//            if (button.getText().equals("0") &&
+//                    getCalculator().getCalculatorType() != CONVERTER)
+//            { button.setPreferredSize(new Dimension(35, 35)); }
+//            else
+//            { button.setPreferredSize(new Dimension(35, 35)); }
+//            button.setBorder(new LineBorder(Color.BLACK));
+//            button.setName(String.valueOf(i.getAndAdd(1)));
+//            button.addActionListener(this::performNumberButtonActions);
+//        });
+//        LOGGER.info("Number buttons configured");
+//    }
     /**
      * The action to perform when clicking any number button
      * @param actionEvent the click event
      */
-    public void performNumberButtonActions(ActionEvent actionEvent)
+    public static void performNumberButtonActions(ActionEvent actionEvent)
     {
         // check if we are in textField1 or textField2
         // check to see what converter we are using
@@ -400,15 +396,11 @@ public class ConverterPanel extends JPanel
                 case SQUARE_YARD_ACRES :
                 case SQUARE_MILES :
                 {
-                    if (!textField2.getText().equals("0")) {
+                    if (textField2.getText().equals("0")) {
+                        textField2.setText(buttonValue);
+                    }
+                    else {
                         textField2.setText(textField2.getText() + buttonValue);
-                    } else {
-                        if (textField2.getText().equals("0")) {
-                            textField2.setText(buttonValue);
-                        }
-                        else {
-                            textField2.setText(textField2.getText() + buttonValue);
-                        }
                     }
                     break;
                 }
@@ -416,112 +408,114 @@ public class ConverterPanel extends JPanel
             }
         }
         LOGGER.info("Finished numberButtonFunctionality");
-        convertAndUpdatePanel();
+        performConversions();
     }
 
-    private void setupDeleteButton()
-    {
-        calculator.getButtonDelete().setFont(mainFont);
-        calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonDelete().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonDelete().setEnabled(true);
-        calculator.getButtonDelete().setName("←");
-        calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
-        LOGGER.info("Delete button configured");
-    }
+//    private void setupDeleteButton()
+//    {
+//        calculator.getButtonDelete().setFont(mainFont);
+//        calculator.getButtonDelete().setPreferredSize(new Dimension(35, 35));
+//        calculator.getButtonDelete().setBorder(new LineBorder(Color.BLACK));
+//        calculator.getButtonDelete().setEnabled(true);
+//        calculator.getButtonDelete().setName("←");
+//        calculator.getButtonDelete().addActionListener(this::performDeleteButtonActions);
+//        LOGGER.info("Delete button configured");
+//    }
     /**
      * The actions to perform when the Delete button is clicked
      * @param actionEvent the click action
      */
-    public void performDeleteButtonActions(ActionEvent actionEvent)
+    public static void performDeleteButtonActions(ActionEvent actionEvent)
     {
         LOGGER.info("DeleteButtonHandler() started for Converter");
         LOGGER.info("button: " + actionEvent.getActionCommand());
-        if (isTextField1Selected) {
-            if (textField1.getText().length() == 1) textField1.setText("0");
-            else textField1.setText(textField1.getText().substring(0, textField1.getText().length()-1));
+        if (isTextField1Selected && !textField1.getText().isEmpty()) {
+            //if (textField1.getText().length() == 1) textField1.setText("0");
+            //else
+            textField1.setText(textField1.getText().substring(0, textField1.getText().length()-1));
         }
-        else {
-            if (textField2.getText().length() == 1) textField2.setText("0");
-            else textField2.setText(textField2.getText().substring(0, textField2.getText().length()-1));
+        else if (!textField2.getText().isEmpty()) {
+            //if (textField2.getText().length() == 1) textField2.setText("0");
+            //else
+            textField2.setText(textField2.getText().substring(0, textField2.getText().length()-1));
         }
         LOGGER.info("DeleteButtonHandler() finished for Converter");
-        convertAndUpdatePanel();
+        //convertAndUpdatePanel();
         calculator.confirm("DeleteButton pushed");
     }
 
-    //TODO: Rework. May not need inner logic here
-    /**
-     * The main method to set up the Dot button
-     */
-    private void setupDotButton()
-    {
-        calculator.getButtonDot().setFont(mainFont);
-        calculator.getButtonDot().setPreferredSize(new Dimension(35, 35));
-        calculator.getButtonDot().setBorder(new LineBorder(Color.BLACK));
-        calculator.getButtonDot().setEnabled(true);
-        calculator.getButtonDot().setName(".");
-        calculator.getButtonDot().addActionListener(this::performDotButtonActions);
-        LOGGER.info("Dot button configured");
-    }
-    /**
-     * The actions to perform when the Dot button is click
-     * @param actionEvent the click action
-     */
-    public void performDotButtonActions(ActionEvent actionEvent)
-    {
-        LOGGER.info("Starting Dot button actions");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-        if (calculator.getValues()[0].contains("E")) { calculator.confirm("Cannot press dot button. Number too big!"); }
-        else
-        {
-            LOGGER.warn("IMPLEMENT Dot Button Actions!");
-        }
-        calculator.confirm("Pressed the Dot button");
-    }
-    /**
-     * The inner logic of performing Dot actions
-     * @param buttonChoice the button choice
-     */
-    private void performDot(String buttonChoice)
-    {
-        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
-        {
-            // dot pushed with nothing in textArea
-            calculator.getTextPane().setText("0" + buttonChoice);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-        }
-        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
-        {
-            // number and then dot is pushed ex: 5 -> .5
-            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-            //StringBuffer lodSB = new StringBuffer(textareaValue);
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
-            //calculator.setValuesToTextAreaValue();
-            //calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
-            //calculator.updateTheTextAreaBasedOnTheTypeAndBase();
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.getButtonDot().setEnabled(false);
-            //calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
-        }
-        else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
-        {
-            //.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
-            //calculator.getTextArea().getText().append(buttonChoice);
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextArea().getText().toString())));
-            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
-        }
-        calculator.getButtonDot().setEnabled(false); // deactivate button now that its active for this number
-        //calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
-    }
+//    /**
+//     * The main method to set up the Dot button
+//     */
+//    private void setupDotButton()
+//    {
+//        calculator.getButtonDecimal().setFont(mainFont);
+//        calculator.getButtonDecimal().setPreferredSize(new Dimension(35, 35));
+//        calculator.getButtonDecimal().setBorder(new LineBorder(Color.BLACK));
+//        calculator.getButtonDecimal().setEnabled(true);
+//        calculator.getButtonDecimal().setName(".");
+//        calculator.getButtonDecimal().addActionListener(this::performDecimalButtonActions);
+//        LOGGER.info("Dot button configured");
+//    }
+//    /**
+//     * The actions to perform when the Dot button is click
+//     * @param actionEvent the click action
+//     */
+//    public static void performDecimalButtonActions(ActionEvent actionEvent)
+//    {
+//        LOGGER.info("Starting Decimal button actions");
+//        String buttonChoice = actionEvent.getActionCommand();
+//        LOGGER.info("button: " + buttonChoice); // print out button confirmation
+//        if (calculator.getValues()[0].contains("E")) { calculator.confirm("Cannot press dot button. Number too big!"); }
+//        else
+//        {
+//            LOGGER.debug("Decimal Button Actions!");
+//            performDecimal(buttonChoice);
+//        }
+//        calculator.confirm("Pressed the Dot button");
+//    }
+//    /**
+//     * The inner logic of performing Dot actions
+//     * @param buttonChoice the button choice
+//     */
+//    private static void performDecimal(String buttonChoice)
+//    {
+//        if (StringUtils.isBlank(calculator.getValues()[calculator.getValuesPosition()]) || !calculator.isFirstNumber())
+//        {
+//            // dot pushed with nothing in textArea
+//            calculator.getTextPane().setText("0" + buttonChoice);
+//            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
+//        }
+//        else if (calculator.isPositiveNumber(calculator.getValues()[calculator.getValuesPosition()]) && !calculator.isDotPressed())
+//        {
+//            // number and then dot is pushed ex: 5 -> .5
+//            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
+//            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
+//            //StringBuffer lodSB = new StringBuffer(textareaValue);
+//            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]).append(buttonChoice));
+//            //calculator.setValuesToTextAreaValue();
+//            //calculator.setTextAreaValue(new StringBuffer().append(buttonChoice).append(calculator.getValues()[calculator.getValuesPosition()]));
+//            //calculator.updateTheTextAreaBasedOnTheTypeAndBase();
+//            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[calculator.getValuesPosition()]));
+//            calculator.getButtonDecimal().setEnabled(false);
+//            //calculator.setDotPressed(true); //!LEAVE. dot logic should not be executed anymore for the current number
+//        }
+//        else // number is negative. reverse. add Dot. reverse back -5 -> 5 -> 5. -> -5. <--> .5-
+//        {
+//            //.setTextAreaValue(new StringBuffer().append(calculator.convertToPositive(calculator.getValues()[calculator.getValuesPosition()])));
+//            //calculator.getTextArea().getText().append(buttonChoice);
+//            //calculator.setTextAreaValue(new StringBuffer().append(calculator.convertToNegative(calculator.getTextArea().getText().toString())));
+//            calculator.getTextPane().setText(calculator.getValues()[calculator.getValuesPosition()] + buttonChoice);
+//            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
+//        }
+//        calculator.getButtonDecimal().setEnabled(false); // deactivate button now that its active for this number
+//        //calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
+//    }
 
     /**
      * Switches the converter type and updates the ConverterPanel
      */
-    private void convertAndUpdatePanel()
+    private static void performConversions()
     {
         LOGGER.info("Performing automatic conversion after each number button");
         switch (calculator.getConverterType())
@@ -534,7 +528,7 @@ public class ConverterPanel extends JPanel
                 break;
         }
         calculator.confirm("Conversion done");
-        repaint();
+        //repaint();
     }
 
     /**
