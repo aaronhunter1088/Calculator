@@ -1148,9 +1148,19 @@ public class Calculator extends JFrame
         values[valuesPosition] = values[valuesPosition] + buttonChoice; // store in values, values[valuesPosition] + buttonChoice
         if (isNegating)
         {
-            values[valuesPosition] = convertToNegative(values[valuesPosition]);
-            textPane.setText(addNewLineCharacters() + addCourtesyCommas(values[valuesPosition])); //values[valuesPosition]
-            setNegating(isSubtracting && isNumberNegative);
+            if (!isNegativeNumber(values[valuesPosition]))
+            {
+                LOGGER.debug("Number not yet showing as negative");
+                values[valuesPosition] = convertToNegative(values[valuesPosition]);
+                textPane.setText(addNewLineCharacters() + addCourtesyCommas(values[valuesPosition])); //values[valuesPosition]
+                setNegating(isSubtracting && isNumberNegative);
+            }
+            else
+            {
+                LOGGER.debug("Number is already showing as negative");
+                textPane.setText(addNewLineCharacters() + addCourtesyCommas(values[valuesPosition])); //values[valuesPosition]
+                setNegating(isSubtracting && isNumberNegative);
+            }
         }
         else
         { textPane.setText(addNewLineCharacters() + addCourtesyCommas(values[valuesPosition])); } //values[valuesPosition])
@@ -1515,7 +1525,25 @@ public class Calculator extends JFrame
         LOGGER.debug("index: " + index);
         if (index == -1) return currentNumber;
         else
-        { currentNumber = currentNumber.substring(0, index); }
+        {
+            // Numbers can come is like 10.0, or 10.35 or 10.035
+            // Result should not clear number if it is like 10.35 or 10.035
+            // Only clear if all numbers to the right of the decimal are zeroes
+            String toTheRight = getNumberOnRightSideOfDecimal(currentNumber);
+//            boolean allZeroes = true;
+            String expected = "0".repeat(toTheRight.length());
+            boolean allZeroes = expected.equals(toTheRight);
+//            for(int i=0; i<toTheRight.length(); i++)
+//            {
+//                if (toTheRight.charAt(i) != '0')
+//                {
+//                    allZeroes = false;
+//                    break;
+//                }
+//            }
+            if (allZeroes) currentNumber = currentNumber.substring(0,index);
+            //currentNumber = currentNumber.substring(0, index);
+        }
         LOGGER.info("ClearZeroesAndDot Result: {}", addCourtesyCommas(currentNumber));
         return currentNumber;
     }
@@ -1562,6 +1590,9 @@ public class Calculator extends JFrame
     public String getTextPaneWithoutNewLineCharacters()
     { return textPane.getText().replaceAll("\n", "").strip(); }
 
+    public String getBasicHistoryPaneWithoutNewLineCharacters()
+    { return basicHistoryTextPane.getText().replaceAll("\n", "").strip(); }
+
     /**
      * This method is used after any result to verify
      * the result of the previous method and see the
@@ -1597,7 +1628,7 @@ public class Calculator extends JFrame
                 LOGGER.info("values[{}]: '{}'", 3, values[3]);
                 LOGGER.info("valuesPosition: '{}'", valuesPosition);
                 LOGGER.info("firstNumBool: '{}'", isFirstNumber);
-                LOGGER.info("isDotEnabled: '{}'", getButtonDecimal().isEnabled());
+                LOGGER.info("isDotEnabled: '{}'", isDotPressed());
                 LOGGER.info("isNegative: '{}'", isNumberNegative);
                 LOGGER.info("isNegating: '{}'", isNegating);
                 LOGGER.info("calculatorType: '{}", calculatorType);
@@ -1976,20 +2007,45 @@ public class Calculator extends JFrame
         { basicHistoryTextPane.setText(""); }
     }
 
-    // TODO: Move memories into Panel
     /**
      * Displays all the memory values in the history panel
      */
     public void performShowMemoriesAction(ActionEvent actionEvent)
     {
-        if (currentPanel instanceof BasicPanel && !isMemoryValuesEmpty())
-        { basicHistoryTextPane.setText(
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Starting {} button actions", buttonChoice);
+        if (currentPanel instanceof BasicPanel)
+        {
+            if (!isMemoryValuesEmpty())
+            {
+                StringBuilder memoriesString = new StringBuilder();
+                memoriesString.append("Memories: ");
+                for(int i=0; i<memoryPosition; i++)
+                {
+                    memoriesString.append("[").append(memoryValues[i]).append("]");
+                    if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(BLANK.getValue()))
+                    {
+                        memoriesString.append(", ");
+                    }
+                }
+
+                basicHistoryTextPane.setText(
                 basicHistoryTextPane.getText() +
-                addNewLineCharacters() + "Memories: [" + memoryValues[0] + "], [" + memoryValues[1] + "], [" +
-                memoryValues[2] + "], [" + memoryValues[3] + "], [" + memoryValues[4] + "], [" + memoryValues[5] + "], [" +
-                memoryValues[6] + "], [" + memoryValues[7] + "], [" + memoryValues[8] + "], [" + memoryValues[9] + "]"
-        );
+                addNewLineCharacters() + memoriesString
+                //addNewLineCharacters() + "Memories: [" + memoryValues[0] + "], [" + memoryValues[1] + "], [" +
+                //memoryValues[2] + "], [" + memoryValues[3] + "], [" + memoryValues[4] + "], [" + memoryValues[5] + "], [" +
+                //memoryValues[6] + "], [" + memoryValues[7] + "], [" + memoryValues[8] + "], [" + memoryValues[9] + "]"
+                );
+            }
+            else
+            {
+                basicHistoryTextPane.setText(
+                basicHistoryTextPane.getText() +
+                addNewLineCharacters() + "No Memories Stored"
+                );
+            }
         }
+        LOGGER.info("Show Memories complete");
     }
 
     /**
@@ -2038,6 +2094,14 @@ public class Calculator extends JFrame
     }
 
     /**
+     * Checks if the resulting answer has met the minimum value
+     * @param result String the value to check
+     * @return boolean true if the minimum value has been met
+     */
+    public boolean isMinimumValue(String result)
+    { return result.equals("0.0000001"); }
+
+    /**
      * Returns true if the maximum value has
      * been met or false otherwise
      * @return boolean if maximum value has been met
@@ -2047,6 +2111,14 @@ public class Calculator extends JFrame
         return values[0].equals("9999999") || values[0].contains(E.getValue()) ||
                values[1].equals("9999999") || values[1].contains(E.getValue());  // 9,999,999 or (10^8) -1
     }
+
+    /**
+     * Checks if the resulting answer has met the maximum value
+     * @param result String the value to check
+     * @return boolean true if the maximum value has been met
+     */
+    public boolean isMaximumValue(String result)
+    { return result.equals("9999999") || result.contains(E.getValue()); }
 
     /* Getters */
     public JButton getButton0() { return button0; }
