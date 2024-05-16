@@ -1,7 +1,6 @@
 package Panels;
 
 import Calculators.Calculator;
-import Types.DateOperation;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
@@ -22,7 +21,7 @@ import java.util.Locale;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static Types.CalculatorType.DATE;
+import static Types.DateOperation.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatePanelTest {
@@ -35,12 +34,12 @@ public class DatePanelTest {
     @BeforeClass
     public static void setup() throws Exception {
         System.setProperty("appName", "DatePanelTest");
-        Calculator calculator = new Calculator(DATE, DateOperation.ADD_SUBTRACT_DAYS);
+        Calculator calculator = new Calculator(ADD_SUBTRACT_DAYS);
         testTheDatePanel = (DatePanel) calculator.getCurrentPanel();
     }
 
     @After
-    public void beforeEach() throws Exception
+    public void beforeEach()
     {
         MockitoAnnotations.initMocks(this);
     }

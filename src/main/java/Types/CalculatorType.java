@@ -11,9 +11,9 @@ public enum CalculatorType
 	DATE("Date"),
 	CONVERTER("Converter");
 
-	private final String name;
-	CalculatorType(String name) {
-		this.name = name;
+	private final String value;
+	CalculatorType(String value) {
+		this.value = value;
 	}
-	public String getName() { return this.name; }
+	public String getValue() { return this.value; }
 }

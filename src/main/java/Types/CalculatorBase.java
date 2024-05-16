@@ -5,10 +5,10 @@ package Types;
  */
 public enum CalculatorBase
 {
-    BINARY("Binary"),
-    OCTAL("Octal"),
-    DECIMAL("Decimal"),
-    HEXADECIMAL("Hexadecimal");
+    BASE_BINARY("Binary"),
+    BASE_OCTAL("Octal"),
+    BASE_DECIMAL("Decimal"),
+    BASE_HEXADECIMAL("Hexadecimal");
 
     private final String name;
     CalculatorBase(String name) {

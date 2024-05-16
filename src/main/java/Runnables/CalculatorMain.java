@@ -3,14 +3,10 @@ package Runnables;
 import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.types.Environment;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-
-import static Types.CalculatorType.*;
-import static Types.CalculatorBase.*;
-import static Types.DateOperation.*;
-import static Types.ConverterType.*;
 
 /**
  * Main Class. Start here!
@@ -43,8 +39,14 @@ public class CalculatorMain
                 //Display the window.
                 calculator.pack();
                 calculator.setVisible(true);
-                calculator.confirm(calculator.getCalculatorType().getName() + " Calculator started");
-                LOGGER.info("size of panel: " + calculator.getSize());
+                calculator.confirm(calculator.getCalculatorType().getValue() + " Calculator started");
+                String logLevel = System.getenv("logLevel");
+                if (null == logLevel) {
+                    LOGGER.warn("Set env.logLevel. Using default:all");
+                } else {
+                    LOGGER.info(System.getenv("logLevel"));
+                }
+
             }
             catch (Exception e) {
                 System.err.printf("Could not create Calculator bc " + e.getMessage());
@@ -56,7 +58,7 @@ public class CalculatorMain
 a. PROGRAMMER: Michael Ball
 b. DATE:   Version 4: 2024
 c. ENVIRONMENT: Mac Sonoma 14.4.1
-d. FILES INCLUDED:
+d. FILES INCLUDED: The Java class files, 5 images, log4j2.properties, and pom.properties
 e. PURPOSE: To recreate the Calculator app (from Windows) and provide more functionality
 f. INPUT:  To calculate numbers, dates, units, and more
 g. PRECONDITIONS: Basic view is the default view
@@ -75,20 +77,21 @@ Version Four Concluded: -
             on fixing a few issues I've seen while playing with the Calculator in the recent past (from
             today's date). And there are still plenty of tests that can be written so I took the time
             to do a few things I've been wanting to do for some time.
-            [a] First I have rearranged the code so that specific logic happens in the panel that is
-            ultimately performing the logic. This allows me to separate the logic and perform less checks.
-            I've also moved specific properties into the appropriate panel (booleans specific for Programmer
-            don't need to be a part of the overall Calculator object).
+            [a] First, I have rearranged the code so that specific logic happens in the panel that is
+            ultimately performing the logic. I've also moved some attributes into the appropriate panel.
             [b] I have updated the logging files so that the main log will now be named Runnables.CalculatorMain,
-            instead of just 'calculator', and added a new separator.
-            [c] I've also adjusted several accessors to use private where needed.
-            [d] I've rearranged the code in such a way to allow a natural pattern to be seen for methods.
-            This should make it easier to read and find methods and grouped specific methods that work
-            with each other so less "searching for code" in needed.
+            instead of just 'calculator', added a new separator, and added env.logLevel from run configurations.
+            [c] I adjusted several accessors to use private where needed.
+            [d] I rearranged the code in such a way to allow a natural pattern to be seen so reading any related
+            classes are easier to find specific methods.
             [e] I've added JavaDocs to all methods to allow quick access to know what each method does.
-            [f] Fix the 'textArea' to not rely on alignment to be Right_to_Left, and enforce right alignment (renamed to textPane)
-            [g] Upgraded Java to 18
-            [h] Added commas to longer numbers, displayed only in the textPane
+            [f] Fix the 'textArea' to not rely on alignment to be Right_to_Left, and enforce right alignment
+            (and renamed it to textPane)
+            [g] Edited each panel's setup to display certain buttons on separate panels for better control
+            [h] Upgraded Java to language level 18!
+            [i] Added commas to longer numbers, displayed only in the textPane
+            [j] Added a history panel to display a record of each button press and operation performed.
+            [k] Added the ability to display all stored memories, displayed in the history panel.
 
             Saturday, Aug 14, 2021:
             I started the Converter version. It should be relatively easy to implement seeing as they all have a

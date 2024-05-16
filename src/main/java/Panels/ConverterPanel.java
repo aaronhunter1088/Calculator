@@ -39,7 +39,7 @@ public class ConverterPanel extends JPanel
 
     public ConverterPanel()
     {
-        setName(CONVERTER.getName());
+        setName(CONVERTER.getValue());
         LOGGER.info("Converter panel created");
     }
 
@@ -48,7 +48,7 @@ public class ConverterPanel extends JPanel
      */
     public ConverterPanel(ConverterType converterType)
     {
-        setName(CONVERTER.getName());
+        setName(CONVERTER.getValue());
         if (converterType == null) setConverterType(ANGLE);
         else setConverterType(converterType);
         LOGGER.info("Converter panel created");
@@ -82,7 +82,7 @@ public class ConverterPanel extends JPanel
         setupHelpMenu(getConverterType());
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
-        setName(CONVERTER.getName());
+        setName(CONVERTER.getValue());
         LOGGER.info("Finished setting up converter panel");
     }
 

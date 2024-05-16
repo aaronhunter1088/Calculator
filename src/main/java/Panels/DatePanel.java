@@ -61,7 +61,7 @@ public class DatePanel extends JPanel
      */
     public DatePanel()
     {
-        setName(DATE.getName());
+        setName(DATE.getValue());
         LOGGER.info("Date panel created");
     }
 
@@ -110,7 +110,7 @@ public class DatePanel extends JPanel
             setSize(new Dimension(250,400));
         }
         SwingUtilities.updateComponentTreeUI(this);
-        setName(DATE.getName());
+        setName(DATE.getValue());
         LOGGER.info("Finished constructing Date panel");
     }
 
@@ -166,7 +166,7 @@ public class DatePanel extends JPanel
                     JPanel mainPanel = new JPanel();
                     mainPanel.add(textLabel);
                     JOptionPane.showMessageDialog(calculator,
-                            mainPanel, "Viewing " + DATE.getName() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+                            mainPanel, "Viewing " + DATE.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
             }

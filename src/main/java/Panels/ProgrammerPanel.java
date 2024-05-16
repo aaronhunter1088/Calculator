@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static Calculators.Calculator.*;
@@ -73,7 +72,7 @@ public class ProgrammerPanel extends JPanel
      */
     public ProgrammerPanel()
     {
-        setName(PROGRAMMER.getName());
+        setName(PROGRAMMER.getValue());
         LOGGER.info("Empty Programmer panel created");
     }
 
@@ -111,7 +110,7 @@ public class ProgrammerPanel extends JPanel
         setSize(new Dimension(425,375));
         setupProgrammerPanelComponents(base);
         addComponentsToPanel();
-        setName(PROGRAMMER.getName());
+        setName(PROGRAMMER.getValue());
         SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up programmer panel");
     }
@@ -182,15 +181,15 @@ public class ProgrammerPanel extends JPanel
      */
     private void setProgrammerBase(CalculatorBase base)
     {
-        if (base == DECIMAL || StringUtils.isNotBlank(calculator.getValues()[0]))
+        if (base == BASE_DECIMAL || StringUtils.isNotBlank(calculator.getValues()[0]))
         {
-            calculator.setCalculatorBase(DECIMAL);
+            calculator.setCalculatorBase(BASE_DECIMAL);
             buttonDec.setSelected(true);
             setDecimalBase(true);
             setButtons2To9(true);
             setButtonsAToF(false);
         }
-        else if (base == OCTAL)
+        else if (base == BASE_OCTAL)
         {
             calculator.setCalculatorBase(base);
             setButtons2To9(true);
@@ -200,7 +199,7 @@ public class ProgrammerPanel extends JPanel
             buttonOct.setSelected(true);
             setOctalBase(true);
         }
-        else if (base == HEXADECIMAL)
+        else if (base == BASE_HEXADECIMAL)
         {
             calculator.setCalculatorBase(base);
             setButtons2To9(true);
@@ -210,7 +209,7 @@ public class ProgrammerPanel extends JPanel
         }
         else
         {
-            calculator.setCalculatorBase(BINARY);
+            calculator.setCalculatorBase(BASE_BINARY);
             setButtons2To9(false);
             setButtonsAToF(false);
             buttonBin.setSelected(true);
@@ -421,7 +420,7 @@ public class ProgrammerPanel extends JPanel
         JMenuItem viewHelp = helpMenuItem.getItem(0);
         // remove any and all other view help actions
         Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
-        viewHelp.addActionListener(action -> showHelpPanel("IMPLEMENT " + PROGRAMMER.getName() + " Calculator Help"));
+        viewHelp.addActionListener(action -> showHelpPanel("IMPLEMENT " + PROGRAMMER.getValue() + " Calculator Help"));
         helpMenuItem.add(viewHelp, 0);
         LOGGER.info("Finished setting up the help menu");
     }
@@ -441,8 +440,8 @@ public class ProgrammerPanel extends JPanel
         JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setSize(new Dimension(400, 300));
         SwingUtilities.updateComponentTreeUI(calculator);
-        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + PROGRAMMER.getName() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        calculator.confirm("Viewing " + BASIC.getName() + " Calculator Help");
+        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + PROGRAMMER.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        calculator.confirm("Viewing " + BASIC.getValue() + " Calculator Help");
     }
 
     /**
@@ -846,16 +845,16 @@ public class ProgrammerPanel extends JPanel
         resetProgrammerByteOperators(false);
         resetProgrammerOperators();
         LOGGER.info("baseChoice: " + newBase);
-        if (newBase == BINARY)
+        if (newBase == BASE_BINARY)
         {
-            calculator.setCalculatorBase(BINARY);
+            calculator.setCalculatorBase(BASE_BINARY);
             buttonBin.setSelected(true);
             setByteByte(true);
             setButtons2To9(false);
             getAToFButtons().forEach(button -> button.setEnabled(false));
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPane().getText());
         }
-        else if (newBase == OCTAL)
+        else if (newBase == BASE_OCTAL)
         {
             buttonOct.setSelected(true);
             setOctalBase(true);
@@ -865,7 +864,7 @@ public class ProgrammerPanel extends JPanel
             getAToFButtons().forEach(button -> button.setEnabled(false));
             updateTextAreaAfterBaseChange(previousBase, newBase, nameOfOperatorPushed);
         }
-        else if (newBase == DECIMAL)
+        else if (newBase == BASE_DECIMAL)
         {
             //calculator.resetProgrammerByteOperators(false);
             buttonByte.setSelected(true);
@@ -875,7 +874,7 @@ public class ProgrammerPanel extends JPanel
             setButtons2To9(true);
             setButtonsAToF(false);
             calculator.getTextPane().setText(calculator.addNewLineCharacters(3) + calculator.getValues()[calculator.getValuesPosition()]);
-            calculator.setCalculatorBase(DECIMAL);// we don't always "update getTextArea()", like when it's blank
+            calculator.setCalculatorBase(BASE_DECIMAL);// we don't always "update getTextArea()", like when it's blank
         }
         else // newBase == HEXIDECIMAL
         {
@@ -994,19 +993,19 @@ public class ProgrammerPanel extends JPanel
         switch (base)
         {
             case "Bin" : {
-                baseToReturn = BINARY;
+                baseToReturn = BASE_BINARY;
                 break;
             }
             case "Oct" : {
-                baseToReturn = OCTAL;
+                baseToReturn = BASE_OCTAL;
                 break;
             }
             case "Dec" : {
-                baseToReturn = DECIMAL;
+                baseToReturn = BASE_DECIMAL;
                 break;
             }
             case "Hex" : {
-                baseToReturn = HEXADECIMAL;
+                baseToReturn = BASE_HEXADECIMAL;
                 break;
             }
             default : { LOGGER.error("Unknown base: " + base); }
@@ -1146,7 +1145,7 @@ public class ProgrammerPanel extends JPanel
         LOGGER.info("Performing programmer number button actions...");
         LOGGER.info("Update bytes based on length of number in getTextArea()");
         LOGGER.info("Adding '{}' to getTextArea()", buttonChoice);
-        if (calculator.getCalculatorBase() == BINARY) {
+        if (calculator.getCalculatorBase() == BASE_BINARY) {
             int lengthOfTextArea = calculator.getTextPaneWithoutNewLineCharacters().length();
             if (lengthOfTextArea == 8 || lengthOfTextArea == 17 || lengthOfTextArea == 26 || lengthOfTextArea == 35 || lengthOfTextArea == 44)
             {   // add a space add the "end" if the length of the number matches the bytes
@@ -1193,7 +1192,7 @@ public class ProgrammerPanel extends JPanel
                 calculator.getTextPane().setText(calculator.addNewLineCharacters(3) + newNumber);
             }
         }
-        else if (calculator.getCalculatorBase() == DECIMAL) {
+        else if (calculator.getCalculatorBase() == BASE_DECIMAL) {
             if (!calculator.isFirstNumber()) // do for second number
             {
                 if (!calculator.isDotPressed())
@@ -1266,7 +1265,7 @@ public class ProgrammerPanel extends JPanel
             }
             calculator.confirm("Pressed " + buttonChoice);
         }
-        else if (calculator.getCalculatorBase() == OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
+        else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
     }
     /**
@@ -1918,11 +1917,11 @@ public class ProgrammerPanel extends JPanel
         else
         {
             LOGGER.info("Programmer dot operations");
-            if (calculator.getCalculatorBase() == BINARY)
+            if (calculator.getCalculatorBase() == BASE_BINARY)
             {
                 LOGGER.warn("IMPLEMENT OR DISABLE");
             }
-            else if (calculator.getCalculatorBase() == DECIMAL)
+            else if (calculator.getCalculatorBase() == BASE_DECIMAL)
             {
                 LOGGER.info("DECIMAL base");
                 performDot(buttonChoice);
@@ -2586,7 +2585,7 @@ public class ProgrammerPanel extends JPanel
         String numberInTextArea = calculator.getTextPaneWithoutAnyOperator();
         if (((ProgrammerPanel)calculator.getCurrentPanel()).buttonBin.isSelected())
         {
-            try { calculator.getValues()[1] = calculator.convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInTextArea); }
+            try { calculator.getValues()[1] = calculator.convertFromTypeToTypeOnValues(BASE_BINARY, BASE_DECIMAL, numberInTextArea); }
             catch (CalculatorError c) { calculator.logException(c); }
             LOGGER.info("Values[1] saved to {}", calculator.getValues()[1]);
             LOGGER.info("Now performing operation...");
@@ -2594,7 +2593,7 @@ public class ProgrammerPanel extends JPanel
         }
         else if (((ProgrammerPanel)calculator.getCurrentPanel()).buttonOct.isSelected())
         {
-            try { calculator.getValues()[1] = calculator.convertFromTypeToTypeOnValues(BINARY, DECIMAL, numberInTextArea); }
+            try { calculator.getValues()[1] = calculator.convertFromTypeToTypeOnValues(BASE_BINARY, BASE_DECIMAL, numberInTextArea); }
             catch (CalculatorError c) { calculator.logException(c); }
         }
         else if (((ProgrammerPanel)calculator.getCurrentPanel()).buttonDec.isSelected())
@@ -2604,10 +2603,10 @@ public class ProgrammerPanel extends JPanel
         else if (((ProgrammerPanel)calculator.getCurrentPanel()).buttonHex.isSelected())
         {
             calculator.getValues()[0] = "";
-            try { calculator.getValues()[0] = calculator.convertFromTypeToTypeOnValues(HEXADECIMAL, DECIMAL, calculator.getValues()[0]); }
+            try { calculator.getValues()[0] = calculator.convertFromTypeToTypeOnValues(BASE_HEXADECIMAL, BASE_DECIMAL, calculator.getValues()[0]); }
             catch (CalculatorError c) { calculator.logException(c); }
             calculator.getValues()[1] = "";
-            try { calculator.getValues()[0] = calculator.convertFromTypeToTypeOnValues(HEXADECIMAL, DECIMAL, calculator.getValues()[1]); }
+            try { calculator.getValues()[0] = calculator.convertFromTypeToTypeOnValues(BASE_HEXADECIMAL, BASE_DECIMAL, calculator.getValues()[1]); }
             catch (CalculatorError c) { calculator.logException(c); }
         }
 
@@ -2713,7 +2712,7 @@ public class ProgrammerPanel extends JPanel
     public void convertValue0AndDisplayInTextArea() throws CalculatorError
     {
         LOGGER.info("Converting value...");
-        String convertedValue = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[calculator.getValuesPosition()]);
+        String convertedValue = calculator.convertFromTypeToTypeOnValues(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
         calculator.getTextPane().setText(calculator.addNewLineCharacters() + convertedValue);
         LOGGER.info("Value converted");
     }
@@ -2757,22 +2756,22 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("convertToDecimal starting");
         CalculatorBase previousBase = calculator.getCalculatorBase();
         // update the current base to binary
-        calculator.setCalculatorBase(DECIMAL);
+        calculator.setCalculatorBase(BASE_DECIMAL);
         CalculatorBase currentBase = calculator.getCalculatorBase();
         LOGGER.info("previous base: " + previousBase);
         LOGGER.info("current base: " + currentBase);
         String nameOfButton = determineIfProgrammerPanelOperatorWasPushed(); // could be null
-        if (previousBase == DECIMAL && currentBase == BINARY ||
+        if (previousBase == BASE_DECIMAL && currentBase == BASE_BINARY ||
                 calculator.getCalculatorType() == CalculatorType.BASIC)
         {
             try {
-                calculator.getValues()[0] = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[0]);
-                calculator.getValues()[1] = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[1]);
+                calculator.getValues()[0] = calculator.convertFromTypeToTypeOnValues(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[0]);
+                calculator.getValues()[1] = calculator.convertFromTypeToTypeOnValues(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[1]);
             } catch (CalculatorError e) {
                 calculator.logException(e);
             }
         }
-        else if (previousBase == BINARY && currentBase == DECIMAL)
+        else if (previousBase == BASE_BINARY && currentBase == BASE_DECIMAL)
         {
         }
         else
@@ -2781,7 +2780,7 @@ public class ProgrammerPanel extends JPanel
             // logic for Binary to Decimal
             try {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters(1)+
-                        calculator.convertFromTypeToTypeOnValues(BINARY, DECIMAL,
+                        calculator.convertFromTypeToTypeOnValues(BASE_BINARY, BASE_DECIMAL,
                                 calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace()));
             } catch (CalculatorError e) {
                 calculator.logException(e);
@@ -2847,7 +2846,7 @@ public class ProgrammerPanel extends JPanel
             calculator.performInitialChecks();
             boolean operatorWasPushed = calculator.determineIfAnyBasicOperatorWasPushed();
             String convertedValue = "";
-            try { convertedValue = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[0]); }
+            try { convertedValue = calculator.convertFromTypeToTypeOnValues(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[0]); }
             catch (CalculatorError c) { calculator.logException(c); }
             if (StringUtils.isNotBlank(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace()))
             {
@@ -2934,17 +2933,17 @@ public class ProgrammerPanel extends JPanel
      */
     public void updateTheTextAreaBasedOnTheTypeAndBase()
     {
-        if (BINARY == calculator.getCalculatorBase())
+        if (BASE_BINARY == calculator.getCalculatorBase())
         {
             String convertedToBinary = "";
             try {
-                convertedToBinary = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[0]);
+                convertedToBinary = calculator.convertFromTypeToTypeOnValues(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[0]);
             } catch (CalculatorError c) {
                 calculator.logException(c);
             }
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + convertedToBinary);
         }
-        else if (DECIMAL == calculator.getCalculatorBase())
+        else if (BASE_DECIMAL == calculator.getCalculatorBase())
         {
             if (!calculator.isNumberNegative())
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPane().getText());
@@ -2954,7 +2953,7 @@ public class ProgrammerPanel extends JPanel
                 calculator.setNumberNegative(true);
             }
         }
-        else if (OCTAL == calculator.getCalculatorBase())
+        else if (BASE_OCTAL == calculator.getCalculatorBase())
         {
             LOGGER.warn("Setup");
         }
