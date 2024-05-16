@@ -954,7 +954,7 @@ public class Calculator extends JFrame
      * @param operatorBool the operator to pressed
      * @return boolean the operatorBool opposite value
      */
-    public boolean resetOperator(boolean operatorBool)
+    public boolean resetCalculatorOperations(boolean operatorBool)
     {
         LOGGER.debug("resetting operator...");
         if (operatorBool)
@@ -1134,7 +1134,7 @@ public class Calculator extends JFrame
                getTextPaneWithoutAnyOperator().equals(ENTER_A_NUMBER.getValue()) ||
                getTextPaneWithoutAnyOperator().equals(ONLY_POSITIVES.getValue()) ||
                getTextPaneWithoutAnyOperator().contains(E.getValue()) ||
-               getTextPaneWithoutAnyOperator().contains(INFINITY.getValue());
+               getTextPaneWithoutAnyOperator().equals(INFINITY.getValue());
     }
 
     /**

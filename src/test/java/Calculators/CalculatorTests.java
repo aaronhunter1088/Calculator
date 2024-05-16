@@ -266,7 +266,7 @@ public class CalculatorTests
     {
         calculator = new Calculator();
         calculator.getValues()[0] = "5";
-        boolean resetResult = calculator.resetOperator(false);
+        boolean resetResult = calculator.resetCalculatorOperations(false);
         assertTrue("Expected result to be true", resetResult);
         assertTrue("Expected dot not to be enabled", calculator.isDotPressed());
         assertTrue("Expected dot button to be enabled", calculator.getButtonDecimal().isEnabled());
@@ -588,7 +588,7 @@ public class CalculatorTests
         assertFalse("Expected dot button to be disabled", calculator.isDotPressed());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
 
-        calculator.resetOperator(calculator.isAdding());
+        calculator.resetCalculatorOperations(calculator.isAdding());
 
         assertSame("Expected valuesPosition to be 1",1, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.isDotPressed());
@@ -606,7 +606,7 @@ public class CalculatorTests
         assertFalse("Expected dot button to be disabled", calculator.getButtonDecimal().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
 
-        calculator.resetOperator(calculator.isAdding());
+        calculator.resetCalculatorOperations(calculator.isAdding());
 
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.isDotPressed());

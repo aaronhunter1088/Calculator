@@ -3,10 +3,14 @@ package Runnables;
 import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.types.Environment;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+
+import static Types.CalculatorType.*;
+import static Types.ConverterType.*;
+import static Types.DateOperation.*;
+import static Types.Texts.*;
 
 /**
  * Main Class. Start here!
@@ -29,13 +33,13 @@ public class CalculatorMain
                 //Start a programmer calculator in DECIMAL mode
                 //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
                 //Start a date calculator with options1 selected
-                //Calculator calculator = new Calculator(DATE, DIFFERENCE_BETWEEN_DATES); //(DATE);
+                //Calculator calculator = new Calculator(DIFFERENCE_BETWEEN_DATES); //(DATE);
                 //Start a date calculator with options2 selected
-                //Calculator calculator = new Calculator(DATE, ADD_SUBTRACT_DAYS);
+                //Calculator calculator = new Calculator(ADD_SUBTRACT_DAYS);
                 //Start an ANGLE converter calculator
                 //Calculator calculator = new Calculator(CONVERTER /*,ANGLE*/ );
                 //Start an AREA converter calculator
-                //Calculator calculator = new Calculator(CONVERTER, AREA);
+                //Calculator calculator = new Calculator(AREA);
                 //Display the window.
                 calculator.pack();
                 calculator.setVisible(true);

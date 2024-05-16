@@ -629,7 +629,8 @@ public class BasicPanelTest {
         assertEquals("Expected values[1] to be 5", FIVE.getValue(), calculator.getValues()[1]);
         basicPanel.performSubtractionButtonActions(actionEvent);
         assertEquals("Expected textPane shows 0.2 -", "0.2 -", calculator.getTextPaneWithoutNewLineCharacters());
-        assertTrue("Expected isDividing to be true", calculator.isDividing());
+        assertFalse("Expected isDividing to be false", calculator.isDividing());
+        assertTrue("Expected isSubtracting to be true", calculator.isSubtracting());
     }
 
     @Test
@@ -1619,8 +1620,8 @@ public class BasicPanelTest {
         when(actionEvent.getActionCommand()).thenReturn(ZERO.getValue());
         calculator.getTextPane().setText(INFINITY.getValue());
         basicPanel.performNumberButtonActions(actionEvent);
-        assertEquals("Expected values[0] to be blank", BLANK.getValue(), calculator.getValues()[0]);
-        assertEquals("Expected textPane to show Infinity", INFINITY.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected values[0] to be 0", ZERO.getValue(), calculator.getValues()[0]);
+        assertEquals("Expected textPane to show 0", ZERO.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test
