@@ -1,4 +1,4 @@
-# Calculator v4.3
+# Calculator v4.4
 
 This project is one of the few projects I have from college that I was able to keep.
 It may look ancient but the goal of this project is to demonstrate my Java programming
@@ -9,7 +9,7 @@ There will be several views to choose from.
 The first 4 calculator views it will display are: Basic, Programmer, Scientific, and Date.
 The next view, Converter, will itself implement various different units to convert between.
 
-v4. By this version, Basic, and Date are working as expected and Converter is in the works.
+v4. By this version, Basic, and Date are working as expected, and Converter is in the works.
 Programmer and Scientific are created but a lot of the logic is not there.
 
 v3: Programmer, Scientific, and Date calculators are all types to be implemented in version3.
