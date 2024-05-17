@@ -969,7 +969,7 @@ public class BasicPanel extends JPanel
             }
             else if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank() && calculator.getValues()[0].isBlank())
             {
-                LOGGER.error("The user pushed plus but there is no number");
+                LOGGER.error("The user pushed divide but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.getValues()[0] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
@@ -1222,7 +1222,7 @@ public class BasicPanel extends JPanel
             }
             else if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank() && calculator.getValues()[0].isBlank())
             {
-                LOGGER.error("The user pushed plus but there is no number");
+                LOGGER.error("The user pushed multiple but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.getValues()[0] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
