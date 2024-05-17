@@ -2,6 +2,8 @@ package Types;
 
 /**
  * The different types of DatePanels
+ * DateOperation.name() returns ENUM value
+ * DateOperation.getValue() returns ENUM("thisValue")
  */
 public enum DateOperation
 {
@@ -12,7 +14,7 @@ public enum DateOperation
     DateOperation(String name) {
         this.name = name;
     }
-    public String getName() {
+    public String getValue() {
         return this.name;
     }
 }

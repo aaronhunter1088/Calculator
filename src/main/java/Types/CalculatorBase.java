@@ -2,6 +2,8 @@ package Types;
 
 /**
  * The CalculatorBases to use primarily in ProgrammerPanel
+ * CalculatorBase.name() returns ENUM value
+ * CalculatorBase.getValue() returns ENUM("thisValue")
  */
 public enum CalculatorBase
 {
@@ -14,7 +16,7 @@ public enum CalculatorBase
     CalculatorBase(String name) {
         this.name = name;
     }
-    public String getName() {
+    public String getValue() {
         return this.name;
     }
 }

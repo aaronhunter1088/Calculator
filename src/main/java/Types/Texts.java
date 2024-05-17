@@ -4,7 +4,7 @@ package Types;
  * This class defines all texts used within
  * the Calculator application
  * Texts.name() returns ENUM value
- * Texts.value() returns ENUM("thisValue")
+ * Texts.getValue() returns ENUM("thisValue")
  */
 public enum Texts {
     // Calculator

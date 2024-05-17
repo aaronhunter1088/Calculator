@@ -69,7 +69,7 @@ public class BasicPanel extends JPanel
         addComponentsToPanel();
         setName(BASIC.getValue());
         SwingUtilities.updateComponentTreeUI(this);
-        LOGGER.info("Finished setting up basic panel");
+        LOGGER.info("Finished setting up {} panel", BASIC.getValue());
     }
 
     /**
@@ -97,9 +97,9 @@ public class BasicPanel extends JPanel
         calculator.setupTextPane();
         calculator.setupNumberButtons();
         calculator.setupMemoryButtons();
-        calculator.setupRemainingBasicButtons();
+        calculator.setupBasicPanelButtons();
         setupBasicHistoryZone();
-        LOGGER.info("Finished configuring the buttons");
+        LOGGER.debug("Finished configuring the buttons");
     }
 
     /**
@@ -146,7 +146,7 @@ public class BasicPanel extends JPanel
         addComponent(basicPanel, buttonsPanel, 2, 0);
 
         addComponent(basicPanel);
-        LOGGER.info("Buttons added to the frame");
+        LOGGER.debug("Buttons added to the frame");
     }
 
     /**
@@ -334,7 +334,7 @@ public class BasicPanel extends JPanel
         Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
         viewHelp.addActionListener(action -> showHelpPanel(helpString));
         helpMenuItem.add(viewHelp, 0);
-        LOGGER.info("Help menu configured");
+        LOGGER.debug("Help menu configured for {}", calculator.getCalculatorType());
     }
 
     /**
@@ -362,6 +362,7 @@ public class BasicPanel extends JPanel
      */
     public void setupBasicHistoryZone()
     {
+        LOGGER.debug("Configuring BasicHistoryZone...");
         constraints.anchor = GridBagConstraints.WEST;
         addComponent(historyPanel, new JLabel(HISTORY.getValue()), 0, 0); // space before with jtextarea
 
@@ -371,7 +372,7 @@ public class BasicPanel extends JPanel
 
         addComponent(historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
                 1, 6, 0, 0, GridBagConstraints.BOTH, 0);
-        calculator.confirm("BasicHistoryZone configured");
+        LOGGER.debug("BasicHistoryZone configured");
     }
 
     /**
@@ -393,7 +394,7 @@ public class BasicPanel extends JPanel
         {
             if (calculator.getMemoryPosition() == 10) // reset to 0
             { calculator.setMemoryPosition(0); }
-            calculator.getMemoryValues()[calculator.getMemoryPosition()] = calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace();
+            calculator.getMemoryValues()[calculator.getMemoryPosition()] = calculator.getTextPaneWithoutNewLineCharacters();
             calculator.getButtonMemoryRecall().setEnabled(true);
             calculator.getButtonMemoryClear().setEnabled(true);
             calculator.getButtonMemoryAddition().setEnabled(true);
@@ -487,7 +488,7 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            LOGGER.debug("textPane: '" + calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace() + "'");
+            LOGGER.debug("textPane: '" + calculator.getTextPaneWithoutNewLineCharacters() + "'");
             LOGGER.debug("memoryValues[{}] = {}",calculator.getMemoryPosition()-1, calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]);
             double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters())
                     + Double.parseDouble(calculator.getMemoryValues()[(calculator.getMemoryPosition()-1)]); // create result forced double
@@ -585,7 +586,7 @@ public class BasicPanel extends JPanel
             result /= 100;
             LOGGER.debug("result: " + result);
             calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
@@ -633,7 +634,7 @@ public class BasicPanel extends JPanel
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.formatNumber(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(false);
             }
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
@@ -672,13 +673,13 @@ public class BasicPanel extends JPanel
                 calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
                 calculator.getButtonDecimal().setEnabled(false);
             }
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.setNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-            + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()])
+            + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
             );
             calculator.confirm("Pressed " + buttonChoice);
         }
@@ -713,13 +714,13 @@ public class BasicPanel extends JPanel
             else if (result % 1 == 0)
             {
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.getButtonDecimal().setEnabled(true);
             }
             else
             {
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.formatNumber(String.valueOf(result));
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.getButtonDecimal().setEnabled(false);
             }
             calculator.setNumberNegative(false);
@@ -727,7 +728,7 @@ public class BasicPanel extends JPanel
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-            + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()])
+            + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
             );
             calculator.confirm("Pressed " + buttonChoice);
         }
@@ -764,7 +765,7 @@ public class BasicPanel extends JPanel
             calculator.setValuesPosition(0);
             calculator.setNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(true);
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
@@ -840,7 +841,7 @@ public class BasicPanel extends JPanel
                     && !calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
             {
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()].substring(0,calculator.getValues()[calculator.getValuesPosition()].length()-1);
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             }
             else if (calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
             {
@@ -852,19 +853,19 @@ public class BasicPanel extends JPanel
                     else if (calculator.isMultiplying()) calculator.setMultiplying(false);
                     else /*if (calculator.isDividing())*/ calculator.setDividing(false);
                     calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPaneWithoutAnyOperator();
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getTextPaneWithoutAnyOperator()));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getTextPaneWithoutAnyOperator()));
                 }
                 else
                 {
                     calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()].substring(0,calculator.getValues()[calculator.getValuesPosition()].length()-1);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 }
             }
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-            + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()])
+            + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
             );
             calculator.confirm("Pressed " + buttonChoice);
         }
@@ -892,7 +893,11 @@ public class BasicPanel extends JPanel
                     && !calculator.getTextPane().getText().isBlank() && !calculator.getValues()[calculator.getValuesPosition()].isBlank())
             {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, DIVISION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setDividing(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -904,12 +909,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setDividing(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setDividing(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
@@ -919,12 +924,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setDividing(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setDividing(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
@@ -934,12 +939,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setDividing(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setDividing(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty() ) //&& !calculator.getValues()[1].equals("0"))
@@ -949,7 +954,7 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setDividing(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else if (calculator.getTextPaneWithoutAnyOperator().equals(INFINITY.getValue()))
                 {
@@ -959,7 +964,7 @@ public class BasicPanel extends JPanel
                 else
                 {
                     calculator.setDividing(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank() && calculator.getValues()[0].isBlank())
@@ -968,7 +973,11 @@ public class BasicPanel extends JPanel
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.getValues()[0] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, DIVISION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setDividing(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -998,7 +1007,11 @@ public class BasicPanel extends JPanel
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
-                calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))));
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textPane changed to whole number, or int
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1006,7 +1019,11 @@ public class BasicPanel extends JPanel
             else
             {
                 LOGGER.info("We have a decimal");
-                calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(String.valueOf(result)));
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(String.valueOf(result))
+                );
                 calculator.getValues()[0] = String.valueOf(result);
             }
             calculator.confirm("Finished dividing");
@@ -1036,7 +1053,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));// textPane changed to whole number, or int
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
@@ -1048,7 +1065,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(String.valueOf(result)) + " " + continuedOperation
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(String.valueOf(result)) + " " + continuedOperation
                 );
                 calculator.getValues()[0] = String.valueOf(result);
                 calculator.getButtonDecimal().setEnabled(false);
@@ -1101,8 +1118,13 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice);
-            calculator.updateBasicHistoryPane(buttonChoice, BLANK.getValue());
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.getBasicHistoryTextPane().setText(
+            calculator.getBasicHistoryTextPane().getText() +
+            calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+            + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
+            );
             calculator.confirm("Pressed " + buttonChoice);
         }
     }
@@ -1129,7 +1151,11 @@ public class BasicPanel extends JPanel
                     && !calculator.getTextPane().getText().isBlank() && !calculator.getValues()[calculator.getValuesPosition()].isBlank())
             {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, MULTIPLICATION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setMultiplying(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -1141,12 +1167,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setMultiplying(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setMultiplying(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
@@ -1156,12 +1182,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setMultiplying(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setMultiplying(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
@@ -1171,12 +1197,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setMultiplying(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setMultiplying(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty())
@@ -1186,12 +1212,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setMultiplying(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setMultiplying(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank() && calculator.getValues()[0].isBlank())
@@ -1200,7 +1226,11 @@ public class BasicPanel extends JPanel
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.getValues()[0] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, MULTIPLICATION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setMultiplying(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -1230,15 +1260,23 @@ public class BasicPanel extends JPanel
             int wholeResult = Integer.parseInt(calculator.clearZeroesAndDecimalAtEnd(calculator.formatNumber(String.valueOf(result))));
             LOGGER.debug("Result is {} but ultimately is a whole number: {}", result, wholeResult);
             LOGGER.info("We have a whole number");
-            calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))));
-            calculator.getValues()[0] = calculator.addCourtesyCommas(String.valueOf(wholeResult));
+            calculator.getBasicHistoryTextPane().setText(
+            calculator.getBasicHistoryTextPane().getText() +
+            calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+            + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+            );
+            calculator.getValues()[0] = calculator.addCommas(String.valueOf(wholeResult));
             calculator.getButtonDecimal().setEnabled(true);
         }
         catch (NumberFormatException nfe)
         {
             calculator.logException(nfe);
             LOGGER.info("We have a decimal");
-            calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))));
+            calculator.getBasicHistoryTextPane().setText(
+            calculator.getBasicHistoryTextPane().getText() +
+            calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+            + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result)))
+            );
             calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
         }
     }
@@ -1257,7 +1295,7 @@ public class BasicPanel extends JPanel
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-            + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas((String.valueOf(wholeResult))) + " " + continuedOperation
+            + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas((String.valueOf(wholeResult))) + " " + continuedOperation
             );
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(wholeResult));
             calculator.getButtonDecimal().setEnabled(true);
@@ -1269,7 +1307,7 @@ public class BasicPanel extends JPanel
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-            + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))) + " " + continuedOperation
+            + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + MULTIPLICATION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result))) + " " + continuedOperation
             );
             calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
             calculator.getButtonDecimal().setEnabled(false);
@@ -1293,7 +1331,11 @@ public class BasicPanel extends JPanel
                     && !calculator.getTextPane().getText().isBlank() && !calculator.getValues()[calculator.getValuesPosition()].isBlank())
             {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, SUBTRACTION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setSubtracting(true);
                 calculator.setFirstNumber(false);
                 calculator.setNegating(false);
@@ -1319,12 +1361,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setSubtracting(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setSubtracting(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
@@ -1334,12 +1376,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setSubtracting(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setSubtracting(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
@@ -1349,12 +1391,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setSubtracting(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setSubtracting(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty())
@@ -1364,12 +1406,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setSubtracting(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setSubtracting(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if ((calculator.isAdding() || calculator.isSubtracting() || calculator.isMultiplying() || calculator.isDividing())
@@ -1391,7 +1433,11 @@ public class BasicPanel extends JPanel
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.getValues()[0] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, SUBTRACTION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setSubtracting(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -1419,8 +1465,12 @@ public class BasicPanel extends JPanel
             {
                 LOGGER.info("We have a whole number");
                 LOGGER.debug(calculator.getValues()[0] + " " + ADDITION.getValue() + " " + calculator.convertToPositive(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + result);
-                calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))));
-                calculator.getValues()[0] = calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)));
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                );
+                calculator.getValues()[0] = calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)));
                 calculator.setNegating(false);
                 calculator.getButtonDecimal().setEnabled(true);
             }
@@ -1428,8 +1478,12 @@ public class BasicPanel extends JPanel
             {
                 LOGGER.info("We have a decimal");
                 LOGGER.debug(calculator.getValues()[0] + " " + ADDITION.getValue() + " " + calculator.convertToPositive(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + result);
-                calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))));
-                calculator.getValues()[0] = calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result)));
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result)))
+                );
+                calculator.getValues()[0] = calculator.addCommas(calculator.formatNumber(String.valueOf(result)));
                 calculator.setNegating(false);
                 calculator.getButtonDecimal().setEnabled(false);
             }
@@ -1440,16 +1494,24 @@ public class BasicPanel extends JPanel
             {
                 LOGGER.info("We have a whole number");
                 LOGGER.debug(calculator.getValues()[0] + " " + SUBTRACTION.getValue() + " " + calculator.getValues()[1] + " " + EQUALS.getValue() + " " + result);
-                calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))));
-                calculator.getValues()[0] = calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)));
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                );
+                calculator.getValues()[0] = calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)));
                 calculator.getButtonDecimal().setEnabled(true);
             }
             else
             {
                 LOGGER.info("We have a decimal");
                 LOGGER.debug(calculator.getValues()[0] + " " + SUBTRACTION.getValue() + " " + calculator.getValues()[1] + " " + EQUALS.getValue() + " " + result);
-                calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))));
-                calculator.getValues()[0] = calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result)));
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result)))
+                );
+                calculator.getValues()[0] = calculator.addCommas(calculator.formatNumber(String.valueOf(result)));
                 calculator.getButtonDecimal().setEnabled(false);
             }
         }
@@ -1467,7 +1529,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1478,7 +1540,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1492,7 +1554,7 @@ public class BasicPanel extends JPanel
                     calculator.getBasicHistoryTextPane().setText(
                     calculator.getBasicHistoryTextPane().getText() +
                     calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                    + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.convertToPositive(calculator.getValues()[1])) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
+                    + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.convertToPositive(calculator.getValues()[1])) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
                     );
                     calculator.setNegating(false);
                     calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
@@ -1505,7 +1567,7 @@ public class BasicPanel extends JPanel
                     calculator.getBasicHistoryTextPane().setText(
                     calculator.getBasicHistoryTextPane().getText() +
                     calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                    + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
+                    + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
                     );
                     calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                     calculator.getButtonDecimal().setEnabled(true);
@@ -1520,7 +1582,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1531,7 +1593,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1545,7 +1607,7 @@ public class BasicPanel extends JPanel
                     calculator.getBasicHistoryTextPane().setText(
                     calculator.getBasicHistoryTextPane().getText() +
                     calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                    + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.convertToPositive(calculator.getValues()[1])) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))) + " " + continuedOperation
+                    + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.convertToPositive(calculator.getValues()[1])) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result))) + " " + continuedOperation
                     );
                     calculator.setNegating(false);
                     calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
@@ -1558,7 +1620,7 @@ public class BasicPanel extends JPanel
                     calculator.getBasicHistoryTextPane().setText(
                     calculator.getBasicHistoryTextPane().getText() +
                     calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                    + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))) + " " + continuedOperation
+                    + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + SUBTRACTION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result))) + " " + continuedOperation
                     );
                     calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
                     calculator.getButtonDecimal().setEnabled(false);
@@ -1589,7 +1651,11 @@ public class BasicPanel extends JPanel
                     && !calculator.getTextPane().getText().isBlank() && !calculator.getValues()[calculator.getValuesPosition()].isBlank())
             {
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, MULTIPLICATION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setAdding(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -1601,12 +1667,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMaximumValue()) // we can add to the minimum number, not to the maximum
                 {
                     calculator.setAdding(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setAdding(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isSubtracting() && !calculator.getValues()[1].isEmpty())
@@ -1616,12 +1682,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setAdding(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setAdding(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isMultiplying() && !calculator.getValues()[1].isEmpty())
@@ -1631,12 +1697,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setAdding(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setAdding(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (calculator.isDividing() && !calculator.getValues()[1].isEmpty())
@@ -1646,12 +1712,12 @@ public class BasicPanel extends JPanel
                 if (calculator.isMinimumValue() || calculator.isMaximumValue())
                 {
                     calculator.setAdding(false);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]));
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
                 }
                 else
                 {
                     calculator.setAdding(true);
-                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + buttonChoice);
+                    calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice);
                 }
             }
             else if (!calculator.getTextPaneWithoutNewLineCharacters().isBlank() && calculator.getValues()[0].isBlank())
@@ -1660,7 +1726,11 @@ public class BasicPanel extends JPanel
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.getValues()[0] = calculator.getTextPaneWithoutNewLineCharacters();
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[0] + " " + buttonChoice);
-                calculator.updateBasicHistoryPane(buttonChoice, ADDITION.getValue());
+                calculator.getBasicHistoryTextPane().setText(
+                calculator.getBasicHistoryTextPane().getText() +
+                calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + buttonChoice
+                );
                 calculator.setAdding(true);
                 calculator.setFirstNumber(false);
                 calculator.setValuesPosition(calculator.getValuesPosition() + 1);
@@ -1691,16 +1761,24 @@ public class BasicPanel extends JPanel
         if (result % 1 == 0)
         {
             LOGGER.info("We have a whole number");
-            calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))));
+            calculator.getBasicHistoryTextPane().setText(
+            calculator.getBasicHistoryTextPane().getText() +
+            calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+            + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+            );
             calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
             calculator.getButtonDecimal().setEnabled(true);
         }
         else
         {
             LOGGER.info("We have a decimal");
-            calculator.updateBasicHistoryPane(EQUALS.getValue(), calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result))));
+            calculator.getBasicHistoryTextPane().setText(
+            calculator.getBasicHistoryTextPane().getText() +
+            calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
+            + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result)))
+            );
             calculator.getButtonDecimal().setEnabled(false);
-            calculator.getValues()[0] = calculator.addCourtesyCommas(calculator.formatNumber(String.valueOf(result)));
+            calculator.getValues()[0] = calculator.addCommas(calculator.formatNumber(String.valueOf(result)));
         }
     }
     private void addition(String continuedOperation)
@@ -1717,7 +1795,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1728,7 +1806,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1739,7 +1817,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result))) + " " + continuedOperation
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1753,7 +1831,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1764,7 +1842,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                 + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
+                 + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result)))
                 );
                 calculator.getValues()[0] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(true);
@@ -1775,7 +1853,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCourtesyCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCourtesyCommas(String.valueOf(result)) + " " + continuedOperation
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + ADDITION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(String.valueOf(result)) + " " + continuedOperation
                 );
                 calculator.getValues()[0] = calculator.formatNumber(String.valueOf(result));
                 calculator.getButtonDecimal().setEnabled(false);
@@ -1808,7 +1886,7 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()])
+                + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
                 );
             }
             else
@@ -1818,10 +1896,10 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()])
+                + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
                 );
             }
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             calculator.confirm("Pressed " + buttonChoice);
         }
     }
@@ -1840,7 +1918,11 @@ public class BasicPanel extends JPanel
         {
             LOGGER.info("Basic dot operations");
             performDecimal(buttonChoice);
-            calculator.updateBasicHistoryPane(buttonChoice, BLANK.getValue());
+            calculator.getBasicHistoryTextPane().setText(
+            calculator.getBasicHistoryTextPane().getText() +
+            calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+            + " Result: " + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])
+            );
             calculator.confirm("Pressed " + buttonChoice);
         }
     }
@@ -1850,13 +1932,21 @@ public class BasicPanel extends JPanel
      */
     private void performDecimal(String buttonChoice)
     {
-        if (calculator.getValues()[calculator.getValuesPosition()].isBlank())
+        if (calculator.getValues()[calculator.getValuesPosition()].isBlank() && !calculator.isNegating())
         {
             calculator.getValues()[calculator.getValuesPosition()] = ZERO.getValue() + DECIMAL.getValue();
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + ZERO.getValue() + DECIMAL.getValue());
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
+        }
+        else if (calculator.getValues()[calculator.getValuesPosition()].isBlank() && calculator.isNegating())
+        {
+            calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + ZERO.getValue() + DECIMAL.getValue();
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.getValues()[calculator.getValuesPosition()]);
         }
         else
-        { calculator.updateValuesAtPositionThenUpdateTextPane(buttonChoice); }
+        {
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+        }
         calculator.getButtonDecimal().setEnabled(false); // deactivate button now that its active for this number
     }
 
@@ -1871,7 +1961,7 @@ public class BasicPanel extends JPanel
         String operator = determineIfBasicPanelOperatorWasPushed();
         determineAndPerformBasicCalculatorOperation();
         if (!operator.isEmpty() && !calculator.textPaneContainsBadText())
-        { calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCourtesyCommas(calculator.getValues()[0])); }
+        { calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0])); }
         calculator.getValues()[0] = BLANK.getValue();
         calculator.getValues()[1] = BLANK.getValue();
         calculator.setFirstNumber(false);

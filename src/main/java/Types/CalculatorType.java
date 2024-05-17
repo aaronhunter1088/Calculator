@@ -2,6 +2,8 @@ package Types;
 
 /**
  * The different types of Calculators available
+ * CalculatorType.name() returns ENUM value
+ * CalculatorType.getValue() returns ENUM("thisValue")
  */
 public enum CalculatorType
 {

@@ -24,8 +24,9 @@ import static org.mockito.Mockito.mock;
 import static Types.DateOperation.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DatePanelTest {
-
+public class DatePanelTest
+{
+    static { System.setProperty("appName", "DatePanelTest"); }
     private static DatePanel testTheDatePanel;
 
     @Mock
@@ -33,7 +34,6 @@ public class DatePanelTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        System.setProperty("appName", "DatePanelTest");
         Calculator calculator = new Calculator(ADD_SUBTRACT_DAYS);
         testTheDatePanel = (DatePanel) calculator.getCurrentPanel();
     }

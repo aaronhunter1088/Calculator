@@ -17,12 +17,18 @@ import static Types.Texts.*;
  */
 public class CalculatorMain
 {
-    static { System.setProperty("appName", "Runnables.CalculatorMain"); }
+    static { System.setProperty("appName", "Calculator"); }
     private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class.getSimpleName());
 
 	public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting calculator...");
+        String logLevel = System.getenv("logLevel");
+        if (null == logLevel) {
+            LOGGER.warn("Set env.logLevel. Using default:all");
+        } else {
+            LOGGER.info(System.getenv("logLevel"));
+        }
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
             try {
@@ -44,18 +50,12 @@ public class CalculatorMain
                 calculator.pack();
                 calculator.setVisible(true);
                 calculator.confirm(calculator.getCalculatorType().getValue() + " Calculator started");
-                String logLevel = System.getenv("logLevel");
-                if (null == logLevel) {
-                    LOGGER.warn("Set env.logLevel. Using default:all");
-                } else {
-                    LOGGER.info(System.getenv("logLevel"));
-                }
-
             }
             catch (Exception e) {
                 System.err.printf("Could not create Calculator bc " + e.getMessage());
             }
         });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.info("Closing Calculator")));
     }
 }
 /*

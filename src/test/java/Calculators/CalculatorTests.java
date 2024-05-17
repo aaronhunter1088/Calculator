@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.invocation.InvocationOnMock;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +24,7 @@ import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
 import static Types.ConverterType.*;
 import static Types.DateOperation.*;
+import static Types.Texts.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -29,10 +32,12 @@ public class CalculatorTests
 {
     static { System.setProperty("appName", "CalculatorTests"); }
     private static Logger LOGGER;
-    private static Calculator calculator;
+    private Calculator calculator;
 
     @Mock
     ActionEvent actionEvent;
+    @Spy
+    Calculator calculatorSpy;
 
     @BeforeClass
     public static void beforeAll()
@@ -47,6 +52,8 @@ public class CalculatorTests
     {
         LOGGER.info("setting up each before...");
         MockitoAnnotations.initMocks(this);
+        calculator = new Calculator();
+        calculatorSpy = spy(calculator);
     }
 
     @After
@@ -208,7 +215,7 @@ public class CalculatorTests
     @Test
     public void testIsPositiveReturnsTrue()
     {
-        assertTrue("IsPositive did not return true", calculator.isPositiveNumber("6"));
+        assertTrue("IsPositive did not return true", calculator.isPositiveNumber(SIX.getValue()));
     }
 
     @Test
@@ -226,23 +233,23 @@ public class CalculatorTests
     @Test
     public void testIsNegativeReturnsFalse()
     {
-        assertFalse("IsNegative did not return false", calculator.isNegativeNumber("6"));
+        assertFalse("IsNegative did not return false", calculator.isNegativeNumber(SIX.getValue()));
     }
 
     @Test
     public void testIsDecimalReturnsTrue()
     {
-        assertTrue("Number should contain the '.'", calculator.isDecimal("5.02"));
+        assertTrue("Number should contain the decimal", calculator.isDecimal("5.02"));
     }
 
     @Test
     public void testIsDecimalReturnsFalse()
     {
-        assertFalse("Number should not contain the '.'", calculator.isDecimal("5"));
+        assertFalse("Number should not contain the decimal", calculator.isDecimal(FIVE.getValue()));
     }
 
     @Test
-    public void methodResetOperatorsWithTrueResultsInAllOperatorsBeingTrue()
+    public void methodResetCalculatorOperationsWithTrueResultsInAllOperatorsBeingTrue()
     {
         calculator.resetBasicOperators(true);
         assertTrue("isAdding() is not true", calculator.isAdding());
@@ -252,7 +259,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void methodResetOperatorsWithFalseResultsInAllOperatorsBeingFalse()
+    public void methodResetCalculatorOperationsWithFalseResultsInAllOperatorsBeingFalse()
     {
         calculator.resetBasicOperators(false);
         assertFalse("isAdding() is not false", calculator.isAdding());
@@ -262,20 +269,26 @@ public class CalculatorTests
     }
 
     @Test
-    public void methodResetOperatorsWhenValuesAt0IsNotADecimal() throws Exception
+    public void methodResetCalculatorOperationsWithFalse()
     {
-        calculator = new Calculator();
-        calculator.getValues()[0] = "5";
+        calculator.getValues()[0] = FIVE.getValue();
         boolean resetResult = calculator.resetCalculatorOperations(false);
         assertTrue("Expected result to be true", resetResult);
-        assertTrue("Expected dot not to be enabled", calculator.isDotPressed());
-        assertTrue("Expected dot button to be enabled", calculator.getButtonDecimal().isEnabled());
+        assertTrue("Expected decimal to be disabled", calculator.isDotPressed());
     }
 
     @Test
-    public void testSetImageIconsWorksAsExpected() throws Exception
+    public void methResetCalculatorOperationsWithTrue()
     {
-        calculator = new Calculator();
+        calculator.getValues()[0] = FIVE.getValue();
+        boolean resetResult = calculator.resetCalculatorOperations(true);
+        assertFalse("Expected result to be false", resetResult);
+        assertTrue("Expected decimal to be enabled", calculator.isDotPressed());
+    }
+
+    @Test
+    public void testSetImageIconsWorksAsExpected()
+    {
         assertNotNull("Expected calculator image", calculator.getCalculatorIcon());
         assertNotNull("Expected mac icon", calculator.getMacIcon());
         assertNotNull("Expected windows icon", calculator.getWindowsIcon());
@@ -283,42 +296,40 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromProgrammerToBasicSwitchesPanels() throws Exception
+    public void switchingFromProgrammerToBasicSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(BASIC.getValue());
-        calculator = new Calculator(PROGRAMMER);
+        calculator.setCalculatorType(PROGRAMMER);
+        calculator.updateJPanel(new ProgrammerPanel());
         calculator.getTextPane().setText("00000100");
-        calculator.getValues()[0]= "4";
+        calculator.getValues()[0]= FOUR.getValue();
         assertEquals("Expected textPane to show Binary representation", "00000100", calculator.getTextPaneWithoutNewLineCharacters());
 
         calculator.switchPanels(actionEvent);
-        assertEquals("Expected textPane to show Decimal representation", "4", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected name to be Basic", BASIC.getValue(), calculator.getTitle());
         assertTrue("Expected BasicPanel", calculator.getCurrentPanel() instanceof BasicPanel);
     }
 
     @Test
-    public void switchingFromBasicToProgrammerSwitchesPanels() throws Exception
+    public void switchingFromBasicToProgrammerSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(PROGRAMMER.getValue());
-        calculator = new Calculator();
-        calculator.getTextPane().setText("4");
-        calculator.getValues()[0]= "4";
-        assertEquals("Expected textPane to show Decimal representation", "4", calculator.getTextPaneWithoutNewLineCharacters());
+        calculator.getTextPane().setText(FOUR.getValue());
+        calculator.getValues()[0]= FOUR.getValue();
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
 
         calculator.switchPanels(actionEvent);
-        assertEquals("Expected textPane to show Decimal representation", "4", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected name to be Programmer", PROGRAMMER.getValue(), calculator.getTitle());
         assertTrue("Expected ProgrammerPanel", calculator.getCurrentPanel() instanceof ProgrammerPanel);
     }
 
     @Test
-    public void switchingFromBasicToDateSwitchesPanels() throws Exception
+    public void switchingFromBasicToDateSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(DATE.getValue());
-        calculator = new Calculator();
         assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
-
         calculator.switchPanels(actionEvent);
         assertEquals("Expected DATE CalculatorType", DATE, calculator.getCalculatorType());
         assertEquals("Expected name to be Date", DATE.getValue(), calculator.getTitle());
@@ -326,10 +337,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToAngleConverterSwitchesPanels() throws Exception
+    public void switchingFromBasicToAngleConverterSwitchesPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ANGLE.getName());
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
 
         calculator.switchPanels(actionEvent);
@@ -339,10 +349,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToAreaConverterSwitchesPanels() throws Exception
+    public void switchingFromBasicToAreaConverterSwitchesPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn(AREA.getName());
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(AREA.getValue());
         assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
 
         calculator.switchPanels(actionEvent);
@@ -352,25 +361,25 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromSomePanelToSamePanelDoesNotSwitchPanels() throws Exception
+    public void switchingFromSomePanelToSamePanelDoesNotSwitchPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn("Basic");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(BASIC.getValue());
         BasicPanel panel = (BasicPanel) calculator.getCurrentPanel();
-        calculator.getTextPane().setText("4");
-        calculator.getValues()[0]= "4";
-        assertEquals("Expected textPane to show Decimal representation", "4", calculator.getTextPaneWithoutNewLineCharacters());
+        calculator.getTextPane().setText(FOUR.getValue());
+        calculator.getValues()[0]= FOUR.getValue();
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
 
         calculator.switchPanels(actionEvent);
         assertEquals("Expected the same panel", panel, calculator.getCurrentPanel());
-        assertEquals("Expected textPane to show Decimal representation", "4", calculator.getTextPaneWithoutNewLineCharacters());
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
     }
 
     @Test
-    public void switchingFromSomeConverterToSameConverterDoesNotSwitchPanels() throws Exception
+    public void switchingFromSomeConverterToSameConverterDoesNotSwitchPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn("Angle");
-        calculator = new Calculator(CONVERTER);
+        when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
+        calculator.setCalculatorType(CONVERTER);
+        calculator.updateJPanel(new ConverterPanel());
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
         assertEquals("Expected converterType to be ANGLE", ANGLE, calculator.getConverterType());
 
@@ -380,13 +389,12 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToMetalLookAndFeel() throws Exception
+    public void switchingToMetalLookAndFeel()
     {
-        calculator = new Calculator();
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for(Component menuItem : lookMenuItems)
         {
-            if ("Metal".equals(menuItem.getName()))
+            if (METAL.getValue().equals(menuItem.getName()))
             {
                 Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
                     listener.actionPerformed(actionEvent);
@@ -399,12 +407,12 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToSystemLookAndFeel() throws Exception {
-        calculator = new Calculator();
+    public void switchingToSystemLookAndFeel()
+    {
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
-            if ("System".equals(menuItem.getName()))
+            if (SYSTEM.getValue().equals(menuItem.getName()))
             {
                 Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
                     listener.actionPerformed(actionEvent);
@@ -419,12 +427,12 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToWindowsLookAndFeel() throws Exception {
-        calculator = new Calculator();
+    public void switchingToWindowsLookAndFeel()
+    {
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
-            if ("Windows".equals(menuItem.getName()))
+            if (WINDOWS.getValue().equals(menuItem.getName()))
             {
                 Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
                     listener.actionPerformed(actionEvent);
@@ -438,13 +446,12 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToMotifLookAndFeel() throws Exception
+    public void switchingToMotifLookAndFeel()
     {
-        calculator = new Calculator();
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for(Component menuItem : lookMenuItems)
         {
-            if ("Motif".equals(menuItem.getName()))
+            if (MOTIF.getValue().equals(menuItem.getName()))
             {
                 Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
                     listener.actionPerformed(actionEvent);
@@ -457,13 +464,12 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToGTKLookAndFeel() throws Exception
+    public void switchingToGTKLookAndFeel()
     {
-        calculator = new Calculator();
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
-            if ("GTK".equals(menuItem.getName()))
+            if (GTK.getValue().equals(menuItem.getName()))
             {
                 Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
                     listener.actionPerformed(actionEvent);
@@ -477,12 +483,11 @@ public class CalculatorTests
     }
 
     @Test
-    public void testResetValues() throws Exception
+    public void testResetValues()
     {
-        calculator = new Calculator();
         calculator.values[0] = "15";
         calculator.values[1] = "26";
-        calculator.values[2] = "5";
+        calculator.values[2] = FIVE.getValue();
 
         assertEquals("Expected values[0] to be 15", 15, Integer.parseInt(calculator.getValues()[0]));
         assertEquals("Expected values[1] to be 26", 26, Integer.parseInt(calculator.getValues()[1]));
@@ -496,24 +501,22 @@ public class CalculatorTests
     }
 
     @Test
-    public void testClearNumberButtonActions() throws Exception
+    public void testClearNumberButtonActions()
     {
-        calculator = new Calculator();
-        calculator.getNumberButtons().forEach(numberButton -> {
+        calculator.getAllNumberButtons().forEach(numberButton -> {
             assertSame("Expecting only 1 action on " + numberButton.getName(), 1, numberButton.getActionListeners().length);
         });
 
         calculator.clearNumberButtonActions();
 
-        calculator.getNumberButtons().forEach(numberButton -> {
+        calculator.getAllNumberButtons().forEach(numberButton -> {
             assertSame("Expecting no actions on " + numberButton.getName(), 0, numberButton.getActionListeners().length);
         });
     }
 
     @Test
-    public void testClearAllOtherBasicCalculatorButtons() throws Exception
+    public void testClearAllOtherBasicCalculatorButtons()
     {
-        calculator = new Calculator();
         calculator.getAllBasicOperatorButtons().forEach(otherButton -> {
             assertSame("Expecting only 1 action on " + otherButton.getName(), 1, otherButton.getActionListeners().length);
         });
@@ -526,9 +529,8 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfAddingOperatorWasPushed() throws Exception
+    public void testDetermineIfAddingOperatorWasPushed()
     {
-        calculator = new Calculator();
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         calculator.setAdding(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
@@ -539,9 +541,8 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfSubtractingOperatorWasPushed() throws Exception
+    public void testDetermineIfSubtractingOperatorWasPushed()
     {
-        calculator = new Calculator();
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         calculator.setSubtracting(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
@@ -552,9 +553,8 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfMultiplyingOperatorWasPushed() throws Exception
+    public void testDetermineIfMultiplyingOperatorWasPushed()
     {
-        calculator = new Calculator();
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         calculator.setMultiplying(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
@@ -565,9 +565,8 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfDividingOperatorWasPushed() throws Exception
+    public void testDetermineIfDividingOperatorWasPushed()
     {
-        calculator = new Calculator();
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         calculator.setDividing(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
@@ -578,10 +577,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testResetOperatorIfClause() throws Exception
+    public void testResetOperatorIfClause()
     {
-        when(actionEvent.getActionCommand()).thenReturn(".");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(DECIMAL.getValue());
         calculator.setAdding(true);
         ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
@@ -596,10 +594,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testResetOperatorElseClause() throws Exception
+    public void testResetOperatorElseClause()
     {
-        when(actionEvent.getActionCommand()).thenReturn(".");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(DECIMAL.getValue());
         calculator.setAdding(false);
         ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonActions(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
@@ -617,39 +614,35 @@ public class CalculatorTests
     @Test
     public void testIsMemoryValuesEmptyIsTrue() throws Exception
     {
-        calculator = new Calculator();
         assertTrue(calculator.isMemoryValuesEmpty());
     }
 
     @Test
-    public void testIsMemoryValuesEmptyIsFalseForBasicCalculator() throws Exception
+    public void testIsMemoryValuesEmptyIsFalseForBasicCalculator()
     {
-        calculator = new Calculator();
-        calculator.getTextPane().setText("5");
-        calculator.getMemoryValues()[0] = "5";
+        calculator.getTextPane().setText(FIVE.getValue());
+        calculator.getMemoryValues()[0] = FIVE.getValue();
         calculator.setMemoryPosition(1);
         assertFalse(calculator.isMemoryValuesEmpty());
         calculator.confirm("Test: isMemoryValuesEmpty -> False");
     }
 
     @Test
-    public void testIsMemoryValuesEmptyIsFalseForProgrammerCalculator() throws Exception
+    public void testIsMemoryValuesEmptyIsFalseForProgrammerCalculator()
     {
-        calculator = new Calculator(PROGRAMMER);
-        calculator.getTextPane().setText("5");
-        calculator.getMemoryValues()[0] = "5";
+        calculator.setCalculatorType(PROGRAMMER);
+        calculator.getTextPane().setText(FIVE.getValue());
+        calculator.getMemoryValues()[0] = FIVE.getValue();
         calculator.setMemoryPosition(1);
         assertFalse(calculator.isMemoryValuesEmpty());
-        calculator.confirm("Test: isMemoryValuesEmpty -> False");
     }
 
     @Test
-    public void testInitialChecksIfClause() throws Exception
+    public void testInitialChecksIfClause()
     {
-        calculator = new Calculator();
-        calculator.getValues()[0] = "Not a Number";
-        calculator.getTextPane().setText("Not a Number");
-        assertEquals("Expected error message in textPane", "Not a Number", calculator.getTextPaneWithoutNewLineCharacters());
+        calculator.getValues()[0] = NOT_A_NUMBER.getValue();
+        calculator.getTextPane().setText(NOT_A_NUMBER.getValue());
+        assertEquals("Expected error message in textPane", NOT_A_NUMBER.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
 
         calculator.performInitialChecks();
 
@@ -662,15 +655,14 @@ public class CalculatorTests
     }
 
     @Test
-    public void testInitialChecksElseIf1Clause() throws Exception
+    public void testInitialChecksElseIf1Clause()
     {
-        calculator = new Calculator();
-        calculator.values[0] = "0";
-        calculator.getTextPane().setText(calculator.addNewLineCharacters() + "0");
+        calculator.values[0] = ZERO.getValue();
+        calculator.getTextPane().setText(calculator.addNewLineCharacters() + ZERO.getValue());
 
-        assertEquals("Expected textPane to contain 0", "0", calculator.getTextPaneWithoutAnyOperator());
-        assertEquals("Expected BASIC CalculatorType", "Basic", calculator.getCalculatorType().getValue());
-        assertEquals("Expected values[0] to be 0", "0", calculator.getValues()[0]);
+        assertEquals("Expected textPane to contain 0", ZERO.getValue(), calculator.getTextPaneWithoutAnyOperator());
+        assertEquals("Expected BASIC CalculatorType", BASIC.getValue(), calculator.getCalculatorType().getValue());
+        assertEquals("Expected values[0] to be 0", ZERO.getValue(), calculator.getValues()[0]);
 
         calculator.performInitialChecks();
 
@@ -682,10 +674,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testInitialChecksElseIf2Clause() throws Exception
+    public void testInitialChecksElseIf2Clause()
     {
-        calculator = new Calculator();
-        calculator.values[0] = "";
+        calculator.values[0] = BLANK.getValue();
         calculator.values[1] = "15";
         calculator.setValuesPosition(1);
 
@@ -701,58 +692,55 @@ public class CalculatorTests
     }
 
     @Test
-    public void testInitialChecksDoesNotEnterAnyClause() throws Exception
+    public void testInitialChecksDoesNotEnterAnyClause()
     {
-        calculator = new Calculator();
-        calculator.getTextPane().setText("5");
+        calculator.getTextPane().setText(FIVE.getValue());
         calculator.performInitialChecks();
     }
 
     @Test
-    public void testTextPaneContainsBadTextTrue() throws Exception
+    public void testTextPaneContainsBadTextTrue()
     {
-        calculator = new Calculator();
-        calculator.getTextPane().setText("Not a Number");
+        calculator.getTextPane().setText(NOT_A_NUMBER.getValue());
         assertTrue("Expected textPane to contain error", calculator.textPaneContainsBadText());
     }
 
     @Test
-    public void testTextPaneContainsBadTextFalse() throws Exception
+    public void testTextPaneContainsBadTextFalse()
     {
-        calculator = new Calculator();
-        calculator.getTextPane().setText("5");
+        calculator.getTextPane().setText(FIVE.getValue());
         assertFalse("Expected textPane to contain valid text", calculator.textPaneContainsBadText());
     }
 
     @Test
-    public void testConfirmCalledForDatePanelWithDateOperation2() throws Exception
+    public void testConfirmCalledForDatePanelWithDateOperation2()
     {
-        calculator = new Calculator(ADD_SUBTRACT_DAYS);
+        calculator.setCalculatorType(DATE);
+        calculator.setDateOperation(ADD_SUBTRACT_DAYS);
+        calculator.updateJPanel(new ProgrammerPanel());
         calculator.confirm("Test: Confirm called");
     }
 
     @Test
-    public void testAddNewLineCharactersForBasicPanelAdds1NewLine() throws Exception
+    public void testAddNewLineCharactersForBasicPanelAdds1NewLine()
     {
-        calculator = new Calculator();
         String newLines = calculator.addNewLineCharacters();
-        assertSame(1, newLines.split("").length);
+        assertSame(1, newLines.split(BLANK.getValue()).length);
     }
 
     @Test
-    public void testAddNewLineCharactersForProgrammerPanelAdds3NewLines() throws Exception
+    public void testAddNewLineCharactersForProgrammerPanelAdds3NewLines()
     {
-        calculator = new Calculator(PROGRAMMER);
+        calculator.updateJPanel(new ProgrammerPanel());
         String newLines = calculator.addNewLineCharacters();
-        assertSame(3, newLines.split("").length);
+        assertSame(3, newLines.split(BLANK.getValue()).length);
     }
 
     @Test
-    public void testDynamicAddNewLineCharacters() throws Exception
+    public void testDynamicAddNewLineCharacters()
     {
-        calculator = new Calculator();
         String newLines = calculator.addNewLineCharacters(10);
-        assertSame(10, newLines.split("").length);
+        assertSame(10, newLines.split(BLANK.getValue()).length);
     }
 
     @Test
@@ -762,16 +750,16 @@ public class CalculatorTests
         assertNotNull("About Calculator is not set on Basic Calculator", helpMe);
 
         helpMe = new Calculator(PROGRAMMER).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_BINARY.getName(), helpMe);
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_BINARY.getValue(), helpMe);
 
         helpMe = new Calculator(BASE_OCTAL).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_OCTAL.getName(), helpMe);
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_OCTAL.getValue(), helpMe);
 
         helpMe = new Calculator(BASE_DECIMAL).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_DECIMAL.getName(), helpMe);
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_DECIMAL.getValue(), helpMe);
 
         helpMe = new Calculator(BASE_HEXADECIMAL).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_HEXADECIMAL.getName(), helpMe);
+        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_HEXADECIMAL.getValue(), helpMe);
 
         helpMe = new Calculator(DATE).getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Date Calculator Type:"+DIFFERENCE_BETWEEN_DATES, helpMe);
@@ -783,58 +771,53 @@ public class CalculatorTests
         assertNotNull("About Calculator is not set on Converter Calculator Type:"+ANGLE, helpMe);
 
         helpMe = new Calculator(AREA).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Converter Calculator Type:"+AREA.getName(), helpMe);
+        assertNotNull("About Calculator is not set on Converter Calculator Type:"+AREA.getValue(), helpMe);
     }
 
     @Test
-    public void testAboutCalculatorOpensAboutCalculatorPanel() throws Exception
+    public void testAboutCalculatorOpensAboutCalculatorPanel()
     {
-        calculator = new Calculator();
-        calculator.performAboutCalculatorFunctionality(actionEvent);
+        calculator.performAboutCalculatorAction(actionEvent);
     }
 
     @Test
-    public void testGetTheNumberToTheLeftOfTheDecimal() throws Exception
+    public void testGetTheNumberToTheLeftOfTheDecimal()
     {
-        calculator = new Calculator();
         assertEquals("123", calculator.getNumberOnLeftSideOfDecimal("123.456"));
     }
 
     @Test
-    public void testGetTheNumberToTheRightOfTheDecimal() throws Exception
+    public void testGetTheNumberToTheRightOfTheDecimal()
     {
-        calculator = new Calculator();
         assertEquals("456", calculator.getNumberOnRightSideOfDecimal("123.456"));
     }
 
     @Test
-    public void testCopy() throws Exception
+    public void testCopy()
     {
-        calculator = new Calculator();
-        calculator.getTextPane().setText("5");
+        calculator.getTextPane().setText(FIVE.getValue());
         assertTrue("Expected values[2] to be blank", calculator.getValues()[2].isBlank());
 
-        calculator.performCopyFunctionality(actionEvent);
+        calculator.performCopyAction(actionEvent);
         assertFalse("Expected values[2] to be 5", calculator.getValues()[2].isBlank());
-        assertEquals("Expected values[2] to be 5", "5", calculator.getValues()[2]);
+        assertEquals("Expected values[2] to be 5", FIVE.getValue(), calculator.getValues()[2]);
     }
 
     @Test
-    public void testPaste() throws Exception
+    public void testPaste()
     {
-        calculator = new Calculator();
-        calculator.performPasteFunctionality(actionEvent);
+        calculator.performPasteAction(actionEvent);
         assertTrue("Expected values[2] to be blank", calculator.getValues()[2].isBlank());
 
         calculator.values[2] = "10";
-        calculator.getTextPane().setText(calculator.addNewLineCharacters() + "5");
+        calculator.getTextPane().setText(calculator.addNewLineCharacters() + FIVE.getValue());
 
-        calculator.performPasteFunctionality(actionEvent);
+        calculator.performPasteAction(actionEvent);
         assertEquals("Expected textPane to be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[0] to be 10", "10", calculator.getValues()[0]);
 
         calculator.setValuesPosition(1);
-        calculator.performPasteFunctionality(actionEvent);
+        calculator.performPasteAction(actionEvent);
         assertEquals("Expected textPane to be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
         assertEquals("Expected values[1] to be 10", "10", calculator.getValues()[0]);
 
@@ -843,16 +826,14 @@ public class CalculatorTests
     @Test
     public void testClearingZeroesAtTheEnd() throws Exception
     {
-        calculator = new Calculator();
         calculator.getValues()[0] = "15.0";
         assertEquals("Expected values[0] to be 15", "15", calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]));
     }
 
     @Test
-    public void testAddCourtesyCommasAddsNoCommas() throws Exception
+    public void testAddCourtesyCommasAddsNoCommas()
     {
-        when(actionEvent.getActionCommand()).thenReturn("5");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
         calculator.getValues()[0] = "2";
         ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertFalse("Expected no commas", calculator.getValues()[0].contains("_"));
@@ -860,10 +841,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber() throws Exception
+    public void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber()
     {
-        when(actionEvent.getActionCommand()).thenReturn("5");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
         calculator.getValues()[0] = "999";
         ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertTrue("Expected textPane to be 9,995", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
@@ -871,10 +851,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber() throws Exception
+    public void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber()
     {
-        when(actionEvent.getActionCommand()).thenReturn("5");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
         calculator.getValues()[0] = "1234";
         ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertTrue("Expected textPane to be 12,345", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
@@ -882,10 +861,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber() throws Exception
+    public void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber()
     {
-        when(actionEvent.getActionCommand()).thenReturn("6");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(SIX.getValue());
         calculator.getValues()[0] = "12345";
         ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertTrue("Expected textPane to be 123,456", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
@@ -893,10 +871,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDeletingADigitAdjustsCourtesyCommas() throws Exception
+    public void testDeletingADigitAdjustsCourtesyCommas()
     {
-        when(actionEvent.getActionCommand()).thenReturn("←");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(DELETE.getValue());
         calculator.getValues()[0] = "12345";
         calculator.getTextPane().setText("12345");
         ((BasicPanel)calculator.getCurrentPanel()).performDeleteButtonActions(actionEvent);
@@ -905,10 +882,9 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasReturnsResultWithTwoCommas7DigitsWholeNumber() throws Exception
+    public void testAddCourtesyCommasReturnsResultWithTwoCommas7DigitsWholeNumber()
     {
-        when(actionEvent.getActionCommand()).thenReturn("7");
-        calculator = new Calculator();
+        when(actionEvent.getActionCommand()).thenReturn(SEVEN.getValue());
         calculator.getValues()[0] = "123456";
         ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
         assertTrue("Expected textPane to be 1,234,567", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
@@ -916,28 +892,119 @@ public class CalculatorTests
     }
 
     @Test
-    public void testCheckValueLength() throws Exception
+    public void testCheckValueLength()
     {
-        calculator = new Calculator();
         calculator.values[0] = "9999998";
         assertTrue("Expected max length to be met", calculator.checkValueLength());
         assertFalse("Expected max number to not be met", calculator.isMaximumValue());
     }
 
     @Test
-    public void testIsMinimumNumber() throws Exception
+    public void testValueAt0IsMinimumNumber()
     {
-        calculator = new Calculator();
         calculator.values[0] = "0.0000001";
         assertTrue("Expected maximum number to be met", calculator.isMinimumValue());
     }
 
     @Test
-    public void testIsMaximumNumber() throws Exception
+    public void testValueAt1IsMinimumNumber()
     {
-        calculator = new Calculator();
+        calculator.values[1] = "0.0000001";
+        assertTrue("Expected maximum number to be met", calculator.isMinimumValue());
+    }
+
+    @Test
+    public void testValueIsMinimumNumber()
+    {
+        calculator.getValues()[0] = "0.0000001";
+        assertTrue("Expected maximum number to be met", calculator.isMinimumValue(calculator.getValues()[0]));
+    }
+
+    @Test
+    public void testValuesAt0IsMaximumNumber()
+    {
         calculator.values[0] = "9999999";
         assertTrue("Expected maximum number to be met", calculator.isMaximumValue());
+    }
+
+    @Test
+    public void testValuesAt1IsMaximumNumber()
+    {
+        calculator.values[1] = "9999999";
+        assertTrue("Expected maximum number to be met", calculator.isMaximumValue());
+    }
+
+    @Test
+    public void testValueIsMaximumNumber()
+    {
+        calculator.values[0] = "9999999";
+        assertTrue("Expected maximum number to be met", calculator.isMaximumValue(calculator.getValues()[0]));
+    }
+
+    @Test
+    public void testMenuOptionsForWindowsAdded()
+    {
+         doAnswer((InvocationOnMock invocationOnMock) ->
+                 calculator.getRootPane()
+         ).when(calculatorSpy).getRootPane();
+         doReturn(false).when(calculatorSpy).isMacOperatingSystem();
+         calculatorSpy.setupMenuBar();
+         assertEquals("Expected View menu to have 3 options", 5, calculator.getViewMenu().getMenuComponents().length);
+    }
+
+    @Test
+    public void testAboutCalculatorShowsWindowsInText()
+    {
+        doReturn(false).when(calculatorSpy).isMacOperatingSystem();
+        String aboutCalculatorText = calculatorSpy.getAboutCalculatorString();
+        assertTrue("Expected About Calculator Text to have Windows", aboutCalculatorText.contains(WINDOWS.getValue()));
+        assertFalse("Expected About Calculator Text to not have Apple", aboutCalculatorText.contains(APPLE.getValue()));
+    }
+
+    @Test
+    public void testGetLowestMemoryValuePosition()
+    {
+        calculator.getMemoryValues()[0] = ONE.getValue();
+        calculator.getMemoryValues()[1] = TWO.getValue();
+        calculator.getMemoryValues()[2] = THREE.getValue();
+        calculator.getMemoryValues()[3] = FOUR.getValue();
+        assertEquals("Expected lowest memoryPosition to be 4", 4, calculator.getLowestMemoryPosition());
+    }
+
+    @Test
+    public void testShowMemoryValuesShowsNoMemoriesSaved()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("Show Memory Values");
+        calculator.performShowMemoriesAction(actionEvent);
+        assertEquals("Expected basicHistoryTextPane to say No Memories Stored",
+                "No Memories Stored",
+                calculator.getBasicHistoryPaneWithoutNewLineCharacters());
+    }
+
+    @Test
+    public void testClearBasicHistoryTextPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("Clearing BasicHistoryTextPane");
+        calculator.performClearBasicHistoryTextPaneAction(actionEvent);
+        assertEquals("Expected basicHistoryTextPane to be blank",
+                BLANK.getValue(),
+                calculator.getBasicHistoryPaneWithoutNewLineCharacters());
+    }
+
+    @Test
+    public void testShowMemoryValuesInHistoryPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("Show Memory Values");
+        calculator.getMemoryValues()[0] = ONE.getValue();
+        calculator.getMemoryValues()[1] = TWO.getValue();
+        calculator.getMemoryValues()[2] = THREE.getValue();
+        calculator.getMemoryValues()[3] = FOUR.getValue();
+        calculator.setMemoryPosition(4);
+        calculator.performShowMemoriesAction(actionEvent);
+        assertEquals("Expected memories to be in basicHistoryTextPane",
+                "Memories: [1], [2], [3], [4]",
+                calculator.getBasicHistoryPaneWithoutNewLineCharacters()
+                );
     }
 
 }

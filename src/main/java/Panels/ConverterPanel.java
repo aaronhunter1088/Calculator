@@ -551,14 +551,14 @@ public class ConverterPanel extends JPanel
             case ANGLE : {
                 //LOGGER.debug("Size of MenuBar: " + getCalculator().bar.getMenuCount());
                 // which is the number of menu choices
-                helpString = "<html>How to use the " + ANGLE.getName() + " Converter<br><br>" +
+                helpString = "<html>How to use the " + ANGLE.getValue() + " Converter<br><br>" +
                         "Step 1. Select the unit for each conversion first.<br>" +
                         "Step 2. Enter a number into either text field.<br>" +
                         "Step 3. Observe the changed unit upon each entry.</html>";
                 break;
             }
             case AREA : {
-                helpString = "<html>How to use the " + AREA.getName() + " Converter<br><br>" +
+                helpString = "<html>How to use the " + AREA.getValue() + " Converter<br><br>" +
                         "Step 1. Select the unit for each conversion first.<br>" +
                         "Step 2. Enter a number into either text field.<br>" +
                         "Step 3. Observe the changed unit upon each entry.</html>";
@@ -604,7 +604,7 @@ public class ConverterPanel extends JPanel
                     JPanel mainPanel = new JPanel();
                     mainPanel.add(textLabel);
                     JOptionPane.showMessageDialog(this,
-                            mainPanel, "Viewing " + getConverterType().getName() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+                            mainPanel, "Viewing " + getConverterType().getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
             }
@@ -692,7 +692,7 @@ public class ConverterPanel extends JPanel
     private void setupAngleConverter()
     {
         LOGGER.info("Starting ANGLE specific setup");
-        setupConverter(ANGLE.getName());
+        setupConverter(ANGLE.getValue());
         setupHelpMenu(ANGLE);
         setConverterType(ANGLE);
         setUnitOptions1(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
@@ -710,7 +710,7 @@ public class ConverterPanel extends JPanel
     private void setupAreaConverter()
     {
         LOGGER.info("Starting AREA specific setup");
-        setupConverter(AREA.getName());
+        setupConverter(AREA.getValue());
         setupHelpMenu(AREA);
         setConverterType(AREA);
         setUnitOptions1(new JComboBox<>(){{ addItem(SQUARE_MILLIMETERS); addItem(SQUARE_CENTIMETERS); addItem(SQUARE_METERS); addItem(HECTARES); addItem(SQUARE_KILOMETERS); addItem(SQUARE_INCHES); addItem(SQUARE_FEET); addItem(SQUARE_YARD_ACRES); addItem(SQUARE_MILES); }});

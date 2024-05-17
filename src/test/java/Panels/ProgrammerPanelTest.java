@@ -61,7 +61,7 @@
 //        programmerPanel.getButtonBin().setSelected(true);
 //        String convertedValue = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[calculator.getValuesPosition()]);
 //        calculator.getTextPane().setText(calculator.addNewLineCharacters(3) + convertedValue);
-//        assertEquals("Did not convert from Decimal to Binary", "00000100", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("Did not convert from Decimal to Binary", "00000100", calculator.getTextPaneWithoutNewLineCharacters());
 //    }
 //
 //    @Test
@@ -98,17 +98,17 @@
 //        calculator.setValuesPosition(0);
 //        for(int i=1; i<=8; i++) { programmerPanel.performProgrammerCalculatorNumberButtonActions(actionEvent); }
 //
-//        assertEquals("getTextPane() not as expected", "00000101", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("getTextPane() not as expected", "00000101", calculator.getTextPaneWithoutNewLineCharacters());
 //
 //        programmerPanel.performAdditionButtonActions(actionEvent);
-//        assertTrue("Values[0] should not match "+ calculator.getTextPane(), !(String.valueOf(calculator.getValues()[0]).equals(calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace())));
+//        assertTrue("Values[0] should not match "+ calculator.getTextPane(), !(String.valueOf(calculator.getValues()[0]).equals(calculator.getTextPaneWithoutNewLineCharacters())));
 //        assertEquals("plus operator not appended", "\n + 00000101", calculator.getTextPane().getText());
 //
 //        for(int i=1; i<=8; i++) { programmerPanel.performProgrammerCalculatorNumberButtonActions(actionEvent); }
-//        assertEquals("getTextPane() not as expected", "00000011", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("getTextPane() not as expected", "00000011", calculator.getTextPaneWithoutNewLineCharacters());
 //
 //        programmerPanel.performButtonEqualsActions(actionEvent);
-//        assertEquals("getTextPane() not as expected", "00001000", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("getTextPane() not as expected", "00001000", calculator.getTextPaneWithoutNewLineCharacters());
 //        assertEquals("text area not as expected", "00001000", calculator.getTextPane().getText());
 //        assertTrue("getValues()[0] did not stay in decimal form",8 == Integer.parseInt(calculator.getValues()[0]));
 //    }
@@ -133,7 +133,7 @@
 //
 //        programmerPanel.performButtonOrActions(actionEvent);
 //
-//        assertEquals("TextArea not as expected", "00000101 OR", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("TextArea not as expected", "00000101 OR", calculator.getTextPaneWithoutNewLineCharacters());
 //        assertEquals("Values[0] is not in decimal base form", Integer.valueOf(5), Integer.valueOf(calculator.getValues()[0]));
 //    }
 //
@@ -147,7 +147,7 @@
 //        when(actionEvent.getActionCommand()).thenReturn("OR");
 //        programmerPanel.performButtonOrActions(actionEvent);
 //
-//        assertEquals("TextArea not showing expected result", "00000111", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("TextArea not showing expected result", "00000111", calculator.getTextPaneWithoutNewLineCharacters());
 //    }
 //
 //    @Test
@@ -161,8 +161,8 @@
 //        calculator.setValuesPosition(0);
 //        programmerPanel.performButtonModActions(actionEvent);
 //
-//        assertEquals("TextArea not as expected!", number+" Mod", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
-//        assertNotEquals("Values[" + calculator.getValuesPosition() + "] should not match ", calculator.getValues()[0], calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("TextArea not as expected!", number+" Mod", calculator.getTextPaneWithoutNewLineCharacters());
+//        assertNotEquals("Values[" + calculator.getValuesPosition() + "] should not match ", calculator.getValues()[0], calculator.getTextPaneWithoutNewLineCharacters());
 //    }
 //
 //    @Test
@@ -189,8 +189,8 @@
 //        programmerPanel.performButtonEqualsActions(actionEvent);
 //
 //        verify(actionEvent, times(1)).getActionCommand();
-//        assertEquals("TextArea not as expected!", "00000001", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
-//        assertNotEquals("Values["+0+"] should not match "+ calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace(), calculator.getValues()[0], calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("TextArea not as expected!", "00000001", calculator.getTextPaneWithoutNewLineCharacters());
+//        assertNotEquals("Values["+0+"] should not match "+ calculator.getTextPaneWithoutNewLineCharacters(), calculator.getValues()[0], calculator.getTextPaneWithoutNewLineCharacters());
 //        assertEquals("Values["+0+"] not as expected", 1, Integer.parseInt(calculator.getValues()[0]));
 //    }
 //
@@ -205,7 +205,7 @@
 //
 //        programmerPanel.performButtonXorActions(actionEvent);
 //
-//        assertEquals("TextArea not as expected", "", calculator.getTextPaneWithoutNewLineCharactersOrWhiteSpace());
+//        assertEquals("TextArea not as expected", "", calculator.getTextPaneWithoutNewLineCharacters());
 //        assertEquals("Values[0] should be empty", "", calculator.getValues()[0]);
 //        assertEquals("Values[1] should be empty", "", calculator.getValues()[1]);
 //        assertFalse("XorButton should be set yet", programmerPanel.isXorPressed());

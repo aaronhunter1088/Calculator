@@ -3,6 +3,8 @@ package Types;
 /**
  * The different units available when using the
  * ConverterPanel in a specific ConverterType
+ * ConverterUnits.name() returns ENUM value
+ * ConverterUnits.getValue() returns ENUM("thisValue")
  */
 public enum ConverterUnits
 {
@@ -26,7 +28,7 @@ public enum ConverterUnits
     ConverterUnits(String name) {
         this.name = name;
     }
-    public String getName() {
+    public String getValue() {
         return this.name;
     }
 }
