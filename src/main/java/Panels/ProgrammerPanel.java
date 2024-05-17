@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import static Calculators.Calculator.*;
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
+import static Types.Texts.BLANK;
 
 public class ProgrammerPanel extends JPanel
 {

@@ -976,7 +976,7 @@ public class Calculator extends JFrame
     {
         var lowestMemory = 0;
         for (int i = 0; i < 10; i++) {
-            if (memoryValues[i].isBlank()) {
+            if (!memoryValues[i].isBlank()) {
                 lowestMemory = i;
                 break;
             }
@@ -1069,7 +1069,7 @@ public class Calculator extends JFrame
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
-        else if (StringUtils.isBlank(values[0]) && StringUtils.isNotBlank(values[1]))
+        else if (values[0].isBlank() && !values[1].isBlank())
         {
             LOGGER.debug("values[0] is blank, values[1] is not");
             values[0] = values[1];
