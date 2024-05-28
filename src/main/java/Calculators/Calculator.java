@@ -64,6 +64,8 @@ public class Calculator extends JFrame
             buttonEquals = new JButton(EQUALS.getValue()), buttonNegate = new JButton(NEGATE.getValue()),
             // Used in programmer and converter... until an official button is determined
             buttonBlank1 = new JButton(BLANK.getValue()), buttonBlank2 = new JButton(BLANK.getValue());
+    protected CalculatorKeyListener keyListener;
+    protected CalculatorMouseListener mouseListener;
     // Values used to store input
     protected String[]
             values = new String[]{BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue()}; // firstNum or total, secondNum, copy, temporary storage
@@ -168,6 +170,10 @@ public class Calculator extends JFrame
         setResizable(false);
         setLocation(750, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        keyListener = new CalculatorKeyListener(this);
+        mouseListener = new CalculatorMouseListener(this);
+        this.addKeyListener(keyListener);
+        this.addMouseListener(mouseListener);
         LOGGER.debug("Finished constructing the calculator");
     }
 
@@ -712,12 +718,12 @@ public class Calculator extends JFrame
         LOGGER.warn("Memory buttons only configured for BASIC Panel");
         if (BASIC.getValue().equals(currentPanel.getName()))
         {
-            getButtonMemoryStore().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryStoreActions(actionEvent));
-            getButtonMemoryRecall().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryRecallActions(actionEvent));
-            getButtonMemoryClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryClearActions(actionEvent));
-            getButtonMemoryAddition().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryAdditionActions(actionEvent));
-            getButtonMemorySubtraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemorySubtractionActions(actionEvent));
-            getButtonHistory().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performHistoryActions(actionEvent));
+            getButtonMemoryStore().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryStoreAction(actionEvent));
+            getButtonMemoryRecall().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryRecallAction(actionEvent));
+            getButtonMemoryClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryClearAction(actionEvent));
+            getButtonMemoryAddition().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryAdditionAction(actionEvent));
+            getButtonMemorySubtraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemorySubtractionAction(actionEvent));
+            getButtonHistory().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performHistoryAction(actionEvent));
         }
         LOGGER.debug("Memory buttons configured");
     }
@@ -741,59 +747,59 @@ public class Calculator extends JFrame
         });
         getButtonPercent().setName(PERCENT.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonPercent().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performPercentButtonActions(actionEvent)); }
+        { getButtonPercent().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performPercentButtonAction(actionEvent)); }
         LOGGER.debug("Percent button configured");
         getButtonSquareRoot().setName(SQUARE_ROOT.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonSquareRoot().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquareRootButtonActions(actionEvent)); }
+        { getButtonSquareRoot().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquareRootButtonAction(actionEvent)); }
         LOGGER.debug("SquareRoot button configured");
         getButtonSquared().setName(SQUARED.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonSquared().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquaredButtonActions(actionEvent)); }
+        { getButtonSquared().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquaredButtonAction(actionEvent)); }
         LOGGER.debug("Delete button configured");
         getButtonFraction().setName(FRACTION.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonFraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performFractionButtonActions(actionEvent)); }
+        { getButtonFraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performFractionButtonAction(actionEvent)); }
         LOGGER.debug("Fraction button configured");
         getButtonClearEntry().setName(CLEAR_ENTRY.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonClearEntry().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearEntryButtonActions(actionEvent)); }
+        { getButtonClearEntry().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearEntryButtonAction(actionEvent)); }
         LOGGER.debug("ClearEntry button configured");
         getButtonClear().setName(CLEAR.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearButtonActions(actionEvent)); }
+        { getButtonClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearButtonAction(actionEvent)); }
         LOGGER.debug("Clear button configured");
         getButtonDelete().setName(DELETE.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonDelete().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDeleteButtonActions(actionEvent)); }
+        { getButtonDelete().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDeleteButtonAction(actionEvent)); }
         LOGGER.debug("Delete button configured");
         getButtonDivide().setName(DIVISION.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonDivide().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDivideButtonActions(actionEvent)); }
+        { getButtonDivide().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDivideButtonAction(actionEvent)); }
         LOGGER.debug("Divide button configured");
         getButtonMultiply().setName(MULTIPLICATION.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonMultiply().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMultiplicationActions(actionEvent)); }
+        { getButtonMultiply().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMultiplicationAction(actionEvent)); }
         LOGGER.debug("Multiply button configured");
         getButtonSubtract().setName(SUBTRACTION.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonSubtract().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSubtractionButtonActions(actionEvent)); }
+        { getButtonSubtract().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSubtractionButtonAction(actionEvent)); }
         LOGGER.debug("Subtract button configured");
         getButtonAdd().setName(ADDITION.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonAdd().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performAdditionButtonActions(actionEvent)); }
+        { getButtonAdd().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performAdditionButtonAction(actionEvent)); }
         LOGGER.debug("Addition button configured");
         getButtonNegate().setName(NEGATE.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonNegate().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNegateButtonActions(actionEvent)); }
+        { getButtonNegate().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNegateButtonAction(actionEvent)); }
         LOGGER.debug("Add button configured");
         getButtonDecimal().setName(DECIMAL.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonDecimal().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDecimalButtonActions(actionEvent)); }
+        { getButtonDecimal().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDecimalButtonAction(actionEvent)); }
         LOGGER.debug("Decimal button configured");
         getButtonEquals().setName(EQUALS.name());
         if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonEquals().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performEqualsButtonActions(actionEvent)); }
+        { getButtonEquals().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performEqualsButtonAction(actionEvent)); }
         LOGGER.debug("Equals button configured");
         LOGGER.debug("Basic Panel buttons configured");
     }
@@ -844,7 +850,7 @@ public class Calculator extends JFrame
             button.setBorder(new LineBorder(Color.BLACK));
             button.setName(String.valueOf(i.getAndAdd(1)));
             if (BASIC.getValue().equals(currentPanel.getName()))
-            { button.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNumberButtonActions(actionEvent)); }
+            { button.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNumberButtonAction(actionEvent)); }
             else if (PROGRAMMER.getValue().equals(currentPanel.getName()))
             { button.addActionListener(ProgrammerPanel::performProgrammerCalculatorNumberButtonActions); }
             else if (CONVERTER.getValue().equals(currentPanel.getName()))
@@ -1832,7 +1838,7 @@ public class Calculator extends JFrame
         if (!isNumberNegative)
         {
             if (numberToFormat.length() <= 2) df = new DecimalFormat("0.00");
-            if (numberToFormat.length() >= 3) df = new DecimalFormat("0.000");
+            if (numberToFormat.length() >= 3) df = new DecimalFormat("0.00");
         }
         else
         {

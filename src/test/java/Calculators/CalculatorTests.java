@@ -581,7 +581,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL.getValue());
         calculator.setAdding(true);
-        ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonAction(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.isDotPressed());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
@@ -598,7 +598,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL.getValue());
         calculator.setAdding(false);
-        ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performDecimalButtonAction(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDecimal().isEnabled());
         assertTrue("Expected to be on the firstNumber", calculator.isFirstNumber());
@@ -835,7 +835,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
         calculator.getValues()[0] = "2";
-        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonAction(actionEvent);
         assertFalse("Expected no commas", calculator.getValues()[0].contains("_"));
         assertEquals("Expected values[0] to be 25", "25", calculator.getValues()[0]);
     }
@@ -845,7 +845,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
         calculator.getValues()[0] = "999";
-        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonAction(actionEvent);
         assertTrue("Expected textPane to be 9,995", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
         assertEquals("Expected values[0] to be 9995", "9995", calculator.getValues()[0]);
     }
@@ -855,7 +855,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
         calculator.getValues()[0] = "1234";
-        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonAction(actionEvent);
         assertTrue("Expected textPane to be 12,345", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
         assertEquals("Expected values[0] to be 12345", "12345", calculator.getValues()[0]);
     }
@@ -865,7 +865,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(SIX.getValue());
         calculator.getValues()[0] = "12345";
-        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonAction(actionEvent);
         assertTrue("Expected textPane to be 123,456", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
         assertEquals("Expected values[0] to be 123456", "123456", calculator.getValues()[0]);
     }
@@ -876,7 +876,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(DELETE.getValue());
         calculator.getValues()[0] = "12345";
         calculator.getTextPane().setText("12345");
-        ((BasicPanel)calculator.getCurrentPanel()).performDeleteButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performDeleteButtonAction(actionEvent);
         assertTrue("Expected textPane to be 1,234", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
         assertEquals("Expected values[0] to be 1234", "1234", calculator.getValues()[0]);
     }
@@ -886,7 +886,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(SEVEN.getValue());
         calculator.getValues()[0] = "123456";
-        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonActions(actionEvent);
+        ((BasicPanel)calculator.getCurrentPanel()).performNumberButtonAction(actionEvent);
         assertTrue("Expected textPane to be 1,234,567", calculator.getTextPaneWithoutNewLineCharacters().contains(","));
         assertEquals("Expected values[0] to be 1234567", "1234567", calculator.getValues()[0]);
     }
@@ -968,7 +968,7 @@ public class CalculatorTests
         calculator.getMemoryValues()[1] = TWO.getValue();
         calculator.getMemoryValues()[2] = THREE.getValue();
         calculator.getMemoryValues()[3] = FOUR.getValue();
-        assertEquals("Expected lowest memoryPosition to be 4", 4, calculator.getLowestMemoryPosition());
+        assertEquals("Expected lowest memoryPosition to be 0", 0, calculator.getLowestMemoryPosition());
     }
 
     @Test

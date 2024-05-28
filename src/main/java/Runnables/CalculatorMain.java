@@ -94,8 +94,10 @@ Version Four Concluded: -
             [g] Edited each panel's setup to display certain buttons on separate panels for better control
             [h] Upgraded Java to language level 18!
             [i] Added commas to longer numbers, displayed only in the textPane
-            [j] Added a history panel to display a record of each button press and operation performed.
+            [j] Added a history panel to display a record of each button press and operation performed, if valid.
             [k] Added the ability to display all stored memories, displayed in the history panel.
+            [l] Added keyboard inputs for all numbers, delete, clear, clear entry, equals, all main basic operators, and decimal.
+            [m] Added mouse listener to regain focus on Calculator.
 
             Saturday, Aug 14, 2021:
             I started the Converter version. It should be relatively easy to implement seeing as they all have a

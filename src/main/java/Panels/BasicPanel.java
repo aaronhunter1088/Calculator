@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
@@ -379,7 +381,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemoryStore is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryStoreActions(ActionEvent actionEvent)
+    public void performMemoryStoreAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -413,7 +415,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemoryRecall is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryRecallActions(ActionEvent actionEvent)
+    public void performMemoryRecallAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -433,7 +435,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemoryClear is clicked
      * @param actionEvent the click action
      */
-    public void performMemoryClearActions(ActionEvent actionEvent)
+    public void performMemoryClearAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -475,7 +477,7 @@ public class BasicPanel extends JPanel
      * textPane as a confirmation.
      * @param actionEvent the click action
      */
-    public void performMemoryAdditionActions(ActionEvent actionEvent)
+    public void performMemoryAdditionAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -510,7 +512,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when MemorySubtraction is clicked
      * @param actionEvent the click action
      */
-    public void performMemorySubtractionActions(ActionEvent actionEvent)
+    public void performMemorySubtractionAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -545,7 +547,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when History is clicked
      * @param actionEvent the click action
      */
-    public void performHistoryActions(ActionEvent actionEvent)
+    public void performHistoryAction(ActionEvent actionEvent)
     {
         if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
         {
@@ -569,7 +571,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Percent button is clicked
      * @param actionEvent the click action
      */
-    public void performPercentButtonActions(ActionEvent actionEvent)
+    public void performPercentButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -603,7 +605,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the SquareRoot button is clicked
      * @param actionEvent the click action
      */
-    public void performSquareRootButtonActions(ActionEvent actionEvent)
+    public void performSquareRootButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -648,7 +650,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Squared button is clicked
      * @param actionEvent the click action
      */
-    public void performSquaredButtonActions(ActionEvent actionEvent)
+    public void performSquaredButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -689,7 +691,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Fraction button is clicked
      * @param actionEvent the click action
      */
-    public void performFractionButtonActions(ActionEvent actionEvent)
+    public void performFractionButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -738,16 +740,17 @@ public class BasicPanel extends JPanel
      * The action to perform when the ClearEntry button is clicked
      * @param actionEvent the click action
      */
-    public void performClearEntryButtonActions(ActionEvent actionEvent)
+    public void performClearEntryButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
         { calculator.confirm(CLEAR_ENTRY + " called... nothing to clear"); }
-        else if (calculator.getValuesPosition() == 0)
+        else if (calculator.getValuesPosition() == 0 || calculator.getValues()[1].isEmpty())
         {
             calculator.getValues()[0] = BLANK.getValue();
             calculator.resetBasicOperators(false);
+            calculator.setValuesPosition(0);
             calculator.setFirstNumber(true);
             calculator.getButtonDecimal().setEnabled(true);
             calculator.getTextPane().setText(BLANK.getValue());
@@ -760,16 +763,17 @@ public class BasicPanel extends JPanel
         }
         else
         {
+            String operator = determineIfBasicPanelOperatorWasPushed();
             calculator.getValues()[1] = BLANK.getValue();
-            calculator.setFirstNumber(true);
-            calculator.setValuesPosition(0);
+            calculator.setFirstNumber(false);
+            calculator.setValuesPosition(1);
             calculator.setNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(true);
-            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]));
+            calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[0]) + ' ' + operator);
             calculator.getBasicHistoryTextPane().setText(
             calculator.getBasicHistoryTextPane().getText() +
             calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-            + " Cleared second number & main operators"
+            + " Cleared second number only"
             );
             calculator.confirm("Pressed: " + buttonChoice);
         }
@@ -779,7 +783,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Clear button is clicked
      * @param actionEvent the action performed
      */
-    public void performClearButtonActions(ActionEvent actionEvent)
+    public void performClearButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -814,7 +818,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Delete button is clicked
      * @param actionEvent the click action
      */
-    public void performDeleteButtonActions(ActionEvent actionEvent)
+    public void performDeleteButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -875,7 +879,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Divide button is clicked
      * @param actionEvent the click action
      */
-    public void performDivideButtonActions(ActionEvent actionEvent)
+    public void performDivideButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1022,9 +1026,9 @@ public class BasicPanel extends JPanel
                 calculator.getBasicHistoryTextPane().setText(
                 calculator.getBasicHistoryTextPane().getText() +
                 calculator.addNewLineCharacters() + LEFT_PARENTHESIS.getValue() + EQUALS.getValue() + RIGHT_PARENTHESIS.getValue()
-                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(String.valueOf(result))
+                + " Result: " + calculator.addCommas(calculator.getValues()[0]) + " " + DIVISION.getValue() + " " + calculator.addCommas(calculator.getValues()[1]) + " " + EQUALS.getValue() + " " + calculator.addCommas(calculator.formatNumber(String.valueOf(result)))
                 );
-                calculator.getValues()[0] = String.valueOf(result);
+                calculator.getValues()[0] = calculator.addCommas(calculator.formatNumber(String.valueOf(result)));
             }
             calculator.confirm("Finished dividing");
         }
@@ -1087,7 +1091,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when clicking any number button
      * @param actionEvent the click action
      */
-    public void performNumberButtonActions(ActionEvent actionEvent)
+    public void performNumberButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1162,7 +1166,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Multiplication button is clicked
      * @param actionEvent the click action
      */
-    public void performMultiplicationActions(ActionEvent actionEvent)
+    public void performMultiplicationAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1348,7 +1352,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Subtraction button is clicked
      * @param actionEvent the click action
      */
-    public void performSubtractionButtonActions(ActionEvent actionEvent)
+    public void performSubtractionButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1663,7 +1667,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Addition button is clicked
      * @param actionEvent the click action
      */
-    public void performAdditionButtonActions(ActionEvent actionEvent)
+    public void performAdditionButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1895,7 +1899,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when you click Negate
      * @param actionEvent the click action
      */
-    public void performNegateButtonActions(ActionEvent actionEvent)
+    public void performNegateButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1905,6 +1909,10 @@ public class BasicPanel extends JPanel
         {
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + ENTER_A_NUMBER.getValue());
             calculator.confirm("No value to negate");
+        }
+        else if (ZERO.getValue().equals(calculator.getTextPaneWithoutNewLineCharacters()))
+        {
+            calculator.confirm("Cannot negate zero");
         }
         else
         {
@@ -1937,7 +1945,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Dot button is click
      * @param actionEvent the click action
      */
-    public void performDecimalButtonActions(ActionEvent actionEvent)
+    public void performDecimalButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -1983,7 +1991,7 @@ public class BasicPanel extends JPanel
      * The actions to perform when the Equals button is clicked
      * @param actionEvent the click action
      */
-    public void performEqualsButtonActions(ActionEvent actionEvent)
+    public void performEqualsButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Starting {} button actions", buttonChoice);
@@ -2096,4 +2104,5 @@ public class BasicPanel extends JPanel
         super.setLayout(panelLayout);
 //        this.basicLayout = panelLayout;
     }
+
 }
