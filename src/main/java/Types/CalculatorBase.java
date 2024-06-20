@@ -1,7 +1,7 @@
 package Types;
 
 /**
- * The CalculatorBases to use primarily in ProgrammerPanel
+ * The CalculatorBases to use primarily in OLDProgrammerPanel
  * CalculatorBase.name() returns ENUM value
  * CalculatorBase.getValue() returns ENUM("thisValue")
  */

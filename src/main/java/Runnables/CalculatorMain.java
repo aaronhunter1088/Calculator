@@ -33,9 +33,9 @@ public class CalculatorMain
         SwingUtilities.invokeLater(() -> {
             try {
                 //Start a basic calculator
-                Calculator calculator = new Calculator(/*BASIC*/);
+                //Calculator calculator = new Calculator(/*BASIC*/);
                 //Start a programmer calculator in BINARY mode
-                //Calculator calculator = new Calculator(PROGRAMMER /*, BINARY*/ );
+                Calculator calculator = new Calculator(PROGRAMMER /*, BINARY*/ );
                 //Start a programmer calculator in DECIMAL mode
                 //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
                 //Start a date calculator with options1 selected
@@ -50,6 +50,7 @@ public class CalculatorMain
                 calculator.pack();
                 calculator.setVisible(true);
                 calculator.confirm(calculator.getCalculatorType().getValue() + " Calculator started");
+                System.out.println(calculator.getSize());
             }
             catch (Exception e) {
                 System.err.printf("Could not create Calculator bc " + e.getMessage());

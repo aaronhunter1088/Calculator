@@ -29,7 +29,7 @@
 //    private String number;
 //    private boolean result;
 //
-//    private static ProgrammerPanel programmerPanel;
+//    private static OLDProgrammerPanel programmerPanel;
 //
 //    @Mock
 //    ActionEvent actionEvent;
@@ -40,7 +40,7 @@
 //        calculator = new Calculator(CalculatorType.PROGRAMMER);
 //        assertSame("ProgrammerCalculator has the wrong type", CalculatorType.PROGRAMMER, calculator.getCalculatorType());
 //        calculator.setFirstNumber(true);
-//        programmerPanel = new ProgrammerPanel(calculator);
+//        programmerPanel = new OLDProgrammerPanel(calculator);
 //        calculator.setCurrentPanel(programmerPanel);
 //    }
 //
@@ -49,7 +49,7 @@
 //        calculator = new Calculator(CalculatorType.PROGRAMMER);
 //        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
 //        calculator.setFirstNumber(true);
-//        programmerPanel = new ProgrammerPanel(calculator);
+//        programmerPanel = new OLDProgrammerPanel(calculator);
 //        calculator.setCurrentPanel(programmerPanel);
 //    }
 //

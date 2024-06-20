@@ -5,6 +5,7 @@ package Types;
  * the Calculator application
  * Texts.name() returns ENUM value
  * Texts.getValue() returns ENUM("thisValue")
+ * Unicode values from <a href="https://www.compart.com/en/unicode/html">Unicodes</a>
  */
 public enum Texts {
     // Calculator
@@ -69,7 +70,7 @@ public enum Texts {
     NUMBER_TOO_BIG("Number too big"),
     ENTER_A_NUMBER("Enter a Number"),
     ONLY_POSITIVES("Only positive numbers"),
-    E("E"),
+    ERR("Error"),
     INFINITY("Infinity"),
     COMMA(","),
 
@@ -79,11 +80,29 @@ public enum Texts {
     MODULUS("MOD"),
     LEFT_PARENTHESIS("("),
     RIGHT_PARENTHESIS(")"),
-    RoL("RoL"),
-    RoR("RoR"),
+    ROL("ROL"),
+    ROR("ROR"),
     OR("OR"),
     XOR("XOR"),
-    AND("AND");
+    AND("AND"),
+    LSH("LSH"),
+    RSH("RSH"),
+    NOT("NOT"),
+    A("A"),
+    B("B"),
+    C("C"),
+    D("D"),
+    E("E"),
+    F("F"),
+    BYTE("Byte"),
+    WORD("Word"),
+    DWORD("DWord"),
+    QWORD("QWord"),
+    BIN("Bin"),
+    DEC("Dec"),
+    OCT("Oct"),
+    HEX("Hex"),
+    SHIFT("↑"); //U+2191
 
     // Scientific
 
