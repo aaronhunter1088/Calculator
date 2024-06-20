@@ -9,8 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -676,11 +675,52 @@ public class Calculator extends JFrame
     public void setupTextPane()
     {
         LOGGER.debug("Configuring textPane...");
-        SimpleAttributeSet attribs = new SimpleAttributeSet();
-        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-        setTextPane(new JTextPane());
-        getTextPane().setParagraphAttributes(attribs, true);
-        getTextPane().setFont(mainFont);
+        if (currentPanel instanceof BasicPanel)
+        {
+            SimpleAttributeSet attribs = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
+            setTextPane(new JTextPane());
+            getTextPane().setParagraphAttributes(attribs, true);
+            getTextPane().setFont(mainFont);
+            getTextPane().setPreferredSize(new Dimension(70, 30));
+        }
+        else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+        {
+            String[] initString = {
+                    addNewLineCharacters(1)+values[valuesPosition]+addNewLineCharacters(1),
+                    programmerPanel.addByteRepresentations()
+            };
+            String[] initStyles = { "regular", "regular"};
+            String[] alignmentStyles = {"alignRight", "alignLeft"};
+
+            JTextPane textPane = new JTextPane();
+            StyledDocument doc = textPane.getStyledDocument();
+
+            Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+            Style regular = doc.addStyle("regular", defaultStyle);
+            StyleConstants.setFontFamily(defaultStyle, mainFont.getFamily());
+            // Add alignment styles
+            Style alignLeft = doc.addStyle("alignLeft", regular);
+            StyleConstants.setAlignment(alignLeft, StyleConstants.ALIGN_LEFT);
+            Style alignRight = doc.addStyle("alignRight", regular);
+            StyleConstants.setAlignment(alignRight, StyleConstants.ALIGN_RIGHT);
+            try {
+                for (int i=0; i < initString.length; i++) {
+                    String style = alignmentStyles[i % alignmentStyles.length];
+                    LOGGER.debug("Style @ {}: {} for string: {}", i, style, initString[i]);
+                    doc.insertString(doc.getLength(), initString[i]
+                            ,doc.getStyle(initStyles[i])
+                    );
+                    doc.setParagraphAttributes(doc.getLength() - initString[i].length(), initString[i].length(), doc.getStyle(style), false);
+                }
+            } catch(BadLocationException ble) {
+                logException(ble);
+            } catch(Exception e) {
+                logException(e);
+            }
+            setTextPane(textPane);
+            getTextPane().setPreferredSize(new Dimension(105, 120));
+        }
         if (isMotif())
         {
             getTextPane().setBackground(new Color(174,178,195));
@@ -692,15 +732,6 @@ public class Calculator extends JFrame
             getTextPane().setBorder(new LineBorder(Color.BLACK));
         }
         getTextPane().setEditable(false);
-        if (currentPanel instanceof BasicPanel)
-        {
-            getTextPane().setPreferredSize(new Dimension(70, 30));
-        }
-        else if (currentPanel instanceof ProgrammerPanel)
-        {
-            //getTextPane().setPreferredSize(new Dimension(70, 60));
-            getTextPane().setPreferredSize(new Dimension(105, 120));
-        }
         LOGGER.debug("TextPane configured");
     }
 
@@ -958,7 +989,7 @@ public class Calculator extends JFrame
         if (!isFirstNumber()) // second number
         {
             LOGGER.debug("!isFirstNumber is: " + !isFirstNumber());
-            getTextPane().setText("");
+            getTextPane().setText(BLANK.getValue());
             setFirstNumber(true);
             if (!isNegating()) setNumberNegative(false);
             if (!isDotPressed())
@@ -1894,7 +1925,15 @@ public class Calculator extends JFrame
         }
         for(int i=0; i < 10; i++)
         { getMemoryValues()[i] = BLANK.getValue(); }
-        getTextPane().setText(addNewLineCharacters() + ZERO.getValue());
+        if (currentPanel instanceof BasicPanel)
+        {
+            getTextPane().setText(addNewLineCharacters() + ZERO.getValue());
+        }
+        else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+        {
+            programmerPanel.appendToPane(textPane,
+                    addNewLineCharacters(1) + ZERO.getValue() + addNewLineCharacters(1));
+        }
 
         resetBasicOperators(false);
         setValuesPosition(0);
@@ -2416,10 +2455,12 @@ public class Calculator extends JFrame
             button.setPreferredSize(new Dimension(35, 35));
             button.setBorder(new LineBorder(Color.BLACK));
             button.setName(String.valueOf(i.getAndAdd(1)));
-            if (BASIC.getValue().equals(currentPanel.getName()))
+            //if (BASIC.getValue().equals(currentPanel.getName()))
+            if (currentPanel instanceof BasicPanel)
             { button.addActionListener(this::performNumberButtonAction); }
-            else if (PROGRAMMER.getValue().equals(currentPanel.getName()))
-            { button.addActionListener(this::performNumberButtonAction); }
+            //else if (PROGRAMMER.getValue().equals(currentPanel.getName()))
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            { button.addActionListener(programmerPanel::performProgrammerCalculatorNumberButtonActions); }
             else if (CONVERTER.getValue().equals(currentPanel.getName()))
             { button.addActionListener(ConverterPanel::performNumberButtonActions); }
             else
@@ -2632,12 +2673,18 @@ public class Calculator extends JFrame
             LOGGER.debug("TextPane contains bad text");
             checkFound = true;
         }
-        else if (getTextPaneWithoutAnyOperator().equals(ZERO.getValue()) &&
-                (calculatorType.equals(BASIC) ||
-                        (calculatorType == PROGRAMMER && calculatorBase == BASE_DECIMAL)))
+        else if (getTextPaneWithoutAnyOperator().equals(ZERO.getValue()) && calculatorType.equals(BASIC))
         {
             LOGGER.debug("textPane equals 0. Setting to blank.");
             textPane.setText(BLANK.getValue());
+            values[valuesPosition] = BLANK.getValue();
+            isFirstNumber = true;
+            buttonDecimal.setEnabled(true);
+        }
+        else if (ZERO.getValue().equals(values[valuesPosition]) && calculatorType.equals(PROGRAMMER))
+        {
+            LOGGER.debug("textPane contains 0. Setting to blank.");
+            ((ProgrammerPanel)currentPanel).appendToPane(textPane, BLANK.getValue()+addNewLineCharacters(1));
             values[valuesPosition] = BLANK.getValue();
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
@@ -2814,8 +2861,14 @@ public class Calculator extends JFrame
                     switchPanelsInner(programmerPanel);
                     if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty())
                     {
-                        if (!values[0].isEmpty()) textPane.setText(addNewLineCharacters() + values[0]);
-                        else textPane.setText(addNewLineCharacters() + currentValueInTextPane);
+                        if (!values[0].isEmpty()) {
+                            programmerPanel.appendToPane(textPane, addNewLineCharacters()+values[0]+"\n");
+                            //textPane.setText(addNewLineCharacters() + values[0]);
+                        }
+                        else {
+                            programmerPanel.appendToPane(textPane, addNewLineCharacters()+currentValueInTextPane+"\n");
+                            //textPane.setText(addNewLineCharacters() + currentValueInTextPane);
+                        }
                         setCalculatorBase(BASE_DECIMAL);
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
@@ -2862,15 +2915,15 @@ public class Calculator extends JFrame
     }
 
     // TODO: Rework
-    /**
-     * Converts the current value from one CalculatorBase
-     * to another CalculatorBase
-     * @param fromType the current CalculatorBase
-     * @param toType the CalculatorBase to convert to
-     * @param currentValue the value to convert
-     * @return String the converted value
-     * @throws CalculatorError throws a conversion error
-     */
+//    /**
+//     * Converts the current value from one CalculatorBase
+//     * to another CalculatorBase
+//     * @param fromType the current CalculatorBase
+//     * @param toType the CalculatorBase to convert to
+//     * @param currentValue the value to convert
+//     * @return String the converted value
+//     * @throws CalculatorError throws a conversion error
+//     */
 //    public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String currentValue) throws CalculatorError
 //    {
 //        LOGGER.debug("convert from {} to {}", fromType, toType);
@@ -3015,6 +3068,107 @@ public class Calculator extends JFrame
 //        LOGGER.info("Base set to: {}", calculatorBase);
 //        return convertedValue;
 //    }
+
+    public String convertValueToBinary()
+    {
+        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 2);
+        LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_BINARY.getValue());
+        StringBuffer sb = new StringBuffer();
+        String base2Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 2);
+        int bytes = ((ProgrammerPanel)currentPanel).getByteType().equals(BYTE) ? 8 : 0;
+        int zeroesToAppend = bytes - base2Number.length();
+        sb.append(ZERO.getValue().repeat(zeroesToAppend)).append(base2Number);
+        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_BINARY.getValue() + ") = " + sb);
+        LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + sb + " in base 2.");
+        return sb.toString();
+//        StringBuffer sb = new StringBuffer();
+//        int number;
+//        try {
+//            number = Integer.parseInt(values[valuesPosition]);
+//            LOGGER.debug("number: " + number);
+//            int i = 0;
+//            if (number == 0) sb.append("00000000");
+//            else {
+//                while (i < 8) {
+//                    if (number % 2 == 0) {
+//                        sb.append("0");
+//                    } else {
+//                        sb.append("1");
+//                    }
+//                    if (sb.length() == 8) sb.append(" ");
+//                    if (number % 2 == 0 && number / 2 == 0) {
+//                        // 0r0
+//                        for (int k = i; k < 8; k++) {
+//                            sb.append("0");
+//                            if (k == 7) sb.append(" ");
+//                        }
+//                        break;
+//                    }
+//                    else if (number / 2 == 0 && number % 2 == 1) {
+//                        // 0r1
+//                        for (int k = i + 1; k < 8; k++) {
+//                            sb.append("0");
+//                            if (k == 7) sb.append(" ");
+//                        }
+//                        break;
+//                    }
+//                    i++;
+//                    number /= 2;
+//                }
+//            }
+//        } catch (NumberFormatException nfe) {
+//            logException(nfe);
+//        }
+//        // Determine bytes and add zeroes if needed
+//        int sizeOfSecond8Bits;
+//        try {
+//            // start counting at 9. The 8th bit is a space
+//            sizeOfSecond8Bits = sb.substring(10).length();
+//            int zeroesToAdd = 8 - sizeOfSecond8Bits;
+//            sb.append("0".repeat(Math.max(0, zeroesToAdd)));
+//        } catch (StringIndexOutOfBoundsException e) {
+//            LOGGER.warn("No second bits found");
+//        }
+//        LOGGER.debug("Before reverse: {}", sb);
+//        // End adding zeroes here
+//
+//        sb.reverse();
+//        LOGGER.debug("After reverse: {}", sb);
+//        String strToReturn = sb.toString();
+//        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_BINARY.getValue() + ") = " + sb);
+//        LOGGER.warn("ADD CODE THAT MAKES SURE RETURNED VALUE UPDATES BYTES IF AFTER REVERSE IS LONGER THAN 8 BITS, WE NEED TO ADD A SPACE BETWEEN THE BYTES");
+//        return strToReturn;
+    }
+
+    public String convertValueToDecimal()
+    {
+        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 10);
+        LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_DECIMAL.getValue());
+        String base10Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 10);
+        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_DECIMAL.getValue() + ") = " + base10Number);
+        LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base10Number + " in base 10.");
+        return base10Number;
+    }
+
+    public String convertValueToOctal()
+    {
+        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 8);
+        LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_OCTAL.getValue());
+        String base8Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 8);
+        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_OCTAL.getValue() + ") = " + base8Number);
+        LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base8Number + " in base 8.");
+        return base8Number;
+    }
+
+    public String convertValueToHexadecimal()
+    {
+        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 16);
+        LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_HEXADECIMAL.getValue());
+        String base16Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 16);
+        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_HEXADECIMAL.getValue() + ") = " + base16Number);
+        LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base16Number + " in base 16.");
+        return base16Number;
+    }
 
     /**
      * Clears any decimal found.
@@ -3226,7 +3380,7 @@ public class Calculator extends JFrame
         {
             LOGGER.debug("Adding {} newLine characters based on panel", newLinesNumber);
             if (currentPanel instanceof BasicPanel) newLines = "\n".repeat(1);
-            else if (currentPanel instanceof ProgrammerPanel) newLines = "\n".repeat(3);
+            else if (currentPanel instanceof ProgrammerPanel) newLines = "\n".repeat(1);
             else if (currentPanel instanceof ScientificPanel) newLines = "\n".repeat(3);
         }
         else
