@@ -1867,7 +1867,7 @@ public class Calculator extends JFrame
         }
         else
         {
-            String operator = determineIfBasicPanelOperatorWasPushed();
+            String operator = getActiveBasicPanelOperator();
             getValues()[1] = BLANK.getValue();
             setFirstNumber(false);
             setValuesPosition(1);
@@ -1973,7 +1973,7 @@ public class Calculator extends JFrame
      * operator was recorded as being activated
      * @return String the basic operation that was pushed
      */
-    public String determineIfBasicPanelOperatorWasPushed()
+    public String getActiveBasicPanelOperator()
     {
         String results = "";
         if (isAdding()) { results = ADDITION.getValue(); }
@@ -2072,7 +2072,7 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Starting {} button actions", buttonChoice);
-        String operator = determineIfBasicPanelOperatorWasPushed();
+        String operator = getActiveBasicPanelOperator();
         if (isAdding() && getValues()[1].isBlank())
         {
             LOGGER.warn("Attempted to perform {} but values[1] is blank", ADDITION);
@@ -2368,7 +2368,7 @@ public class Calculator extends JFrame
         if (Arrays.asList(BASIC.getValue(),PROGRAMMER.getValue()).contains(currentPanel.getName()))
         { getButtonEquals().addActionListener(this::performEqualsButtonAction); }
         LOGGER.debug("Equals button configured");
-        LOGGER.debug("Basic Panel buttons configured");
+        LOGGER.debug("Common buttons configured");
     }
 
     /**
@@ -2794,26 +2794,33 @@ public class Calculator extends JFrame
         { confirm("Not changing panels when the conversion type is the same"); }
         else
         {
+            String currentValueInTextPane = getTextPaneWithoutNewLineCharacters();
             switch (selectedPanel) {
                 case "Basic":
                     BasicPanel basicPanel = new BasicPanel();
                     switchPanelsInner(basicPanel);
-                    if (!values[0].isEmpty())
+                    if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty())
                     {
-                        textPane.setText(addNewLineCharacters() + values[0]);
+                        if (!values[0].isEmpty()) textPane.setText(addNewLineCharacters() + values[0]);
+                        else textPane.setText(addNewLineCharacters() + currentValueInTextPane);
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
+                        if (determineIfAnyBasicOperatorWasPushed())
+                        { textPane.setText(textPane.getText() + EMPTY.getValue() + getActiveBasicPanelOperator()); }
                     }
                     break;
                 case "Programmer":
                     ProgrammerPanel programmerPanel = new ProgrammerPanel();
                     switchPanelsInner(programmerPanel);
-                    if (!values[0].isEmpty())
+                    if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty())
                     {
-                        textPane.setText(addNewLineCharacters() + values[0]);
+                        if (!values[0].isEmpty()) textPane.setText(addNewLineCharacters() + values[0]);
+                        else textPane.setText(addNewLineCharacters() + currentValueInTextPane);
                         setCalculatorBase(BASE_DECIMAL);
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
+                        if (determineIfAnyBasicOperatorWasPushed())
+                        { textPane.setText(textPane.getText() + EMPTY.getValue() + getActiveBasicPanelOperator()); }
                     }
                     break;
                 case "Scientific":
