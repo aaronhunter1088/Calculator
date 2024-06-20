@@ -85,10 +85,9 @@ public class CalculatorTests
         LOGGER.info("createProgrammerCalculator...");
         calculator = new Calculator(PROGRAMMER);
         calculator.setMotif(true);
-        calculator.setCurrentPanel(new ProgrammerPanel(calculator, BASE_BINARY));
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
         assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
-        assertSame("Base is not binary", calculator.getCalculatorBase(), BASE_BINARY);
+        assertSame("Base is not decimal", calculator.getCalculatorBase(), BASE_DECIMAL);
     }
 
     @Test

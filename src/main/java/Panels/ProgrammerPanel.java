@@ -933,43 +933,6 @@ public class ProgrammerPanel extends JPanel
         //calculator.setDotPressed(true); // control variable used to check if we have pushed the dot button
     }
 
-//    /**
-//     * The actions to perform when the SquareRoot button is clicked
-//     * @param actionEvent the click action
-//     */
-//    public void performSquareRootButtonActions(ActionEvent actionEvent)
-//    {
-//        LOGGER.info("SquareRoot ButtonHandler class started");
-//        String buttonChoice = actionEvent.getActionCommand();
-//        LOGGER.info("button: " + buttonChoice); // print out button confirmation
-//        String errorStringNaN = "Not a Number";
-//        LOGGER.debug("text: " + calculator.getTextPane().getText().replace("\n",""));
-//        if (calculator.getValues()[0].contains("E"))
-//        {
-//            String errorMsg = "Cannot perform square root operation. Number too big!";
-//            calculator.confirm(errorMsg);
-//        }
-//        else
-//        {
-//            if (calculator.getTextPane().getText().equals("") || calculator.isNegativeNumber(calculator.getTextPane().getText()))
-//            {
-//                calculator.getTextPane().setText("\n"+errorStringNaN);
-//                //calculator.setTextAreaValue(new StringBuffer().append("\n").append(errorStringNaN));
-//                calculator.confirm(errorStringNaN + "Cannot perform square root operation on blank/negative number");
-//            }
-//            else
-//            {
-//                String result = String.valueOf(Math.sqrt(Double.valueOf(calculator.getTextPane().getText())));
-//                result = calculator.formatNumber(result);
-//                calculator.getTextPane().setText("\n"+result);
-//                //calculator.setTextAreaValue(new StringBuffer().append(result));
-//                calculator.confirm("Pressed: " + buttonChoice);
-//            }
-//        }
-//    }
-
-
-
     /* Getters */
     public JTextPane getProgrammerHistoryTextPane() { return programmerHistoryTextPane; }
 
