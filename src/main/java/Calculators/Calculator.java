@@ -631,11 +631,11 @@ public class Calculator extends JFrame
         if (currentPanel instanceof BasicPanel panel)
         { panel.setupBasicPanel(this); }
         else if (currentPanel instanceof ProgrammerPanel panel)
-        { panel.setupProgrammerPanel(this, calculatorBase); }
+        { panel.setupProgrammerPanel(this, BASE_BINARY); }
         else if (currentPanel instanceof ScientificPanel panel)
         { LOGGER.info("IMPLEMENT SCIENTIFIC PANEL"); /*panel.setupScientificPanel(this, calculatorBase);*/ }
         else if (currentPanel instanceof DatePanel panel)
-        { panel.setupDatePanel(this, dateOperation); }
+        { panel.setupDatePanel(this, DIFFERENCE_BETWEEN_DATES); }
         else if (currentPanel instanceof ConverterPanel panel)
         { panel.setupConverterPanel(this, converterType); }
         LOGGER.debug("Panel set up");
@@ -1980,7 +1980,12 @@ public class Calculator extends JFrame
                     && !getTextPaneWithoutNewLineCharacters().isEmpty())
             {
                 getValues()[getValuesPosition()] = getValues()[getValuesPosition()].substring(0,getValues()[getValuesPosition()].length()-1);
-                getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[getValuesPosition()]));
+                if (currentPanel instanceof BasicPanel)
+                { getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[getValuesPosition()])); }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(textPane, addNewLineCharacters()+addCommas(getValues()[getValuesPosition()])+addNewLineCharacters());
+                }
             }
             else if (isAdding() || isSubtracting() || isMultiplying() || isDividing())
             {
@@ -1992,12 +1997,18 @@ public class Calculator extends JFrame
                     else if (isMultiplying()) setMultiplying(false);
                     else /*if (isDividing())*/ setDividing(false);
                     getValues()[getValuesPosition()] = getTextPaneWithoutAnyOperator();
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getTextPaneWithoutAnyOperator()));
+                    if (currentPanel instanceof BasicPanel)
+                    { getTextPane().setText(addNewLineCharacters() + addCommas(getTextPaneWithoutAnyOperator())); }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    { programmerPanel.appendToPane(textPane, addNewLineCharacters() + addCommas(getTextPaneWithoutAnyOperator()) + addNewLineCharacters()); }
                 }
                 else
                 {
                     getValues()[getValuesPosition()] = getValues()[getValuesPosition()].substring(0,getValues()[getValuesPosition()].length()-1);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[getValuesPosition()]));
+                    if (currentPanel instanceof BasicPanel)
+                    { getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[getValuesPosition()])); }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    { programmerPanel.appendToPane(textPane, addNewLineCharacters() + addCommas(getValues()[getValuesPosition()]) + addNewLineCharacters()); }
                 }
             }
             getButtonDecimal().setEnabled(!isDecimal(getValues()[getValuesPosition()]));
@@ -2849,7 +2860,11 @@ public class Calculator extends JFrame
                     if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty())
                     {
                         if (!values[0].isEmpty()) textPane.setText(addNewLineCharacters() + values[0]);
-                        else textPane.setText(addNewLineCharacters() + currentValueInTextPane);
+                        else {
+                            if (!"Hex: 0Dec: 0Oct: 0Bin: 0".equals(currentValueInTextPane)) {
+                                textPane.setText(addNewLineCharacters() + currentValueInTextPane);
+                            }
+                        }
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
                         if (determineIfAnyBasicOperatorWasPushed())
@@ -2866,8 +2881,10 @@ public class Calculator extends JFrame
                             //textPane.setText(addNewLineCharacters() + values[0]);
                         }
                         else {
-                            programmerPanel.appendToPane(textPane, addNewLineCharacters()+currentValueInTextPane+"\n");
-                            //textPane.setText(addNewLineCharacters() + currentValueInTextPane);
+                            if (!"Hex: 0Dec: 0Oct: 0Bin: 0".equals(currentValueInTextPane)) {
+                                programmerPanel.appendToPane(textPane, addNewLineCharacters()+currentValueInTextPane+"\n");
+                                //textPane.setText(addNewLineCharacters() + currentValueInTextPane);
+                            }
                         }
                         setCalculatorBase(BASE_DECIMAL);
                         if (isDecimal(values[0]))
@@ -2914,237 +2931,21 @@ public class Calculator extends JFrame
         pack();
     }
 
-    // TODO: Rework
-//    /**
-//     * Converts the current value from one CalculatorBase
-//     * to another CalculatorBase
-//     * @param fromType the current CalculatorBase
-//     * @param toType the CalculatorBase to convert to
-//     * @param currentValue the value to convert
-//     * @return String the converted value
-//     * @throws CalculatorError throws a conversion error
-//     */
-//    public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String currentValue) throws CalculatorError
-//    {
-//        LOGGER.debug("convert from {} to {}", fromType, toType);
-//        LOGGER.debug("on value: {}", currentValue);
-//        StringBuffer sb = new StringBuffer();
-//        if (currentValue.contains(" ")) {
-//            String[] strs = currentValue.split(" ");
-//            for (String s : strs) {
-//                sb.append(s);
-//            }
-//        } else {
-//            sb.append(currentValue);
-//        }
-//        LOGGER.debug("sb: " + sb);
-//        String convertedValue = "";
-//        if (StringUtils.isEmpty(currentValue)) return "";
-//        // All from HEXADECIMAL to any other option
-//        if (fromType == BASE_HEXADECIMAL && toType == BASE_DECIMAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_HEXADECIMAL && toType == BASE_OCTAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_HEXADECIMAL && toType == BASE_BINARY) {
-//            confirm("IMPLEMENT");
-//        }
-//        // All from BASE_DECIMAL to any other option
-//        else if (fromType == BASE_DECIMAL && toType == BASE_HEXADECIMAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_DECIMAL && toType == BASE_OCTAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_DECIMAL && toType == BASE_BINARY)
-//        {
-//            LOGGER.debug("Converting str(" + sb + ")");
-//            sb = new StringBuffer();
-//            int number;
-//            try {
-//                number = Integer.parseInt(currentValue);
-//                LOGGER.debug("number: " + number);
-//                int i = 0;
-//                if (number == 0) sb.append("00000000");
-//                else {
-//                    while (i < ((ProgrammerPanel)currentPanel).getBytes()) {
-//                        if (number % 2 == 0) {
-//                            sb.append("0");
-//                        } else {
-//                            sb.append("1");
-//                        }
-//                        if (sb.length() == 8) sb.append(" ");
-//                        if (number % 2 == 0 && number / 2 == 0) {
-//                            // 0r0
-//                            for (int k = i; k < ((ProgrammerPanel)currentPanel).getBytes(); k++) {
-//                                sb.append("0");
-//                                if (k == 7) sb.append(" ");
-//                            }
-//                            break;
-//                        }
-//                        else if (number / 2 == 0 && number % 2 == 1) {
-//                            // 0r1
-//                            for (int k = i + 1; k < ((ProgrammerPanel)currentPanel).getBytes(); k++) {
-//                                sb.append("0");
-//                                if (k == 7) sb.append(" ");
-//                            }
-//                            break;
-//                        }
-//                        i++;
-//                        number /= 2;
-//                    }
-//                }
-//            } catch (NumberFormatException nfe) {
-//                logException(nfe);
-//            }
-//            // Determine bytes and add zeroes if needed
-//            int sizeOfSecond8Bits;
-//            try {
-//                // start counting at 9. The 8th bit is a space
-//                sizeOfSecond8Bits = sb.substring(10).length();
-//                int zeroesToAdd = 8 - sizeOfSecond8Bits;
-//                sb.append("0".repeat(Math.max(0, zeroesToAdd)));
-//            } catch (StringIndexOutOfBoundsException e) {
-//                LOGGER.warn("No second bits found");
-//            }
-//            LOGGER.debug("Before reverse: {}", sb);
-//            // End adding zeroes here
-//
-//            sb.reverse();
-//            LOGGER.debug("After reverse: {}", sb);
-//            String strToReturn = sb.toString();
-//            LOGGER.debug("convertFrom(" + fromType + ")To(" + toType + ") = " + sb);
-//            LOGGER.warn("ADD CODE THAT MAKES SURE RETURNED VALUE UPDATES BYTES IF AFTER REVERSE IS LONGER THAN 8 BITS, WE NEED TO ADD A SPACE BETWEEN THE BYTES");
-//            convertedValue = strToReturn;
-//        }
-//        // All from OCTAL to any other option
-//        else if (fromType == BASE_OCTAL && toType == BASE_HEXADECIMAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_OCTAL && toType == BASE_DECIMAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_OCTAL && toType == BASE_BINARY) {
-//            confirm("IMPLEMENT");
-//        }
-//        // All from BINARY to any other option
-//        else if (fromType == BASE_BINARY && toType == BASE_HEXADECIMAL) {
-//            confirm("IMPLEMENT");
-//        }
-//        else if (fromType == BASE_BINARY && toType == BASE_DECIMAL)
-//        {
-//            LOGGER.debug("BINARY TO DECIMAL: {}", sb);
-//            int appropriateLength = ((ProgrammerPanel)currentPanel).getBytes();
-//            LOGGER.debug("sb: " + sb);
-//            LOGGER.debug("appropriateLength: " + appropriateLength);
-//            if (sb.length() != appropriateLength) {
-//                LOGGER.warn("sb, '" + sb + "', is too short. adding missing zeroes");
-//                // user had entered 101, which really is 00000101, but they aren't showing the first 5 zeroes
-//                int difference = appropriateLength - sb.length();
-//                StringBuilder missingZeroes = new StringBuilder();
-//                missingZeroes.append("0".repeat(Math.max(0, difference)));
-//                missingZeroes.append(sb);
-//                sb = new StringBuffer(missingZeroes);
-//                LOGGER.debug("sb: " + sb);
-//            }
-//            double result = 0.0;
-//            double num1;
-//            double num2;
-//            for (int i = 0, k = appropriateLength - 1; i < appropriateLength; i++, k--) {
-//                num1 = Double.parseDouble(String.valueOf(sb.charAt(i)));
-//                num2 = Math.pow(2, k);
-//                result = (num1 * num2) + result;
-//            }
-//            convertedValue = String.valueOf(Double.valueOf(result));
-//            if (isPositiveNumber(convertedValue))
-//            { convertedValue = String.valueOf(clearZeroesAndDecimalAtEnd(convertedValue)); }
-//        }
-//        else if (fromType == BASE_BINARY && toType == BASE_OCTAL) {
-//            confirm("IMPLEMENT");
-//        }
-//
-//        LOGGER.debug("Converted value: {}", convertedValue);
-//        LOGGER.info("Base set to: {}", calculatorBase);
-//        return convertedValue;
-//    }
-
     public String convertValueToBinary()
     {
         if (values[valuesPosition].isEmpty()) return Integer.toString(0, 2);
         LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_BINARY.getValue());
-        StringBuffer sb = new StringBuffer();
-        String base2Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 2);
-        int bytes = ((ProgrammerPanel)currentPanel).getByteType().equals(BYTE) ? 8 : 0;
-        int zeroesToAppend = bytes - base2Number.length();
-        sb.append(ZERO.getValue().repeat(zeroesToAppend)).append(base2Number);
-        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_BINARY.getValue() + ") = " + sb);
-        LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + sb + " in base 2.");
-        return sb.toString();
-//        StringBuffer sb = new StringBuffer();
-//        int number;
-//        try {
-//            number = Integer.parseInt(values[valuesPosition]);
-//            LOGGER.debug("number: " + number);
-//            int i = 0;
-//            if (number == 0) sb.append("00000000");
-//            else {
-//                while (i < 8) {
-//                    if (number % 2 == 0) {
-//                        sb.append("0");
-//                    } else {
-//                        sb.append("1");
-//                    }
-//                    if (sb.length() == 8) sb.append(" ");
-//                    if (number % 2 == 0 && number / 2 == 0) {
-//                        // 0r0
-//                        for (int k = i; k < 8; k++) {
-//                            sb.append("0");
-//                            if (k == 7) sb.append(" ");
-//                        }
-//                        break;
-//                    }
-//                    else if (number / 2 == 0 && number % 2 == 1) {
-//                        // 0r1
-//                        for (int k = i + 1; k < 8; k++) {
-//                            sb.append("0");
-//                            if (k == 7) sb.append(" ");
-//                        }
-//                        break;
-//                    }
-//                    i++;
-//                    number /= 2;
-//                }
-//            }
-//        } catch (NumberFormatException nfe) {
-//            logException(nfe);
-//        }
-//        // Determine bytes and add zeroes if needed
-//        int sizeOfSecond8Bits;
-//        try {
-//            // start counting at 9. The 8th bit is a space
-//            sizeOfSecond8Bits = sb.substring(10).length();
-//            int zeroesToAdd = 8 - sizeOfSecond8Bits;
-//            sb.append("0".repeat(Math.max(0, zeroesToAdd)));
-//        } catch (StringIndexOutOfBoundsException e) {
-//            LOGGER.warn("No second bits found");
-//        }
-//        LOGGER.debug("Before reverse: {}", sb);
-//        // End adding zeroes here
-//
-//        sb.reverse();
-//        LOGGER.debug("After reverse: {}", sb);
-//        String strToReturn = sb.toString();
-//        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_BINARY.getValue() + ") = " + sb);
-//        LOGGER.warn("ADD CODE THAT MAKES SURE RETURNED VALUE UPDATES BYTES IF AFTER REVERSE IS LONGER THAN 8 BITS, WE NEED TO ADD A SPACE BETWEEN THE BYTES");
-//        return strToReturn;
+        String base2Number = Integer.toString(Integer.parseInt(values[valuesPosition], 10), 2);
+        LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_BINARY.getValue() + ") = " + base2Number);
+        LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base2Number + " in base 2.");
+        return base2Number;
     }
 
     public String convertValueToDecimal()
     {
         if (values[valuesPosition].isEmpty()) return Integer.toString(0, 10);
         LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_DECIMAL.getValue());
-        String base10Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 10);
+        String base10Number = Integer.toString(Integer.parseInt(values[valuesPosition], 10), 10);
         LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_DECIMAL.getValue() + ") = " + base10Number);
         LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base10Number + " in base 10.");
         return base10Number;
@@ -3154,7 +2955,7 @@ public class Calculator extends JFrame
     {
         if (values[valuesPosition].isEmpty()) return Integer.toString(0, 8);
         LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_OCTAL.getValue());
-        String base8Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 8);
+        String base8Number = Integer.toString(Integer.parseInt(values[valuesPosition], 10), 8);
         LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_OCTAL.getValue() + ") = " + base8Number);
         LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base8Number + " in base 8.");
         return base8Number;
@@ -3164,7 +2965,7 @@ public class Calculator extends JFrame
     {
         if (values[valuesPosition].isEmpty()) return Integer.toString(0, 16);
         LOGGER.debug("Converting str(" + values[valuesPosition] + ") to " + BASE_HEXADECIMAL.getValue());
-        String base16Number = Integer.toString(Integer.parseInt(values[valuesPosition]), 16);
+        String base16Number = Integer.toString(Integer.parseInt(values[valuesPosition], 10), 16);
         LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_HEXADECIMAL.getValue() + ") = " + base16Number);
         LOGGER.info("The number " + values[valuesPosition] + " in base 10 is " + base16Number + " in base 16.");
         return base16Number;
@@ -3783,6 +3584,12 @@ public class Calculator extends JFrame
         LOGGER.debug("is {} maximumValue: {}", valueToCheck, valueToCheck.equals("9999999"));
         LOGGER.debug("does {} minimumValue contain E: {}", valueToCheck, valueToCheck.contains(E.getValue()));
         return valueToCheck.equals("9999999") || valueToCheck.contains(E.getValue());
+    }
+
+    public void logAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
     }
 
     /* Getters */

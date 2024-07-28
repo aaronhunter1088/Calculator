@@ -100,14 +100,14 @@ public class DatePanel extends JPanel
             createCommonPanel();
             createDifferenceBetweenDatesPanel();
             addComponent(datePanel1);
-            setSize(new Dimension(250,340));
+            setSize(datePanel1.getSize());
         }
         else
         {
             createCommonPanel();
             createAddOrSubtractPanel();
             addComponent(datePanel2);
-            setSize(new Dimension(250,400));
+            setSize(datePanel2.getSize());
         }
         SwingUtilities.updateComponentTreeUI(this);
         setName(DATE.getValue());
