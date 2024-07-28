@@ -6,6 +6,7 @@ import Types.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.types.LogLevel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -111,7 +112,7 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator(CalculatorType calculatorType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    { this(calculatorType, null, null, null); }
+    { this(calculatorType, BASE_DECIMAL, null, null); }
 
     /**
      * Starts the calculator with the PROGRAMMER CalculatorType with a specified CalculatorBase
@@ -631,7 +632,7 @@ public class Calculator extends JFrame
         if (currentPanel instanceof BasicPanel panel)
         { panel.setupBasicPanel(this); }
         else if (currentPanel instanceof ProgrammerPanel panel)
-        { panel.setupProgrammerPanel(this, BASE_BINARY); }
+        { panel.setupProgrammerPanel(this, calculatorBase); }
         else if (currentPanel instanceof ScientificPanel panel)
         { LOGGER.info("IMPLEMENT SCIENTIFIC PANEL"); /*panel.setupScientificPanel(this, calculatorBase);*/ }
         else if (currentPanel instanceof DatePanel panel)
@@ -2247,16 +2248,16 @@ public class Calculator extends JFrame
                 if (addButtonChoiceToEnd)
                 {
                     programmerPanel.getProgrammerHistoryTextPane().setText(
-                            programmerPanel.getProgrammerHistoryTextPane().getText() +
-                                    addNewLineCharacters(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                                    + " Result: " + addCommas(getValues()[getValuesPosition()]) + " " + buttonChoice
+                        programmerPanel.getProgrammerHistoryTextPane().getText() +
+                        addNewLineCharacters(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                        + " Result: " + addCommas(getValues()[getValuesPosition()]) + " " + buttonChoice
                     );
                 }
                 else {
                     programmerPanel.getProgrammerHistoryTextPane().setText(
-                            programmerPanel.getProgrammerHistoryTextPane().getText() +
-                                    addNewLineCharacters(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                                    + " Result: " + addCommas(getValues()[getValuesPosition()])
+                        programmerPanel.getProgrammerHistoryTextPane().getText() +
+                        addNewLineCharacters(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                        + " Result: " + addCommas(getValues()[getValuesPosition()])
                     );
                 }
             }
@@ -2286,14 +2287,14 @@ public class Calculator extends JFrame
                     programmerPanel.getProgrammerHistoryTextPane().setText(
                         programmerPanel.getProgrammerHistoryTextPane().getText() +
                         addNewLineCharacters(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                        + " Result: " + addCommas(getValues()[getValuesPosition()]) + " " + buttonChoice
+                        + message + " " + buttonChoice
                     );
                 }
                 else {
                     programmerPanel.getProgrammerHistoryTextPane().setText(
                         programmerPanel.getProgrammerHistoryTextPane().getText() +
                         addNewLineCharacters(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                        + " Result: " + addCommas(getValues()[getValuesPosition()])
+                        + message
                     );
                 }
             }
@@ -3586,10 +3587,11 @@ public class Calculator extends JFrame
         return valueToCheck.equals("9999999") || valueToCheck.contains(E.getValue());
     }
 
-    public void logAction(ActionEvent actionEvent)
+    public void logAction(ActionEvent actionEvent, LogLevel logLevel)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
+        if (logLevel == LogLevel.INFO) LOGGER.info("Action for {} started", buttonChoice);
+        else if (logLevel == LogLevel.DEBUG) LOGGER.debug("Action for {} started", buttonChoice);
     }
 
     /* Getters */

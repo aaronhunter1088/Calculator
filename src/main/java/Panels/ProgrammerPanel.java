@@ -7,6 +7,7 @@ import Types.Texts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.types.LogLevel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static Calculators.Calculator.mainFont;
@@ -57,7 +59,8 @@ public class ProgrammerPanel extends JPanel
     private JTextPane allRepresentationsTextPane;
     private JLabel byteLabel = new JLabel(BYTE.getValue()), wordLabel = new JLabel(WORD.getValue()),
                    dWordLabel = new JLabel(DWORD.getValue()), qWordLabel = new JLabel(QWORD.getValue());
-    private Texts byteType;
+    private Texts byteType, baseType;
+    //private CalculatorBase currentBase;
     private static boolean
             isBinaryBase = true, isOctalBase = false,
             isDecimalBase = false, isHexadecimalBase = false,
@@ -84,7 +87,7 @@ public class ProgrammerPanel extends JPanel
      * @param calculator the Calculator to use
      */
     public ProgrammerPanel(Calculator calculator)
-    { this(calculator, null); }
+    { this(calculator, BASE_DECIMAL); }
 
     /**
      * The main constructor used to create a OLDProgrammerPanel
@@ -107,7 +110,7 @@ public class ProgrammerPanel extends JPanel
     public void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         this.calculator = calculator;
-        this.calculator.setCalculatorBase(base);
+        //this.calculator.setCalculatorBase(base);
         setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
         setSize(new Dimension(227,383)); // sets main size
@@ -139,18 +142,15 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Removed actions...");
 
         calculator.setupNumberButtons(); //required first for setProgrammerBase()
-        calculator.setCalculatorType(PROGRAMMER);
-        calculator.setCalculatorBase(base);
-        calculator.setConverterType(null);
         setupHelpMenu();
         calculator.setupTextPane();
         calculator.setupButtonBlank1();
         calculator.setupMemoryButtons(); // MR MC MS M+ M- H
         calculator.setupBasicPanelButtons(); // common
+        setByteType(BYTE);
+        //setBaseType(calculator.getCalculatorBase());
         setupProgrammerHistoryZone();
         setupProgrammerPanelButtons();
-        resetProgrammerByteOperators(false);
-        setByteType(BYTE);
         //setupButtonGroupOne();
         //setupButtonGroupTwo();
         LOGGER.info("Finished configuring the buttons");
@@ -342,18 +342,57 @@ public class ProgrammerPanel extends JPanel
             hexadecimalNumberButton.setBorder(new LineBorder(Color.BLACK));
             hexadecimalNumberButton.addActionListener(this::performProgrammerCalculatorNumberButtonActions);
         });
+        updateButtonsBasedOnBase();
         LOGGER.debug("Hexadecimal buttons configured");
         buttonShift.setName(SHIFT.name());
         buttonShift.addActionListener(this::performButtonShiftAction);
         LOGGER.debug("Shift button needs to be configured");
         buttonBytes.setName("Bytes");
+        buttonBytes.setText(byteType.getValue());
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
-        buttonBytes.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonBytes"));
+        buttonBytes.addActionListener(this::performButtonBytesAction);
         LOGGER.debug("ButtonBytes needs to be configured");
         buttonBases.setName("Bases");
+        buttonBases.setText(this.calculator.getCalculatorBase().getValue());
         buttonBases.setPreferredSize(new Dimension(70, 35) );
-        buttonBases.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonBases"));
+        buttonBases.addActionListener(this::performButtonBasesAction);
         LOGGER.debug("ButtonBytes needs to be configured");
+    }
+
+    /**
+     * Enables the appropriate buttons based on
+     * the current CalculatorBase
+     */
+    public void updateButtonsBasedOnBase()
+    {
+        switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> {
+                setButtons2To9(false);
+                setButtonsAToF(false);
+                calculator.getButton0().setEnabled(true);
+                calculator.getButton1().setEnabled(true);
+            }
+            case BASE_OCTAL -> {
+                calculator.getButton0().setEnabled(true);
+                calculator.getButton1().setEnabled(true);
+                setButtons2To9(true);
+                setButtonsAToF(false);
+                calculator.getButton8().setEnabled(false);
+                calculator.getButton9().setEnabled(false);
+            }
+            case BASE_DECIMAL -> {
+                calculator.getButton0().setEnabled(true);
+                calculator.getButton1().setEnabled(true);
+                setButtons2To9(true);
+                setButtonsAToF(false);
+            }
+            case BASE_HEXADECIMAL -> {
+                calculator.getButton0().setEnabled(true);
+                calculator.getButton1().setEnabled(true);
+                setButtons2To9(true);
+                setButtonsAToF(true);
+            }
+        }
     }
 
     /**
@@ -366,6 +405,18 @@ public class ProgrammerPanel extends JPanel
         isWordByte = byteOption;
         isDWordByte = byteOption;
         isQWordByte = byteOption;
+    }
+
+    /**
+     * Resets the base flags to the passed in boolean
+     * @param baseOption a boolean to reset the operators to
+     */
+    public void resetProgrammerBaseOperators(boolean baseOption)
+    {
+        isBinaryBase = baseOption;
+        isOctalBase = baseOption;
+        isDecimalBase = baseOption;
+        isHexadecimalBase = baseOption;
     }
 
     /**
@@ -478,9 +529,15 @@ public class ProgrammerPanel extends JPanel
      */
     public void setButtons2To9(boolean isEnabled)
     {
-        Collection<JButton> buttonsWithout0Or1 = new ArrayList<>(calculator.getAllNumberButtons());
-        buttonsWithout0Or1.removeIf(btn -> btn.getName().equals("0") || btn.getName().equals("1"));
-        buttonsWithout0Or1.forEach(button -> button.setEnabled(isEnabled));
+        //Collection<JButton> buttonsWithout0Or1 = new ArrayList<>(calculator.getAllNumberButtons());
+        //buttonsWithout0Or1.removeIf(btn -> btn.getName().equals("0") || btn.getName().equals("1"));
+        //buttonsWithout0Or1.forEach(button -> button.setEnabled(isEnabled));
+
+        calculator.getAllNumberButtons()
+                .forEach(button -> {
+                    if (!"0".equals(button.getName()) ||!"0".equals(button.getName()))
+                        button.setEnabled(isEnabled);
+                });
     }
 
     /**
@@ -723,7 +780,7 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonShiftAction(ActionEvent actionEvent)
     {
-        calculator.logAction(actionEvent);
+        calculator.logAction(actionEvent, LogLevel.INFO);
         if (isShiftPressed) {
             isShiftPressed = false;
             LOGGER.debug("isShiftPressed: {}", isShiftPressed);
@@ -753,6 +810,69 @@ public class ProgrammerPanel extends JPanel
         }
         buttonsPanel.repaint();
         buttonsPanel.revalidate();
+    }
+
+    /**
+     * The actions to perform when the Bytes button is clicked
+     */
+    public void performButtonBytesAction(ActionEvent actionEvent)
+    {
+        calculator.logAction(actionEvent, LogLevel.INFO);
+        resetProgrammerByteOperators(false);
+        switch(byteType)
+        {
+            case BYTE -> {
+                byteType = WORD;
+            }
+            case WORD -> {
+                byteType = DWORD;
+            }
+            case DWORD  -> {
+                byteType = QWORD;
+            }
+            case QWORD -> {
+                byteType = BYTE;
+            }
+        }
+        buttonBytes.setText(byteType.getValue());
+        calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + byteType.getValue());
+        calculator.confirm("Bytes updated");
+    }
+
+    /**
+     * The actions to perform when the Bases button is clicked
+     */
+    public void performButtonBasesAction(ActionEvent actionEvent)
+    {
+        calculator.logAction(actionEvent, LogLevel.INFO);
+        resetProgrammerBaseOperators(false);
+        switch(calculator.getCalculatorBase())
+        {
+            case BASE_BINARY -> {
+                //currentBase = BASE_OCTAL;
+                this.calculator.setCalculatorBase(BASE_OCTAL);
+                isOctalBase = true;
+            }
+            case BASE_OCTAL -> {
+                //currentBase = BASE_DECIMAL;
+                this.calculator.setCalculatorBase(BASE_DECIMAL);
+                isDecimalBase = true;
+            }
+            case BASE_DECIMAL  -> {
+                //currentBase = BASE_HEXADECIMAL;
+                this.calculator.setCalculatorBase(BASE_HEXADECIMAL);
+                isHexadecimalBase = true;
+            }
+            case BASE_HEXADECIMAL -> {
+                //currentBase = BASE_BINARY;
+                this.calculator.setCalculatorBase(BASE_BINARY);
+                isBinaryBase = true;
+            }
+        }
+        updateButtonsBasedOnBase();
+        buttonBases.setText(this.calculator.getCalculatorBase().getValue());
+        calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
+        calculator.confirm("Bases updated");
     }
 
     /**
@@ -977,6 +1097,7 @@ public class ProgrammerPanel extends JPanel
     /* Getters */
     public JTextPane getProgrammerHistoryTextPane() { return programmerHistoryTextPane; }
     public Texts getByteType() { return byteType; }
+    //public CalculatorBase getBaseType() { return currentBase; }
     public boolean isByteByte() { return isByteByte; }
     public boolean isWordByte() { return isWordByte; }
     public boolean isDWordByte() { return isDWordByte; }
@@ -988,7 +1109,11 @@ public class ProgrammerPanel extends JPanel
         super.setLayout(panelLayout);
 //        this.basicLayout = panelLayout;
     }
-    public void setByteType(Texts byteType) { this.byteType = byteType; };
+    public void setByteType(Texts byteType) { this.byteType = byteType; }
+//    public void setBaseType(CalculatorBase baseType) {
+//        this.currentBase = baseType;
+//        this.calculator.setCalculatorBase(baseType);
+//    }
     public void setProgrammerHistoryTextPane(JTextPane programmerHistoryTextPane) { this.programmerHistoryTextPane = programmerHistoryTextPane; }
 
 }

@@ -95,10 +95,12 @@ public enum Texts {
     D("D"),
     E("E"),
     F("F"),
+    // Byte Type
     BYTE("Byte"),
     WORD("Word"),
     DWORD("DWord"),
     QWORD("QWord"),
+    // Base Type
     BIN("Bin"),
     DEC("Dec"),
     OCT("Oct"),

@@ -3,6 +3,7 @@ package Panels;
 import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.types.LogLevel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,9 +92,6 @@ public class BasicPanel extends JPanel
                 .forEach(button::removeActionListener));
         LOGGER.debug("Actions removed...");
 
-        calculator.setCalculatorBase(BASE_DECIMAL);
-        calculator.setCalculatorType(BASIC);
-        calculator.setConverterType(null);
         setupHelpMenu();
         calculator.setupTextPane();
         calculator.setupNumberButtons();
@@ -378,6 +376,7 @@ public class BasicPanel extends JPanel
      */
     public void performHistoryAction(ActionEvent actionEvent)
     {
+        calculator.logAction(actionEvent, LogLevel.DEBUG);
         if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
         {
             LOGGER.debug("{}", actionEvent.getActionCommand());
