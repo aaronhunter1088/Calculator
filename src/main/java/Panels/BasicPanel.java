@@ -376,7 +376,8 @@ public class BasicPanel extends JPanel
      */
     public void performHistoryAction(ActionEvent actionEvent)
     {
-        calculator.logAction(actionEvent, LogLevel.DEBUG);
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
         {
             LOGGER.debug("{}", actionEvent.getActionCommand());

@@ -7,7 +7,6 @@ import Types.Texts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.types.LogLevel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -18,16 +17,15 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static Calculators.Calculator.mainFont;
 import static Types.CalculatorBase.*;
-import static Types.CalculatorBase.BASE_BINARY;
+import static Types.CalculatorBase.*;
+import static Types.CalculatorByte.*;
 import static Types.CalculatorType.PROGRAMMER;
 import static Types.Texts.*;
 
@@ -56,7 +54,7 @@ public class ProgrammerPanel extends JPanel
             buttonE = new JButton(E.getValue()), buttonF = new JButton(F.getValue()),
             buttonBytes = new JButton(BYTE.getValue()), buttonBases = new JButton(BASE_BINARY.getValue()),
             buttonShift = new JButton(SHIFT.getValue());
-    private JTextPane allRepresentationsTextPane;
+    //private JTextPane allRepresentationsTextPane;
     private JLabel byteLabel = new JLabel(BYTE.getValue()), wordLabel = new JLabel(WORD.getValue()),
                    dWordLabel = new JLabel(DWORD.getValue()), qWordLabel = new JLabel(QWORD.getValue());
     private Texts byteType, baseType;
@@ -110,7 +108,6 @@ public class ProgrammerPanel extends JPanel
     public void setupProgrammerPanel(Calculator calculator, CalculatorBase base)
     {
         this.calculator = calculator;
-        //this.calculator.setCalculatorBase(base);
         setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
         setSize(new Dimension(227,383)); // sets main size
@@ -148,7 +145,7 @@ public class ProgrammerPanel extends JPanel
         calculator.setupMemoryButtons(); // MR MC MS M+ M- H
         calculator.setupBasicPanelButtons(); // common
         setByteType(BYTE);
-        //setBaseType(calculator.getCalculatorBase());
+        this.calculator.setCalculatorByte(BYTE_BYTE);
         setupProgrammerHistoryZone();
         setupProgrammerPanelButtons();
         //setupButtonGroupOne();
@@ -351,7 +348,7 @@ public class ProgrammerPanel extends JPanel
         buttonBytes.setText(byteType.getValue());
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
         buttonBytes.addActionListener(this::performButtonBytesAction);
-        LOGGER.debug("ButtonBytes needs to be configured");
+        LOGGER.debug("Bytes button configured");
         buttonBases.setName("Bases");
         buttonBases.setText(this.calculator.getCalculatorBase().getValue());
         buttonBases.setPreferredSize(new Dimension(70, 35) );
@@ -780,7 +777,8 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonShiftAction(ActionEvent actionEvent)
     {
-        calculator.logAction(actionEvent, LogLevel.INFO);
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         if (isShiftPressed) {
             isShiftPressed = false;
             LOGGER.debug("isShiftPressed: {}", isShiftPressed);
@@ -817,25 +815,35 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonBytesAction(ActionEvent actionEvent)
     {
-        calculator.logAction(actionEvent, LogLevel.INFO);
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         resetProgrammerByteOperators(false);
         switch(byteType)
         {
             case BYTE -> {
                 byteType = WORD;
+                isWordByte = true;
+                calculator.setCalculatorByte(BYTE_WORD);
             }
             case WORD -> {
                 byteType = DWORD;
+                isDWordByte = true;
+                calculator.setCalculatorByte(BYTE_DWORD);
             }
             case DWORD  -> {
                 byteType = QWORD;
+                isQWordByte = true;
+                calculator.setCalculatorByte(BYTE_QWORD);
             }
             case QWORD -> {
                 byteType = BYTE;
+                isByteByte = true;
+                calculator.setCalculatorByte(BYTE_BYTE);
             }
         }
         buttonBytes.setText(byteType.getValue());
         calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + byteType.getValue());
+        appendToPane(calculator.getValues()[calculator.getValuesPosition()]);
         calculator.confirm("Bytes updated");
     }
 
@@ -844,7 +852,8 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonBasesAction(ActionEvent actionEvent)
     {
-        calculator.logAction(actionEvent, LogLevel.INFO);
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         resetProgrammerBaseOperators(false);
         switch(calculator.getCalculatorBase())
         {
@@ -886,7 +895,7 @@ public class ProgrammerPanel extends JPanel
         if (!calculator.isFirstNumber())
         {
             LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
-            appendToPane(calculator.getTextPane(), calculator.addNewLineCharacters()+BLANK.getValue()+calculator.addNewLineCharacters());
+            appendToPane(BLANK.getValue());
             calculator.setFirstNumber(true);
             if (!calculator.isNegating()) calculator.setNumberNegative(false);
             if (!calculator.isDotPressed())
@@ -991,7 +1000,7 @@ public class ProgrammerPanel extends JPanel
             else
             {
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
-                appendToPane(calculator.getTextPane(), calculator.addNewLineCharacters()+calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])+calculator.addNewLineCharacters());
+                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.writeHistory(buttonChoice, false);
             }
             calculator.confirm("Pressed " + buttonChoice);
@@ -1011,26 +1020,28 @@ public class ProgrammerPanel extends JPanel
                 .formatted(
                     calculator.addNewLineCharacters(1),
                     calculator.convertValueToHexadecimal(),
-                    calculator.convertValueToDecimal(),//calculator.getValues()[calculator.getValuesPosition()],
+                    calculator.convertValueToDecimal(),
                     calculator.convertValueToOctal(),
                     calculator.convertValueToBinary()
                 );
     }
 
-    public void appendToPane(JTextPane textPane, String text) {
-        StyledDocument doc = textPane.getStyledDocument();
+    public void appendToPane(String text) {
+        //StyledDocument doc = textPane.getStyledDocument();
+        StyledDocument doc = calculator.getTextPane().getStyledDocument();
         try {
             // Get the start and end position of the text to be inserted
             doc.remove(0, doc.getLength());
-            doc.insertString(0, text, doc.getStyle("alignRight"));
+            doc.insertString(0, "\n"+text+"\n", doc.getStyle("alignRight"));
             SimpleAttributeSet attribs = new SimpleAttributeSet();
             StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
             doc.setParagraphAttributes(0, text.length(), attribs, false);
 
-            doc.insertString(doc.getLength(), addByteRepresentations(), doc.getStyle("alignLeft"));
+            String byteRepresentation = addByteRepresentations();
+            doc.insertString(doc.getLength(), byteRepresentation, doc.getStyle("alignLeft"));
             attribs = new SimpleAttributeSet();
             StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_LEFT);
-            doc.setParagraphAttributes(doc.getLength() - addByteRepresentations().length(), addByteRepresentations().length(), doc.getStyle("alignLeft"), false);
+            doc.setParagraphAttributes(doc.getLength() - byteRepresentation.length(), byteRepresentation.length(), doc.getStyle("alignLeft"), false);
         } catch (BadLocationException e) {
             calculator.logException(e);
         }
