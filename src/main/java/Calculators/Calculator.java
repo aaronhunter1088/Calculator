@@ -2059,13 +2059,15 @@ public class Calculator extends JFrame
             if (isNumberNegative())
             {
                 setNumberNegative(false);
-                getValues()[getValuesPosition()] = convertToPositive(getValues()[getValuesPosition()]);
+                String textToConvert = getValues()[getValuesPosition()].isBlank() ? getTextPaneWithoutNewLineCharacters() : getValues()[getValuesPosition()];
+                getValues()[getValuesPosition()] = convertToPositive(textToConvert);
                 writeHistory(buttonChoice, false);
             }
             else
             {
                 setNumberNegative(true);
-                getValues()[getValuesPosition()] = convertToNegative(getValues()[getValuesPosition()]);
+                String textToConvert = getValues()[getValuesPosition()].isBlank() ? getTextPaneWithoutNewLineCharacters() : getValues()[getValuesPosition()];
+                getValues()[getValuesPosition()] = convertToNegative(textToConvert);
                 writeHistory(buttonChoice, false);
             }
             if (currentPanel instanceof BasicPanel) {
@@ -2875,6 +2877,7 @@ public class Calculator extends JFrame
                         if (determineIfAnyBasicOperatorWasPushed())
                         { textPane.setText(textPane.getText() + EMPTY.getValue() + getActiveBasicPanelOperator()); }
                     }
+                    setCalculatorType(BASIC);
                     break;
                 case "Programmer":
                     ProgrammerPanel programmerPanel = new ProgrammerPanel();
@@ -2897,24 +2900,29 @@ public class Calculator extends JFrame
                         if (determineIfAnyBasicOperatorWasPushed())
                         { textPane.setText(textPane.getText() + EMPTY.getValue() + getActiveBasicPanelOperator()); }
                     }
+                    setCalculatorType(PROGRAMMER);
                     break;
                 case "Scientific":
                     LOGGER.warn("Setup");
+                    setCalculatorType(SCIENTIFIC);
                     break;
                 case "Date":
                     DatePanel datePanel = new DatePanel();
                     switchPanelsInner(datePanel);
+                    setCalculatorType(DATE);
                     break;
                 case "Angle": {
                     ConverterPanel converterPanel = new ConverterPanel();
                     setConverterType(ANGLE);
                     switchPanelsInner(converterPanel);
+                    setCalculatorType(CONVERTER);
                     break;
                 }
                 case "Area": {
                     ConverterPanel converterPanel = new ConverterPanel();
                     setConverterType(AREA);
                     switchPanelsInner(converterPanel);
+                    setCalculatorType(CONVERTER);
                     break;
                 }
             }
