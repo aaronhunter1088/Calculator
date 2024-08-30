@@ -59,10 +59,10 @@ public class ProgrammerPanel extends JPanel
                    dWordLabel = new JLabel(DWORD.getValue()), qWordLabel = new JLabel(QWORD.getValue());
     private Texts byteType, baseType;
     //private CalculatorBase currentBase;
-    private static boolean
-            isBinaryBase = true, isOctalBase = false,
+    private boolean
+            isBinaryBase = false, isOctalBase = false,
             isDecimalBase = false, isHexadecimalBase = false,
-            isByteByte = true, isWordByte = false,
+            isByteByte = false, isWordByte = false,
             isDWordByte = false, isQWordByte = false,
             isOrPressed = false, isModulusPressed = false,
             isXorPressed = false, /*negateButtonBool = false,*/
@@ -144,8 +144,31 @@ public class ProgrammerPanel extends JPanel
         calculator.setupButtonBlank1();
         calculator.setupMemoryButtons(); // MR MC MS M+ M- H
         calculator.setupBasicPanelButtons(); // common
-        setByteType(BYTE);
-        this.calculator.setCalculatorByte(BYTE_BYTE);
+        if (null == this.calculator.getCalculatorBase()) {
+            setDecimalBase(true);
+            this.calculator.setCalculatorBase(BASE_DECIMAL);
+
+        } else {
+            this.calculator.setCalculatorBase(base);
+            switch (this.calculator.getCalculatorBase()) {
+                case BASE_BINARY -> setBinaryBase(true);
+                case BASE_OCTAL -> setOctalBase(true);
+                case BASE_DECIMAL -> setDecimalBase(true);
+                case BASE_HEXADECIMAL -> setHexadecimalBase(true);
+            }
+        }
+        if (null == this.calculator.getCalculatorByte()) {
+            setByteType(BYTE);
+            this.calculator.setCalculatorByte(BYTE_BYTE);
+        } else {
+            switch (this.calculator.getCalculatorByte()) {
+                case BYTE_BYTE -> { setByteType(BYTE); setByteByte(true); }
+                case BYTE_WORD -> { setByteType(WORD); setWordByte(true);}
+                case BYTE_DWORD -> { setByteType(DWORD); setDWordByte(true); }
+                case BYTE_QWORD -> { setByteType(QWORD); setQWordByte(true); }
+            }
+        }
+        calculator.setupTextPane();
         setupProgrammerHistoryZone();
         setupProgrammerPanelButtons();
         //setupButtonGroupOne();
@@ -1125,6 +1148,14 @@ public class ProgrammerPanel extends JPanel
 //        this.currentBase = baseType;
 //        this.calculator.setCalculatorBase(baseType);
 //    }
+    public void setByteByte(boolean byteByte) { this.isByteByte = byteByte; }
+    public void setWordByte(boolean wordByte) { this.isWordByte = wordByte; }
+    public void setDWordByte(boolean dwordByte) { this.isDWordByte = dwordByte; }
+    public void setQWordByte(boolean qwordByte) { this.isQWordByte = qwordByte; }
+    public void setBinaryBase(boolean binaryBase) { this.isBinaryBase = binaryBase; }
+    public void setOctalBase(boolean octalBase) { this.isOctalBase = octalBase; }
+    public void setDecimalBase(boolean decimalBase) { this.isDecimalBase = decimalBase; }
+    public void setHexadecimalBase(boolean hexadecimalBase) { this.isHexadecimalBase = hexadecimalBase; }
     public void setProgrammerHistoryTextPane(JTextPane programmerHistoryTextPane) { this.programmerHistoryTextPane = programmerHistoryTextPane; }
 
 }

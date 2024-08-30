@@ -2894,7 +2894,7 @@ public class Calculator extends JFrame
                                 //textPane.setText(addNewLineCharacters() + currentValueInTextPane);
                             }
                         }
-                        setCalculatorBase(BASE_DECIMAL);
+                        //setCalculatorBase(BASE_DECIMAL);
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
                         if (determineIfAnyBasicOperatorWasPushed())
@@ -3076,6 +3076,7 @@ public class Calculator extends JFrame
     {
         LOGGER.info("Confirm Results: {}", message);
         LOGGER.info("---------------- ");
+        LOGGER.info("calculatorType: {}", calculatorType);
         switch (calculatorType) {
             case BASIC: {
                 LOGGER.info("textPane: {}", getTextPaneWithoutNewLineCharacters());
@@ -3103,8 +3104,8 @@ public class Calculator extends JFrame
                 LOGGER.info("isDotEnabled: {}", isDotPressed() ? "yes" : "no");
                 LOGGER.info("isNegative: {}", isNumberNegative ? "yes" : "no");
                 LOGGER.info("isNegating: {}", isNegating ? "yes" : "no");
-                LOGGER.info("calculatorType: {}", calculatorType);
-                LOGGER.info("calculatorBase: {}", calculatorBase);
+                //LOGGER.info("calculatorType: {}", calculatorType);
+                //LOGGER.info("calculatorBase: {}", calculatorBase);
                 break;
             }
             case PROGRAMMER: {
