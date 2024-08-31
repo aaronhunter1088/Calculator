@@ -2354,6 +2354,7 @@ public class Calculator extends JFrame
                 }
             }
             getButtonDecimal().setEnabled(!isDecimal(values[valuesPosition]));
+            isNumberNegative = values[valuesPosition].contains(SUBTRACTION.getValue());
             writeHistory(buttonChoice, false);
             confirm("Pressed " + buttonChoice);
         }
@@ -3457,7 +3458,21 @@ public class Calculator extends JFrame
     { return textPane.getText().replaceAll("\n", "").strip(); }
 
     public String getValueFromTextPaneForProgrammerPanel()
-    { return textPane.getText().split("\n")[2].replace(",",""); }
+    {
+        try
+        {
+            return textPane.getText().split("\n")[2].replace(",","");
+        } catch (ArrayIndexOutOfBoundsException ae1)
+        {
+            try
+            {
+                return textPane.getText().split("\n")[1].replace(",","");
+            } catch (ArrayIndexOutOfBoundsException ae2)
+            {
+                return BLANK.getValue();
+            }
+        }
+    }
 
     public String getBasicHistoryPaneWithoutNewLineCharacters()
     {
