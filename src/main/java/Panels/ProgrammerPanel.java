@@ -867,7 +867,7 @@ public class ProgrammerPanel extends JPanel
         }
         //buttonBytes.setText(byteType.getValue());
         calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + byteType.getValue());
-        appendToPane(calculator.getValues()[calculator.getValuesPosition()]);
+        appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
         calculator.confirm("Bytes updated");
     }
 
@@ -900,7 +900,7 @@ public class ProgrammerPanel extends JPanel
         }
         updateButtonsBasedOnBase();
         //buttonBases.setText(this.calculator.getCalculatorBase().getValue());
-        appendToPane(calculator.getValues()[calculator.getValuesPosition()]); // must call to update textPane base value
+        appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])); // must call to update textPane base value
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
         calculator.confirm("Bases updated");
     }
