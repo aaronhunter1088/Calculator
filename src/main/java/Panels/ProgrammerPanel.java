@@ -1004,7 +1004,8 @@ public class ProgrammerPanel extends JPanel
             if (calculator.isNegating() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
             {
                 calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-                calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                //calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.writeHistory(buttonChoice, false);
                 calculator.setNegating(false);
                 calculator.setNumberNegative(true);
@@ -1029,16 +1030,33 @@ public class ProgrammerPanel extends JPanel
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
     }
 
+    /**
+     * Returns the value in its alternative base form
+     * @return String the base representation of the current value
+     */
     public String addByteRepresentation()
     {
-        return switch (calculator.getCalculatorBase()) {
+        boolean set = false;
+        if (Arrays.asList(SPACE.getValue(), BLANK.getValue()).contains(calculator.getValues()[calculator.getValuesPosition()])) {
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.getTextPane().getText().split("\n")[2].replace(",", "");
+            set = true;
+        }
+        String representation = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
             case BASE_OCTAL -> calculator.convertValueToOctal();
             case BASE_DECIMAL -> calculator.addCommas(calculator.convertValueToDecimal());
             case BASE_HEXADECIMAL -> calculator.convertValueToHexadecimal();
         };
+//        if (set) {
+//            calculator.getValues()[calculator.getValuesPosition()] = SPACE.getValue();
+//        }
+        return representation;
     }
 
+    /**
+     * Returns the byte and base value
+     * @return String the byte and base
+     */
     public String displayByteAndBase()
     {
         return """

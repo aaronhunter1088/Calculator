@@ -1063,16 +1063,31 @@ public class Calculator extends JFrame
         { confirm("Cannot perform " + DIVISION); }
         else if (getTextPaneWithoutNewLineCharacters().isEmpty() && getValues()[0].isEmpty())
         {
-            getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            if (currentPanel instanceof BasicPanel basicPanel)
+            {
+                getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            }
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            {
+                programmerPanel.appendToPane(ENTER_A_NUMBER.getValue());
+            }
             confirm("Cannot perform " + DIVISION + " operation");
         }
         else
         {
-            LOGGER.info("button: " + buttonChoice);
+            // No basic operator pushed, textPane has a value, and values is set
             if (!isAdding() && !isSubtracting()  && !isMultiplying() &&!isDividing()
                     && !getTextPane().getText().isBlank() && !getValues()[getValuesPosition()].isBlank())
             {
-                getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                //getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(values[valuesPosition] + " " + buttonChoice);
+                }
                 writeHistory(buttonChoice, true);
                 setDividing(true);
                 setFirstNumber(false);
@@ -1085,12 +1100,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setDividing(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
                 else
                 {
                     setDividing(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
             }
             else if (isSubtracting() && !getValues()[1].isEmpty())
@@ -1100,12 +1129,27 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setDividing(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
                 else
                 {
                     setDividing(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
             }
             else if (isMultiplying() && !getValues()[1].isEmpty())
@@ -1115,12 +1159,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setDividing(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
                 else
                 {
                     setDividing(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
             }
             else if (isDividing() && !getValues()[1].isEmpty() ) //&& !getValues()[1].equals("0"))
@@ -1130,7 +1188,14 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setDividing(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[valuesPosition]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[valuesPosition]));
+                    }
                 }
                 else if (getTextPaneWithoutAnyOperator().equals(INFINITY.getValue()))
                 {
@@ -1147,8 +1212,19 @@ public class Calculator extends JFrame
             {
                 LOGGER.error("The user pushed divide but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
-                getValues()[0] = getTextPaneWithoutNewLineCharacters();
-                getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
+                //getValues()[0] = getTextPaneWithoutNewLineCharacters();
+                //getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getValues()[0] = getTextPaneWithoutNewLineCharacters().replace(",","");
+                    getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    getValues()[0] = textPane.getText().split("\n")[2].replace(",","");
+                    programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                }
+                LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 setDividing(true);
                 setFirstNumber(false);
@@ -1251,16 +1327,30 @@ public class Calculator extends JFrame
         { confirm("Cannot perform " + MULTIPLICATION); }
         else if (getTextPaneWithoutNewLineCharacters().isEmpty() && getValues()[0].isEmpty())
         {
-            getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            if (currentPanel instanceof BasicPanel basicPanel)
+            {
+                getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            }
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            {
+                programmerPanel.appendToPane(ENTER_A_NUMBER.getValue());
+            }
             confirm("Cannot perform " + MULTIPLICATION + " operation");
         }
         else
         {
-            LOGGER.info("button: " + buttonChoice);
+            // No basic operator pushed, textPane has a value, and values is set
             if (!isAdding() && !isSubtracting()  && !isMultiplying() &&!isDividing()
                     && !getTextPane().getText().isBlank() && !getValues()[getValuesPosition()].isBlank())
             {
-                getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(values[valuesPosition] + " " + buttonChoice);
+                }
                 writeHistory(buttonChoice, true);
                 setMultiplying(true);
                 setFirstNumber(false);
@@ -1273,12 +1363,27 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setMultiplying(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setMultiplying(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
+
                 }
             }
             else if (isSubtracting() && !getValues()[1].isEmpty())
@@ -1288,12 +1393,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setMultiplying(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setMultiplying(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (isMultiplying() && !getValues()[1].isEmpty())
@@ -1303,12 +1422,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setMultiplying(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setMultiplying(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (isDividing() && !getValues()[1].isEmpty())
@@ -1318,20 +1451,45 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setMultiplying(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setMultiplying(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (!getTextPaneWithoutNewLineCharacters().isBlank() && getValues()[0].isBlank())
             {
                 LOGGER.error("The user pushed multiple but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
-                getValues()[0] = getTextPaneWithoutNewLineCharacters();
-                getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getValues()[0] = getTextPaneWithoutNewLineCharacters().replace(",","");
+                    getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    getValues()[0] = textPane.getText().split("\n")[2].replace(",","");
+                    programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                }
+                LOGGER.debug("values[0]: {}", values[0]);
+                //getValues()[0] = getTextPaneWithoutNewLineCharacters();
+                //getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
                 writeHistory(buttonChoice, true);
                 setMultiplying(true);
                 setFirstNumber(false);
@@ -1411,12 +1569,33 @@ public class Calculator extends JFrame
         LOGGER.info("Action for {} started", buttonChoice);
         if (textPaneContainsBadText() || isMinimumValue())
         { confirm("Cannot perform " + SUBTRACTION); }
+        else if (getTextPaneWithoutNewLineCharacters().isEmpty() && getValues()[0].isEmpty())
+        {
+            if (currentPanel instanceof BasicPanel basicPanel)
+            {
+                getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            }
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            {
+                programmerPanel.appendToPane(ENTER_A_NUMBER.getValue());
+            }
+            confirm("Cannot perform " + SUBTRACTION + " operation");
+        }
         else
         {
-            if (!isAdding() && !isSubtracting()  && !isMultiplying() &&!isDividing()
+            // No basic operator pushed, textPane has a value, and values is set
+            if (!isAdding() && !isSubtracting()  && !isMultiplying() && !isDividing()
                     && !getTextPane().getText().isBlank() && !getValues()[getValuesPosition()].isBlank())
             {
-                getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                //getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(addCommas(values[valuesPosition]) + " " + buttonChoice);
+                }
                 writeHistory(buttonChoice, true);
                 setSubtracting(true);
                 setFirstNumber(false);
@@ -1424,10 +1603,19 @@ public class Calculator extends JFrame
                 setNumberNegative(false);
                 setValuesPosition(getValuesPosition() + 1);
             }
-            else if (!isAdding() && !isSubtracting()  && !isMultiplying() &&!isDividing()
-                    && getTextPaneWithoutNewLineCharacters().isBlank())
+            // No basic operator pushed, textPane is empty, and values is not set
+            else if (!isAdding() && !isSubtracting()  && !isMultiplying() && !isDividing()
+                    && getTextPaneWithoutNewLineCharacters().isBlank() )
             {
-                getTextPane().setText(addNewLineCharacters() + buttonChoice);
+                //getTextPane().setText(addNewLineCharacters() + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getTextPane().setText(addNewLineCharacters() + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(buttonChoice);
+                }
                 writeHistory(buttonChoice, true);
                 setNegating(true);
                 setNumberNegative(true);
@@ -1444,7 +1632,15 @@ public class Calculator extends JFrame
                 else
                 {
                     setSubtracting(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    //getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (isSubtracting() && !getValues()[1].isEmpty())
@@ -1459,7 +1655,15 @@ public class Calculator extends JFrame
                 else
                 {
                     setSubtracting(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    //getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (isMultiplying() && !getValues()[1].isEmpty())
@@ -1474,7 +1678,15 @@ public class Calculator extends JFrame
                 else
                 {
                     setSubtracting(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    //getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (isDividing() && !getValues()[1].isEmpty())
@@ -1489,7 +1701,15 @@ public class Calculator extends JFrame
                 else
                 {
                     setSubtracting(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    //getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if ((isAdding() || isSubtracting() || isMultiplying() || isDividing())
@@ -1497,7 +1717,15 @@ public class Calculator extends JFrame
             {
                 LOGGER.info("operator already selected. then clicked subtract button. second number will be negated");
                 writeHistory(buttonChoice, true);
-                getTextPane().setText(addNewLineCharacters() + buttonChoice);
+                //getTextPane().setText(addNewLineCharacters() + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getTextPane().setText(addNewLineCharacters() + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(buttonChoice);
+                }
                 setNegating(true);
                 setNumberNegative(true);
             }
@@ -1505,8 +1733,19 @@ public class Calculator extends JFrame
             {
                 LOGGER.error("The user pushed subtract but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
-                getValues()[0] = getTextPaneWithoutNewLineCharacters();
-                getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getValues()[0] = getTextPaneWithoutNewLineCharacters().replace(",","");
+                    getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    getValues()[0] = textPane.getText().split("\n")[2].replace(",","");
+                    programmerPanel.appendToPane(addCommas(values[0]) + " " + buttonChoice);
+                }
+                LOGGER.debug("values[0]: {}", values[0]);
+                //getValues()[0] = getTextPaneWithoutNewLineCharacters();
+                //getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
                 writeHistory(buttonChoice, true);
                 setSubtracting(true);
                 setFirstNumber(false);
@@ -1545,6 +1784,7 @@ public class Calculator extends JFrame
                 LOGGER.info("We have a decimal");
                 LOGGER.debug(getValues()[0] + " " + ADDITION.getValue() + " " + convertToPositive(getValues()[1]) + " " + EQUALS.getValue() + " " + result);
                 writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
+                // TODO: check if addCommas is needed on getValues... values should be a plain number. commas for printing to screen
                 getValues()[0] = addCommas(formatNumber(String.valueOf(result)));
                 setNegating(false);
                 getButtonDecimal().setEnabled(false);
@@ -1664,15 +1904,30 @@ public class Calculator extends JFrame
         { confirm("Cannot perform " + ADDITION); }
         else if (getTextPaneWithoutNewLineCharacters().isEmpty() && getValues()[0].isEmpty())
         {
-            getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            if (currentPanel instanceof BasicPanel basicPanel)
+            {
+                getTextPane().setText(addNewLineCharacters() + ENTER_A_NUMBER.getValue());
+            }
+            else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            {
+                programmerPanel.appendToPane(ENTER_A_NUMBER.getValue());
+            }
             confirm("Cannot perform " + ADDITION + " operation");
         }
         else
         {
+            // No basic operator pushed, textPane has a value, and values is set
             if (!isAdding() && !isSubtracting()  && !isMultiplying() &&!isDividing()
                     && !getTextPane().getText().isBlank() && !getValues()[getValuesPosition()].isBlank())
             {
-                getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getTextPane().setText(addNewLineCharacters() + getTextPaneWithoutNewLineCharacters() + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    programmerPanel.appendToPane(values[valuesPosition] + " " + buttonChoice);
+                }
                 writeHistory(buttonChoice, true);
                 setAdding(true);
                 setFirstNumber(false);
@@ -1685,12 +1940,26 @@ public class Calculator extends JFrame
                 if (isMaximumValue()) // we can add to the minimum number, not to the maximum
                 {
                     setAdding(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setAdding(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(getValues()[0]) + " " + buttonChoice);
+                    }
                 }
             }
             else if (isSubtracting() && !getValues()[1].isEmpty())
@@ -1700,12 +1969,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setAdding(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setAdding(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
             }
             else if (isMultiplying() && !getValues()[1].isEmpty())
@@ -1715,12 +1998,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setAdding(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setAdding(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
             }
             else if (isDividing() && !getValues()[1].isEmpty())
@@ -1730,12 +2027,26 @@ public class Calculator extends JFrame
                 if (isMinimumValue() || isMaximumValue())
                 {
                     setAdding(false);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]));
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
                 else
                 {
                     setAdding(true);
-                    getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]) + " " + buttonChoice);
+                    if (currentPanel instanceof BasicPanel basicPanel)
+                    {
+                        getTextPane().setText(addNewLineCharacters() + addCommas(values[0]) + " " + buttonChoice);
+                    }
+                    else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                    {
+                        programmerPanel.appendToPane(addCommas(values[0]));
+                    }
                 }
             }
             else if (!getTextPaneWithoutNewLineCharacters().isBlank() && getValues()[0].isBlank())
@@ -1743,7 +2054,17 @@ public class Calculator extends JFrame
                 LOGGER.error("The user pushed plus but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 getValues()[0] = getTextPaneWithoutNewLineCharacters();
-                getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
+                if (currentPanel instanceof BasicPanel basicPanel)
+                {
+                    getValues()[0] = getTextPaneWithoutNewLineCharacters().replace(",","");
+                    getTextPane().setText(addNewLineCharacters() + getValues()[0] + " " + buttonChoice);
+                }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    getValues()[0] = textPane.getText().split("\n")[2].replace(",","");
+                    programmerPanel.appendToPane(values[0] + " " + buttonChoice);
+                }
+                LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 setAdding(true);
                 setFirstNumber(false);
@@ -2163,8 +2484,13 @@ public class Calculator extends JFrame
             return;
         }
         determineAndPerformBasicCalculatorOperation();
-        if (!operator.isEmpty() && !textPaneContainsBadText())
-        { getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0])); }
+        if (!operator.isEmpty() && !textPaneContainsBadText()) {
+            if (currentPanel instanceof BasicPanel basicPanel) {
+                getTextPane().setText(addNewLineCharacters() + addCommas(getValues()[0]));
+            } else if (currentPanel instanceof ProgrammerPanel programmerPanel) {
+                programmerPanel.appendToPane(addCommas(values[0]));
+            }
+        }
         getValues()[0] = BLANK.getValue();
         getValues()[1] = BLANK.getValue();
         setNegating(false);
