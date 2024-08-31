@@ -52,7 +52,7 @@ public class ProgrammerPanel extends JPanel
             buttonA = new JButton(A.getValue()), buttonB = new JButton(B.getValue()),
             buttonC = new JButton(C.getValue()), buttonD = new JButton(D.getValue()),
             buttonE = new JButton(E.getValue()), buttonF = new JButton(F.getValue()),
-            buttonBytes = new JButton(BYTE.getValue()), buttonBases = new JButton(BASE_BINARY.getValue()),
+            buttonBytes = new JButton(BYTE.getValue().toUpperCase()), buttonBases = new JButton(BASE.getValue()),
             buttonShift = new JButton(SHIFT.getValue());
     //private JTextPane allRepresentationsTextPane;
     private JLabel byteLabel = new JLabel(BYTE.getValue()), wordLabel = new JLabel(WORD.getValue()),
@@ -138,17 +138,12 @@ public class ProgrammerPanel extends JPanel
                 .forEach(button::removeActionListener));
         LOGGER.debug("Removed actions...");
 
-        calculator.setupNumberButtons(); //required first for setProgrammerBase()
-        setupHelpMenu();
-        calculator.setupTextPane();
-        calculator.setupButtonBlank1();
-        calculator.setupMemoryButtons(); // MR MC MS M+ M- H
-        calculator.setupBasicPanelButtons(); // common
         if (null == this.calculator.getCalculatorBase()) {
             setDecimalBase(true);
             this.calculator.setCalculatorBase(BASE_DECIMAL);
 
-        } else {
+        }
+        else {
             this.calculator.setCalculatorBase(base);
             switch (this.calculator.getCalculatorBase()) {
                 case BASE_BINARY -> setBinaryBase(true);
@@ -160,7 +155,8 @@ public class ProgrammerPanel extends JPanel
         if (null == this.calculator.getCalculatorByte()) {
             setByteType(BYTE);
             this.calculator.setCalculatorByte(BYTE_BYTE);
-        } else {
+        }
+        else {
             switch (this.calculator.getCalculatorByte()) {
                 case BYTE_BYTE -> { setByteType(BYTE); setByteByte(true); }
                 case BYTE_WORD -> { setByteType(WORD); setWordByte(true);}
@@ -168,7 +164,12 @@ public class ProgrammerPanel extends JPanel
                 case BYTE_QWORD -> { setByteType(QWORD); setQWordByte(true); }
             }
         }
+        calculator.setupNumberButtons();
+        setupHelpMenu();
         calculator.setupTextPane();
+        calculator.setupButtonBlank1();
+        calculator.setupMemoryButtons(); // MR MC MS M+ M- H
+        calculator.setupBasicPanelButtons(); // common
         setupProgrammerHistoryZone();
         setupProgrammerPanelButtons();
         //setupButtonGroupOne();
@@ -368,12 +369,12 @@ public class ProgrammerPanel extends JPanel
         buttonShift.addActionListener(this::performButtonShiftAction);
         LOGGER.debug("Shift button needs to be configured");
         buttonBytes.setName("Bytes");
-        buttonBytes.setText(byteType.getValue());
+        //buttonBytes.setText(byteType.getValue());
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
         buttonBytes.addActionListener(this::performButtonBytesAction);
         LOGGER.debug("Bytes button configured");
         buttonBases.setName("Bases");
-        buttonBases.setText(this.calculator.getCalculatorBase().getValue());
+        //buttonBases.setText(this.calculator.getCalculatorBase().getValue());
         buttonBases.setPreferredSize(new Dimension(70, 35) );
         buttonBases.addActionListener(this::performButtonBasesAction);
         LOGGER.debug("ButtonBytes needs to be configured");
@@ -864,7 +865,7 @@ public class ProgrammerPanel extends JPanel
                 calculator.setCalculatorByte(BYTE_BYTE);
             }
         }
-        buttonBytes.setText(byteType.getValue());
+        //buttonBytes.setText(byteType.getValue());
         calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + byteType.getValue());
         appendToPane(calculator.getValues()[calculator.getValuesPosition()]);
         calculator.confirm("Bytes updated");
@@ -881,28 +882,25 @@ public class ProgrammerPanel extends JPanel
         switch(calculator.getCalculatorBase())
         {
             case BASE_BINARY -> {
-                //currentBase = BASE_OCTAL;
                 this.calculator.setCalculatorBase(BASE_OCTAL);
                 isOctalBase = true;
             }
             case BASE_OCTAL -> {
-                //currentBase = BASE_DECIMAL;
                 this.calculator.setCalculatorBase(BASE_DECIMAL);
                 isDecimalBase = true;
             }
             case BASE_DECIMAL  -> {
-                //currentBase = BASE_HEXADECIMAL;
                 this.calculator.setCalculatorBase(BASE_HEXADECIMAL);
                 isHexadecimalBase = true;
             }
             case BASE_HEXADECIMAL -> {
-                //currentBase = BASE_BINARY;
                 this.calculator.setCalculatorBase(BASE_BINARY);
                 isBinaryBase = true;
             }
         }
         updateButtonsBasedOnBase();
-        buttonBases.setText(this.calculator.getCalculatorBase().getValue());
+        //buttonBases.setText(this.calculator.getCalculatorBase().getValue());
+        appendToPane(calculator.getValues()[calculator.getValuesPosition()]); // must call to update textPane base value
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
         calculator.confirm("Bases updated");
     }
@@ -1032,6 +1030,7 @@ public class ProgrammerPanel extends JPanel
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
     }
 
+    @Deprecated
     public String addByteRepresentations()
     {
         return """
@@ -1049,22 +1048,49 @@ public class ProgrammerPanel extends JPanel
                 );
     }
 
+    public String displayByteAndBase()
+    {
+        return """
+                %s  %s
+                """
+                .formatted(
+                      calculator.getCalculatorByte().getValue(),
+                      calculator.getCalculatorBase().getValue()
+                );
+    }
+
     public void appendToPane(String text) {
         //StyledDocument doc = textPane.getStyledDocument();
         StyledDocument doc = calculator.getTextPane().getStyledDocument();
         try {
             // Get the start and end position of the text to be inserted
-            doc.remove(0, doc.getLength());
-            doc.insertString(0, "\n"+text+"\n", doc.getStyle("alignRight"));
-            SimpleAttributeSet attribs = new SimpleAttributeSet();
-            StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-            doc.setParagraphAttributes(0, text.length(), attribs, false);
+//            doc.remove(0, doc.getLength());
+//            doc.insertString(0, "\n"+text+"\n", doc.getStyle("alignRight"));
+//            SimpleAttributeSet attribs = new SimpleAttributeSet();
+//            StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
+//            doc.setParagraphAttributes(0, text.length(), attribs, false);
 
-            String byteRepresentation = addByteRepresentations();
-            doc.insertString(doc.getLength(), byteRepresentation, doc.getStyle("alignLeft"));
-            attribs = new SimpleAttributeSet();
+//            String byteRepresentation = displayByteAndBase(); //addByteRepresentations();
+//            doc.insertString(doc.getLength(), byteRepresentation, doc.getStyle("alignLeft"));
+//            attribs = new SimpleAttributeSet();
+//            StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_LEFT);
+//            doc.setParagraphAttributes(doc.getLength() - byteRepresentation.length(), byteRepresentation.length(), doc.getStyle("alignLeft"), false);
+
+            doc.remove(0, doc.getLength());
+
+            SimpleAttributeSet attribs = new SimpleAttributeSet();
             StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_LEFT);
-            doc.setParagraphAttributes(doc.getLength() - byteRepresentation.length(), byteRepresentation.length(), doc.getStyle("alignLeft"), false);
+            String byteRepresentation = displayByteAndBase(); //addByteRepresentations();
+            doc.insertString(0, byteRepresentation, doc.getStyle("alignLeft"));
+            doc.setParagraphAttributes(0, byteRepresentation.length(), attribs, false);
+            //doc.setParagraphAttributes(doc.getLength() - byteRepresentation.length(), byteRepresentation.length(), doc.getStyle("alignLeft"), false);
+
+            attribs = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
+            doc.insertString(doc.getLength(), "\n"+text+"\n", doc.getStyle("alignRight"));
+            //doc.setParagraphAttributes(0, text.length(), attribs, false);
+            doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
+
         } catch (BadLocationException e) {
             calculator.logException(e);
         }

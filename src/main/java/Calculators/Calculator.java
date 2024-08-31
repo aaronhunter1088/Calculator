@@ -689,12 +689,14 @@ public class Calculator extends JFrame
         else if (currentPanel instanceof ProgrammerPanel programmerPanel)
         {
             String[] initString = {
-                    addNewLineCharacters(1)+values[valuesPosition]+addNewLineCharacters(1),
-                    programmerPanel.addByteRepresentations()
+                    programmerPanel.displayByteAndBase()+addNewLineCharacters(1),
+                    //programmerPanel.addByteRepresentations(),
+                    values[valuesPosition]+addNewLineCharacters(1)
             };
             String[] initStyles = { "regular", "regular"};
-            String[] alignmentStyles = {"alignRight", "alignLeft"};
+            String[] alignmentStyles = {"alignLeft", "alignRight"};
 
+            // TODO: Remove local object declaration and use global variable textPane on line below
             JTextPane textPane = new JTextPane();
             StyledDocument doc = textPane.getStyledDocument();
 
@@ -710,9 +712,7 @@ public class Calculator extends JFrame
                 for (int i=0; i < initString.length; i++) {
                     String style = alignmentStyles[i % alignmentStyles.length];
                     LOGGER.debug("Style @ {}: {} for string: {}", i, style, initString[i]);
-                    doc.insertString(doc.getLength(), initString[i]
-                            ,doc.getStyle(initStyles[i])
-                    );
+                    doc.insertString( doc.getLength(), initString[i], doc.getStyle(initStyles[i]) );
                     doc.setParagraphAttributes(doc.getLength() - initString[i].length(), initString[i].length(), doc.getStyle(style), false);
                 }
             } catch(BadLocationException ble) {

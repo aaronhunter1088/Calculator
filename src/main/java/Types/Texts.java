@@ -101,6 +101,7 @@ public enum Texts {
     DWORD("DWord"),
     QWORD("QWord"),
     // Base Type
+    BASE("BASE"),
     BIN("Bin"),
     DEC("Dec"),
     OCT("Oct"),
