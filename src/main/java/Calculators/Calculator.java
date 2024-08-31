@@ -6,7 +6,6 @@ import Types.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.types.LogLevel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static Types.CalculatorByte.*;
 import static Types.Texts.*;
 import static Types.CalculatorType.*;
 import static Types.CalculatorBase.*;
@@ -72,6 +72,7 @@ public class Calculator extends JFrame
             memoryValues = new String[]{BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue()}; // stores memory values; rolls over after 10 entries
     private int valuesPosition = 0, memoryPosition = 0, memoryRecallPosition = 0;
     private JTextPane textPane;
+    //private JScrollPane scrollPane;
 
     private CalculatorType calculatorType;
     private CalculatorBase calculatorBase;
@@ -698,6 +699,11 @@ public class Calculator extends JFrame
 
             // TODO: Remove local object declaration and use global variable textPane on line below
             JTextPane textPane = new JTextPane();
+            // Put the JTextPane inside a JScrollPane
+            //JScrollPane scrollPane = new JScrollPane(textPane);
+            //scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // Disable vertical scrolling
+            //scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
+
             StyledDocument doc = textPane.getStyledDocument();
 
             Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
@@ -720,20 +726,22 @@ public class Calculator extends JFrame
             } catch(Exception e) {
                 logException(e);
             }
+            textPane.setPreferredSize(new Dimension(100, 120));
+            textPane.setEditable(false);
+            //textPane.setDocument(doc);
             setTextPane(textPane);
-            getTextPane().setPreferredSize(new Dimension(105, 120));
+            //setScrollTextPane(scrollPane);
         }
         if (isMotif())
         {
-            getTextPane().setBackground(new Color(174,178,195));
-            getTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
+            textPane.setBackground(new Color(174,178,195));
+            textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
         }
         else
         {
-            getTextPane().setBackground(Color.WHITE);
-            getTextPane().setBorder(new LineBorder(Color.BLACK));
+            textPane.setBackground(Color.WHITE);
+            textPane.setBorder(new LineBorder(Color.BLACK));
         }
-        getTextPane().setEditable(false);
         LOGGER.debug("TextPane configured");
     }
 
@@ -2875,7 +2883,7 @@ public class Calculator extends JFrame
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
                         if (determineIfAnyBasicOperatorWasPushed())
-                        { textPane.setText(textPane.getText() + EMPTY.getValue() + getActiveBasicPanelOperator()); }
+                        { textPane.setText(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator()); }
                     }
                     setCalculatorType(BASIC);
                     break;
@@ -2898,7 +2906,7 @@ public class Calculator extends JFrame
                         if (isDecimal(values[0]))
                         { buttonDecimal.setEnabled(false); }
                         if (determineIfAnyBasicOperatorWasPushed())
-                        { textPane.setText(textPane.getText() + EMPTY.getValue() + getActiveBasicPanelOperator()); }
+                        { textPane.setText(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator()); }
                     }
                     setCalculatorType(PROGRAMMER);
                     break;
@@ -2955,7 +2963,31 @@ public class Calculator extends JFrame
         else if ( ((ProgrammerPanel)currentPanel).isWordByte() ) topLength = 16;
         else if ( ((ProgrammerPanel)currentPanel).isDWordByte() ) topLength = 32;
         else if ( ((ProgrammerPanel)currentPanel).isQWordByte() ) topLength = 64;
-        if (topLength < base2Length) topLength = topLength + 8;
+        if (topLength < base2Length) {
+            LOGGER.debug("base2Length: {}", base2Length);
+            if (base2Length <= 8) {
+                topLength = 8;
+                ((ProgrammerPanel)currentPanel).setByteType(BYTE);
+                ((ProgrammerPanel)currentPanel).setByteByte(true);
+                setCalculatorByte(BYTE_BYTE);
+            } else if (base2Length <= 16) {
+                topLength = 16;
+                ((ProgrammerPanel)currentPanel).setByteType(WORD);
+                ((ProgrammerPanel)currentPanel).setWordByte(true);
+                setCalculatorByte(BYTE_WORD);
+            } else if (base2Length <= 32) {
+                topLength = 32;
+                ((ProgrammerPanel)currentPanel).setByteType(DWORD);
+                ((ProgrammerPanel)currentPanel).setDWordByte(true);
+                setCalculatorByte(BYTE_DWORD);
+            } else if (base2Length <= 64) {
+                topLength = 64;
+                ((ProgrammerPanel)currentPanel).setByteType(QWORD);
+                ((ProgrammerPanel)currentPanel).setQWordByte(true);
+                setCalculatorByte(BYTE_QWORD);
+
+            }
+        }
         int addZeroes = topLength - base2Length;
         base2Number = "0".repeat(addZeroes) + base2Number;
         LOGGER.debug("convertFrom(" + BASE_DECIMAL.getValue() + ") To(" + BASE_BINARY.getValue() + ") = " + base2Number);
@@ -3649,6 +3681,7 @@ public class Calculator extends JFrame
     public int getMemoryPosition() { return memoryPosition; }
     public int getMemoryRecallPosition() { return memoryRecallPosition; }
     public JTextPane getTextPane() { return textPane; }
+    //public JScrollPane getScrollTextPane() { return scrollPane; }
     //public JTextPane getBasicHistoryTextPane() { return basicHistoryTextPane; }
     public CalculatorType getCalculatorType() { return calculatorType; }
     public CalculatorBase getCalculatorBase() { return calculatorBase; }
@@ -3689,6 +3722,7 @@ public class Calculator extends JFrame
     public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
     public void setMemoryRecallPosition(int memoryRecallPosition) { this.memoryRecallPosition = memoryRecallPosition; }
     public void setTextPane(JTextPane textPane) { this.textPane = textPane; }
+    //public void setScrollTextPane(JScrollPane scrollPane) { this.scrollPane = scrollPane; }
     //public void setBasicHistoryTextPane(JTextPane basicHistoryTextPane) { this.basicHistoryTextPane = basicHistoryTextPane; }
     public void setCalculatorType(CalculatorType calculatorType) { this.calculatorType = calculatorType; }
     public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; }

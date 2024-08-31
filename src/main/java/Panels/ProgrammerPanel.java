@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import static Calculators.Calculator.mainFont;
 import static Types.CalculatorBase.*;
-import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
 import static Types.CalculatorType.PROGRAMMER;
 import static Types.Texts.*;
@@ -867,7 +866,7 @@ public class ProgrammerPanel extends JPanel
         }
         //buttonBytes.setText(byteType.getValue());
         calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + byteType.getValue());
-        appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+        appendToPane(addByteRepresentation());
         calculator.confirm("Bytes updated");
     }
 
@@ -900,7 +899,7 @@ public class ProgrammerPanel extends JPanel
         }
         updateButtonsBasedOnBase();
         //buttonBases.setText(this.calculator.getCalculatorBase().getValue());
-        appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()])); // must call to update textPane base value
+        appendToPane(addByteRepresentation()); // must call to update textPane base value
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
         calculator.confirm("Bases updated");
     }
@@ -1030,22 +1029,14 @@ public class ProgrammerPanel extends JPanel
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
     }
 
-    @Deprecated
-    public String addByteRepresentations()
+    public String addByteRepresentation()
     {
-        return """
-                %sHex: %s
-                Dec: %s
-                Oct: %s
-                Bin: %s
-                """
-                .formatted(
-                    calculator.addNewLineCharacters(1),
-                    calculator.convertValueToHexadecimal(),
-                    calculator.convertValueToDecimal(),
-                    calculator.convertValueToOctal(),
-                    calculator.convertValueToBinary()
-                );
+        return switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
+            case BASE_OCTAL -> calculator.convertValueToOctal();
+            case BASE_DECIMAL -> calculator.addCommas(calculator.convertValueToDecimal());
+            case BASE_HEXADECIMAL -> calculator.convertValueToHexadecimal();
+        };
     }
 
     public String displayByteAndBase()
@@ -1057,6 +1048,84 @@ public class ProgrammerPanel extends JPanel
                       calculator.getCalculatorByte().getValue(),
                       calculator.getCalculatorBase().getValue()
                 );
+    }
+
+    /**
+     * Takes a String byte and adds a space between every
+     * pair of 8 bits.
+     * @param representation the String to alter
+     * @return String the altered representation with spaces
+     */
+    public String separateBits(String representation)
+    {
+        return switch (calculator.getCalculatorByte()) {
+            case BYTE_BYTE -> representation;
+            case BYTE_WORD -> {
+                StringBuilder sb = new StringBuilder();
+                sb.append(representation, 0, 4);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 4, 8);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 8, 12);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 12, representation.length());
+                yield sb.toString();
+            }
+            case BYTE_DWORD -> {
+                StringBuilder sb = new StringBuilder();
+                sb.append(representation, 0, 4);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 4, 8);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 8, 12);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 12, 16);
+                sb.append(calculator.addNewLineCharacters(1));
+                sb.append(representation, 16, 20);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 20, 24);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 24, 28);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 28, representation.length());
+                yield sb.toString();
+            }
+            case BYTE_QWORD -> {
+                StringBuilder sb = new StringBuilder();
+                sb.append(representation, 0, 4);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 4, 8);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 8, 12);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 12, 16);
+                sb.append(calculator.addNewLineCharacters(1));
+                sb.append(representation, 16, 20);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 20, 24);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 24, 28);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 28, 32);
+                sb.append(calculator.addNewLineCharacters(1));
+                sb.append(representation, 32, 36);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 36, 40);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 40, 44);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 44, 48);
+                sb.append(calculator.addNewLineCharacters(1));
+                sb.append(representation, 48, 52);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 52, 56);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 56, 60);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 60, representation.length());
+                yield sb.toString();
+            }
+        };
     }
 
     public void appendToPane(String text) {

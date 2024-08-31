@@ -43,7 +43,7 @@ public enum Texts {
     EQUALS("="),
     NEGATE("±"),
     BLANK(""),
-    EMPTY(" "),
+    SPACE(" "),
     SQUARED("x²"),
     // Menu Choices
     LOOK("Look"),
