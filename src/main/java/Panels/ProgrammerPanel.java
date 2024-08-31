@@ -1056,6 +1056,8 @@ public class ProgrammerPanel extends JPanel
     /**
      * Returns the byte and base value
      * @return String the byte and base
+     *
+     * Format: <String><Space><Space><String>
      */
     public String displayByteAndBase()
     {

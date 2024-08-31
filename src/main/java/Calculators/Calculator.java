@@ -3249,7 +3249,8 @@ public class Calculator extends JFrame
                     {
                         if (!values[0].isEmpty()) textPane.setText(addNewLineCharacters() + values[0]);
                         else {
-                            if (!"Hex: 0Dec: 0Oct: 0Bin: 0".equals(currentValueInTextPane)) {
+                            // see ProgrammerPanel.displayByteAndBase()
+                            if (!(getCalculatorByte().getValue()+SPACE.getValue()+SPACE.getValue()+getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
                                 textPane.setText(addNewLineCharacters() + currentValueInTextPane);
                             }
                         }
