@@ -507,6 +507,13 @@ public class BasicPanel extends JPanel
         }
     }
 
+    /**
+     * Adds the text to the text pane appropriately for
+     * the basic panel
+     */
+    public void appendToPane(String text)
+    { calculator.getTextPane().setText(calculator.addNewLines() + text); }
+
     /* Getters */
     public JTextPane getHistoryTextPane() { return basicHistoryTextPane; }
 
