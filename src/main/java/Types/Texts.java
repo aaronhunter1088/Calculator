@@ -115,6 +115,9 @@ public enum Texts {
     // Converter
 
     // Other
+    UNDERSCORE("_"),
+    MAX_VALUE("9999999"),
+    MIN_VALUE("0.0000001"),
     YES("YES"),
     NO("NO");
 

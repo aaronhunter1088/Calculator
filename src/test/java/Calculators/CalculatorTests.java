@@ -516,13 +516,13 @@ public class CalculatorTests
     @Test
     public void testClearAllOtherBasicCalculatorButtons()
     {
-        calculator.getAllBasicOperatorButtons().forEach(otherButton -> {
+        calculator.getAllBasicPanelButtons().forEach(otherButton -> {
             assertSame("Expecting only 1 action on " + otherButton.getName(), 1, otherButton.getActionListeners().length);
         });
 
         calculator.clearAllOtherBasicCalculatorButtons();
 
-        calculator.getAllBasicOperatorButtons().forEach(otherButton -> {
+        calculator.getAllBasicPanelButtons().forEach(otherButton -> {
             assertSame("Expecting no actions on " + otherButton.getName(), 0, otherButton.getActionListeners().length);
         });
     }
@@ -531,7 +531,7 @@ public class CalculatorTests
     public void testDetermineIfAddingOperatorWasPushed()
     {
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
-        calculator.setAdding(true);
+        calculator.setIsAdding(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         assertTrue("Expected isAdding to be true", calculator.isAdding());
         assertFalse("Expected isSubtracting to be false", calculator.isSubtracting());
@@ -543,7 +543,7 @@ public class CalculatorTests
     public void testDetermineIfSubtractingOperatorWasPushed()
     {
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
-        calculator.setSubtracting(true);
+        calculator.setIsSubtracting(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         assertFalse("Expected isAdding to be false", calculator.isAdding());
         assertTrue("Expected isSubtracting to be true", calculator.isSubtracting());
@@ -555,7 +555,7 @@ public class CalculatorTests
     public void testDetermineIfMultiplyingOperatorWasPushed()
     {
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
-        calculator.setMultiplying(true);
+        calculator.setIsMultiplying(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         assertFalse("Expected isAdding to be false", calculator.isAdding());
         assertFalse("Expected isSubtracting to be false", calculator.isSubtracting());
@@ -567,7 +567,7 @@ public class CalculatorTests
     public void testDetermineIfDividingOperatorWasPushed()
     {
         assertFalse("Did not expect any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
-        calculator.setDividing(true);
+        calculator.setIsDividing(true);
         assertTrue("Expected any operator to be pushed", calculator.determineIfAnyBasicOperatorWasPushed());
         assertFalse("Expected isAdding to be false", calculator.isAdding());
         assertFalse("Expected isSubtracting to be false", calculator.isSubtracting());
@@ -579,7 +579,7 @@ public class CalculatorTests
     public void testResetOperatorIfClause()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL.getValue());
-        calculator.setAdding(true);
+        calculator.setIsAdding(true);
         calculator.performDecimalButtonAction(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.isDotPressed());
@@ -596,7 +596,7 @@ public class CalculatorTests
     public void testResetOperatorElseClause()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL.getValue());
-        calculator.setAdding(false);
+        calculator.setIsAdding(false);
         calculator.performDecimalButtonAction(actionEvent);
         assertSame("Expected valuesPosition to be 0",0, calculator.getValuesPosition());
         assertFalse("Expected dot button to be disabled", calculator.getButtonDecimal().isEnabled());
@@ -657,7 +657,7 @@ public class CalculatorTests
     public void testInitialChecksElseIf1Clause()
     {
         calculator.values[0] = ZERO.getValue();
-        calculator.getTextPane().setText(calculator.addNewLineCharacters() + ZERO.getValue());
+        calculator.getTextPane().setText(calculator.addNewLines() + ZERO.getValue());
 
         assertEquals("Expected textPane to contain 0", ZERO.getValue(), calculator.getTextPaneWithoutAnyOperator());
         assertEquals("Expected BASIC CalculatorView", VIEW_BASIC.getValue(), calculator.getCalculatorView().getValue());
@@ -723,7 +723,7 @@ public class CalculatorTests
     @Test
     public void testAddNewLineCharactersForBasicPanelAdds1NewLine()
     {
-        String newLines = calculator.addNewLineCharacters();
+        String newLines = calculator.addNewLines();
         assertSame(1, newLines.split(BLANK.getValue()).length);
     }
 
@@ -731,14 +731,14 @@ public class CalculatorTests
     public void testAddNewLineCharactersForProgrammerPanelAdds3NewLines()
     {
         calculator.updateJPanel(new ProgrammerPanel());
-        String newLines = calculator.addNewLineCharacters();
+        String newLines = calculator.addNewLines();
         assertSame(1, newLines.split(BLANK.getValue()).length);
     }
 
     @Test
     public void testDynamicAddNewLineCharacters()
     {
-        String newLines = calculator.addNewLineCharacters(10);
+        String newLines = calculator.addNewLines(10);
         assertSame(10, newLines.split(BLANK.getValue()).length);
     }
 
@@ -809,7 +809,7 @@ public class CalculatorTests
         assertTrue("Expected values[2] to be blank", calculator.getValues()[2].isBlank());
 
         calculator.values[2] = "10";
-        calculator.getTextPane().setText(calculator.addNewLineCharacters() + FIVE.getValue());
+        calculator.getTextPane().setText(calculator.addNewLines() + FIVE.getValue());
 
         calculator.performPasteAction(actionEvent);
         assertEquals("Expected textPane to be 10", "10", calculator.getTextPaneWithoutNewLineCharacters());
@@ -977,17 +977,17 @@ public class CalculatorTests
         calculator.performShowMemoriesAction(actionEvent);
         assertEquals("Expected basicHistoryTextPane to say No Memories Stored",
                 "No Memories Stored",
-                calculator.getBasicHistoryPaneWithoutNewLineCharacters());
+                calculator.getBasicHistoryPaneTextWithoutNewLineCharacters());
     }
 
     @Test
     public void testClearBasicHistoryTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn("Clearing BasicHistoryTextPane");
-        calculator.performClearBasicHistoryTextPaneAction(actionEvent);
+        calculator.performClearHistoryTextPaneAction(actionEvent);
         assertEquals("Expected basicHistoryTextPane to be blank",
                 BLANK.getValue(),
-                calculator.getBasicHistoryPaneWithoutNewLineCharacters());
+                calculator.getBasicHistoryPaneTextWithoutNewLineCharacters());
     }
 
     @Test
@@ -1002,7 +1002,7 @@ public class CalculatorTests
         calculator.performShowMemoriesAction(actionEvent);
         assertEquals("Expected memories to be in basicHistoryTextPane",
                 "Memories: [1], [2], [3], [4]",
-                calculator.getBasicHistoryPaneWithoutNewLineCharacters()
+                calculator.getBasicHistoryPaneTextWithoutNewLineCharacters()
                 );
     }
 
