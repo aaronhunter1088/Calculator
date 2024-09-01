@@ -106,13 +106,17 @@ public enum Texts {
     DEC("Dec"),
     OCT("Oct"),
     HEX("Hex"),
-    SHIFT("↑"); //U+2191
+    SHIFT("↑"), //U+2191
 
     // Scientific
 
     // Date
 
     // Converter
+
+    // Other
+    YES("YES"),
+    NO("NO");
 
     final String value;
     Texts(String value) {

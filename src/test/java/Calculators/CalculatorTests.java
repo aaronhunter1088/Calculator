@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 
-import static Types.CalculatorType.*;
+import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
 import static Types.ConverterType.*;
 import static Types.DateOperation.*;
@@ -66,16 +66,16 @@ public class CalculatorTests
         LOGGER.info("createDefaultCalculator...");
         calculator = new Calculator();
         assertTrue("Cannot see basic calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + BASIC, BASIC, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_BASIC, VIEW_BASIC, calculator.getCalculatorView());
     }
 
     @Test
     public void createBasicCalculatorEnforced() throws Exception
     {
         LOGGER.info("createBasicCalculator enforced...");
-        calculator = new Calculator(BASIC);
+        calculator = new Calculator(VIEW_BASIC);
         assertTrue("Cannot see basic calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + BASIC, BASIC, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_BASIC, VIEW_BASIC, calculator.getCalculatorView());
     }
 
     /************* Programmer Calculator Tests ******************/
@@ -83,10 +83,10 @@ public class CalculatorTests
     public void createProgrammerCalculator() throws Exception
     {
         LOGGER.info("createProgrammerCalculator...");
-        calculator = new Calculator(PROGRAMMER);
+        calculator = new Calculator(VIEW_PROGRAMMER);
         calculator.setMotif(true);
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_PROGRAMMER, VIEW_PROGRAMMER, calculator.getCalculatorView());
         assertSame("Base is not decimal", calculator.getCalculatorBase(), BASE_DECIMAL);
     }
 
@@ -96,7 +96,7 @@ public class CalculatorTests
         LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_BINARY);
         calculator = new Calculator(BASE_BINARY);
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_PROGRAMMER, VIEW_PROGRAMMER, calculator.getCalculatorView());
         assertSame("Base is not binary", calculator.getCalculatorBase(), BASE_BINARY);
     }
 
@@ -106,7 +106,7 @@ public class CalculatorTests
         LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_DECIMAL);
         calculator = new Calculator(BASE_DECIMAL);
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + PROGRAMMER, PROGRAMMER, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_PROGRAMMER, VIEW_PROGRAMMER, calculator.getCalculatorView());
         assertSame("Base is not decimal", calculator.getCalculatorBase(), BASE_DECIMAL);
     }
 
@@ -141,9 +141,9 @@ public class CalculatorTests
     public void createDateCalculator() throws Exception
     {
         LOGGER.info("createDateCalculator...");
-        calculator = new Calculator(DATE);
+        calculator = new Calculator(VIEW_DATE);
         assertTrue("Cannot see date calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + DATE, DATE, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_DATE, VIEW_DATE, calculator.getCalculatorView());
         assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), DIFFERENCE_BETWEEN_DATES);
     }
 
@@ -153,7 +153,7 @@ public class CalculatorTests
         LOGGER.info("createDateCalculator with {} enforced...", DIFFERENCE_BETWEEN_DATES);
         calculator = new Calculator(DIFFERENCE_BETWEEN_DATES);
         assertTrue("Cannot see date calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + DATE, DATE, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_DATE, VIEW_DATE, calculator.getCalculatorView());
         assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), DIFFERENCE_BETWEEN_DATES);
     }
 
@@ -163,7 +163,7 @@ public class CalculatorTests
         LOGGER.info("createDateCalculator with {} enforced...", ADD_SUBTRACT_DAYS);
         calculator = new Calculator(ADD_SUBTRACT_DAYS);
         assertTrue("Cannot see date calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + DATE, DATE, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_DATE, VIEW_DATE, calculator.getCalculatorView());
         assertSame("Date operation is not " + ADD_SUBTRACT_DAYS, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), ADD_SUBTRACT_DAYS);
     }
 
@@ -172,9 +172,9 @@ public class CalculatorTests
     public void createConverterCalculator() throws Exception
     {
         LOGGER.info("createConverterCalculator...");
-        calculator = new Calculator(CONVERTER);
+        calculator = new Calculator(VIEW_CONVERTER);
         assertTrue("Cannot see converter calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + CONVERTER, CONVERTER, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_CONVERTER, VIEW_CONVERTER, calculator.getCalculatorView());
         assertSame("Converter operation is not " + ANGLE, ((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE);
     }
 
@@ -184,7 +184,7 @@ public class CalculatorTests
         LOGGER.info("createConverterCalculator with {} enforced...", ANGLE);
         calculator = new Calculator(ANGLE);
         assertTrue("Cannot see converter calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + CONVERTER, CONVERTER, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_CONVERTER, VIEW_CONVERTER, calculator.getCalculatorView());
         assertSame("Converter operation is not " + ANGLE, ((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE);
     }
 
@@ -194,7 +194,7 @@ public class CalculatorTests
         LOGGER.info("createConverterCalculator with {} enforced...", AREA);
         calculator = new Calculator(AREA);
         assertTrue("Cannot see converter calculator", calculator.isVisible());
-        assertEquals("Expected CalculatorType to be " + CONVERTER, CONVERTER, calculator.getCalculatorType());
+        assertEquals("Expected CalculatorView to be " + VIEW_CONVERTER, VIEW_CONVERTER, calculator.getCalculatorView());
         assertSame("Converter operation is not " + AREA, ((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), AREA);
     }
 
@@ -297,8 +297,8 @@ public class CalculatorTests
     @Test
     public void switchingFromProgrammerToBasicSwitchesPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn(BASIC.getValue());
-        calculator.setCalculatorType(PROGRAMMER);
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
+        calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.updateJPanel(new ProgrammerPanel());
         calculator.getTextPane().setText("00000100");
         calculator.getValues()[0]= FOUR.getValue();
@@ -306,32 +306,32 @@ public class CalculatorTests
 
         calculator.switchPanels(actionEvent);
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
-        assertEquals("Expected name to be Basic", BASIC.getValue(), calculator.getTitle());
+        assertEquals("Expected name to be Basic", VIEW_BASIC.getValue(), calculator.getTitle());
         assertTrue("Expected BasicPanel", calculator.getCurrentPanel() instanceof BasicPanel);
     }
 
     @Test
     public void switchingFromBasicToProgrammerSwitchesPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn(PROGRAMMER.getValue());
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.getTextPane().setText(FOUR.getValue());
-        calculator.getValues()[0]= FOUR.getValue();
+        calculator.getValues()[0] = FOUR.getValue();
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
 
         calculator.switchPanels(actionEvent);
-        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneWithoutNewLineCharacters());
-        assertEquals("Expected name to be Programmer", PROGRAMMER.getValue(), calculator.getTitle());
-        assertTrue("Expected OLDProgrammerPanel", calculator.getCurrentPanel() instanceof ProgrammerPanel);
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getValueFromTextPaneForProgrammerPanel());
+        assertEquals("Expected name to be Programmer", VIEW_PROGRAMMER.getValue(), calculator.getTitle());
+        assertTrue("Expected ProgrammerPanel", calculator.getCurrentPanel() instanceof ProgrammerPanel);
     }
 
     @Test
     public void switchingFromBasicToDateSwitchesPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn(DATE.getValue());
-        assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_DATE.getValue());
+        assertEquals("Expected BASIC CalculatorView", VIEW_BASIC, calculator.getCalculatorView());
         calculator.switchPanels(actionEvent);
-        assertEquals("Expected DATE CalculatorType", DATE, calculator.getCalculatorType());
-        assertEquals("Expected name to be Date", DATE.getValue(), calculator.getTitle());
+        assertEquals("Expected DATE CalculatorView", VIEW_DATE, calculator.getCalculatorView());
+        assertEquals("Expected name to be Date", VIEW_DATE.getValue(), calculator.getTitle());
         assertTrue("Expected DatePanel", calculator.getCurrentPanel() instanceof DatePanel);
     }
 
@@ -339,11 +339,11 @@ public class CalculatorTests
     public void switchingFromBasicToAngleConverterSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
-        assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
+        assertEquals("Expected BASIC CalculatorView", VIEW_BASIC, calculator.getCalculatorView());
 
         calculator.switchPanels(actionEvent);
-        assertEquals("Expected CONVERTER CalculatorType", CONVERTER, calculator.getCalculatorType());
-        assertEquals("Expected name to be CONVERTER", CONVERTER.getValue(), calculator.getTitle());
+        assertEquals("Expected CONVERTER CalculatorView", VIEW_CONVERTER, calculator.getCalculatorView());
+        assertEquals("Expected name to be CONVERTER", VIEW_CONVERTER.getValue(), calculator.getTitle());
         assertTrue("Expected ConverterPanel", calculator.getCurrentPanel() instanceof ConverterPanel);
     }
 
@@ -351,18 +351,18 @@ public class CalculatorTests
     public void switchingFromBasicToAreaConverterSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(AREA.getValue());
-        assertEquals("Expected BASIC CalculatorType", BASIC, calculator.getCalculatorType());
+        assertEquals("Expected BASIC CalculatorView", VIEW_BASIC, calculator.getCalculatorView());
 
         calculator.switchPanels(actionEvent);
-        assertEquals("Expected CONVERTER CalculatorType", CONVERTER, calculator.getCalculatorType());
-        assertEquals("Expected name to be CONVERTER", CONVERTER.getValue(), calculator.getTitle());
+        assertEquals("Expected CONVERTER CalculatorView", VIEW_CONVERTER, calculator.getCalculatorView());
+        assertEquals("Expected name to be CONVERTER", VIEW_CONVERTER.getValue(), calculator.getTitle());
         assertTrue("Expected ConverterPanel", calculator.getCurrentPanel() instanceof ConverterPanel);
     }
 
     @Test
     public void switchingFromSomePanelToSamePanelDoesNotSwitchPanels()
     {
-        when(actionEvent.getActionCommand()).thenReturn(BASIC.getValue());
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
         BasicPanel panel = (BasicPanel) calculator.getCurrentPanel();
         calculator.getTextPane().setText(FOUR.getValue());
         calculator.getValues()[0]= FOUR.getValue();
@@ -377,7 +377,7 @@ public class CalculatorTests
     public void switchingFromSomeConverterToSameConverterDoesNotSwitchPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
-        calculator.setCalculatorType(CONVERTER);
+        calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.updateJPanel(new ConverterPanel());
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
         assertEquals("Expected converterType to be ANGLE", ANGLE, calculator.getConverterType());
@@ -629,7 +629,7 @@ public class CalculatorTests
     @Test
     public void testIsMemoryValuesEmptyIsFalseForProgrammerCalculator()
     {
-        calculator.setCalculatorType(PROGRAMMER);
+        calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.getTextPane().setText(FIVE.getValue());
         calculator.getMemoryValues()[0] = FIVE.getValue();
         calculator.setMemoryPosition(1);
@@ -660,7 +660,7 @@ public class CalculatorTests
         calculator.getTextPane().setText(calculator.addNewLineCharacters() + ZERO.getValue());
 
         assertEquals("Expected textPane to contain 0", ZERO.getValue(), calculator.getTextPaneWithoutAnyOperator());
-        assertEquals("Expected BASIC CalculatorType", BASIC.getValue(), calculator.getCalculatorType().getValue());
+        assertEquals("Expected BASIC CalculatorView", VIEW_BASIC.getValue(), calculator.getCalculatorView().getValue());
         assertEquals("Expected values[0] to be 0", ZERO.getValue(), calculator.getValues()[0]);
 
         calculator.performInitialChecks();
@@ -714,7 +714,7 @@ public class CalculatorTests
     @Test
     public void testConfirmCalledForDatePanelWithDateOperation2()
     {
-        calculator.setCalculatorType(DATE);
+        calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(ADD_SUBTRACT_DAYS);
         calculator.updateJPanel(new ProgrammerPanel());
         calculator.confirm("Test: Confirm called");
@@ -732,7 +732,7 @@ public class CalculatorTests
     {
         calculator.updateJPanel(new ProgrammerPanel());
         String newLines = calculator.addNewLineCharacters();
-        assertSame(3, newLines.split(BLANK.getValue()).length);
+        assertSame(1, newLines.split(BLANK.getValue()).length);
     }
 
     @Test
@@ -748,7 +748,7 @@ public class CalculatorTests
         String helpMe = new Calculator().getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Basic Calculator", helpMe);
 
-        helpMe = new Calculator(PROGRAMMER).getAboutCalculatorString();
+        helpMe = new Calculator(VIEW_PROGRAMMER).getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_BINARY.getValue(), helpMe);
 
         helpMe = new Calculator(BASE_OCTAL).getAboutCalculatorString();
@@ -760,13 +760,13 @@ public class CalculatorTests
         helpMe = new Calculator(BASE_HEXADECIMAL).getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_HEXADECIMAL.getValue(), helpMe);
 
-        helpMe = new Calculator(DATE).getAboutCalculatorString();
+        helpMe = new Calculator(VIEW_DATE).getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Date Calculator Type:"+DIFFERENCE_BETWEEN_DATES, helpMe);
 
         helpMe = new Calculator(ADD_SUBTRACT_DAYS).getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Date Calculator Type:"+ADD_SUBTRACT_DAYS, helpMe);
 
-        helpMe = new Calculator(CONVERTER).getAboutCalculatorString();
+        helpMe = new Calculator(VIEW_CONVERTER).getAboutCalculatorString();
         assertNotNull("About Calculator is not set on Converter Calculator Type:"+ANGLE, helpMe);
 
         helpMe = new Calculator(AREA).getAboutCalculatorString();

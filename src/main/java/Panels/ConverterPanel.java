@@ -16,7 +16,7 @@ import java.util.Objects;
 
 import static Calculators.Calculator.*;
 import static Types.ConverterType.*;
-import static Types.CalculatorType.*;
+import static Types.CalculatorView.*;
 import static Types.ConverterUnits.*;
 
 public class ConverterPanel extends JPanel
@@ -39,7 +39,7 @@ public class ConverterPanel extends JPanel
 
     public ConverterPanel()
     {
-        setName(CONVERTER.getValue());
+        setName(VIEW_CONVERTER.getValue());
         LOGGER.info("Converter panel created");
     }
 
@@ -48,7 +48,7 @@ public class ConverterPanel extends JPanel
      */
     public ConverterPanel(ConverterType converterType)
     {
-        setName(CONVERTER.getValue());
+        setName(VIEW_CONVERTER.getValue());
         if (converterType == null) setConverterType(ANGLE);
         else setConverterType(converterType);
         LOGGER.info("Converter panel created");
@@ -82,18 +82,18 @@ public class ConverterPanel extends JPanel
         setupHelpMenu(getConverterType());
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
-        setName(CONVERTER.getValue());
+        setName(VIEW_CONVERTER.getValue());
         LOGGER.info("Finished setting up converter panel");
     }
 
     /**
-     * Clears button actions, sets the CalculatorType,
+     * Clears button actions, sets the CalculatorView,
      * CalculatorBase, ConverterType, and finally
      * sets up the ConverterPanel and its components
      */
     private void setupConverterPanelComponents(ConverterType converterType)
     {
-        calculator.setCalculatorType(CONVERTER);
+        calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(converterType);
         setupAllConverterButtonsFunctionalities();
         switch (converterType)

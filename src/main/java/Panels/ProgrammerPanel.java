@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static Calculators.Calculator.mainFont;
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
-import static Types.CalculatorType.PROGRAMMER;
+import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 
 public class ProgrammerPanel extends JPanel
@@ -75,7 +75,7 @@ public class ProgrammerPanel extends JPanel
      */
     public ProgrammerPanel()
     {
-        setName(PROGRAMMER.getValue());
+        setName(VIEW_PROGRAMMER.getValue());
         LOGGER.info("Empty Programmer panel created");
     }
 
@@ -92,10 +92,7 @@ public class ProgrammerPanel extends JPanel
      * @param base the CalculatorBase to use
      */
     public ProgrammerPanel(Calculator calculator, CalculatorBase base)
-    {
-        setupProgrammerPanel(calculator, base);
-        LOGGER.info("Programmer panel created");
-    }
+    { setupProgrammerPanel(calculator, base); }
 
     /* Start of methods here */
 
@@ -113,13 +110,13 @@ public class ProgrammerPanel extends JPanel
         setMinimumSize(new Dimension(227, 383)); // sets minimum size
         setupProgrammerPanelComponents(base);
         addComponentsToPanel();
-        setName(PROGRAMMER.getValue());
+        setName(VIEW_PROGRAMMER.getValue());
         SwingUtilities.updateComponentTreeUI(this);
-        LOGGER.info("Finished setting up programmer panel");
+        LOGGER.info("Programmer panel setup finished");
     }
 
     /**
-     * Clears button actions, sets the CalculatorType,
+     * Clears button actions, sets the CalculatorView,
      * CalculatorBase, ConverterType, and finally
      * sets up the OLDProgrammerPanel and its components
      */
@@ -134,26 +131,27 @@ public class ProgrammerPanel extends JPanel
                 .toList();
 
         allButtons.forEach(button -> Stream.of(button.getActionListeners())
-                .forEach(button::removeActionListener));
-        LOGGER.debug("Removed actions...");
+                  .forEach(button::removeActionListener));
 
-        if (null == this.calculator.getCalculatorBase()) {
+        LOGGER.debug("Actions removed");
+        if (calculator.getCalculatorBase() == null) {
             setDecimalBase(true);
-            this.calculator.setCalculatorBase(BASE_DECIMAL);
-
+            calculator.setCalculatorBase(BASE_DECIMAL);
         }
         else {
-            this.calculator.setCalculatorBase(base);
+            //this.calculator.setCalculatorBase(base);
             switch (this.calculator.getCalculatorBase()) {
                 case BASE_BINARY -> setBinaryBase(true);
                 case BASE_OCTAL -> setOctalBase(true);
                 case BASE_DECIMAL -> setDecimalBase(true);
                 case BASE_HEXADECIMAL -> setHexadecimalBase(true);
             }
+            // just added
+            //setProgrammerBase(calculator.getCalculatorBase());
         }
-        if (null == this.calculator.getCalculatorByte()) {
+        if (calculator.getCalculatorByte() == null) {
             setByteType(BYTE);
-            this.calculator.setCalculatorByte(BYTE_BYTE);
+            calculator.setCalculatorByte(BYTE_BYTE);
         }
         else {
             switch (this.calculator.getCalculatorByte()) {
@@ -180,39 +178,40 @@ public class ProgrammerPanel extends JPanel
      * Sets the base to start the ProgrammerPanel in
      * @param base the CalculatorBase to use
      */
+    @Deprecated
     private void setProgrammerBase(CalculatorBase base)
     {
         if (base == BASE_DECIMAL || StringUtils.isNotBlank(calculator.getValues()[0]))
         {
-            calculator.setCalculatorBase(BASE_DECIMAL);
-            calculator.getButtonDecimal().setSelected(true);
+            //calculator.setCalculatorBase(BASE_DECIMAL);
+            //calculator.getButtonDecimal().setEnabled(true);
             //setDecimalBase(true);
-            setButtons2To9(true);
-            setButtonsAToF(false);
+            //setButtons2To9(true);
+            //setButtonsAToF(false);
         }
         else if (base == BASE_OCTAL)
         {
-            calculator.setCalculatorBase(base);
-            setButtons2To9(true);
-            calculator.getButton8().setEnabled(false);
-            calculator.getButton9().setEnabled(false);
-            setButtonsAToF(false);
+            //calculator.setCalculatorBase(base);
+            //setButtons2To9(true);
+            //calculator.getButton8().setEnabled(false);
+            //calculator.getButton9().setEnabled(false);
+            //setButtonsAToF(false);
             //buttonOct.setSelected(true);
             //setOctalBase(true);
         }
         else if (base == BASE_HEXADECIMAL)
         {
-            calculator.setCalculatorBase(base);
-            setButtons2To9(true);
-            setButtonsAToF(true);
+            //calculator.setCalculatorBase(base);
+            //setButtons2To9(true);
+            //setButtonsAToF(true);
             //buttonHex.setSelected(true);
             //setHexadecimalBase(true);
         }
         else
         {
-            calculator.setCalculatorBase(BASE_BINARY);
-            setButtons2To9(false);
-            setButtonsAToF(false);
+            //calculator.setCalculatorBase(BASE_BINARY);
+            //setButtons2To9(false);
+            //setButtonsAToF(false);
             //buttonBin.setSelected(true);
             //setBinaryBase(true);
         }
@@ -229,7 +228,7 @@ public class ProgrammerPanel extends JPanel
         JMenuItem viewHelp = helpMenuItem.getItem(0);
         // remove any and all other view help actions
         Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
-        viewHelp.addActionListener(action -> showHelpPanel("IMPLEMENT " + PROGRAMMER.getValue() + " Calculator Help"));
+        viewHelp.addActionListener(action -> showHelpPanel("IMPLEMENT " + VIEW_PROGRAMMER.getValue() + " Calculator Help"));
         helpMenuItem.add(viewHelp, 0);
         LOGGER.info("Finished setting up the help menu");
     }
@@ -249,8 +248,8 @@ public class ProgrammerPanel extends JPanel
         JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setSize(new Dimension(400, 300));
         SwingUtilities.updateComponentTreeUI(calculator);
-        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + PROGRAMMER.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        calculator.confirm("Viewing " + PROGRAMMER.getValue() + " Calculator Help");
+        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + VIEW_PROGRAMMER.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        calculator.confirm("Viewing " + VIEW_PROGRAMMER.getValue() + " Calculator Help");
     }
 
     /**
@@ -363,6 +362,8 @@ public class ProgrammerPanel extends JPanel
             hexadecimalNumberButton.addActionListener(this::performProgrammerCalculatorNumberButtonActions);
         });
         updateButtonsBasedOnBase();
+        // just added
+        //setProgrammerBase(calculator.getCalculatorBase());
         LOGGER.debug("Hexadecimal buttons configured");
         buttonShift.setName(SHIFT.name());
         buttonShift.addActionListener(this::performButtonShiftAction);
@@ -401,6 +402,7 @@ public class ProgrammerPanel extends JPanel
                 calculator.getButton9().setEnabled(false);
             }
             case BASE_DECIMAL -> {
+                calculator.getButtonDecimal().setEnabled(true);
                 calculator.getButton0().setEnabled(true);
                 calculator.getButton1().setEnabled(true);
                 setButtons2To9(true);
@@ -917,7 +919,7 @@ public class ProgrammerPanel extends JPanel
             LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
             appendToPane(BLANK.getValue());
             calculator.setFirstNumber(true);
-            if (!calculator.isNegating()) calculator.setNumberNegative(false);
+            if (!calculator.isNumberNegative()) calculator.setIsNumberNegative(false);
             if (!calculator.isDotPressed())
             {
                 LOGGER.debug("Decimal is disabled. Enabling");
@@ -1001,22 +1003,22 @@ public class ProgrammerPanel extends JPanel
                 calculator.confirm("Max length of 7 digit number met");
                 return;
             }
-            if (calculator.isNegating() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
+            if (calculator.isNumberNegative() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
             {
                 calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
                 //calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.writeHistory(buttonChoice, false);
-                calculator.setNegating(false);
-                calculator.setNumberNegative(true);
+                calculator.setIsNumberNegative(false);
+                calculator.setIsNumberNegative(true);
             }
-            else if (calculator.isNegating() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
+            else if (calculator.isNumberNegative() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
             {
                 calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.writeHistory(buttonChoice, false);
-                calculator.setNegating(false);
-                calculator.setNumberNegative(true);
+                calculator.setIsNumberNegative(false);
+                calculator.setIsNumberNegative(true);
             }
             else
             {

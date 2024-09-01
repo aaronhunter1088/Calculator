@@ -3,7 +3,6 @@ package Panels;
 import Calculators.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.types.LogLevel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static Types.CalculatorBase.*;
-import static Types.CalculatorType.*;
+import static Types.CalculatorView.*;
 import static Types.Texts.*;
 
 public class BasicPanel extends JPanel
@@ -38,7 +36,7 @@ public class BasicPanel extends JPanel
      */
     public BasicPanel()
     {
-        setName(BASIC.getValue());
+        setName(VIEW_BASIC.getValue());
         LOGGER.info("Empty Basic panel created");
     }
 
@@ -68,13 +66,13 @@ public class BasicPanel extends JPanel
         setMinimumSize(new Dimension(200, 336)); // sets minimum size
         setupBasicPanelComponents();
         addComponentsToPanel();
-        setName(BASIC.getValue());
+        setName(VIEW_BASIC.getValue());
         SwingUtilities.updateComponentTreeUI(this);
-        LOGGER.info("Finished setting up {} panel", BASIC.getValue());
+        LOGGER.info("Finished setting up {} panel", VIEW_BASIC.getValue());
     }
 
     /**
-     * Clears button actions, sets the CalculatorType,
+     * Clears button actions, sets the CalculatorView,
      * CalculatorBase, ConverterType, and finally
      * sets up the basic panel and its components
      */
@@ -298,7 +296,7 @@ public class BasicPanel extends JPanel
                 View Help: Describes how to use the currently selected view.
                 About Calculator: will describe the current version and licensing information about the Calculator.
                 """
-                .formatted(BASIC.getValue(),
+                .formatted(VIEW_BASIC.getValue(),
                         ADDITION.getValue(), SUBTRACTION.getValue(), MULTIPLICATION.getValue(), DIVISION.getValue(), EQUALS.getValue(),
                         PERCENT.getValue(), SQUARE_ROOT.getValue(),SQUARED.getValue(), FRACTION.getValue(), ENTER_A_NUMBER.getValue(),
                         MEMORY_STORE.getValue(), calculator.getMemoryValues().length, // MemoryStore,
@@ -329,7 +327,7 @@ public class BasicPanel extends JPanel
         Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
         viewHelp.addActionListener(action -> showHelpPanel(helpString));
         helpMenuItem.add(viewHelp, 0);
-        LOGGER.debug("Help menu configured for {}", calculator.getCalculatorType());
+        LOGGER.debug("Help menu configured for {}", calculator.getCalculatorView());
     }
 
     /**
@@ -347,8 +345,8 @@ public class BasicPanel extends JPanel
         JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setSize(new Dimension(400, 300));
         SwingUtilities.updateComponentTreeUI(calculator);
-        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + BASIC.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        calculator.confirm("Viewing " + BASIC.getValue() + " Calculator Help");
+        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + VIEW_BASIC.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        calculator.confirm("Viewing " + VIEW_BASIC.getValue() + " Calculator Help");
     }
 
     /**
@@ -455,8 +453,9 @@ public class BasicPanel extends JPanel
                 calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
                 calculator.getButtonDecimal().setEnabled(false);
             }
+            calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION.getValue()));
             calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.setNumberNegative(false);
+            //calculator.setIsNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
             calculator.writeHistory(buttonChoice, false);
             calculator.confirm("Pressed " + buttonChoice);
@@ -501,7 +500,7 @@ public class BasicPanel extends JPanel
                 calculator.getTextPane().setText(calculator.addNewLineCharacters() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
                 calculator.getButtonDecimal().setEnabled(false);
             }
-            calculator.setNumberNegative(false);
+            calculator.setIsNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
             calculator.writeHistory(buttonChoice, false);
             calculator.confirm("Pressed " + buttonChoice);

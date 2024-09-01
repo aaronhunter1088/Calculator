@@ -2,7 +2,7 @@
 //
 //import Calculators.Calculator;
 //import Calculators.CalculatorError;
-//import Types.CalculatorType;
+//import Types.CalculatorView;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 //import org.junit.Before;
@@ -37,8 +37,8 @@
 //    @BeforeClass
 //    public static void setup() throws Exception
 //    {
-//        calculator = new Calculator(CalculatorType.PROGRAMMER);
-//        assertSame("ProgrammerCalculator has the wrong type", CalculatorType.PROGRAMMER, calculator.getCalculatorType());
+//        calculator = new Calculator(CalculatorView.PROGRAMMER);
+//        assertSame("ProgrammerCalculator has the wrong type", CalculatorView.PROGRAMMER, calculator.getCalculatorType());
 //        calculator.setFirstNumber(true);
 //        programmerPanel = new OLDProgrammerPanel(calculator);
 //        calculator.setCurrentPanel(programmerPanel);
@@ -46,8 +46,8 @@
 //
 //    @Before
 //    public void setupBefore() throws Exception {
-//        calculator = new Calculator(CalculatorType.PROGRAMMER);
-//        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
+//        calculator = new Calculator(CalculatorView.PROGRAMMER);
+//        calculator.setCalculatorType(CalculatorView.PROGRAMMER);
 //        calculator.setFirstNumber(true);
 //        programmerPanel = new OLDProgrammerPanel(calculator);
 //        calculator.setCurrentPanel(programmerPanel);
@@ -86,7 +86,7 @@
 //        //4. Press equals.
 //        //5. Textarea displays proper sum in 8 bit form
 //        calculator.getTextPane().setText("");
-//        calculator.setCalculatorType(CalculatorType.PROGRAMMER);
+//        calculator.setCalculatorType(CalculatorView.PROGRAMMER);
 //        programmerPanel.getButtonBin().setSelected(true);
 //        calculator.setFirstNumber(true);
 //        when(actionEvent.getActionCommand()).thenReturn("0").thenReturn("0").thenReturn("0").thenReturn("0")

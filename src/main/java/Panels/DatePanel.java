@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import static Calculators.Calculator.*;
-import static Types.CalculatorType.*;
+import static Types.CalculatorView.*;
 import static Types.DateOperation.*;
 
 public class DatePanel extends JPanel
@@ -61,7 +61,7 @@ public class DatePanel extends JPanel
      */
     public DatePanel()
     {
-        setName(DATE.getValue());
+        setName(VIEW_DATE.getValue());
         LOGGER.info("Date panel created");
     }
 
@@ -110,7 +110,7 @@ public class DatePanel extends JPanel
             setSize(datePanel2.getSize());
         }
         SwingUtilities.updateComponentTreeUI(this);
-        setName(DATE.getValue());
+        setName(VIEW_DATE.getValue());
         LOGGER.info("Finished constructing Date panel");
     }
 
@@ -166,7 +166,7 @@ public class DatePanel extends JPanel
                     JPanel mainPanel = new JPanel();
                     mainPanel.add(textLabel);
                     JOptionPane.showMessageDialog(calculator,
-                            mainPanel, "Viewing " + DATE.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+                            mainPanel, "Viewing " + VIEW_DATE.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
                 });
                 menuOption.add(viewHelpItem, 0);
             }
@@ -175,13 +175,13 @@ public class DatePanel extends JPanel
     }
 
     /**
-     * Sets the CalculatorType, CalculatorBase,
+     * Sets the CalculatorView, CalculatorBase,
      * ConverterType, and finally
      * sets up the DatePanel and its components
      */
     private void setupDatePanelComponents(DateOperation dateOperation)
     {
-        calculator.setCalculatorType(DATE);
+        calculator.setCalculatorView(VIEW_DATE);
         calculator.setCalculatorBase(null);
         calculator.setConverterType(null);
         calculator.setDateOperation(dateOperation);
