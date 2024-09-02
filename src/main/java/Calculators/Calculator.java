@@ -3217,15 +3217,14 @@ public class Calculator extends JFrame
 
     /**
      * Returns the value in the text pane when panel is programmer panel.
-     * TODO: Determine where extra \n is coming from which is why I am trying [2] then [1]
+     * <Byte><Space><Space><Base>\n\n<value[valuePosition]>\n
      * @return the value in the programmer text pane
      */
     public String getValueFromTextPaneForProgrammerPanel()
     {
         try
-        {
-            return textPane.getText().split("\n")[2].replace(",","");
-        } catch (ArrayIndexOutOfBoundsException ae1)
+        { return textPane.getText().split("\n")[2].replace(",",""); }
+        catch (ArrayIndexOutOfBoundsException ae1)
         {
             try
             {

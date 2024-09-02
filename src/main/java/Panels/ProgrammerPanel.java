@@ -898,20 +898,20 @@ public class ProgrammerPanel extends JPanel
     public void performNumberButtonActions(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Programmer Number Action for {} started", buttonChoice);
-        if (!calculator.isFirstNumber())
-        {
-            LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
-            appendToPane(BLANK.getValue());
-            calculator.setIsFirstNumber(true);
-            if (!calculator.isNumberNegative()) calculator.setIsNumberNegative(false);
-            if (!calculator.isDotPressed())
-            {
-                LOGGER.debug("Decimal is disabled. Enabling");
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-        }
-        try { performInnerNumberActions(buttonChoice); }
+        LOGGER.info("Programmer Action for {} started", buttonChoice);
+//        if (!calculator.isFirstNumber())
+//        {
+//            LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
+//            appendToPane(BLANK.getValue());
+//            calculator.setIsFirstNumber(true);
+//            if (!calculator.isNumberNegative()) calculator.setIsNumberNegative(false);
+//            if (!calculator.isDotPressed())
+//            {
+//                LOGGER.debug("Decimal is disabled. Enabling");
+//                calculator.getButtonDecimal().setEnabled(true);
+//            }
+//        }
+        try { performInnerNumberActions(buttonChoice, actionEvent); }
         catch (CalculatorError c) { calculator.logException(c); }
     }
     /**
@@ -919,7 +919,7 @@ public class ProgrammerPanel extends JPanel
      * @param buttonChoice the chosen number
      * @throws CalculatorError if there is a CalculatorException that occurs
      */
-    private void performInnerNumberActions(String buttonChoice) throws CalculatorError
+    private void performInnerNumberActions(String buttonChoice, ActionEvent actionEvent) throws CalculatorError
     {
         if (calculator.getCalculatorBase() == BASE_BINARY) {
             int lengthOfTextArea = calculator.getTextPaneWithoutNewLineCharacters().length();
@@ -957,47 +957,48 @@ public class ProgrammerPanel extends JPanel
             }
         }
         else if (calculator.getCalculatorBase() == BASE_DECIMAL) {
-            if (calculator.performInitialChecks())
-            {
-                LOGGER.warn("Invalid entry in textPane. Clearing...");
-                appendToPane(BLANK.getValue());
-                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
-                calculator.setIsFirstNumber(true);
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-            if (calculator.getValues()[0].isBlank())
-            {
-                LOGGER.info("Highest size not met. Values[0] is blank");
-            }
-            else if (calculator.checkValueLength())
-            {
-                LOGGER.info("Highest size of value has been met");
-                calculator.confirm("Max length of 7 digit number met");
-                return;
-            }
-            if (calculator.isNumberNegative() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.writeHistory(buttonChoice, false);
-                calculator.setIsNumberNegative(false);
-                calculator.setIsNumberNegative(true);
-            }
-            else if (calculator.isNumberNegative() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.writeHistory(buttonChoice, false);
-                calculator.setIsNumberNegative(false);
-                calculator.setIsNumberNegative(true);
-            }
-            else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
-                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.writeHistory(buttonChoice, false);
-            }
-            calculator.confirm("Pressed " + buttonChoice);
+            calculator.performNumberButtonAction(actionEvent);
+//            if (calculator.performInitialChecks())
+//            {
+//                LOGGER.warn("Invalid entry in textPane. Clearing...");
+//                appendToPane(BLANK.getValue());
+//                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
+//                calculator.setIsFirstNumber(true);
+//                calculator.getButtonDecimal().setEnabled(true);
+//            }
+//            if (calculator.getValues()[0].isBlank())
+//            {
+//                LOGGER.info("Highest size not met. Values[0] is blank");
+//            }
+//            else if (calculator.checkValueLength())
+//            {
+//                LOGGER.info("Highest size of value has been met");
+//                calculator.confirm("Max length of 7 digit number met");
+//                return;
+//            }
+//            if (calculator.isNumberNegative() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
+//            {
+//                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
+//                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+//                calculator.writeHistory(buttonChoice, false);
+//                calculator.setIsNumberNegative(false);
+//                calculator.setIsNumberNegative(true);
+//            }
+//            else if (calculator.isNumberNegative() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
+//            {
+//                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
+//                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+//                calculator.writeHistory(buttonChoice, false);
+//                calculator.setIsNumberNegative(false);
+//                calculator.setIsNumberNegative(true);
+//            }
+//            else
+//            {
+//                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
+//                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+//                calculator.writeHistory(buttonChoice, false);
+//            }
+//            calculator.confirm("Pressed " + buttonChoice);
         }
         else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
