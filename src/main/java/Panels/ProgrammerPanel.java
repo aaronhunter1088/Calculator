@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -982,24 +983,10 @@ public class ProgrammerPanel extends JPanel
         LOGGER.info("Programmer Action for {} started", buttonChoice);
         if (BASE_BINARY == calculator.getCalculatorBase())
         {
-            int allowedLengthMinusNewLines = 0;
-            switch (calculator.getCalculatorByte())
-            {
-                case BYTE_BYTE -> {
-                    allowedLengthMinusNewLines = 9; // 0000_0101, or 9 total characters
-                }
-                case BYTE_WORD -> {
-                    allowedLengthMinusNewLines = 19; // 0000_0101_0000_0101, or 19 total characters
-                }
-                case BYTE_DWORD -> {
-                    allowedLengthMinusNewLines = 38; // double word minus newlines
-                }
-                case BYTE_QWORD -> {
-                    allowedLengthMinusNewLines = 76; // double dword minus newlines
-                }
-            }
+            calculator.performNumberButtonAction(actionEvent);
+            var allowedLengthMinusNewLines = getAllowedLengthsOfTextPane();
             String textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
-            if (textPaneText.length() == allowedLengthMinusNewLines)
+            if (allowedLengthMinusNewLines.contains(textPaneText.length()))
             {
                 calculator.getValues()[calculator.getValuesPosition()] = textPaneText;
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.convertValueToDecimal();
@@ -1009,7 +996,7 @@ public class ProgrammerPanel extends JPanel
             {
                 appendToPane(textPaneText + buttonChoice);
                 textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
-                if (textPaneText.length() == allowedLengthMinusNewLines)
+                if (allowedLengthMinusNewLines.contains(textPaneText.length()))
                 {
                     calculator.setPreviousBase(BASE_BINARY);
                     calculator.getValues()[calculator.getValuesPosition()] = textPaneText;
@@ -1021,8 +1008,34 @@ public class ProgrammerPanel extends JPanel
         }
         else if (BASE_DECIMAL == calculator.getCalculatorBase())
         { calculator.performNumberButtonAction(actionEvent); }
-        else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
-        else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
+        else if (BASE_OCTAL == calculator.getCalculatorBase()) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
+        else /* (HEXADECIMAL == calculator.getCalculatorBase()) */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
+    }
+
+    /**
+     * Returns the correct lengths allowed when using base binary
+     * and different byte values. This accounts for spaces and newlines
+     * @return List the lengths allowed for different bytes
+     */
+    private List<Integer> getAllowedLengthsOfTextPane() {
+        List<Integer> allowedLengthMinusNewLines = new ArrayList<>();
+        switch (calculator.getCalculatorByte())
+        {
+            case BYTE_BYTE -> {
+                allowedLengthMinusNewLines.add(9);  // 0000_0101, or 9 total characters
+                allowedLengthMinusNewLines.add(11); // 0000_0101_+, or 11 total characters
+            }
+            case BYTE_WORD -> {
+                allowedLengthMinusNewLines.add(19); // 0000_0101_0000_0101, or 19 total characters
+            }
+            case BYTE_DWORD -> {
+                allowedLengthMinusNewLines.add(38); // double word minus newlines
+            }
+            case BYTE_QWORD -> {
+                allowedLengthMinusNewLines.add(76); // double dword minus newlines
+            }
+        }
+        return allowedLengthMinusNewLines;
     }
 
     /**

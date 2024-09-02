@@ -1126,7 +1126,7 @@ public class Calculator extends JFrame
     }
 
     /**
-     * The actions to perform when clicking any number button
+     * The beginning actions to perform when clicking any number button
      * @param actionEvent the click action
      */
     public void performNumberButtonAction(ActionEvent actionEvent)
@@ -1181,11 +1181,21 @@ public class Calculator extends JFrame
         }
         else
         {
-            values[valuesPosition] = values[valuesPosition] + buttonChoice;
-            appendTextToPane(addCommas(values[valuesPosition]));
-            writeHistory(buttonChoice, false);
+            if (currentPanel instanceof BasicPanel) performNumberButtonInnerAction(buttonChoice);
+            else return;
         }
         confirm("Pressed " + buttonChoice);
+    }
+
+    /**
+     * Inner logic of number button actions.
+     * @param buttonChoice the clicked button
+     */
+    public void performNumberButtonInnerAction(String buttonChoice)
+    {
+        values[valuesPosition] = values[valuesPosition] + buttonChoice;
+        appendTextToPane(addCommas(values[valuesPosition]));
+        writeHistory(buttonChoice, false);
     }
 
     /**
@@ -2260,7 +2270,7 @@ public class Calculator extends JFrame
     public void performEqualsButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Starting {} button actions", buttonChoice);
+        LOGGER.info("Performing {} button actions", buttonChoice);
         if (isAdding && values[1].isBlank())
         {
             LOGGER.warn("Attempted to perform {} but values[1] is blank", ADDITION);
@@ -2288,7 +2298,7 @@ public class Calculator extends JFrame
         String operator = getActiveBasicPanelOperator();
         determineAndPerformBasicCalculatorOperation();
         if (!operator.isEmpty() && !textPaneContainsBadText()) {
-            appendTextToPane(addCommas(values[0]));
+            appendTextToPane(values[0]);
         }
         values[0] = BLANK.getValue();
         values[1] = BLANK.getValue();
@@ -3100,9 +3110,15 @@ public class Calculator extends JFrame
      */
     public String convertValueToBinary()
     {
-        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // return Integer.toString(0, 2) // "0"
-        LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_BINARY.getValue());
-        String base2Number = Integer.toBinaryString(Integer.parseInt(values[valuesPosition]));
+        String valueToConvert = values[valuesPosition];
+        if (valueToConvert.isEmpty()) {
+            if (valuesPosition != 0 && values[valuesPosition-1].isEmpty())
+                valueToConvert = BLANK.getValue();
+            else valueToConvert = values[valuesPosition-1];
+        }
+        if (valueToConvert.isEmpty()) return BLANK.getValue();
+        LOGGER.debug("Converting {} to {}", valueToConvert, BASE_BINARY.getValue());
+        String base2Number = Integer.toBinaryString(Integer.parseInt(valueToConvert));
         int base2Length = base2Number.length();
         int topLength = 0;
         if ( calculatorByte == BYTE_BYTE ) topLength = 8;
@@ -3128,7 +3144,7 @@ public class Calculator extends JFrame
         int addZeroes = topLength - base2Length;
         base2Number = ZERO.getValue().repeat(addZeroes) + base2Number;
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_BINARY.getValue(), base2Number);
-        LOGGER.info("The number {} in base 10 is {} in base 2.", values[valuesPosition], base2Number);
+        LOGGER.info("The number {} in base 10 is {} in base 2.", valueToConvert, base2Number);
         return base2Number;
     }
 
@@ -3737,11 +3753,17 @@ public class Calculator extends JFrame
         {
             switch (calculatorBase) {
                 case BASE_BINARY -> {
-                    programmerPanel.appendToPane(text);
+                    if (!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) {
+                        programmerPanel.appendToPane(text);
+                    } else if (!values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1])) {
+                        programmerPanel.appendToPane(text);
+                    } else {
+                        programmerPanel.appendToPane(programmerPanel.separateBits(convertValueToBinary()));
+                    }
                 }
                 case BASE_OCTAL -> {}
                 case BASE_DECIMAL -> {
-                    programmerPanel.appendToPane(text);
+                    programmerPanel.appendToPane(addCommas(text));
                 }
                 case BASE_HEXADECIMAL -> {}
             }
