@@ -111,6 +111,13 @@ public enum Texts {
     // Scientific
 
     // Date
+    SAME("Same"),
+    YEAR("Year"),
+    MONTH("Month"),
+    WEEK("Week"),
+    DAY("Day"),
+    ADD_OR_SUB_RESULT("Result"),
+    LOWER_CASE_S("s"),
 
     // Converter
 

@@ -3031,7 +3031,7 @@ public class Calculator extends JFrame
                     setCalculatorView(VIEW_SCIENTIFIC);
                     break;
                 case "Date":
-                    setDateOperation(dateOperation);
+                    setDateOperation(DIFFERENCE_BETWEEN_DATES);
                     switchPanelsInner(new DatePanel());
                     setCalculatorView(VIEW_DATE);
                     break;
@@ -3328,7 +3328,7 @@ public class Calculator extends JFrame
                 break;
             }
             case VIEW_DATE: {
-                if (((DatePanel) currentPanel).dateOperation == DIFFERENCE_BETWEEN_DATES)
+                if (dateOperation == DIFFERENCE_BETWEEN_DATES)
                 {
                     LOGGER.info("{} Selected", DIFFERENCE_BETWEEN_DATES);
                     int year = ((DatePanel) currentPanel).getTheYearFromTheFromDatePicker();

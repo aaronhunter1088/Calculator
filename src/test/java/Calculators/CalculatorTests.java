@@ -144,7 +144,7 @@ public class CalculatorTests
         calculator = new Calculator(VIEW_DATE);
         assertTrue("Cannot see date calculator", calculator.isVisible());
         assertEquals("Expected CalculatorView to be " + VIEW_DATE, VIEW_DATE, calculator.getCalculatorView());
-        assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), DIFFERENCE_BETWEEN_DATES);
+        assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, calculator.getDateOperation(), DIFFERENCE_BETWEEN_DATES);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class CalculatorTests
         calculator = new Calculator(DIFFERENCE_BETWEEN_DATES);
         assertTrue("Cannot see date calculator", calculator.isVisible());
         assertEquals("Expected CalculatorView to be " + VIEW_DATE, VIEW_DATE, calculator.getCalculatorView());
-        assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), DIFFERENCE_BETWEEN_DATES);
+        assertSame("Date operation is not " + DIFFERENCE_BETWEEN_DATES, calculator.getDateOperation(), DIFFERENCE_BETWEEN_DATES);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class CalculatorTests
         calculator = new Calculator(ADD_SUBTRACT_DAYS);
         assertTrue("Cannot see date calculator", calculator.isVisible());
         assertEquals("Expected CalculatorView to be " + VIEW_DATE, VIEW_DATE, calculator.getCalculatorView());
-        assertSame("Date operation is not " + ADD_SUBTRACT_DAYS, ((DatePanel)calculator.getCurrentPanel()).getDateOperation(), ADD_SUBTRACT_DAYS);
+        assertSame("Date operation is not " + ADD_SUBTRACT_DAYS, calculator.getDateOperation(), ADD_SUBTRACT_DAYS);
     }
 
     /************* Converter Calculator Tests ******************/

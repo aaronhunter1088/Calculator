@@ -51,145 +51,6 @@ public class BasicPanel extends JPanel
 
     /* Start of methods here */
     /**
-     * The actions to perform when History is clicked
-     * @param actionEvent the click action
-     */
-    public void performHistoryAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
-        {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
-            calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
-            basicPanel.remove(historyPanel);
-            addComponent(basicPanel, buttonsPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
-        }
-        else
-        {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
-            calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
-            basicPanel.remove(buttonsPanel);
-            addComponent(basicPanel, historyPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
-        }
-    }
-
-    /**
-     * The actions to perform when the Percent button is clicked
-     * @param actionEvent the click action
-     */
-    public void performPercentButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform " + PERCENT + " operation"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
-        {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
-            calculator.confirm("Pressed: " + buttonChoice);
-        }
-        else
-        {
-            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
-            result /= 100;
-            LOGGER.debug("result: " + result);
-            calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
-            calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-            calculator.writeHistory(buttonChoice, false);
-            LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
-            LOGGER.debug("textPane: {}", calculator.getTextPane().getText());
-            calculator.getButtonDecimal().setEnabled(false);
-            calculator.confirm("Pressed " + buttonChoice);
-        }
-    }
-
-    /**
-     * The actions to perform when the Squared button is clicked
-     * @param actionEvent the click action
-     */
-    public void performSquaredButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform " + SQUARED + " operation"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
-        {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
-            calculator.confirm("No number to square");
-        }
-        else
-        {
-            double result = Math.pow(Double.parseDouble(calculator.getValues()[0]), 2);
-            LOGGER.debug("result: " + result);
-            if (result % 1 == 0)
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-            else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
-                calculator.getButtonDecimal().setEnabled(false);
-            }
-            calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION.getValue()));
-            calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-            //calculator.setIsNumberNegative(false);
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
-            calculator.writeHistory(buttonChoice, false);
-            calculator.confirm("Pressed " + buttonChoice);
-        }
-    }
-
-    /**
-     * The actions to perform when the Fraction button is clicked
-     * @param actionEvent the click action
-     */
-    public void performFractionButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform " + FRACTION + " operation"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
-        {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
-            calculator.confirm("Cannot perform " + FRACTION + " operation");
-        }
-        else
-        {
-            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
-            result = 1 / result;
-            LOGGER.debug("result: " + result);
-            if (INFINITY.getValue().equals(String.valueOf(result)))
-            {
-                calculator.getButtonDecimal().setEnabled(true);
-                calculator.getTextPane().setText(calculator.addNewLines() + INFINITY.getValue());
-                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
-            }
-            else if (result % 1 == 0)
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-            else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.formatNumber(String.valueOf(result));
-                calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.getButtonDecimal().setEnabled(false);
-            }
-            calculator.setIsNumberNegative(false);
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
-            calculator.writeHistory(buttonChoice, false);
-            calculator.confirm("Pressed " + buttonChoice);
-        }
-    }
-
-    /**
      * The main method used to define the BasicPanel
      * and all of its components and their actions
      * @param calculator the Calculator object
@@ -512,6 +373,145 @@ public class BasicPanel extends JPanel
      */
     public void appendToPane(String text)
     { calculator.getTextPane().setText(calculator.addNewLines(1) + text); }
+
+    /**
+     * The actions to perform when History is clicked
+     * @param actionEvent the click action
+     */
+    public void performHistoryAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
+        {
+            LOGGER.debug("{}", actionEvent.getActionCommand());
+            calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
+            basicPanel.remove(historyPanel);
+            addComponent(basicPanel, buttonsPanel, 2, 0);
+            SwingUtilities.updateComponentTreeUI(this);
+        }
+        else
+        {
+            LOGGER.debug("{}", actionEvent.getActionCommand());
+            calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
+            basicPanel.remove(buttonsPanel);
+            addComponent(basicPanel, historyPanel, 2, 0);
+            SwingUtilities.updateComponentTreeUI(this);
+        }
+    }
+
+    /**
+     * The actions to perform when the Percent button is clicked
+     * @param actionEvent the click action
+     */
+    public void performPercentButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + PERCENT + " operation"); }
+        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
+            calculator.confirm("Pressed: " + buttonChoice);
+        }
+        else
+        {
+            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+            result /= 100;
+            LOGGER.debug("result: " + result);
+            calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
+            calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.writeHistory(buttonChoice, false);
+            LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
+            LOGGER.debug("textPane: {}", calculator.getTextPane().getText());
+            calculator.getButtonDecimal().setEnabled(false);
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+    }
+
+    /**
+     * The actions to perform when the Squared button is clicked
+     * @param actionEvent the click action
+     */
+    public void performSquaredButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + SQUARED + " operation"); }
+        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
+            calculator.confirm("No number to square");
+        }
+        else
+        {
+            double result = Math.pow(Double.parseDouble(calculator.getValues()[0]), 2);
+            LOGGER.debug("result: " + result);
+            if (result % 1 == 0)
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
+                calculator.getButtonDecimal().setEnabled(true);
+            }
+            else
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
+                calculator.getButtonDecimal().setEnabled(false);
+            }
+            calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION.getValue()));
+            calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            //calculator.setIsNumberNegative(false);
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
+            calculator.writeHistory(buttonChoice, false);
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+    }
+
+    /**
+     * The actions to perform when the Fraction button is clicked
+     * @param actionEvent the click action
+     */
+    public void performFractionButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + FRACTION + " operation"); }
+        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        {
+            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
+            calculator.confirm("Cannot perform " + FRACTION + " operation");
+        }
+        else
+        {
+            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+            result = 1 / result;
+            LOGGER.debug("result: " + result);
+            if (INFINITY.getValue().equals(String.valueOf(result)))
+            {
+                calculator.getButtonDecimal().setEnabled(true);
+                calculator.getTextPane().setText(calculator.addNewLines() + INFINITY.getValue());
+                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
+            }
+            else if (result % 1 == 0)
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
+                calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.getButtonDecimal().setEnabled(true);
+            }
+            else
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.formatNumber(String.valueOf(result));
+                calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.getButtonDecimal().setEnabled(false);
+            }
+            calculator.setIsNumberNegative(false);
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
+            calculator.writeHistory(buttonChoice, false);
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+    }
 
     /* Getters */
     public JTextPane getHistoryTextPane() { return basicHistoryTextPane; }

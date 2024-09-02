@@ -80,439 +80,6 @@ public class ProgrammerPanel extends JPanel
 
     /* Start of methods here */
     /**
-     * The actions to perform when you click MemorySubtraction
-     * @param actionEvent the click action
-     */
-    public void performModulusAction(ActionEvent actionEvent)
-    {
-        LOGGER.debug("performModButtonActions begins");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.debug("button: " + buttonChoice);
-        LOGGER.debug("is it enabled? " + buttonModulus.isEnabled() + " Setting to false.");
-        //setModulusPressed(true);
-        buttonModulus.setEnabled(false);
-        if (calculator.getValues()[0].equals("") && calculator.getValues()[1].equals("") )
-        {
-            // do nothing
-            LOGGER.debug("Doing nothing because...");
-            LOGGER.debug("calculator.getValues()[0]: " + calculator.getValues()[0]);
-            LOGGER.debug("calculator.getValues()[1]: " + calculator.getValues()[1]);
-        }
-        else if (!calculator.getValues()[0].equals("") &&
-                !calculator.getValues()[1].equals(""))
-        {
-            LOGGER.debug("performing Modulus");
-            performModulus();
-        }
-        else if (!calculator.getValues()[0].equals("") &&
-                calculator.getValues()[1].equals(""))
-        {
-            // some value entered then pushed mod ... more input to come
-            calculator.getTextPane().setText(calculator.getTextPane().getText() + " " + buttonChoice);
-            //calculator.updateTextAreaValueFromTextArea();
-//            calculator.getValues()[0] = calculator.getTextAreaWithoutNewLineCharacters();
-            LOGGER.debug("setting setModButtonBool to true");
-            //setModulusPressed(true);
-            calculator.setIsFirstNumber(false);
-        }
-        calculator.confirm("Modulus Actions finished");
-    }
-    /**
-     * The inner logic for modulus
-     */
-    private void performModulus()
-    {
-        // some value mod another value returns result:  4 mod 3 == 1; 1 * 3 = 3; 4 - 3 = 1 == result
-        int firstResult = Integer.parseInt(calculator.getValues()[0]) / Integer.parseInt(calculator.getValues()[1]); // create result forced double
-        LOGGER.debug("firstResult: " + firstResult);
-        int secondResult = (firstResult * Integer.parseInt(calculator.getValues()[1]));
-        LOGGER.debug("secondResult: " + secondResult);
-        int finalResult = Integer.parseInt(calculator.getValues()[0]) - secondResult;
-        LOGGER.debug("modulus: " + finalResult);
-        calculator.getValues()[0] = String.valueOf(finalResult);
-    }
-
-    /**
-     * The actions to perform when Or is clicked
-     */
-    public void performOrAction(ActionEvent actionEvent)
-    {
-        LOGGER.info("performOrLogic starts here");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice);
-        //setOrPressed(true);
-        buttonOr.setEnabled(false);
-//        if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isNotEmpty(calculator.getValues()[1]))
-//        {
-//            String msg = "calculator.getValues()[1] is set and not calculator.getValues()[0]. This is not allowed.";
-//            throw new CalculatorError(msg);
-//        }
-//        else if below
-        if (StringUtils.isNotEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
-        {
-            LOGGER.debug("getValues()[0] is set, but not getValues()[1]");
-            calculator.setIsFirstNumber(false);
-            calculator.getTextPane().setText(calculator.addNewLines()
-                    + buttonChoice + " " + calculator.getValues()[0]);
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[0] + " " + buttonChoice));
-            calculator.setValuesPosition(calculator.getValuesPosition() + 1);
-            calculator.confirm("OR complete");
-        }
-        else if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
-        {
-            //setOrPressed(false);
-            calculator.setIsFirstNumber(true);
-            calculator.confirm("Pressed OR. Doing nothing");
-        }
-        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && !StringUtils.isEmpty(calculator.getValues()[1]))
-        {
-            String sb = performOr(); // 2 OR 3 OR button presses
-            //TODO: need to convert sb to DECIMAL form before storing in getValues()
-            calculator.getValues()[0] = sb;
-            calculator.getTextPane().setText(calculator.addNewLines(1)+calculator.getValues()[0]);
-            //setOrPressed(false);
-            calculator.setValuesPosition(0);
-        }
-    }
-    /**
-     * The inner logic for Or
-     * @return String the result of the Or operation
-     */
-    private String performOr()
-    {
-        LOGGER.debug("performing Or");
-        StringBuffer sb = new StringBuffer();
-        //TODO: if getValues()[0] and getValues()[1] in decimal and difference length, this will fail.
-        //In order for this to work, we need to convert to most appropriate base
-        //Check to make sure both are same length
-
-        for (int i=0; i<calculator.getValues()[0].length(); i++)
-        {
-            String letter = "0";
-            if (String.valueOf(calculator.getValues()[0].charAt(i)).equals("0") &&
-                    String.valueOf(calculator.getValues()[1].charAt(i)).equals("0") )
-            { // if the characters at both getValues() at the same position are the same and equal 0
-                letter = "0";
-            }
-            else
-            {
-                letter = "1";
-            }
-            sb.append(letter);
-            LOGGER.info(calculator.getValues()[0].charAt(i)+" OR "+calculator.getValues()[1].charAt(i)+" = "+ letter);
-        }
-        calculator.getValues()[3] = sb.toString();
-        //calculator.convertAllValuesToDecimal();
-        LOGGER.info(calculator.getValues()[0]+" OR "+calculator.getValues()[1]+" = "+ calculator.getValues()[3]);
-        calculator.getValues()[0] = calculator.getValues()[3];
-        buttonOr.setEnabled(true);
-        return String.valueOf(sb);
-    }
-
-    /**
-     * The actions to perform when Xor is clicked
-     */
-    public void performXorAction(ActionEvent actionEvent)
-    {
-        LOGGER.info("performing XOR button actions");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice);
-        //setXorPressed(true);
-        buttonXor.setEnabled(false);
-        if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1])) {
-
-            calculator.confirm("No getValues() set");
-        }
-        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
-        {
-            calculator.getTextPane().setText(calculator.addNewLines(1)+
-                    calculator.getTextPaneWithoutNewLineCharacters() + " " + "XOR");
-        }
-        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && !StringUtils.isEmpty(calculator.getValues()[1]))
-        {
-            performXor();
-        }
-    }
-    /**
-     * The inner logic for Xor
-     * @return
-     */
-    private String performXor()
-    {
-        LOGGER.info("performing Xor");
-        StringBuffer sb = new StringBuffer();
-        for (int i=0; i<calculator.getValues()[0].length(); i++) {
-            String letter = "0";
-            if (String.valueOf(calculator.getValues()[0].charAt(i)).equals("0") &&
-                    String.valueOf(calculator.getValues()[1].charAt(i)).equals("0") )
-            { // if the characters at both getValues() at the same position are the same and equal 0
-                letter = "0";
-            }
-            else
-            {
-                letter = "1";
-            }
-            sb.append(letter);
-            LOGGER.info(calculator.getValues()[0].charAt(i) + " + " + calculator.getValues()[1].charAt(i)+ " = " + letter);
-        }
-        return String.valueOf(sb);
-    }
-
-    /**
-     * The actions to perform when the Not button is clicked
-     */
-    public void performNotAction(ActionEvent actionEvent)
-    {
-        LOGGER.info("performing not operation...");
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice);
-        //setNotPressed(false);
-        buttonNot.setEnabled(false);
-        //calculator.setTextAreaValue(new StringBuffer(calculator.getTextArea().getText().replaceAll("\n", "")));
-        LOGGER.debug("before operation execution: " + calculator.getTextPane().getText().toString());
-        StringBuffer newBuffer = new StringBuffer();
-        for (int i = 0; i < calculator.getTextPane().getText().length(); i++) {
-            String s = Character.toString(calculator.getTextPane().getText().charAt(i));
-            if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
-            else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
-        }
-        LOGGER.debug("after operation execution: " + newBuffer);
-        //calculator.setTextAreaValue(new StringBuffer(newBuffer));
-        calculator.getTextPane().setText("\n"+calculator.getTextPane().getText().toString());
-        LOGGER.info("not operation completed.");
-    }
-
-    /**
-     * The actions to perform when the Shift button is clicked
-     */
-    public void performShiftAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.debug("isShiftPressed: {}", isShiftPressed);
-        if (isShiftPressed) {
-            isShiftPressed = false;
-            buttonsPanel.remove(buttonRotateLeft);
-            buttonsPanel.remove(buttonRotateRight);
-            buttonsPanel.remove(buttonBytes);
-            buttonsPanel.remove(buttonBases);
-            addComponent(buttonsPanel, buttonShiftLeft, 0, 0);
-            addComponent(buttonsPanel, buttonShiftRight, 0, 1);
-            addComponent(buttonsPanel, buttonOr, 0, 2);
-            addComponent(buttonsPanel, buttonXor, 0, 3);
-            addComponent(buttonsPanel, buttonNot, 0, 4);
-            addComponent(buttonsPanel, buttonAnd, 0, 5);
-        } else {
-            isShiftPressed = true;
-            buttonsPanel.remove(buttonShiftLeft);
-            buttonsPanel.remove(buttonShiftRight);
-            buttonsPanel.remove(buttonOr);
-            buttonsPanel.remove(buttonXor);
-            buttonsPanel.remove(buttonNot);
-            buttonsPanel.remove(buttonAnd);
-            addComponent(buttonsPanel, buttonRotateLeft, 0, 0);
-            addComponent(buttonsPanel, buttonRotateRight, 0, 1);
-            addComponent(buttonsPanel, buttonBytes, 0, 2, null, 2, 1, 1, 1, 0,0);
-            addComponent(buttonsPanel, buttonBases, 0, 4, null, 2, 1, 1, 1, 0,0);
-        }
-        buttonsPanel.repaint();
-        buttonsPanel.revalidate();
-    }
-
-    /**
-     * The actions to perform when the Bytes button is clicked
-     */
-    public void performBytesAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        switch(calculator.getCalculatorByte())
-        {
-            case BYTE_BYTE -> {
-                calculator.setCalculatorByte(BYTE_WORD);
-            }
-            case BYTE_WORD -> {
-                calculator.setCalculatorByte(BYTE_DWORD);
-            }
-            case BYTE_DWORD  -> {
-                calculator.setCalculatorByte(BYTE_QWORD);
-            }
-            case BYTE_QWORD -> {
-                calculator.setCalculatorByte(BYTE_BYTE);
-            }
-        }
-        calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + calculator.getCalculatorByte().getValue());
-        appendToPane(addByteRepresentation());
-        calculator.confirm("Bytes updated");
-    }
-
-    /**
-     * The actions to perform when the Bases button is clicked
-     */
-    public void performBasesAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
-        switch(calculator.getCalculatorBase())
-        {
-            case BASE_BINARY -> {
-                this.calculator.setCalculatorBase(BASE_OCTAL);
-            }
-            case BASE_OCTAL -> {
-                this.calculator.setCalculatorBase(BASE_DECIMAL);
-            }
-            case BASE_DECIMAL  -> {
-                this.calculator.setCalculatorBase(BASE_HEXADECIMAL);
-            }
-            case BASE_HEXADECIMAL -> {
-                this.calculator.setCalculatorBase(BASE_BINARY);
-            }
-        }
-        updateButtonsBasedOnBase();
-        appendToPane(addByteRepresentation()); // must call to update textPane base value
-        calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
-        calculator.confirm("Bases updated");
-    }
-
-    /**
-     * The actions to perform when clicking a hexadecimal number button
-     * @param actionEvent the click action
-     */
-    public void performNumberButtonActions(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Programmer Number Action for {} started", buttonChoice);
-        if (!calculator.isFirstNumber())
-        {
-            LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
-            appendToPane(BLANK.getValue());
-            calculator.setIsFirstNumber(true);
-            if (!calculator.isNumberNegative()) calculator.setIsNumberNegative(false);
-            if (!calculator.isDotPressed())
-            {
-                LOGGER.debug("Decimal is disabled. Enabling");
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-        }
-        try { performInnerNumberActions(buttonChoice); }
-        catch (CalculatorError c) { calculator.logException(c); }
-    }
-    /**
-     * The inner logic for number buttons
-     * @param buttonChoice the chosen number
-     * @throws CalculatorError if there is a CalculatorException that occurs
-     */
-    private void performInnerNumberActions(String buttonChoice) throws CalculatorError
-    {
-        if (calculator.getCalculatorBase() == BASE_BINARY) {
-            int lengthOfTextArea = calculator.getTextPaneWithoutNewLineCharacters().length();
-            LOGGER.debug("text pane value.length: {}", lengthOfTextArea);
-            if (lengthOfTextArea == 8 || lengthOfTextArea == 17 || lengthOfTextArea == 26 || lengthOfTextArea == 35 || lengthOfTextArea == 44)
-            {   // add a space add the "end" if the length of the number matches the bytes
-                StringBuffer newNumber = new StringBuffer();
-                newNumber.append(buttonChoice).append(" ").append(calculator.getTextPaneWithoutNewLineCharacters());
-                calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
-            }
-            else if (lengthOfTextArea >= 53) { LOGGER.info("No more entries aloud"); }
-            else {
-                StringBuffer newNumber = new StringBuffer();
-                newNumber.append(calculator.getTextPaneWithoutNewLineCharacters());
-                if (calculator.getTextPaneWithoutNewLineCharacters().contains(" ")) {
-                    String[] bytes = calculator.getTextPaneWithoutNewLineCharacters().split(" ");
-                    newNumber = new StringBuffer();
-                    for (int i = 1; i < bytes.length; i++) {
-                        newNumber.append(bytes[i]).append(" "); // 10000000' '
-                    }
-                    newNumber.append(bytes[0]); // 10000000' '1
-                    newNumber.append(buttonChoice); // 10000000' '10
-                    bytes[0] = bytes[0] + buttonChoice;
-                    bytes = newNumber.toString().split(" "); // '10000000', '10'
-                    newNumber = new StringBuffer();
-                    for (int i = bytes.length-1; i > 0; i--) {
-                        newNumber.append(bytes[i]).append(" "); // 10' '
-                    }
-                    newNumber.append(bytes[0]); // 10' '10000000
-                }
-                else {
-                    newNumber.append(buttonChoice);
-                }
-                calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
-            }
-        }
-        else if (calculator.getCalculatorBase() == BASE_DECIMAL) {
-            if (calculator.performInitialChecks())
-            {
-                LOGGER.warn("Invalid entry in textPane. Clearing...");
-                appendToPane(BLANK.getValue());
-                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
-                calculator.setIsFirstNumber(true);
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-            if (calculator.getValues()[0].isBlank())
-            {
-                LOGGER.info("Highest size not met. Values[0] is blank");
-            }
-            else if (calculator.checkValueLength())
-            {
-                LOGGER.info("Highest size of value has been met");
-                calculator.confirm("Max length of 7 digit number met");
-                return;
-            }
-            if (calculator.isNumberNegative() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.writeHistory(buttonChoice, false);
-                calculator.setIsNumberNegative(false);
-                calculator.setIsNumberNegative(true);
-            }
-            else if (calculator.isNumberNegative() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.writeHistory(buttonChoice, false);
-                calculator.setIsNumberNegative(false);
-                calculator.setIsNumberNegative(true);
-            }
-            else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
-                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.writeHistory(buttonChoice, false);
-            }
-            calculator.confirm("Pressed " + buttonChoice);
-        }
-        else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
-        else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
-    }
-
-    /**
-     * The actions to perform when History is clicked
-     * @param actionEvent the click action
-     */
-    public void performHistoryAction(ActionEvent actionEvent)
-    {
-        if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
-        {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
-            calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
-            programmerPanel.remove(historyPanel);
-            addComponent(programmerPanel, buttonsPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
-            System.out.println(programmerPanel.getSize());
-        }
-        else
-        {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
-            calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
-            programmerPanel.remove(buttonsPanel);
-            addComponent(programmerPanel, historyPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
-            System.out.println(programmerPanel.getSize());
-        }
-    }
-
-    /**
      * The main method used to define the ProgrammerPanel
      * and all of its components and their actions
      * @param calculator the calculator
@@ -529,7 +96,6 @@ public class ProgrammerPanel extends JPanel
         setupProgrammerPanelComponents();
         addComponentsToPanel();
         setName(VIEW_PROGRAMMER.getValue());
-        //SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up {} panel", VIEW_PROGRAMMER.getValue());
     }
 
@@ -1028,6 +594,439 @@ public class ProgrammerPanel extends JPanel
             doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
         }
         catch (BadLocationException e) { calculator.logException(e); }
+    }
+
+    /**
+     * The actions to perform when you click MemorySubtraction
+     * @param actionEvent the click action
+     */
+    public void performModulusAction(ActionEvent actionEvent)
+    {
+        LOGGER.debug("performModButtonActions begins");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.debug("button: " + buttonChoice);
+        LOGGER.debug("is it enabled? " + buttonModulus.isEnabled() + " Setting to false.");
+        //setModulusPressed(true);
+        buttonModulus.setEnabled(false);
+        if (calculator.getValues()[0].equals("") && calculator.getValues()[1].equals("") )
+        {
+            // do nothing
+            LOGGER.debug("Doing nothing because...");
+            LOGGER.debug("calculator.getValues()[0]: " + calculator.getValues()[0]);
+            LOGGER.debug("calculator.getValues()[1]: " + calculator.getValues()[1]);
+        }
+        else if (!calculator.getValues()[0].equals("") &&
+                !calculator.getValues()[1].equals(""))
+        {
+            LOGGER.debug("performing Modulus");
+            performModulus();
+        }
+        else if (!calculator.getValues()[0].equals("") &&
+                calculator.getValues()[1].equals(""))
+        {
+            // some value entered then pushed mod ... more input to come
+            calculator.getTextPane().setText(calculator.getTextPane().getText() + " " + buttonChoice);
+            //calculator.updateTextAreaValueFromTextArea();
+//            calculator.getValues()[0] = calculator.getTextAreaWithoutNewLineCharacters();
+            LOGGER.debug("setting setModButtonBool to true");
+            //setModulusPressed(true);
+            calculator.setIsFirstNumber(false);
+        }
+        calculator.confirm("Modulus Actions finished");
+    }
+    /**
+     * The inner logic for modulus
+     */
+    private void performModulus()
+    {
+        // some value mod another value returns result:  4 mod 3 == 1; 1 * 3 = 3; 4 - 3 = 1 == result
+        int firstResult = Integer.parseInt(calculator.getValues()[0]) / Integer.parseInt(calculator.getValues()[1]); // create result forced double
+        LOGGER.debug("firstResult: " + firstResult);
+        int secondResult = (firstResult * Integer.parseInt(calculator.getValues()[1]));
+        LOGGER.debug("secondResult: " + secondResult);
+        int finalResult = Integer.parseInt(calculator.getValues()[0]) - secondResult;
+        LOGGER.debug("modulus: " + finalResult);
+        calculator.getValues()[0] = String.valueOf(finalResult);
+    }
+
+    /**
+     * The actions to perform when Or is clicked
+     */
+    public void performOrAction(ActionEvent actionEvent)
+    {
+        LOGGER.info("performOrLogic starts here");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: " + buttonChoice);
+        //setOrPressed(true);
+        buttonOr.setEnabled(false);
+//        if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isNotEmpty(calculator.getValues()[1]))
+//        {
+//            String msg = "calculator.getValues()[1] is set and not calculator.getValues()[0]. This is not allowed.";
+//            throw new CalculatorError(msg);
+//        }
+//        else if below
+        if (StringUtils.isNotEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
+        {
+            LOGGER.debug("getValues()[0] is set, but not getValues()[1]");
+            calculator.setIsFirstNumber(false);
+            calculator.getTextPane().setText(calculator.addNewLines()
+                    + buttonChoice + " " + calculator.getValues()[0]);
+            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[0] + " " + buttonChoice));
+            calculator.setValuesPosition(calculator.getValuesPosition() + 1);
+            calculator.confirm("OR complete");
+        }
+        else if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
+        {
+            //setOrPressed(false);
+            calculator.setIsFirstNumber(true);
+            calculator.confirm("Pressed OR. Doing nothing");
+        }
+        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && !StringUtils.isEmpty(calculator.getValues()[1]))
+        {
+            String sb = performOr(); // 2 OR 3 OR button presses
+            //TODO: need to convert sb to DECIMAL form before storing in getValues()
+            calculator.getValues()[0] = sb;
+            calculator.getTextPane().setText(calculator.addNewLines(1)+calculator.getValues()[0]);
+            //setOrPressed(false);
+            calculator.setValuesPosition(0);
+        }
+    }
+    /**
+     * The inner logic for Or
+     * @return String the result of the Or operation
+     */
+    private String performOr()
+    {
+        LOGGER.debug("performing Or");
+        StringBuffer sb = new StringBuffer();
+        //TODO: if getValues()[0] and getValues()[1] in decimal and difference length, this will fail.
+        //In order for this to work, we need to convert to most appropriate base
+        //Check to make sure both are same length
+
+        for (int i=0; i<calculator.getValues()[0].length(); i++)
+        {
+            String letter = "0";
+            if (String.valueOf(calculator.getValues()[0].charAt(i)).equals("0") &&
+                    String.valueOf(calculator.getValues()[1].charAt(i)).equals("0") )
+            { // if the characters at both getValues() at the same position are the same and equal 0
+                letter = "0";
+            }
+            else
+            {
+                letter = "1";
+            }
+            sb.append(letter);
+            LOGGER.info(calculator.getValues()[0].charAt(i)+" OR "+calculator.getValues()[1].charAt(i)+" = "+ letter);
+        }
+        calculator.getValues()[3] = sb.toString();
+        //calculator.convertAllValuesToDecimal();
+        LOGGER.info(calculator.getValues()[0]+" OR "+calculator.getValues()[1]+" = "+ calculator.getValues()[3]);
+        calculator.getValues()[0] = calculator.getValues()[3];
+        buttonOr.setEnabled(true);
+        return String.valueOf(sb);
+    }
+
+    /**
+     * The actions to perform when Xor is clicked
+     */
+    public void performXorAction(ActionEvent actionEvent)
+    {
+        LOGGER.info("performing XOR button actions");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: " + buttonChoice);
+        //setXorPressed(true);
+        buttonXor.setEnabled(false);
+        if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1])) {
+
+            calculator.confirm("No getValues() set");
+        }
+        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
+        {
+            calculator.getTextPane().setText(calculator.addNewLines(1)+
+                    calculator.getTextPaneWithoutNewLineCharacters() + " " + "XOR");
+        }
+        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && !StringUtils.isEmpty(calculator.getValues()[1]))
+        {
+            performXor();
+        }
+    }
+    /**
+     * The inner logic for Xor
+     * @return
+     */
+    private String performXor()
+    {
+        LOGGER.info("performing Xor");
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<calculator.getValues()[0].length(); i++) {
+            String letter = "0";
+            if (String.valueOf(calculator.getValues()[0].charAt(i)).equals("0") &&
+                    String.valueOf(calculator.getValues()[1].charAt(i)).equals("0") )
+            { // if the characters at both getValues() at the same position are the same and equal 0
+                letter = "0";
+            }
+            else
+            {
+                letter = "1";
+            }
+            sb.append(letter);
+            LOGGER.info(calculator.getValues()[0].charAt(i) + " + " + calculator.getValues()[1].charAt(i)+ " = " + letter);
+        }
+        return String.valueOf(sb);
+    }
+
+    /**
+     * The actions to perform when the Not button is clicked
+     */
+    public void performNotAction(ActionEvent actionEvent)
+    {
+        LOGGER.info("performing not operation...");
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("button: " + buttonChoice);
+        //setNotPressed(false);
+        buttonNot.setEnabled(false);
+        //calculator.setTextAreaValue(new StringBuffer(calculator.getTextArea().getText().replaceAll("\n", "")));
+        LOGGER.debug("before operation execution: " + calculator.getTextPane().getText().toString());
+        StringBuffer newBuffer = new StringBuffer();
+        for (int i = 0; i < calculator.getTextPane().getText().length(); i++) {
+            String s = Character.toString(calculator.getTextPane().getText().charAt(i));
+            if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
+            else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
+        }
+        LOGGER.debug("after operation execution: " + newBuffer);
+        //calculator.setTextAreaValue(new StringBuffer(newBuffer));
+        calculator.getTextPane().setText("\n"+calculator.getTextPane().getText().toString());
+        LOGGER.info("not operation completed.");
+    }
+
+    /**
+     * The actions to perform when the Shift button is clicked
+     */
+    public void performShiftAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        LOGGER.debug("isShiftPressed: {}", isShiftPressed);
+        if (isShiftPressed) {
+            isShiftPressed = false;
+            buttonsPanel.remove(buttonRotateLeft);
+            buttonsPanel.remove(buttonRotateRight);
+            buttonsPanel.remove(buttonBytes);
+            buttonsPanel.remove(buttonBases);
+            addComponent(buttonsPanel, buttonShiftLeft, 0, 0);
+            addComponent(buttonsPanel, buttonShiftRight, 0, 1);
+            addComponent(buttonsPanel, buttonOr, 0, 2);
+            addComponent(buttonsPanel, buttonXor, 0, 3);
+            addComponent(buttonsPanel, buttonNot, 0, 4);
+            addComponent(buttonsPanel, buttonAnd, 0, 5);
+        } else {
+            isShiftPressed = true;
+            buttonsPanel.remove(buttonShiftLeft);
+            buttonsPanel.remove(buttonShiftRight);
+            buttonsPanel.remove(buttonOr);
+            buttonsPanel.remove(buttonXor);
+            buttonsPanel.remove(buttonNot);
+            buttonsPanel.remove(buttonAnd);
+            addComponent(buttonsPanel, buttonRotateLeft, 0, 0);
+            addComponent(buttonsPanel, buttonRotateRight, 0, 1);
+            addComponent(buttonsPanel, buttonBytes, 0, 2, null, 2, 1, 1, 1, 0,0);
+            addComponent(buttonsPanel, buttonBases, 0, 4, null, 2, 1, 1, 1, 0,0);
+        }
+        buttonsPanel.repaint();
+        buttonsPanel.revalidate();
+    }
+
+    /**
+     * The actions to perform when the Bytes button is clicked
+     */
+    public void performBytesAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        switch(calculator.getCalculatorByte())
+        {
+            case BYTE_BYTE -> {
+                calculator.setCalculatorByte(BYTE_WORD);
+            }
+            case BYTE_WORD -> {
+                calculator.setCalculatorByte(BYTE_DWORD);
+            }
+            case BYTE_DWORD  -> {
+                calculator.setCalculatorByte(BYTE_QWORD);
+            }
+            case BYTE_QWORD -> {
+                calculator.setCalculatorByte(BYTE_BYTE);
+            }
+        }
+        calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + calculator.getCalculatorByte().getValue());
+        appendToPane(addByteRepresentation());
+        calculator.confirm("Bytes updated");
+    }
+
+    /**
+     * The actions to perform when the Bases button is clicked
+     */
+    public void performBasesAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        switch(calculator.getCalculatorBase())
+        {
+            case BASE_BINARY -> {
+                this.calculator.setCalculatorBase(BASE_OCTAL);
+            }
+            case BASE_OCTAL -> {
+                this.calculator.setCalculatorBase(BASE_DECIMAL);
+            }
+            case BASE_DECIMAL  -> {
+                this.calculator.setCalculatorBase(BASE_HEXADECIMAL);
+            }
+            case BASE_HEXADECIMAL -> {
+                this.calculator.setCalculatorBase(BASE_BINARY);
+            }
+        }
+        updateButtonsBasedOnBase();
+        appendToPane(addByteRepresentation()); // must call to update textPane base value
+        calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
+        calculator.confirm("Bases updated");
+    }
+
+    /**
+     * The actions to perform when clicking a hexadecimal number button
+     * @param actionEvent the click action
+     */
+    public void performNumberButtonActions(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Programmer Number Action for {} started", buttonChoice);
+        if (!calculator.isFirstNumber())
+        {
+            LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
+            appendToPane(BLANK.getValue());
+            calculator.setIsFirstNumber(true);
+            if (!calculator.isNumberNegative()) calculator.setIsNumberNegative(false);
+            if (!calculator.isDotPressed())
+            {
+                LOGGER.debug("Decimal is disabled. Enabling");
+                calculator.getButtonDecimal().setEnabled(true);
+            }
+        }
+        try { performInnerNumberActions(buttonChoice); }
+        catch (CalculatorError c) { calculator.logException(c); }
+    }
+    /**
+     * The inner logic for number buttons
+     * @param buttonChoice the chosen number
+     * @throws CalculatorError if there is a CalculatorException that occurs
+     */
+    private void performInnerNumberActions(String buttonChoice) throws CalculatorError
+    {
+        if (calculator.getCalculatorBase() == BASE_BINARY) {
+            int lengthOfTextArea = calculator.getTextPaneWithoutNewLineCharacters().length();
+            LOGGER.debug("text pane value.length: {}", lengthOfTextArea);
+            if (lengthOfTextArea == 8 || lengthOfTextArea == 17 || lengthOfTextArea == 26 || lengthOfTextArea == 35 || lengthOfTextArea == 44)
+            {   // add a space add the "end" if the length of the number matches the bytes
+                StringBuffer newNumber = new StringBuffer();
+                newNumber.append(buttonChoice).append(" ").append(calculator.getTextPaneWithoutNewLineCharacters());
+                calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
+            }
+            else if (lengthOfTextArea >= 53) { LOGGER.info("No more entries aloud"); }
+            else {
+                StringBuffer newNumber = new StringBuffer();
+                newNumber.append(calculator.getTextPaneWithoutNewLineCharacters());
+                if (calculator.getTextPaneWithoutNewLineCharacters().contains(" ")) {
+                    String[] bytes = calculator.getTextPaneWithoutNewLineCharacters().split(" ");
+                    newNumber = new StringBuffer();
+                    for (int i = 1; i < bytes.length; i++) {
+                        newNumber.append(bytes[i]).append(" "); // 10000000' '
+                    }
+                    newNumber.append(bytes[0]); // 10000000' '1
+                    newNumber.append(buttonChoice); // 10000000' '10
+                    bytes[0] = bytes[0] + buttonChoice;
+                    bytes = newNumber.toString().split(" "); // '10000000', '10'
+                    newNumber = new StringBuffer();
+                    for (int i = bytes.length-1; i > 0; i--) {
+                        newNumber.append(bytes[i]).append(" "); // 10' '
+                    }
+                    newNumber.append(bytes[0]); // 10' '10000000
+                }
+                else {
+                    newNumber.append(buttonChoice);
+                }
+                calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
+            }
+        }
+        else if (calculator.getCalculatorBase() == BASE_DECIMAL) {
+            if (calculator.performInitialChecks())
+            {
+                LOGGER.warn("Invalid entry in textPane. Clearing...");
+                appendToPane(BLANK.getValue());
+                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
+                calculator.setIsFirstNumber(true);
+                calculator.getButtonDecimal().setEnabled(true);
+            }
+            if (calculator.getValues()[0].isBlank())
+            {
+                LOGGER.info("Highest size not met. Values[0] is blank");
+            }
+            else if (calculator.checkValueLength())
+            {
+                LOGGER.info("Highest size of value has been met");
+                calculator.confirm("Max length of 7 digit number met");
+                return;
+            }
+            if (calculator.isNumberNegative() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
+                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.writeHistory(buttonChoice, false);
+                calculator.setIsNumberNegative(false);
+                calculator.setIsNumberNegative(true);
+            }
+            else if (calculator.isNumberNegative() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
+                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.writeHistory(buttonChoice, false);
+                calculator.setIsNumberNegative(false);
+                calculator.setIsNumberNegative(true);
+            }
+            else
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
+                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+                calculator.writeHistory(buttonChoice, false);
+            }
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+        else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
+        else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
+    }
+
+    /**
+     * The actions to perform when History is clicked
+     * @param actionEvent the click action
+     */
+    public void performHistoryAction(ActionEvent actionEvent)
+    {
+        if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
+        {
+            LOGGER.debug("{}", actionEvent.getActionCommand());
+            calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
+            programmerPanel.remove(historyPanel);
+            addComponent(programmerPanel, buttonsPanel, 2, 0);
+            SwingUtilities.updateComponentTreeUI(this);
+            System.out.println(programmerPanel.getSize());
+        }
+        else
+        {
+            LOGGER.debug("{}", actionEvent.getActionCommand());
+            calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
+            programmerPanel.remove(buttonsPanel);
+            addComponent(programmerPanel, historyPanel, 2, 0);
+            SwingUtilities.updateComponentTreeUI(this);
+            System.out.println(programmerPanel.getSize());
+        }
     }
 
     /* Getters */
