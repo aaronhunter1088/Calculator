@@ -81,7 +81,7 @@ public class Calculator extends JFrame
     private int valuesPosition = 0, memoryPosition = 0, memoryRecallPosition = 0;
     // Current view, base, byte, date operation, converter type, and panel (view)
     private CalculatorView calculatorView;
-    private CalculatorBase calculatorBase;
+    private CalculatorBase calculatorBase, previousBase;
     private CalculatorByte calculatorByte;
     private DateOperation dateOperation;
     private ConverterType converterType;
@@ -3153,9 +3153,10 @@ public class Calculator extends JFrame
     public String convertValueToDecimal()
     {
         if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // Integer.toString(0, 10);
-        LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_DECIMAL.getValue());
-        String base10Number = Integer.toString(Integer.parseInt(values[valuesPosition], 10), 10);
-        LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_DECIMAL.getValue(), base10Number);
+        String valueToConvert = values[valuesPosition].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+        LOGGER.debug("Converting {} to {}", valueToConvert, BASE_DECIMAL.getValue());
+        String base10Number = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix()), 10);
+        LOGGER.debug("convert from({}) to({}) = {}", previousBase.getValue(), BASE_DECIMAL.getValue(), base10Number);
         LOGGER.info("The number {} in base 10 is {} in base 10", values[valuesPosition], base10Number);
         return base10Number;
     }
@@ -3172,6 +3173,17 @@ public class Calculator extends JFrame
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_HEXADECIMAL.getValue(), base16Number);
         LOGGER.info("The number {} in base 10 is {} in base 16.", values[valuesPosition], base16Number);
         return base16Number;
+    }
+
+    public int getPreviousRadix()
+    {
+        return switch (previousBase)
+        {
+            case BASE_BINARY -> 2;
+            case BASE_OCTAL -> 8;
+            case BASE_DECIMAL -> 10;
+            case BASE_HEXADECIMAL -> 16;
+        };
     }
 
     /**
@@ -3790,6 +3802,7 @@ public class Calculator extends JFrame
     public JTextPane getTextPane() { return textPane; }
     public CalculatorView getCalculatorView() { return calculatorView; }
     public CalculatorBase getCalculatorBase() { return calculatorBase; }
+    public CalculatorBase getPreviousBase() { return previousBase; }
     public CalculatorByte getCalculatorByte() { return calculatorByte; }
     public DateOperation getDateOperation() { return dateOperation; }
     public ConverterType getConverterType() { return converterType; }
@@ -3828,6 +3841,7 @@ public class Calculator extends JFrame
     public void setTextPane(JTextPane textPane) { this.textPane = textPane; }
     public void setCalculatorView(CalculatorView calculatorView) { this.calculatorView = calculatorView; }
     public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; }
+    public void setPreviousBase(CalculatorBase previousBase) { this.previousBase = previousBase; }
     public void setCalculatorByte(CalculatorByte calculatorByte) { this.calculatorByte = calculatorByte; }
     public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; }
     public void setConverterType(ConverterType converterType) { this.converterType = converterType; }

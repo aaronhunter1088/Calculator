@@ -475,7 +475,7 @@ public class ProgrammerPanel extends JPanel
         return switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
             case BASE_OCTAL -> calculator.convertValueToOctal();
-            case BASE_DECIMAL -> calculator.addCommas(calculator.convertValueToDecimal());
+            case BASE_DECIMAL -> calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]);
             case BASE_HEXADECIMAL -> calculator.convertValueToHexadecimal();
         };
     }
@@ -1000,10 +1000,22 @@ public class ProgrammerPanel extends JPanel
             }
             String textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
             if (textPaneText.length() == allowedLengthMinusNewLines)
-            { calculator.confirm("Byte length "+allowedLengthMinusNewLines+" reached"); }
+            {
+                calculator.getValues()[calculator.getValuesPosition()] = textPaneText;
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.convertValueToDecimal();
+                calculator.confirm("Byte length "+allowedLengthMinusNewLines+" reached");
+            }
             else
             {
                 appendToPane(textPaneText + buttonChoice);
+                textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
+                if (textPaneText.length() == allowedLengthMinusNewLines)
+                {
+                    calculator.setPreviousBase(BASE_BINARY);
+                    calculator.getValues()[calculator.getValuesPosition()] = textPaneText;
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.convertValueToDecimal();
+                    calculator.confirm("Byte length "+allowedLengthMinusNewLines+" reached with this input");
+                }
                 calculator.confirm("Pressed " + buttonChoice);
             }
         }
