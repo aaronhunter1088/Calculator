@@ -14,6 +14,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
@@ -504,9 +505,17 @@ public class ProgrammerPanel extends JPanel
      */
     public String separateBits(String representation)
     {
+        if (representation.isEmpty()) return representation;
+        else if (representation.length() < 4) return representation;
         StringBuilder sb = new StringBuilder();
+        representation = representation.replace(SPACE.getValue(), BLANK.getValue());
         return switch (calculator.getCalculatorByte()) {
-            case BYTE_BYTE -> representation;
+            case BYTE_BYTE -> {
+                sb.append(representation, 0, 4);
+                sb.append(SPACE.getValue());
+                sb.append(representation, 4, representation.length());
+                yield sb.toString();
+            }
             case BYTE_WORD -> {
                 sb.append(representation, 0, 4);
                 sb.append(SPACE.getValue());
@@ -594,6 +603,77 @@ public class ProgrammerPanel extends JPanel
             doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
         }
         catch (BadLocationException e) { calculator.logException(e); }
+    }
+
+    /**
+     * The programmer actions to perform when the Delete button is clicked
+     * @param actionEvent the click action
+     */
+    public void performDeleteButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Programmer Action for {} started", buttonChoice);
+        switch (calculator.getCalculatorBase())
+        {
+            case BASE_BINARY -> {
+                if (calculator.textPaneContainsBadText())
+                {
+                    calculator.appendTextToPane(BLANK.getValue());
+                    calculator.confirm("Contains bad text. Pressed " + buttonChoice);
+                }
+                else if (calculator.getValueFromTextPaneForProgrammerPanel().isEmpty() && calculator.getValues()[0].isEmpty())
+                {
+                    calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+                    calculator.confirm("No need to perform " + DELETE + " operation");
+                }
+                else
+                {
+                    if (calculator.getValuesPosition() == 1 && calculator.getValues()[1].isEmpty())
+                    { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
+                    if (calculator.getValues()[0].isEmpty())
+                    { calculator.getValues()[0] = calculator.getValueFromTextPaneForProgrammerPanel(); }
+                    LOGGER.debug("values[{}]: {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
+                    LOGGER.debug("textPane: {}", calculator.getValueFromTextPaneForProgrammerPanel());
+                    // if no operator has been pushed but text pane has value
+                    if (!calculator.isAdding() && !calculator.isSubtracting()
+                        && !calculator.isMultiplying() && !calculator.isDividing()
+                        && !calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+                    {
+                        String substring = calculator.getValueFromTextPaneForProgrammerPanel().substring(0, calculator.getValueFromTextPaneForProgrammerPanel().length()-1);
+                        if (substring.endsWith(SPACE.getValue())) substring = substring.substring(0,substring.length()-1);
+                        boolean updateValue = substring.isEmpty();
+                        calculator.appendTextToPane(substring, updateValue);
+                    }
+                    else if (calculator.determineIfAnyBasicOperatorWasPushed())
+                    {
+                        LOGGER.debug("An operator has been pushed");
+                        if (calculator.getValuesPosition() == 0)
+                        {
+                            if (calculator.isAdding()) calculator.setIsAdding(false);
+                            else if (calculator.isSubtracting()) calculator.setIsSubtracting(false);
+                            else if (calculator.isMultiplying()) calculator.setIsMultiplying(false);
+                            else /* (calculator.isDividing())*/ calculator.setIsDividing(false);
+                            String textWithoutOperator = calculator.getTextPaneWithoutAnyOperator();
+                            calculator.appendTextToPane(textWithoutOperator);
+                        }
+                        else
+                        {
+                            String substring = calculator.getValueFromTextPaneForProgrammerPanel().substring(0,calculator.getValueFromTextPaneForProgrammerPanel().length()-1);
+                            calculator.appendTextToPane(substring);
+                        }
+                    }
+                    calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]));
+                    calculator.setIsNumberNegative(calculator.getValues()[calculator.getValuesPosition()].contains(SUBTRACTION.getValue()));
+                    calculator.writeHistory(buttonChoice, false);
+                    calculator.confirm("Pressed " + buttonChoice);
+                }
+            }
+            case BASE_OCTAL -> {}
+            case BASE_DECIMAL -> {
+                calculator.performDeleteButtonAction(actionEvent);
+            }
+            case BASE_HEXADECIMAL -> {}
+        }
     }
 
     /**
@@ -899,64 +979,34 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Programmer Action for {} started", buttonChoice);
-//        if (!calculator.isFirstNumber())
-//        {
-//            LOGGER.debug("!isFirstNumber is: " + !calculator.isFirstNumber());
-//            appendToPane(BLANK.getValue());
-//            calculator.setIsFirstNumber(true);
-//            if (!calculator.isNumberNegative()) calculator.setIsNumberNegative(false);
-//            if (!calculator.isDotPressed())
-//            {
-//                LOGGER.debug("Decimal is disabled. Enabling");
-//                calculator.getButtonDecimal().setEnabled(true);
-//            }
-//        }
-        try { performInnerNumberActions(buttonChoice, actionEvent); }
-        catch (CalculatorError c) { calculator.logException(c); }
-    }
-    /**
-     * The inner logic for number buttons
-     * @param buttonChoice the chosen number
-     * @throws CalculatorError if there is a CalculatorException that occurs
-     */
-    private void performInnerNumberActions(String buttonChoice, ActionEvent actionEvent) throws CalculatorError
-    {
-        if (calculator.getCalculatorBase() == BASE_BINARY) {
-            int lengthOfTextArea = calculator.getTextPaneWithoutNewLineCharacters().length();
-            LOGGER.debug("text pane value.length: {}", lengthOfTextArea);
-            if (lengthOfTextArea == 8 || lengthOfTextArea == 17 || lengthOfTextArea == 26 || lengthOfTextArea == 35 || lengthOfTextArea == 44)
-            {   // add a space add the "end" if the length of the number matches the bytes
-                StringBuffer newNumber = new StringBuffer();
-                newNumber.append(buttonChoice).append(" ").append(calculator.getTextPaneWithoutNewLineCharacters());
-                calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
+        if (BASE_BINARY == calculator.getCalculatorBase())
+        {
+            int allowedLengthMinusNewLines = 0;
+            switch (calculator.getCalculatorByte())
+            {
+                case BYTE_BYTE -> {
+                    allowedLengthMinusNewLines = 9; // 0000_0101, or 9 total characters
+                }
+                case BYTE_WORD -> {
+                    allowedLengthMinusNewLines = 19; // 0000_0101_0000_0101, or 19 total characters
+                }
+                case BYTE_DWORD -> {
+                    allowedLengthMinusNewLines = 38; // double word minus newlines
+                }
+                case BYTE_QWORD -> {
+                    allowedLengthMinusNewLines = 76; // double dword minus newlines
+                }
             }
-            else if (lengthOfTextArea >= 53) { LOGGER.info("No more entries aloud"); }
-            else {
-                StringBuffer newNumber = new StringBuffer();
-                newNumber.append(calculator.getTextPaneWithoutNewLineCharacters());
-                if (calculator.getTextPaneWithoutNewLineCharacters().contains(" ")) {
-                    String[] bytes = calculator.getTextPaneWithoutNewLineCharacters().split(" ");
-                    newNumber = new StringBuffer();
-                    for (int i = 1; i < bytes.length; i++) {
-                        newNumber.append(bytes[i]).append(" "); // 10000000' '
-                    }
-                    newNumber.append(bytes[0]); // 10000000' '1
-                    newNumber.append(buttonChoice); // 10000000' '10
-                    bytes[0] = bytes[0] + buttonChoice;
-                    bytes = newNumber.toString().split(" "); // '10000000', '10'
-                    newNumber = new StringBuffer();
-                    for (int i = bytes.length-1; i > 0; i--) {
-                        newNumber.append(bytes[i]).append(" "); // 10' '
-                    }
-                    newNumber.append(bytes[0]); // 10' '10000000
-                }
-                else {
-                    newNumber.append(buttonChoice);
-                }
-                calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
+            String textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
+            if (textPaneText.length() == allowedLengthMinusNewLines)
+            { calculator.confirm("Byte length "+allowedLengthMinusNewLines+" reached"); }
+            else
+            {
+                appendToPane(textPaneText + buttonChoice);
+                calculator.confirm("Pressed " + buttonChoice);
             }
         }
-        else if (calculator.getCalculatorBase() == BASE_DECIMAL)
+        else if (BASE_DECIMAL == calculator.getCalculatorBase())
         { calculator.performNumberButtonAction(actionEvent); }
         else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }

@@ -841,7 +841,7 @@ public class Calculator extends JFrame
         buttonSquared.setName(SQUARED.name());
         if (VIEW_BASIC.getValue().equals(currentPanel.getName()))
         { buttonSquared.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquaredButtonAction(actionEvent)); }
-        LOGGER.debug("Delete button configured");
+        LOGGER.debug("Squared button configured");
         buttonFraction.setName(FRACTION.name());
         if (VIEW_BASIC.getValue().equals(currentPanel.getName()))
         { buttonFraction.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performFractionButtonAction(actionEvent)); }
@@ -855,8 +855,10 @@ public class Calculator extends JFrame
         { buttonClear.addActionListener(this::performClearButtonAction); }
         LOGGER.debug("Clear button configured");
         buttonDelete.setName(DELETE.name());
-        if (Arrays.asList(VIEW_BASIC.getValue(), VIEW_PROGRAMMER.getValue()).contains(currentPanel.getName()))
+        if (currentPanel instanceof BasicPanel)
         { buttonDelete.addActionListener(this::performDeleteButtonAction); }
+        else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+        { buttonDelete.addActionListener(programmerPanel::performDeleteButtonAction); }
         LOGGER.debug("Delete button configured");
         buttonDivide.setName(DIVISION.name());
         if (Arrays.asList(VIEW_BASIC.getValue(), VIEW_PROGRAMMER.getValue()).contains(currentPanel.getName()))
@@ -2125,7 +2127,7 @@ public class Calculator extends JFrame
         if (textPaneContainsBadText())
         {
             appendTextToPane(BLANK.getValue());
-            confirm("Pressed " + buttonChoice);
+            confirm("Contains bad text. Pressed " + buttonChoice);
         }
         else if (getTextPaneWithoutNewLineCharacters().isEmpty() && values[0].isEmpty())
         {
@@ -2134,7 +2136,7 @@ public class Calculator extends JFrame
         }
         else
         {
-            if (values[1].isEmpty())
+            if (valuesPosition == 1 && values[1].isEmpty())
             { valuesPosition = 0; } // assume they could have pressed an operator then wish to delete
             if (values[0].isEmpty())
             { values[0] = getTextPaneWithoutNewLineCharacters(); }
@@ -2848,14 +2850,16 @@ public class Calculator extends JFrame
      */
     public boolean textPaneContainsBadText()
     {
-        LOGGER.debug("TextPane text is {}", getTextPaneWithoutNewLineCharacters());
-        return getTextPaneWithoutAnyOperator().equals(CANNOT_DIVIDE_BY_ZERO.getValue()) ||
+        boolean result = getTextPaneWithoutAnyOperator().equals(CANNOT_DIVIDE_BY_ZERO.getValue()) ||
                getTextPaneWithoutAnyOperator().equals(NOT_A_NUMBER.getValue()) ||
                getTextPaneWithoutAnyOperator().equals(NUMBER_TOO_BIG.getValue()) ||
                getTextPaneWithoutAnyOperator().equals(ENTER_A_NUMBER.getValue()) ||
                getTextPaneWithoutAnyOperator().equals(ONLY_POSITIVES.getValue()) ||
                getTextPaneWithoutAnyOperator().contains(ERR.getValue()) ||
                getTextPaneWithoutAnyOperator().equals(INFINITY.getValue());
+        if (result) LOGGER.debug("textPane contains bad text. text is {}", getTextPaneWithoutNewLineCharacters());
+        else LOGGER.debug("textPane is clean. text is {}", getTextPaneWithoutNewLineCharacters());
+        return result;
     }
 
     /**
@@ -3072,7 +3076,7 @@ public class Calculator extends JFrame
      */
     public String convertValueToBinary()
     {
-        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 2);
+        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // return Integer.toString(0, 2) // "0"
         LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_BINARY.getValue());
         String base2Number = Integer.toBinaryString(Integer.parseInt(values[valuesPosition]));
         int base2Length = base2Number.length();
@@ -3110,7 +3114,7 @@ public class Calculator extends JFrame
      */
     public String convertValueToOctal()
     {
-        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 8);
+        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // Integer.toString(0, 8);
         LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_OCTAL.getValue());
         String base8Number = Integer.toOctalString(Integer.parseInt(values[valuesPosition]));
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_OCTAL.getValue(), base8Number);
@@ -3124,7 +3128,7 @@ public class Calculator extends JFrame
      */
     public String convertValueToDecimal()
     {
-        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 10);
+        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // Integer.toString(0, 10);
         LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_DECIMAL.getValue());
         String base10Number = Integer.toString(Integer.parseInt(values[valuesPosition], 10), 10);
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_DECIMAL.getValue(), base10Number);
@@ -3138,7 +3142,7 @@ public class Calculator extends JFrame
      */
     public String convertValueToHexadecimal()
     {
-        if (values[valuesPosition].isEmpty()) return Integer.toString(0, 16);
+        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // return Integer.toString(0, 16);
         LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_HEXADECIMAL.getValue());
         String base16Number = Integer.toHexString(Integer.parseInt(values[valuesPosition]));
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_HEXADECIMAL.getValue(), base16Number);
@@ -3267,7 +3271,7 @@ public class Calculator extends JFrame
         LOGGER.info("view: {}", calculatorView);
         switch (calculatorView) {
             case VIEW_BASIC: {
-                LOGGER.info("textPane: {}", getTextPaneWithoutNewLineCharacters());
+                LOGGER.info("textPane: '{}'", getTextPaneWithoutNewLineCharacters());
                 if (isMemoryValuesEmpty()) {
                     LOGGER.info("no memories stored!");
                 } else {
@@ -3283,10 +3287,10 @@ public class Calculator extends JFrame
                 LOGGER.info("subBool: {}", isSubtracting ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("mulBool: {}", isMultiplying ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("divBool: {}", isDividing ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("values[{}]: {}", 0, values[0]);
-                LOGGER.info("values[{}]: {}", 1, values[1]);
-                LOGGER.info("values[{}]: {}", 2, values[2]);
-                LOGGER.info("values[{}]: {}", 3, values[3]);
+                LOGGER.info("values[0]: '{}'", values[0]);
+                LOGGER.info("values[1]: '{}'", values[1]);
+                LOGGER.info("values[2]: '{}'", values[2]);
+                LOGGER.info("values[3]: '{}'", values[3]);
                 LOGGER.info("valuesPosition: {}", valuesPosition);
                 LOGGER.info("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
@@ -3294,7 +3298,7 @@ public class Calculator extends JFrame
                 break;
             }
             case VIEW_PROGRAMMER: {
-                LOGGER.info("textPane: {}", getTextPaneWithoutNewLineCharacters());
+                LOGGER.info("textPane: '{}'", getTextPaneWithoutNewLineCharacters());
                 if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition])) {
                     LOGGER.info("no memories stored!");
                 } else {
@@ -3310,10 +3314,10 @@ public class Calculator extends JFrame
                 LOGGER.info("subBool: {}", isSubtracting ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("mulBool: {}", isMultiplying ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("divBool: {}", isDividing ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("values[{}]: {}", 0, values[0]);
-                LOGGER.info("values[{}]: {}", 1, values[1]);
-                LOGGER.info("values[{}]: {}", 2, values[2]);
-                LOGGER.info("values[{}]: {}", 3, values[3]);
+                LOGGER.info("values[0]: '{}'", values[0]);
+                LOGGER.info("values[1]: '{}'", values[1]);
+                LOGGER.info("values[2]: '{}'", values[2]);
+                LOGGER.info("values[3]: '{}'", values[3]);
                 LOGGER.info("valuesPosition: {}", valuesPosition);
                 LOGGER.info("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
@@ -3695,11 +3699,29 @@ public class Calculator extends JFrame
         }
         else if (currentPanel instanceof ProgrammerPanel programmerPanel)
         {
-            programmerPanel.appendToPane(text);
+            switch (calculatorBase) {
+                case BASE_BINARY -> {
+                    programmerPanel.appendToPane(text);
+                }
+                case BASE_OCTAL -> {}
+                case BASE_DECIMAL -> {
+                    programmerPanel.appendToPane(text);
+                }
+                case BASE_HEXADECIMAL -> {}
+            }
         }
         else
         {
             LOGGER.warn("Implement adding text here");
+        }
+    }
+
+    public void appendTextToPane(String text, boolean updateValues)
+    {
+        appendTextToPane(text);
+        LOGGER.debug("Text appended to pane. Updating values? {}", updateValues);
+        if (updateValues) {
+            values[valuesPosition] = text;
         }
     }
 
