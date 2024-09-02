@@ -2518,20 +2518,44 @@ public class Calculator extends JFrame
             }
             else if (currentPanel instanceof ProgrammerPanel programmerPanel)
             {
-                if (addButtonChoiceToEnd)
+                switch (calculatorBase)
                 {
-                    programmerPanel.getHistoryTextPane().setText(
-                        programmerPanel.getHistoryTextPane().getText() +
-                        addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                        + " Result: " + addCommas(values[valuesPosition]) + SPACE.getValue() + buttonChoice
-                    );
-                }
-                else {
-                    programmerPanel.getHistoryTextPane().setText(
-                        programmerPanel.getHistoryTextPane().getText() +
-                        addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                        + " Result: " + addCommas(values[valuesPosition])
-                    );
+                    case BASE_BINARY -> {
+                        if (addButtonChoiceToEnd)
+                        {
+                            programmerPanel.getHistoryTextPane().setText(
+                            programmerPanel.getHistoryTextPane().getText() +
+                            addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                            + " Result: " + getValueFromTextPaneForProgrammerPanel() + SPACE.getValue() + buttonChoice
+                            );
+                        }
+                        else {
+                            programmerPanel.getHistoryTextPane().setText(
+                            programmerPanel.getHistoryTextPane().getText() +
+                            addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                            + " Result: " + getValueFromTextPaneForProgrammerPanel()
+                            );
+                        }
+                    }
+                    case BASE_OCTAL -> {}
+                    case BASE_DECIMAL -> {
+                        if (addButtonChoiceToEnd)
+                        {
+                            programmerPanel.getHistoryTextPane().setText(
+                                    programmerPanel.getHistoryTextPane().getText() +
+                                            addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                                            + " Result: " + addCommas(values[valuesPosition]) + SPACE.getValue() + buttonChoice
+                            );
+                        }
+                        else {
+                            programmerPanel.getHistoryTextPane().setText(
+                                    programmerPanel.getHistoryTextPane().getText() +
+                                            addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                                            + " Result: " + addCommas(values[valuesPosition])
+                            );
+                        }
+                    }
+                    case BASE_HEXADECIMAL -> {}
                 }
             }
         } else {

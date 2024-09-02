@@ -644,6 +644,7 @@ public class ProgrammerPanel extends JPanel
                         boolean updateValue = substring.isEmpty();
                         calculator.appendTextToPane(substring, updateValue);
                     }
+                    // if an operator was pushed, remove operator from text and reset operator
                     else if (calculator.determineIfAnyBasicOperatorWasPushed())
                     {
                         LOGGER.debug("An operator has been pushed");
