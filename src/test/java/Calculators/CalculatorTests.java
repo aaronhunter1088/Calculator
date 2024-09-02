@@ -84,7 +84,7 @@ public class CalculatorTests
     {
         LOGGER.info("createProgrammerCalculator...");
         calculator = new Calculator(VIEW_PROGRAMMER);
-        calculator.setMotif(true);
+        calculator.setIsMotif(true);
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
         assertEquals("Expected CalculatorView to be " + VIEW_PROGRAMMER, VIEW_PROGRAMMER, calculator.getCalculatorView());
         assertSame("Base is not decimal", calculator.getCalculatorBase(), BASE_DECIMAL);
