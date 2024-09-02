@@ -300,8 +300,8 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.updateJPanel(new ProgrammerPanel());
-        calculator.getTextPane().setText("00000100");
-        calculator.getValues()[0]= FOUR.getValue();
+        calculator.appendTextToPane("00000100");
+        calculator.getValues()[0] = FOUR.getValue();
         assertEquals("Expected textPane to show Binary representation", "00000100", calculator.getTextPaneWithoutNewLineCharacters());
 
         calculator.switchPanels(actionEvent);
