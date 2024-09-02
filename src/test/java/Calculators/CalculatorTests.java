@@ -101,6 +101,15 @@ public class CalculatorTests
     }
 
     @Test
+    public void createProgrammerCalculatorInOctalEnforced() throws Exception
+    {
+        LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_OCTAL);
+        calculator = new Calculator(BASE_OCTAL);
+        assertTrue("Cannot see programmer calculator", calculator.isVisible());
+        assertSame("Base is not octal", calculator.getCalculatorBase(), BASE_OCTAL);
+    }
+
+    @Test
     public void createProgrammerCalculatorInDecimalEnforced() throws Exception
     {
         LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_DECIMAL);
@@ -108,15 +117,6 @@ public class CalculatorTests
         assertTrue("Cannot see programmer calculator", calculator.isVisible());
         assertEquals("Expected CalculatorView to be " + VIEW_PROGRAMMER, VIEW_PROGRAMMER, calculator.getCalculatorView());
         assertSame("Base is not decimal", calculator.getCalculatorBase(), BASE_DECIMAL);
-    }
-
-    @Test
-    public void createProgrammerCalculatorInOctalEnforced() throws Exception
-    {
-        LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_OCTAL);
-        calculator = new Calculator(BASE_OCTAL);
-        assertTrue("Cannot see programmer calculator", calculator.isVisible());
-        assertSame("Base is not octal", calculator.getCalculatorBase(), BASE_OCTAL);
     }
 
     @Test
