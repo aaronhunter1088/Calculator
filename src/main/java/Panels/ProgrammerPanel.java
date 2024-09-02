@@ -956,50 +956,8 @@ public class ProgrammerPanel extends JPanel
                 calculator.getTextPane().setText(calculator.addNewLines(3) + newNumber);
             }
         }
-        else if (calculator.getCalculatorBase() == BASE_DECIMAL) {
-            calculator.performNumberButtonAction(actionEvent);
-//            if (calculator.performInitialChecks())
-//            {
-//                LOGGER.warn("Invalid entry in textPane. Clearing...");
-//                appendToPane(BLANK.getValue());
-//                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
-//                calculator.setIsFirstNumber(true);
-//                calculator.getButtonDecimal().setEnabled(true);
-//            }
-//            if (calculator.getValues()[0].isBlank())
-//            {
-//                LOGGER.info("Highest size not met. Values[0] is blank");
-//            }
-//            else if (calculator.checkValueLength())
-//            {
-//                LOGGER.info("Highest size of value has been met");
-//                calculator.confirm("Max length of 7 digit number met");
-//                return;
-//            }
-//            if (calculator.isNumberNegative() && calculator.isNumberNegative() && calculator.getValues()[calculator.getValuesPosition()].isBlank())
-//            {
-//                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-//                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-//                calculator.writeHistory(buttonChoice, false);
-//                calculator.setIsNumberNegative(false);
-//                calculator.setIsNumberNegative(true);
-//            }
-//            else if (calculator.isNumberNegative() && calculator.isNumberNegative() && !calculator.getValues()[1].isBlank())
-//            {
-//                calculator.getValues()[calculator.getValuesPosition()] = SUBTRACTION.getValue() + buttonChoice;
-//                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-//                calculator.writeHistory(buttonChoice, false);
-//                calculator.setIsNumberNegative(false);
-//                calculator.setIsNumberNegative(true);
-//            }
-//            else
-//            {
-//                calculator.getValues()[calculator.getValuesPosition()] = calculator.getValues()[calculator.getValuesPosition()] + buttonChoice;
-//                appendToPane(calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-//                calculator.writeHistory(buttonChoice, false);
-//            }
-//            calculator.confirm("Pressed " + buttonChoice);
-        }
+        else if (calculator.getCalculatorBase() == BASE_DECIMAL)
+        { calculator.performNumberButtonAction(actionEvent); }
         else if (calculator.getCalculatorBase() == BASE_OCTAL) { LOGGER.warn("IMPLEMENT Octal number button actions"); }
         else /* (calculator.getCalculatorBase() == HEXADECIMAL */ { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
     }
