@@ -1,7 +1,6 @@
 package Panels;
 
 import Calculators.Calculator;
-import Calculators.CalculatorError;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +13,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -471,7 +469,7 @@ public class ProgrammerPanel extends JPanel
      * Returns the value in its alternative base form
      * @return String the base representation of the current value
      */
-    public String addByteRepresentation()
+    public String addBaseRepresentation()
     {
         return switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
@@ -941,7 +939,7 @@ public class ProgrammerPanel extends JPanel
             }
         }
         calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + calculator.getCalculatorByte().getValue());
-        appendToPane(addByteRepresentation());
+        appendToPane(addBaseRepresentation());
         calculator.confirm("Bytes updated");
     }
 
@@ -952,25 +950,33 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
+        boolean updateValues = false;
         switch(calculator.getCalculatorBase())
         {
             case BASE_BINARY -> {
-                this.calculator.setCalculatorBase(BASE_OCTAL);
+                calculator.setCalculatorBase(BASE_OCTAL);
+                updateValues = getAllowedLengthsOfTextPane().contains(calculator.getValueFromTextPaneForProgrammerPanel().length());
+                if (updateValues) {
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getValueFromTextPaneForProgrammerPanel());
+                    calculator.setPreviousBase(BASE_BINARY);
+                }
             }
             case BASE_OCTAL -> {
-                this.calculator.setCalculatorBase(BASE_DECIMAL);
+                calculator.setCalculatorBase(BASE_DECIMAL);
+
             }
             case BASE_DECIMAL  -> {
-                this.calculator.setCalculatorBase(BASE_HEXADECIMAL);
+                calculator.setCalculatorBase(BASE_HEXADECIMAL);
             }
             case BASE_HEXADECIMAL -> {
-                this.calculator.setCalculatorBase(BASE_BINARY);
+                calculator.setCalculatorBase(BASE_BINARY);
             }
         }
         updateButtonsBasedOnBase();
-        appendToPane(addByteRepresentation()); // must call to update textPane base value
+        appendToPane(addBaseRepresentation()); // must call to update textPane base value
+        //if (updateValues) calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue(); // reset back to blank
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
-        calculator.confirm("Bases updated");
+        calculator.confirm("Bases updated to " + calculator.getCalculatorBase());
     }
 
     /**
@@ -1017,7 +1023,8 @@ public class ProgrammerPanel extends JPanel
      * and different byte values. This accounts for spaces and newlines
      * @return List the lengths allowed for different bytes
      */
-    private List<Integer> getAllowedLengthsOfTextPane() {
+    private List<Integer> getAllowedLengthsOfTextPane()
+    {
         List<Integer> allowedLengthMinusNewLines = new ArrayList<>();
         switch (calculator.getCalculatorByte())
         {

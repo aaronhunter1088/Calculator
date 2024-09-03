@@ -1181,7 +1181,10 @@ public class Calculator extends JFrame
         }
         else
         {
-            if (currentPanel instanceof BasicPanel) performNumberButtonInnerAction(buttonChoice);
+            if (currentPanel instanceof BasicPanel
+                || (currentPanel instanceof ProgrammerPanel
+                    && BASE_DECIMAL == calculatorBase))
+                performNumberButtonInnerAction(buttonChoice);
             else return;
         }
         confirm("Pressed " + buttonChoice);
@@ -3110,11 +3113,21 @@ public class Calculator extends JFrame
      */
     public String convertValueToBinary()
     {
-        String valueToConvert = values[valuesPosition];
+        String valueToConvert = values[valuesPosition].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
         if (valueToConvert.isEmpty()) {
-            if (valuesPosition != 0 && values[valuesPosition-1].isEmpty())
-                valueToConvert = BLANK.getValue();
-            else valueToConvert = values[valuesPosition-1];
+            if (valuesPosition != 0 && values[valuesPosition-1].isEmpty()) {
+                valueToConvert = values[valuesPosition-1].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+                if (valueToConvert.isEmpty()) {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            } else {
+                if (valuesPosition != 0) valueToConvert = values[valuesPosition-1];
+                else {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            }
         }
         if (valueToConvert.isEmpty()) return BLANK.getValue();
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_BINARY.getValue());
@@ -3154,9 +3167,25 @@ public class Calculator extends JFrame
      */
     public String convertValueToOctal()
     {
-        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // Integer.toString(0, 8);
+        String valueToConvert = values[valuesPosition].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+        if (valueToConvert.isEmpty()) {
+            if (valuesPosition != 0 && values[valuesPosition-1].isEmpty()) {
+                valueToConvert = values[valuesPosition-1].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+                if (valueToConvert.isEmpty()) {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            } else {
+                if (valuesPosition != 0) valueToConvert = values[valuesPosition-1];
+                else {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            }
+        }
+        if (valueToConvert.isEmpty()) return BLANK.getValue();
         LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_OCTAL.getValue());
-        String base8Number = Integer.toOctalString(Integer.parseInt(values[valuesPosition]));
+        String base8Number = Integer.toOctalString(Integer.parseInt(valueToConvert));
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_OCTAL.getValue(), base8Number);
         LOGGER.info("The number {} in base 10 is {} in base 8.", values[valuesPosition], base8Number);
         return base8Number;
@@ -3168,8 +3197,23 @@ public class Calculator extends JFrame
      */
     public String convertValueToDecimal()
     {
-        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // Integer.toString(0, 10);
         String valueToConvert = values[valuesPosition].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+        if (valueToConvert.isEmpty()) {
+            if (valuesPosition != 0 && values[valuesPosition-1].isEmpty()) {
+                valueToConvert = values[valuesPosition-1].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+                if (valueToConvert.isEmpty()) {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            } else {
+                if (valuesPosition != 0) valueToConvert = values[valuesPosition-1];
+                else {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            }
+        }
+        if (valueToConvert.isEmpty()) return BLANK.getValue();
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_DECIMAL.getValue());
         String base10Number = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix()), 10);
         LOGGER.debug("convert from({}) to({}) = {}", previousBase.getValue(), BASE_DECIMAL.getValue(), base10Number);
@@ -3183,7 +3227,23 @@ public class Calculator extends JFrame
      */
     public String convertValueToHexadecimal()
     {
-        if (values[valuesPosition].isEmpty()) return BLANK.getValue(); // return Integer.toString(0, 16);
+        String valueToConvert = values[valuesPosition].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+        if (valueToConvert.isEmpty()) {
+            if (valuesPosition != 0 && values[valuesPosition-1].isEmpty()) {
+                valueToConvert = values[valuesPosition-1].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+                if (valueToConvert.isEmpty()) {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            } else {
+                if (valuesPosition != 0) valueToConvert = values[valuesPosition-1];
+                else {
+                    valueToConvert = getTextPaneWithoutNewLineCharacters();
+                    LOGGER.debug("values[0] and values[1] is empty. valueToConvert is {}", valueToConvert);
+                }
+            }
+        }
+        if (valueToConvert.isEmpty()) return BLANK.getValue();
         LOGGER.debug("Converting {} to {}", values[valuesPosition], BASE_HEXADECIMAL.getValue());
         String base16Number = Integer.toHexString(Integer.parseInt(values[valuesPosition]));
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_HEXADECIMAL.getValue(), base16Number);
@@ -3191,9 +3251,21 @@ public class Calculator extends JFrame
         return base16Number;
     }
 
-    public int getPreviousRadix()
+    public String convertFromBaseToBase(CalculatorBase fromBase, CalculatorBase toBase, String valueToConvert)
     {
-        return switch (previousBase)
+        valueToConvert = valueToConvert.replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+        LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
+        String baseXNumber = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
+        LOGGER.info("converted: {}", baseXNumber);
+        return baseXNumber;
+    }
+
+    public int getPreviousRadix()
+    { return getPreviousRadix(previousBase); }
+
+    public int getPreviousRadix(CalculatorBase base)
+    {
+        return switch (base)
         {
             case BASE_BINARY -> 2;
             case BASE_OCTAL -> 8;
@@ -3755,7 +3827,7 @@ public class Calculator extends JFrame
                 case BASE_BINARY -> {
                     if (!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) {
                         programmerPanel.appendToPane(text);
-                    } else if (!values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1])) {
+                    } else if (valuesPosition != 0 && !values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1])) {
                         programmerPanel.appendToPane(text);
                     } else {
                         programmerPanel.appendToPane(programmerPanel.separateBits(convertValueToBinary()));
