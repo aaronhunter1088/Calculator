@@ -122,6 +122,7 @@ public enum Texts {
     // Converter
 
     // Other
+    NEWLINE("\n"),
     UNDERSCORE("_"),
     MAX_VALUE("9999999"),
     MIN_VALUE("0.0000001"),

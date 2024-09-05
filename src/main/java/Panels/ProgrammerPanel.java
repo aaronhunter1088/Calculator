@@ -321,7 +321,7 @@ public class ProgrammerPanel extends JPanel
             button.setEnabled(true);
         });
         buttonModulus.setName(MODULUS.name());
-        buttonModulus.addActionListener(this::performModulusAction);
+        buttonModulus.addActionListener(this::performButtonModulusAction);
         LOGGER.debug("Modulus button configured");
         buttonLeftParenthesis.setName(LEFT_PARENTHESIS.name());
         buttonLeftParenthesis.addActionListener(action -> LOGGER.warn("IMPLEMENT Left ("));
@@ -336,10 +336,10 @@ public class ProgrammerPanel extends JPanel
         buttonRotateRight.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonRotateRight"));
         LOGGER.warn("RoR button needs to be configured");
         buttonOr.setName(OR.name());
-        buttonOr.addActionListener(this::performOrAction);
+        buttonOr.addActionListener(this::performButtonOrAction);
         LOGGER.debug("Or button configured");
         buttonXor.setName(XOR.name());
-        buttonXor.addActionListener(this::performXorAction);
+        buttonXor.addActionListener(this::performButtonXorAction);
         LOGGER.debug("Xor button configured");
         buttonShiftLeft.setName(LSH.name());
         buttonShiftLeft.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonShiftLeft"));
@@ -348,7 +348,7 @@ public class ProgrammerPanel extends JPanel
         buttonShiftRight.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonShiftRight"));
         LOGGER.debug("Right Shift button needs to be configured");
         buttonNot.setName(NOT.name());
-        buttonNot.addActionListener(this::performNotAction);
+        buttonNot.addActionListener(this::performButtonNotAction);
         LOGGER.debug("Not button configured");
         buttonAnd.setName(AND.name());
         buttonAnd.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonAdd"));
@@ -368,15 +368,15 @@ public class ProgrammerPanel extends JPanel
         updateButtonsBasedOnBase();
         LOGGER.debug("Hexadecimal buttons configured");
         buttonShift.setName(SHIFT.name());
-        buttonShift.addActionListener(this::performShiftAction);
+        buttonShift.addActionListener(this::performButtonShiftAction);
         LOGGER.debug("Shift button needs to be configured");
         buttonBytes.setName("Bytes");
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
-        buttonBytes.addActionListener(this::performBytesAction);
+        buttonBytes.addActionListener(this::performButtonByteAction);
         LOGGER.debug("Bytes button configured");
         buttonBases.setName("Bases");
         buttonBases.setPreferredSize(new Dimension(70, 35) );
-        buttonBases.addActionListener(this::performBasesAction);
+        buttonBases.addActionListener(this::performButtonBaseAction);
         LOGGER.debug("ButtonBytes needs to be configured");
     }
 
@@ -473,9 +473,9 @@ public class ProgrammerPanel extends JPanel
     {
         return switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
-            case BASE_OCTAL -> calculator.convertValueToOctal();
+            case BASE_OCTAL -> calculator.convertValueToOctal(); // TODO: add similar separateBits method for octal, grouping by 3s
             case BASE_DECIMAL -> calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]);
-            case BASE_HEXADECIMAL -> calculator.convertValueToHexadecimal();
+            case BASE_HEXADECIMAL -> calculator.getValues()[calculator.getValuesPosition()]; // TODO: may need to add separateBits for hexa numbers
         };
     }
 
@@ -608,7 +608,7 @@ public class ProgrammerPanel extends JPanel
      * The programmer actions to perform when the Delete button is clicked
      * @param actionEvent the click action
      */
-    public void performDeleteButtonAction(ActionEvent actionEvent)
+    public void performButtonDeleteButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Programmer Action for {} started", buttonChoice);
@@ -680,7 +680,7 @@ public class ProgrammerPanel extends JPanel
      * The actions to perform when you click MemorySubtraction
      * @param actionEvent the click action
      */
-    public void performModulusAction(ActionEvent actionEvent)
+    public void performButtonModulusAction(ActionEvent actionEvent)
     {
         LOGGER.debug("performModButtonActions begins");
         String buttonChoice = actionEvent.getActionCommand();
@@ -732,7 +732,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when Or is clicked
      */
-    public void performOrAction(ActionEvent actionEvent)
+    public void performButtonOrAction(ActionEvent actionEvent)
     {
         LOGGER.info("performOrLogic starts here");
         String buttonChoice = actionEvent.getActionCommand();
@@ -809,7 +809,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when Xor is clicked
      */
-    public void performXorAction(ActionEvent actionEvent)
+    public void performButtonXorAction(ActionEvent actionEvent)
     {
         LOGGER.info("performing XOR button actions");
         String buttonChoice = actionEvent.getActionCommand();
@@ -858,7 +858,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when the Not button is clicked
      */
-    public void performNotAction(ActionEvent actionEvent)
+    public void performButtonNotAction(ActionEvent actionEvent)
     {
         LOGGER.info("performing not operation...");
         String buttonChoice = actionEvent.getActionCommand();
@@ -882,7 +882,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when the Shift button is clicked
      */
-    public void performShiftAction(ActionEvent actionEvent)
+    public void performButtonShiftAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -914,12 +914,13 @@ public class ProgrammerPanel extends JPanel
         }
         buttonsPanel.repaint();
         buttonsPanel.revalidate();
+        LOGGER.info("Action for {} completed. isShiftPressed: {}{}", buttonChoice, isShiftPressed, calculator.addNewLines(1));
     }
 
     /**
      * The actions to perform when the Bytes button is clicked
      */
-    public void performBytesAction(ActionEvent actionEvent)
+    public void performButtonByteAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -946,7 +947,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when the Bases button is clicked
      */
-    public void performBasesAction(ActionEvent actionEvent)
+    public void performButtonBaseAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -957,24 +958,44 @@ public class ProgrammerPanel extends JPanel
                 calculator.setCalculatorBase(BASE_OCTAL);
                 updateValues = getAllowedLengthsOfTextPane().contains(calculator.getValueFromTextPaneForProgrammerPanel().length());
                 if (updateValues) {
-                    calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getValueFromTextPaneForProgrammerPanel());
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_OCTAL, calculator.getValueFromTextPaneForProgrammerPanel());
                     calculator.setPreviousBase(BASE_BINARY);
+                    appendToPane(calculator.getValues()[calculator.getValuesPosition()]);
                 }
             }
             case BASE_OCTAL -> {
                 calculator.setCalculatorBase(BASE_DECIMAL);
-
+                // TODO: Create similar logic as i did for setting this for binary.
+                updateValues = true;
+                if (updateValues) {
+                    calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_OCTAL, BASE_DECIMAL, calculator.getValueFromTextPaneForProgrammerPanel());
+                    calculator.setPreviousBase(BASE_OCTAL);
+                    appendToPane(calculator.getValues()[calculator.getValuesPosition()]);
+                }
             }
             case BASE_DECIMAL  -> {
                 calculator.setCalculatorBase(BASE_HEXADECIMAL);
+                // TODO: Create similar logic as i did for setting this for binary.
+                updateValues = true;
+                if (updateValues) {
+                    String converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, calculator.getValueFromTextPaneForProgrammerPanel());
+                    calculator.setPreviousBase(BASE_DECIMAL);
+                    appendToPane(converted);
+                }
             }
             case BASE_HEXADECIMAL -> {
                 calculator.setCalculatorBase(BASE_BINARY);
+                // TODO: Create similar logic as i did for setting this for binary.
+                updateValues = true;
+                if (updateValues) {
+                    String converted = calculator.convertFromBaseToBase(BASE_HEXADECIMAL, BASE_BINARY, calculator.getValueFromTextPaneForProgrammerPanel());
+                    calculator.setPreviousBase(BASE_HEXADECIMAL);
+                    appendToPane(separateBits(converted));
+                }
             }
         }
         updateButtonsBasedOnBase();
-        appendToPane(addBaseRepresentation()); // must call to update textPane base value
-        //if (updateValues) calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue(); // reset back to blank
+        //appendToPane(addBaseRepresentation()); // must call to update textPane base value
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, "Updated bases to " + this.calculator.getCalculatorBase().getValue());
         calculator.confirm("Bases updated to " + calculator.getCalculatorBase());
     }
