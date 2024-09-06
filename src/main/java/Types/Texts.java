@@ -122,6 +122,7 @@ public enum Texts {
     // Converter
 
     // Other
+    PUSHED_CLEAR("Pushed clear"),
     NEWLINE("\n"),
     UNDERSCORE("_"),
     MAX_VALUE("9999999"),

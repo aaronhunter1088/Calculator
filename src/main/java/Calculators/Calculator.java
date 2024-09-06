@@ -2107,14 +2107,16 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        for (int i=0; i < 3; i++)
+        for (int i=0; i<4; i++)
         {
-            if (i == 0) { values[0] = ZERO.getValue(); }
+            if (i == 0) { values[i] = ZERO.getValue(); }
+            else if (i==3) { values[i] = PUSHED_CLEAR.getValue(); }
             else { values[i] = BLANK.getValue(); }
         }
         for(int i=0; i < 10; i++)
         { memoryValues[i] = BLANK.getValue(); }
         appendTextToPane(ZERO.getValue());
+        values[3] = BLANK.getValue();
         resetBasicOperators(false);
         valuesPosition = 0;
         memoryPosition = 0;
@@ -3786,24 +3788,30 @@ public class Calculator extends JFrame
         {
             switch (calculatorBase) {
                 case BASE_BINARY -> {
-                    if (!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) {
+                    // TODO: Rethink
+                    if (PUSHED_CLEAR.getValue().equals(values[3]) ||
+                        (!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) ||
+                        (valuesPosition != 0 && !values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1]))
+                    )
                         programmerPanel.appendToPane(text);
-                    } else if (valuesPosition != 0 && !values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1])) {
-                        programmerPanel.appendToPane(text);
-                    } else {
+                    else {
                         programmerPanel.appendToPane(programmerPanel.separateBits(convertValueToBinary()));
                     }
                 }
-                case BASE_OCTAL -> {}
+                case BASE_OCTAL -> {
+                    programmerPanel.appendToPane(text);
+                }
                 case BASE_DECIMAL -> {
                     programmerPanel.appendToPane(addCommas(text));
                 }
-                case BASE_HEXADECIMAL -> {}
+                case BASE_HEXADECIMAL -> {
+                    programmerPanel.appendToPane(text);
+                }
             }
         }
         else
         {
-            LOGGER.warn("Implement adding text here");
+            LOGGER.warn("Implement adding text for <view> here");
         }
     }
 
