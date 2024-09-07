@@ -3371,9 +3371,51 @@ public class Calculator extends JFrame
         String currentValue = BLANK.getValue();
         try
         {
-            // TODO: this may depend on the base they're in.
-            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                    .replace(COMMA.getValue(), BLANK.getValue());
+            // TODO: this will depend on the byte/base they're in.
+            switch (calculatorBase)
+            {
+                case BASE_BINARY ->
+                {
+                    if (BYTE_BYTE == calculatorByte)
+                    {
+                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                .replace(COMMA.getValue(), BLANK.getValue());
+                    }
+                    else if (BYTE_WORD == calculatorByte)
+                    {
+                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                .replace(COMMA.getValue(), BLANK.getValue());
+                    }
+                    else if (BYTE_DWORD == calculatorByte)
+                    {
+                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                + textPane.getText().split(NEWLINE.getValue())[3]
+                                .replace(COMMA.getValue(), BLANK.getValue());
+                    }
+                    else if (BYTE_QWORD == calculatorByte)
+                    {
+                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                + textPane.getText().split(NEWLINE.getValue())[3]
+                                + textPane.getText().split(NEWLINE.getValue())[4]
+                                + textPane.getText().split(NEWLINE.getValue())[5]
+                                .replace(COMMA.getValue(), BLANK.getValue());
+                    }
+                }
+                case BASE_OCTAL -> {
+                    currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                            .replace(COMMA.getValue(), BLANK.getValue());
+                }
+                case BASE_DECIMAL -> {
+                    currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                            .replace(COMMA.getValue(), BLANK.getValue());
+                }
+                case BASE_HEXADECIMAL -> {
+                    // TODO: If we are going from decimal to hexadecimal, the number is 5
+                    // TODO: Rework to account for the Base
+                    currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                            .replace(COMMA.getValue(), BLANK.getValue());
+                }
+            }
             if (currentValue.isEmpty()) {
                 logException(new CalculatorError("Attempted to retrieve value from text pane but it was empty. Returning blank."));
                 return BLANK.getValue();
@@ -3383,7 +3425,7 @@ public class Calculator extends JFrame
         {
             try
             {
-                return textPane.getText().split("\n")[1].replace(COMMA.getValue(), BLANK.getValue());
+                return textPane.getText().split(NEWLINE.getValue())[1].replace(COMMA.getValue(), BLANK.getValue());
             } catch (ArrayIndexOutOfBoundsException ae2)
             {
                 return BLANK.getValue();

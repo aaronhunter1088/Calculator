@@ -964,12 +964,14 @@ public class ProgrammerPanel extends JPanel
         switch(calculator.getCalculatorBase())
         {
             case BASE_BINARY -> {
-                calculator.setCalculatorBase(BASE_OCTAL);
-                updateValues = getAllowedLengthsOfTextPane().contains(calculator.getValueFromTextPaneForProgrammerPanel().length());
+                // TODO: Not just is the correct length but also if the length is less than
+                converted = calculator.getValueFromTextPaneForProgrammerPanel();
+                updateValues = getAllowedLengthsOfTextPane().contains(converted.length());
                 if (updateValues) {
                     converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_OCTAL, calculator.getValueFromTextPaneForProgrammerPanel());
                     calculator.getValues()[calculator.getValuesPosition()] = converted;
                     calculator.setPreviousBase(BASE_BINARY);
+                    calculator.setCalculatorBase(BASE_OCTAL);
                     appendToPane(calculator.getValues()[calculator.getValuesPosition()]);
                 }
             }
@@ -1024,17 +1026,17 @@ public class ProgrammerPanel extends JPanel
         {
             calculator.performNumberButtonAction(actionEvent);
             var allowedLengthMinusNewLines = getAllowedLengthsOfTextPane();
-            String textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
+            String textPaneText = calculator.getValueFromTextPaneForProgrammerPanel();
             if (allowedLengthMinusNewLines.contains(textPaneText.length()))
             { calculator.confirm("Byte length "+allowedLengthMinusNewLines+" already reached"); }
             else
             {
-                appendToPane(textPaneText + buttonChoice);
+                appendToPane(separateBits(textPaneText + buttonChoice));
                 calculator.writeHistory(buttonChoice, false);
-                textPaneText = separateBits(calculator.getValueFromTextPaneForProgrammerPanel());
+                textPaneText = calculator.getValueFromTextPaneForProgrammerPanel();
                 if (allowedLengthMinusNewLines.contains(textPaneText.length()))
                 {
-                    calculator.setPreviousBase(BASE_BINARY);
+                    calculator.setPreviousBase(BASE_BINARY); // set previousBase since number is fully formed
                     calculator.getValues()[calculator.getValuesPosition()] = textPaneText;
                     calculator.getValues()[calculator.getValuesPosition()] = calculator.convertValueToDecimal();
                     calculator.confirm("Byte length "+allowedLengthMinusNewLines+" reached with this input");
@@ -1050,7 +1052,8 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * Returns the correct lengths allowed when using base binary
-     * and different byte values. This accounts for spaces and newlines
+     * and different byte values. This uses only the value in the
+     * text pane.
      * @return List the lengths allowed for different bytes
      */
     private List<Integer> getAllowedLengthsOfTextPane()
@@ -1061,23 +1064,23 @@ public class ProgrammerPanel extends JPanel
             // TODO: check shorthand
             case BYTE_BYTE -> {
                 //IntStream.rangeClosed(1,8).forEach(lengthsAllowed::add); // for shorthand
-                lengthsAllowed.add(9);  // 0000_0101, or 9 total characters
-                lengthsAllowed.add(11); // 0000_0101_+, or 11 total characters
+                lengthsAllowed.add(8);  // 00000101, or 8 total characters
+                lengthsAllowed.add(10); // 00000101_<operator>, or 10 total characters
             }
             case BYTE_WORD -> {
                 //IntStream.rangeClosed(1,18).forEach(lengthsAllowed::add);
-                lengthsAllowed.add(19); // 0000_0101_0000_0101, or 19 total characters
-                lengthsAllowed.add(21); // ..._<operator>, so 19 + 2 = 21
+                lengthsAllowed.add(16); // 0000010100000101, or 16 total characters
+                lengthsAllowed.add(18); // 0000010100000101_<operator>, or 16 + 2 = 18
             }
             case BYTE_DWORD -> {
                 //IntStream.rangeClosed(1,38).forEach(lengthsAllowed::add);
-                lengthsAllowed.add(38); // double word minus newlines
-                lengthsAllowed.add(40); // with operator
+                lengthsAllowed.add(32); // double word minus newlines
+                lengthsAllowed.add(34); // with operator
             }
             case BYTE_QWORD -> {
                 //IntStream.rangeClosed(1,75).forEach(lengthsAllowed::add);
-                lengthsAllowed.add(76); // double dword minus newlines
-                lengthsAllowed.add(78); // with operator
+                lengthsAllowed.add(64); // double dword minus newlines
+                lengthsAllowed.add(66); // with operator
             }
         }
         return lengthsAllowed;
