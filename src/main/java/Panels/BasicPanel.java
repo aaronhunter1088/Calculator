@@ -410,14 +410,14 @@ public class BasicPanel extends JPanel
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.textPaneContainsBadText())
         { calculator.confirm("Cannot perform " + PERCENT + " operation"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
             calculator.confirm("Pressed: " + buttonChoice);
         }
         else
         {
-            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+            double result = Double.parseDouble(calculator.getTextPaneValue());
             result /= 100;
             LOGGER.debug("result: " + result);
             calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
@@ -440,7 +440,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.textPaneContainsBadText())
         { calculator.confirm("Cannot perform " + SQUARED + " operation"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
             calculator.confirm("No number to square");
@@ -478,14 +478,14 @@ public class BasicPanel extends JPanel
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.textPaneContainsBadText())
         { calculator.confirm("Cannot perform " + FRACTION + " operation"); }
-        else if (calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+        else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
             calculator.confirm("Cannot perform " + FRACTION + " operation");
         }
         else
         {
-            double result = Double.parseDouble(calculator.getTextPaneWithoutNewLineCharacters());
+            double result = Double.parseDouble(calculator.getTextPaneValue());
             result = 1 / result;
             LOGGER.debug("result: " + result);
             if (INFINITY.getValue().equals(String.valueOf(result)))

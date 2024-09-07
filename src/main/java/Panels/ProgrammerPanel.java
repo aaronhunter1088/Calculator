@@ -499,7 +499,10 @@ public class ProgrammerPanel extends JPanel
     /**
      * Takes a String byte and adds a space between every
      * pair of 4 bits. Will always return a "full byte" based on
-     * current byte value
+     * current byte value.
+     * If the representation is empty, or less than 4 bits, it
+     * will return the representation as is, otherwise it will
+     * first remove any spaces and then add spaces between.
      * @param representation the String to alter
      * @return String the altered representation with spaces
      */
@@ -509,7 +512,9 @@ public class ProgrammerPanel extends JPanel
         else if (representation.length() < 4) return representation;
         StringBuilder sb = new StringBuilder();
         representation = representation.replace(SPACE.getValue(), BLANK.getValue());
-        return switch (calculator.getCalculatorByte()) {
+        boolean operatorSet = calculator.determineIfAnyBasicOperatorWasPushed();
+        if (operatorSet) representation = calculator.returnWithoutAnyOperator(representation);
+        String respaced = switch (calculator.getCalculatorByte()) {
             case BYTE_BYTE -> {
                 sb.append(representation, 0, 4);
                 sb.append(SPACE.getValue());
@@ -579,6 +584,8 @@ public class ProgrammerPanel extends JPanel
                 yield sb.toString();
             }
         };
+        if (operatorSet) respaced = respaced + SPACE.getValue() + calculator.getActiveBasicPanelOperator();
+        return respaced;
     }
 
     /**
@@ -637,7 +644,7 @@ public class ProgrammerPanel extends JPanel
                     // if no operator has been pushed but text pane has value
                     if (!calculator.isAdding() && !calculator.isSubtracting()
                         && !calculator.isMultiplying() && !calculator.isDividing()
-                        && !calculator.getTextPaneWithoutNewLineCharacters().isEmpty())
+                        && !calculator.getTextPaneValue().isEmpty())
                     {
                         String substring = calculator.getValueFromTextPaneForProgrammerPanel().substring(0, calculator.getValueFromTextPaneForProgrammerPanel().length()-1);
                         if (substring.endsWith(SPACE.getValue())) substring = substring.substring(0,substring.length()-1);
@@ -824,7 +831,7 @@ public class ProgrammerPanel extends JPanel
         else if (!StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
         {
             calculator.getTextPane().setText(calculator.addNewLines(1)+
-                    calculator.getTextPaneWithoutNewLineCharacters() + " " + "XOR");
+                    calculator.getTextPaneValue() + " " + "XOR");
         }
         else if (!StringUtils.isEmpty(calculator.getValues()[0]) && !StringUtils.isEmpty(calculator.getValues()[1]))
         {
@@ -988,11 +995,11 @@ public class ProgrammerPanel extends JPanel
                 }
             }
             case BASE_HEXADECIMAL -> {
+                converted = calculator.convertFromBaseToBase(BASE_HEXADECIMAL, BASE_BINARY, calculator.getValueFromTextPaneForProgrammerPanel());
                 calculator.setCalculatorBase(BASE_BINARY);
                 // TODO: Create similar logic as i did for setting this for binary.
                 updateValues = true;
                 if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_HEXADECIMAL, BASE_BINARY, calculator.getValueFromTextPaneForProgrammerPanel());
                     calculator.setPreviousBase(BASE_HEXADECIMAL);
                     appendToPane(separateBits(converted));
                 }
@@ -1048,24 +1055,32 @@ public class ProgrammerPanel extends JPanel
      */
     private List<Integer> getAllowedLengthsOfTextPane()
     {
-        List<Integer> allowedLengthMinusNewLines = new ArrayList<>();
+        List<Integer> lengthsAllowed = new ArrayList<>();
         switch (calculator.getCalculatorByte())
         {
+            // TODO: check shorthand
             case BYTE_BYTE -> {
-                allowedLengthMinusNewLines.add(9);  // 0000_0101, or 9 total characters
-                allowedLengthMinusNewLines.add(11); // 0000_0101_+, or 11 total characters
+                //IntStream.rangeClosed(1,8).forEach(lengthsAllowed::add); // for shorthand
+                lengthsAllowed.add(9);  // 0000_0101, or 9 total characters
+                lengthsAllowed.add(11); // 0000_0101_+, or 11 total characters
             }
             case BYTE_WORD -> {
-                allowedLengthMinusNewLines.add(19); // 0000_0101_0000_0101, or 19 total characters
+                //IntStream.rangeClosed(1,18).forEach(lengthsAllowed::add);
+                lengthsAllowed.add(19); // 0000_0101_0000_0101, or 19 total characters
+                lengthsAllowed.add(21); // ..._<operator>, so 19 + 2 = 21
             }
             case BYTE_DWORD -> {
-                allowedLengthMinusNewLines.add(38); // double word minus newlines
+                //IntStream.rangeClosed(1,38).forEach(lengthsAllowed::add);
+                lengthsAllowed.add(38); // double word minus newlines
+                lengthsAllowed.add(40); // with operator
             }
             case BYTE_QWORD -> {
-                allowedLengthMinusNewLines.add(76); // double dword minus newlines
+                //IntStream.rangeClosed(1,75).forEach(lengthsAllowed::add);
+                lengthsAllowed.add(76); // double dword minus newlines
+                lengthsAllowed.add(78); // with operator
             }
         }
-        return allowedLengthMinusNewLines;
+        return lengthsAllowed;
     }
 
     /**
