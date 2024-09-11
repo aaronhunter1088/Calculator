@@ -584,7 +584,8 @@ public class ProgrammerPanel extends JPanel
                 yield sb.toString();
             }
         };
-        if (operatorSet) respaced = respaced + SPACE.getValue() + calculator.getActiveBasicPanelOperator();
+        if (operatorSet && calculator.getValuesPosition() == 0)
+            respaced = respaced + SPACE.getValue() + calculator.getActiveBasicPanelOperator();
         return respaced;
     }
 
