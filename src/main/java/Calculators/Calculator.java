@@ -2072,6 +2072,7 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
+        LOGGER.debug("valuesPosition: {}", valuesPosition);
         if (getTextPaneValue().isEmpty())
         { confirm(CLEAR_ENTRY + " called... nothing to clear"); }
         else if (valuesPosition == 0 || values[1].isEmpty())
@@ -2082,8 +2083,8 @@ public class Calculator extends JFrame
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
             appendTextToPane(BLANK.getValue());
-            writeHistoryWithMessage(buttonChoice, false, " Cleared first number & main operators");
-            confirm("Pressed: " + buttonChoice + ". Cleared first number & main operators");
+            writeHistoryWithMessage(buttonChoice, false, SPACE.getValue() + buttonChoice + " performed");
+            confirm("Pressed: " + buttonChoice);
         }
         else
         {
@@ -2094,8 +2095,8 @@ public class Calculator extends JFrame
             isNumberNegative = false;
             buttonDecimal.setEnabled(true);
             appendTextToPane(addCommas(values[0]) + SPACE.getValue() + operator);
-            writeHistoryWithMessage(buttonChoice, false, " Cleared second number only");
-            confirm("Pressed: " + buttonChoice + ". Cleared second number only");
+            writeHistoryWithMessage(buttonChoice, false, SPACE.getValue() + buttonChoice + " performed");
+            confirm("Pressed: " + buttonChoice);
         }
     }
 

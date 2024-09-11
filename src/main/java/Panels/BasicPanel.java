@@ -141,6 +141,12 @@ public class BasicPanel extends JPanel
                 MemorySubtract: %s
                 Pressing this button will subtract the current value in the textPane to the previously saved value.
                 
+                History: %s/%s
+                Pressing this button will display the history panel. The icon will display an arrow pointing up when the history panel is open.
+                Pressing the button again will change the icon back to a downward pointing arrow and hide the history panel.
+                The history panel shows all button actions which are correctly performed. For example, if you press the %s button (%s), with
+                no value in the text pane, history will not be recorded since the operation was not performed.
+                
                 Percent: %s
                 Pressing this button will return the value in the textPane as a percentage, or a message '%s', if no value is available in the textPane.
                 Ex: 25 -> %s -> 0.25
@@ -220,6 +226,7 @@ public class BasicPanel extends JPanel
                         MEMORY_RECALL.getValue(),
                         MEMORY_ADDITION.getValue(),
                         MEMORY_SUBTRACTION.getValue(),
+                        HISTORY_CLOSED.getValue(), HISTORY_OPEN.getValue(), PERCENT.name(), PERCENT.getValue(), // H^, Hv, PERCENT, Ex:Percent
                         PERCENT.getValue(), ENTER_A_NUMBER.getValue(), PERCENT.getValue(), // Percent
                         SQUARE_ROOT.getValue(), NOT_A_NUMBER.getValue(), ERR.getValue(),
                         SQUARED.getValue(), ENTER_A_NUMBER.getValue(),
