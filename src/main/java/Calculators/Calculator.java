@@ -2303,7 +2303,15 @@ public class Calculator extends JFrame
         String operator = getActiveBasicPanelOperator();
         determineAndPerformBasicCalculatorOperation();
         if (!operator.isEmpty() && !textPaneContainsBadText()) {
-            appendTextToPane(values[0]);
+            switch (calculatorBase)
+            {
+                case BASE_BINARY -> appendTextToPane(convertValueToBinary());
+                case BASE_OCTAL,
+                     BASE_DECIMAL,
+                     BASE_HEXADECIMAL -> {
+                    appendTextToPane(values[0]);
+                }
+            }
         }
         values[0] = BLANK.getValue();
         values[1] = BLANK.getValue();
@@ -3241,6 +3249,14 @@ public class Calculator extends JFrame
         return base16Number;
     }
 
+    /**
+     * Converts the given value from the fromBase to
+     * the given toBase.
+     * @param fromBase the base to convert from
+     * @param toBase the base to convert to
+     * @param valueToConvert the value to convert
+     * @return the converted value or an empty string
+     */
     public String convertFromBaseToBase(CalculatorBase fromBase, CalculatorBase toBase, String valueToConvert)
     {
         valueToConvert = valueToConvert.replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
@@ -3371,47 +3387,38 @@ public class Calculator extends JFrame
         String currentValue = BLANK.getValue();
         try
         {
-            // TODO: this will depend on the byte/base they're in.
+            LOGGER.debug("calculatorBase: {}", calculatorBase);
             switch (calculatorBase)
             {
                 case BASE_BINARY ->
                 {
-                    if (BYTE_BYTE == calculatorByte)
+                    LOGGER.debug("calculatorByte: {}", calculatorByte);
+                    switch (calculatorByte)
                     {
-                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                .replace(COMMA.getValue(), BLANK.getValue());
+                        case BYTE_BYTE,
+                             BYTE_WORD -> {
+                            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                    .replace(COMMA.getValue(), BLANK.getValue());
+                        }
+                        case BYTE_DWORD -> {
+                            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                    + textPane.getText().split(NEWLINE.getValue())[3]
+                                    .replace(COMMA.getValue(), BLANK.getValue());
+                        }
+                        case BYTE_QWORD -> {
+                            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
+                                    + textPane.getText().split(NEWLINE.getValue())[3]
+                                    + textPane.getText().split(NEWLINE.getValue())[4]
+                                    + textPane.getText().split(NEWLINE.getValue())[5]
+                                    .replace(COMMA.getValue(), BLANK.getValue());
+                        }
                     }
-                    else if (BYTE_WORD == calculatorByte)
-                    {
-                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                .replace(COMMA.getValue(), BLANK.getValue());
-                    }
-                    else if (BYTE_DWORD == calculatorByte)
-                    {
-                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                + textPane.getText().split(NEWLINE.getValue())[3]
-                                .replace(COMMA.getValue(), BLANK.getValue());
-                    }
-                    else if (BYTE_QWORD == calculatorByte)
-                    {
-                        currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                + textPane.getText().split(NEWLINE.getValue())[3]
-                                + textPane.getText().split(NEWLINE.getValue())[4]
-                                + textPane.getText().split(NEWLINE.getValue())[5]
-                                .replace(COMMA.getValue(), BLANK.getValue());
-                    }
+                    currentValue = currentValue.replace(SPACE.getValue(), BLANK.getValue());
+                    currentValue = adjustBinaryNumber(currentValue);
                 }
-                case BASE_OCTAL -> {
-                    currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                            .replace(COMMA.getValue(), BLANK.getValue());
-                }
-                case BASE_DECIMAL -> {
-                    currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                            .replace(COMMA.getValue(), BLANK.getValue());
-                }
-                case BASE_HEXADECIMAL -> {
-                    // TODO: If we are going from decimal to hexadecimal, the number is 5
-                    // TODO: Rework to account for the Base
+                case BASE_OCTAL,
+                     BASE_DECIMAL,
+                     BASE_HEXADECIMAL -> {
                     currentValue = textPane.getText().split(NEWLINE.getValue())[2]
                             .replace(COMMA.getValue(), BLANK.getValue());
                 }
@@ -3425,9 +3432,10 @@ public class Calculator extends JFrame
         {
             try
             {
-                return textPane.getText().split(NEWLINE.getValue())[1].replace(COMMA.getValue(), BLANK.getValue());
+                return textPane.getText().split(NEWLINE.getValue())[2].replace(COMMA.getValue(), BLANK.getValue());
             } catch (ArrayIndexOutOfBoundsException ae2)
             {
+                logException(new CalculatorError("Attempted to retrieve value from text pane but it was empty. Returning blank."));
                 return BLANK.getValue();
             }
         }
@@ -3436,16 +3444,7 @@ public class Calculator extends JFrame
             logException(e);
             return BLANK.getValue();
         }
-
-        return switch (calculatorBase) {
-            case BASE_BINARY -> {
-                currentValue = currentValue.replace(SPACE.getValue(), BLANK.getValue());
-                yield adjustBinaryNumber(currentValue);
-            }
-            case BASE_OCTAL -> { yield currentValue; }
-            case BASE_DECIMAL -> { yield currentValue; }
-            case BASE_HEXADECIMAL -> { yield currentValue; }
-        };
+        return currentValue;
     }
 
     /**
