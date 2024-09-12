@@ -23,6 +23,9 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -2458,7 +2461,7 @@ public class Calculator extends JFrame
      */
     public void performAboutCalculatorAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("Action for {} started", actionEvent.getActionCommand());
+        LOGGER.info("Action for {} started", actionEvent.getActionCommand());
         JPanel iconPanel = new JPanel(new GridBagLayout());
         iconLabel = new JLabel();
         iconPanel.add(iconLabel);
@@ -2582,7 +2585,8 @@ public class Calculator extends JFrame
                     case BASE_HEXADECIMAL -> {}
                 }
             }
-        } else {
+        }
+        else {
             if (currentPanel instanceof BasicPanel basicPanel)
             {
                 if (addButtonChoiceToEnd)
@@ -3010,7 +3014,7 @@ public class Calculator extends JFrame
      * @param e the Exception to log
      */
     public void logException(Exception e)
-    { LOGGER.error(e.getClass().getName() + ": " + e.getMessage()); }
+    { LOGGER.error(e.getClass().getSimpleName() + ": " + e.getMessage()); }
 
     /**
      * Determines if the OS is Mac or not
@@ -3087,7 +3091,8 @@ public class Calculator extends JFrame
                     setCalculatorView(VIEW_SCIENTIFIC);
                     break;
                 case "Date":
-                    setDateOperation(DIFFERENCE_BETWEEN_DATES);
+                    // TODO: move the line below. this feels wrong to check at this point. like, once a calc is started, if not in date calc mode first, then just default that value to DIFFERENCE
+                    dateOperation = dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation;
                     switchPanelsInner(new DatePanel());
                     setCalculatorView(VIEW_DATE);
                     break;
@@ -3369,7 +3374,7 @@ public class Calculator extends JFrame
     {
         if (currentPanel instanceof BasicPanel)
         { return textPane.getText().replaceAll(NEWLINE.getValue(), BLANK.getValue()).strip(); }
-        else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+        else if (currentPanel instanceof ProgrammerPanel)
         { return getValueFromTextPaneForProgrammerPanel(); }
         else
         {
@@ -3425,7 +3430,7 @@ public class Calculator extends JFrame
                 }
             }
             if (currentValue.isEmpty()) {
-                logException(new CalculatorError("Attempted to retrieve value from text pane but it was empty. Returning blank."));
+                LOGGER.warn("Attempted to retrieve value from text pane but it was empty. Returning blank.");
                 return BLANK.getValue();
             }
         }
@@ -3433,10 +3438,13 @@ public class Calculator extends JFrame
         {
             try
             {
-                return textPane.getText().split(NEWLINE.getValue())[2].replace(COMMA.getValue(), BLANK.getValue());
+                var splitTextValue = textPane.getText().split(NEWLINE.getValue());
+                return splitTextValue.length == 1 && "Byte  Decimal".equals(splitTextValue[0])
+                        ? BLANK.getValue()
+                        : splitTextValue[2].replace(COMMA.getValue(), BLANK.getValue());
             } catch (ArrayIndexOutOfBoundsException ae2)
             {
-                logException(new CalculatorError("Attempted to retrieve value from text pane but it was empty. Returning blank."));
+                logException(new CalculatorError("Attempted to retrieve value from text pane but it was null. Returning blank."));
                 return BLANK.getValue();
             }
         }
@@ -3478,8 +3486,9 @@ public class Calculator extends JFrame
         LOGGER.info("----------------");
         LOGGER.info("view: {}", calculatorView);
         switch (calculatorView) {
-            case VIEW_BASIC: {
-                LOGGER.info("textPane: '{}'", getTextPaneValue());
+            case VIEW_BASIC, VIEW_PROGRAMMER -> {
+                if (BASE_BINARY == calculatorBase) LOGGER.info("textPane: '{}'", ((ProgrammerPanel) currentPanel).separateBits(getTextPaneValue()));
+                else LOGGER.info("textPane: '{}'", getTextPaneValue());
                 if (isMemoryValuesEmpty()) {
                     LOGGER.info("no memories stored!");
                 } else {
@@ -3503,84 +3512,56 @@ public class Calculator extends JFrame
                 LOGGER.info("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
                 LOGGER.info("isNegative: {}", isNumberNegative ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                break;
-            }
-            case VIEW_PROGRAMMER: {
-                if (BASE_BINARY == calculatorBase) LOGGER.info("textPane: '{}'", ((ProgrammerPanel) currentPanel).separateBits(getTextPaneValue()));
-                else LOGGER.info("textPane: '{}'", getTextPaneValue());
-                if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition])) {
-                    LOGGER.info("no memories stored!");
-                } else {
-                    LOGGER.info("memoryPosition: {}", memoryPosition);
-                    LOGGER.info("memoryRecallPosition: {}", memoryRecallPosition);
-                    for (int i = 0; i < 10; i++) {
-                        if (!memoryValues[i].isBlank()) {
-                            LOGGER.info("memoryValues[{}]: {}", i, memoryValues[i]);
-                        }
-                    }
-                }
-                LOGGER.info("addBool: {}", isAdding ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("subBool: {}", isSubtracting ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("mulBool: {}", isMultiplying ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("divBool: {}", isDividing ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("values[0]: '{}'", values[0]);
-                LOGGER.info("values[1]: '{}'", values[1]);
-                LOGGER.info("values[2]: '{}'", values[2]);
-                LOGGER.info("values[3]: '{}'", values[3]);
-                LOGGER.info("valuesPosition: {}", valuesPosition);
-                LOGGER.info("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("isNegative: {}", isNumberNegative ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("calculatorByte: {}", calculatorByte);
                 LOGGER.info("calculatorBase: {}", calculatorBase);
-                break;
+                LOGGER.info("calculatorByte: {}", calculatorByte);
             }
-            case VIEW_SCIENTIFIC: {
+            case VIEW_SCIENTIFIC -> {
                 LOGGER.warn("Confirm message not setup for " + calculatorView);
-                break;
             }
-            case VIEW_DATE: {
+            case VIEW_DATE -> {
+                LOGGER.info("dateOperation: {}", dateOperation);
+                LocalDateTime date = LocalDateTime.of(((DatePanel)currentPanel).getTheDateFromTheFromDate(), LocalTime.now());
+                var updatedDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));
+                var capitalizedDay = updatedDate.split(SPACE.getValue())[0].toUpperCase();
+                var capitalizedMonth = updatedDate.split(SPACE.getValue())[1].toUpperCase();
+                updatedDate = capitalizedDay + SPACE.getValue() + capitalizedMonth + SPACE.getValue() + updatedDate.split(SPACE.getValue())[2] + SPACE.getValue() + updatedDate.split(SPACE.getValue())[3];
+                LOGGER.info("From Date: {}", updatedDate);
                 if (dateOperation == DIFFERENCE_BETWEEN_DATES)
                 {
-                    LOGGER.info("{} Selected", DIFFERENCE_BETWEEN_DATES);
-                    int year = ((DatePanel) currentPanel).getTheYearFromTheFromDatePicker();
-                    int month = ((DatePanel) currentPanel).getTheMonthFromTheFromDatePicker();
-                    int day = ((DatePanel) currentPanel).getTheDayOfTheMonthFromTheFromDatePicker();
-                    LocalDate date = LocalDate.of(year, month, day);
-                    LOGGER.info("FromDate(yyyy-mm-dd): " + date);
-                    year = ((DatePanel) currentPanel).getTheYearFromTheToDatePicker();
-                    month = ((DatePanel) currentPanel).getTheMonthFromTheToDatePicker();
-                    day = ((DatePanel) currentPanel).getTheDayOfTheMonthFromTheToDatePicker();
-                    date = LocalDate.of(year, month, day);
-                    LOGGER.info("ToDate(yyyy-mm-dd): " + date);
+                    date = LocalDateTime.of(((DatePanel)currentPanel).getTheDateFromTheToDate(), LocalTime.now());
+                    updatedDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));
+                    capitalizedDay = updatedDate.split(SPACE.getValue())[0].toUpperCase();
+                    capitalizedMonth = updatedDate.split(SPACE.getValue())[1].toUpperCase();
+                    updatedDate = capitalizedDay + SPACE.getValue() + capitalizedMonth + SPACE.getValue() + updatedDate.split(SPACE.getValue())[2] + SPACE.getValue() + updatedDate.split(SPACE.getValue())[3];
+                    LOGGER.info("To Date: {}", updatedDate);
                     LOGGER.info("Difference");
-                    LOGGER.info("Year: " + ((DatePanel) currentPanel).getYearsDifferenceLabel().getText());
-                    LOGGER.info("Month: " + ((DatePanel) currentPanel).getMonthsDifferenceLabel().getText());
-                    LOGGER.info("Weeks: " + ((DatePanel) currentPanel).getWeeksDifferenceLabel().getText());
-                    LOGGER.info("Days: " + ((DatePanel) currentPanel).getDaysDifferenceLabel().getText());
+                    LOGGER.info("Year: {}", ((DatePanel) currentPanel).getYearsDifferenceLabel().getText());
+                    LOGGER.info("Month: {}", ((DatePanel) currentPanel).getMonthsDifferenceLabel().getText());
+                    LOGGER.info("Weeks: {}", ((DatePanel) currentPanel).getWeeksDifferenceLabel().getText());
+                    LOGGER.info("Days: {}", ((DatePanel) currentPanel).getDaysDifferenceLabel().getText());
                 }
-                else
+                else // dateOperation == ADD_SUBTRACT_DAYS
                 {
-                    LOGGER.info("{} Selected", ADD_SUBTRACT_DAYS);
-                    int year = ((DatePanel) currentPanel).getTheYearFromTheFromDatePicker();
-                    int month = ((DatePanel) currentPanel).getTheMonthFromTheFromDatePicker();
-                    int day = ((DatePanel) currentPanel).getTheDayOfTheMonthFromTheFromDatePicker();
-                    LocalDate date = LocalDate.of(year, month, day);
-                    LOGGER.info("FromDate(yyyy-mm-dd): " + date);
                     boolean isAddSelected = ((DatePanel) currentPanel).getAddRadioButton().isSelected();
                     if (isAddSelected) LOGGER.info("Add Selected");
                     else               LOGGER.info("Subtract Selected");
-                    LOGGER.info("New Date: " + ((DatePanel) currentPanel).getResultsLabel().getText());
+                    var addSubYears = ((DatePanel) currentPanel).getYearsTextField().getText();
+                    if (!addSubYears.isBlank()) LOGGER.info("Years: {}", addSubYears);
+                    var addSubMonths = ((DatePanel) currentPanel).getMonthsTextField().getText();
+                    if (!addSubMonths.isBlank()) LOGGER.info("Months: {}", addSubMonths);
+                    var addSubWeeks = ((DatePanel) currentPanel).getWeeksTextField().getText();
+                    if (!addSubWeeks.isBlank()) LOGGER.info("Weeks: {}", addSubWeeks);
+                    var addSubDays = ((DatePanel) currentPanel).getDaysTextField().getText();
+                    if (!addSubDays.isBlank()) LOGGER.info("Days: {}", addSubDays);
+                    LOGGER.info("Result: " + ((DatePanel)currentPanel).getResultsLabel().getText());
                 }
-                break;
             }
-            case VIEW_CONVERTER: {
+            case VIEW_CONVERTER -> {
                 LOGGER.info("Converter: {}", ((ConverterPanel) currentPanel).getConverterType());
                 LOGGER.info("text field 1: {}", ((ConverterPanel) currentPanel).getTextField1().getText() + SPACE.getValue()
                         + ((ConverterPanel) currentPanel).getUnitOptions1().getSelectedItem());
                 LOGGER.info("text field 2: {}", ((ConverterPanel) currentPanel).getTextField2().getText() + SPACE.getValue()
                         + ((ConverterPanel) currentPanel).getUnitOptions2().getSelectedItem());
-                break;
             }
         }
         LOGGER.info("-------- End Confirm Results --------{}", addNewLines(1));
@@ -3650,6 +3631,36 @@ public class Calculator extends JFrame
     }
 
     /**
+     * Displays the help text in a scrollable pane
+     * @param helpString the help text to display
+     */
+    public void showHelpPanel(String helpString)
+    {
+        JTextArea message = new JTextArea(helpString,20,40);
+        message.setWrapStyleWord(true);
+        message.setLineWrap(true);
+        message.setEditable(false);
+        message.setFocusable(false);
+        message.setOpaque(false);
+        JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setSize(new Dimension(400, 300));
+        SwingUtilities.updateComponentTreeUI(this);
+        JOptionPane.showMessageDialog(this, scrollPane, "Viewing " + VIEW_BASIC.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        confirm("Viewing " + VIEW_BASIC.getValue() + " Calculator Help");
+    }
+
+    public void updateHelpMenu(String helpString)
+    {
+        //JMenu helpMenuItem = getHelpMenu();
+        JMenuItem viewHelp = helpMenu.getItem(0);
+        // remove any and all other view help actions
+        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        viewHelp.addActionListener(action -> showHelpPanel(helpString));
+        helpMenu.add(viewHelp, 0);
+        LOGGER.debug("Help menu configured for {}", calculatorView);
+    }
+
+    /**
      * This method updates the panel by removing the old panel,
      * setting up the new panel, and adds it to the frame
      * @param newPanel the panel to update on the Calculator
@@ -3659,8 +3670,8 @@ public class Calculator extends JFrame
         LOGGER.debug("Updating to panel {}...", newPanel.getClass().getSimpleName());
         JPanel oldPanel = currentPanel;
         remove(oldPanel);
-        setCurrentPanel(newPanel);
-        setCalculatorView(determineView());
+        this.currentPanel = newPanel;
+        this.calculatorView = determineView();
         setupPanel();
         add(currentPanel);
         LOGGER.debug("Panel updated");
@@ -3672,17 +3683,18 @@ public class Calculator extends JFrame
      */
     public CalculatorView determineView()
     {
-        if (currentPanel instanceof BasicPanel) {
-            return VIEW_BASIC;
-        } else if (currentPanel instanceof ProgrammerPanel) {
-            return VIEW_PROGRAMMER;
-        } else if (currentPanel instanceof ScientificPanel) {
-            return VIEW_SCIENTIFIC;
-        } else if (currentPanel instanceof DatePanel) {
-            return VIEW_DATE;
-        } else { //if (currentPanel instanceof ConverterPanel) {
-            return VIEW_CONVERTER;
-        }
+        return switch (currentPanel.getClass().getSimpleName())
+        {
+            case "BasicPanel" -> VIEW_BASIC;
+            case "ProgrammerPanel" -> VIEW_PROGRAMMER;
+            case "ScientificPanel" -> VIEW_SCIENTIFIC;
+            case "DatePanel" -> VIEW_DATE;
+            case "ConverterPanel" -> VIEW_CONVERTER;
+            default -> {
+                logException(new IllegalStateException("Unexpected value: " + currentPanel.getClass().getSimpleName()));
+                yield VIEW_BASIC;
+            }
+        };
     }
 
     /**

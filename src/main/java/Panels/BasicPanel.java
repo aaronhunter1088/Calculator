@@ -105,6 +105,7 @@ public class BasicPanel extends JPanel
      */
     private void setupHelpMenu()
     {
+        LOGGER.info("Setting up the help menu for basic panel");
         String helpString = """
                 How to use the %s Calculator
                 
@@ -243,32 +244,7 @@ public class BasicPanel extends JPanel
                         NEGATE.getValue(),
                         DECIMAL.getValue(), DECIMAL.getValue(), DECIMAL.getValue(), DECIMAL.getValue(),
                         EQUALS.getValue());
-        JMenu helpMenuItem = calculator.getHelpMenu();
-        JMenuItem viewHelp = helpMenuItem.getItem(0);
-        // remove any and all other view help actions
-        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
-        viewHelp.addActionListener(action -> showHelpPanel(helpString));
-        helpMenuItem.add(viewHelp, 0);
-        LOGGER.debug("Help menu configured for {}", calculator.getCalculatorView());
-    }
-
-    /**
-     * Displays the help text in a scrollable pane
-     * @param helpString the help text to display
-     */
-    public void showHelpPanel(String helpString)
-    {
-        JTextArea message = new JTextArea(helpString,20,40);
-        message.setWrapStyleWord(true);
-        message.setLineWrap(true);
-        message.setEditable(false);
-        message.setFocusable(false);
-        message.setOpaque(false);
-        JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setSize(new Dimension(400, 300));
-        SwingUtilities.updateComponentTreeUI(calculator);
-        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + VIEW_BASIC.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        calculator.confirm("Viewing " + VIEW_BASIC.getValue() + " Calculator Help");
+        calculator.updateHelpMenu(helpString);
     }
 
     /**

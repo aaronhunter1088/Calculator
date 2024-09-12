@@ -87,10 +87,10 @@ public class ProgrammerPanel extends JPanel
     public void setupProgrammerPanel(Calculator calculator)
     {
         this.calculator = calculator;
-        if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
-        if (calculator.getCalculatorByte() == null) { calculator.setCalculatorByte(BYTE_BYTE); }
         setLayout(new GridBagLayout());
         constraints = new GridBagConstraints();
+        if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
+        if (calculator.getCalculatorByte() == null) { calculator.setCalculatorByte(BYTE_BYTE); }
         setSize(new Dimension(227,383)); // sets main size
         setMinimumSize(new Dimension(227, 383)); // sets minimum size
         setupProgrammerPanelComponents();
@@ -138,6 +138,7 @@ public class ProgrammerPanel extends JPanel
     private void setupHelpMenu()
     {
         LOGGER.warn("IMPLEMENT Help Menu");
+        LOGGER.info("Setting up the help menu for programmer panel");
         String helpString = """
                 How to use the %s Calculator
                 
@@ -150,32 +151,7 @@ public class ProgrammerPanel extends JPanel
                 Described below are how each button works from the top left down in detail.
                 """
                 .formatted(VIEW_PROGRAMMER.getValue());
-        JMenu helpMenuItem = calculator.getHelpMenu();
-        JMenuItem viewHelp = helpMenuItem.getItem(0);
-        // remove any and all other view help actions
-        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
-        viewHelp.addActionListener(action -> showHelpPanel(helpString));
-        helpMenuItem.add(viewHelp, 0);
-        LOGGER.debug("Help menu configured for {}", calculator.getCalculatorView());
-    }
-
-    /**
-     * Displays the help text in a scrollable pane
-     * @param helpString the help text to display
-     */
-    public void showHelpPanel(String helpString)
-    {
-        JTextArea message = new JTextArea(helpString,20,40);
-        message.setWrapStyleWord(true);
-        message.setLineWrap(true);
-        message.setEditable(false);
-        message.setFocusable(false);
-        message.setOpaque(false);
-        JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setSize(new Dimension(400, 300));
-        SwingUtilities.updateComponentTreeUI(calculator);
-        JOptionPane.showMessageDialog(calculator, scrollPane, "Viewing " + VIEW_PROGRAMMER.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        calculator.confirm("Viewing " + VIEW_PROGRAMMER.getValue() + " Calculator Help");
+        calculator.updateHelpMenu(helpString);
     }
 
     /**
@@ -1093,23 +1069,21 @@ public class ProgrammerPanel extends JPanel
      */
     public void performHistoryAction(ActionEvent actionEvent)
     {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
         {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
             calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
             programmerPanel.remove(historyPanel);
             addComponent(programmerPanel, buttonsPanel, 2, 0);
             SwingUtilities.updateComponentTreeUI(this);
-            System.out.println(programmerPanel.getSize());
         }
         else
         {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
             calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
             programmerPanel.remove(buttonsPanel);
             addComponent(programmerPanel, historyPanel, 2, 0);
             SwingUtilities.updateComponentTreeUI(this);
-            System.out.println(programmerPanel.getSize());
         }
     }
 

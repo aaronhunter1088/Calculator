@@ -47,7 +47,6 @@ public class CalculatorMain
                 calculator.pack();
                 calculator.setVisible(true);
                 calculator.confirm(calculator.getCalculatorView().getValue() + " Calculator started");
-                System.out.println(calculator.getSize());
             }
             catch (Exception e) {
                 System.err.printf("Could not create Calculator bc " + e.getMessage());

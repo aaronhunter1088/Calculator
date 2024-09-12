@@ -23,8 +23,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BasicPanelTest {
-
+public class BasicPanelTest
+{
     static { System.setProperty("appName", "BasicPanelTest"); }
     private static Logger LOGGER;
     private static Calculator calculator;
@@ -69,7 +69,7 @@ public class BasicPanelTest {
     @Test
     public void testShowingHelpShowsText()
     {
-        basicPanel.showHelpPanel("This is a test. Close to proceed.");
+        calculator.showHelpPanel("This is a test. Close to proceed.");
     }
 
     @Test

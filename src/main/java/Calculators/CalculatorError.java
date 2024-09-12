@@ -1,7 +1,10 @@
 package Calculators;
 
+import java.io.Serial;
+
 public class CalculatorError extends Exception
 {
+    @Serial
     final static private long serialVersionUID = 4L;
     private String message;
     private Exception exception;

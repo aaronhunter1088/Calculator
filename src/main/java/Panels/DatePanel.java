@@ -30,15 +30,15 @@ public class DatePanel extends JPanel
 
     private GridBagLayout dateLayout;
     private GridBagConstraints constraints;
-    private UtilCalendarModel fromModel, toModel;
+    private UtilCalendarModel fromCalendarUtil, toCalendarUtil;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
     private Calculator calculator;
-    private JComboBox<DateOperation> optionsBox;
+    private JComboBox<DateOperation> dateOperationsDropdown;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, weeksLabel, daysLabel, resultsLabel,
-                   yearsDifferenceLabel, monthsDifferenceLabel, weeksDifferenceLabel, daysDifferenceLabel;
-    private JLabel blankLabel1, blankLabel2, blankLabel3, blankLabel4, blankLabel5;
+                   yearsDifferenceLabel, monthsDifferenceLabel, weeksDifferenceLabel, daysDifferenceLabel,
+                   blankLabel1, blankLabel2, blankLabel3, blankLabel4, blankLabel5;
     private ButtonGroup buttonGroup;
     private JPanel buttonGroupPanel, textFieldsGroupPanel,
             datePanel1, datePanel2, commonToBothDateCalculators;
@@ -75,9 +75,11 @@ public class DatePanel extends JPanel
      */
     public void setupDatePanel(Calculator calculator, DateOperation dateOperation)
     {
-        setCalculator(calculator);
+        this.calculator = calculator;
         setLayout(new GridBagLayout());
-        setConstraints(new GridBagConstraints());
+        this.constraints = new GridBagConstraints();
+        this.calculator.setCalculatorView(VIEW_DATE);
+        this.calculator.setDateOperation(dateOperation);
         setupHelpMenu();
         setupDatePanelComponents(dateOperation);
         createCommonPanel();
@@ -99,62 +101,33 @@ public class DatePanel extends JPanel
 
     /**
      * The main method which sets the help text
-     * to be used in the help menu for the ConverterPanel,
+     * to be used in the help menu for the DatePanel,
      * and adds it to the Help menu item
      */
     private void setupHelpMenu()
     {
-        LOGGER.info("Creating the view help menu for date panel");
-        String helpString = "<html>How to use the "+ ADD_OR_SUB_RESULT + " Calculator<br><br>" +
-                "Difference Between Dates:<br>" +
-                "Enter a date into either field, From or To.<br>" +
-                "Only 1 date is required to change to show a difference.<br>" +
-                "See the difference between the two dates below.<br><br>" +
-                "Add or Subtract Days: <br>" +
-                "Select a date from the drop down option.<br>" +
-                "Enter values in the choices: Years, Months, or Days.<br>" +
-                "Click Add or Subtract to execute that action using your values and date.</html>";
-        // 4 menu options: loop through to find the Help option
-        for(int i=0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++)
+        LOGGER.info("Setting up the help menu for date panel");
+        String helpString = "How to use the %s Calculator".formatted(calculator.getDateOperation());
+        switch (calculator.getDateOperation())
         {
-            JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
-            JMenuItem valueForThisMenuOption = null;
-            if (menuOption.getName() != null && menuOption.getName().equals("Help")) {
-                // get the options. remove viewHelpItem
-                for(int j=0; j<menuOption.getItemCount(); j++) {
-                    valueForThisMenuOption = menuOption.getItem(j);
-                    if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("View Help"))
-                    {
-                        break; // do nothing at this moment
-                    }
-                    else if (valueForThisMenuOption != null && valueForThisMenuOption.getName() != null &&
-                            valueForThisMenuOption.getName().equals("About"))
-                    {
-                        break; // do nothing at this moment
-                    }
-                }
-                // remove old option
-                menuOption.remove(valueForThisMenuOption);
-                // set up new viewHelpItem option
-                JMenuItem viewHelpItem = new JMenuItem("View Help");
-                viewHelpItem.setFont(mainFont);
-                viewHelpItem.setName("View Help");
-                viewHelpItem.addActionListener(action -> {
-                    JLabel textLabel = new JLabel(helpString,
-                            calculator.getBlankIcon(), SwingConstants.CENTER);
-                    textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-                    textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-                    JPanel mainPanel = new JPanel();
-                    mainPanel.add(textLabel);
-                    JOptionPane.showMessageDialog(calculator,
-                            mainPanel, "Viewing " + VIEW_DATE.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-                });
-                menuOption.add(viewHelpItem, 0);
+            case DIFFERENCE_BETWEEN_DATES -> {
+                helpString += """
+                \n
+                Enter a date into either field, From or To.
+                Only 1 date is required to change to show a difference.
+                See the difference between the two dates below.
+                """; // .formatted();
+            }
+            case ADD_SUBTRACT_DAYS -> {
+                helpString += """
+                \n
+                Select a date from the drop down option.
+                Enter values in the choices: Years, Months, Weeks and/or Days.
+                Click Add or Subtract to execute that action using your values and date.
+                """; //.formatted();
             }
         }
-        LOGGER.info("Finished creating the view help menu");
+        calculator.updateHelpMenu(helpString);
     }
 
     /**
@@ -164,10 +137,6 @@ public class DatePanel extends JPanel
      */
     private void setupDatePanelComponents(DateOperation dateOperation)
     {
-        calculator.setCalculatorView(VIEW_DATE);
-        calculator.setCalculatorBase(null);
-        calculator.setConverterType(null);
-        calculator.setDateOperation(dateOperation);
         setupOptionsSelection(dateOperation);
         setupFromDate();
         setupToDate();
@@ -365,7 +334,7 @@ public class DatePanel extends JPanel
      */
     private void setupDaysLabel()
     {
-        setDaysLabel(new JLabel(DAY.getValue() + LOWER_CASE_S));
+        setDaysLabel(new JLabel(DAY.getValue() + LOWER_CASE_S.getValue()));
         daysLabel.setFont(verdanaFontBold);
         daysLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -440,10 +409,10 @@ public class DatePanel extends JPanel
      */
     private void setupOptionsSelection(DateOperation dateOperation)
     {
-        setOptionsBox(new JComboBox<>(new DateOperation[]{DIFFERENCE_BETWEEN_DATES, ADD_SUBTRACT_DAYS}));
-        optionsBox.setSelectedItem(dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation);
-        optionsBox.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        optionsBox.addActionListener(this::performOptionsBoxFunctionality);
+        setDateOperationsDropdown(new JComboBox<>(new DateOperation[]{DIFFERENCE_BETWEEN_DATES, ADD_SUBTRACT_DAYS}));
+        dateOperationsDropdown.setSelectedItem(dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation);
+        dateOperationsDropdown.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        dateOperationsDropdown.addActionListener(this::performOptionsBoxFunctionality);
     }
     /**
      * The actions to perform when we change DateOperations
@@ -451,17 +420,19 @@ public class DatePanel extends JPanel
      */
     private void performOptionsBoxFunctionality(ActionEvent actionEvent)
     {
-        if ( optionsBox.getSelectedItem() == DIFFERENCE_BETWEEN_DATES )
+        if (dateOperationsDropdown.getSelectedItem() == DIFFERENCE_BETWEEN_DATES)
         { // Only Switch to OPTIONS1 if and only if we are really showing OPTIONS2
             calculator.setDateOperation(DateOperation.DIFFERENCE_BETWEEN_DATES);
             switchComponentsForDateDifference();
+            setupHelpMenu();
             updateThisPanel();
             calculator.confirm("Changing to " + DIFFERENCE_BETWEEN_DATES);
         }
-        else if (optionsBox.getSelectedItem() == ADD_SUBTRACT_DAYS )
+        else if (dateOperationsDropdown.getSelectedItem() == ADD_SUBTRACT_DAYS )
         { // Only Switch to OPTIONS2 if and only if we are really showing OPTIONS1
             calculator.setDateOperation(DateOperation.ADD_SUBTRACT_DAYS);
             switchComponentsForAddSubDate();
+            setupHelpMenu();
             updateThisPanel();
             calculator.confirm("Changing to " + ADD_SUBTRACT_DAYS);
         }
@@ -479,14 +450,14 @@ public class DatePanel extends JPanel
         fromDateLabel.setFont(verdanaFontBold);
         fromDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
         //
-        setFromModel(new UtilCalendarModel());
+        setFromCalendarUtil(new UtilCalendarModel());
         LocalDate todaysDate = LocalDate.now();
         int year = todaysDate.getYear();
         int monthInt = todaysDate.getMonthValue()-1;
         int day = todaysDate.getDayOfMonth();
-        fromModel.setDate(year, monthInt, day);
-        fromModel.setSelected(true);
-        setFromDatePanel(new JDatePanelImpl(fromModel));
+        fromCalendarUtil.setDate(year, monthInt, day);
+        fromCalendarUtil.setSelected(true);
+        setFromDatePanel(new JDatePanelImpl(fromCalendarUtil));
         setFromDatePicker(new JDatePickerImpl(fromDatePanel));
         fromDatePicker.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         fromDatePicker.addActionListener(this::performDatePickerFunctionality);
@@ -501,15 +472,14 @@ public class DatePanel extends JPanel
         setToDateLabel(new JLabel("To Date"));
         toDateLabel.setFont(verdanaFontBold);
         toDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        //
-        setToModel(new UtilCalendarModel());
+        setToCalendarUtil(new UtilCalendarModel());
         LocalDate todaysDate = LocalDate.now();
         int year = todaysDate.getYear();
         int monthInt = todaysDate.getMonthValue()-1;
         int day = todaysDate.getDayOfMonth();
-        toModel.setDate(year, monthInt, day); // defaults to today
-        toModel.setSelected(true);
-        setToDatePanel(new JDatePanelImpl(toModel));
+        toCalendarUtil.setDate(year, monthInt, day); // defaults to today
+        toCalendarUtil.setSelected(true);
+        setToDatePanel(new JDatePanelImpl(toCalendarUtil));
         setToDatePicker(new JDatePickerImpl(toDatePanel));
         toDatePicker.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         toDatePicker.addActionListener(this::performDatePickerFunctionality); //action -> updateResultsTextBox());
@@ -521,12 +491,13 @@ public class DatePanel extends JPanel
      */
     public void performDatePickerFunctionality(ActionEvent actionEvent)
     {
-        if (Objects.requireNonNull(optionsBox.getSelectedItem()) == DIFFERENCE_BETWEEN_DATES )
+        LOGGER.info("Performing From Date picker");
+        if (Objects.requireNonNull(dateOperationsDropdown.getSelectedItem()) == DIFFERENCE_BETWEEN_DATES )
         { updateResultsTextBox(); }
-        else if (optionsBox.getSelectedItem() == ADD_SUBTRACT_DAYS)
+        else if (dateOperationsDropdown.getSelectedItem() == ADD_SUBTRACT_DAYS)
         {
             int year = getTheYearFromTheFromDatePicker();
-            int month = getTheMonthFromTheFromDatePicker();
+            int month = getTheMonthFromTheFromDatePicker()+1;
             int dayOfMonth = getTheDayOfTheMonthFromTheFromDatePicker();
             LocalDateTime localDateTime = LocalDateTime.of(LocalDate.of(year, month, dayOfMonth), LocalTime.now());
             LOGGER.debug("new date selected: " + localDateTime.toLocalDate());
@@ -545,7 +516,7 @@ public class DatePanel extends JPanel
 
     /**
      * Returns the month from the FromDate
-     * @return int the fromDate month
+     * @return int the fromDate month, zero-index based
      */
     public int getTheMonthFromTheFromDatePicker()
     { return fromDatePicker.getModel().getMonth(); }
@@ -677,25 +648,27 @@ public class DatePanel extends JPanel
 
     /**
      * The inner logic performed when clicking Add or Subtract
-     * when in DateOperation2
+     * when in dateOperation ADD_SUBTRACT_DAYS
      * @param actionEvent the click action
      */
     public void performRadioButtonFunctionality(ActionEvent actionEvent)
     {
-        int year = fromDatePicker.getModel().getYear();
-        int month = fromDatePicker.getModel().getMonth();
-        int dayOfMonth = fromDatePicker.getModel().getDay();
-        LocalDateTime localDateTime = LocalDateTime.of(LocalDate.of(year, month, dayOfMonth), LocalTime.now());
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        LOGGER.debug("Add or Subtract radiobutton");
+        //int year = fromDatePicker.getModel().getYear();
+        //int month = fromDatePicker.getModel().getMonth()+1; // zero-based
+        //int dayOfMonth = fromDatePicker.getModel().getDay();
+        LocalDateTime localDateTime = LocalDateTime.of(getTheDateFromTheFromDate(), LocalTime.now());
         LOGGER.debug("FromDate is {}", localDateTime.toLocalDate());
-        //
-        int years = Integer.parseInt(StringUtils.isBlank(yearsTextField.getText()) ? "0" : yearsTextField.getText());
-        int months = Integer.parseInt(StringUtils.isEmpty(monthsTextField.getText()) ? "0" : monthsTextField.getText());
-        int weeks = Integer.parseInt(StringUtils.isEmpty(weeksTextField.getText()) ? "0" : weeksTextField.getText());
-        int days = Integer.parseInt(StringUtils.isEmpty(daysTextField.getText()) ? "0" : daysTextField.getText());
-        LOGGER.info("Years is {}", years);
-        LOGGER.info("Months is {}", months);
-        LOGGER.info("Weeks is {}", weeks);
-        LOGGER.info("Days is {}", days);
+        int years = Integer.parseInt(StringUtils.isBlank(yearsTextField.getText()) ? ZERO.getValue() : yearsTextField.getText());
+        int months = Integer.parseInt(StringUtils.isEmpty(monthsTextField.getText()) ? ZERO.getValue() : monthsTextField.getText());
+        int weeks = Integer.parseInt(StringUtils.isEmpty(weeksTextField.getText()) ? ZERO.getValue() : weeksTextField.getText());
+        int days = Integer.parseInt(StringUtils.isEmpty(daysTextField.getText()) ? ZERO.getValue() : daysTextField.getText());
+        LOGGER.debug("Years is {}", years);
+        LOGGER.debug("Months is {}", months);
+        LOGGER.debug("Weeks is {}", weeks);
+        LOGGER.debug("Days is {}", days);
         if (addRadioButton.isSelected())
         {
             LOGGER.info("Adding values to the date");
@@ -715,6 +688,8 @@ public class DatePanel extends JPanel
         LOGGER.info("Date is now {}", localDateTime.toLocalDate());
         updateToDate(localDateTime);
         updateResultsLabel(localDateTime);
+        if (addRadioButton.isSelected()) calculator.confirm("Pressed Add");
+        else calculator.confirm("Pressed Subtract");
     }
 
     /**
@@ -756,10 +731,11 @@ public class DatePanel extends JPanel
         LOGGER.info("Finished adding components to AddOrSubtract panel");
     }
 
+    @Deprecated(since = "not enough going on for specialized code")
     private void createCommonPanel()
     {
         commonToBothDateCalculators = new JPanel(new GridBagLayout());
-        addComponent(commonToBothDateCalculators, optionsBox, 0, 1,1, 0,0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        addComponent(commonToBothDateCalculators, dateOperationsDropdown, 0, 1,1, 0,0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
         addComponent(commonToBothDateCalculators, fromDateLabel, 1, 0,1.0);
         addComponent(commonToBothDateCalculators, fromDatePicker, 2, 0,1.0);
     }
@@ -815,13 +791,13 @@ public class DatePanel extends JPanel
     public int[] calculateDifferenceBetweenDates()
     {
         int year = getTheYearFromTheFromDatePicker();
-        int month = getTheMonthFromTheFromDatePicker();
+        int month = getTheMonthFromTheFromDatePicker()+1;
         int day = getTheDayOfTheMonthFromTheFromDatePicker();
         LocalDate fromDate = LocalDate.of(year, month, day);
         Instant fromInstance = fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         year = getTheYearFromTheToDatePicker();
-        month = getTheMonthFromTheToDatePicker();
+        month = getTheMonthFromTheToDatePicker()+1;
         day = getTheDayOfTheMonthFromTheToDatePicker();
         LocalDate toDate = LocalDate.of(year, month, day);
         Instant toInstance = toDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -919,7 +895,7 @@ public class DatePanel extends JPanel
     public LocalDate getTheDateFromTheFromDate()
     {
         int year = getTheYearFromTheFromDatePicker();
-        int month = getTheMonthFromTheFromDatePicker();
+        int month = getTheMonthFromTheFromDatePicker()+1;
         int day = getTheDayOfTheMonthFromTheFromDatePicker();
         return LocalDate.of(year, month, day);
     }
@@ -931,7 +907,7 @@ public class DatePanel extends JPanel
     public LocalDate getTheDateFromTheToDate()
     {
         int year = getTheYearFromTheToDatePicker();
-        int month = getTheMonthFromTheToDatePicker();
+        int month = getTheMonthFromTheToDatePicker()+1;
         int day = getTheDayOfTheMonthFromTheToDatePicker();
         return LocalDate.of(year, month, day);
     }
@@ -943,10 +919,10 @@ public class DatePanel extends JPanel
     private void updateResultsTextBox()
     {
         int[] numberOfYearsMonthsWeeksAndDays = calculateDifferenceBetweenDates();
-        String wordYear = YEAR.getValue().toLowerCase() + LOWER_CASE_S;
-        String wordMonth = MONTH.getValue().toLowerCase() + LOWER_CASE_S;
-        String wordWeek = WEEK.getValue().toLowerCase() + LOWER_CASE_S;
-        String wordDay = DAY.getValue().toLowerCase() + LOWER_CASE_S;
+        String wordYear = YEAR.getValue().toLowerCase() + LOWER_CASE_S.getValue();
+        String wordMonth = MONTH.getValue().toLowerCase() + LOWER_CASE_S.getValue();
+        String wordWeek = WEEK.getValue().toLowerCase() + LOWER_CASE_S.getValue();
+        String wordDay = DAY.getValue().toLowerCase() + LOWER_CASE_S.getValue();
         if (numberOfYearsMonthsWeeksAndDays[0] == 1 || numberOfYearsMonthsWeeksAndDays[0] == -1)
         { wordYear = YEAR.getValue().toLowerCase(); }
         if (numberOfYearsMonthsWeeksAndDays[1] == 1 || numberOfYearsMonthsWeeksAndDays[1] == -1)
@@ -976,10 +952,10 @@ public class DatePanel extends JPanel
         else
         {
             LOGGER.info("{} is the same as {}", fromDate, toDate);
-            yearsDifferenceLabel.setText(SAME + SPACE.getValue() + YEAR);
-            monthsDifferenceLabel.setText(SAME + SPACE.getValue() + MONTH);
-            weeksDifferenceLabel.setText(SAME + SPACE.getValue() + WEEK);
-            daysDifferenceLabel.setText(SAME + SPACE.getValue() + ADD_OR_SUB_RESULT);
+            yearsDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + YEAR.getValue());
+            monthsDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + MONTH.getValue());
+            weeksDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + WEEK.getValue());
+            daysDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + ADD_OR_SUB_RESULT.getValue());
         }
         LOGGER.info("Difference Results updated");
     }
@@ -987,14 +963,14 @@ public class DatePanel extends JPanel
     /* Getters */
     public GridBagLayout getDateLayout() { return dateLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
-    public UtilCalendarModel getFromModel() { return fromModel; }
-    public UtilCalendarModel getToModel() { return toModel; }
+    public UtilCalendarModel getFromCalendarUtil() { return fromCalendarUtil; }
+    public UtilCalendarModel getToCalendarUtil() { return toCalendarUtil; }
     public JDatePanelImpl getFromDatePanel() { return fromDatePanel; }
     public JDatePanelImpl getToDatePanel() { return toDatePanel; }
     public JDatePickerImpl getFromDatePicker() { return fromDatePicker; }
     public JDatePickerImpl getToDatePicker() { return toDatePicker; }
     public Calculator getCalculator() { return calculator; }
-    public JComboBox<DateOperation> getOptionsBox() { return optionsBox; }
+    public JComboBox<DateOperation> getDateOperationsDropdown() { return dateOperationsDropdown; }
     public JLabel getFromDateLabel() { return fromDateLabel; }
     public JLabel getToDateLabel() { return toDateLabel; }
     public JLabel getDifferenceLabel() { return differenceLabel; }
@@ -1030,13 +1006,13 @@ public class DatePanel extends JPanel
     }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setFromModel(UtilCalendarModel fromModel) { this.fromModel = fromModel; }
-    public void setToModel(UtilCalendarModel toModel) { this.toModel = toModel; }
+    public void setFromCalendarUtil(UtilCalendarModel fromCalendarUtil) { this.fromCalendarUtil = fromCalendarUtil; }
+    public void setToCalendarUtil(UtilCalendarModel toCalendarUtil) { this.toCalendarUtil = toCalendarUtil; }
     public void setFromDatePanel(JDatePanelImpl fromDatePanel) { this.fromDatePanel = fromDatePanel; }
     public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; }
     public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; }
     public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; }
-    private void setOptionsBox(JComboBox<DateOperation> optionsBox) { this.optionsBox = optionsBox; }
+    private void setDateOperationsDropdown(JComboBox<DateOperation> dateOperationsDropdown) { this.dateOperationsDropdown = dateOperationsDropdown; }
     private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; }
     private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; }
     private void setWeeksDifferenceLabel(JLabel weeksDifferenceLabel) { this.weeksDifferenceLabel = weeksDifferenceLabel; }
