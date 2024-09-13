@@ -1,82 +1,78 @@
-//package Panels;
-//
-//import Calculators.Calculator;
-//import Calculators.CalculatorError;
-//import Types.CalculatorView;
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
-//import org.junit.Before;
-//import org.junit.BeforeClass;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.mockito.Mock;
-//import org.mockito.junit.MockitoJUnitRunner;
-//
-//import java.awt.event.ActionEvent;
-//import java.math.BigInteger;
-//
-//import static org.junit.Assert.*;
-//import static org.mockito.Mockito.*;
-//import static Types.CalculatorBase.BINARY;
-//import static Types.CalculatorBase.DECIMAL;
-//
-//@RunWith(MockitoJUnitRunner.class)
-//public class ProgrammerPanelTest
-//{
-//    static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
-//    protected final static Logger LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
-//    private static Calculator calculator;
-//    private String number;
-//    private boolean result;
-//
-//    private static OLDProgrammerPanel programmerPanel;
-//
-//    @Mock
-//    ActionEvent actionEvent;
-//
-//    @BeforeClass
-//    public static void setup() throws Exception
-//    {
-//        calculator = new Calculator(CalculatorView.PROGRAMMER);
-//        assertSame("ProgrammerCalculator has the wrong type", CalculatorView.PROGRAMMER, calculator.getCalculatorType());
-//        calculator.setFirstNumber(true);
-//        programmerPanel = new OLDProgrammerPanel(calculator);
-//        calculator.setCurrentPanel(programmerPanel);
-//    }
-//
-//    @Before
-//    public void setupBefore() throws Exception {
-//        calculator = new Calculator(CalculatorView.PROGRAMMER);
-//        calculator.setCalculatorType(CalculatorView.PROGRAMMER);
-//        calculator.setFirstNumber(true);
-//        programmerPanel = new OLDProgrammerPanel(calculator);
-//        calculator.setCurrentPanel(programmerPanel);
-//    }
-//
-//    @Test
-//    public void switchingFromBasicToProgrammerConvertsTextArea() throws CalculatorError
-//    {
-//        calculator.getTextPane().setText("4");
-//        calculator.getValues()[0] = "4";
-//        programmerPanel.getButtonBin().setSelected(true);
-//        String convertedValue = calculator.convertFromTypeToTypeOnValues(DECIMAL, BINARY, calculator.getValues()[calculator.getValuesPosition()]);
-//        calculator.getTextPane().setText(calculator.addNewLineCharacters(3) + convertedValue);
-//        assertEquals("Did not convert from Decimal to Binary", "00000100", calculator.getTextPaneWithoutNewLineCharacters());
-//    }
-//
-//    @Test
-//    public void pressingNotButtonReversesAllBits() {
-//        //Assertions
-//        when(actionEvent.getActionCommand()).thenReturn("\"\\u00B1\"");
-//        //Assuming in Bytes form to begin with
-//        String expected = "11110100";
-//
-//        calculator.getTextPane().setText("00001011");
-//        programmerPanel.performButtonNotActions(actionEvent);
-//        //assertEquals("topQWord not as expected", ""); // lots of 1's
-//        assertEquals("textarea not as expected", expected, calculator.getTextPane().getText().replaceAll("\n", ""));
-//    }
-//
+package Panels;
+
+import Calculators.Calculator;
+import Calculators.CalculatorError;
+import Calculators.CalculatorTests;
+import Types.CalculatorByte;
+import Types.CalculatorView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.awt.event.ActionEvent;
+
+import static Types.CalculatorBase.*;
+import static Types.CalculatorByte.*;
+import static Types.Texts.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class ProgrammerPanelTest
+{
+    static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
+    private static Logger LOGGER;
+    private static Calculator calculator;
+    private static ProgrammerPanel programmerPanel;
+    private final double delta = 0.000001d;
+
+    @Mock
+    ActionEvent actionEvent;
+
+    @BeforeClass
+    public static void beforeAll()
+    { LOGGER = LogManager.getLogger(ProgrammerPanelTest.class); }
+
+    @AfterClass
+    public static void afterAll()
+    { LOGGER.info("Finished running " + ProgrammerPanel.class.getSimpleName()); }
+
+    @Before
+    public void beforeEach() throws Exception 
+    {
+        calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
+        programmerPanel = (ProgrammerPanel)calculator.getCurrentPanel();
+    }
+    
+    @After
+    public void afterEach() {}
+
+    @Test
+    public void switchingFromBasicToProgrammerConvertsTextArea() throws CalculatorError
+    {
+        calculator.getTextPane().setText("4");
+        calculator.getValues()[0] = "4";
+        calculator.setCalculatorByte(BYTE_BYTE);
+        String convertedValue = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
+        assertEquals("Conversion went wrong!", "00000100", convertedValue);
+        programmerPanel.appendToPane(convertedValue);
+        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "00000100", calculator.getValueFromTextPaneForProgrammerPanel());
+    }
+
+    @Test
+    public void pressingNotButtonReversesAllBits()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(NOT.getValue());
+        calculator.setCalculatorBase(BASE_BINARY);
+        programmerPanel.appendToPane("0000 1011");
+        programmerPanel.performButtonNotAction(actionEvent);
+        //assertEquals("topQWord not as expected", ""); // lots of 1's
+        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "1111 0100", programmerPanel.separateBits(calculator.getValueFromTextPaneForProgrammerPanel()));
+    }
+
 //    @Test
 //    public void testProgrammerNumberEntry() throws CalculatorError {
 //        // This method tests the user's ability to
@@ -112,50 +108,49 @@
 //        assertEquals("text area not as expected", "00001000", calculator.getTextPane().getText());
 //        assertTrue("getValues()[0] did not stay in decimal form",8 == Integer.parseInt(calculator.getValues()[0]));
 //    }
-//
-//    @Test(expected = CalculatorError.class)
-//    public void testPushingButtonOrWithValuesAtZeroNotSet() throws CalculatorError {
-//        when(actionEvent.getActionCommand()).thenReturn("OR");
-//        calculator.getValues()[0] = "";
-//        calculator.getValues()[1] = "50";
-//
-//        programmerPanel.performButtonOrActions(actionEvent);
-//    }
-//
-//    @Test
-//    public void testPushingButtonOrWithOneInput() {
-//        final String buttonChoice = "OR";
-//        when(actionEvent.getActionCommand()).thenReturn(buttonChoice);
-//
-//        calculator.getTextPane().setText(calculator.addNewLineCharacters(1) + "00000101");
-//        calculator.getValues()[0] = "5";
-//        calculator.getValues()[1] = "";
-//
-//        programmerPanel.performButtonOrActions(actionEvent);
-//
-//        assertEquals("TextArea not as expected", "00000101 OR", calculator.getTextPaneWithoutNewLineCharacters());
-//        assertEquals("Values[0] is not in decimal base form", Integer.valueOf(5), Integer.valueOf(calculator.getValues()[0]));
-//    }
-//
-//    @Test
-//    public void testPushingButtonOrWithBothValuesSetReturnsCorrectResult() throws CalculatorError {
-//        calculator.getValues()[0] = "00000101";
-//        calculator.getValues()[1] = "00000011";
-//
-//        calculator.getTextPane().setText(calculator.addNewLineCharacters(1)+ calculator.getValues()[1]);
-//
-//        when(actionEvent.getActionCommand()).thenReturn("OR");
-//        programmerPanel.performButtonOrActions(actionEvent);
-//
-//        assertEquals("TextArea not showing expected result", "00000111", calculator.getTextPaneWithoutNewLineCharacters());
-//    }
-//
+
+    @Test
+    public void testPushOrWhenValuesAtZeroNotSet()
+    {
+        when(actionEvent.getActionCommand()).thenReturn("OR");
+        calculator.getValues()[0] = "";
+        calculator.getValues()[1] = "50";
+        programmerPanel.performButtonOrAction(actionEvent);
+        assertTrue("Expected isFirstNumber to be true", calculator.isFirstNumber());
+        assertEquals("Expected values[0] to be empty", BLANK.getValue(), calculator.getValues()[0]);
+        assertEquals("Expected values[1] to be 50", "50", calculator.getValues()[1]);
+    }
+
+    @Test
+    public void testPushOrWithDecimalInput()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(OR.getValue());
+        calculator.setCalculatorBase(BASE_DECIMAL); // BYTE_BYTE default
+        calculator.appendTextToPane("5");
+        calculator.getValues()[0] = "5";
+        programmerPanel.performButtonOrAction(actionEvent);
+        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "5 OR", calculator.getValueFromTextPaneForProgrammerPanel());
+        assertEquals("Values[0] is not in decimal base form", "5", calculator.getValues()[0]);
+    }
+
+    @Test
+    public void testPushOrWithBothValuesSetWithDecimalInputReturnsResult()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(OR.getValue());
+        calculator.setCalculatorBase(BASE_DECIMAL); // BYTE_BYTE default
+        calculator.getValues()[0] = "5";
+        calculator.getValues()[1] = "3";
+        calculator.appendTextToPane(calculator.getValues()[1]);
+        programmerPanel.performButtonOrAction(actionEvent);
+        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "7", calculator.getValueFromTextPaneForProgrammerPanel());
+    }
+
 //    @Test
 //    public void testPushingModulusButtonWithOneInputReturnsZero() {
 //        when(actionEvent.getActionCommand()).thenReturn("Mod");
 //
 //        String number = "00000101"; //5
-//        calculator.getTextPane().setText(calculator.addNewLineCharacters() + number);
+//        calculator.getTextPane().setText(calculator.addNewLines() + number);
 //        calculator.getValues()[0] = "5";
 //        calculator.getValues()[1] = "";
 //        calculator.setValuesPosition(0);
@@ -180,7 +175,7 @@
 //        programmerPanel.performButtonModActions(actionEvent);
 //
 //        String number = "00000011"; //3
-//        calculator.getTextPane().setText(calculator.addNewLineCharacters() + number);
+//        calculator.getTextPane().setText(calculator.addNewLines() + number);
 //        calculator.setValuesPosition(1);
 //        //below is required
 //        calculator.getValues()[1] = "00000011";
@@ -201,7 +196,7 @@
 //        calculator.getValues()[0] = "";
 //        calculator.getValues()[1] = "";
 //        calculator.setValuesPosition(0);
-//        calculator.getTextPane().setText(calculator.addNewLineCharacters());
+//        calculator.getTextPane().setText(calculator.addNewLines());
 //
 //        programmerPanel.performButtonXorActions(actionEvent);
 //
@@ -251,27 +246,28 @@
 //        assertFalse(calculator.getButton8().isEnabled());
 //        assertFalse(calculator.getButton9().isEnabled());
 //    }
+
+//    COMMENTED OUT
+//    @Test
+//    public void testConvertingBinaryToDecimalWorks() throws CalculatorError
+//    {
+//        // Test that this work
+//        //String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "10000000");
+//        //assertEquals(Integer.parseInt(test), 128);
+//        // Test another number
+//        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111");
+//        //assertEquals(Integer.parseInt(test), 255);
+//        // Make sure this returns the same as above, although i believe this entry by the user is impossible
+//        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111 ");
+//        //assertEquals(Integer.parseInt(test), 255);
+//        // Test to make sure an incomplete number returns appropriately
+//        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "101");
+//        //assertEquals(Integer.parseInt(test), 5);
+//        // Test to make sure a WORD BINARY entry returns appropriately
+//        //c.setByte(false);
+//        //c.setWord(false);
+//        String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, new String("00000001 00000000"));
+//        assertEquals(Integer.parseInt(test), 256);
 //
-//    //    @Test
-////    public void testConvertingBinaryToDecimalWorks() throws CalculatorError
-////    {
-////        // Test that this work
-////        //String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "10000000");
-////        //assertEquals(Integer.parseInt(test), 128);
-////        // Test another number
-////        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111");
-////        //assertEquals(Integer.parseInt(test), 255);
-////        // Make sure this returns the same as above, although i believe this entry by the user is impossible
-////        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111 ");
-////        //assertEquals(Integer.parseInt(test), 255);
-////        // Test to make sure an incomplete number returns appropriately
-////        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "101");
-////        //assertEquals(Integer.parseInt(test), 5);
-////        // Test to make sure a WORD BINARY entry returns appropriately
-////        //c.setByte(false);
-////        //c.setWord(false);
-////        String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, new String("00000001 00000000"));
-////        assertEquals(Integer.parseInt(test), 256);
-////
-////    }
-//}
+//    }
+}

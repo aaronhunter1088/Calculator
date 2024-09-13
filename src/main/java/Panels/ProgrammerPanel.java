@@ -667,9 +667,8 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonModulusAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("performModButtonActions begins");
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.debug("button: " + buttonChoice);
+        LOGGER.info("Action for {} started", buttonChoice);
         LOGGER.debug("is it enabled? " + buttonModulus.isEnabled() + " Setting to false.");
         //setModulusPressed(true);
         buttonModulus.setEnabled(false);
@@ -704,6 +703,7 @@ public class ProgrammerPanel extends JPanel
      */
     private void performModulus()
     {
+        LOGGER.info("Performing modulus");
         // some value mod another value returns result:  4 mod 3 == 1; 1 * 3 = 3; 4 - 3 = 1 == result
         int firstResult = Integer.parseInt(calculator.getValues()[0]) / Integer.parseInt(calculator.getValues()[1]); // create result forced double
         LOGGER.debug("firstResult: " + firstResult);
@@ -719,76 +719,63 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonOrAction(ActionEvent actionEvent)
     {
-        LOGGER.info("performOrLogic starts here");
         String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         LOGGER.info("button: " + buttonChoice);
-        //setOrPressed(true);
-        buttonOr.setEnabled(false);
-//        if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isNotEmpty(calculator.getValues()[1]))
-//        {
-//            String msg = "calculator.getValues()[1] is set and not calculator.getValues()[0]. This is not allowed.";
-//            throw new CalculatorError(msg);
-//        }
-//        else if below
-        if (StringUtils.isNotEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
+        // Ex: 2
+        if (calculator.getValues()[0].isEmpty()) // Requires both v[0] and v[1] to be set
         {
-            LOGGER.debug("getValues()[0] is set, but not getValues()[1]");
-            calculator.setIsFirstNumber(false);
-            calculator.getTextPane().setText(calculator.addNewLines()
-                    + buttonChoice + " " + calculator.getValues()[0]);
-            //calculator.setTextAreaValue(new StringBuffer().append(calculator.getValues()[0] + " " + buttonChoice));
-            calculator.setValuesPosition(calculator.getValuesPosition() + 1);
-            calculator.confirm("OR complete");
-        }
-        else if (StringUtils.isEmpty(calculator.getValues()[0]) && StringUtils.isEmpty(calculator.getValues()[1]))
-        {
-            //setOrPressed(false);
             calculator.setIsFirstNumber(true);
-            calculator.confirm("Pressed OR. Doing nothing");
+            calculator.confirm("Pressed " + buttonChoice + ", no affect");
         }
-        else if (!StringUtils.isEmpty(calculator.getValues()[0]) && !StringUtils.isEmpty(calculator.getValues()[1]))
+        else if (!calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty())
         {
-            String sb = performOr(); // 2 OR 3 OR button presses
-            //TODO: need to convert sb to DECIMAL form before storing in getValues()
-            calculator.getValues()[0] = sb;
-            calculator.getTextPane().setText(calculator.addNewLines(1)+calculator.getValues()[0]);
-            //setOrPressed(false);
-            calculator.setValuesPosition(0);
+            LOGGER.debug("Appending {} to text pane", buttonChoice);
+            calculator.setIsFirstNumber(false);
+            calculator.appendTextToPane(calculator.getValues()[0] + SPACE.getValue() + buttonChoice); // Ex: 2 OR
+            calculator.setValuesPosition(1);
+            calculator.confirm("Pressed " + buttonChoice);
+        }
+        else if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
+        {
+            String sb = performOr(); // Ex: 2 OR 3, or 2 OR 3 OR (continued operation)
+            calculator.getValues()[0] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, sb);
+            // because the Or operation always returns the result in binary, we need to append the result
+            // of the operation in the same base as we currently are in
+            switch (calculator.getCalculatorBase())
+            {
+                case BASE_BINARY -> { calculator.appendTextToPane(sb); }
+                case BASE_OCTAL -> { calculator.appendTextToPane(calculator.convertValueToOctal()); }
+                case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
+                case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
+            }
+            calculator.resetCalculatorOperations(false);
+            calculator.confirm("Pressed " + buttonChoice);
         }
     }
     /**
      * The inner logic for Or
-     * @return String the result of the Or operation
+     * @return the result of the Or operation in binary
      */
     private String performOr()
     {
-        LOGGER.debug("performing Or");
-        StringBuffer sb = new StringBuffer();
-        //TODO: if getValues()[0] and getValues()[1] in decimal and difference length, this will fail.
-        //In order for this to work, we need to convert to most appropriate base
-        //Check to make sure both are same length
-
-        for (int i=0; i<calculator.getValues()[0].length(); i++)
+        LOGGER.debug("Performing Or");
+        StringBuilder sb = new StringBuilder();
+        // TODO: Double check that the values are the same length (in terms of bytes)
+        var value1InBinary = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[0]);
+        var value2InBinary = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[1]);
+        for (int i=0; i<value1InBinary.length(); i++)
         {
             String letter = "0";
-            if (String.valueOf(calculator.getValues()[0].charAt(i)).equals("0") &&
-                    String.valueOf(calculator.getValues()[1].charAt(i)).equals("0") )
-            { // if the characters at both getValues() at the same position are the same and equal 0
-                letter = "0";
-            }
+            if (ZERO.getValue().equals(String.valueOf(value1InBinary.charAt(i)))
+               && ZERO.getValue().equals(String.valueOf(value2InBinary.charAt(i))))
+            { sb.append(ZERO.getValue()); } // if the characters at both getValues() at the same position are the same and equal 0
             else
-            {
-                letter = "1";
-            }
-            sb.append(letter);
-            LOGGER.info(calculator.getValues()[0].charAt(i)+" OR "+calculator.getValues()[1].charAt(i)+" = "+ letter);
+            { sb.append(ONE.getValue()); } // otherwise
+            LOGGER.info("{} OR {} = {}", value1InBinary.charAt(i), value2InBinary.charAt(i), letter);
         }
-        calculator.getValues()[3] = sb.toString();
-        //calculator.convertAllValuesToDecimal();
-        LOGGER.info(calculator.getValues()[0]+" OR "+calculator.getValues()[1]+" = "+ calculator.getValues()[3]);
-        calculator.getValues()[0] = calculator.getValues()[3];
-        buttonOr.setEnabled(true);
-        return String.valueOf(sb);
+        LOGGER.info("{} OR {} = {}", calculator.getValues()[0], calculator.getValues()[1], sb.toString());
+        return sb.toString();
     }
 
     /**
@@ -796,8 +783,8 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonXorAction(ActionEvent actionEvent)
     {
-        LOGGER.info("performing XOR button actions");
         String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
         LOGGER.info("button: " + buttonChoice);
         //setXorPressed(true);
         buttonXor.setEnabled(false);
@@ -821,7 +808,7 @@ public class ProgrammerPanel extends JPanel
      */
     private String performXor()
     {
-        LOGGER.info("performing Xor");
+        LOGGER.info("Performing Xor");
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<calculator.getValues()[0].length(); i++) {
             String letter = "0";
@@ -845,23 +832,22 @@ public class ProgrammerPanel extends JPanel
      */
     public void performButtonNotAction(ActionEvent actionEvent)
     {
-        LOGGER.info("performing not operation...");
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("button: " + buttonChoice);
-        //setNotPressed(false);
+        LOGGER.info("Action for {} started", buttonChoice);
         buttonNot.setEnabled(false);
-        //calculator.setTextAreaValue(new StringBuffer(calculator.getTextArea().getText().replaceAll("\n", "")));
-        LOGGER.debug("before operation execution: " + calculator.getTextPane().getText().toString());
-        StringBuffer newBuffer = new StringBuffer();
-        for (int i = 0; i < calculator.getTextPane().getText().length(); i++) {
-            String s = Character.toString(calculator.getTextPane().getText().charAt(i));
+        String textPaneValue = calculator.getValueFromTextPaneForProgrammerPanel();
+        LOGGER.debug("before operation execution: {}", textPaneValue);
+        StringBuilder newBuffer = new StringBuilder();
+        for (int i = 0; i < textPaneValue.length(); i++) {
+            String s = Character.toString(textPaneValue.charAt(i));
             if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
             else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
         }
-        LOGGER.debug("after operation execution: " + newBuffer);
-        //calculator.setTextAreaValue(new StringBuffer(newBuffer));
-        calculator.getTextPane().setText("\n"+calculator.getTextPane().getText().toString());
-        LOGGER.info("not operation completed.");
+        LOGGER.debug("after operation execution: {}", newBuffer);
+        calculator.appendTextToPane(newBuffer.toString());
+        calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, newBuffer.toString());
+        LOGGER.info("{} complete", buttonChoice);
+        calculator.confirm("Pressed " + buttonChoice);
     }
 
     /**

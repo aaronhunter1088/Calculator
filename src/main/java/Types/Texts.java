@@ -128,7 +128,10 @@ public enum Texts {
     MAX_VALUE("9999999"),
     MIN_VALUE("0.0000001"),
     YES("YES"),
-    NO("NO");
+    NO("NO"),
+
+    // Tests
+    TEXT_PANE_WRONG_VALUE("Text Pane has the wrong value");
 
     final String value;
     Texts(String value) {

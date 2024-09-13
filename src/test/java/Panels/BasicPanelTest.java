@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class BasicPanelTest
 {
-    static { System.setProperty("appName", "BasicPanelTest"); }
+    static { System.setProperty("appName", BasicPanelTest.class.getSimpleName()); }
     private static Logger LOGGER;
     private static Calculator calculator;
     private static BasicPanel basicPanel;
@@ -40,7 +40,7 @@ public class BasicPanelTest
 
     @AfterClass
     public static void afterAll()
-    { LOGGER.info("Finished running " + CalculatorTests.class.getSimpleName()); }
+    { LOGGER.info("Finished running " + BasicPanelTest.class.getSimpleName()); }
 
     @Before
     public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException

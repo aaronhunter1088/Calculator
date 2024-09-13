@@ -3381,7 +3381,8 @@ public class Calculator extends JFrame
 
     /**
      * Returns the value in the text pane when panel is programmer panel.
-     * <Byte><Space><Space><Base>\n\n<value[valuePosition]>\n
+     * Value in text pane for programmer panel is as follows:
+     * Byte Space Space Base NEWLINE NEWLINE value[valuePosition] NEWLINE
      * @return the value in the programmer text pane
      */
     public String getValueFromTextPaneForProgrammerPanel()
