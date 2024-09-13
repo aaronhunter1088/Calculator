@@ -6,7 +6,7 @@ package Types;
  * ConverterType.name() returns ENUM value
  * ConverterType.getValue() returns ENUM("thisValue")
  */
-public enum ConverterType
+public enum ConverterType implements CalculatorType
 {
     ANGLE("Angle"),
     AREA("Area");
@@ -18,4 +18,5 @@ public enum ConverterType
     public String getValue() {
         return this.name;
     }
+    public String getName() { return this.name(); }
 }

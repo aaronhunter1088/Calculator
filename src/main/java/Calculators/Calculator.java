@@ -436,21 +436,21 @@ public class Calculator extends JFrame
         JMenu converterMenu = new JMenu(VIEW_CONVERTER.getValue());
         basic.setFont(mainFont);
         basic.setName(VIEW_BASIC.getValue());
-        basic.addActionListener(this::switchPanels);
+        basic.addActionListener(action -> switchPanels(action, VIEW_BASIC));
         programmer.setFont(mainFont);
         programmer.setName(VIEW_PROGRAMMER.getValue());
-        programmer.addActionListener(this::switchPanels);
+        programmer.addActionListener(action -> switchPanels(action, VIEW_PROGRAMMER));
         date.setFont(mainFont);
         date.setName(VIEW_DATE.getValue());
-        date.addActionListener(this::switchPanels);
+        date.addActionListener(action -> switchPanels(action, VIEW_DATE));
         JMenuItem angleConverter = new JMenuItem(ANGLE.getValue());
         angleConverter.setFont(mainFont);
         angleConverter.setName(ANGLE.getValue());
-        angleConverter.addActionListener(this::switchPanels);
+        angleConverter.addActionListener(action -> switchPanels(action, ANGLE));
         JMenuItem areaConverter = new JMenuItem(AREA.getValue()); // The converterMenu is a menu of more choices
         areaConverter.setFont(mainFont);
         areaConverter.setName(AREA.getValue());
-        areaConverter.addActionListener(this::switchPanels);
+        areaConverter.addActionListener(action -> switchPanels(action, AREA));
         converterMenu.setFont(mainFont);
         converterMenu.setName(VIEW_CONVERTER.getValue());
         converterMenu.add(angleConverter);
@@ -3031,83 +3031,79 @@ public class Calculator extends JFrame
      * The main actions to perform when switch panels
      * @param actionEvent the click action
      */
-    public void switchPanels(ActionEvent actionEvent)
+    public void switchPanels(ActionEvent actionEvent, CalculatorType calculatorView)
     {
-        LOGGER.info("Changing view...");
-        String oldPanelName = currentPanel.getClass().getSimpleName().replace("Panel", BLANK.getValue());
-        String selectedPanel = actionEvent.getActionCommand();
-        LOGGER.debug("oldPanel: {}", oldPanelName);
-        LOGGER.debug("newPanel: {}", selectedPanel);
+        LOGGER.info("Switching panels...");
+        LOGGER.debug("Action: {}", actionEvent.getActionCommand());
+        String oldPanelName = currentPanel.getClass().getSimpleName(); //.replace("Panel", BLANK.getValue());
+        String selectedPanel = calculatorView.getName(); //actionEvent.getActionCommand();
+        LOGGER.debug("from '{}' to '{}'", oldPanelName, selectedPanel);
         if (oldPanelName.equals(selectedPanel))
         { confirm("Not changing to " + selectedPanel + " when already showing " + oldPanelName); }
-        else if (converterType != null && converterType.getValue().equals(selectedPanel))
-        { confirm("Not changing panels when the conversion type is the same"); }
+        else if (converterType != null && selectedPanel.equals(converterType.getValue()))
+        { confirm("Not changing panels when the converterType is the same"); }
         else
         {
             String currentValueInTextPane = getTextPaneValue();
-            switch (selectedPanel) {
-                case "Basic":
-                    BasicPanel basicPanel = new BasicPanel();
-                    switchPanelsInner(basicPanel);
-                    if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty())
-                    {
-                        if (!values[0].isEmpty()) appendTextToPane(values[0]);
-                        else {
-                            // see ProgrammerPanel.displayByteAndBase()
-                            if (!(calculatorByte.getValue()+SPACE.getValue()+SPACE.getValue()+getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
-                                basicPanel.appendToPane(currentValueInTextPane);
-                            }
+            if (calculatorView.equals(VIEW_BASIC))
+            {
+                BasicPanel basicPanel = new BasicPanel();
+                switchPanelsInner(basicPanel);
+                if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty()) {
+                    if (!values[0].isEmpty()) appendTextToPane(values[0]);
+                    else {
+                        // see ProgrammerPanel.displayByteAndBase()
+                        if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
+                            basicPanel.appendToPane(currentValueInTextPane);
                         }
-                        if (isDecimal(values[0]))
-                        { buttonDecimal.setEnabled(false); }
-                        if (determineIfAnyBasicOperatorWasPushed())
-                        { basicPanel.appendToPane(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator()); }
                     }
-                    setCalculatorView(VIEW_BASIC);
-                    break;
-                case "Programmer":
-                    ProgrammerPanel programmerPanel = new ProgrammerPanel();
-                    switchPanelsInner(programmerPanel);
-                    if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty())
-                    {
-                        if (!values[0].isEmpty()) {
-                            programmerPanel.appendToPane(values[0]);
-                        }
-                        else {
-                            // see ProgrammerPanel.displayByteAndBase()
-                            if (!(calculatorByte.getValue()+SPACE.getValue()+SPACE.getValue()+calculatorBase.getValue()).equals(currentValueInTextPane)) {
-                                programmerPanel.appendToPane(currentValueInTextPane);
-                            }
-                        }
-                        if (isDecimal(values[0]))
-                        { buttonDecimal.setEnabled(false); }
-                        if (determineIfAnyBasicOperatorWasPushed())
-                        { programmerPanel.appendToPane(values[0] + SPACE.getValue() + getActiveBasicPanelOperator()); }
+                    if (isDecimal(values[0])) {
+                        buttonDecimal.setEnabled(false);
                     }
-                    setCalculatorView(VIEW_PROGRAMMER);
-                    break;
-                case "Scientific":
-                    LOGGER.warn("Setup");
-                    setCalculatorView(VIEW_SCIENTIFIC);
-                    break;
-                case "Date":
-                    // TODO: move the line below. this feels wrong to check at this point. like, once a calc is started, if not in date calc mode first, then just default that value to DIFFERENCE
-                    dateOperation = dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation;
-                    switchPanelsInner(new DatePanel());
-                    setCalculatorView(VIEW_DATE);
-                    break;
-                case "Angle": {
-                    setConverterType(ANGLE);
-                    switchPanelsInner(new ConverterPanel());
-                    setCalculatorView(VIEW_CONVERTER);
-                    break;
+                    if (determineIfAnyBasicOperatorWasPushed()) {
+                        basicPanel.appendToPane(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator());
+                    }
                 }
-                case "Area": {
-                    setConverterType(AREA);
-                    switchPanelsInner(new ConverterPanel());
-                    setCalculatorView(VIEW_CONVERTER);
-                    break;
+                setCalculatorView(VIEW_BASIC);
+            }
+            else if (calculatorView.equals(VIEW_PROGRAMMER)) {
+                ProgrammerPanel programmerPanel = new ProgrammerPanel();
+                switchPanelsInner(programmerPanel);
+                if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty()) {
+                    if (!values[0].isEmpty()) {
+                        programmerPanel.appendToPane(values[0]);
+                    } else {
+                        // see ProgrammerPanel.displayByteAndBase()
+                        if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + calculatorBase.getValue()).equals(currentValueInTextPane)) {
+                            programmerPanel.appendToPane(currentValueInTextPane);
+                        }
+                    }
+                    if (isDecimal(values[0])) {
+                        buttonDecimal.setEnabled(false);
+                    }
+                    if (determineIfAnyBasicOperatorWasPushed()) {
+                        programmerPanel.appendToPane(values[0] + SPACE.getValue() + getActiveBasicPanelOperator());
+                    }
                 }
+                setCalculatorView(VIEW_PROGRAMMER);
+            }
+            else if (calculatorView.equals(VIEW_SCIENTIFIC)) {
+                LOGGER.warn("Setup");
+                setCalculatorView(VIEW_SCIENTIFIC);
+            }
+            else if (calculatorView.equals(VIEW_DATE)) {
+                // TODO: move the line below. this feels wrong to check at this point. like, once a calc is started, if not in date calc mode first, then just default that value to DIFFERENCE
+                dateOperation = dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation;
+                switchPanelsInner(new DatePanel());
+                setCalculatorView(VIEW_DATE);
+            } else if (calculatorView.equals(ANGLE)) {
+                setConverterType(ANGLE);
+                switchPanelsInner(new ConverterPanel());
+                setCalculatorView(VIEW_CONVERTER);
+            } else if (calculatorView.equals(AREA)) {
+                setConverterType(AREA);
+                switchPanelsInner(new ConverterPanel());
+                setCalculatorView(VIEW_CONVERTER);
             }
             confirm("Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
         }

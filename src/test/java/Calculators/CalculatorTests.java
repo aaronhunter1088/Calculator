@@ -304,7 +304,7 @@ public class CalculatorTests
         calculator.getValues()[0] = FOUR.getValue();
         assertEquals("Expected textPane to show Binary representation", "00000100", calculator.getTextPaneValue());
 
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, VIEW_BASIC);
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneValue());
         assertEquals("Expected name to be Basic", VIEW_BASIC.getValue(), calculator.getTitle());
         assertTrue("Expected BasicPanel", calculator.getCurrentPanel() instanceof BasicPanel);
@@ -318,7 +318,7 @@ public class CalculatorTests
         calculator.getValues()[0] = FOUR.getValue();
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneValue());
 
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getValueFromTextPaneForProgrammerPanel());
         assertEquals("Expected name to be Programmer", VIEW_PROGRAMMER.getValue(), calculator.getTitle());
         assertTrue("Expected ProgrammerPanel", calculator.getCurrentPanel() instanceof ProgrammerPanel);
@@ -329,7 +329,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_DATE.getValue());
         assertEquals("Expected BASIC CalculatorView", VIEW_BASIC, calculator.getCalculatorView());
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, VIEW_DATE);
         assertEquals("Expected DATE CalculatorView", VIEW_DATE, calculator.getCalculatorView());
         assertEquals("Expected name to be Date", VIEW_DATE.getValue(), calculator.getTitle());
         assertTrue("Expected DatePanel", calculator.getCurrentPanel() instanceof DatePanel);
@@ -341,7 +341,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         assertEquals("Expected BASIC CalculatorView", VIEW_BASIC, calculator.getCalculatorView());
 
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, ANGLE);
         assertEquals("Expected CONVERTER CalculatorView", VIEW_CONVERTER, calculator.getCalculatorView());
         assertEquals("Expected name to be CONVERTER", VIEW_CONVERTER.getValue(), calculator.getTitle());
         assertTrue("Expected ConverterPanel", calculator.getCurrentPanel() instanceof ConverterPanel);
@@ -353,7 +353,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(AREA.getValue());
         assertEquals("Expected BASIC CalculatorView", VIEW_BASIC, calculator.getCalculatorView());
 
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, AREA);
         assertEquals("Expected CONVERTER CalculatorView", VIEW_CONVERTER, calculator.getCalculatorView());
         assertEquals("Expected name to be CONVERTER", VIEW_CONVERTER.getValue(), calculator.getTitle());
         assertTrue("Expected ConverterPanel", calculator.getCurrentPanel() instanceof ConverterPanel);
@@ -368,7 +368,7 @@ public class CalculatorTests
         calculator.getValues()[0]= FOUR.getValue();
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneValue());
 
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, VIEW_BASIC);
         assertEquals("Expected the same panel", panel, calculator.getCurrentPanel());
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneValue());
     }
@@ -382,7 +382,7 @@ public class CalculatorTests
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
         assertEquals("Expected converterType to be ANGLE", ANGLE, calculator.getConverterType());
 
-        calculator.switchPanels(actionEvent);
+        calculator.switchPanels(actionEvent, ANGLE);
         assertEquals("Expected the same panel", panel, calculator.getCurrentPanel());
         assertEquals("Expected converterType to be ANGLE", ANGLE, calculator.getConverterType());
     }

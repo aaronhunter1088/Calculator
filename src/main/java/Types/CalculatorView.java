@@ -5,7 +5,7 @@ package Types;
  * CalculatorView.name() returns ENUM value
  * CalculatorView.getValue() returns ENUM("thisValue")
  */
-public enum CalculatorView
+public enum CalculatorView implements CalculatorType
 {
 	VIEW_BASIC("Basic"),
 	VIEW_PROGRAMMER("Programmer"),
@@ -18,4 +18,5 @@ public enum CalculatorView
 		this.value = value;
 	}
 	public String getValue() { return this.value; }
+	public String getName() { return this.name(); }
 }

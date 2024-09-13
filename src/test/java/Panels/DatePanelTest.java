@@ -50,8 +50,6 @@ public class DatePanelTest
         MockitoAnnotations.initMocks(this);
     }
 
-
-
     @Test
     public void testSubtractRadioButtonWorks()
     {
