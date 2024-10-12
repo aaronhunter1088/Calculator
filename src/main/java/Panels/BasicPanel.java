@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -354,7 +353,7 @@ public class BasicPanel extends JPanel
      * Add text to the text pane when using the basic panel
      * @param text the text to add
      */
-    public void appendToPane(String text)
+    public void appendTextToBasicPane(String text)
     { calculator.getTextPane().setText(calculator.addNewLines(1) + text); }
 
     /**

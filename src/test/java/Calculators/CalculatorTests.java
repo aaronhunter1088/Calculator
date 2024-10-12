@@ -319,7 +319,7 @@ public class CalculatorTests
         assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneValue());
 
         calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
-        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getValueFromTextPaneForProgrammerPanel());
+        assertEquals("Expected textPane to show Decimal representation", FOUR.getValue(), calculator.getTextPaneValueForProgrammerPanel());
         assertEquals("Expected name to be Programmer", VIEW_PROGRAMMER.getValue(), calculator.getTitle());
         assertTrue("Expected ProgrammerPanel", calculator.getCurrentPanel() instanceof ProgrammerPanel);
     }

@@ -1140,7 +1140,7 @@ public class Calculator extends JFrame
         {
             LOGGER.debug("obtaining second number...");
             // TODO: Check logic here. Not sure if this is correct.
-            if (!isNumberNegative) appendTextToPane(BLANK.getValue());
+            if (!isNumberNegative) clearTextInTextPane();
             isFirstNumber = true;
             if (isNumberNegative && !getTextPaneValue().contains(SUBTRACTION.getValue()))
                 isNumberNegative = false;
@@ -1185,8 +1185,7 @@ public class Calculator extends JFrame
         else
         {
             if (currentPanel instanceof BasicPanel
-                || (currentPanel instanceof ProgrammerPanel
-                    && BASE_DECIMAL == calculatorBase))
+                || (currentPanel instanceof ProgrammerPanel && BASE_DECIMAL == calculatorBase))
                 performNumberButtonInnerAction(buttonChoice);
             else return;
         }
@@ -2082,10 +2081,12 @@ public class Calculator extends JFrame
         {
             values[0] = BLANK.getValue();
             resetBasicOperators(false);
+            if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            { programmerPanel.resetProgrammerOperators(false); }
             valuesPosition = 0;
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
-            appendTextToPane(BLANK.getValue());
+            clearTextInTextPane();
             writeHistoryWithMessage(buttonChoice, false, SPACE.getValue() + buttonChoice + " performed");
             confirm("Pressed: " + buttonChoice);
         }
@@ -2485,7 +2486,7 @@ public class Calculator extends JFrame
      */
     public String getActiveBasicPanelOperator()
     {
-        String results = "";
+        String results = BLANK.getValue();
         if (isAdding) { results = ADDITION.getValue(); }
         else if (isSubtracting) { results = SUBTRACTION.getValue(); }
         else if (isMultiplying) { results = MULTIPLICATION.getValue(); }
@@ -2553,14 +2554,14 @@ public class Calculator extends JFrame
                             programmerPanel.getHistoryTextPane().setText(
                             programmerPanel.getHistoryTextPane().getText() +
                             addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                            + " Result: " + getValueFromTextPaneForProgrammerPanel() + SPACE.getValue() + buttonChoice
+                            + " Result: " + getTextPaneValueForProgrammerPanel() + SPACE.getValue() + buttonChoice
                             );
                         }
                         else {
                             programmerPanel.getHistoryTextPane().setText(
                             programmerPanel.getHistoryTextPane().getText() +
                             addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                            + " Result: " + getValueFromTextPaneForProgrammerPanel()
+                            + " Result: " + getTextPaneValueForProgrammerPanel()
                             );
                         }
                     }
@@ -2728,7 +2729,7 @@ public class Calculator extends JFrame
         {
             values[1] = BLANK.getValue();
             valuesPosition = 1;
-            buttonDecimal.setEnabled(!isDecimal(values[0]));
+            buttonDecimal.setEnabled(true); // !isDecimal(values[0])
             isFirstNumber = false;
             return false;
         }
@@ -2749,8 +2750,10 @@ public class Calculator extends JFrame
     public boolean isMemoryValuesEmpty()
     {
         var result = true;
-        for (int i = 0; i < 10; i++) {
-            if (!memoryValues[i].isBlank()) {
+        for (int i = 0; i < 10; i++)
+        {
+            if (!memoryValues[i].isBlank())
+            {
                 result = false;
                 break;
             }
@@ -2853,7 +2856,7 @@ public class Calculator extends JFrame
             LOGGER.debug("TextPane contains bad text");
             issueFound = true;
         }
-        else if (getTextPaneWithoutAnyOperator().equals(ZERO.getValue()) && calculatorView.equals(VIEW_BASIC))
+        else if (ZERO.getValue().equals(getTextPaneWithoutAnyOperator()) && VIEW_BASIC.equals(calculatorView))
         {
             LOGGER.debug("textPane equals 0. Setting to blank.");
             appendTextToPane(BLANK.getValue());
@@ -2861,10 +2864,10 @@ public class Calculator extends JFrame
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
-        else if (ZERO.getValue().equals(values[valuesPosition]) && calculatorView.equals(VIEW_PROGRAMMER))
+        else if (ZERO.getValue().equals(values[valuesPosition]) && VIEW_PROGRAMMER.equals(calculatorView))
         {
             LOGGER.debug("textPane contains 0. Setting to blank.");
-            ((ProgrammerPanel)currentPanel).appendToPane(BLANK.getValue());
+            ((ProgrammerPanel)currentPanel).appendTextToProgrammerPane(BLANK.getValue());
             values[valuesPosition] = BLANK.getValue();
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
@@ -2906,26 +2909,28 @@ public class Calculator extends JFrame
     public boolean textPaneContainsBadText()
     {
         var val = getTextPaneWithoutAnyOperator();
-        boolean result = val.equals(CANNOT_DIVIDE_BY_ZERO.getValue()) ||
-               val.equals(NOT_A_NUMBER.getValue()) ||
-               val.equals(NUMBER_TOO_BIG.getValue()) ||
-               val.equals(ENTER_A_NUMBER.getValue()) ||
-               val.equals(ONLY_POSITIVES.getValue()) ||
-               val.contains(ERR.getValue()) ||
-               val.equals(INFINITY.getValue());
+        boolean result = CANNOT_DIVIDE_BY_ZERO.getValue().equals(val) ||
+               NOT_A_NUMBER.getValue().equals(val) ||
+               NUMBER_TOO_BIG.getValue().equals(val) ||
+               ENTER_A_NUMBER.getValue().equals(val) ||
+               ONLY_POSITIVES.getValue().equals(val) ||
+               ERR.getValue().equals(val) || // ERR.getValue().contains(val)
+               INFINITY.getValue().equals(val);
         if (result) LOGGER.debug("textPane contains bad text. text is {}", val);
-        else LOGGER.debug("textPane is clean. text is {}", val);
+        else LOGGER.debug("textPane is clean. text is '{}'", val);
         return result;
     }
 
     /**
      * Adds commas to the number if appropriate
-     * @param valueToAdjust the textPane value
-     * @return String the textPane value with commas
+     * @param valueToAdjust the passed in value
+     * @return String the value with commas
      */
     public String addCommas(String valueToAdjust)
     {
         if (valueToAdjust.isBlank()) return valueToAdjust;
+        LOGGER.debug("Stripping any operators");
+        valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
         LOGGER.debug("Adding commas to '{}'", valueToAdjust);
         var temp = valueToAdjust;
         String adjusted;
@@ -2989,10 +2994,25 @@ public class Calculator extends JFrame
         }
         // if number was originally negative, add back negative symbol
         // if the textPane is only the negative symbol, don't add back
-        if ( (isNumberNegative && !SUBTRACTION.getValue().equals(getValueFromTextPaneForProgrammerPanel()) )
+        if ( (isNumberNegative && !SUBTRACTION.getValue().equals(getTextPaneValueForProgrammerPanel()) )
             || temp.contains(SUBTRACTION.getValue())) {
             LOGGER.debug("adding '-' to beginning of number");
             adjusted = SUBTRACTION.getValue() + adjusted;
+        }
+        if (valuesPosition == 0)
+        {
+            String operator = getActiveBasicPanelOperator();
+            if (!BLANK.getValue().equals(operator))
+            { adjusted += SPACE.getValue() + operator; }
+            else
+            {
+                if (VIEW_PROGRAMMER.equals(calculatorView))
+                {
+                    operator = ((ProgrammerPanel)currentPanel).getActiveProgrammerPanelOperator();
+                    if (!BLANK.getValue().equals(operator))
+                    { adjusted += SPACE.getValue() + operator; }
+                }
+            }
         }
         LOGGER.debug("adjustedFinal: {}", adjusted);
         return adjusted;
@@ -3054,14 +3074,14 @@ public class Calculator extends JFrame
                     else {
                         // see ProgrammerPanel.displayByteAndBase()
                         if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
-                            basicPanel.appendToPane(currentValueInTextPane);
+                            basicPanel.appendTextToBasicPane(currentValueInTextPane);
                         }
                     }
                     if (isDecimal(values[0])) {
                         buttonDecimal.setEnabled(false);
                     }
                     if (determineIfAnyBasicOperatorWasPushed()) {
-                        basicPanel.appendToPane(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator());
+                        basicPanel.appendTextToBasicPane(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator());
                     }
                 }
                 setCalculatorView(VIEW_BASIC);
@@ -3071,18 +3091,18 @@ public class Calculator extends JFrame
                 switchPanelsInner(programmerPanel);
                 if (!values[0].isEmpty() || !currentValueInTextPane.isEmpty()) {
                     if (!values[0].isEmpty()) {
-                        programmerPanel.appendToPane(values[0]);
+                        programmerPanel.appendTextToProgrammerPane(values[0]);
                     } else {
                         // see ProgrammerPanel.displayByteAndBase()
                         if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + calculatorBase.getValue()).equals(currentValueInTextPane)) {
-                            programmerPanel.appendToPane(currentValueInTextPane);
+                            programmerPanel.appendTextToProgrammerPane(currentValueInTextPane);
                         }
                     }
                     if (isDecimal(values[0])) {
                         buttonDecimal.setEnabled(false);
                     }
                     if (determineIfAnyBasicOperatorWasPushed()) {
-                        programmerPanel.appendToPane(values[0] + SPACE.getValue() + getActiveBasicPanelOperator());
+                        programmerPanel.appendTextToProgrammerPane(values[0] + SPACE.getValue() + getActiveBasicPanelOperator());
                     }
                 }
                 setCalculatorView(VIEW_PROGRAMMER);
@@ -3336,6 +3356,24 @@ public class Calculator extends JFrame
                .strip();
     }
 
+    public String getValueWithoutAnyOperator(String valueToAdjust)
+    {
+        return valueToAdjust
+                .replace(ADDITION.getValue(), BLANK.getValue()) // target, replacement
+                .replace(SUBTRACTION.getValue(), BLANK.getValue())
+                .replace(MULTIPLICATION.getValue(), BLANK.getValue())
+                .replace(DIVISION.getValue(), BLANK.getValue())
+                .replace(MODULUS.getValue(), BLANK.getValue())
+                .replace(LEFT_PARENTHESIS.getValue(), BLANK.getValue())
+                .replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
+                .replace(ROL.getValue(), BLANK.getValue())
+                .replace(ROR.getValue(), BLANK.getValue())
+                .replace(OR.getValue(), BLANK.getValue())
+                .replace(XOR.getValue(), BLANK.getValue())
+                .replace(AND.getValue(), BLANK.getValue())
+                .strip();
+    }
+
     /**
      * Returns the text in the textPane without
      * any new line characters or operator text.
@@ -3371,7 +3409,7 @@ public class Calculator extends JFrame
         if (currentPanel instanceof BasicPanel)
         { return textPane.getText().replaceAll(NEWLINE.getValue(), BLANK.getValue()).strip(); }
         else if (currentPanel instanceof ProgrammerPanel)
-        { return getValueFromTextPaneForProgrammerPanel(); }
+        { return getTextPaneValueForProgrammerPanel(); }
         else
         {
             LOGGER.warn("Implement");
@@ -3385,7 +3423,7 @@ public class Calculator extends JFrame
      * Byte Space Space Base NEWLINE NEWLINE value[valuePosition] NEWLINE
      * @return the value in the programmer text pane
      */
-    public String getValueFromTextPaneForProgrammerPanel()
+    public String getTextPaneValueForProgrammerPanel()
     {
         String currentValue = BLANK.getValue();
         try
@@ -3479,38 +3517,91 @@ public class Calculator extends JFrame
      */
     public void confirm(String message)
     {
+        String textPaneValue = getTextPaneValue();
         LOGGER.info("Confirm Results: {}", message);
         LOGGER.info("----------------");
-        LOGGER.info("view: {}", calculatorView);
         switch (calculatorView) {
             case VIEW_BASIC, VIEW_PROGRAMMER -> {
-                if (BASE_BINARY == calculatorBase) LOGGER.info("textPane: '{}'", ((ProgrammerPanel) currentPanel).separateBits(getTextPaneValue()));
-                else LOGGER.info("textPane: '{}'", getTextPaneValue());
-                if (isMemoryValuesEmpty()) {
-                    LOGGER.info("no memories stored!");
-                } else {
-                    LOGGER.info("memoryPosition: {}", memoryPosition);
-                    LOGGER.info("memoryRecallPosition: {}", memoryRecallPosition);
-                    for (int i = 0; i < 10; i++) {
-                        if (!memoryValues[i].isBlank()) {
-                            LOGGER.info("memoryValues[{}]: {}", i, memoryValues[i]);
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug("view: {}", calculatorView);
+                    if (BASE_BINARY == calculatorBase) LOGGER.debug("textPane: '{}'", ((ProgrammerPanel)currentPanel).separateBits(textPaneValue));
+                    else LOGGER.debug("textPane: '{}'", textPaneValue);
+                    if (isMemoryValuesEmpty())
+                    { LOGGER.debug("no memories stored!"); }
+                    else {
+                        LOGGER.debug("memoryPosition: {}", memoryPosition);
+                        LOGGER.debug("memoryRecallPosition: {}", memoryRecallPosition);
+                        for (int i = 0; i < 10; i++) {
+                            if (!memoryValues[i].isBlank()) {
+                                LOGGER.debug("memoryValues[{}]: {}", i, memoryValues[i]);
+                            }
                         }
                     }
+                    LOGGER.debug("addBool: {}", isAdding ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.debug("subBool: {}", isSubtracting ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.debug("mulBool: {}", isMultiplying ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.debug("divBool: {}", isDividing ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    if (VIEW_PROGRAMMER == calculatorView)
+                    {
+                        LOGGER.debug("orBool: {}", ((ProgrammerPanel)currentPanel).isOr() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                        LOGGER.debug("modBool: {}", ((ProgrammerPanel)currentPanel).isModulus() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                        LOGGER.debug("xorBool: {}", ((ProgrammerPanel)currentPanel).isXor() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                        LOGGER.debug("notBool: {}", ((ProgrammerPanel)currentPanel).isNot() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                        LOGGER.debug("andBool: {}", ((ProgrammerPanel)currentPanel).isAnd() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    }
+                    LOGGER.debug("values[0]: '{}'", values[0]);
+                    LOGGER.debug("values[1]: '{}'", values[1]);
+                    LOGGER.debug("values[2]: '{}'", values[2]);
+                    LOGGER.debug("values[3]: '{}'", values[3]);
+                    LOGGER.debug("valuesPosition: {}", valuesPosition);
+                    LOGGER.debug("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.debug("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.debug("isNegative: {}", isNumberNegative ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.debug("calculatorBase: {}", calculatorBase);
+                    LOGGER.debug("calculatorByte: {}", calculatorByte);
                 }
-                LOGGER.info("addBool: {}", isAdding ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("subBool: {}", isSubtracting ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("mulBool: {}", isMultiplying ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("divBool: {}", isDividing ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("values[0]: '{}'", values[0]);
-                LOGGER.info("values[1]: '{}'", values[1]);
-                LOGGER.info("values[2]: '{}'", values[2]);
-                LOGGER.info("values[3]: '{}'", values[3]);
-                LOGGER.info("valuesPosition: {}", valuesPosition);
-                LOGGER.info("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("isNegative: {}", isNumberNegative ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                LOGGER.info("calculatorBase: {}", calculatorBase);
-                LOGGER.info("calculatorByte: {}", calculatorByte);
+                else
+                {
+                    LOGGER.info("view: {}", calculatorView);
+                    if (BASE_BINARY == calculatorBase) LOGGER.info("textPane: '{}'", ((ProgrammerPanel)currentPanel).separateBits(textPaneValue));
+                    else LOGGER.info("textPane: '{}'", textPaneValue);
+                    if (isMemoryValuesEmpty())
+                    { LOGGER.info("no memories stored!"); }
+                    else {
+                        LOGGER.info("memoryPosition: {}", memoryPosition);
+                        LOGGER.info("memoryRecallPosition: {}", memoryRecallPosition);
+                        for (int i = 0; i < 10; i++) {
+                            if (!memoryValues[i].isBlank()) {
+                                LOGGER.info("memoryValues[{}]: {}", i, memoryValues[i]);
+                            }
+                        }
+                    }
+                    if (isAdding) LOGGER.info("addBool: {}", YES.getValue().toLowerCase());
+                    if (isSubtracting) LOGGER.info("subBool: {}", YES.getValue().toLowerCase());
+                    if (isMultiplying) LOGGER.info("mulBool: {}", YES.getValue().toLowerCase());
+                    if (isDividing) LOGGER.info("divBool: {}", YES.getValue().toLowerCase());
+                    if (VIEW_PROGRAMMER == calculatorView)
+                    {
+                        if (((ProgrammerPanel)currentPanel).isOr()) LOGGER.info("orBool: {}", YES.getValue().toLowerCase());
+                        if (((ProgrammerPanel)currentPanel).isModulus()) LOGGER.info("modBool: {}", YES.getValue().toLowerCase());
+                        if (((ProgrammerPanel)currentPanel).isXor()) LOGGER.info("xorBool: {}", YES.getValue().toLowerCase());
+                        if (((ProgrammerPanel)currentPanel).isNot()) LOGGER.info("notBool: {}", YES.getValue().toLowerCase());
+                        if (((ProgrammerPanel)currentPanel).isAnd()) LOGGER.info("andBool: {}", YES.getValue().toLowerCase());
+                    }
+                    if (!values[0].isEmpty()) LOGGER.info("values[0]: '{}'", values[0]);
+                    if (!values[1].isEmpty()) LOGGER.info("values[1]: '{}'", values[1]);
+                    if (!values[2].isEmpty()) LOGGER.info("values[2]: '{}'", values[2]);
+                    if (!values[3].isEmpty()) LOGGER.info("values[3]: '{}'", values[3]);
+                    LOGGER.info("valuesPosition: {}", valuesPosition);
+                    LOGGER.info("firstNumBool: {}", isFirstNumber ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.info("isDotEnabled: {}", isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    // TODO: exclude if: v[vP] is empty, bc no need to print if an empty value is negative
+                    // TODO: exclude if: the negative sign is not present
+                    LOGGER.info("isNegative: {}", isNumberNegative ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    LOGGER.info("calculatorBase: {}", calculatorBase);
+                    LOGGER.info("calculatorByte: {}", calculatorByte);
+                }
             }
             case VIEW_SCIENTIFIC -> {
                 LOGGER.warn("Confirm message not setup for " + calculatorView);
@@ -3751,15 +3842,15 @@ public class Calculator extends JFrame
 
     /**
      * Resets the 4 main operators to the boolean passed in
-     * @param bool a boolean to reset the operators to
+     * @param reset a boolean to reset the operators to
      */
-    public void resetBasicOperators(boolean bool)
+    public void resetBasicOperators(boolean reset)
     {
-        isAdding = bool;
-        isSubtracting = bool;
-        isMultiplying = bool;
-        isDividing = bool;
-        LOGGER.debug("Main basic operators reset to {}", bool);
+        isAdding = reset;
+        isSubtracting = reset;
+        isMultiplying = reset;
+        isDividing = reset;
+        LOGGER.debug("Main basic operators reset to {}", reset);
     }
 
     /**
@@ -3902,6 +3993,21 @@ public class Calculator extends JFrame
     }
 
     /**
+     * This is the default method to add text to the textPane
+     * Adds the text appropriately and if true, updates the values
+     * @param text the text to add
+     */
+    public void appendTextToPane(String text, boolean updateValues)
+    {
+        appendTextToPane(text);
+        LOGGER.debug("Text appended to pane. Updating values? {}", updateValues);
+        if (updateValues) {
+            values[valuesPosition] = text;
+        }
+    }
+
+    /**
+     * This is the default method to add text to the textPane
      * Adds the text appropriately
      * @param text the text to add
      */
@@ -3909,29 +4015,34 @@ public class Calculator extends JFrame
     {
         if (currentPanel instanceof BasicPanel basicPanel)
         {
-            basicPanel.appendToPane(text);
+            basicPanel.appendTextToBasicPane(text);
         }
         else if (currentPanel instanceof ProgrammerPanel programmerPanel)
         {
             if (PUSHED_CLEAR.getValue().equals(values[3]) //||
-                    //(!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) ||
-                    //(valuesPosition != 0 && !values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1]))
+                //(!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) ||
+                //(valuesPosition != 0 && !values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1]))
             ) {
-                programmerPanel.appendToPane(text);
+                programmerPanel.appendTextToProgrammerPane(text);
                 return;
             }
             switch (calculatorBase) {
                 case BASE_BINARY -> {
-                    programmerPanel.appendToPane(programmerPanel.separateBits(text));
+                    programmerPanel.appendTextToProgrammerPane(programmerPanel.separateBits(text));
                 }
                 case BASE_OCTAL -> {
-                    programmerPanel.appendToPane(text);
+                    programmerPanel.appendTextToProgrammerPane(text);
                 }
                 case BASE_DECIMAL -> {
-                    programmerPanel.appendToPane(addCommas(text));
+                    String textWithCommasAndOperators = addCommas(text);
+                    //if (programmerPanel.determineIfAnyProgrammerOperatorWasPushed())
+                    //{
+                    //    textWithCommasAndOperators += SPACE.getValue() + programmerPanel.getActiveProgrammerPanelOperator();
+                    //}
+                    programmerPanel.appendTextToProgrammerPane(textWithCommasAndOperators);
                 }
                 case BASE_HEXADECIMAL -> {
-                    programmerPanel.appendToPane(text);
+                    programmerPanel.appendTextToProgrammerPane(text);
                 }
             }
         }
@@ -3941,12 +4052,18 @@ public class Calculator extends JFrame
         }
     }
 
-    public void appendTextToPane(String text, boolean updateValues)
+    /**
+     * Simple method to clear the text pane
+     */
+    public void clearTextInTextPane()
     {
-        appendTextToPane(text);
-        LOGGER.debug("Text appended to pane. Updating values? {}", updateValues);
-        if (updateValues) {
-            values[valuesPosition] = text;
+        if (currentPanel instanceof BasicPanel basicPanel)
+        {
+            basicPanel.appendTextToBasicPane(BLANK.getValue());
+        }
+        else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+        {
+            programmerPanel.appendTextToProgrammerPane(BLANK.getValue());
         }
     }
 
