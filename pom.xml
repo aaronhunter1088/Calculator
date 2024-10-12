@@ -112,6 +112,12 @@
 				</includes>
 			</resource>
 		</resources>
+
+		<!-- NOTES -->
+		<!-- Assembly:single creates CarBeeper-#.jar -->
+		<!-- Mvn:package creates CarBeeper-#-jar-with-dependencies.jar -->
+		<!-- Mvn:install adds CarBeeper-#-jar-with-dependencies.jar to local repo -->
+
 		<plugins>
 			<!-- Compile -->
 			<plugin>
