@@ -12,7 +12,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<outputDirectory>${basedir}/dist/version4</outputDirectory>
 		<finalName>${project.artifactId}-${project.version}</finalName>
-		<project.version>${project.version}</project.version>
 		<maven.compiler.source>18</maven.compiler.source>
 		<maven.compiler.target>18</maven.compiler.target>
 
@@ -30,6 +29,7 @@
 		<mockito.version>3.0.0</mockito.version>
 		<properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
 	</properties>
+
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
 		<dependency>
@@ -99,6 +99,7 @@
 			<version>${date.picker.version}</version>
 		</dependency>
 	</dependencies>
+
     <build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
@@ -162,28 +163,43 @@
 				</executions>
 			</plugin>
 			<!-- Binds to Package phase, but will not run... -->
-			<!-- When creating a jar, create build.properties file -->
+			<!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory
+			     Run Command: mvn install -DskipTests -DskipITs -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.version}</version>
 				<executions>
 					<execution>
-						<phase>initialize</phase>
+						<id>default-jar</id>
+						<phase>compile</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>jar</goal>
 						</goals>
-						<configuration>
-							<tasks>
-								<mkdir dir="${project.build.directory}"/>
-								<tstamp>
-									<format property="last.updated" pattern="yyyy-MM-dd HH:mm:ss"/>
-								</tstamp>
-								<!--suppress UnresolvedMavenProperty -->
-								<echo file="${outputDirectory}/build.properties" message="build.time=${last.updated}"/>
-							</tasks>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<finalName>${finalName}</finalName>
+					<outputDirectory>${outputDirectory}</outputDirectory>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addClasspath>true</addClasspath>
+							<mainClass>Runnables.CalculatorMain</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
+							<!--suppress UnresolvedMavenProperty -->
+							<Creation-Time>${build.time}</Creation-Time>
+							<mainClass>Runnables.CalculatorMain</mainClass>
+						</manifestEntries>
+					</archive>
+					<includes>
+						<include>**/*</include>
+					</includes>
+				</configuration>
 			</plugin>
 			<!-- Assembly:Single creates runnable jar with dependencies
 			     Run Command: mvn clean package (-Dmaven.test.skip=true) -->
@@ -194,6 +210,10 @@
 				<executions>
 					<execution>
 						<id>build-calculator</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
 						<configuration>
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -215,10 +235,6 @@
 							<finalName>${finalName}</finalName>
 							<outputDirectory>${outputDirectory}</outputDirectory>
 						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
