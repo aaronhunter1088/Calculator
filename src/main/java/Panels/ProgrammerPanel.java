@@ -872,19 +872,30 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        buttonNot.setEnabled(false);
         String textPaneValue = calculator.getTextPaneValueForProgrammerPanel();
+        if (BASE_BINARY != calculator.getCalculatorBase()) {
+            textPaneValue = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, textPaneValue);
+        }
         LOGGER.debug("before operation execution: {}", textPaneValue);
         StringBuilder newBuffer = new StringBuilder();
-        for (int i = 0; i < textPaneValue.length(); i++) {
+        for (int i = 0; i < calculator.determineRequiredLength(textPaneValue.length()); i++) {
             String s = Character.toString(textPaneValue.charAt(i));
             if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
             else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
         }
         LOGGER.debug("after operation execution: {}", newBuffer);
+        // TODO: Rework. It's a bit sloppy atm
+        if (BASE_BINARY != calculator.getCalculatorBase()) {
+            newBuffer = new StringBuilder().append(calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), newBuffer.toString()));
+            calculator.getValues()[calculator.getValuesPosition()] = newBuffer.toString();
+        } else {
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, newBuffer.toString());
+        }
         calculator.appendTextToPane(newBuffer.toString());
-        calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, newBuffer.toString());
-        LOGGER.info("{} complete", buttonChoice);
+
+        //calculator.setCalculatorBaseAndUpdatePreviousBase(calculator.getPreviousBase());
+        //calculator.setCalculatorBaseAndUpdatePreviousBase(calculator.getPreviousBase());
+        LOGGER.info("action {} complete", buttonChoice);
         calculator.confirm("Pressed " + buttonChoice);
     }
 
@@ -1062,6 +1073,7 @@ public class ProgrammerPanel extends JPanel
     private List<Integer> getAllowedLengthsOfTextPane()
     {
         List<Integer> lengthsAllowed = new ArrayList<>();
+        lengthsAllowed.add(0);  // what if no input??
         switch (calculator.getCalculatorByte())
         {
             // TODO: check shorthand

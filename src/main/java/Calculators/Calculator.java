@@ -3288,7 +3288,7 @@ public class Calculator extends JFrame
         if (BASE_BINARY == toBase) {
             convertedNumber = adjustBinaryNumber(convertedNumber);
         }
-        LOGGER.info("converted: {}", convertedNumber);
+        LOGGER.debug("converted: {}", convertedNumber);
         return convertedNumber;
     }
 
@@ -3474,7 +3474,9 @@ public class Calculator extends JFrame
             try
             {
                 var splitTextValue = textPane.getText().split(NEWLINE.getValue());
-                return splitTextValue.length == 1 && "Byte  Decimal".equals(splitTextValue[0])
+                // TODO: Rework to not use Strings
+                var textPaneTopRowExpectedValues = List.of("Byte  Binary", "Byte  Octal", "Byte  Decimal", "Byte  Hexadecimal");
+                return splitTextValue.length == 1 && textPaneTopRowExpectedValues.contains(splitTextValue[0])
                         ? BLANK.getValue()
                         : splitTextValue[2].replace(COMMA.getValue(), BLANK.getValue());
             } catch (ArrayIndexOutOfBoundsException ae2)
@@ -4147,6 +4149,12 @@ public class Calculator extends JFrame
     public void setTextPane(JTextPane textPane) { this.textPane = textPane; }
     public void setCalculatorView(CalculatorView calculatorView) { this.calculatorView = calculatorView; }
     public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; }
+    public void setCalculatorBaseAndUpdatePreviousBase(CalculatorBase calculatorBase) {
+        LOGGER.info("updating previous base, currently set to {}", previousBase);
+        setPreviousBase(getCalculatorBase());
+        setCalculatorBase(calculatorBase);
+        LOGGER.info("previous base now set as {}", previousBase);
+    }
     public void setPreviousBase(CalculatorBase previousBase) { this.previousBase = previousBase; }
     public void setCalculatorByte(CalculatorByte calculatorByte) { this.calculatorByte = calculatorByte; }
     public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; }
