@@ -1,5 +1,5 @@
 .idea/
-dist/
+dist/*
 dist/.DS_Store
 logs/*
 target/*
