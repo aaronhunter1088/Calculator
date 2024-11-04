@@ -7,6 +7,7 @@
     <version>4.4</version>
     <packaging>jar</packaging>
     <name>Calculator</name>
+	<description>This is a Calculator Swing App</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,9 +115,9 @@
 		</resources>
 
 		<!-- NOTES -->
-		<!-- Assembly:single creates CarBeeper-#.jar -->
-		<!-- Mvn:package creates CarBeeper-#-jar-with-dependencies.jar -->
-		<!-- Mvn:install adds CarBeeper-#-jar-with-dependencies.jar to local repo -->
+		<!-- Assembly:single creates Calculator-#.jar -->
+		<!-- Mvn:package creates Calculator-#-jar-with-dependencies.jar -->
+		<!-- Mvn:install adds Calculator-#-jar-with-dependencies.jar to local repo -->
 
 		<plugins>
 			<!-- Compile -->

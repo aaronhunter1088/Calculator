@@ -7,6 +7,7 @@ import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +34,7 @@ public class DatePanelTest
 {
     static { System.setProperty("appName", "DatePanelTest"); }
     private static Logger LOGGER;
+    private static Calculator calculator;
     private static DatePanel datePanel;
 
     @Mock
@@ -39,15 +43,32 @@ public class DatePanelTest
     @BeforeClass
     public static void beforeAll() throws Exception
     {
-        Calculator calculator = new Calculator(ADD_SUBTRACT_DAYS);
+        calculator = new Calculator(ADD_SUBTRACT_DAYS);
+        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         datePanel = (DatePanel) calculator.getCurrentPanel();
         LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
     }
 
-    @After
+    @Before
     public void beforeEach()
-    {
-        MockitoAnnotations.initMocks(this);
+    { MockitoAnnotations.initMocks(this); }
+
+    @After
+    public void afterEach() {
+        if (calculator != null) {
+            LOGGER.info("Test complete. Closing the calculator...");
+            // Create a WindowEvent with WINDOW_CLOSING event type
+            WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
+
+            // Dispatch the event to the JFrame instance
+            calculator.dispatchEvent(windowClosing);
+
+            // Ensure the clock is no longer visible
+            assertFalse(calculator.isVisible());
+
+            // Dispose of the JFrame to release resources
+            calculator.dispose();
+        }
     }
 
     @Test

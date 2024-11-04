@@ -585,7 +585,7 @@ public class Calculator extends JFrame
     /**
      * @return JPanel, the Panel to use. Panel will be setup afterwards
      */
-    private JPanel determinePanel()
+    protected JPanel determinePanel()
     {
         LOGGER.debug("DeterminePanel, type:{}", calculatorView);
         return switch (calculatorView)
@@ -612,7 +612,7 @@ public class Calculator extends JFrame
     /**
      * The main method that calls the setup method for a specific panel
      */
-    private void setupPanel()
+    protected void setupPanel()
     {
         LOGGER.debug("Setting up panel, {}", currentPanel.getClass().getSimpleName());
         if (currentPanel instanceof BasicPanel panel)
@@ -1233,60 +1233,58 @@ public class Calculator extends JFrame
             else if (isAdding && !values[1].isEmpty())
             {
                 addition(DIVISION.getValue()); // 5 + 3 ÷
-                resetCalculatorOperations(false);
-                isAdding = false; // isAdding
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isDividing = false;
-                    appendTextToPane(addCommas(values[valuesPosition]));
+                    appendTextToPane(addCommas(values[0]));
                 }
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[valuesPosition]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isAdding = false;
             }
             else if (isSubtracting && !values[1].isEmpty())
             {
                 subtract(DIVISION.getValue()); // 5 - 3 ÷
-                resetCalculatorOperations(false);
-                isSubtracting = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isDividing = false;
-                    appendTextToPane(addCommas(values[valuesPosition]));
+                    appendTextToPane(addCommas(values[0]));
                 }
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[valuesPosition]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isSubtracting = false;
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
                 multiply(DIVISION.getValue()); // 5 ✕ 3 ÷
-                resetCalculatorOperations(false);
-                isMultiplying = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isDividing = false;
-                    appendTextToPane(addCommas(values[valuesPosition]));
+                    appendTextToPane(addCommas(values[0]));
                 }
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[valuesPosition]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isMultiplying = false;
             }
             else if (isDividing && !values[1].isEmpty() )
             {
                 divide(DIVISION.getValue()); // 5 ÷ 3 ÷
-                resetCalculatorOperations(false);
-                isDividing = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isDividing = false;
-                    appendTextToPane(addCommas(values[valuesPosition]));
+                    appendTextToPane(addCommas(values[0]));
                 }
                 else if (getTextPaneWithoutAnyOperator().equals(INFINITY.getValue()))
                 {
@@ -1298,6 +1296,7 @@ public class Calculator extends JFrame
                     isDividing = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
             }
             else if (!getTextPaneValue().isBlank() && values[0].isBlank())
             {
@@ -1426,8 +1425,6 @@ public class Calculator extends JFrame
             else if (isAdding && !values[1].isEmpty())
             {
                 addition(MULTIPLICATION.getValue()); // 5 + 3 ✕...
-                resetCalculatorOperations(false);
-                isAdding = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isMultiplying = false;
@@ -1438,12 +1435,12 @@ public class Calculator extends JFrame
                     isMultiplying = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isAdding = false;
             }
             else if (isSubtracting && !values[1].isEmpty())
             {
                 subtract(MULTIPLICATION.getValue()); // 5 - 3 ✕...
-                resetCalculatorOperations(false);
-                isSubtracting = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isMultiplying = false;
@@ -1454,12 +1451,12 @@ public class Calculator extends JFrame
                     isMultiplying = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isSubtracting = false;
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
                 multiply(MULTIPLICATION.getValue());
-                resetCalculatorOperations(false);
-                isMultiplying = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isMultiplying = false;
@@ -1470,12 +1467,11 @@ public class Calculator extends JFrame
                     isMultiplying = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
             }
             else if (isDividing && !values[1].isEmpty())
             {
                 divide(MULTIPLICATION.getValue());
-                resetCalculatorOperations(false);
-                isDividing = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isMultiplying = false;
@@ -1486,6 +1482,8 @@ public class Calculator extends JFrame
                     isMultiplying = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isDividing = false;
             }
             else if (!getTextPaneValue().isBlank() && values[0].isBlank())
             {
@@ -1607,8 +1605,6 @@ public class Calculator extends JFrame
             else if (isAdding && !values[1].isEmpty())
             {
                 addition(SUBTRACTION.getValue());
-                resetCalculatorOperations(false);
-                isAdding = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isSubtracting = false;
@@ -1619,12 +1615,12 @@ public class Calculator extends JFrame
                     isSubtracting = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isAdding = false;
             }
-            else if ((isSubtracting && !values[1].isEmpty()))
+            else if (isSubtracting && !values[1].isEmpty())
             {
                 subtract(SUBTRACTION.getValue());
-                resetCalculatorOperations(false);
-                isSubtracting = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isSubtracting = false;
@@ -1635,12 +1631,11 @@ public class Calculator extends JFrame
                     isSubtracting = true;
                     appendTextToPane(values[0] + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
                 multiply(SUBTRACTION.getValue());
-                resetCalculatorOperations(false);
-                isMultiplying = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isSubtracting = false;
@@ -1651,12 +1646,12 @@ public class Calculator extends JFrame
                     isSubtracting = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isMultiplying = false;
             }
             else if (isDividing && !values[1].isEmpty())
             {
                 divide(SUBTRACTION.getValue());
-                resetCalculatorOperations(false);
-                isDividing = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isSubtracting = false;
@@ -1667,6 +1662,8 @@ public class Calculator extends JFrame
                     isSubtracting = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isDividing = false;
             }
             else if ( determineIfAnyBasicOperatorWasPushed() && !isNumberNegative)
             {
@@ -1729,7 +1726,11 @@ public class Calculator extends JFrame
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
-                LOGGER.debug("{} - {} = {}", values[0], values[1], result);
+                if (values[1].contains(SUBTRACTION.getValue())) {
+                    LOGGER.debug("{} + {} = {}", values[0], convertToPositive(values[1]), result);
+                } else {
+                    LOGGER.debug("{} - {} = {}", values[0], values[1], result);
+                }
                 writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
                 values[0] = addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
                 buttonDecimal.setEnabled(true);
@@ -1737,7 +1738,11 @@ public class Calculator extends JFrame
             else
             {
                 LOGGER.info("We have a decimal");
-                LOGGER.debug("{} - {} = {}", values[0], values[1], result);
+                if (values[1].contains(SUBTRACTION.getValue())) {
+                    LOGGER.debug("{} + {} = {}", values[0], convertToPositive(values[1]), result);
+                } else {
+                    LOGGER.debug("{} - {} = {}", values[0], values[1], result);
+                }
                 writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
                 values[0] = addCommas(formatNumber(String.valueOf(result)));
                 buttonDecimal.setEnabled(false);
@@ -1857,8 +1862,6 @@ public class Calculator extends JFrame
             else if (isAdding && !values[1].isEmpty())
             {
                 addition(ADDITION.getValue());  // 5 + 3 + ...
-                resetCalculatorOperations(false);
-                isAdding = false;
                 if (isMaximumValue()) // we can add to the minimum number, not to the maximum
                 {
                     isAdding = false;
@@ -1869,12 +1872,12 @@ public class Calculator extends JFrame
                     isAdding = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                //isAdding = false;
             }
             else if (isSubtracting && !values[1].isEmpty())
             {
                 subtract(ADDITION.getValue()); // 5 - 3 + ...
-                resetCalculatorOperations(false);
-                isSubtracting = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isAdding = false;
@@ -1885,12 +1888,12 @@ public class Calculator extends JFrame
                     isAdding = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isSubtracting = false;
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
                 multiply(ADDITION.getValue()); // 5 ✕ 3 + ...
-                resetCalculatorOperations(false);
-                isMultiplying = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isAdding = false;
@@ -1901,12 +1904,12 @@ public class Calculator extends JFrame
                     isAdding = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isMultiplying = false;
             }
             else if (isDividing && !values[1].isEmpty())
             {
                 divide(ADDITION.getValue()); // 5 ÷ 3 + ...
-                resetCalculatorOperations(false);
-                isDividing = false;
                 if (isMinimumValue() || isMaximumValue())
                 {
                     isAdding = false;
@@ -1917,6 +1920,8 @@ public class Calculator extends JFrame
                     isAdding = true;
                     appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
                 }
+                resetCalculatorOperations(false);
+                isDividing = false;
             }
             else if (!getTextPaneValue().isBlank() && values[0].isBlank())
             {
@@ -2929,10 +2934,10 @@ public class Calculator extends JFrame
     public String addCommas(String valueToAdjust)
     {
         if (valueToAdjust.isBlank()) return valueToAdjust;
+        var temp = valueToAdjust;
         LOGGER.debug("Stripping any operators");
         valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
         LOGGER.debug("Adding commas to '{}'", valueToAdjust);
-        var temp = valueToAdjust;
         String adjusted;
         String toTheLeft;
         String toTheRight = "";
@@ -3813,6 +3818,7 @@ public class Calculator extends JFrame
         return number.contains(SUBTRACTION.getValue());
     }
 
+    // TODO: Remove isNumberNegative = true; This method should only return a copy of the number in its negative form
     /**
      * Converts a number to its negative equivalent
      * @param number the value to convert
@@ -3828,6 +3834,7 @@ public class Calculator extends JFrame
         return number;
     }
 
+    // TODO: Remove isNumberNegative = false; This method should only return a copy of the number in its positive form
     /**
      * Converts a number to its positive equivalent
      * @param number the value to convert
