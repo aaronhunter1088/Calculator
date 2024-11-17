@@ -1,7 +1,6 @@
 package Panels;
 
 import Calculators.Calculator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -262,7 +261,7 @@ public class ProgrammerPanel extends JPanel
      */
     public void setupProgrammerHistoryZone()
     {
-        LOGGER.debug("Configuring BasicHistoryZone...");
+        LOGGER.debug("Configuring ProgrammerHistoryZone...");
         constraints.anchor = GridBagConstraints.WEST;
         addComponent(historyPanel, new JLabel(HISTORY.getValue()), 0, 0); // space before with jtextarea
 
@@ -272,7 +271,7 @@ public class ProgrammerPanel extends JPanel
 
         addComponent(historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
                 1, 6, 0, 0, GridBagConstraints.BOTH, 0);
-        LOGGER.debug("BasicHistoryZone configured");
+        LOGGER.debug("ProgrammerHistoryZone configured");
     }
 
     /**
@@ -310,10 +309,10 @@ public class ProgrammerPanel extends JPanel
         buttonRotateRight.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonRotateRight"));
         LOGGER.warn("RoR button needs to be configured");
         buttonOr.setName(OR.name());
-        buttonOr.addActionListener(this::performButtonOrAction);
+        buttonOr.addActionListener(this::performOrButtonAction);
         LOGGER.debug("Or button configured");
         buttonXor.setName(XOR.name());
-        buttonXor.addActionListener(this::performButtonXorAction);
+        buttonXor.addActionListener(this::performXorButtonAction);
         LOGGER.debug("Xor button configured");
         buttonShiftLeft.setName(LSH.name());
         buttonShiftLeft.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonShiftLeft"));
@@ -322,10 +321,10 @@ public class ProgrammerPanel extends JPanel
         buttonShiftRight.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonShiftRight"));
         LOGGER.debug("Right Shift button needs to be configured");
         buttonNot.setName(NOT.name());
-        buttonNot.addActionListener(this::performButtonNotAction);
+        buttonNot.addActionListener(this::performNotButtonAction);
         LOGGER.debug("Not button configured");
         buttonAnd.setName(AND.name());
-        buttonAnd.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonAdd"));
+        buttonAnd.addActionListener(this::performAndButtonAction);
         LOGGER.debug("And button needs to be configured");
         buttonA.setName(A.name());
         buttonB.setName(B.name());
@@ -342,15 +341,15 @@ public class ProgrammerPanel extends JPanel
         updateButtonsBasedOnBase();
         LOGGER.debug("Hexadecimal buttons configured");
         buttonShift.setName(SHIFT.name());
-        buttonShift.addActionListener(this::performButtonShiftAction);
+        buttonShift.addActionListener(this::performShiftButtonAction);
         LOGGER.debug("Shift button needs to be configured");
         buttonBytes.setName("Bytes");
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
-        buttonBytes.addActionListener(this::performButtonByteAction);
+        buttonBytes.addActionListener(this::performByteButtonAction);
         LOGGER.debug("Bytes button configured");
         buttonBases.setName("Bases");
         buttonBases.setPreferredSize(new Dimension(70, 35) );
-        buttonBases.addActionListener(this::performButtonBaseAction);
+        buttonBases.addActionListener(this::performBaseButtonAction);
         LOGGER.debug("ButtonBytes needs to be configured");
     }
 
@@ -487,7 +486,7 @@ public class ProgrammerPanel extends JPanel
         StringBuilder sb = new StringBuilder();
         representation = representation.replace(SPACE.getValue(), BLANK.getValue());
         boolean operatorSet = calculator.determineIfAnyBasicOperatorWasPushed();
-        if (operatorSet) representation = calculator.returnWithoutAnyOperator(representation);
+        if (operatorSet) representation = calculator.getValueWithoutAnyOperator(representation);
         String respaced = switch (calculator.getCalculatorByte()) {
             case BYTE_BYTE -> {
                 sb.append(representation, 0, 4);
@@ -575,13 +574,13 @@ public class ProgrammerPanel extends JPanel
             //
             SimpleAttributeSet attribs = new SimpleAttributeSet();
             StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_LEFT);
-            String byteRepresentation = displayByteAndBase();
-            doc.insertString(0, byteRepresentation, doc.getStyle("alignLeft"));
-            doc.setParagraphAttributes(0, byteRepresentation.length(), attribs, false);
+            String byteAndBaseDisplay = displayByteAndBase();
+            doc.insertString(0, byteAndBaseDisplay, doc.getStyle("alignLeft"));
+            doc.setParagraphAttributes(0, byteAndBaseDisplay.length(), attribs, false);
             //
             attribs = new SimpleAttributeSet();
             StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-            doc.insertString(doc.getLength(), calculator.addNewLines(1)+text+calculator.addNewLines(1), doc.getStyle("alignRight"));
+            doc.insertString(doc.getLength(), NEWLINE.getValue()+text+NEWLINE.getValue(), doc.getStyle("alignRight"));
             doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
         }
         catch (BadLocationException e) { calculator.logException(e); }
@@ -758,7 +757,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when Or is clicked
      */
-    public void performButtonOrAction(ActionEvent actionEvent)
+    public void performOrButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -798,7 +797,7 @@ public class ProgrammerPanel extends JPanel
      * The inner logic for Or
      * @return the result of the Or operation in binary
      */
-    private String performOr()
+    public String performOr()
     {
         LOGGER.debug("Performing Or");
         StringBuilder sb = new StringBuilder();
@@ -822,7 +821,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when Xor is clicked
      */
-    public void performButtonXorAction(ActionEvent actionEvent)
+    public void performXorButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -850,7 +849,7 @@ public class ProgrammerPanel extends JPanel
      * The inner logic for Xor
      * @return String the result of the operation
      */
-    private String performXor()
+    public String performXor()
     {
         LOGGER.info("Performing Xor");
         StringBuilder sb = new StringBuilder();
@@ -868,7 +867,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when the Not button is clicked
      */
-    public void performButtonNotAction(ActionEvent actionEvent)
+    public void performNotButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -880,8 +879,10 @@ public class ProgrammerPanel extends JPanel
         StringBuilder newBuffer = new StringBuilder();
         for (int i = 0; i < calculator.determineRequiredLength(textPaneValue.length()); i++) {
             String s = Character.toString(textPaneValue.charAt(i));
-            if (s.equals("0")) { newBuffer.append("1"); LOGGER.debug("appending a 1"); }
-            else               { newBuffer.append("0"); LOGGER.debug("appending a 0"); }
+            if (s.equals(ZERO.getValue()))
+                { newBuffer.append(ONE.getValue()); LOGGER.debug("appending a {}", ONE.getValue()); }
+            else
+                { newBuffer.append(ZERO.getValue()); LOGGER.debug("appending a {}", ZERO.getValue()); }
         }
         LOGGER.debug("after operation execution: {}", newBuffer);
         // TODO: Rework. It's a bit sloppy atm
@@ -900,9 +901,66 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**
+     * The actions to perform when the And button is clicked
+     * @param actionEvent the click action
+     */
+    public void performAndButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        LOGGER.info("Action for {} started", buttonChoice);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + AND); }
+        else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty())
+        {
+            calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+            calculator.confirm("Cannot perform " + AND + " operation");
+        }
+        else if (!calculator.getTextPaneValue().isEmpty() && calculator.getValues()[1].isEmpty())
+        {
+            setAnd(true);
+            calculator.appendTextToPane(calculator.getValues()[calculator.getValuesPosition()] + SPACE.getValue() + buttonChoice);
+            calculator.writeHistory(buttonChoice, true);
+            calculator.setIsFirstNumber(false);
+            calculator.setIsNumberNegative(false);
+            calculator.setValuesPosition(1);
+            calculator.confirm(AND + " performed");
+        }
+        else
+        {
+            performAnd();
+        }
+    }
+    /**
+     * The inner logic for And
+     */
+    public String performAnd()
+    {
+        LOGGER.info("value[0]: '{}'", calculator.getValues()[0]);
+        LOGGER.info("value[1]: '{}'", calculator.getValues()[1]);
+        String v1InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[0] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
+        String v2InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[1] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
+        String v1AndV2 = BLANK.getValue();
+        boolean result = false;
+        int indexMax = v2InBinary.length() - 1;
+        int counter = 0;
+        for (char a : v1InBinary.toCharArray()) {
+            char b = v2InBinary.charAt(counter);
+            if (a == b && a == ONE.getValue().charAt(0) && b == ONE.getValue().charAt(0)) {
+                v1AndV2 += ONE.getValue();
+            } else {
+                v1AndV2 += ZERO.getValue();
+            }
+            counter++;
+        }
+        String andResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2);
+        LOGGER.info("{} AND {} = {}", calculator.getValues()[0], calculator.getValues()[1], andResult);
+        return andResult;
+    }
+
+    /**
      * The actions to perform when the Shift button is clicked
      */
-    public void performButtonShiftAction(ActionEvent actionEvent)
+    public void performShiftButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -940,7 +998,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when the Bytes button is clicked
      */
-    public void performButtonByteAction(ActionEvent actionEvent)
+    public void performByteButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
@@ -967,7 +1025,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * The actions to perform when the Bases button is clicked
      */
-    public void performButtonBaseAction(ActionEvent actionEvent)
+    public void performBaseButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
