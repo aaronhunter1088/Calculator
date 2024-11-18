@@ -12,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.text.ParseException;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
@@ -31,8 +33,12 @@ public class ProgrammerPanelTest
     ActionEvent actionEvent;
 
     @BeforeAll
-    public static void beforeAll()
-    { LOGGER = LogManager.getLogger(ProgrammerPanelTest.class); }
+    public static void beforeAll() throws Exception
+    {
+        LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
+        calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
+        calculator.pack();
+    }
 
     @AfterAll
     public static void afterAll()
@@ -41,10 +47,11 @@ public class ProgrammerPanelTest
     @BeforeEach
     public void beforeEach() throws Exception 
     {
+        MockitoAnnotations.initMocks(this);
         calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
+        calculator.pack();
         calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         programmerPanel = (ProgrammerPanel)calculator.getCurrentPanel();
-        MockitoAnnotations.initMocks(this);
     }
 
     @AfterEach
@@ -68,7 +75,7 @@ public class ProgrammerPanelTest
     @Test
     public void switchingFromBasicToProgrammerConvertsTextArea() throws CalculatorError
     {
-        calculator.getTextPane().setText(FOUR.getValue());
+        calculator.appendTextToPane(FOUR.getValue());
         calculator.getValues()[0] = FOUR.getValue();
         calculator.setCalculatorByte(BYTE_BYTE);
         String convertedValue = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
@@ -96,7 +103,7 @@ public class ProgrammerPanelTest
 //        //3. Input another single, 8 bit number
 //        //4. Press equals.
 //        //5. Textarea displays proper sum in 8 bit form
-//        calculator.getTextPane().setText("");
+//        calculator.appendTextToPane("");
 //        calculator.setCalculatorType(CalculatorView.PROGRAMMER);
 //        programmerPanel.getButtonBin().setSelected(true);
 //        calculator.setFirstNumber(true);
@@ -162,10 +169,11 @@ public class ProgrammerPanelTest
     }
 
     @Test
-    public void testPushingModulusButtonWithOneInputReturnsZero() {
+    public void testPushingModulusButtonWithOneInputReturnsZero()
+    {
         when(actionEvent.getActionCommand()).thenReturn(MODULUS.getValue());
         String number = "00000101"; //5
-        calculator.getTextPane().setText(calculator.addNewLines() + number);
+        calculator.appendTextToPane(calculator.addNewLines() + number);
         calculator.getValues()[0] = FIVE.getValue();
         calculator.getValues()[1] = BLANK.getValue();
         calculator.setValuesPosition(0);
@@ -276,23 +284,40 @@ public class ProgrammerPanelTest
 
     @Test
     public void testClickedButtonAndWhenTextPaneBlank()
-    {}
+    {
+        when(actionEvent.getActionCommand()).thenReturn(AND.getValue());
+        programmerPanel.performAndButtonAction(actionEvent);
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER.getValue());
+    }
 
     @Test
     public void testClickedButtonAndWhenTextPaneContainsBadText()
-    {}
+    {
+        when(actionEvent.getActionCommand()).thenReturn(AND.getValue());
+        calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+        programmerPanel.performAndButtonAction(actionEvent);
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER.getValue());
+    }
 
     @Test
     public void testClickedButtonAndWhenValuesAtZeroIsEmpty()
-    {}
+    {
+        when(actionEvent.getActionCommand()).thenReturn(AND.getValue());
+        programmerPanel.performAndButtonAction(actionEvent);
+        assertEquals(BLANK.getValue(), calculator.getValues()[0], "Expected values[0] to be empty");
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER.getValue());
+    }
 
     @Test
     public void testClickedButtonAndWhenValuesAtOneIsEmpty()
-    {}
-
-    @Test
-    public void testClickedButtonAndWhenValuesAreBothSet()
-    {}
+    {
+        when(actionEvent.getActionCommand()).thenReturn(AND.getValue());
+        calculator.getValues()[0] = FIVE.getValue();
+        calculator.appendTextToPane(FIVE.getValue());
+        programmerPanel.performAndButtonAction(actionEvent);
+        assertEquals(FIVE.getValue(), calculator.getValues()[0], "Expected values[0] to be 5");
+        assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to say 5 AND");
+    }
 
     @Test
     @DisplayName("Test And Button")
@@ -304,13 +329,19 @@ public class ProgrammerPanelTest
                 .thenReturn(SIX.getValue()).thenReturn(SIX.getValue())
                 .thenReturn(EQUALS.getValue());
         programmerPanel.performNumberButtonActions(actionEvent);
+        assertEquals(FIVE.getValue(), calculator.getTextPaneValue(), "Expected textPane to be 5");
 
         programmerPanel.performAndButtonAction(actionEvent);
+        assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to be 5 AND");
+        assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
 
         programmerPanel.performNumberButtonActions(actionEvent);
+        assertEquals(SIX.getValue(), calculator.getTextPaneValue(), "Expected textPane to contain 6");
+        assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
 
         calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to contain 4");
+        assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to be 4");
+        assertFalse(programmerPanel.isAnd(), "Expected isAnd to be false");
     }
 
     @Test
@@ -318,18 +349,24 @@ public class ProgrammerPanelTest
     public void testPerformAddContinuedOperation()
     {
         when(actionEvent.getActionCommand())
-                .thenReturn(FIVE.getValue())
+                .thenReturn(FIVE.getValue()).thenReturn(FIVE.getValue())
                 .thenReturn(AND.getValue())
-                .thenReturn(SIX.getValue())
+                .thenReturn(SIX.getValue()).thenReturn(SIX.getValue())
                 .thenReturn(AND.getValue());
         programmerPanel.performNumberButtonActions(actionEvent);
+        assertEquals(FIVE.getValue(), calculator.getTextPaneValue(), "Expected textPane to be 5");
 
         programmerPanel.performAndButtonAction(actionEvent);
+        assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to be 5 AND");
+        assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
 
         programmerPanel.performNumberButtonActions(actionEvent);
+        assertEquals(SIX.getValue(), calculator.getTextPaneValue(), "Expected textPane to contain 6");
+        assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
 
         programmerPanel.performAndButtonAction(actionEvent);
-
+        assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to be 4 AND");
+        assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
     }
 
 }

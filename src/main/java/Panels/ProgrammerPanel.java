@@ -825,7 +825,6 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.info("button: " + buttonChoice);
         if (isXor || (calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty()))
         { calculator.confirm("Pressed "+buttonChoice+". No action performed."); }
         // if v[0] is set, v[1] is not, and we have not pushed Xor yet
@@ -929,7 +928,12 @@ public class ProgrammerPanel extends JPanel
         // v[0] and v[1] are set, isAnd is true, continued operation
         else
         {
-            performAnd();
+            String result = performAnd();
+            calculator.appendTextToPane(result + SPACE.getValue() + buttonChoice);
+            // TODO: Should AND replace values[0] and values[1]??
+            calculator.writeContinuedHistory(EQUALS.getValue(), AND.getValue(), Double.parseDouble(result), true);
+            setAnd(true);
+            calculator.resetCalculatorOperations(true);
         }
     }
     /**
