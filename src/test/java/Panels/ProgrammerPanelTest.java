@@ -5,10 +5,9 @@ import Calculators.CalculatorError;
 import Types.CalculatorView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,10 +16,9 @@ import java.awt.event.WindowEvent;
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
 import static Types.Texts.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ProgrammerPanelTest
 {
     static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
@@ -32,23 +30,24 @@ public class ProgrammerPanelTest
     @Mock
     ActionEvent actionEvent;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll()
     { LOGGER = LogManager.getLogger(ProgrammerPanelTest.class); }
 
-    @AfterClass
+    @AfterAll
     public static void afterAll()
     { LOGGER.info("Finished running " + ProgrammerPanel.class.getSimpleName()); }
 
-    @Before
+    @BeforeEach
     public void beforeEach() throws Exception 
     {
         calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
         calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         programmerPanel = (ProgrammerPanel)calculator.getCurrentPanel();
+        MockitoAnnotations.initMocks(this);
     }
 
-    @After
+    @AfterEach
     public void afterEach() {
         if (calculator != null) {
             LOGGER.info("Test complete. Closing the calculator...");
@@ -73,9 +72,9 @@ public class ProgrammerPanelTest
         calculator.getValues()[0] = FOUR.getValue();
         calculator.setCalculatorByte(BYTE_BYTE);
         String convertedValue = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
-        assertEquals("Conversion went wrong!", "00000100", convertedValue);
+        assertEquals("00000100", convertedValue, "Conversion went wrong!");
         programmerPanel.appendTextToProgrammerPane(convertedValue);
-        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "00000100", calculator.getTextPaneValueForProgrammerPanel());
+        assertEquals("00000100", calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
     }
 
     @Test
@@ -86,7 +85,7 @@ public class ProgrammerPanelTest
         programmerPanel.appendTextToProgrammerPane("0000 1011");
         programmerPanel.performNotButtonAction(actionEvent);
         //assertEquals("topQWord not as expected", ""); // lots of 1's
-        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "1111 0100", programmerPanel.separateBits(calculator.getTextPaneValueForProgrammerPanel()));
+        assertEquals("1111 0100", programmerPanel.separateBits(calculator.getTextPaneValueForProgrammerPanel()), TEXT_PANE_WRONG_VALUE.getValue());
     }
 
 //    @Test
@@ -132,9 +131,9 @@ public class ProgrammerPanelTest
         calculator.getValues()[0] = BLANK.getValue();
         calculator.getValues()[1] = "50";
         programmerPanel.performOrButtonAction(actionEvent);
-        assertTrue("Expected isFirstNumber to be true", calculator.isFirstNumber());
-        assertEquals("Expected values[0] to be empty", BLANK.getValue(), calculator.getValues()[0]);
-        assertEquals("Expected values[1] to be 50", "50", calculator.getValues()[1]);
+        assertTrue(calculator.isFirstNumber(), "Expected isFirstNumber to be true");
+        assertEquals(BLANK.getValue(), calculator.getValues()[0], "Expected values[0] to be empty");
+        assertEquals("50", calculator.getValues()[1], "Expected values[1] to be 50");
     }
 
     @Test
@@ -147,7 +146,7 @@ public class ProgrammerPanelTest
         programmerPanel.performOrButtonAction(actionEvent);
         // TODO: Uncomment and fix
         //assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), "5 OR", calculator.getTextPaneValueForProgrammerPanel());
-        assertEquals("Values[0] is not in decimal base form", "5", calculator.getValues()[0]);
+        assertEquals("5", calculator.getValues()[0], "Values[0] is not in decimal base form");
     }
 
     @Test
@@ -159,7 +158,7 @@ public class ProgrammerPanelTest
         calculator.getValues()[1] = THREE.getValue();
         calculator.appendTextToPane(calculator.getValues()[1]);
         programmerPanel.performOrButtonAction(actionEvent);
-        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), SEVEN.getValue(), calculator.getTextPaneValueForProgrammerPanel());
+        assertEquals(SEVEN.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
     }
 
     @Test
@@ -184,10 +183,10 @@ public class ProgrammerPanelTest
         calculator.getValues()[1] = BLANK.getValue();
         calculator.setValuesPosition(1);
         programmerPanel.performXorButtonAction(actionEvent);
-        assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), BLANK.getValue(), calculator.getTextPaneValueForProgrammerPanel());
-        assertEquals("Values[0] should be empty", BLANK.getValue(), calculator.getValues()[0]);
-        assertEquals("Values[1] should be empty", BLANK.getValue(), calculator.getValues()[1]);
-        assertFalse("XorButton should be set", programmerPanel.isXor());
+        assertEquals(BLANK.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
+        assertEquals(BLANK.getValue(), calculator.getValues()[0], "Values[0] should be empty");
+        assertEquals(BLANK.getValue(), calculator.getValues()[1], "Values[1] should be empty");
+        assertFalse(programmerPanel.isXor(), "XorButton should be set");
     }
 
     @Test
@@ -262,7 +261,7 @@ public class ProgrammerPanelTest
         calculator.getValues()[0] = FOUR.getValue();
         calculator.getValues()[1] = THREE.getValue();
         programmerPanel.performButtonModulusAction(actionEvent);
-        assertEquals("Modulus not as expected", ONE.getValue(), calculator.getValues()[0]);
+        assertEquals(ONE.getValue(), calculator.getValues()[0], "Modulus not as expected");
     }
 
     @Test
@@ -272,7 +271,65 @@ public class ProgrammerPanelTest
         calculator.getValues()[0] = FOUR.getValue();
         calculator.getValues()[1] = ZERO.getValue();
         programmerPanel.performButtonModulusAction(actionEvent);
-        assertEquals("Modulus not as expected", ZERO.getValue(), calculator.getValues()[0]);
+        assertEquals(ZERO.getValue(), calculator.getValues()[0], "Modulus not as expected");
+    }
+
+    @Test
+    public void testClickedButtonAndWhenTextPaneBlank()
+    {}
+
+    @Test
+    public void testClickedButtonAndWhenTextPaneContainsBadText()
+    {}
+
+    @Test
+    public void testClickedButtonAndWhenValuesAtZeroIsEmpty()
+    {}
+
+    @Test
+    public void testClickedButtonAndWhenValuesAtOneIsEmpty()
+    {}
+
+    @Test
+    public void testClickedButtonAndWhenValuesAreBothSet()
+    {}
+
+    @Test
+    @DisplayName("Test And Button")
+    public void testPerformAdd()
+    {
+        when(actionEvent.getActionCommand())
+                .thenReturn(FIVE.getValue()).thenReturn(FIVE.getValue())
+                .thenReturn(AND.getValue())
+                .thenReturn(SIX.getValue()).thenReturn(SIX.getValue())
+                .thenReturn(EQUALS.getValue());
+        programmerPanel.performNumberButtonActions(actionEvent);
+
+        programmerPanel.performAndButtonAction(actionEvent);
+
+        programmerPanel.performNumberButtonActions(actionEvent);
+
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to contain 4");
+    }
+
+    @Test
+    @DisplayName("Test And Button continued operation")
+    public void testPerformAddContinuedOperation()
+    {
+        when(actionEvent.getActionCommand())
+                .thenReturn(FIVE.getValue())
+                .thenReturn(AND.getValue())
+                .thenReturn(SIX.getValue())
+                .thenReturn(AND.getValue());
+        programmerPanel.performNumberButtonActions(actionEvent);
+
+        programmerPanel.performAndButtonAction(actionEvent);
+
+        programmerPanel.performNumberButtonActions(actionEvent);
+
+        programmerPanel.performAndButtonAction(actionEvent);
+
     }
 
 }

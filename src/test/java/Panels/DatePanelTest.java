@@ -6,11 +6,10 @@ import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -24,12 +23,11 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static Types.DateOperation.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class DatePanelTest
 {
     static { System.setProperty("appName", "DatePanelTest"); }
@@ -40,7 +38,7 @@ public class DatePanelTest
     @Mock
     ActionEvent actionEvent;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() throws Exception
     {
         calculator = new Calculator(ADD_SUBTRACT_DAYS);
@@ -49,11 +47,11 @@ public class DatePanelTest
         LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
     }
 
-    @Before
+    @BeforeEach
     public void beforeEach()
     { MockitoAnnotations.initMocks(this); }
 
-    @After
+    @AfterEach
     public void afterEach() {
         if (calculator != null) {
             LOGGER.info("Test complete. Closing the calculator...");

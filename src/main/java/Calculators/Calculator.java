@@ -2329,7 +2329,7 @@ public class Calculator extends JFrame
         LOGGER.info("Performing {} button actions", buttonChoice);
         String operator = getActiveBasicPanelOperator();
         determineAndPerformBasicCalculatorOperation();
-        if (!List.of(AND, XOR).contains(Texts.valueOf(operator))) {
+        if (!Stream.of(AND, XOR).map(Texts::getValue).toList().contains(operator)) {
             if (!operator.isEmpty() && !textPaneContainsBadText()) {
                 switch (calculatorBase)
                 {

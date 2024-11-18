@@ -915,6 +915,7 @@ public class ProgrammerPanel extends JPanel
             calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
             calculator.confirm("Cannot perform " + AND + " operation");
         }
+        // v[0] is set, then pushes And
         else if (!calculator.getTextPaneValue().isEmpty() && calculator.getValues()[1].isEmpty())
         {
             setAnd(true);
@@ -925,6 +926,7 @@ public class ProgrammerPanel extends JPanel
             calculator.setValuesPosition(1);
             calculator.confirm(AND + " performed");
         }
+        // v[0] and v[1] are set, isAnd is true, continued operation
         else
         {
             performAnd();
@@ -932,6 +934,12 @@ public class ProgrammerPanel extends JPanel
     }
     /**
      * The inner logic for And
+     * Takes v[0] and ensures it is in binary form
+     * Takes v[1] and ensures it is in binary form
+     * Ex: 0101 (5) and
+     *     0110 (6) =
+     *     0100 (4) because 0x0=0, 1x1=1, 0x1=0, 1x0=0
+     * return 1 when a=1 and b=1, otherwise 0
      */
     public String performAnd()
     {
@@ -940,8 +948,6 @@ public class ProgrammerPanel extends JPanel
         String v1InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[0] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
         String v2InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[1] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
         String v1AndV2 = BLANK.getValue();
-        boolean result = false;
-        int indexMax = v2InBinary.length() - 1;
         int counter = 0;
         for (char a : v1InBinary.toCharArray()) {
             char b = v2InBinary.charAt(counter);

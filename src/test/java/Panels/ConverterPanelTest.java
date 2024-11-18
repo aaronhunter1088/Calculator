@@ -4,19 +4,19 @@ import Calculators.Calculator;
 import Converters.AngleMethods;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import static org.junit.Assert.assertEquals;
 import static Types.ConverterType.*;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ConverterPanelTest
 {
@@ -28,7 +28,7 @@ public class ConverterPanelTest
     @Mock
     ActionEvent ae;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         LOGGER = LogManager.getLogger(ConverterPanelTest.class.getSimpleName());
         calculator = new Calculator();
@@ -36,10 +36,10 @@ public class ConverterPanelTest
         converterPanel = new ConverterPanel(calculator, AREA);
         calculator.setCurrentPanel(converterPanel);
     }
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
-    @After
+    @AfterEach
     public void afterEach() {
         if (calculator != null) {
             LOGGER.info("Test complete. Closing the calculator...");
