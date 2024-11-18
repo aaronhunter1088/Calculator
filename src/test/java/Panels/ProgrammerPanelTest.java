@@ -365,7 +365,7 @@ public class ProgrammerPanelTest
         assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
 
         programmerPanel.performAndButtonAction(actionEvent);
-        assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to be 4 AND");
+        assertEquals("4 AND", calculator.getTextPaneValue(), "Expected textPane to be 4 AND");
         assertTrue(programmerPanel.isAnd(), "Expected isAnd to be true");
     }
 

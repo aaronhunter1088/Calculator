@@ -2676,7 +2676,7 @@ public class Calculator extends JFrame
      * @param result double the result from the operation
      * @param addContinuedOperationToEnd boolean whether to append the operation to the end
      */
-    public void writeContinuedHistory(String continuedOperation, String operation, double result, boolean addContinuedOperationToEnd)
+    public void writeContinuedHistory(String continuedOperation, String operation, Object result, boolean addContinuedOperationToEnd)
     {
         if (currentPanel instanceof BasicPanel basicPanel)
         {

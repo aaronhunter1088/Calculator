@@ -316,16 +316,16 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Xor button configured");
         buttonShiftLeft.setName(LSH.name());
         buttonShiftLeft.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonShiftLeft"));
-        LOGGER.debug("Left Shift button needs to be configured");
+        LOGGER.warn("Left Shift button needs to be configured");
         buttonShiftRight.setName(RSH.name());
         buttonShiftRight.addActionListener(action -> LOGGER.warn("IMPLEMENT buttonShiftRight"));
-        LOGGER.debug("Right Shift button needs to be configured");
+        LOGGER.warn("Right Shift button needs to be configured");
         buttonNot.setName(NOT.name());
         buttonNot.addActionListener(this::performNotButtonAction);
         LOGGER.debug("Not button configured");
         buttonAnd.setName(AND.name());
         buttonAnd.addActionListener(this::performAndButtonAction);
-        LOGGER.debug("And button needs to be configured");
+        LOGGER.debug("And button configured");
         buttonA.setName(A.name());
         buttonB.setName(B.name());
         buttonC.setName(C.name());
@@ -342,7 +342,7 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Hexadecimal buttons configured");
         buttonShift.setName(SHIFT.name());
         buttonShift.addActionListener(this::performShiftButtonAction);
-        LOGGER.debug("Shift button needs to be configured");
+        LOGGER.debug("Shift button configured");
         buttonBytes.setName("Bytes");
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
         buttonBytes.addActionListener(this::performByteButtonAction);
@@ -350,7 +350,7 @@ public class ProgrammerPanel extends JPanel
         buttonBases.setName("Bases");
         buttonBases.setPreferredSize(new Dimension(70, 35) );
         buttonBases.addActionListener(this::performBaseButtonAction);
-        LOGGER.debug("ButtonBytes needs to be configured");
+        LOGGER.debug("Base Button configured");
     }
 
     /**
@@ -761,30 +761,36 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.info("button: " + buttonChoice);
         // Ex: 2
-        if (calculator.getValues()[0].isEmpty()) // Requires both v[0] and v[1] to be set
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + OR); }
+        else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty())
         {
-            calculator.setIsFirstNumber(true);
-            calculator.confirm("Pressed " + buttonChoice + ", no affect");
+            calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+            calculator.confirm("Cannot perform " + OR + " operation");
         }
-        else if (!calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty())
+        // v[0] is set, then pushes OR
+        else if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank())
         {
+            setOr(true);
             LOGGER.debug("Appending {} to text pane", buttonChoice);
             calculator.setIsFirstNumber(false);
             calculator.appendTextToPane(calculator.getValues()[0] + SPACE.getValue() + buttonChoice); // Ex: 2 OR
+            calculator.writeHistory(buttonChoice, true);
             calculator.setValuesPosition(1);
             calculator.confirm("Pressed " + buttonChoice);
         }
-        else if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
+        // v[0] & v[1] set, OR set, then pushes OR, continued operation
+        else //if (!calculator.getValues()[0].isBlank() && !calculator.getValues()[1].isBlank() && isOr)
         {
-            String sb = performOr(); // Ex: 2 OR 3, or 2 OR 3 OR (continued operation)
-            calculator.getValues()[0] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, sb);
-            // because the Or operation always returns the result in binary, we need to append the result
-            // of the operation in the same base as we currently are in
+            String orResult = performOr();
+            var resultInBase = !BASE_BINARY.equals(calculator.getCalculatorBase()) ?
+                    calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), orResult) : orResult;
+            calculator.writeContinuedHistory(OR.getValue(), OR.getValue(), resultInBase, true);
+            calculator.getValues()[0] = resultInBase;
             switch (calculator.getCalculatorBase())
             {
-                case BASE_BINARY -> { calculator.appendTextToPane(sb); }
+                case BASE_BINARY -> { calculator.appendTextToPane(orResult); }
                 case BASE_OCTAL -> { calculator.appendTextToPane(calculator.convertValueToOctal()); }
                 case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
                 case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
@@ -802,16 +808,27 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Performing Or");
         StringBuilder sb = new StringBuilder();
         // TODO: Double check that the values are the same length (in terms of bytes)
-        var value1InBinary = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[0]);
-        var value2InBinary = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[1]);
+        var value1InBinary = BASE_BINARY.equals(calculator.getCalculatorBase()) ?
+                calculator.getValues()[0] :
+                calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
+        var value2InBinary = BASE_BINARY.equals(calculator.getCalculatorBase()) ?
+                calculator.getValues()[1] :
+                calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
         for (int i=0; i<value1InBinary.length(); i++)
         {
             String letter = "0";
+            // if the characters at both getValues() at the same position are the same and equal 0
             if (ZERO.getValue().equals(String.valueOf(value1InBinary.charAt(i)))
                && ZERO.getValue().equals(String.valueOf(value2InBinary.charAt(i))))
-            { sb.append(ZERO.getValue()); } // if the characters at both getValues() at the same position are the same and equal 0
+            {
+                sb.append(ZERO.getValue());
+                letter = ZERO.getValue();
+            }
             else
-            { sb.append(ONE.getValue()); } // otherwise
+            {
+                sb.append(ONE.getValue());
+                letter = ONE.getValue();
+            }
             LOGGER.info("{} OR {} = {}", value1InBinary.charAt(i), value2InBinary.charAt(i), letter);
         }
         LOGGER.info("{} OR {} = {}", calculator.getValues()[0], calculator.getValues()[1], sb.toString());
@@ -929,9 +946,11 @@ public class ProgrammerPanel extends JPanel
         else
         {
             String result = performAnd();
+            calculator.setValuesPosition(0);
             calculator.appendTextToPane(result + SPACE.getValue() + buttonChoice);
             // TODO: Should AND replace values[0] and values[1]??
-            calculator.writeContinuedHistory(EQUALS.getValue(), AND.getValue(), Double.parseDouble(result), true);
+            calculator.resetCalculatorOperations(true);
+            calculator.writeContinuedHistory(AND.getValue(), AND.getValue(), Double.parseDouble(result), true);
             setAnd(true);
             calculator.resetCalculatorOperations(true);
         }
