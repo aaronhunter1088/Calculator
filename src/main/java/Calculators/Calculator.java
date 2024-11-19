@@ -2329,7 +2329,7 @@ public class Calculator extends JFrame
         LOGGER.info("Performing {} button actions", buttonChoice);
         String operator = getActiveBasicPanelOperator();
         determineAndPerformBasicCalculatorOperation();
-        if (!Stream.of(AND, XOR).map(Texts::getValue).toList().contains(operator)) {
+        if (!Stream.of(AND, XOR, OR).map(Texts::getValue).toList().contains(operator)) {
             if (!operator.isEmpty() && !textPaneContainsBadText()) {
                 switch (calculatorBase)
                 {
@@ -2405,6 +2405,37 @@ public class Calculator extends JFrame
                     // TODO: Should AND replace values[0] and values[1]??
                     writeContinuedHistory(EQUALS.getValue(), AND.getValue(), Double.parseDouble(result), false);
                     programmerPanel.setAnd(false);
+                    resetCalculatorOperations(false);
+                }
+                else if (programmerPanel.isOr())
+                {
+                    String orResult = programmerPanel.performOr();
+                    var resultInBase = !BASE_BINARY.equals(getCalculatorBase()) ?
+                            convertFromBaseToBase(BASE_BINARY, getCalculatorBase(), orResult) : orResult;
+                    writeContinuedHistory(OR.getValue(), OR.getValue(), resultInBase, false);
+                    getValues()[0] = resultInBase;
+                    programmerPanel.setOr(false);
+                    switch (getCalculatorBase())
+                    {
+                        case BASE_BINARY -> { appendTextToPane(orResult); }
+                        case BASE_OCTAL -> { appendTextToPane(convertValueToOctal()); }
+                        case BASE_DECIMAL -> { appendTextToPane(getValues()[0]); }
+                        case BASE_HEXADECIMAL -> { appendTextToPane(convertValueToHexadecimal());}
+                    }
+                    resetCalculatorOperations(false);
+                } else if (programmerPanel.isXor()) {
+                    String xorResult = programmerPanel.performXor();
+                    var resultInBase = !BASE_BINARY.equals(calculatorBase) ?
+                            convertFromBaseToBase(BASE_BINARY, calculatorBase, xorResult) : xorResult;
+                    writeContinuedHistory(OR.getValue(), OR.getValue(), resultInBase, false);
+                    getValues()[0] = resultInBase;
+                    switch (getCalculatorBase())
+                    {
+                        case BASE_BINARY -> { appendTextToPane(xorResult); }
+                        case BASE_OCTAL -> { appendTextToPane(convertValueToOctal()); }
+                        case BASE_DECIMAL -> { appendTextToPane(getValues()[0]); }
+                        case BASE_HEXADECIMAL -> { appendTextToPane(convertValueToHexadecimal());}
+                    }
                     resetCalculatorOperations(false);
                 }
             }
@@ -2530,8 +2561,11 @@ public class Calculator extends JFrame
         else if (isDividing) { results = DIVISION.getValue(); }
         if (currentPanel instanceof ProgrammerPanel panel) {
             if (panel.isAnd()) { results = AND.getValue(); }
+            else if (panel.isOr()) { results = OR.getValue(); }
+            else if (panel.isXor()) { results = XOR.getValue(); }
+            else if (panel.isNot()) { results = NOT.getValue(); }
         }
-        LOGGER.info("operator: {}", (results.isEmpty() ? "no basic operator pushed" : results));
+        LOGGER.info(results.isEmpty() ? "no basic operator pushed" : "operator: {}", results);
         return results;
     }
 
@@ -3046,21 +3080,21 @@ public class Calculator extends JFrame
             LOGGER.debug("adding '-' to beginning of number");
             adjusted = SUBTRACTION.getValue() + adjusted;
         }
-        if (valuesPosition == 0)
-        {
-            String operator = getActiveBasicPanelOperator();
-            if (!BLANK.getValue().equals(operator))
-            { adjusted += SPACE.getValue() + operator; }
-            else
-            {
-                if (VIEW_PROGRAMMER.equals(calculatorView))
-                {
-                    operator = ((ProgrammerPanel)currentPanel).getActiveProgrammerPanelOperator();
-                    if (!BLANK.getValue().equals(operator))
-                    { adjusted += SPACE.getValue() + operator; }
-                }
-            }
-        }
+//        if (valuesPosition == 0)
+//        {
+//            String operator = getActiveBasicPanelOperator();
+//            if (!BLANK.getValue().equals(operator))
+//            { adjusted += SPACE.getValue() + operator; }
+//            else
+//            {
+//                if (VIEW_PROGRAMMER.equals(calculatorView))
+//                {
+//                    operator = ((ProgrammerPanel)currentPanel).getActiveProgrammerPanelOperator();
+//                    if (!BLANK.getValue().equals(operator))
+//                    { adjusted += SPACE.getValue() + operator; }
+//                }
+//            }
+//        }
         LOGGER.debug("adjustedFinal: {}", adjusted);
         return adjusted;
     }
@@ -3420,8 +3454,8 @@ public class Calculator extends JFrame
                 .replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
                 .replace(ROL.getValue(), BLANK.getValue())
                 .replace(ROR.getValue(), BLANK.getValue())
+                .replace(XOR.getValue(), BLANK.getValue()) // XOR must be checked before OR, otherwise OR will be replaced when XOR is there, leaving X, which is not desired
                 .replace(OR.getValue(), BLANK.getValue())
-                .replace(XOR.getValue(), BLANK.getValue())
                 .replace(AND.getValue(), BLANK.getValue())
                 .strip();
     }
@@ -3990,14 +4024,16 @@ public class Calculator extends JFrame
     /**
      * Returns true if the minimum value has
      * been met or false otherwise
+     * 0.0000001 or 10^-7
      * @return boolean is minimum value has been met
      */
     public boolean isMinimumValue()
     {
-        LOGGER.debug("is {} minimumValue: {}", values[0], values[0].equals(MIN_VALUE.getValue()));
-        LOGGER.debug("is {} minimumValue: {}", values[1], values[1].equals(MIN_VALUE.getValue()));
-        return values[0].equals(MIN_VALUE.getValue()) ||
-               values[1].equals(MIN_VALUE.getValue()); // 10^-7
+        boolean v1 = !values[0].isEmpty() && Double.parseDouble(values[0]) <= Double.parseDouble(MIN_VALUE.getValue());
+        LOGGER.debug("is '{}' <= {}: {}", values[0], MIN_VALUE.getValue(), v1);
+        boolean v2 = !values[1].isEmpty() && Double.parseDouble(values[1]) <= Double.parseDouble(MIN_VALUE.getValue());
+        LOGGER.debug("is '{}' <= {}: {}", values[1], MIN_VALUE.getValue(), v2);
+        return v1 || v2;
     }
 
     /**
@@ -4007,35 +4043,43 @@ public class Calculator extends JFrame
      */
     public boolean isMinimumValue(String valueToCheck)
     {
-        LOGGER.debug("is {} minimumValue: {}", valueToCheck, valueToCheck.equals(MIN_VALUE.getValue()));
-        return valueToCheck.equals(MIN_VALUE.getValue());
+        boolean v1 = !valueToCheck.isEmpty() && Double.parseDouble(valueToCheck) <= Double.parseDouble(MIN_VALUE.getValue());
+        LOGGER.debug("is '{}' <= {}: {}", valueToCheck, MIN_VALUE.getValue(), v1);
+        return v1;
     }
 
     /**
      * Returns true if the maximum value has
      * been met or false otherwise
+     * 9,999,999 or (10^8) -1
      * @return boolean if maximum value has been met
      */
     public boolean isMaximumValue()
     {
-        LOGGER.debug("is '{}' maximumValue: {}", values[0], values[0].equals(MAX_VALUE.getValue()));
-        LOGGER.debug("is '{}' maximumValue: {}", values[1], values[1].equals(MAX_VALUE.getValue()));
-        LOGGER.debug("does '{}' maximumValue contain E: {}", values[0], values[0].contains(E.getValue()));
-        LOGGER.debug("does '{}' maximumValue contain E: {}", values[1], values[1].contains(E.getValue()));
-        return values[0].equals(MAX_VALUE.getValue()) || values[0].contains(E.getValue()) ||
-               values[1].equals(MAX_VALUE.getValue()) || values[1].contains(E.getValue());  // 9,999,999 or (10^8) -1
+        boolean v1 = !values[0].isEmpty() && Double.parseDouble(values[0]) >= Double.parseDouble(MAX_VALUE.getValue());
+        LOGGER.debug("is '{}' >= {}: {}", values[0], MAX_VALUE.getValue(), v1);
+        boolean v2 = !values[1].isEmpty() && Double.parseDouble(values[1]) >= Double.parseDouble(MAX_VALUE.getValue());
+        LOGGER.debug("is '{}' >= {}: {}", values[1], MAX_VALUE.getValue(), v2);
+        boolean v3 = !values[0].isEmpty() && values[0].contains(E.getValue());
+        LOGGER.debug("does '{}' contain E: {}", values[0], v3);
+        boolean v4 = !values[1].isEmpty() && values[1].contains(E.getValue());
+        LOGGER.debug("does '{}' contain E: {}", values[1], v4);
+        return v1 || v2 || v3 || v4;
     }
 
     /**
+     * TODO: Check why we are checking for E!
      * Checks if the resulting answer has met the maximum value
-     * @param valueToCheck String the value to check
+     * @param valueToCheck String the value to check in its purest form
      * @return boolean true if the maximum value has been met
      */
     public boolean isMaximumValue(String valueToCheck)
     {
-        LOGGER.debug("is {} maximumValue: {}", valueToCheck, valueToCheck.equals(MAX_VALUE.getValue()));
-        LOGGER.debug("does {} minimumValue contain E: {}", valueToCheck, valueToCheck.contains(E.getValue()));
-        return valueToCheck.equals(MAX_VALUE.getValue()) || valueToCheck.contains(E.getValue());
+        boolean v1 = !valueToCheck.isEmpty() && Double.parseDouble(valueToCheck) >= Double.parseDouble(MAX_VALUE.getValue());
+        LOGGER.debug("is '{}' >= {}: {}", valueToCheck, MAX_VALUE.getValue(), v1);
+        boolean v2 = !valueToCheck.isEmpty() && valueToCheck.contains(E.getValue());
+        LOGGER.debug("does '{}' contain E: {}", valueToCheck, v2);
+        return v1 || v2;
     }
 
     /**
@@ -4084,10 +4128,6 @@ public class Calculator extends JFrame
                     if (valuesPosition == 0) textWithCommas = getValueWithOperator(textWithCommas);
                     if (isNumberNegative && !textWithCommas.startsWith(SUBTRACTION.getValue()))
                         textWithCommas = SUBTRACTION.getValue() + textWithCommas;
-                    //if (programmerPanel.determineIfAnyProgrammerOperatorWasPushed())
-                    //{
-                    //    textWithCommasAndOperators += SPACE.getValue() + programmerPanel.getActiveProgrammerPanelOperator();
-                    //}
                     programmerPanel.appendTextToProgrammerPane(textWithCommas);
                 }
                 case BASE_HEXADECIMAL -> {

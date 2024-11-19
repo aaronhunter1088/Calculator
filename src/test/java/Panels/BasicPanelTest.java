@@ -1292,18 +1292,19 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSubtractThen5ThenSubtractThen6ThenEquals()
+    public void pressedSubtractThen5ThenSubtractThenSubtractThen6ThenEquals()
     {
+        // -5 - 6 =
         when(actionEvent.getActionCommand()).thenReturn(EQUALS.getValue());
-        calculator.getTextPane().setText(calculator.addNewLines() + "-6");
         calculator.getValues()[0] = "-5";
         calculator.getValues()[1] = "-6";
+        calculator.getTextPane().setText(calculator.addNewLines() + "-6");
         calculator.setIsNumberNegative(true);
         calculator.setIsSubtracting(true);
         calculator.setValuesPosition(1);
         calculator.performEqualsButtonAction(actionEvent);
         assertEquals(BLANK.getValue(), calculator.getValues()[0], "Values[0] is not blank");
-        assertEquals(ONE.getValue(), calculator.getTextPaneValue(), "textPane does not equal 1");
+        assertEquals("1", calculator.getTextPaneValue(), "textPane does not equal 1");
         assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
         assertFalse(calculator.isSubtracting(), "Expected isSubtracting to be false");
     }

@@ -126,7 +126,7 @@ public enum Texts {
     NEWLINE("\n"),
     UNDERSCORE("_"),
     MAX_VALUE("9999999"),
-    MIN_VALUE("0.0000001"),
+    MIN_VALUE("-9999999"), //"0.0000001"
     YES("YES"),
     NO("NO"),
 

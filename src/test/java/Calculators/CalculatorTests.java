@@ -953,21 +953,21 @@ public class CalculatorTests
     @Test
     public void testValueAt0IsMinimumNumber()
     {
-        calculator.values[0] = "0.0000001";
+        calculator.values[0] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
     }
 
     @Test
     public void testValueAt1IsMinimumNumber()
     {
-        calculator.values[1] = "0.0000001";
+        calculator.values[1] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
     }
 
     @Test
     public void testValueIsMinimumNumber()
     {
-        calculator.getValues()[0] = "0.0000001";
+        calculator.getValues()[0] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(calculator.getValues()[0]), "Expected maximum number to be met");
     }
 

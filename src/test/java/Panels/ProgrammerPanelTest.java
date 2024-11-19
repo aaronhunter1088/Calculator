@@ -163,7 +163,7 @@ public class ProgrammerPanelTest
         calculator.setCalculatorBase(BASE_DECIMAL); // BYTE_BYTE default
         calculator.getValues()[0] = FIVE.getValue();
         calculator.getValues()[1] = THREE.getValue();
-        calculator.appendTextToPane(calculator.getValues()[1]);
+        calculator.appendTextToPane(THREE.getValue());
         programmerPanel.performOrButtonAction(actionEvent);
         assertEquals(SEVEN.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
     }
@@ -191,7 +191,7 @@ public class ProgrammerPanelTest
         calculator.getValues()[1] = BLANK.getValue();
         calculator.setValuesPosition(1);
         programmerPanel.performXorButtonAction(actionEvent);
-        assertEquals(BLANK.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
         assertEquals(BLANK.getValue(), calculator.getValues()[0], "Values[0] should be empty");
         assertEquals(BLANK.getValue(), calculator.getValues()[1], "Values[1] should be empty");
         assertFalse(programmerPanel.isXor(), "XorButton should be set");
