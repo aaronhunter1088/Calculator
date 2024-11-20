@@ -558,7 +558,7 @@ public class ProgrammerPanel extends JPanel
             }
         };
         if (operatorSet && calculator.getValuesPosition() == 0)
-            respaced = respaced + SPACE.getValue() + calculator.getActiveBasicPanelOperator();
+            respaced = respaced + SPACE.getValue() + calculator.getActiveOperator();
         return respaced;
     }
 
@@ -759,7 +759,43 @@ public class ProgrammerPanel extends JPanel
      */
     public String performRotateLeft()
     {
-        return "";
+        String positionedValue = calculator.convertValueToBinary();
+        LOGGER.debug("before rotate left: {}", positionedValue);
+        String valueRotatedLeft = "";
+        for (int bit=0; bit<positionedValue.length(); bit++) {
+            if ((bit+1) < positionedValue.length()) {
+                valueRotatedLeft += positionedValue.charAt(bit+1);
+            } else {
+                valueRotatedLeft += positionedValue.charAt(0);
+            }
+        }
+        String rotatedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueRotatedLeft);
+        LOGGER.debug("rotated left: {} or {} converted", valueRotatedLeft, rotatedAndConverted);
+        valueRotatedLeft = switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield valueRotatedLeft;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_OCTAL -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield rotatedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_DECIMAL -> valueRotatedLeft;
+            case BASE_HEXADECIMAL -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield rotatedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+        };
+        return valueRotatedLeft;
     }
 
     /**
@@ -1079,14 +1115,9 @@ public class ProgrammerPanel extends JPanel
         else
         {
             String leftShiftResult = performLeftShift();
-            String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ?
-                    calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), leftShiftResult) : leftShiftResult;
-            if (BASE_BINARY == calculator.getCalculatorBase()) {
-                calculator.appendTextToPane(convertedResult);
-            } else {
-                calculator.appendTextToPane(leftShiftResult);
-            }
-            calculator.getValues()[calculator.getValuesPosition()] = leftShiftResult;
+            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), leftShiftResult) : leftShiftResult;
+            calculator.appendTextToPane(leftShiftResult);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, leftShiftResult);
             calculator.writeHistory(buttonChoice, true);
             calculator.confirm(LSH + " performed");
         }
@@ -1095,18 +1126,47 @@ public class ProgrammerPanel extends JPanel
      * The inner logic for LeftShift
      * Will shift left the current value at the current position
      * by multiplying the number by 2.
-     * @return String the result of the operation
+     * @return String the result of the operation in the current base
      */
     public String performLeftShift()
     {
-        String positionedValue = calculator.getValues()[calculator.getValuesPosition()];
-        if (positionedValue.isEmpty()) positionedValue = calculator.getTextPaneValue();
-        String valueShiftedLeft = String.valueOf(Double.parseDouble(positionedValue)*2);
-        if (calculator.isMaximumValue(valueShiftedLeft)) {
-            return positionedValue;
-        } else {
-            return valueShiftedLeft;
+        String positionedValue = calculator.convertValueToBinary();
+        LOGGER.debug("before shift left: {}", positionedValue);
+        String valueShiftedLeft = "";
+        for (int bit=0; bit<positionedValue.length(); bit++) {
+            if ((bit+1) < positionedValue.length()) {
+                valueShiftedLeft += positionedValue.charAt(bit+1);
+            } else {
+                valueShiftedLeft += ZERO.getValue();
+            }
         }
+        String shiftedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueShiftedLeft);
+        LOGGER.debug("shifted left: {} or {} converted", valueShiftedLeft, shiftedAndConverted);
+        valueShiftedLeft = switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> {
+                if (!calculator.isMaximumValue(shiftedAndConverted)) {
+                    yield valueShiftedLeft;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_OCTAL -> {
+                if (!calculator.isMaximumValue(shiftedAndConverted)) {
+                    yield shiftedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_DECIMAL -> valueShiftedLeft;
+            case BASE_HEXADECIMAL -> {
+                if (!calculator.isMaximumValue(shiftedAndConverted)) {
+                    yield shiftedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+        };
+        return valueShiftedLeft;
     }
 
     /**
@@ -1127,14 +1187,9 @@ public class ProgrammerPanel extends JPanel
         else
         {
             String rightShiftResult = performRightShift();
-            String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ?
-                    calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
-            if (BASE_BINARY == calculator.getCalculatorBase()) {
-                calculator.appendTextToPane(convertedResult);
-            } else {
-                calculator.appendTextToPane(rightShiftResult);
-            }
-            calculator.getValues()[calculator.getValuesPosition()] = rightShiftResult;
+            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
+            calculator.appendTextToPane(rightShiftResult);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, rightShiftResult);
             calculator.writeHistory(buttonChoice, true);
             calculator.confirm(RSH + " performed");
         }
@@ -1145,14 +1200,34 @@ public class ProgrammerPanel extends JPanel
      */
     public String performRightShift()
     {
-        String positionedValue = calculator.getValues()[calculator.getValuesPosition()];
-        if (positionedValue.isEmpty()) positionedValue = calculator.getTextPaneValue();
+        String positionedValue = calculator.getAppropriateValue();
+        if (BASE_DECIMAL != calculator.getCalculatorBase()) positionedValue = calculator.convertValueToDecimal();
         String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue)/2);
-        if (calculator.isMaximumValue(valueShiftedRight)) {
-            return positionedValue;
-        } else {
-            return valueShiftedRight;
-        }
+        valueShiftedRight = switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> {
+                if (!calculator.isMaximumValue(valueShiftedRight)) {
+                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, valueShiftedRight);
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_OCTAL -> {
+                if (!calculator.isMaximumValue(valueShiftedRight)) {
+                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, valueShiftedRight);
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_DECIMAL -> valueShiftedRight;
+            case BASE_HEXADECIMAL -> {
+                if (!calculator.isMaximumValue(valueShiftedRight)) {
+                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, valueShiftedRight);
+                } else {
+                    yield positionedValue;
+                }
+            }
+        };
+        return valueShiftedRight;
     }
 
     /**
@@ -1294,7 +1369,10 @@ public class ProgrammerPanel extends JPanel
         {
             calculator.performNumberButtonAction(actionEvent);
             var allowedLengthMinusNewLines = getAllowedLengthsOfTextPane();
+            // TEST: removed 0 from allowed lengths
+            allowedLengthMinusNewLines.remove((Object)0);
             String textPaneText = calculator.getTextPaneValueForProgrammerPanel();
+            LOGGER.debug("textPaneText: {}", textPaneText);
             if (allowedLengthMinusNewLines.contains(textPaneText.length()))
             { calculator.confirm("Byte length "+allowedLengthMinusNewLines+" already reached"); }
             else
@@ -1307,7 +1385,7 @@ public class ProgrammerPanel extends JPanel
                     calculator.setPreviousBase(BASE_BINARY); // set previousBase since number is fully formed
                     calculator.getValues()[calculator.getValuesPosition()] = textPaneText;
                     calculator.getValues()[calculator.getValuesPosition()] = calculator.convertValueToDecimal();
-                    calculator.confirm("Byte length "+allowedLengthMinusNewLines+" reached with this input");
+                    LOGGER.debug("Byte length {} reached with this input", allowedLengthMinusNewLines);
                 }
                 calculator.confirm("Pressed " + buttonChoice);
             }

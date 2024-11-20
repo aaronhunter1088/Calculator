@@ -1185,11 +1185,11 @@ public class Calculator extends JFrame
         else
         {
             if (currentPanel instanceof BasicPanel
-                || (currentPanel instanceof ProgrammerPanel && BASE_DECIMAL == calculatorBase))
+                || (currentPanel instanceof ProgrammerPanel && BASE_DECIMAL == calculatorBase)) {
                 performNumberButtonInnerAction(buttonChoice);
-            else return;
+                confirm("Pressed " + buttonChoice);
+            }
         }
-        confirm("Pressed " + buttonChoice);
     }
 
     /**
@@ -2118,7 +2118,7 @@ public class Calculator extends JFrame
         }
         else
         {
-            String operator = getActiveBasicPanelOperator();
+            String operator = getActiveOperator();
             values[1] = BLANK.getValue();
             isFirstNumber = false;
             valuesPosition = 1;
@@ -2327,7 +2327,7 @@ public class Calculator extends JFrame
             }
         }
         LOGGER.info("Performing {} button actions", buttonChoice);
-        String operator = getActiveBasicPanelOperator();
+        String operator = getActiveOperator();
         determineAndPerformBasicCalculatorOperation();
         if (!Stream.of(AND, XOR, OR).map(Texts::getValue).toList().contains(operator)) {
             if (!operator.isEmpty() && !textPaneContainsBadText()) {
@@ -2552,7 +2552,7 @@ public class Calculator extends JFrame
      * operator was recorded as being activated
      * @return String the basic operation that was pushed
      */
-    public String getActiveBasicPanelOperator()
+    public String getActiveOperator()
     {
         String results = BLANK.getValue();
         if (isAdding) { results = ADDITION.getValue(); }
@@ -2601,6 +2601,7 @@ public class Calculator extends JFrame
      */
     public void writeHistoryWithMessage(String buttonChoice, boolean addButtonChoiceToEnd, String message)
     {
+        LOGGER.info("Writing history");
         if (null == message) {
             if (currentPanel instanceof BasicPanel basicPanel)
             {
@@ -2664,6 +2665,7 @@ public class Calculator extends JFrame
             }
         }
         else {
+            LOGGER.debug("message: {}", message);
             if (currentPanel instanceof BasicPanel basicPanel)
             {
                 if (addButtonChoiceToEnd)
@@ -2712,6 +2714,7 @@ public class Calculator extends JFrame
      */
     public void writeContinuedHistory(String continuedOperation, String operation, Object result, boolean addContinuedOperationToEnd)
     {
+        LOGGER.info("Writing continued history");
         if (currentPanel instanceof BasicPanel basicPanel)
         {
             if (addContinuedOperationToEnd)
@@ -3162,7 +3165,7 @@ public class Calculator extends JFrame
                         buttonDecimal.setEnabled(false);
                     }
                     if (determineIfAnyBasicOperatorWasPushed()) {
-                        basicPanel.appendTextToBasicPane(textPane.getText() + SPACE.getValue() + getActiveBasicPanelOperator());
+                        basicPanel.appendTextToBasicPane(textPane.getText() + SPACE.getValue() + getActiveOperator());
                     }
                 }
                 setCalculatorView(VIEW_BASIC);
@@ -3183,7 +3186,7 @@ public class Calculator extends JFrame
                         buttonDecimal.setEnabled(false);
                     }
                     if (determineIfAnyBasicOperatorWasPushed()) {
-                        programmerPanel.appendTextToProgrammerPane(values[0] + SPACE.getValue() + getActiveBasicPanelOperator());
+                        programmerPanel.appendTextToProgrammerPane(values[0] + SPACE.getValue() + getActiveOperator());
                     }
                 }
                 setCalculatorView(VIEW_PROGRAMMER);
@@ -3333,7 +3336,7 @@ public class Calculator extends JFrame
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_DECIMAL.getValue());
         String base10Number = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix()), 10);
         LOGGER.debug("convert from({}) to({}) = {}", previousBase.getValue(), BASE_DECIMAL.getValue(), base10Number);
-        LOGGER.info("The number {} in base 10 is {} in base 10", valueToConvert, base10Number);
+        LOGGER.info("The number {} in base {} is {} in base 10", valueToConvert, previousBase.getRadix(), base10Number);
         return base10Number;
     }
 
@@ -3365,7 +3368,16 @@ public class Calculator extends JFrame
         valueToConvert = valueToConvert.replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
         if (valueToConvert.isEmpty()) return BLANK.getValue();
         LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
-        String convertedNumber = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
+        String convertedNumber;
+        if (!isDecimal(valueToConvert))
+            convertedNumber = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
+        else {
+            var value = clearZeroesAndDecimalAtEnd(valueToConvert);
+            convertedNumber = Integer.toString(Integer.parseInt(value, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
+        }
+        if (isDecimal(valueToConvert)) {
+            LOGGER.warn("Lost precision converting decimal to integer. FIX");
+        }
         if (BASE_BINARY == toBase) {
             convertedNumber = adjustBinaryNumber(convertedNumber);
         }
@@ -3531,7 +3543,8 @@ public class Calculator extends JFrame
                         }
                     }
                     currentValue = currentValue.replace(SPACE.getValue(), BLANK.getValue());
-                    currentValue = adjustBinaryNumber(currentValue);
+                    // TODO: Determine where this was used, then move method to proper location
+                    //currentValue = adjustBinaryNumber(currentValue);
                 }
                 case BASE_OCTAL,
                      BASE_DECIMAL,
@@ -3557,7 +3570,7 @@ public class Calculator extends JFrame
                         : splitTextValue[2].replace(COMMA.getValue(), BLANK.getValue());
             } catch (ArrayIndexOutOfBoundsException ae2)
             {
-                logException(new CalculatorError("Attempted to retrieve value from text pane but it was null. Returning blank."));
+                logException(new CalculatorError("Attempted to retrieve value from text pane but got ArrayIndexOutOfBoundsException. Returning blank."));
                 return BLANK.getValue();
             }
         }
