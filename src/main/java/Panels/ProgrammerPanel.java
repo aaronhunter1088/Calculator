@@ -1117,7 +1117,27 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.warn("{} button needs to be configured", RSH);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + RSH); }
+        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
+        {
+            calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+            calculator.confirm("Cannot perform " + RSH);
+        }
+        else
+        {
+            String rightShiftResult = performRightShift();
+            String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ?
+                    calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
+            if (BASE_BINARY == calculator.getCalculatorBase()) {
+                calculator.appendTextToPane(convertedResult);
+            } else {
+                calculator.appendTextToPane(rightShiftResult);
+            }
+            calculator.getValues()[calculator.getValuesPosition()] = rightShiftResult;
+            calculator.writeHistory(buttonChoice, true);
+            calculator.confirm(RSH + " performed");
+        }
     }
     /**
      * The inner logic for RightShift
@@ -1125,7 +1145,14 @@ public class ProgrammerPanel extends JPanel
      */
     public String performRightShift()
     {
-        return "";
+        String positionedValue = calculator.getValues()[calculator.getValuesPosition()];
+        if (positionedValue.isEmpty()) positionedValue = calculator.getTextPaneValue();
+        String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue)/2);
+        if (calculator.isMaximumValue(valueShiftedRight)) {
+            return positionedValue;
+        } else {
+            return valueShiftedRight;
+        }
     }
 
     /**

@@ -4124,7 +4124,7 @@ public class Calculator extends JFrame
                     programmerPanel.appendTextToProgrammerPane(text);
                 }
                 case BASE_DECIMAL -> {
-                    String textWithCommas = addCommas(getValueWithoutAnyOperator(text));
+                    String textWithCommas = addCommas(getValueWithoutAnyOperator(clearZeroesAndDecimalAtEnd(text)));
                     if (valuesPosition == 0) textWithCommas = getValueWithOperator(textWithCommas);
                     if (isNumberNegative && !textWithCommas.startsWith(SUBTRACTION.getValue()))
                         textWithCommas = SUBTRACTION.getValue() + textWithCommas;
