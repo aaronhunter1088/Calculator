@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 
+import static Types.CalculatorByte.*;
 import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
 import static Types.ConverterType.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -1057,4 +1059,94 @@ public class CalculatorTests
                 "Expected memories to be in basicHistoryTextPane");
     }
 
+    @Test
+    @DisplayName("Convert Byte Binary 3 to Decimal 3")
+    public void testConvertFromBaseToBase()
+    {
+        String binary = "00000011";
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_BYTE);
+        calculator.appendTextToPane(binary);
+        calculator.getValues()[0] = THREE.getValue();
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        assertEquals(THREE.getValue(), converted, "Expected 3");
+    }
+
+    @Test
+    @DisplayName("Convert Word Binary 3 to Decimal 3")
+    public void test2ConvertFromBaseToBase() throws InterruptedException
+    {
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
+        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        sleep(3000);
+        String eight0s = ZERO.getValue().repeat(8);
+        String binary = eight0s+"00000011"; // still 3
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_WORD);
+        calculator.appendTextToPane(binary);
+        calculator.getValues()[0] = THREE.getValue();
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        assertEquals(THREE.getValue(), converted, "Expected 3");
+    }
+
+    @Test
+    @DisplayName("Convert DWord Binary 3 to Decimal 3")
+    public void test3ConvertFromBaseToBase() throws InterruptedException
+    {
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
+        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        sleep(3000);
+        String sixteen0s = ZERO.getValue().repeat(16);
+        String eight0s = ZERO.getValue().repeat(8);
+        String binary = sixteen0s+eight0s+"00000011"; // still 3
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_DWORD);
+        calculator.appendTextToPane(binary);
+        calculator.getValues()[0] = THREE.getValue();
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        assertEquals(THREE.getValue(), converted, "Expected 3");
+    }
+
+    @Test
+    @DisplayName("Convert QWord Binary 3 to Decimal 3")
+    public void test4ConvertFromBaseToBase() throws InterruptedException
+    {
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
+        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        sleep(3000);
+        String forty8zeroes = ZERO.getValue().repeat(48);
+        String eight0s = ZERO.getValue().repeat(8);
+        String binary = forty8zeroes+eight0s+"00000011"; // still 3
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_QWORD);
+        calculator.appendTextToPane(binary);
+        calculator.getValues()[0] = THREE.getValue();
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        assertEquals(THREE.getValue(), converted, "Expected 3");
+    }
+
+    /*
+    This test is failing because the binary number when converted,
+    comes out to 9223372036854775811. This number is too big to store
+    in any primitive type, and therefore, converting from binary to decimal
+    is failing. The method will need to be enhanced to account for this, and
+    return some other result.
+     */
+    @Test
+    @DisplayName("Convert QWord Binary # to Decimal #")
+    public void test5ConvertFromBaseToBase() throws InterruptedException
+    {
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
+        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        sleep(3000);
+        String forty7zeroes = ZERO.getValue().repeat(47);
+        String eight0s = ZERO.getValue().repeat(8);
+        String binary = ONE.getValue()+forty7zeroes+eight0s+"00000011"; // still 3
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_QWORD);
+        calculator.appendTextToPane(binary);
+        calculator.getValues()[0] = "9223372036854775811";
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        assertEquals("9223372036854775811", converted, "Expected big number");
+    }
 }

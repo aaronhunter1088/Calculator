@@ -50,10 +50,7 @@ public class ProgrammerPanel extends JPanel
             buttonE = new JButton(E.getValue()), buttonF = new JButton(F.getValue()),
             buttonBytes = new JButton(BYTE.getValue().toUpperCase()), buttonBases = new JButton(BASE.getValue()),
             buttonShift = new JButton(SHIFT.getValue());
-    private boolean
-            isOr = false, isModulus = false,
-            isXor = false, isNot = false,
-            isAnd = false, isShiftPressed = false;
+    private boolean isOr, isModulus, isXor, isNot, isAnd, isShiftPressed;
 
     /* Constructors */
     /**
@@ -298,16 +295,16 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Modulus button configured");
         buttonLeftParenthesis.setName(LEFT_PARENTHESIS.name());
         buttonLeftParenthesis.addActionListener(this::performLeftParenthesisButtonAction);
-        LOGGER.warn("Left Parenthesis button needs to be configured");
+        LOGGER.warn("Right Parenthesis button needs to be configured");
         buttonRightParenthesis.setName(RIGHT_PARENTHESIS.name());
         buttonRightParenthesis.addActionListener(this::performRightParenthesisButtonAction);
         LOGGER.warn("Right Parenthesis button needs to be configured");
         buttonRotateLeft.setName(ROL.name());
         buttonRotateLeft.addActionListener(this::performRotateLeftButtonAction);
-        LOGGER.warn("RoL button needs to be configured");
+        LOGGER.debug("RoL button configured");
         buttonRotateRight.setName(ROR.name());
         buttonRotateRight.addActionListener(this::performRotateRightButtonAction);
-        LOGGER.warn("RoR button needs to be configured");
+        LOGGER.debug("RoR button configured");
         buttonOr.setName(OR.name());
         buttonOr.addActionListener(this::performOrButtonAction);
         LOGGER.debug("Or button configured");
@@ -316,10 +313,10 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Xor button configured");
         buttonShiftLeft.setName(LSH.name());
         buttonShiftLeft.addActionListener(this::performLeftShiftButtonAction);
-        LOGGER.warn("Left Shift button needs to be configured");
+        LOGGER.debug("Left Shift button configured");
         buttonShiftRight.setName(RSH.name());
         buttonShiftRight.addActionListener(this::performRightShiftButtonAction);
-        LOGGER.warn("Right Shift button needs to be configured");
+        LOGGER.debug("Right Shift button configured");
         buttonNot.setName(NOT.name());
         buttonNot.addActionListener(this::performNotButtonAction);
         LOGGER.debug("Not button configured");
@@ -713,7 +710,11 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.warn("Left Parenthesis button needs to be configured");
+        LOGGER.warn("Left Parenthesis button method created. Logic needs to be configured");
+        appendTextToProgrammerPane(calculator.getTextPaneValue() + buttonChoice);
+        calculator.writeHistory(buttonChoice, false);
+        calculator.setIsPemdasActive(true);
+        calculator.confirm("Pressed " + buttonChoice);
     }
     /**
      * The inner logic for (
@@ -732,7 +733,10 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.warn("Right Parenthesis button needs to be configured");
+        LOGGER.warn("Right Parenthesis button method created. Logic needs to be configured");
+        appendTextToProgrammerPane(calculator.getTextPaneValue() + buttonChoice);
+        calculator.writeHistory(buttonChoice, false);
+        calculator.confirm("Pressed " + buttonChoice);
     }
     /**
      * The inner logic for )
@@ -751,7 +755,22 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.warn("{} button needs to be configured", ROL);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + ROL); }
+        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
+        {
+            calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+            calculator.confirm("Cannot perform " + ROL);
+        }
+        else
+        {
+            String rotateLeftResult = performRotateLeft();
+            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rotateLeftResult) : rotateLeftResult;
+            calculator.appendTextToPane(rotateLeftResult);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, rotateLeftResult);
+            calculator.writeHistory(buttonChoice, false);
+            calculator.confirm(LSH + " performed");
+        }
     }
     /**
      * The inner logic for ROL
@@ -786,7 +805,13 @@ public class ProgrammerPanel extends JPanel
                     yield positionedValue;
                 }
             }
-            case BASE_DECIMAL -> valueRotatedLeft;
+            case BASE_DECIMAL -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield rotatedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
             case BASE_HEXADECIMAL -> {
                 if (!calculator.isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
@@ -806,7 +831,22 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.warn("{} button needs to be configured", ROR);
+        if (calculator.textPaneContainsBadText())
+        { calculator.confirm("Cannot perform " + ROR); }
+        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
+        {
+            calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
+            calculator.confirm("Cannot perform " + ROR);
+        }
+        else
+        {
+            String rotateRightResult = performRotateRight();
+            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rotateRightResult) : rotateRightResult;
+            calculator.appendTextToPane(rotateRightResult);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, rotateRightResult);
+            calculator.writeHistory(buttonChoice, false);
+            calculator.confirm(ROR + " performed");
+        }
     }
     /**
      * The inner logic for ROR
@@ -814,37 +854,52 @@ public class ProgrammerPanel extends JPanel
      */
     public String performRotateRight()
     {
-        return "";
-    }
-
-    /**
-     * This method returns true or false depending
-     * on if an operator was pushed or not. The
-     * operators checked are isOr, isModulus,
-     * isXor, isNot, and isAnd
-     *
-     * @return true if any operator was pushed, false otherwise
-     */
-    public boolean determineIfAnyProgrammerOperatorWasPushed()
-    { return isOr || isModulus || isXor || isNot || isAnd; }
-
-    /**
-     * This method returns the String operator that was activated
-     * Results could be: 'OR', 'MOD', 'XOR', 'NOT' or 'AND'
-     * operator was recorded as being activated
-     * @return String the basic operation that was pushed
-     */
-    public String getActiveProgrammerPanelOperator()
-    {
-        String results = BLANK.getValue();
-        if (isOr) { results = OR.getValue(); }
-        else if (isModulus) { results = MODULUS.getValue(); }
-        else if (isXor) { results = XOR.getValue(); }
-        else if (isNot) { results = NOT.getValue(); }
-        else if (isAnd) { results = AND.getValue(); }
-        if (results.isEmpty()) { LOGGER.info("no programmer operator pushed"); }
-        else { LOGGER.info("operator: {}", results); }
-        return results;
+        String positionedValue = calculator.convertValueToBinary();
+        LOGGER.debug("before rotate right: {}", positionedValue); // 10000000
+        String valueRotatedRight = "";
+        String lastToFirst = "";
+        for (int bit=0; bit<positionedValue.length(); bit++) {
+            if (bit == positionedValue.length()-1) {
+                lastToFirst += positionedValue.charAt(bit);
+            } else {
+                valueRotatedRight += positionedValue.charAt(bit);
+            }
+        } // 0100 0000
+        LOGGER.debug("reversed: {}", lastToFirst +"," + valueRotatedRight);
+        valueRotatedRight = lastToFirst + valueRotatedRight;
+        String rotatedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueRotatedRight);
+        LOGGER.debug("rotated right: {} or {} converted", valueRotatedRight, rotatedAndConverted);
+        valueRotatedRight = switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield valueRotatedRight;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_OCTAL -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield rotatedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_DECIMAL -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield rotatedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_HEXADECIMAL -> {
+                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                    yield rotatedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+        };
+        return valueRotatedRight;
     }
 
     /**
@@ -1118,7 +1173,7 @@ public class ProgrammerPanel extends JPanel
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), leftShiftResult) : leftShiftResult;
             calculator.appendTextToPane(leftShiftResult);
             calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, leftShiftResult);
-            calculator.writeHistory(buttonChoice, true);
+            calculator.writeHistory(buttonChoice, false);
             calculator.confirm(LSH + " performed");
         }
     }
@@ -1190,7 +1245,7 @@ public class ProgrammerPanel extends JPanel
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
             calculator.appendTextToPane(rightShiftResult);
             calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, rightShiftResult);
-            calculator.writeHistory(buttonChoice, true);
+            calculator.writeHistory(buttonChoice, false);
             calculator.confirm(RSH + " performed");
         }
     }
@@ -1237,7 +1292,6 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        LOGGER.debug("isShiftPressed: {}", isShiftPressed);
         if (isShiftPressed) {
             isShiftPressed = false;
             buttonsPanel.remove(buttonRotateLeft);
@@ -1278,6 +1332,7 @@ public class ProgrammerPanel extends JPanel
         switch(calculator.getCalculatorByte())
         {
             case BYTE_BYTE -> {
+                //calculator.setPreviousByte();
                 calculator.setCalculatorByte(BYTE_WORD);
             }
             case BYTE_WORD -> {
@@ -1396,6 +1451,36 @@ public class ProgrammerPanel extends JPanel
         { calculator.performNumberButtonAction(actionEvent); }
         else /* (HEXADECIMAL == calculator.getCalculatorBase()) */
         { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
+    }
+
+    /**
+     * This method returns true or false depending
+     * on if an operator was pushed or not. The
+     * operators checked are isOr, isModulus,
+     * isXor, isNot, and isAnd
+     *
+     * @return true if any operator was pushed, false otherwise
+     */
+    public boolean determineIfAnyProgrammerOperatorWasPushed()
+    { return isOr || isModulus || isXor || isNot || isAnd; }
+
+    /**
+     * This method returns the String operator that was activated
+     * Results could be: 'OR', 'MOD', 'XOR', 'NOT' or 'AND'
+     * operator was recorded as being activated
+     * @return String the basic operation that was pushed
+     */
+    public String getActiveProgrammerPanelOperator()
+    {
+        String results = BLANK.getValue();
+        if (isOr) { results = OR.getValue(); }
+        else if (isModulus) { results = MODULUS.getValue(); }
+        else if (isXor) { results = XOR.getValue(); }
+        else if (isNot) { results = NOT.getValue(); }
+        else if (isAnd) { results = AND.getValue(); }
+        if (results.isEmpty()) { LOGGER.info("no programmer operator pushed"); }
+        else { LOGGER.info("operator: {}", results); }
+        return results;
     }
 
     /**
