@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+import java.util.prefs.Preferences;
 
 import static Types.CalculatorByte.*;
 import static Types.Texts.*;
@@ -47,6 +48,10 @@ public class Calculator extends JFrame
             mainFont = new Font(SEGOE_UI.getValue(), Font.PLAIN, 12), // all panels
             mainFontBold = new Font(SEGOE_UI.getValue(), Font.BOLD, 12), // Date panel
             verdanaFontBold = new Font(VERDANA.getValue(), Font.BOLD, 20); // Converter, Date panels
+    public static final Color
+            MOTIF_GRAY = new Color(174,178,195); // Motif look
+    // Preferences
+    private Preferences preferences;
     // Menubar
     private JMenuBar menuBar;
     // Menubar Items
@@ -158,6 +163,7 @@ public class Calculator extends JFrame
     public Calculator(CalculatorView calculatorView, CalculatorBase calculatorBase, ConverterType converterType, DateOperation dateOperation) throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
     {
         super(calculatorView.getValue());
+        setupPreferences();
         setCalculatorView(calculatorView);
         setCalculatorBase(calculatorBase);
         setCalculatorByte(determineByte());
@@ -165,12 +171,10 @@ public class Calculator extends JFrame
         setDateOperation(dateOperation);
         setCurrentPanel(determinePanel());
         setupMenuBar();
-        setupCalculatorImages();
-        //if (converterType == null && dateOperation == null) setCurrentPanel(determinePanel(calculatorView));
-        //else if (converterType != null) setCurrentPanel(determinePanel(calculatorView, null, converterType, null));
-        //else setCurrentPanel(determinePanel(calculatorView, null, null, dateOperation));
         setupPanel();
+        configureMenuBar();
         add(currentPanel);
+        setupCalculatorImages();
         LOGGER.debug("Panel added to calculator");
         setMinimumSize(currentPanel.getSize());
         setVisible(true);
@@ -186,18 +190,29 @@ public class Calculator extends JFrame
 
     /* Start of methods here */
     /**
-     * Sets the menu bar used across the entire Calculator
+     * Sets the menu options on the bar
      */
     public void setupMenuBar()
     {
-        LOGGER.debug("Configuring MenuBar...");
         setCalculatorMenuBar(new JMenuBar());
         setJMenuBar(menuBar);
-        setupLookMenu(new JMenu(LOOK.getValue()));
-        setupViewMenu(new JMenu(VIEW.getValue()));
-        setupEditMenu(new JMenu(EDIT.getValue()));
-        setupHelpMenu(new JMenu(HELP.getValue()));
-        LOGGER.debug("MenuBar configured");
+        setLookMenu(new JMenu(LOOK.getValue()));
+        setViewMenu(new JMenu(VIEW.getValue()));
+        setEditMenu(new JMenu(EDIT.getValue()));
+        setHelpMenu(new JMenu(HELP.getValue()));
+        LOGGER.debug("MenuBar set");
+    }
+
+    /**
+     * Configures the menu options on the bar
+     */
+    public void configureMenuBar()
+    {
+        setupLookMenu(getLookMenu());
+        setupViewMenu(getViewMenu());
+        setupEditMenu(getEditMenu());
+        setupHelpMenu(getHelpMenu());
+        LOGGER.debug("Menu Bar options configured");
     }
 
     /**
@@ -228,14 +243,22 @@ public class Calculator extends JFrame
                         basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
                     }
                 }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    if (null != programmerPanel.getHistoryTextPane())
+                    {
+                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
+                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
+                    }
+                }
                 else
                 {
                     LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
                 }
-                SwingUtilities.updateComponentTreeUI(this);
+                updateLookAndFeel();
                 resetLook();
                 setIsMetal(true);
-                super.pack();
+                preferences.put("look", METAL.getValue());
             }
             catch (ClassNotFoundException | InstantiationException |
                      IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -265,10 +288,10 @@ public class Calculator extends JFrame
                 {
                     LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
                 }
-                SwingUtilities.updateComponentTreeUI(this);
+                updateLookAndFeel();
                 resetLook();
                 setIsSystem(true);
-                pack();
+                preferences.put("look", SYSTEM.getValue());
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -298,9 +321,10 @@ public class Calculator extends JFrame
                 {
                     LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
                 }
-                SwingUtilities.updateComponentTreeUI(this);
+                updateLookAndFeel();
                 resetLook();
                 setIsWindows(true);
+                preferences.put("look", WINDOWS.getValue());
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -315,7 +339,7 @@ public class Calculator extends JFrame
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
                 if (null != textPane) // not used in all Calculators
                 {
-                    textPane.setBackground(new Color(174,178,195));
+                    textPane.setBackground(MOTIF_GRAY);
                     textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
                 }
                 if (currentPanel instanceof BasicPanel basicPanel)
@@ -326,14 +350,22 @@ public class Calculator extends JFrame
                         basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
                     }
                 }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    if (null != programmerPanel.getHistoryTextPane())
+                    {
+                        programmerPanel.getHistoryTextPane().setBackground(MOTIF_GRAY);
+                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
+                    }
+                }
                 else
                 {
                     LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
                 }
+                updateLookAndFeel();
                 resetLook();
                 setIsMotif(true);
-                SwingUtilities.updateComponentTreeUI(this);
-                pack();
+                preferences.put("look", MOTIF.getValue());
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -363,10 +395,10 @@ public class Calculator extends JFrame
                 {
                     LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
                 }
-                SwingUtilities.updateComponentTreeUI(this);
+                updateLookAndFeel();
                 resetLook();
                 setIsGtk(true);
-                super.pack();
+                preferences.put("look", GTK.getValue());
             }
             catch (ClassNotFoundException | InstantiationException |
                      IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -392,14 +424,22 @@ public class Calculator extends JFrame
                         basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
                     }
                 }
+                else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+                {
+                    if (null != programmerPanel.getHistoryTextPane())
+                    {
+                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
+                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
+                    }
+                }
                 else
                 {
                     LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
                 }
-                SwingUtilities.updateComponentTreeUI(this);
+                updateLookAndFeel();
                 resetLook();
                 setIsApple(true);
-                super.pack();
+                preferences.put("look", APPLE.getValue());
             }
             catch (ClassNotFoundException | InstantiationException |
                    IllegalAccessException | UnsupportedLookAndFeelException e)
@@ -414,6 +454,30 @@ public class Calculator extends JFrame
             lookMenu.add(system);
             lookMenu.add(gtk);
             lookMenu.remove(apple);
+        }
+        String look = preferences.get("look", "");
+        if (!look.isBlank()) {
+            try {
+                var attempt = Texts.valueOf(look.toUpperCase());
+                switch (attempt) {
+                    case METAL -> metal.doClick();
+                    case SYSTEM -> system.doClick();
+                    case WINDOWS -> windows.doClick();
+                    case MOTIF -> motif.doClick();
+                    case GTK -> gtk.doClick();
+                    case APPLE -> apple.doClick();
+                    default -> {
+                        LOGGER.warn("Look preference not found: '{}'", look);
+                        LOGGER.warn("Defaulting to Metal look");
+                        metal.doClick();
+                    }
+                }
+            }
+            catch (IllegalArgumentException e) {
+                LOGGER.error("Look preference not found: '{}'", look);
+                LOGGER.warn("Defaulting to Metal look");
+                metal.doClick();
+            }
         }
         lookMenu.setFont(mainFont);
         lookMenu.setName(LOOK.getValue());
@@ -512,16 +576,24 @@ public class Calculator extends JFrame
     private void setupHelpMenu(JMenu helpMenu)
     {
         LOGGER.debug("Configuring Help menu...");
-        JMenuItem viewHelpItem = createViewHelpJMenuItem();
+        //JMenuItem viewHelpItem = createViewHelpJMenuItem();
         JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
-        helpMenu.add(viewHelpItem, 0);
+        //helpMenu.add(viewHelpItem, 0);
         helpMenu.addSeparator();
         helpMenu.add(aboutCalculatorItem, 2);
         helpMenu.setFont(mainFont);
         helpMenu.setName(HELP.getValue());
         setHelpMenu(helpMenu);
         menuBar.add(helpMenu);
-        LOGGER.debug("Help menu configured");
+        LOGGER.debug("Help menu will finish inside chosen panel...");
+    }
+
+    private void updateLookAndFeel()
+    {
+        SwingUtilities.updateComponentTreeUI(this);
+        revalidate();
+        repaint();
+        pack();
     }
 
     /**
@@ -610,6 +682,31 @@ public class Calculator extends JFrame
     }
 
     /**
+     * Experimental preferences.
+     */
+    protected void setupPreferences()
+    {
+        preferences = Preferences.userNodeForPackage(Calculator.class);
+    }
+
+    private void loadPreferences() {
+        // Load preferences from storage
+        // used as a place holder. when you want to load a preference,
+        // copy and place this method here where you want to load that preference
+        String look = preferences.get("look", "");
+
+        // Use the loaded preferences to initialize your Swing components
+        // ...
+    }
+
+    private void savePreferences() {
+        // Save preferences to storage
+        // used as a place holder. when you want to save a preference,
+        // copy and place this method here where you want to save that preference
+        preferences.put("look", "");
+    }
+
+    /**
      * The main method that calls the setup method for a specific panel
      */
     protected void setupPanel()
@@ -634,11 +731,10 @@ public class Calculator extends JFrame
      */
     public JMenuItem createViewHelpJMenuItem()
     {
-        LOGGER.debug("Configuring View Help...");
         JMenuItem viewHelpItem = new JMenuItem(VIEW_HELP.getValue());
         viewHelpItem.setName(VIEW_HELP.getValue());
         viewHelpItem.setFont(mainFont);
-        LOGGER.debug("View Help configured");
+        LOGGER.debug("View Help configured. Panel adds text");
         return viewHelpItem;
     }
 
@@ -647,7 +743,6 @@ public class Calculator extends JFrame
      */
     public JMenuItem createAboutCalculatorJMenuItem()
     {
-        LOGGER.debug("Configuring About Calculator...");
         JMenuItem aboutCalculatorItem = new JMenuItem(ABOUT_CALCULATOR.getValue());
         aboutCalculatorItem.setName(ABOUT_CALCULATOR.getValue());
         aboutCalculatorItem.setFont(mainFont);
@@ -2987,13 +3082,14 @@ public class Calculator extends JFrame
      */
     public String addCommas(String valueToAdjust)
     {
+        var delimiter = getDelimiter();
         if (valueToAdjust.isBlank()) return valueToAdjust;
         if (!isDecimal(valueToAdjust) && valueToAdjust.length() <= 3) return valueToAdjust;
-        if (valueToAdjust.contains(COMMA.getValue())) return valueToAdjust;
+        if (valueToAdjust.contains(delimiter)) return valueToAdjust;
         var backupValue = valueToAdjust;
         //LOGGER.debug("Stripping any operators");
         //valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
-        LOGGER.debug("Adding commas to '{}'", valueToAdjust);
+        LOGGER.debug("Adding {} to '{}'", delimiter, valueToAdjust);
         String adjusted;
         String toTheLeft;
         String toTheRight = "";
@@ -3014,7 +3110,7 @@ public class Calculator extends JFrame
             }
         }
         valueToAdjust = valueToAdjust.replace(UNDERSCORE.getValue(), BLANK.getValue())
-                .replace(COMMA.getValue(), BLANK.getValue())
+                .replace(delimiter, BLANK.getValue())
                 .replace(DECIMAL.getValue(), BLANK.getValue())
                 .replace(SUBTRACTION.getValue(), BLANK.getValue());
         LOGGER.debug("adjusted1: {}", valueToAdjust);
@@ -3026,13 +3122,13 @@ public class Calculator extends JFrame
             if (reversed.length() <= 6)
             {
                 LOGGER.debug("Length is : {}", reversed.length());
-                reversed = new StringBuffer().append(reversed.substring(0,3)).append(getThousandsDelimiter()).append(reversed.substring(3,reversed.length()));
+                reversed = new StringBuffer().append(reversed.substring(0,3)).append(getDelimiter()).append(reversed.substring(3,reversed.length()));
                 adjusted = reversed.reverse().toString();
             }
             else
             {
                 LOGGER.debug("Length is : {}", reversed.length());
-                reversed = new StringBuffer().append(reversed.substring(0,3)).append(getThousandsDelimiter()).append(reversed.substring(3,6)).append(getThousandsDelimiter()).append(reversed.substring(6));
+                reversed = new StringBuffer().append(reversed.substring(0,3)).append(getDelimiter()).append(reversed.substring(3,6)).append(getDelimiter()).append(reversed.substring(6));
                 adjusted = reversed.reverse().toString();
             }
         }
@@ -3048,7 +3144,7 @@ public class Calculator extends JFrame
         }
         if (!isDotPressed() && isDecimal(backupValue))
         {
-            adjusted += DECIMAL.getValue() + toTheRight;
+            adjusted += getDecimalDelimiter() + toTheRight;
             buttonDecimal.setEnabled(false);
         }
         // if number was originally negative, add back negative symbol
@@ -3089,11 +3185,20 @@ public class Calculator extends JFrame
 
     /**
      * Returns the thousands delimiter
-     * @return the delimiter to use for thousands
+     * @return the delimiter to use for decimal value
      */
-    public String getThousandsDelimiter()
+    public String getDecimalDelimiter()
     {
         // TODO: Setup menu option to allow user to choose this value
+        return DECIMAL.getValue();
+    }
+
+    /**
+     * Returns the delimiter
+     * @return the delimiter to use for thousands
+     */
+    public String getDelimiter()
+    {
         return COMMA.getValue();
     }
 
@@ -3828,8 +3933,8 @@ public class Calculator extends JFrame
         JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setSize(new Dimension(400, 300));
         SwingUtilities.updateComponentTreeUI(this);
-        JOptionPane.showMessageDialog(this, scrollPane, "Viewing " + VIEW_BASIC.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        confirm("Viewing " + VIEW_BASIC.getValue() + " Calculator Help");
+        JOptionPane.showMessageDialog(this, scrollPane, "Viewing " + calculatorView.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        confirm("Viewing " + calculatorView.getValue() + " Calculator Help");
     }
 
     public void updateHelpMenu(String helpString)
@@ -3837,7 +3942,11 @@ public class Calculator extends JFrame
         //JMenu helpMenuItem = getHelpMenu();
         JMenuItem viewHelp = helpMenu.getItem(0);
         // remove any and all other view help actions
-        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        if (viewHelp == null) {
+            viewHelp = createViewHelpJMenuItem();
+        } else {
+            Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        }
         viewHelp.addActionListener(action -> showHelpPanel(helpString));
         helpMenu.add(viewHelp, 0);
         LOGGER.debug("Help menu configured for {}", calculatorView);
