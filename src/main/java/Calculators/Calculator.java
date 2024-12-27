@@ -689,7 +689,12 @@ public class Calculator extends JFrame
         preferences = Preferences.userNodeForPackage(Calculator.class);
     }
 
-    private void loadPreferences() {
+    /**
+     * Loads the preferences from storage
+     * Use get, getInt, getBoolean
+     */
+    private void loadPreferences()
+    {
         // Load preferences from storage
         // used as a place holder. when you want to load a preference,
         // copy and place this method here where you want to load that preference
@@ -699,7 +704,12 @@ public class Calculator extends JFrame
         // ...
     }
 
-    private void savePreferences() {
+    /**
+     * Saves the preferences to storage
+     * Use put, putInt, putBoolean
+     */
+    private void savePreferences()
+    {
         // Save preferences to storage
         // used as a place holder. when you want to save a preference,
         // copy and place this method here where you want to save that preference
