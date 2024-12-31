@@ -1,11 +1,6 @@
 package Types;
 
-/**
- * The different types of Calculators available
- * CalculatorByte.name() returns ENUM value
- * CalculatorByte.getValue() returns ENUM("thisValue")
- */
-public enum CalculatorByte
+public enum CalculatorByte implements CalculatorType
 {
     BYTE_BYTE("Byte"),
     BYTE_WORD("Word"),
@@ -16,5 +11,6 @@ public enum CalculatorByte
     CalculatorByte(String value) {
         this.value = value;
     }
-    public String getValue() { return this.value; }
+    public String getValue() { return value; }
+    public String getName() { return this.name(); }
 }

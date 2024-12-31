@@ -36,7 +36,7 @@ import static Types.CalculatorByte.*;
 import static Types.Texts.*;
 import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
-import static Types.ConverterType.*;
+import static Types.CalculatorConverterType.*;
 import static Types.DateOperation.*;
 
 public class Calculator extends JFrame
@@ -88,7 +88,7 @@ public class Calculator extends JFrame
     private CalculatorBase calculatorBase, previousBase;
     private CalculatorByte calculatorByte;
     private DateOperation dateOperation;
-    private ConverterType converterType;
+    private CalculatorConverterType converterType;
     private final BasicPanel basicPanel;
     private final ProgrammerPanel programmerPanel;
     private final ScientificPanel scientificPanel;
@@ -146,12 +146,12 @@ public class Calculator extends JFrame
     { this(VIEW_DATE, null, null, dateOperation); }
 
     /**
-     * This constructor is used to create a Converter Calculator starting with a specific ConverterType
+     * This constructor is used to create a Converter Calculator starting with a specific CalculatorConverterType
      *
      * @param converterType  the type of unit to start the Converter Calculator in
      * @throws CalculatorError when Calculator fails to build
      */
-    public Calculator(ConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    public Calculator(CalculatorConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     { this(VIEW_CONVERTER, null, converterType, null); }
 
     /**
@@ -162,7 +162,7 @@ public class Calculator extends JFrame
      * @param dateOperation  the type of DateOperation to start with
      * @throws CalculatorError when Calculator fails to build
      */
-    public Calculator(CalculatorView calculatorView, CalculatorBase calculatorBase, ConverterType converterType, DateOperation dateOperation) throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
+    public Calculator(CalculatorView calculatorView, CalculatorBase calculatorBase, CalculatorConverterType converterType, DateOperation dateOperation) throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
     {
         super(calculatorView.getValue());
         setupPreferences();
@@ -789,9 +789,7 @@ public class Calculator extends JFrame
                 }
             }
             case "ConverterPanel" -> {
-                if (!converterPanel.isInitialized()) {
-                    converterPanel.setupConverterPanel(this, converterType);
-                }
+                converterPanel.setupConverterPanel(this, converterType);
             }
         }
         LOGGER.debug("Panel set up");
@@ -4457,7 +4455,7 @@ public class Calculator extends JFrame
     public CalculatorBase getPreviousBase() { return previousBase; }
     public CalculatorByte getCalculatorByte() { return calculatorByte; }
     public DateOperation getDateOperation() { return dateOperation; }
-    public ConverterType getConverterType() { return converterType; }
+    public CalculatorConverterType getConverterType() { return converterType; }
     public JPanel getCurrentPanel() { return currentPanel; }
     public ImageIcon getCalculatorIcon() { return calculatorIcon; }
     public ImageIcon getMacIcon() { return macIcon; }
@@ -4506,7 +4504,7 @@ public class Calculator extends JFrame
     public void setPreviousBase(CalculatorBase previousBase) { this.previousBase = previousBase; }
     public void setCalculatorByte(CalculatorByte calculatorByte) { this.calculatorByte = calculatorByte; }
     public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; }
-    public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
+    public void setConverterType(CalculatorConverterType converterType) { this.converterType = converterType; }
     public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
     public void setCalculatorIcon(ImageIcon calculatorIcon) { this.calculatorIcon = calculatorIcon; }
     public void setMacIcon(ImageIcon macIcon) { this.macIcon = macIcon; }

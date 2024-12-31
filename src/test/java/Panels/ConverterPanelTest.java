@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import static Types.ConverterType.*;
+import static Types.CalculatorConverterType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 

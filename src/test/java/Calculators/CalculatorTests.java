@@ -24,7 +24,7 @@ import java.util.Arrays;
 import static Types.CalculatorByte.*;
 import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
-import static Types.ConverterType.*;
+import static Types.CalculatorConverterType.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
 import static java.lang.Thread.sleep;

@@ -96,7 +96,7 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * Clears button actions, sets the CalculatorView,
-     * CalculatorBase, ConverterType, and finally
+     * CalculatorBase, CalculatorConverterType, and finally
      * sets up the OLDProgrammerPanel and its components
      */
     private void setupProgrammerPanelComponents()

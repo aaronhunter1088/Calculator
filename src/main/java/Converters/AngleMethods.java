@@ -1,7 +1,7 @@
 package Converters;
 
 import Calculators.Calculator;
-import Types.ConverterUnits;
+import Types.CalculatorConverterUnits;
 import Panels.ConverterPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,16 +22,16 @@ public abstract class AngleMethods
     public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
-        ConverterUnits unit1 = (ConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
-        ConverterUnits unit2 = (ConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
+        CalculatorConverterUnits unit1 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
+        CalculatorConverterUnits unit2 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
         double number;
         if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
         {
-            if (unit1 == ConverterUnits.DEGREES) {
-                if (unit2 == ConverterUnits.DEGREES) {
+            if (unit1 == CalculatorConverterUnits.DEGREES) {
+                if (unit2 == CalculatorConverterUnits.DEGREES) {
                     ((ConverterPanel)calculator.getCurrentPanel()).getTextField2().setText(((ConverterPanel)calculator.getCurrentPanel()).getTextField1().getText());
                 } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
+                else if (unit2 == CalculatorConverterUnits.RADIANS) {
                     number = AngleMethods.convertingDegreesToRadians(calculator);
                     //number = convertingDegreesToRadians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -44,7 +44,7 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
+                else { // unit2 is CalculatorConverterUnits.GRADIANS
                     number = AngleMethods.convertingDegreesToGradians(calculator);
                     //number = convertingDegreesToGradians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -58,8 +58,8 @@ public abstract class AngleMethods
                     }
                 }
             }
-            else if (unit1 == ConverterUnits.RADIANS) {
-                if (unit2 == ConverterUnits.DEGREES) {
+            else if (unit1 == CalculatorConverterUnits.RADIANS) {
+                if (unit2 == CalculatorConverterUnits.DEGREES) {
                     number = AngleMethods.convertingRadiansToDegrees(calculator);
                     //number = convertingRadiansToDegrees();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -72,10 +72,10 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
+                else if (unit2 == CalculatorConverterUnits.RADIANS) {
                     ((ConverterPanel)calculator.getCurrentPanel()).getTextField2().setText(((ConverterPanel)calculator.getCurrentPanel()).getTextField1().getText());
                 } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
+                else { // unit2 is CalculatorConverterUnits.GRADIANS
                     number = AngleMethods.convertingRadiansToGradians(calculator);
                     //number = convertingRadiansToGradians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -89,8 +89,8 @@ public abstract class AngleMethods
                     }
                 }
             }
-            else { // unit1 is ConverterUnits.GRADIANS
-                if (unit2 == ConverterUnits.DEGREES) {
+            else { // unit1 is CalculatorConverterUnits.GRADIANS
+                if (unit2 == CalculatorConverterUnits.DEGREES) {
                     number = AngleMethods.convertingGradiansToDegrees(calculator);
                     //number = convertingGradiansToDegrees();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -103,7 +103,7 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 }
-                else if (unit2 == ConverterUnits.RADIANS) {
+                else if (unit2 == CalculatorConverterUnits.RADIANS) {
                     number = AngleMethods.convertingGradiansToRadians(calculator);
                     //number = convertingGradiansToRadians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -116,19 +116,19 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 }
-                else { // unit2 is ConverterUnits.GRADIANS
+                else { // unit2 is CalculatorConverterUnits.GRADIANS
                     ((ConverterPanel)calculator.getCurrentPanel()).getTextField2().setText(((ConverterPanel)calculator.getCurrentPanel()).getTextField1().getText());
                 }
             }
         }
         else // going from unit2 to unit1
         {
-            if (unit1 == ConverterUnits.DEGREES) {
-                if (unit2 == ConverterUnits.DEGREES) {
+            if (unit1 == CalculatorConverterUnits.DEGREES) {
+                if (unit2 == CalculatorConverterUnits.DEGREES) {
                     // best case scenario. get to copy one to the other
                     ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(((ConverterPanel)calculator.getCurrentPanel()).getTextField2().getText());
                 } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
+                else if (unit2 == CalculatorConverterUnits.RADIANS) {
                     number = AngleMethods.convertingRadiansToDegrees(calculator);
                     //number = convertingRadiansToDegrees();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -141,7 +141,7 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
+                else { // unit2 is CalculatorConverterUnits.GRADIANS
                     number = AngleMethods.convertingGradiansToDegrees(calculator);
                     //number = convertingGradiansToDegrees();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -155,8 +155,8 @@ public abstract class AngleMethods
                     }
                 }
             }
-            else if (unit1 == ConverterUnits.RADIANS) {
-                if (unit2 == ConverterUnits.DEGREES) {
+            else if (unit1 == CalculatorConverterUnits.RADIANS) {
+                if (unit2 == CalculatorConverterUnits.DEGREES) {
                     number = AngleMethods.convertingDegreesToRadians(calculator);
                     //number = convertingDegreesToRadians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -169,10 +169,10 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 } // WORKING!
-                else if (unit2 == ConverterUnits.RADIANS) {
+                else if (unit2 == CalculatorConverterUnits.RADIANS) {
                     ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(((ConverterPanel)calculator.getCurrentPanel()).getTextField2().getText());
                 } // WORKING!
-                else { // unit2 is ConverterUnits.GRADIANS
+                else { // unit2 is CalculatorConverterUnits.GRADIANS
                     number = AngleMethods.convertingRadiansToGradians(calculator);
                     //number = convertingRadiansToGradians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -186,8 +186,8 @@ public abstract class AngleMethods
                     }
                 }
             }
-            else { // unit1 is ConverterUnits.GRADIANS
-                if (unit2 == ConverterUnits.DEGREES) {
+            else { // unit1 is CalculatorConverterUnits.GRADIANS
+                if (unit2 == CalculatorConverterUnits.DEGREES) {
                     number = AngleMethods.convertingGradiansToDegrees(calculator);
                     //number = convertingGradiansToDegrees();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -200,7 +200,7 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 }
-                else if (unit2 == ConverterUnits.RADIANS) {
+                else if (unit2 == CalculatorConverterUnits.RADIANS) {
                     number = AngleMethods.convertingGradiansToRadians(calculator);
                     //number = convertingGradiansToRadians();
                     if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected() && String.valueOf(number).endsWith(".0")) {
@@ -213,7 +213,7 @@ public abstract class AngleMethods
                         ((ConverterPanel)calculator.getCurrentPanel()).getTextField1().setText(String.valueOf(number));
                     }
                 }
-                else { // unit2 is ConverterUnits.GRADIANS
+                else { // unit2 is CalculatorConverterUnits.GRADIANS
                     ((ConverterPanel)calculator.getCurrentPanel()).getTextField2().setText(((ConverterPanel)calculator.getCurrentPanel()).getTextField1().getText());
                 }
             }

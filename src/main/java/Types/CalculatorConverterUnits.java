@@ -1,12 +1,6 @@
 package Types;
 
-/**
- * The different units available when using the
- * ConverterPanel in a specific ConverterType
- * ConverterUnits.name() returns ENUM value
- * ConverterUnits.getValue() returns ENUM("thisValue")
- */
-public enum ConverterUnits
+public enum CalculatorConverterUnits
 {
     // Angle converter units
     DEGREES("Degrees"),
@@ -25,7 +19,7 @@ public enum ConverterUnits
     SQUARE_MILES("Square Miles");
 
     private final String name;
-    ConverterUnits(String name) {
+    CalculatorConverterUnits(String name) {
         this.name = name;
     }
     public String getValue() {

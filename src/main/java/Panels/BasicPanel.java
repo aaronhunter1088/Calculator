@@ -71,7 +71,7 @@ public class BasicPanel extends JPanel
 
     /**
      * Clears button actions, sets the CalculatorView,
-     * CalculatorBase, ConverterType, and finally
+     * CalculatorBase, CalculatorConverterType, and finally
      * sets up the basic panel and its components
      */
     private void setupBasicPanelComponents()

@@ -2,8 +2,8 @@ package Panels;
 
 import Calculators.Calculator;
 import Converters.AreaMethods;
-import Types.ConverterType;
-import Types.ConverterUnits;
+import Types.CalculatorConverterType;
+import Types.CalculatorConverterUnits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import Converters.AngleMethods;
@@ -15,9 +15,9 @@ import java.io.Serial;
 import java.util.Objects;
 
 import static Calculators.Calculator.*;
-import static Types.ConverterType.*;
+import static Types.CalculatorConverterType.*;
 import static Types.CalculatorView.*;
-import static Types.ConverterUnits.*;
+import static Types.CalculatorConverterUnits.*;
 
 public class ConverterPanel extends JPanel
 {
@@ -28,11 +28,12 @@ public class ConverterPanel extends JPanel
     private GridBagLayout converterLayout;
     private GridBagConstraints constraints;
     private JLabel converterTypeName;
-    private ConverterType converterType;
+    private CalculatorConverterType converterType;
     private static JTextField textField1, textField2;
-    private static JComboBox<ConverterUnits> unitOptions1, unitOptions2;
+    private static JComboBox<CalculatorConverterUnits> unitOptions1, unitOptions2;
     //private JTextArea bottomSpaceAboveNumbers;
     private static Calculator calculator;
+    private JPanel currentConverterPanel;
     private static boolean isTextField1Selected, isInitialized;
 
     /************* Constructors ******************/
@@ -46,7 +47,7 @@ public class ConverterPanel extends JPanel
     /**
      * A zero argument constructor for creating a ConverterPanel
      */
-    public ConverterPanel(ConverterType converterType)
+    public ConverterPanel(CalculatorConverterType converterType)
     {
         setName(VIEW_CONVERTER.getValue());
         if (converterType == null) setConverterType(ANGLE);
@@ -59,7 +60,7 @@ public class ConverterPanel extends JPanel
      * @param calculator the Calculator to use
      * @param converterType the converter type to use
      */
-    public ConverterPanel(Calculator calculator, ConverterType converterType)
+    public ConverterPanel(Calculator calculator, CalculatorConverterType converterType)
     { setupConverterPanel(calculator, converterType); }
 
     /************* Start of methods here ******************/
@@ -68,9 +69,9 @@ public class ConverterPanel extends JPanel
      * The main method used to define the ConverterPanel
      * and all of its components and their actions
      * @param calculator the Calculator object
-     * @param converterType the ConverterType to use
+     * @param converterType the CalculatorConverterType to use
      */
-    public void setupConverterPanel(Calculator calculator, ConverterType converterType)
+    public void setupConverterPanel(Calculator calculator, CalculatorConverterType converterType)
     {
         setCalculator(calculator);
         setConverterType(converterType);
@@ -89,10 +90,10 @@ public class ConverterPanel extends JPanel
 
     /**
      * Clears button actions, sets the CalculatorView,
-     * CalculatorBase, ConverterType, and finally
+     * CalculatorBase, CalculatorConverterType, and finally
      * sets up the ConverterPanel and its components
      */
-    private void setupConverterPanelComponents(ConverterType converterType)
+    public void setupConverterPanelComponents(CalculatorConverterType converterType)
     {
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(converterType);
@@ -118,11 +119,15 @@ public class ConverterPanel extends JPanel
     /**
      * Specifies where each button is placed on the ConverterPanel
      */
-    private void addComponentsToPanel()
+    public void addComponentsToPanel()
     {
-//        constraints.fill = GridBagConstraints.BOTH;
-//        constraints.anchor = GridBagConstraints.CENTER;
-        JPanel converterPanel = new JPanel(new GridBagLayout());
+        LOGGER.info("Add components to converter panel");
+        // Logic is similar to updatingJPanel() in Calculator. Remove previous panel if present. Was overlapping due to recent changes
+        if (currentConverterPanel == null) currentConverterPanel = new JPanel(new GridBagLayout());
+        else {
+            remove(currentConverterPanel);
+            currentConverterPanel = new JPanel(new GridBagLayout());
+        }
 
         JPanel entryPanel = new JPanel(new GridBagLayout());
         addComponent(entryPanel, converterTypeName, 0,0,1,1, 1.0,1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
@@ -131,7 +136,7 @@ public class ConverterPanel extends JPanel
         addComponent(entryPanel, textField2, 3, 0, 0, 1,1.0,1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         addComponent(entryPanel, unitOptions2, 4, 0, 0,1, 1.0,1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
 
-        addComponent(converterPanel, entryPanel, 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        addComponent(currentConverterPanel, entryPanel, 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
         //
         //setNumbersPanel(new JPanel());
         JPanel numbersPanel = new JPanel(new GridBagLayout());
@@ -154,8 +159,8 @@ public class ConverterPanel extends JPanel
         addComponent(numbersPanel, calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         // numbers are added on top of a single panel
         //constraints.anchor = GridBagConstraints.PAGE_START;
-        addComponent(converterPanel, numbersPanel, 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.PAGE_START);
-        addComponent(converterPanel);
+        addComponent(currentConverterPanel, numbersPanel, 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.PAGE_START);
+        addComponent(currentConverterPanel);
         LOGGER.info("Finished adding components to panel");
     }
 
@@ -352,7 +357,7 @@ public class ConverterPanel extends JPanel
         LOGGER.info("Pressed " + buttonValue);
         if (isTextField1Selected)
         {
-            switch ((ConverterUnits) Objects.requireNonNull(unitOptions1.getSelectedItem())) {
+            switch ((CalculatorConverterUnits) Objects.requireNonNull(unitOptions1.getSelectedItem())) {
                 case DEGREES :
                 case RADIANS :
                 case GRADIANS:
@@ -383,7 +388,7 @@ public class ConverterPanel extends JPanel
         }
         else
         {
-            switch ((ConverterUnits) Objects.requireNonNull(unitOptions2.getSelectedItem())) {
+            switch ((CalculatorConverterUnits) Objects.requireNonNull(unitOptions2.getSelectedItem())) {
                 case DEGREES :
                 case RADIANS :
                 case GRADIANS:
@@ -537,14 +542,14 @@ public class ConverterPanel extends JPanel
      * from another panel to the ConverterPanel
      * @param calculator the Calculator object
      */
-    public void performConverterCalculatorTypeSwitchOperations(Calculator calculator, ConverterType converterType)
+    public void performConverterCalculatorTypeSwitchOperations(Calculator calculator, CalculatorConverterType converterType)
     { setupConverterPanel(calculator, converterType); }
 
     /**
      * The main method which sets the help text
      * to be used in the help menu for the ConverterPanel
      */
-    private void setupHelpMenu(ConverterType converterType)
+    public void setupHelpMenu(CalculatorConverterType converterType)
     {
         String helpString = null;
         switch (converterType)
@@ -690,7 +695,7 @@ public class ConverterPanel extends JPanel
     /**
      * The main method used to define the AngleConverter
      */
-    private void setupAngleConverter()
+    public void setupAngleConverter()
     {
         LOGGER.info("Starting ANGLE specific setup");
         setupConverter(ANGLE.getValue());
@@ -708,7 +713,7 @@ public class ConverterPanel extends JPanel
     /**
      * The main method used to define the AreaConverter
      */
-    private void setupAreaConverter()
+    public void setupAreaConverter()
     {
         LOGGER.info("Starting AREA specific setup");
         setupConverter(AREA.getValue());
@@ -724,7 +729,7 @@ public class ConverterPanel extends JPanel
     }
 
     /**
-     * Builds the converter based on the ConverterType
+     * Builds the converter based on the CalculatorConverterType
      * @param nameOfConverter
      */
     private void setupConverter(String nameOfConverter)
@@ -823,11 +828,11 @@ public class ConverterPanel extends JPanel
     public GridBagLayout getConverterLayout() { return converterLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
     public JLabel getConverterTypeName() { return converterTypeName; }
-    public ConverterType getConverterType() { return converterType; }
+    public CalculatorConverterType getConverterType() { return converterType; }
     public JTextField getTextField1() { return textField1; }
     public JTextField getTextField2() { return textField2; }
-    public JComboBox<ConverterUnits> getUnitOptions1() { return unitOptions1; }
-    public JComboBox<ConverterUnits> getUnitOptions2() { return unitOptions2; }
+    public JComboBox<CalculatorConverterUnits> getUnitOptions1() { return unitOptions1; }
+    public JComboBox<CalculatorConverterUnits> getUnitOptions2() { return unitOptions2; }
     //public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
     public Calculator getCalculator() { return calculator; }
     //public JPanel getNumbersPanel() { return numbersPanel; }
@@ -841,11 +846,11 @@ public class ConverterPanel extends JPanel
     }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setConverterTypeName(JLabel converterTypeName) { this.converterTypeName = converterTypeName; }
-    public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
+    public void setConverterType(CalculatorConverterType converterType) { this.converterType = converterType; }
     public void setTextField1(JTextField textField1) { this.textField1 = textField1; }
     public void setTextField2(JTextField textField2) { this.textField2 = textField2; }
-    public void setUnitOptions1(JComboBox<ConverterUnits> unitOptions1) { this.unitOptions1 = unitOptions1; }
-    public void setUnitOptions2(JComboBox<ConverterUnits> unitOptions2) { this.unitOptions2 = unitOptions2; }
+    public void setUnitOptions1(JComboBox<CalculatorConverterUnits> unitOptions1) { this.unitOptions1 = unitOptions1; }
+    public void setUnitOptions2(JComboBox<CalculatorConverterUnits> unitOptions2) { this.unitOptions2 = unitOptions2; }
     //public void setBottomSpaceAboveNumbers(JTextArea bottomSpaceAboveNumbers) { this.bottomSpaceAboveNumbers = bottomSpaceAboveNumbers; }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     //public void setNumbersPanel(JPanel numbersPanel) { this.numbersPanel = numbersPanel; }

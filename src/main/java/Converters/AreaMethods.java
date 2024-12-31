@@ -2,7 +2,7 @@ package Converters;
 
 import Calculators.Calculator;
 import Panels.ConverterPanel;
-import Types.ConverterUnits;
+import Types.CalculatorConverterUnits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +19,8 @@ public abstract class AreaMethods
     public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
-        ConverterUnits unit1 = (ConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
-        ConverterUnits unit2 = (ConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
+        CalculatorConverterUnits unit1 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
+        CalculatorConverterUnits unit2 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
         LOGGER.info("unit1: " + unit1);
         LOGGER.info("unit2: " + unit2);
         double number;

@@ -1,11 +1,6 @@
 package Types;
 
-/**
- * The CalculatorBases to use primarily in OLDProgrammerPanel
- * CalculatorBase.name() returns ENUM value
- * CalculatorBase.getValue() returns ENUM("thisValue")
- */
-public enum CalculatorBase
+public enum CalculatorBase implements CalculatorType
 {
     BASE_BINARY("Binary", 2),
     BASE_OCTAL("Octal", 8),
@@ -15,10 +10,7 @@ public enum CalculatorBase
     private final String name;
     private final int radix;
     CalculatorBase(String name, int radix) { this.name = name; this.radix = radix; }
-    public String getValue() {
-        return this.name;
-    }
-    public int getRadix() {
-        return this.radix;
-    }
+    public String getValue() { return name; }
+    public String getName() { return this.name(); }
+    public int getRadix() { return this.radix; }
 }

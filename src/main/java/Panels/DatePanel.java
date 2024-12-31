@@ -134,7 +134,7 @@ public class DatePanel extends JPanel
 
     /**
      * Sets the CalculatorView, CalculatorBase,
-     * ConverterType, and finally
+     * CalculatorConverterType, and finally
      * sets up the DatePanel and its components
      */
     private void setupDatePanelComponents(DateOperation dateOperation)
