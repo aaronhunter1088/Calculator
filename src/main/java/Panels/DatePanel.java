@@ -44,6 +44,7 @@ public class DatePanel extends JPanel
             datePanel1, datePanel2, commonToBothDateCalculators;
     private JRadioButton addRadioButton, subtractRadioButton;
     private JTextField yearsTextField, monthsTextField, weeksTextField, daysTextField;
+    private boolean isInitialized;
 
     /* Constructors */
     /**
@@ -79,7 +80,7 @@ public class DatePanel extends JPanel
         setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
         this.calculator.setCalculatorView(VIEW_DATE);
-        this.calculator.setDateOperation(dateOperation);
+        this.calculator.setDateOperation(dateOperation != null ? dateOperation : DIFFERENCE_BETWEEN_DATES);
         setupHelpMenu();
         setupDatePanelComponents(dateOperation);
         createCommonPanel();
@@ -96,6 +97,7 @@ public class DatePanel extends JPanel
             setSize(datePanel2.getSize());
         }
         setName(VIEW_DATE.getValue());
+        isInitialized = true;
         LOGGER.info("Finished constructing Date panel");
     }
 
@@ -107,7 +109,7 @@ public class DatePanel extends JPanel
     private void setupHelpMenu()
     {
         LOGGER.info("Setting up the help menu for date panel");
-        String helpString = "How to use the %s Calculator".formatted(calculator.getDateOperation());
+        String helpString = "How to use the %s Calculator".formatted(this.calculator.getDateOperation());
         switch (calculator.getDateOperation())
         {
             case DIFFERENCE_BETWEEN_DATES -> {
@@ -998,6 +1000,7 @@ public class DatePanel extends JPanel
     public JTextField getMonthsTextField() { return monthsTextField; }
     public JTextField getWeeksTextField() { return weeksTextField; }
     public JTextField getDaysTextField() { return daysTextField; }
+    public boolean isInitialized() { return isInitialized; }
 
     /* Setters */
     public void setLayout(GridBagLayout dateLayout) {

@@ -50,7 +50,7 @@ public class ProgrammerPanel extends JPanel
             buttonE = new JButton(E.getValue()), buttonF = new JButton(F.getValue()),
             buttonBytes = new JButton(BYTE.getValue().toUpperCase()), buttonBases = new JButton(BASE.getValue()),
             buttonShift = new JButton(SHIFT.getValue());
-    private boolean isOr, isModulus, isXor, isNot, isAnd, isShiftPressed;
+    private boolean isOr, isModulus, isXor, isNot, isAnd, isShiftPressed, isInitialized;
 
     /* Constructors */
     /**
@@ -90,6 +90,7 @@ public class ProgrammerPanel extends JPanel
         setupProgrammerPanelComponents();
         addComponentsToPanel();
         setName(VIEW_PROGRAMMER.getValue());
+        isInitialized = true;
         LOGGER.info("Finished setting up {} panel", VIEW_PROGRAMMER.getValue());
     }
 
@@ -101,8 +102,7 @@ public class ProgrammerPanel extends JPanel
     private void setupProgrammerPanelComponents()
     {
         List<JButton> allButtons = Stream.of(
-                        calculator.getAllBasicPanelButtons(),
-                        calculator.getAllBasicPanelOperatorButtons(),
+                        calculator.getBasicPanelOperators(),
                         calculator.getAllNumberButtons(),
                         calculator.getAllMemoryPanelButtons())
                 .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
@@ -151,7 +151,7 @@ public class ProgrammerPanel extends JPanel
     /**
      * Specifies where each button is placed on the BasicPanel
      */
-    private void addComponentsToPanel()
+    public void addComponentsToPanel()
     {
         addComponent(programmerPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
 
@@ -280,7 +280,7 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Configuring Programmer Panel buttons...");
         List<JButton> allButtons =
                 Stream.of(getAllProgrammerOperatorButtons(),
-                                calculator.getAllBasicPanelButtons(),
+                                calculator.getBasicPanelOperators(),
                                 getAllHexadecimalButtons())
                         .flatMap(Collection::stream) // Flatten into a stream of JButton objects
                         .toList();
@@ -335,8 +335,8 @@ public class ProgrammerPanel extends JPanel
             hexadecimalNumberButton.setBorder(new LineBorder(Color.BLACK));
             hexadecimalNumberButton.addActionListener(this::performNumberButtonActions);
         });
-        updateButtonsBasedOnBase();
         LOGGER.debug("Hexadecimal buttons configured");
+        enableOrDisableNumberButtonsBasedOnBase();
         buttonShift.setName(SHIFT.name());
         buttonShift.addActionListener(this::performShiftButtonAction);
         LOGGER.debug("Shift button configured");
@@ -354,7 +354,7 @@ public class ProgrammerPanel extends JPanel
      * Enables the appropriate buttons based on
      * the current CalculatorBase
      */
-    public void updateButtonsBasedOnBase()
+    public void enableOrDisableNumberButtonsBasedOnBase()
     {
         switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
@@ -385,6 +385,7 @@ public class ProgrammerPanel extends JPanel
                 setButtonsAToF(true);
             }
         }
+        LOGGER.debug("Buttons enabled or disabled based on base {}", calculator.getCalculatorBase());
     }
 
     /**
@@ -1405,7 +1406,7 @@ public class ProgrammerPanel extends JPanel
                 }
             }
         }
-        updateButtonsBasedOnBase();
+        enableOrDisableNumberButtonsBasedOnBase();
         //appendToPane(addBaseRepresentation()); // must call to update textPane base value
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Updated bases to " + this.calculator.getCalculatorBase().getValue());
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
@@ -1562,6 +1563,7 @@ public class ProgrammerPanel extends JPanel
     public boolean isNot() { return isNot; }
     public boolean isAnd() { return isAnd; }
     public boolean isShiftPressed() { return isShiftPressed; }
+    public boolean isInitialized() { return isInitialized; }
 
     /* Setters */
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }

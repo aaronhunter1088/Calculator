@@ -27,6 +27,7 @@ public class BasicPanel extends JPanel
                          buttonsPanel = new JPanel(new GridBagLayout()),
                          historyPanel = new JPanel(new GridBagLayout());
     private JTextPane basicHistoryTextPane;
+    private boolean isInitialized;
 
     /* Constructors */
     /**
@@ -64,7 +65,7 @@ public class BasicPanel extends JPanel
         setupBasicPanelComponents();
         addComponentsToPanel();
         setName(VIEW_BASIC.getValue());
-        //SwingUtilities.updateComponentTreeUI(this);
+        isInitialized = true;
         LOGGER.info("Finished setting up {} panel", VIEW_BASIC.getValue());
     }
 
@@ -76,12 +77,11 @@ public class BasicPanel extends JPanel
     private void setupBasicPanelComponents()
     {
         List<JButton> allButtons = Stream.of(
-                        calculator.getAllBasicPanelButtons(),
-                        calculator.getAllBasicPanelOperatorButtons(),
+                        calculator.getBasicPanelOperators(),
                         calculator.getAllNumberButtons(),
                         calculator.getAllMemoryPanelButtons())
                 .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
-                .toList();
+                .toList(); // Return as a single list
         allButtons
             .forEach(button -> Stream.of(button.getActionListeners())
                 .forEach(al -> {
@@ -249,7 +249,7 @@ public class BasicPanel extends JPanel
     /**
      * Specifies where each button is placed on the BasicPanel
      */
-    private void addComponentsToPanel()
+    public void addComponentsToPanel()
     {
         addComponent(basicPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
 
@@ -366,7 +366,7 @@ public class BasicPanel extends JPanel
         LOGGER.info("Action for {} started", buttonChoice);
         if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
         {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
+            LOGGER.debug("Closing History");
             calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
             basicPanel.remove(historyPanel);
             addComponent(basicPanel, buttonsPanel, 2, 0);
@@ -374,9 +374,12 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            LOGGER.debug("{}", actionEvent.getActionCommand());
+            LOGGER.debug("Opening history");
             calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
             basicPanel.remove(buttonsPanel);
+            var currentHistory = basicHistoryTextPane.getText();
+            //setupBasicHistoryZone();
+            basicHistoryTextPane.setText(currentHistory);
             addComponent(basicPanel, historyPanel, 2, 0);
             SwingUtilities.updateComponentTreeUI(this);
         }
@@ -496,13 +499,14 @@ public class BasicPanel extends JPanel
     }
 
     /* Getters */
+    public JPanel getHistoryPanel() { return historyPanel;}
     public JTextPane getHistoryTextPane() { return basicHistoryTextPane; }
+    public boolean isInitialized() { return isInitialized; }
 
     /* Setters */
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
-//        this.basicLayout = panelLayout;
     }
     public void setBasicHistoryTextPane(JTextPane basicHistoryTextPane) { this.basicHistoryTextPane = basicHistoryTextPane; }
 

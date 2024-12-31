@@ -346,12 +346,12 @@ public class ProgrammerPanelTest
 
     @Test
     @DisplayName("Test And Button continued operation")
-    public void testPerformAddContinuedOperation()
+    public void testPerformAndContinuedOperation()
     {
         when(actionEvent.getActionCommand())
-                .thenReturn(FIVE.getValue()).thenReturn(FIVE.getValue())
+                .thenReturn(FIVE.getValue()).thenReturn(FIVE.getValue()) // leave,
                 .thenReturn(AND.getValue())
-                .thenReturn(SIX.getValue()).thenReturn(SIX.getValue())
+                .thenReturn(SIX.getValue()).thenReturn(SIX.getValue()) // leave
                 .thenReturn(AND.getValue());
         programmerPanel.performNumberButtonActions(actionEvent);
         assertEquals(FIVE.getValue(), calculator.getTextPaneValue(), "Expected textPane to be 5");

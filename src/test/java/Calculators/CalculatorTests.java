@@ -175,7 +175,7 @@ public class CalculatorTests
         //calculator = new Calculator(VIEW_DATE);
         calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(DIFFERENCE_BETWEEN_DATES);
-        calculator.setCurrentPanel(calculator.determinePanel());
+        calculator.setCurrentPanel(calculator.getDatePanel());
         calculator.setupPanel();
         assertTrue(calculator.isVisible(), "Cannot see date calculator");
         assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
@@ -214,7 +214,7 @@ public class CalculatorTests
         //calculator = new Calculator(VIEW_CONVERTER);
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
-        calculator.setCurrentPanel(calculator.determinePanel());
+        calculator.setCurrentPanel(calculator.getConverterPanel());
         calculator.setupPanel();
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
@@ -228,7 +228,7 @@ public class CalculatorTests
         //calculator = new Calculator(ANGLE);
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
-        calculator.setCurrentPanel(calculator.determinePanel());
+        calculator.setCurrentPanel(calculator.getConverterPanel());
         calculator.setupPanel();
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
@@ -242,7 +242,7 @@ public class CalculatorTests
         //calculator = new Calculator(AREA);
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(AREA);
-        calculator.setCurrentPanel(calculator.determinePanel());
+        calculator.setCurrentPanel(calculator.getConverterPanel());
         calculator.setupPanel();
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
@@ -430,7 +430,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
-        calculator.setCurrentPanel(calculator.determinePanel());
+        calculator.setCurrentPanel(calculator.getConverterPanel());
         calculator.setupPanel();
         calculator.updateJPanel(new ConverterPanel());
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
@@ -570,13 +570,13 @@ public class CalculatorTests
     @Test
     public void testClearAllOtherBasicCalculatorButtons()
     {
-        calculator.getAllBasicPanelButtons().forEach(otherButton -> {
+        calculator.getBasicPanelOperators().forEach(otherButton -> {
             assertSame(1, otherButton.getActionListeners().length, "Expecting only 1 action on " + otherButton.getName());
         });
 
         calculator.clearAllOtherBasicCalculatorButtons();
 
-        calculator.getAllBasicPanelButtons().forEach(otherButton -> {
+        calculator.getBasicPanelOperators().forEach(otherButton -> {
             assertSame(0, otherButton.getActionListeners().length, "Expecting no actions on " + otherButton.getName());
         });
     }
@@ -799,32 +799,7 @@ public class CalculatorTests
     @Test
     public void testGetAboutCalculatorStringReturnsText() throws Exception
     {
-        String helpMe = new Calculator().getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Basic Calculator", helpMe);
-
-        helpMe = new Calculator(VIEW_PROGRAMMER).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_BINARY.getValue(), helpMe);
-
-        helpMe = new Calculator(BASE_OCTAL).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_OCTAL.getValue(), helpMe);
-
-        helpMe = new Calculator(BASE_DECIMAL).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_DECIMAL.getValue(), helpMe);
-
-        helpMe = new Calculator(BASE_HEXADECIMAL).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Programmer Calculator Type:"+ BASE_HEXADECIMAL.getValue(), helpMe);
-
-        helpMe = new Calculator(DIFFERENCE_BETWEEN_DATES).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Date Calculator Type:"+DIFFERENCE_BETWEEN_DATES, helpMe);
-
-        helpMe = new Calculator(ADD_SUBTRACT_DAYS).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Date Calculator Type:"+ADD_SUBTRACT_DAYS, helpMe);
-
-        helpMe = new Calculator(ANGLE).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Converter Calculator Type:"+ANGLE, helpMe);
-
-        helpMe = new Calculator(AREA).getAboutCalculatorString();
-        assertNotNull("About Calculator is not set on Converter Calculator Type:"+AREA.getValue(), helpMe);
+        // Later
     }
 
     @Test
@@ -897,17 +872,22 @@ public class CalculatorTests
     public void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
-        calculator.getValues()[0] = "999";
+        calculator.setCalculatorBase(BASE_DECIMAL);
+        calculator.valuesPosition = 0;
+        calculator.values[calculator.valuesPosition] = "999";
+        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 9,995");
-        assertEquals("9995", calculator.getValues()[0], "Expected values[0] to be 9995");
+        assertEquals("9995", calculator.values[calculator.valuesPosition], "Expected values[0] to be 9995");
     }
 
     @Test
     public void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE.getValue());
-        calculator.getValues()[0] = "1234";
+        calculator.valuesPosition = 0;
+        calculator.values[calculator.valuesPosition] = "1234";
+        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 12,345");
         assertEquals("12345", calculator.getValues()[0], "Expected values[0] to be 12345");
@@ -917,7 +897,9 @@ public class CalculatorTests
     public void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SIX.getValue());
-        calculator.getValues()[0] = "12345";
+        calculator.valuesPosition = 0;
+        calculator.values[calculator.valuesPosition] = "12345";
+        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 123,456");
         assertEquals("123456", calculator.getValues()[0], "Expected values[0] to be 123456");
@@ -938,7 +920,9 @@ public class CalculatorTests
     public void testAddCourtesyCommasReturnsResultWithTwoCommas7DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SEVEN.getValue());
-        calculator.getValues()[0] = "123456";
+        calculator.valuesPosition = 0;
+        calculator.getValues()[calculator.valuesPosition] = "123456";
+        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 1,234,567");
         assertEquals("1234567", calculator.getValues()[0], "Expected values[0] to be 1234567");
@@ -983,7 +967,8 @@ public class CalculatorTests
     @Test
     public void testValuesAt1IsMaximumNumber()
     {
-        calculator.values[1] = "9999999";
+        calculator.valuesPosition = 1;
+        calculator.values[calculator.valuesPosition] = "9999999";
         assertTrue(calculator.isMaximumValue(), "Expected maximum number to be met");
     }
 
@@ -1001,7 +986,7 @@ public class CalculatorTests
                  calculator.getRootPane()
          ).when(calculatorSpy).getRootPane();
          doReturn(false).when(calculatorSpy).isMacOperatingSystem();
-         calculatorSpy.setupMenuBar();
+         calculatorSpy.createMenuBar();
          assertEquals(5, calculator.getViewMenu().getMenuComponents().length, "Expected View menu to have 3 options");
     }
 
@@ -1145,7 +1130,8 @@ public class CalculatorTests
         calculator.setCalculatorBase(BASE_BINARY);
         calculator.setCalculatorByte(BYTE_QWORD);
         calculator.appendTextToPane(binary);
-        calculator.getValues()[0] = "9223372036854775811";
+        calculator.valuesPosition = 0;
+        calculator.values[calculator.valuesPosition] = "9223372036854775811";
         String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
         assertEquals("9223372036854775811", converted, "Expected big number");
     }

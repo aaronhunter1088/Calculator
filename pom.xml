@@ -13,6 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<outputDirectory>${basedir}/dist/version4</outputDirectory>
 		<finalName>${project.artifactId}-${project.version}</finalName>
+		<project.version>${project.version}</project.version>
 		<maven.compiler.source>18</maven.compiler.source>
 		<maven.compiler.target>18</maven.compiler.target>
 

@@ -2152,6 +2152,7 @@ public class BasicPanelTest
         calculator.getValues()[0] = "1";
         calculator.setIsDividing(true);
         calculator.getValues()[1] = "0";
+        calculator.getTextPane().setText(calculator.getValues()[1]);
         calculator.performDivideButtonAction(actionEvent);
         assertEquals(INFINITY.getValue(), calculator.getTextPaneValue(), "Expected textPane to show error");
         assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");

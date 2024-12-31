@@ -33,7 +33,7 @@ public class ConverterPanel extends JPanel
     private static JComboBox<ConverterUnits> unitOptions1, unitOptions2;
     //private JTextArea bottomSpaceAboveNumbers;
     private static Calculator calculator;
-    private static boolean isTextField1Selected;
+    private static boolean isTextField1Selected, isInitialized;
 
     /************* Constructors ******************/
 
@@ -83,6 +83,7 @@ public class ConverterPanel extends JPanel
         addComponentsToPanel();
         SwingUtilities.updateComponentTreeUI(this);
         setName(VIEW_CONVERTER.getValue());
+        isInitialized = true;
         LOGGER.info("Finished setting up converter panel");
     }
 
@@ -831,6 +832,7 @@ public class ConverterPanel extends JPanel
     public Calculator getCalculator() { return calculator; }
     //public JPanel getNumbersPanel() { return numbersPanel; }
     public boolean isTextField1Selected() { return isTextField1Selected; }
+    public boolean isInitialized() { return isInitialized; }
 
     /************* All Setters ******************/
     public void setLayout(GridBagLayout converterLayout) {
