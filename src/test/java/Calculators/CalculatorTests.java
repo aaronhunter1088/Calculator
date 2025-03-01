@@ -1112,7 +1112,7 @@ public class CalculatorTests
 
     /*
     This test is failing because the binary number when converted,
-    comes out to 9223372036854775811. This number is too big to store
+    comes out to 9,223,372,036,854,775,811. This number is too big to store
     in any primitive type, and therefore, converting from binary to decimal
     is failing. The method will need to be enhanced to account for this, and
     return some other result.

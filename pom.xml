@@ -30,6 +30,8 @@
 		<maven.jar.version>3.2.0</maven.jar.version>
 		<mockito.version>3.0.0</mockito.version>
 		<properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
+		<jacoco.maven.plugin.version>0.8.12</jacoco.maven.plugin.version>
+		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -246,6 +248,45 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Attach sources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- configures the JaCoCo Maven plugin for code coverage analysis in the project. -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.maven.plugin.version}</version>
+				<configuration>
+					<!-- Include/Exclude classes from code coverage -->
+				</configuration>
+				<executions>
+					<!-- prepares the JaCoCo agent -->
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<!-- generates the code coverage report during the test phase -->
+					<execution>
+						<id>generate-code-coverage-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-    </build>
+	</build>
 </project>
