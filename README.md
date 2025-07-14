@@ -1,4 +1,6 @@
-# Calculator v4.4
+# Calculator v4.5
+
+v4.5: Introduced the Parent Pom used to manage the versions of the dependencies.
 
 This project is one of the few projects I have from college that I was able to keep.
 It may look ancient but the goal of this project is to demonstrate my Java programming
