@@ -1,6 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
+import Types.CalculatorBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static Types.CalculatorBase.BASE_DECIMAL;
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
 
@@ -60,11 +62,16 @@ public class BasicPanel extends JPanel
         this.calculator = calculator;
         setLayout(new GridBagLayout());
         constraints = new GridBagConstraints();
-        setSize(new Dimension(200, 336)); // sets main size
-        setMinimumSize(new Dimension(200, 336)); // sets minimum size
+        if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
+        if (!isInitialized)
+        {
+            setSize(new Dimension(200, 336)); // sets main size
+            setMinimumSize(new Dimension(200, 336)); // sets minimum size
+            setName(VIEW_BASIC.getValue());
+            setupBasicHistoryZone();
+        }
         setupBasicPanelComponents();
         addComponentsToPanel();
-        setName(VIEW_BASIC.getValue());
         isInitialized = true;
         LOGGER.info("Finished setting up {} panel", VIEW_BASIC.getValue());
     }
@@ -94,7 +101,6 @@ public class BasicPanel extends JPanel
         calculator.setupTextPane();
         calculator.setupMemoryButtons();
         calculator.setupBasicPanelButtons();
-        setupBasicHistoryZone();
         LOGGER.debug("Finished configuring the buttons");
     }
 
