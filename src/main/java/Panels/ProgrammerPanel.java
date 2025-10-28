@@ -53,7 +53,8 @@ public class ProgrammerPanel extends JPanel
             buttonShift = new JButton(SHIFT.getValue());
     private boolean isOr, isModulus, isXor, isNot, isAnd, isShiftPressed, isInitialized;
 
-    /* Constructors */
+    /**************** CONSTRUCTORS ****************/
+
     /**
      * A zero argument constructor for creating a OLDProgrammerPanel
      */
@@ -73,7 +74,8 @@ public class ProgrammerPanel extends JPanel
         LOGGER.info("Programmer panel created");
     }
 
-    /* Start of methods here */
+    /**************** START OF METHODS ****************/
+
     /**
      * The main method used to define the ProgrammerPanel
      * and all of its components and their actions
@@ -303,7 +305,7 @@ public class ProgrammerPanel extends JPanel
             hexadecimalNumberButton.addActionListener(this::performNumberButtonActions);
         });
         LOGGER.debug("Hexadecimal buttons configured");
-        enableOrDisableNumberButtonsBasedOnBase();
+        enableDisableNumberButtonsBasedOnBase();
         buttonShift.setName(SHIFT.name());
         buttonShift.addActionListener(this::performShiftButtonAction);
         LOGGER.debug("Shift button configured");
@@ -321,7 +323,7 @@ public class ProgrammerPanel extends JPanel
      * Enables the appropriate buttons based on
      * the current CalculatorBase
      */
-    public void enableOrDisableNumberButtonsBasedOnBase()
+    public void enableDisableNumberButtonsBasedOnBase()
     {
         switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
@@ -352,7 +354,7 @@ public class ProgrammerPanel extends JPanel
                 setButtonsAToF(true);
             }
         }
-        LOGGER.debug("Buttons enabled or disabled based on base {}", calculator.getCalculatorBase());
+        LOGGER.debug("Buttons enabled or disabled based on {}", calculator.getCalculatorBase());
     }
 
     /**
@@ -549,6 +551,83 @@ public class ProgrammerPanel extends JPanel
             doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
         }
         catch (BadLocationException e) { calculator.logException(e); }
+    }
+
+    /**
+     * This method returns true or false depending
+     * on if an operator was pushed or not. The
+     * operators checked are: isOr, isModulus,
+     * isXor, isNot, and isAnd
+     *
+     * @return true if any operator was pushed, false otherwise
+     */
+    public boolean isProgrammerOperatorActive()
+    { return isOr || isModulus || isXor || isNot || isAnd; }
+
+    /**
+     * This method returns the String operator that was activated
+     * Results could be: 'OR', 'MOD', 'XOR', 'NOT' or 'AND'
+     * operator was recorded as being activated
+     * @return String the basic operation that was pushed
+     */
+    public String getActiveProgrammerPanelOperator()
+    {
+        String results = BLANK.getValue();
+        if (isOr) { results = OR.getValue(); }
+        else if (isModulus) { results = MODULUS.getValue(); }
+        else if (isXor) { results = XOR.getValue(); }
+        else if (isNot) { results = NOT.getValue(); }
+        else if (isAnd) { results = AND.getValue(); }
+        if (results.isEmpty()) { LOGGER.info("no programmer operator pushed"); }
+        else { LOGGER.info("operator: {}", results); }
+        return results;
+    }
+
+    /**
+     * Returns the correct lengths allowed when using base binary
+     * and different byte values. This uses only the value in the
+     * text pane.
+     * @return List the lengths allowed for different bytes
+     */
+    private List<Integer> getAllowedLengthsOfTextPane()
+    {
+        List<Integer> lengthsAllowed = new ArrayList<>();
+        lengthsAllowed.add(0);  // what if no input??
+        switch (calculator.getCalculatorByte())
+        {
+            // TODO: check shorthand
+            case BYTE_BYTE -> {
+                //IntStream.rangeClosed(1,8).forEach(lengthsAllowed::add); // for shorthand
+                lengthsAllowed.add(8);  // 00000101, or 8 total characters
+                lengthsAllowed.add(10); // 00000101_<operator>, or 10 total characters
+            }
+            case BYTE_WORD -> {
+                //IntStream.rangeClosed(1,18).forEach(lengthsAllowed::add);
+                lengthsAllowed.add(16); // 0000010100000101, or 16 total characters
+                lengthsAllowed.add(18); // 0000010100000101_<operator>, or 16 + 2 = 18
+            }
+            case BYTE_DWORD -> {
+                //IntStream.rangeClosed(1,38).forEach(lengthsAllowed::add);
+                lengthsAllowed.add(32); // double word minus newlines
+                lengthsAllowed.add(34); // with operator
+            }
+            case BYTE_QWORD -> {
+                //IntStream.rangeClosed(1,75).forEach(lengthsAllowed::add);
+                lengthsAllowed.add(64); // double dword minus newlines
+                lengthsAllowed.add(66); // with operator
+            }
+        }
+        return lengthsAllowed;
+    }
+
+    public void resetProgrammerOperators(boolean reset)
+    {
+        isOr = reset;
+        isModulus = reset;
+        isXor = reset;
+        isNot = reset;
+        isAnd = reset;
+        LOGGER.debug("Main programmer operators reset to {}", reset);
     }
 
     /**************** ACTIONS ****************/
@@ -1375,7 +1454,7 @@ public class ProgrammerPanel extends JPanel
                 }
             }
         }
-        enableOrDisableNumberButtonsBasedOnBase();
+        enableDisableNumberButtonsBasedOnBase();
         //appendToPane(addBaseRepresentation()); // must call to update textPane base value
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Updated bases to " + this.calculator.getCalculatorBase().getValue());
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
@@ -1424,73 +1503,6 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**
-     * This method returns true or false depending
-     * on if an operator was pushed or not. The
-     * operators checked are isOr, isModulus,
-     * isXor, isNot, and isAnd
-     *
-     * @return true if any operator was pushed, false otherwise
-     */
-    public boolean determineIfAnyProgrammerOperatorWasPushed()
-    { return isOr || isModulus || isXor || isNot || isAnd; }
-
-    /**
-     * This method returns the String operator that was activated
-     * Results could be: 'OR', 'MOD', 'XOR', 'NOT' or 'AND'
-     * operator was recorded as being activated
-     * @return String the basic operation that was pushed
-     */
-    public String getActiveProgrammerPanelOperator()
-    {
-        String results = BLANK.getValue();
-        if (isOr) { results = OR.getValue(); }
-        else if (isModulus) { results = MODULUS.getValue(); }
-        else if (isXor) { results = XOR.getValue(); }
-        else if (isNot) { results = NOT.getValue(); }
-        else if (isAnd) { results = AND.getValue(); }
-        if (results.isEmpty()) { LOGGER.info("no programmer operator pushed"); }
-        else { LOGGER.info("operator: {}", results); }
-        return results;
-    }
-
-    /**
-     * Returns the correct lengths allowed when using base binary
-     * and different byte values. This uses only the value in the
-     * text pane.
-     * @return List the lengths allowed for different bytes
-     */
-    private List<Integer> getAllowedLengthsOfTextPane()
-    {
-        List<Integer> lengthsAllowed = new ArrayList<>();
-        lengthsAllowed.add(0);  // what if no input??
-        switch (calculator.getCalculatorByte())
-        {
-            // TODO: check shorthand
-            case BYTE_BYTE -> {
-                //IntStream.rangeClosed(1,8).forEach(lengthsAllowed::add); // for shorthand
-                lengthsAllowed.add(8);  // 00000101, or 8 total characters
-                lengthsAllowed.add(10); // 00000101_<operator>, or 10 total characters
-            }
-            case BYTE_WORD -> {
-                //IntStream.rangeClosed(1,18).forEach(lengthsAllowed::add);
-                lengthsAllowed.add(16); // 0000010100000101, or 16 total characters
-                lengthsAllowed.add(18); // 0000010100000101_<operator>, or 16 + 2 = 18
-            }
-            case BYTE_DWORD -> {
-                //IntStream.rangeClosed(1,38).forEach(lengthsAllowed::add);
-                lengthsAllowed.add(32); // double word minus newlines
-                lengthsAllowed.add(34); // with operator
-            }
-            case BYTE_QWORD -> {
-                //IntStream.rangeClosed(1,75).forEach(lengthsAllowed::add);
-                lengthsAllowed.add(64); // double dword minus newlines
-                lengthsAllowed.add(66); // with operator
-            }
-        }
-        return lengthsAllowed;
-    }
-
-    /**
      * The actions to perform when History is clicked
      * @param actionEvent the click action
      */
@@ -1512,16 +1524,6 @@ public class ProgrammerPanel extends JPanel
             calculator.addComponent(this, constraints, programmerPanel, historyPanel, 2, 0);
             SwingUtilities.updateComponentTreeUI(this);
         }
-    }
-
-    public void resetProgrammerOperators(boolean reset)
-    {
-        isOr = reset;
-        isModulus = reset;
-        isXor = reset;
-        isNot = reset;
-        isAnd = reset;
-        LOGGER.debug("Main programmer operators reset to {}", reset);
     }
 
     /**************** GETTERS ****************/

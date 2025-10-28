@@ -2357,7 +2357,7 @@ public class Calculator extends JFrame
         {
             values[0] = BLANK.getValue();
             resetBasicOperators(false);
-            if (currentPanel instanceof ProgrammerPanel programmerPanel)
+            if (calculatorView == VIEW_PROGRAMMER)
             { programmerPanel.resetProgrammerOperators(false); }
             valuesPosition = 0;
             isFirstNumber = true;
@@ -2606,7 +2606,7 @@ public class Calculator extends JFrame
      */
     public void determineAndPerformBasicCalculatorOperation()
     {
-        if (isMaximumValue() && (isAdding || isMultiplying) )
+        if (isMaximumValue() && (isAdding || isMultiplying))
         {
             appendTextToPane(ERR.getValue());
             values[0] = BLANK.getValue();
@@ -2837,9 +2837,9 @@ public class Calculator extends JFrame
         else if (isSubtracting) { results = SUBTRACTION.getValue(); }
         else if (isMultiplying) { results = MULTIPLICATION.getValue(); }
         else if (isDividing) { results = DIVISION.getValue(); }
-        if (currentPanel instanceof ProgrammerPanel panel) {
+        if (currentPanel instanceof ProgrammerPanel) {
             if (results.equals(BLANK.getValue())) {
-                results = panel.getActiveProgrammerPanelOperator();
+                results = programmerPanel.getActiveProgrammerPanelOperator();
             }
         }
         LOGGER.info(results.isEmpty() ? "no basic operator pushed" : "operator: {}", results);
