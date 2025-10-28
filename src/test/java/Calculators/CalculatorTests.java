@@ -27,13 +27,13 @@ import static Types.CalculatorBase.*;
 import static Types.CalculatorConverterType.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
+import static Utilities.LoggingUtil.confirm;
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CalculatorTests
 {
-    static { System.setProperty("appName", "CalculatorTests"); }
     private static Logger LOGGER;
     private static Calculator calculator;
 
@@ -43,24 +43,25 @@ public class CalculatorTests
     static Calculator calculatorSpy;
 
     @BeforeAll
-    public static void beforeAll() throws Exception
+    public static void beforeAll()
     {
         LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
+    }
+
+    @BeforeEach
+    public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        LOGGER.info("Setting up beforeEach...");
+        MockitoAnnotations.initMocks(this);
+        calculator = new Calculator();
+        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        calculatorSpy = spy(Calculator.class);
     }
 
     @AfterAll
     public static void afterAll()
     { LOGGER.info("Finished running {}", CalculatorTests.class.getSimpleName()); }
 
-    @BeforeEach
-    public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        LOGGER.info("setting up each before...");
-        MockitoAnnotations.initMocks(this);
-        calculator = new Calculator();
-        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        calculatorSpy = spy(calculator);
-    }
 
     @AfterEach
     public void afterEach() {
@@ -556,13 +557,13 @@ public class CalculatorTests
     @Test
     public void testClearNumberButtonActions()
     {
-        calculator.getAllNumberButtons().forEach(numberButton -> {
+        calculator.getNumberButtons().forEach(numberButton -> {
             assertSame(1, numberButton.getActionListeners().length, "Expecting only 1 action on " + numberButton.getName());
         });
 
         calculator.clearNumberButtonActions();
 
-        calculator.getAllNumberButtons().forEach(numberButton -> {
+        calculator.getNumberButtons().forEach(numberButton -> {
             assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName());
         });
     }
@@ -570,13 +571,13 @@ public class CalculatorTests
     @Test
     public void testClearAllOtherBasicCalculatorButtons()
     {
-        calculator.getBasicPanelOperators().forEach(otherButton -> {
+        calculator.getCommonButtons().forEach(otherButton -> {
             assertSame(1, otherButton.getActionListeners().length, "Expecting only 1 action on " + otherButton.getName());
         });
 
         calculator.clearAllOtherBasicCalculatorButtons();
 
-        calculator.getBasicPanelOperators().forEach(otherButton -> {
+        calculator.getCommonButtons().forEach(otherButton -> {
             assertSame(0, otherButton.getActionListeners().length, "Expecting no actions on " + otherButton.getName());
         });
     }
@@ -677,7 +678,7 @@ public class CalculatorTests
         calculator.getMemoryValues()[0] = FIVE.getValue();
         calculator.setMemoryPosition(1);
         assertFalse(calculator.isMemoryValuesEmpty());
-        calculator.confirm("Test: isMemoryValuesEmpty -> False");
+        confirm(calculator, LOGGER, "Test: isMemoryValuesEmpty -> False");
     }
 
     @Test
@@ -771,7 +772,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(ADD_SUBTRACT_DAYS);
         calculator.updateJPanel(new ProgrammerPanel());
-        calculator.confirm("Test: Confirm called");
+        confirm(calculator, LOGGER,"Test: Confirm called");
     }
 
     @Test
@@ -986,7 +987,7 @@ public class CalculatorTests
                  calculator.getRootPane()
          ).when(calculatorSpy).getRootPane();
          doReturn(false).when(calculatorSpy).isMacOperatingSystem();
-         calculatorSpy.createMenuBar();
+         calculatorSpy.configureMenuBar();
          assertEquals(5, calculator.getViewMenu().getMenuComponents().length, "Expected View menu to have 3 options");
     }
 

@@ -23,6 +23,7 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.Locale;
 
+import static Utilities.LoggingUtil.confirm;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static Types.DateOperation.*;
@@ -43,7 +44,7 @@ public class DatePanelTest
     {
         calculator = new Calculator(ADD_SUBTRACT_DAYS);
         calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        datePanel = (DatePanel) calculator.getCurrentPanel();
+        datePanel = (DatePanel) calculator.getDatePanel();
         LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
     }
 
@@ -99,13 +100,13 @@ public class DatePanelTest
         datePanel.getDaysTextField().setText("21");
 
         datePanel.performSubtractRadioButtonFunctionality(actionEvent);
-        datePanel.getCalculator().confirm("Pushed Subtract From Test");
+        confirm(calculator, LOGGER, "Pushed Subtract From Test");
 
         assertEquals(LocalDate.of(1992, Month.AUGUST, 29), datePanel.getTheDateFromTheToDate().minusMonths(1));
 
         // Now add the same values back and test that the same date is returned
         datePanel.performAddRadioButtonFunctionality(actionEvent);
-        datePanel.getCalculator().confirm("Pushed Add From Test");
+        confirm(calculator, LOGGER, "Pushed Subtract From Test");
 
         assertEquals(LocalDate.of(2051, Month.FEBRUARY, 10), datePanel.getTheDateFromTheToDate().minusMonths(1));
     }

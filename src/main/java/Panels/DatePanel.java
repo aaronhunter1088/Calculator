@@ -21,6 +21,7 @@ import static Calculators.Calculator.*;
 import static Types.CalculatorView.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
+import static Utilities.LoggingUtil.confirm;
 
 public class DatePanel extends JPanel
 {
@@ -76,28 +77,34 @@ public class DatePanel extends JPanel
      */
     public void setupDatePanel(Calculator calculator, DateOperation dateOperation)
     {
-        this.calculator = calculator;
-        setLayout(new GridBagLayout());
-        this.constraints = new GridBagConstraints();
-        this.calculator.setCalculatorView(VIEW_DATE);
-        this.calculator.setDateOperation(dateOperation != null ? dateOperation : DIFFERENCE_BETWEEN_DATES);
-        setupHelpMenu();
-        setupDatePanelComponents(dateOperation);
-        createCommonPanel();
-        if (DIFFERENCE_BETWEEN_DATES == dateOperation)
+        if (!isInitialized)
         {
-            createDifferenceBetweenDatesPanel();
-            addComponent(datePanel1);
+            this.calculator = calculator;
+            setLayout(new GridBagLayout());
+            this.constraints = new GridBagConstraints();
+            this.calculator.setCalculatorView(VIEW_DATE);
+            this.calculator.setDateOperation(dateOperation != null ? dateOperation : DIFFERENCE_BETWEEN_DATES);
+            setupHelpMenu();
+            setupDatePanelComponents(this.calculator.getDateOperation());
+            createCommonPanel();
+            datePanel1 = new JPanel(new GridBagLayout());
+            datePanel2 = new JPanel(new GridBagLayout());
+            isInitialized = true;
+        }
+        if (dateOperation == DIFFERENCE_BETWEEN_DATES)
+        {
+            setupDifferenceBetweenDatesPanel();
+            calculator.addComponent(this, constraints, datePanel1);
             setSize(datePanel1.getSize());
         }
         else
         {
-            createAddOrSubtractPanel();
-            addComponent(datePanel2);
+            setupAddOrSubtractPanel();
+            calculator.addComponent(this, constraints, datePanel2);
             setSize(datePanel2.getSize());
         }
         setName(VIEW_DATE.getValue());
-        isInitialized = true;
+        SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished constructing Date panel");
     }
 
@@ -129,7 +136,8 @@ public class DatePanel extends JPanel
                 """; //.formatted();
             }
         }
-        calculator.updateHelpMenu(helpString);
+        calculator.setHelpString(helpString);
+        calculator.updateShowHelp();
     }
 
     /**
@@ -167,7 +175,6 @@ public class DatePanel extends JPanel
         setupAddOrSubtractResultLabel();
         setupResultsText();
         setTheSelectedOption(dateOperation);
-        SwingUtilities.updateComponentTreeUI(this);
         LOGGER.info("Finished setting up date panel");
     }
 
@@ -190,7 +197,6 @@ public class DatePanel extends JPanel
         blankLabel1.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    //TODO: Rework. Copy blank1
     /**
      * The main method used to set up the blank2 label
      */
@@ -200,7 +206,6 @@ public class DatePanel extends JPanel
         blankLabel2.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    //TODO: Rework. Copy blank1
     /**
      * The main method used to set up the blank3 label
      */
@@ -210,7 +215,6 @@ public class DatePanel extends JPanel
         blankLabel3.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    //TODO: Rework. Copy blank1
     /**
      * The main method used to set up the blank4 label
      */
@@ -220,7 +224,6 @@ public class DatePanel extends JPanel
         blankLabel4.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    //TODO: Rework. Copy blank1
     /**
      * The main method used to set up the blank5 label
      */
@@ -286,6 +289,7 @@ public class DatePanel extends JPanel
         setYearsTextField(new JTextField(BLANK.getValue(), 5));
         yearsTextField.setEditable(true);
         yearsTextField.setHorizontalAlignment(SwingConstants.LEFT);
+        yearsTextField.setFont(mainFont);
     }
 
     /**
@@ -428,7 +432,7 @@ public class DatePanel extends JPanel
             switchComponentsForDateDifference();
             setupHelpMenu();
             updateThisPanel();
-            calculator.confirm("Changing to " + DIFFERENCE_BETWEEN_DATES);
+            confirm(calculator, LOGGER, "Changing to " + DIFFERENCE_BETWEEN_DATES);
         }
         else if (dateOperationsDropdown.getSelectedItem() == ADD_SUBTRACT_DAYS )
         { // Only Switch to OPTIONS2 if and only if we are really showing OPTIONS1
@@ -436,10 +440,10 @@ public class DatePanel extends JPanel
             switchComponentsForAddSubDate();
             setupHelpMenu();
             updateThisPanel();
-            calculator.confirm("Changing to " + ADD_SUBTRACT_DAYS);
+            confirm(calculator, LOGGER, "Changing to " + ADD_SUBTRACT_DAYS);
         }
         else
-        { calculator.confirm("Options not changed"); }
+        { confirm(calculator, LOGGER, "Options not changed"); }
     }
 
     /**
@@ -506,7 +510,7 @@ public class DatePanel extends JPanel
             updateResultsLabel(localDateTime);
         }
         LOGGER.info("Finished performing date picker logic");
-        calculator.confirm("New date, FROM DATE chosen");
+        confirm(calculator, LOGGER, "New date, FROM DATE chosen");
     }
 
     /**
@@ -610,8 +614,8 @@ public class DatePanel extends JPanel
     public void switchComponentsForDateDifference()
     {
         remove(datePanel2);
-        createDifferenceBetweenDatesPanel();
-        addComponent(datePanel1);
+        setupDifferenceBetweenDatesPanel();
+        calculator.addComponent(this, constraints, datePanel1);
     }
 
     /**
@@ -622,8 +626,8 @@ public class DatePanel extends JPanel
     public void switchComponentsForAddSubDate()
     {
         remove(datePanel1);
-        createAddOrSubtractPanel();
-        addComponent(datePanel2);
+        setupAddOrSubtractPanel();
+        calculator.addComponent(this, constraints, datePanel2);
     }
 
     /**
@@ -690,88 +694,62 @@ public class DatePanel extends JPanel
         LOGGER.info("Date is now {}", localDateTime.toLocalDate());
         updateToDate(localDateTime);
         updateResultsLabel(localDateTime);
-        if (addRadioButton.isSelected()) calculator.confirm("Pressed Add");
-        else calculator.confirm("Pressed Subtract");
+        if (addRadioButton.isSelected()) confirm(calculator, LOGGER, "Pressed Add");
+        else confirm(calculator, LOGGER, "Pressed Subtract");
     }
 
     /**
-     * Specifies where each button is placed on the DatePanel
-     * dependent on the DateOperation
+     * Specifies where each button is placed
+     * on the datePanel1
      */
-    private void createDifferenceBetweenDatesPanel()
+    private void setupDifferenceBetweenDatesPanel()
     {
-        datePanel1 = new JPanel(new GridBagLayout());
-        addComponent(datePanel1, commonToBothDateCalculators, 0, 0, 0);
+        calculator.addComponent(this, constraints, datePanel1, commonToBothDateCalculators, 0, 0, 0);
         JPanel differenceBetweenDates = new JPanel(new GridBagLayout());
-        addComponent(differenceBetweenDates, toDateLabel, 0, 0,1.0);
-        addComponent(differenceBetweenDates, toDatePicker, 1, 0,1.0);
-        addComponent(differenceBetweenDates, blankLabel3, 2, 0,1.0); // representing a blank space
-        addComponent(differenceBetweenDates, differenceLabel, 3, 0,1.0); // representing a blank space
-        addComponent(differenceBetweenDates, yearsDifferenceLabel, 4, 0,1.0);
-        addComponent(differenceBetweenDates, monthsDifferenceLabel, 5, 0,1.0);
-        addComponent(differenceBetweenDates, weeksDifferenceLabel, 6, 0, 1.0);
-        addComponent(differenceBetweenDates, daysDifferenceLabel, 7, 0,1.0);
-        addComponent(differenceBetweenDates, blankLabel4, 8, 1.0,1.0); // representing a blank space
+        calculator.addComponent(this, constraints, differenceBetweenDates, toDateLabel, 0, 0,1.0);
+        calculator.addComponent(this, constraints, differenceBetweenDates, toDatePicker, 1, 0,1.0);
+        calculator.addComponent(this, constraints, differenceBetweenDates, blankLabel3, 2, 0,1.0); // representing a blank space
+        calculator.addComponent(this, constraints, differenceBetweenDates, differenceLabel, 3, 0,1.0); // representing a blank space
+        calculator.addComponent(this, constraints, differenceBetweenDates, yearsDifferenceLabel, 4, 0,1.0);
+        calculator.addComponent(this, constraints, differenceBetweenDates, monthsDifferenceLabel, 5, 0,1.0);
+        calculator.addComponent(this, constraints, differenceBetweenDates, weeksDifferenceLabel, 6, 0, 1.0);
+        calculator.addComponent(this, constraints, differenceBetweenDates, daysDifferenceLabel, 7, 0,1.0);
+        calculator.addComponent(this, constraints, differenceBetweenDates, blankLabel4, 8, 1.0,1.0); // representing a blank space
         updateResultsTextBox();
-        addComponent(datePanel1, differenceBetweenDates, 1, 0, 0);
-        LOGGER.info("Finished adding components to DifferenceBetweenDates panel");
+        calculator.addComponent(this, constraints, datePanel1, differenceBetweenDates, 1, 0, 0);
+        LOGGER.debug("Finished adding components to DifferenceBetweenDates panel");
     }
 
-    private void createAddOrSubtractPanel()
+    /**
+     * Specifies where each button is placed
+     * on the datePanel2
+     */
+    private void setupAddOrSubtractPanel()
     {
-        datePanel2 = new JPanel(new GridBagLayout());
-        addComponent(datePanel2, commonToBothDateCalculators, 0, 0, 0);
+        calculator.addComponent(this, constraints, datePanel2, commonToBothDateCalculators, 0, 0, 0);
         JPanel addOrSubtractDates = new JPanel(new GridBagLayout());
-        addComponent(addOrSubtractDates, buttonGroupPanel, 0, 0,1.0);
-        addComponent(addOrSubtractDates, blankLabel3, 1, 0, 1.0); // representing a blank space
-        addComponent(addOrSubtractDates, textFieldsGroupPanel, 2, 0, 1.0);
-        addComponent(addOrSubtractDates, blankLabel4, 3, 0.0, 1.0);
-        addComponent(addOrSubtractDates, dateLabel, 4, 0, 1.0);
-        addComponent(addOrSubtractDates, resultsLabel, 5, 0, 1.0);
-        addComponent(addOrSubtractDates, blankLabel5, 6, 1.0, 1.0);
-        addComponent(datePanel2, addOrSubtractDates, 1, 0, 0);
-        LOGGER.info("Finished adding components to AddOrSubtract panel");
+        calculator.addComponent(this, constraints, addOrSubtractDates, buttonGroupPanel, 0, 0,1.0);
+        calculator.addComponent(this, constraints, addOrSubtractDates, blankLabel3, 1, 0, 1.0); // representing a blank space
+        calculator.addComponent(this, constraints, addOrSubtractDates, textFieldsGroupPanel, 2, 0, 1.0);
+        calculator.addComponent(this, constraints, addOrSubtractDates, blankLabel4, 3, 0.0, 1.0);
+        calculator.addComponent(this, constraints, addOrSubtractDates, dateLabel, 4, 0, 1.0);
+        calculator.addComponent(this, constraints, addOrSubtractDates, resultsLabel, 5, 0, 1.0);
+        calculator.addComponent(this, constraints, addOrSubtractDates, blankLabel5, 6, 1.0, 1.0);
+        calculator.addComponent(this, constraints, datePanel2, addOrSubtractDates, 1, 0, 0);
+        LOGGER.debug("Finished adding components to AddOrSubtract panel");
     }
 
-    @Deprecated(since = "not enough going on for specialized code")
+    /**
+     * Creates the common panel used by both date operations
+     */
     private void createCommonPanel()
     {
         commonToBothDateCalculators = new JPanel(new GridBagLayout());
-        addComponent(commonToBothDateCalculators, dateOperationsDropdown, 0, 1,1, 0,0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
-        addComponent(commonToBothDateCalculators, fromDateLabel, 1, 0,1.0);
-        addComponent(commonToBothDateCalculators, fromDatePicker, 2, 0,1.0);
+        calculator.addComponent(this, constraints, commonToBothDateCalculators, dateOperationsDropdown, 0, 0, null, 1,1, 0,0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        calculator.addComponent(this, constraints, commonToBothDateCalculators, fromDateLabel, 1, 0,1.0);
+        calculator.addComponent(this, constraints, commonToBothDateCalculators, fromDatePicker, 2, 0,1.0);
+        LOGGER.debug("Finished adding components to the common panel");
     }
-
-    /**
-     * Adding a component enforcing the GridBagConstraints.BOTH
-     *
-     * @param c   the component to add
-     * @param row the row to add the component to
-     */
-    private void addComponent(JPanel panel, Component c, int row, int gridWidth,
-                              int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
-    {
-        constraints.gridy = row;
-        constraints.gridx = 0;
-        constraints.gridwidth = gridWidth;
-        constraints.gridheight = gridHeight;
-        constraints.weighty = weightXRow;
-        constraints.weightx = weightYColumn;
-        constraints.insets = new Insets(0, 0, 0, 0);
-        if (fill != 0)   constraints.fill = fill;
-        if (anchor != 0) constraints.anchor = anchor;
-        if (c != null) panel.add(c, constraints);
-        else           add(panel, constraints);
-    }
-    private void addComponent(JPanel panel, Component c, int row,
-                              double weighty, double weightx)
-    {
-        addComponent(panel, c, row, 1, 1, weighty, weightx, 0, 0);
-    }
-
-    /** Primarily used to add the basicPanel to the frame */
-    private void addComponent(JPanel panel)
-    { addComponent(panel, null, 0, 0, 0, 1.0, 1.0, 0, 0); }
 
     /**
      * Calls the main setup method when switching
@@ -962,7 +940,7 @@ public class DatePanel extends JPanel
         LOGGER.info("Difference Results updated");
     }
 
-    /* Getters */
+    /**************** GETTERS ****************/
     public GridBagLayout getDateLayout() { return dateLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
     public UtilCalendarModel getFromCalendarUtil() { return fromCalendarUtil; }
@@ -1002,7 +980,7 @@ public class DatePanel extends JPanel
     public JTextField getDaysTextField() { return daysTextField; }
     public boolean isInitialized() { return isInitialized; }
 
-    /* Setters */
+    /**************** SETTERS ****************/
     public void setLayout(GridBagLayout dateLayout) {
         super.setLayout(dateLayout);
         this.dateLayout = dateLayout;

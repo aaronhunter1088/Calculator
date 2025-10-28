@@ -1,7 +1,6 @@
 package Panels;
 
 import Calculators.Calculator;
-import Types.CalculatorBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,6 +15,7 @@ import java.util.stream.Stream;
 import static Types.CalculatorBase.BASE_DECIMAL;
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
+import static Utilities.LoggingUtil.confirm;
 
 public class BasicPanel extends JPanel
 {
@@ -24,11 +24,11 @@ public class BasicPanel extends JPanel
     private static final long serialVersionUID = 4L;
     private Calculator calculator;
     private GridBagConstraints constraints;
-    private final JPanel basicPanel = new JPanel(new GridBagLayout()),
-                         memoryPanel = new JPanel(new GridBagLayout()),
-                         buttonsPanel = new JPanel(new GridBagLayout()),
-                         historyPanel = new JPanel(new GridBagLayout());
-    private JTextPane basicHistoryTextPane;
+    private JPanel basicPanel,
+                   memoryPanel,
+                   buttonsPanel,
+                   historyPanel;
+    private JTextPane historyTextPane;
     private boolean isInitialized;
 
     /* Constructors */
@@ -59,19 +59,27 @@ public class BasicPanel extends JPanel
      */
     public void setupBasicPanel(Calculator calculator)
     {
-        this.calculator = calculator;
-        setLayout(new GridBagLayout());
-        constraints = new GridBagConstraints();
-        if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
         if (!isInitialized)
         {
+            this.calculator = calculator;
+            this.basicPanel = new JPanel(new GridBagLayout());
+            this.basicPanel.setName("BasicPanel");
+            this.memoryPanel = new JPanel(new GridBagLayout());
+            this.memoryPanel.setName("MemoryPanel");
+            this.buttonsPanel = new JPanel(new GridBagLayout());
+            this.buttonsPanel.setName("ButtonsPanel");
+            this.historyPanel = new JPanel(new GridBagLayout());
+            this.historyPanel.setName("HistoryPanel");
+            setLayout(new GridBagLayout());
+            constraints = new GridBagConstraints();
+            if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
             setSize(new Dimension(200, 336)); // sets main size
             setMinimumSize(new Dimension(200, 336)); // sets minimum size
-            setName(VIEW_BASIC.getValue());
             setupBasicHistoryZone();
         }
         setupBasicPanelComponents();
         addComponentsToPanel();
+        setName(VIEW_BASIC.getValue());
         isInitialized = true;
         LOGGER.info("Finished setting up {} panel", VIEW_BASIC.getValue());
     }
@@ -84,8 +92,8 @@ public class BasicPanel extends JPanel
     private void setupBasicPanelComponents()
     {
         List<JButton> allButtons = Stream.of(
-                        calculator.getBasicPanelOperators(),
-                        calculator.getAllNumberButtons(),
+                        calculator.getCommonButtons(),
+                        calculator.getNumberButtons(),
                         calculator.getAllMemoryPanelButtons())
                 .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
                 .toList(); // Return as a single list
@@ -97,10 +105,10 @@ public class BasicPanel extends JPanel
                 }));
         LOGGER.debug("Actions removed...");
         calculator.setupNumberButtons();
-        setupHelpMenu();
+        setupHelpString();
         calculator.setupTextPane();
         calculator.setupMemoryButtons();
-        calculator.setupBasicPanelButtons();
+        calculator.setupCommonButtons();
         LOGGER.debug("Finished configuring the buttons");
     }
 
@@ -108,10 +116,10 @@ public class BasicPanel extends JPanel
      * The main method to set up the Help menu item.
      * Sets the help text for the the BasicPanel
      */
-    private void setupHelpMenu()
+    private void setupHelpString()
     {
-        LOGGER.info("Setting up the help menu for basic panel");
-        String helpString = """
+        LOGGER.info("Setting up the help string for basic panel");
+        calculator.setHelpString("""
                 How to use the %s Calculator
                 
                 Using the basic operators:
@@ -248,8 +256,8 @@ public class BasicPanel extends JPanel
                         ADDITION.getValue(), ADDITION.getValue(), ENTER_A_NUMBER.getValue(),
                         NEGATE.getValue(),
                         DECIMAL.getValue(), DECIMAL.getValue(), DECIMAL.getValue(), DECIMAL.getValue(),
-                        EQUALS.getValue());
-        calculator.updateHelpMenu(helpString);
+                        EQUALS.getValue()));
+        calculator.updateShowHelp();
     }
 
     /**
@@ -257,84 +265,47 @@ public class BasicPanel extends JPanel
      */
     public void addComponentsToPanel()
     {
-        addComponent(basicPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, basicPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
 
-        addComponent(memoryPanel, calculator.getButtonMemoryStore(),0, 0, new Insets(0,1,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, 0);
-        addComponent(memoryPanel, calculator.getButtonMemoryRecall(),0, 1, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, 0);
-        addComponent(memoryPanel, calculator.getButtonMemoryClear(),0, 2, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, 0);
-        addComponent(memoryPanel, calculator.getButtonMemoryAddition(),0, 3, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, 0);
-        addComponent(memoryPanel, calculator.getButtonMemorySubtraction(),0, 4, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, 0); //right:1
-        addComponent(memoryPanel, calculator.getButtonHistory(),0, 5, new Insets(0, 0, 0, 1),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, memoryPanel, calculator.getButtonMemoryStore(),0, 0, new Insets(0,1,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, memoryPanel, calculator.getButtonMemoryRecall(),0, 1, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, memoryPanel, calculator.getButtonMemoryClear(),0, 2, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, memoryPanel, calculator.getButtonMemoryAddition(),0, 3, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, memoryPanel, calculator.getButtonMemorySubtraction(),0, 4, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0); //right:1
+        calculator.addComponent(this, constraints, memoryPanel, calculator.getButtonHistory(),0, 5, new Insets(0, 0, 0, 1),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
 
-        addComponent(basicPanel, memoryPanel, 1, 0, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        calculator.addComponent(this, constraints, basicPanel, memoryPanel, 1, 0, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
 
-        addComponent(buttonsPanel, calculator.getButtonPercent(), 0, 0);
-        addComponent(buttonsPanel, calculator.getButtonSquareRoot(), 0, 1);
-        addComponent(buttonsPanel, calculator.getButtonSquared(), 0, 2);
-        addComponent(buttonsPanel, calculator.getButtonFraction(), 0, 3);
-        addComponent(buttonsPanel, calculator.getButtonClearEntry(), 1, 0);
-        addComponent(buttonsPanel, calculator.getButtonClear(), 1, 1);
-        addComponent(buttonsPanel, calculator.getButtonDelete(), 1, 2);
-        addComponent(buttonsPanel, calculator.getButtonDivide(), 1, 3);
-        addComponent(buttonsPanel, calculator.getButton7(), 2, 0);
-        addComponent(buttonsPanel, calculator.getButton8(), 2, 1);
-        addComponent(buttonsPanel, calculator.getButton9(), 2, 2);
-        addComponent(buttonsPanel, calculator.getButtonMultiply(), 2, 3);
-        addComponent(buttonsPanel, calculator.getButton4(), 3, 0);
-        addComponent(buttonsPanel, calculator.getButton5(), 3, 1);
-        addComponent(buttonsPanel, calculator.getButton6(), 3, 2);
-        addComponent(buttonsPanel, calculator.getButtonSubtract(), 3, 3);
-        addComponent(buttonsPanel, calculator.getButton1(), 4, 0);
-        addComponent(buttonsPanel, calculator.getButton2(),4, 1);
-        addComponent(buttonsPanel, calculator.getButton3(), 4, 2);
-        addComponent(buttonsPanel, calculator.getButtonAdd(),4, 3);
-        addComponent(buttonsPanel, calculator.getButtonNegate(), 5, 0);
-        addComponent(buttonsPanel, calculator.getButton0(), 5, 1);
-        addComponent(buttonsPanel, calculator.getButtonDecimal(), 5, 2);
-        addComponent(buttonsPanel, calculator.getButtonEquals(), 5, 3);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonPercent(), 0, 0);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonSquareRoot(), 0, 1);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonSquared(), 0, 2);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonFraction(), 0, 3);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonClearEntry(), 1, 0);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonClear(), 1, 1);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonDelete(), 1, 2);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonDivide(), 1, 3);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton7(), 2, 0);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton8(), 2, 1);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton9(), 2, 2);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonMultiply(), 2, 3);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton4(), 3, 0);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton5(), 3, 1);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton6(), 3, 2);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonSubtract(), 3, 3);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton1(), 4, 0);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton2(),4, 1);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton3(), 4, 2);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonAdd(),4, 3);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonNegate(), 5, 0);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton0(), 5, 1);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonDecimal(), 5, 2);
+        calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonEquals(), 5, 3);
 
-        addComponent(basicPanel, buttonsPanel, 2, 0);
+        calculator.addComponent(this, constraints, basicPanel, buttonsPanel, 2, 0);
 
-        addComponent(basicPanel);
+        calculator.addComponent(this, constraints, basicPanel);
         LOGGER.debug("Buttons added to the frame");
     }
-
-    /**
-     * Adds a component to a panel
-     * @param panel the panel to add to
-     * @param c the component to add to a panel
-     * @param row the row to place the component in
-     * @param column the column to place the component in
-     * @param insets the space between the component
-     * @param gridWidth the number of columns the component should use
-     * @param gridHeight the number of rows the component should use
-     * @param weightXRow set to allow the button grow horizontally
-     * @param weightYColumn set to allow the button grow horizontally
-     * @param fill set to make the component resize if any unused space
-     * @param anchor set to place the component in a specific location on the frame
-     */
-    private void addComponent(JPanel panel, Component c, int row, int column, Insets insets, int gridWidth, int gridHeight, double weightXRow, double weightYColumn, int fill, int anchor)
-    {
-        constraints.gridy = row;
-        constraints.gridx = column;
-        constraints.gridwidth = gridWidth;
-        constraints.gridheight = gridHeight;
-        constraints.weighty = weightXRow;
-        constraints.weightx = weightYColumn;
-        constraints.insets = insets == null ? new Insets(1, 1, 1, 1) : insets;
-        if (fill != 0)   constraints.fill = fill;
-        if (anchor != 0) constraints.anchor = anchor;
-        if (c != null) panel.add(c, constraints);
-        else           add(panel, constraints);
-    }
-
-    /** Primarily used to add the buttons to a panel */
-    private void addComponent(JPanel panel, Component c, int row, int column)
-    { addComponent(panel, c, row, column, null, 1, 1, 1.0, 1.0, 0, 0); }
-
-    /** Primarily used to add the basicPanel to the frame */
-    private void addComponent(JPanel panel)
-    { addComponent(panel, null, 0, 0, new Insets(0,0,0,0), 0, 0, 1.0, 1.0, 0, GridBagConstraints.NORTH); }
 
     /**
      * Displays the history for the BasicPanel
@@ -344,13 +315,13 @@ public class BasicPanel extends JPanel
     {
         LOGGER.debug("Configuring BasicHistoryZone...");
         constraints.anchor = GridBagConstraints.WEST;
-        addComponent(historyPanel, new JLabel(HISTORY.getValue()), 0, 0); // space before with jtextarea
+        calculator.addComponent(this, constraints, historyPanel, new JLabel(HISTORY.getValue()), 0, 0); // space before with jtextarea
 
         calculator.setupHistoryTextPane();
-        JScrollPane scrollPane = new JScrollPane(basicHistoryTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(basicHistoryTextPane.getSize());
+        JScrollPane scrollPane = new JScrollPane(historyTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(historyTextPane.getSize());
 
-        addComponent(historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
+        calculator.addComponent(this, constraints, historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
                 1, 6, 0, 0, GridBagConstraints.BOTH, 0);
         LOGGER.debug("BasicHistoryZone configured");
     }
@@ -361,6 +332,8 @@ public class BasicPanel extends JPanel
      */
     public void appendTextToBasicPane(String text)
     { calculator.getTextPane().setText(calculator.addNewLines(1) + text); }
+
+    /**************** ACTIONS ****************/
 
     /**
      * The actions to perform when History is clicked
@@ -375,20 +348,19 @@ public class BasicPanel extends JPanel
             LOGGER.debug("Closing History");
             calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
             basicPanel.remove(historyPanel);
-            addComponent(basicPanel, buttonsPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
+            calculator.addComponent(this, constraints, basicPanel, buttonsPanel, 2, 0);
         }
         else
         {
             LOGGER.debug("Opening history");
             calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
             basicPanel.remove(buttonsPanel);
-            var currentHistory = basicHistoryTextPane.getText();
+            //var currentHistory = basicHistoryTextPane.getText();
             //setupBasicHistoryZone();
-            basicHistoryTextPane.setText(currentHistory);
-            addComponent(basicPanel, historyPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
+            //basicHistoryTextPane.setText(currentHistory);
+            calculator.addComponent(this, constraints, basicPanel, historyPanel, 2, 0);
         }
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
     /**
@@ -400,11 +372,11 @@ public class BasicPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform " + PERCENT + " operation"); }
+        { confirm(calculator, LOGGER, "Cannot perform " + PERCENT + " operation"); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
-            calculator.confirm("Pressed: " + buttonChoice);
+            confirm(calculator, LOGGER, "Pressed: " + buttonChoice);
         }
         else
         {
@@ -417,7 +389,7 @@ public class BasicPanel extends JPanel
             LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
             LOGGER.debug("textPane: {}", calculator.getTextPane().getText());
             calculator.getButtonDecimal().setEnabled(false);
-            calculator.confirm("Pressed " + buttonChoice);
+            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
     }
 
@@ -430,11 +402,11 @@ public class BasicPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform " + SQUARED + " operation"); }
+        { confirm(calculator, LOGGER, "Cannot perform " + SQUARED + " operation"); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
-            calculator.confirm("No number to square");
+            confirm(calculator, LOGGER, "No number to square");
         }
         else
         {
@@ -455,7 +427,7 @@ public class BasicPanel extends JPanel
             //calculator.setIsNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
             calculator.writeHistory(buttonChoice, false);
-            calculator.confirm("Pressed " + buttonChoice);
+            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
     }
 
@@ -468,11 +440,11 @@ public class BasicPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
         if (calculator.textPaneContainsBadText())
-        { calculator.confirm("Cannot perform " + FRACTION + " operation"); }
+        { confirm(calculator, LOGGER, "Cannot perform " + FRACTION + " operation"); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
-            calculator.confirm("Cannot perform " + FRACTION + " operation");
+            confirm(calculator, LOGGER, "Cannot perform " + FRACTION + " operation");
         }
         else
         {
@@ -500,20 +472,20 @@ public class BasicPanel extends JPanel
             calculator.setIsNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
             calculator.writeHistory(buttonChoice, false);
-            calculator.confirm("Pressed " + buttonChoice);
+            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
     }
 
-    /* Getters */
+    /**************** GETTERS ****************/
     public JPanel getHistoryPanel() { return historyPanel;}
-    public JTextPane getHistoryTextPane() { return basicHistoryTextPane; }
+    public JTextPane getHistoryTextPane() { return historyTextPane; }
     public boolean isInitialized() { return isInitialized; }
 
-    /* Setters */
+    /**************** SETTERS ****************/
     public void setCalculator(Calculator calculator) { this.calculator = calculator; }
     public void setLayout(GridBagLayout panelLayout) {
         super.setLayout(panelLayout);
     }
-    public void setBasicHistoryTextPane(JTextPane basicHistoryTextPane) { this.basicHistoryTextPane = basicHistoryTextPane; }
+    public void setHistoryTextPane(JTextPane historyTextPane) { this.historyTextPane = historyTextPane; }
 
 }

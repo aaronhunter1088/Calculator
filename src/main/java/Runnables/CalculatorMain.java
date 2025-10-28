@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import static Types.CalculatorView.*;
+import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
+import static Utilities.LoggingUtil.confirm;
 
 /**
  * Main Class. Start here!
@@ -21,7 +23,7 @@ public class CalculatorMain
     {
         LOGGER.info("Starting calculator...");
         String logLevel = System.getenv("logLevel");
-        if (null == logLevel) {
+        if (logLevel == null) {
             LOGGER.warn("Set env.logLevel. Using default:all");
         } else {
             LOGGER.info(System.getenv("logLevel"));
@@ -45,11 +47,10 @@ public class CalculatorMain
                 //Calculator calculator = new Calculator(AREA);
                 //Display the window.
                 calculator.pack();
-                calculator.confirm(calculator.getCalculatorView().getValue() + " Calculator started");
+                confirm(calculator, LOGGER, calculator.getCalculatorView().getValue() + " Calculator started");
             }
-            catch (Exception e) {
-                System.err.printf("Could not create Calculator bc " + e.getMessage());
-            }
+            catch (Exception e)
+            { LOGGER.error("Could not create Calculator bc: {}", e.getMessage(), e); }
         });
         Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.info("Closing Calculator")));
     }
