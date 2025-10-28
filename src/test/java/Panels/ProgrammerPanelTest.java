@@ -81,7 +81,7 @@ public class ProgrammerPanelTest
         String convertedValue = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
         assertEquals("00000100", convertedValue, "Conversion went wrong!");
         programmerPanel.appendTextToProgrammerPane(convertedValue);
-        assertEquals("00000100", calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
+        assertEquals("00000100", calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE.getValue());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ProgrammerPanelTest
         programmerPanel.appendTextToProgrammerPane("0000 1011");
         programmerPanel.performNotButtonAction(actionEvent);
         //assertEquals("topQWord not as expected", ""); // lots of 1's
-        assertEquals("1111 0100", programmerPanel.separateBits(calculator.getTextPaneValueForProgrammerPanel()), TEXT_PANE_WRONG_VALUE.getValue());
+        assertEquals("1111 0100", programmerPanel.separateBits(calculator.getTextPaneValue()), TEXT_PANE_WRONG_VALUE.getValue());
     }
 
 //    @Test
@@ -165,7 +165,7 @@ public class ProgrammerPanelTest
         calculator.getValues()[1] = THREE.getValue();
         calculator.appendTextToPane(THREE.getValue());
         programmerPanel.performOrButtonAction(actionEvent);
-        assertEquals(SEVEN.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
+        assertEquals(SEVEN.getValue(), calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE.getValue());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class ProgrammerPanelTest
         programmerPanel.performButtonModulusAction(actionEvent);
         // TODO: Uncomment and fix
         //assertEquals(TEXT_PANE_WRONG_VALUE.getValue(), number+" Mod", calculator.getTextPaneValueForProgrammerPanel());
-        assertNotEquals("Values[0] should not match ", calculator.getValues()[0], calculator.getTextPaneValueForProgrammerPanel());
+        assertNotEquals("Values[0] should not match ", calculator.getValues()[0], calculator.getTextPaneValue());
     }
 
     @Test
@@ -191,7 +191,7 @@ public class ProgrammerPanelTest
         calculator.getValues()[1] = BLANK.getValue();
         calculator.setValuesPosition(1);
         programmerPanel.performXorButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getTextPaneValueForProgrammerPanel(), TEXT_PANE_WRONG_VALUE.getValue());
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE.getValue());
         assertEquals(BLANK.getValue(), calculator.getValues()[0], "Values[0] should be empty");
         assertEquals(BLANK.getValue(), calculator.getValues()[1], "Values[1] should be empty");
         assertFalse(programmerPanel.isXor(), "XorButton should be set");

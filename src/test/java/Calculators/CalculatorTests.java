@@ -288,15 +288,15 @@ public class CalculatorTests
     }
 
     @Test
-    public void testIsDecimalReturnsTrue()
+    public void testIsDecimalNumberReturnsTrue()
     {
-        assertTrue(calculator.isDecimal("5.02"), "Number should contain the decimal");
+        assertTrue(calculator.isDecimalNumber("5.02"), "Number should contain the decimal");
     }
 
     @Test
-    public void testIsDecimalReturnsFalse()
+    public void testIsDecimalNumberReturnsFalse()
     {
-        assertFalse(calculator.isDecimal(FIVE.getValue()), "Number should not contain the decimal");
+        assertFalse(calculator.isDecimalNumber(FIVE.getValue()), "Number should not contain the decimal");
     }
 
     @Test
@@ -371,7 +371,7 @@ public class CalculatorTests
         assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
 
         calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
-        assertEquals(FOUR.getValue(), calculator.getTextPaneValueForProgrammerPanel(), "Expected textPane to show Decimal representation");
+        assertEquals(FOUR.getValue(), calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
         assertEquals(VIEW_PROGRAMMER.getValue(), calculator.getTitle(), "Expected name to be Programmer");
         assertInstanceOf(ProgrammerPanel.class, calculator.getCurrentPanel(), "Expected ProgrammerPanel");
     }
@@ -714,7 +714,7 @@ public class CalculatorTests
         calculator.values[0] = ZERO.getValue();
         calculator.getTextPane().setText(calculator.addNewLines() + ZERO.getValue());
 
-        assertEquals(ZERO.getValue(), calculator.getTextPaneWithoutAnyOperator(), "Expected textPane to contain 0");
+        assertEquals(ZERO.getValue(), calculator.getTextPaneValue(), "Expected textPane to contain 0");
         assertEquals(VIEW_BASIC.getValue(), calculator.getCalculatorView().getValue(), "Expected BASIC CalculatorView");
         assertEquals(ZERO.getValue(), calculator.getValues()[0], "Expected values[0] to be 0");
 

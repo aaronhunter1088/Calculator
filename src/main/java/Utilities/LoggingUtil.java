@@ -198,4 +198,16 @@ public class LoggingUtil {
             logger.info("value[{}]: '{}'", index, value);
         }
     }
+
+    /**
+     * Logs the value at the current position in the calculator's values array.
+     * @param calculator the Calculator object containing the values
+     * @param logger the Logger needed to log the value
+     */
+    public static void logValuesAtPosition(Calculator calculator, Logger logger)
+    {
+        logger.debug("values[{}]: {}",
+                calculator.getValuesPosition(),
+                calculator.getValues()[calculator.getValuesPosition()]);
+    }
 }

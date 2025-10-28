@@ -964,7 +964,7 @@ public class Calculator extends JFrame
      */
     public void setupCommonButtons()
     {
-        LOGGER.debug("Configuring default buttons...");
+        LOGGER.debug("Configuring common buttons...");
         List<JButton> allButtons =
                 Stream.of(getCommonButtons(), getNumberButtons())
                         .flatMap(Collection::stream) // Flatten into a stream of JButton objects
@@ -1009,7 +1009,7 @@ public class Calculator extends JFrame
         buttonDelete.setName(DELETE.name());
         if (currentPanel instanceof BasicPanel)
         { buttonDelete.addActionListener(this::performDeleteButtonAction); }
-        else if (currentPanel instanceof ProgrammerPanel programmerPanel)
+        else if (currentPanel instanceof ProgrammerPanel)
         { buttonDelete.addActionListener(programmerPanel::performButtonDeleteButtonAction); }
         LOGGER.debug("Delete button configured");
 
@@ -2193,12 +2193,12 @@ public class Calculator extends JFrame
                 divide(DIVISION.getValue()); // 5 ÷ 3 ÷
                 isDividing = true;
                 resetCalculatorOperations(false);
-                if (!getTextPaneWithoutAnyOperator().equals(INFINITY.getValue()) && (isMinimumValue() || isMaximumValue()))
+                if (!getValueWithoutAnyOperator(getTextPaneValue()).equals(INFINITY.getValue()) && (isMinimumValue() || isMaximumValue()))
                 {
                     isDividing = false;
                     appendTextToPane(addCommas(values[0]));
                 }
-                else if (getTextPaneWithoutAnyOperator().equals(INFINITY.getValue()))
+                else if (getValueWithoutAnyOperator(getTextPaneValue()).equals(INFINITY.getValue()))
                 {
                     isDividing = false;
                     valuesPosition = 0;
@@ -2420,12 +2420,13 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneTextValue = getTextPaneValue();
         if (textPaneContainsBadText())
         {
-            appendTextToPane(BLANK.getValue());
+            appendTextToPane(getBadText());
             confirm(this, LOGGER, "Contains bad text. Pressed " + buttonChoice);
         }
-        else if (getTextPaneValue().isEmpty() && values[0].isEmpty())
+        else if (textPaneTextValue.isEmpty() && values[0].isEmpty())
         {
             appendTextToPane(ENTER_A_NUMBER.getValue());
             confirm(this, LOGGER, "No need to perform " + DELETE + " operation");
@@ -2434,12 +2435,12 @@ public class Calculator extends JFrame
         {
             if (valuesPosition == 1 && values[1].isEmpty())
             { valuesPosition = 0; } // assume they could have pressed an operator then wish to delete
-            if (values[0].isEmpty())
-            { values[0] = getTextPaneValue(); }
-            LOGGER.debug("values[{}]: {}", valuesPosition, values[valuesPosition]);
-            LOGGER.debug("textPane: {}", getTextPaneValue());
+            if (values[0].isEmpty() || !values[0].equals(textPaneTextValue))
+            { values[0] = textPaneTextValue; }
+            logValuesAtPosition(this, LOGGER);
+            LOGGER.debug("textPane: {}", textPaneTextValue);
             if (!isAdding && !isSubtracting && !isMultiplying && !isDividing
-                && !getTextPaneValue().isEmpty())
+                && !textPaneTextValue.isEmpty())
             {
                 values[valuesPosition] = values[valuesPosition].substring(0,values[valuesPosition].length()-1);
                 appendTextToPane(addCommas(values[valuesPosition]));
@@ -2453,8 +2454,9 @@ public class Calculator extends JFrame
                     else if (isSubtracting) isSubtracting = false;
                     else if (isMultiplying) isMultiplying = false;
                     else /*if (isDividing())*/ isDividing = false;
-                    values[valuesPosition] = getTextPaneWithoutAnyOperator();
-                    appendTextToPane(addCommas(getTextPaneWithoutAnyOperator()));
+                    values[valuesPosition] = getValueWithoutAnyOperator(textPaneTextValue);
+// TODO: Adjust logic. We should append values[position] adjusted however (commas, toBinary, etc) to textPane
+                    appendTextToPane(addCommas(getValueWithoutAnyOperator(textPaneTextValue)));
                 }
                 else
                 {
@@ -2462,7 +2464,7 @@ public class Calculator extends JFrame
                     appendTextToPane(addCommas(values[valuesPosition]));
                 }
             }
-            buttonDecimal.setEnabled(!isDecimal(values[valuesPosition]));
+            buttonDecimal.setEnabled(!isDecimalNumber(values[valuesPosition]));
             isNumberNegative = values[valuesPosition].contains(SUBTRACTION.getValue());
             writeHistory(buttonChoice, false);
             confirm(this, LOGGER, "Pressed " + buttonChoice);
@@ -2575,6 +2577,7 @@ public class Calculator extends JFrame
                 confirm(this, LOGGER, "Not performing " + buttonChoice);
                 return;
             }
+            // TODO: Add programmer operators
         }
         LOGGER.info("Performing {} button actions", buttonChoice);
         String operator = getActiveOperator();
@@ -2823,6 +2826,17 @@ public class Calculator extends JFrame
         confirm(this, LOGGER, "Pressed " + ABOUT_CALCULATOR.getValue());
     }
 
+    /**
+     * This method returns true or false depending
+     * on if an operator was pushed or not. The
+     * operators checked are: isAdding, isSubtracting,
+     * isMultiplying, and isDividing
+     *
+     * @return true if any operator was pushed, false otherwise
+     */
+    public boolean isOperatorActive()
+    { return isAdding || isSubtracting || isMultiplying || isDividing; }
+
     /* Calculator helper methods */
     /**
      * This method returns the String operator that was activated
@@ -2935,7 +2949,7 @@ public class Calculator extends JFrame
                     programmerPanel.getHistoryTextPane().setText(
                         programmerPanel.getHistoryTextPane().getText() +
                         addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                        + paneValue
+                        + SPACE.getValue() + paneValue
                     );
                 }
                 default -> {
@@ -2956,7 +2970,7 @@ public class Calculator extends JFrame
     public void writeContinuedHistory(String continuedOperation, String operation, Object result, boolean addContinuedOperationToEnd)
     {
         LOGGER.info("Writing continued history");
-        if (currentPanel instanceof BasicPanel panel)
+        if (calculatorView == VIEW_BASIC)
         {
             var paneValue = addCommas(values[0]) + SPACE.getValue() + operation + SPACE.getValue() + addCommas(values[1]) + SPACE.getValue() + EQUALS.getValue() + SPACE.getValue() + addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
             if (addContinuedOperationToEnd) {
@@ -2968,7 +2982,7 @@ public class Calculator extends JFrame
                 + " Result: " + paneValue
             );
         }
-        else if (currentPanel instanceof ProgrammerPanel panel)
+        else if (calculatorView == VIEW_PROGRAMMER)
         {
             var paneValue = addCommas(values[0]) + SPACE.getValue() + operation + SPACE.getValue() + addCommas(values[1]) + SPACE.getValue() + EQUALS.getValue() + SPACE.getValue() + addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
             if (addContinuedOperationToEnd) {
@@ -3049,7 +3063,7 @@ public class Calculator extends JFrame
         {
             values[1] = BLANK.getValue();
             valuesPosition = 0;
-            buttonDecimal.setEnabled(!isDecimal(values[0]));
+            buttonDecimal.setEnabled(!isDecimalNumber(values[0]));
             isFirstNumber = true;
             return true;
         }
@@ -3149,9 +3163,9 @@ public class Calculator extends JFrame
      * @param number the number to test
      * @return boolean if the given number contains a decimal
      */
-    public boolean isDecimal(String number)
+    public boolean isDecimalNumber(String number)
     {
-        LOGGER.debug("isDecimal({}): {}", number.replace(addNewLines(1), BLANK.getValue()), number.contains(DECIMAL.getValue()));
+        LOGGER.debug("isDecimalNumber({}): {}", number.replace(addNewLines(1), BLANK.getValue()), number.contains(DECIMAL.getValue()));
         return number.contains(DECIMAL.getValue());
     }
 
@@ -3169,7 +3183,7 @@ public class Calculator extends JFrame
             LOGGER.debug("TextPane contains bad text");
             issueFound = true;
         }
-        else if (ZERO.getValue().equals(getTextPaneWithoutAnyOperator()) && VIEW_BASIC.equals(calculatorView))
+        else if (ZERO.getValue().equals(getValueWithoutAnyOperator(getTextPaneValue())) && VIEW_BASIC.equals(calculatorView))
         {
             LOGGER.debug("textPane equals 0. Setting to blank.");
             appendTextToPane(BLANK.getValue());
@@ -3221,7 +3235,7 @@ public class Calculator extends JFrame
      */
     public boolean textPaneContainsBadText()
     {
-        var val = getTextPaneWithoutAnyOperator();
+        var val = getValueWithoutAnyOperator(getTextPaneValue());
         boolean result = false;
         if (BLANK.getValue().equals(val)) return result;
         else {
@@ -3233,43 +3247,58 @@ public class Calculator extends JFrame
                      ERR.getValue().equals(val) || // ERR.getValue().contains(val)
                      INFINITY.getValue().equals(val);
         }
-        if (result) LOGGER.debug("textPane contains bad text. text is {}", val);
+        if (result) LOGGER.debug("textPane contains bad text: {}", val);
         else LOGGER.debug("textPane is clean. text is '{}'", val);
         return result;
     }
 
     /**
-     * Adds commas to the number if appropriate
+     * Returns the bad text in the textPane
+     * @return String the bad text
+     */
+    public String getBadText()
+    {
+        String badText = BLANK.getValue();
+        if (CANNOT_DIVIDE_BY_ZERO.getValue().equals(getTextPaneValue())) badText = CANNOT_DIVIDE_BY_ZERO.getValue();
+        else if (NOT_A_NUMBER.getValue().equals(getTextPaneValue())) badText = NOT_A_NUMBER.getValue();
+        else if (NUMBER_TOO_BIG.getValue().equals(getTextPaneValue())) badText = NUMBER_TOO_BIG.getValue();
+        else if (ENTER_A_NUMBER.getValue().equals(getTextPaneValue())) badText = ENTER_A_NUMBER.getValue();
+        else if (ONLY_POSITIVES.getValue().equals(getTextPaneValue())) badText = ONLY_POSITIVES.getValue();
+        else if (ERR.getValue().equals(getTextPaneValue())) badText = ERR.getValue();
+        else if (INFINITY.getValue().equals(getTextPaneValue())) badText = INFINITY.getValue();
+        return badText;
+    }
+
+    /**
+     * Adds the delimiter to the number if appropriate
      * @param valueToAdjust the passed in value
-     * @return String the value with commas
+     * @return String the value with the delimiter chosen
      */
     public String addCommas(String valueToAdjust)
     {
         var delimiter = getDelimiter();
         if (valueToAdjust.isBlank()) return valueToAdjust;
-        if (!isDecimal(valueToAdjust) && valueToAdjust.length() <= 3) return valueToAdjust;
+        if (!isDecimalNumber(valueToAdjust) && valueToAdjust.length() <= 3) return valueToAdjust;
         if (valueToAdjust.contains(delimiter)) return valueToAdjust;
         var backupValue = valueToAdjust;
-        //LOGGER.debug("Stripping any operators");
-        //valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
         LOGGER.debug("Adding {} to '{}'", delimiter, valueToAdjust);
         String adjusted;
         String toTheLeft;
         String toTheRight = "";
-        if (isDecimal(valueToAdjust)) // 1.25, Length of 4
+        if (isDecimalNumber(valueToAdjust)) // 1.25, Length of 4
         {
             LOGGER.debug("backupValue: {}", backupValue);
             toTheLeft = getNumberOnLeftSideOfDecimal(valueToAdjust);
             toTheRight = getNumberOnRightSideOfDecimal(valueToAdjust);
             if (toTheLeft.length() <= 3)
             {
-                buttonDecimal.setEnabled(!isDecimal(backupValue));
+                buttonDecimal.setEnabled(!isDecimalNumber(backupValue));
                 return backupValue;
             }
             else
             {
                 valueToAdjust = toTheLeft;
-                buttonDecimal.setEnabled(!isDecimal(backupValue));
+                buttonDecimal.setEnabled(!isDecimalNumber(backupValue));
             }
         }
         valueToAdjust = valueToAdjust.replace(UNDERSCORE.getValue(), BLANK.getValue())
@@ -3299,13 +3328,13 @@ public class Calculator extends JFrame
         {
             adjusted = valueToAdjust;
             LOGGER.debug("adjusted2: {}", adjusted);
-            if (isDecimal(backupValue)) {
+            if (isDecimalNumber(backupValue)) {
                 buttonDecimal.setEnabled(false);
                 adjusted += toTheRight;
                 LOGGER.debug("adjusted2: {}", adjusted);
             }
         }
-        if (!isDotPressed() && isDecimal(backupValue))
+        if (!isDotPressed() && isDecimalNumber(backupValue))
         {
             adjusted += getDecimalDelimiter() + toTheRight;
             buttonDecimal.setEnabled(false);
@@ -3362,6 +3391,7 @@ public class Calculator extends JFrame
      */
     public String getDelimiter()
     {
+        // TODO: Setup menu option to allow user to choose this value
         return COMMA.getValue();
     }
 
@@ -3388,82 +3418,85 @@ public class Calculator extends JFrame
      * The main actions to perform when switch panels
      * @param actionEvent the click action
      */
-    public void switchPanels(ActionEvent actionEvent, CalculatorType calculatorView)
+    public void switchPanels(ActionEvent actionEvent, CalculatorType updatedView)
     {
         LOGGER.info("Switching panels...");
         LOGGER.debug("Action: {}", actionEvent.getActionCommand());
-        String oldPanelName = currentPanel.getClass().getSimpleName(); //.replace("Panel", BLANK.getValue());
-        String selectedPanel = calculatorView.getName(); //actionEvent.getActionCommand();
-        LOGGER.debug("from '{}' to '{}'", oldPanelName, selectedPanel);
-        if (oldPanelName.equals(selectedPanel))
-        { confirm(this, LOGGER, "Not changing to " + selectedPanel + " when already showing " + oldPanelName); }
-        else if (converterType != null && selectedPanel.equals(converterType.getValue()))
+        String currentView = calculatorView.getName();//currentPanel.getClass().getSimpleName(); //.replace("Panel", BLANK.getValue());
+        String newView = updatedView.getName(); //actionEvent.getActionCommand();
+        LOGGER.debug("from '{}' to '{}'", currentView, newView);
+        if (currentView.equals(newView))
+        { confirm(this, LOGGER, "Not changing to " + newView + " when already showing " + currentView); }
+        else if (newView.equals(converterType.getValue()))
         { confirm(this, LOGGER, "Not changing panels when the converterType is the same"); }
         else
         {
             String currentValueInTextPane = BLANK.getValue();
-            if (calculatorView.equals(VIEW_BASIC)) {
-                //BasicPanel basicPanel = new BasicPanel();
-                switchPanelsInner(basicPanel);
-                currentValueInTextPane = getTextPaneValue();
-                if (!values[0].isEmpty()) basicPanel.appendTextToBasicPane(values[0]);//appendTextToPane(values[0]);
-                else {
-                    // see ProgrammerPanel.displayByteAndBase()
-                    if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
-                        basicPanel.appendTextToBasicPane(addCommas(currentValueInTextPane));
-                    }
-                }
-                if (isDecimal(values[0])) {
-                    buttonDecimal.setEnabled(false);
-                }
-                if (determineIfAnyBasicOperatorWasPushed()) {
-                    basicPanel.appendTextToBasicPane(textPane.getText() + SPACE.getValue() + getActiveOperator());
-                }
-                setCalculatorView(VIEW_BASIC);
-            }
-            else if (calculatorView.equals(VIEW_PROGRAMMER)) {
-                //ProgrammerPanel programmerPanel = new ProgrammerPanel();
-                switchPanelsInner(programmerPanel);
-                currentValueInTextPane = getTextPaneValue();
-                if (!currentValueInTextPane.isEmpty()) {
-                    if (!values[0].isEmpty()) {
-                        programmerPanel.appendTextToProgrammerPane(values[0]);
-                    } else {
+            switch (updatedView) {
+                case VIEW_BASIC -> {
+                    //BasicPanel basicPanel = new BasicPanel();
+                    switchPanelsInner(basicPanel);
+                    currentValueInTextPane = getTextPaneValue();
+                    if (!values[0].isEmpty()) basicPanel.appendTextToBasicPane(values[0]);//appendTextToPane(values[0]);
+                    else {
                         // see ProgrammerPanel.displayByteAndBase()
-                        if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + calculatorBase.getValue()).equals(currentValueInTextPane)) {
-                            programmerPanel.appendTextToProgrammerPane(currentValueInTextPane);
+                        if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
+                            basicPanel.appendTextToBasicPane(addCommas(currentValueInTextPane));
                         }
                     }
-                    if (isDecimal(values[0])) {
+                    if (isDecimalNumber(values[0])) {
                         buttonDecimal.setEnabled(false);
                     }
                     if (determineIfAnyBasicOperatorWasPushed()) {
-                        programmerPanel.appendTextToProgrammerPane(values[0] + SPACE.getValue() + getActiveOperator());
+                        basicPanel.appendTextToBasicPane(textPane.getText() + SPACE.getValue() + getActiveOperator());
                     }
+                    setCalculatorView(VIEW_BASIC);
                 }
-                setCalculatorView(VIEW_PROGRAMMER);
+                case VIEW_PROGRAMMER -> {
+                    //ProgrammerPanel programmerPanel = new ProgrammerPanel();
+                    switchPanelsInner(programmerPanel);
+                    currentValueInTextPane = getTextPaneValue();
+                    if (!currentValueInTextPane.isEmpty()) {
+                        if (!values[0].isEmpty()) {
+                            programmerPanel.appendTextToProgrammerPane(values[0]);
+                        } else {
+                            // see ProgrammerPanel.displayByteAndBase()
+                            if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + calculatorBase.getValue()).equals(currentValueInTextPane)) {
+                                programmerPanel.appendTextToProgrammerPane(currentValueInTextPane);
+                            }
+                        }
+                        if (isDecimalNumber(values[0])) {
+                            buttonDecimal.setEnabled(false);
+                        }
+                        if (determineIfAnyBasicOperatorWasPushed()) {
+                            programmerPanel.appendTextToProgrammerPane(values[0] + SPACE.getValue() + getActiveOperator());
+                        }
+                    }
+                    setCalculatorView(VIEW_PROGRAMMER);
+                }
+                case VIEW_SCIENTIFIC -> {
+                    LOGGER.warn("Setup");
+                    setCalculatorView(VIEW_SCIENTIFIC);
+                }
+                case VIEW_DATE -> {
+                    // TODO: move the line below. this feels wrong to check at this point. like, once a calc is started, if not in date calc mode first, then just default that value to DIFFERENCE
+                    dateOperation = dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation;
+                    switchPanelsInner(datePanel);
+                    setCalculatorView(VIEW_DATE);
+                }
+                case ANGLE -> {
+                    setConverterType(ANGLE);
+                    switchPanelsInner(converterPanel);
+                    setCalculatorView(VIEW_CONVERTER);
+                }
+                case AREA -> {
+                    setConverterType(AREA);
+                    switchPanelsInner(converterPanel);
+                    setCalculatorView(VIEW_CONVERTER);
+                }
+                default -> { LOGGER.warn("Add other views"); }
             }
-            else if (calculatorView.equals(VIEW_SCIENTIFIC)) {
-                LOGGER.warn("Setup");
-                setCalculatorView(VIEW_SCIENTIFIC);
-            }
-            else if (calculatorView.equals(VIEW_DATE)) {
-                // TODO: move the line below. this feels wrong to check at this point. like, once a calc is started, if not in date calc mode first, then just default that value to DIFFERENCE
-                dateOperation = dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation;
-                switchPanelsInner(datePanel);
-                setCalculatorView(VIEW_DATE);
-            }
-            else if (calculatorView.equals(ANGLE)) {
-                setConverterType(ANGLE);
-                switchPanelsInner(converterPanel);
-                setCalculatorView(VIEW_CONVERTER);
-            }
-            else if (calculatorView.equals(AREA)) {
-                setConverterType(AREA);
-                switchPanelsInner(converterPanel);
-                setCalculatorView(VIEW_CONVERTER);
-            }
-            confirm(this, LOGGER, "Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
+            confirm(this, LOGGER, "Switched from " + currentView + " to " + currentPanel.getClass().getSimpleName());
         }
     }
 
@@ -3624,13 +3657,13 @@ public class Calculator extends JFrame
         if (valueToConvert.isEmpty()) return BLANK.getValue();
         LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
         String convertedNumber;
-        if (!isDecimal(valueToConvert))
+        if (!isDecimalNumber(valueToConvert))
             convertedNumber = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
         else {
             var value = clearZeroesAndDecimalAtEnd(valueToConvert);
             convertedNumber = Integer.toString(Integer.parseInt(value, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
         }
-        if (isDecimal(valueToConvert)) {
+        if (isDecimalNumber(valueToConvert)) {
             LOGGER.warn("Lost precision converting decimal to integer. FIX");
         }
         if (BASE_BINARY == toBase) {
@@ -3675,6 +3708,7 @@ public class Calculator extends JFrame
         if (index == -1) return currentNumber;
         else
         {
+            getNumberOnLeftSideOfDecimal(currentNumber);
             String toTheRight = getNumberOnRightSideOfDecimal(currentNumber);
             String expected = ZERO.getValue().repeat(toTheRight.length());
             boolean allZeroes = expected.equals(toTheRight);
@@ -3682,30 +3716,6 @@ public class Calculator extends JFrame
         }
         LOGGER.debug("ClearZeroesAndDot Result: {}", addCommas(currentNumber));
         return currentNumber;
-    }
-
-    /**
-     * Returns the text in the textPane without
-     * any new line characters or operator text.
-     * Takes into account the current panel.
-     * @return the plain textPane text
-     */
-    public String getTextPaneWithoutAnyOperator()
-    {
-        return getTextPaneValue()
-               .replace(ADDITION.getValue(), BLANK.getValue()) // target, replacement
-               .replace(SUBTRACTION.getValue(), BLANK.getValue())
-               .replace(MULTIPLICATION.getValue(), BLANK.getValue())
-               .replace(DIVISION.getValue(), BLANK.getValue())
-               .replace(MODULUS.getValue(), BLANK.getValue())
-               .replace(LEFT_PARENTHESIS.getValue(), BLANK.getValue())
-               .replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
-               .replace(ROL.getValue(), BLANK.getValue())
-               .replace(ROR.getValue(), BLANK.getValue())
-               .replace(OR.getValue(), BLANK.getValue())
-               .replace(XOR.getValue(), BLANK.getValue())
-               .replace(AND.getValue(), BLANK.getValue())
-               .strip();
     }
 
     /**
@@ -3721,8 +3731,8 @@ public class Calculator extends JFrame
                 .replace(MULTIPLICATION.getValue(), BLANK.getValue())
                 .replace(DIVISION.getValue(), BLANK.getValue())
                 .replace(MODULUS.getValue(), BLANK.getValue())
-                .replace(LEFT_PARENTHESIS.getValue(), BLANK.getValue())
-                .replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
+                //.replace(LEFT_PARENTHESIS.getValue(), BLANK.getValue())
+                //.replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
                 .replace(ROL.getValue(), BLANK.getValue())
                 .replace(ROR.getValue(), BLANK.getValue())
                 .replace(XOR.getValue(), BLANK.getValue()) // XOR must be checked before OR, otherwise OR will be replaced when XOR is there, leaving X, which is not desired
@@ -3760,11 +3770,11 @@ public class Calculator extends JFrame
      */
     public String getTextPaneValue()
     {
-        if (currentPanel instanceof BasicPanel)
+        if (calculatorView == VIEW_BASIC)
         { return textPane.getText()
                 .replaceAll(NEWLINE.getValue(), BLANK.getValue())
                 .strip(); }
-        else if (currentPanel instanceof ProgrammerPanel)
+        else if (calculatorView == VIEW_PROGRAMMER)
         { return getTextPaneValueForProgrammerPanel(); }
         else
         {
@@ -3779,7 +3789,7 @@ public class Calculator extends JFrame
      * Byte Space Space Base NEWLINE NEWLINE value[valuePosition] NEWLINE
      * @return the value in the programmer text pane
      */
-    public String getTextPaneValueForProgrammerPanel()
+    private String getTextPaneValueForProgrammerPanel()
     {
         String currentValue = BLANK.getValue();
         try
@@ -3825,10 +3835,7 @@ public class Calculator extends JFrame
                 LOGGER.warn("Attempted to retrieve value from text pane but it was empty. Returning blank.");
                 return BLANK.getValue();
             }
-            if (currentValue.contains(ADDITION.getValue()) ||
-                currentValue.contains(SUBTRACTION.getValue()) ||
-                currentValue.contains(MULTIPLICATION.getValue()) ||
-                currentValue.contains(DIVISION.getValue()) )
+            if (isOperatorActive() || programmerPanel.isProgrammerOperatorActive())
             {
                 LOGGER.debug("Removing operator from currentValue: {}", currentValue);
                 currentValue = getValueWithoutAnyOperator(currentValue);
@@ -4078,7 +4085,7 @@ public class Calculator extends JFrame
     public String getNumberOnLeftSideOfDecimal(String currentNumber)
     {
         String leftSide;
-        if (!isDecimal(currentNumber)) return currentNumber;
+        if (!isDecimalNumber(currentNumber)) return currentNumber;
         int index = currentNumber.indexOf(DECIMAL.getValue());
         if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = BLANK.getValue();
         else

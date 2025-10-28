@@ -425,7 +425,7 @@ public class BasicPanel extends JPanel
             calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION.getValue()));
             calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             //calculator.setIsNumberNegative(false);
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[0]));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
@@ -470,7 +470,7 @@ public class BasicPanel extends JPanel
                 calculator.getButtonDecimal().setEnabled(false);
             }
             calculator.setIsNumberNegative(false);
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[0]));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[0]));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }

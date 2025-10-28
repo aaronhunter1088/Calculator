@@ -24,7 +24,7 @@ import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
-import static Utilities.LoggingUtil.confirm;
+import static Utilities.LoggingUtil.*;
 
 public class ProgrammerPanel extends JPanel
 {
@@ -639,16 +639,17 @@ public class ProgrammerPanel extends JPanel
     public void performButtonDeleteButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Programmer Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneTextValue = calculator.getTextPaneValue();
         switch (calculator.getCalculatorBase())
         {
             case BASE_BINARY -> {
                 if (calculator.textPaneContainsBadText())
                 {
-                    calculator.appendTextToPane(BLANK.getValue());
+                    calculator.appendTextToPane(calculator.getBadText());
                     confirm(calculator, LOGGER, "Contains bad text. Pressed " + buttonChoice);
                 }
-                else if (calculator.getTextPaneValueForProgrammerPanel().isEmpty() && calculator.getValues()[0].isEmpty())
+                else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
                 {
                     calculator.appendTextToPane(ENTER_A_NUMBER.getValue());
                     confirm(calculator, LOGGER, "No need to perform " + DELETE + " operation");
@@ -658,15 +659,15 @@ public class ProgrammerPanel extends JPanel
                     if (calculator.getValuesPosition() == 1 && calculator.getValues()[1].isEmpty())
                     { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
                     if (calculator.getValues()[0].isEmpty())
-                    { calculator.getValues()[0] = calculator.getTextPaneValueForProgrammerPanel(); }
-                    LOGGER.debug("values[{}]: {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
-                    LOGGER.debug("textPane: {}", calculator.getTextPaneValueForProgrammerPanel());
+                    { calculator.getValues()[0] = calculator.getTextPaneValue(); }
+                    logValuesAtPosition(calculator, LOGGER);
+                    LOGGER.debug("textPane: {}", calculator.getTextPaneValue());
                     // if no operator has been pushed but text pane has value
                     if (!calculator.isAdding() && !calculator.isSubtracting()
                         && !calculator.isMultiplying() && !calculator.isDividing()
                         && !calculator.getTextPaneValue().isEmpty())
                     {
-                        String substring = calculator.getTextPaneValueForProgrammerPanel().substring(0, calculator.getTextPaneValueForProgrammerPanel().length()-1);
+                        String substring = calculator.getTextPaneValue().substring(0, calculator.getTextPaneValue().length()-1);
                         if (substring.endsWith(SPACE.getValue())) substring = substring.substring(0,substring.length()-1);
                         boolean updateValue = substring.isEmpty();
                         calculator.appendTextToPane(substring, updateValue);
@@ -681,16 +682,16 @@ public class ProgrammerPanel extends JPanel
                             else if (calculator.isSubtracting()) calculator.setIsSubtracting(false);
                             else if (calculator.isMultiplying()) calculator.setIsMultiplying(false);
                             else /* (calculator.isDividing())*/ calculator.setIsDividing(false);
-                            String textWithoutOperator = calculator.getTextPaneWithoutAnyOperator();
+                            String textWithoutOperator = calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue());
                             calculator.appendTextToPane(textWithoutOperator);
                         }
                         else
                         {
-                            String substring = calculator.getTextPaneValueForProgrammerPanel().substring(0,calculator.getTextPaneValueForProgrammerPanel().length()-1);
+                            String substring = calculator.getTextPaneValue().substring(0,calculator.getTextPaneValue().length()-1);
                             calculator.appendTextToPane(substring);
                         }
                     }
-                    calculator.getButtonDecimal().setEnabled(!calculator.isDecimal(calculator.getValues()[calculator.getValuesPosition()]));
+                    calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[calculator.getValuesPosition()]));
                     calculator.setIsNumberNegative(calculator.getValues()[calculator.getValuesPosition()].contains(SUBTRACTION.getValue()));
                     calculator.writeHistory(buttonChoice, false);
                     confirm(calculator, LOGGER, "Pressed " + buttonChoice);
@@ -718,7 +719,7 @@ public class ProgrammerPanel extends JPanel
         else if (!calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty())
         {
             isModulus = true;
-            String updatedTextValue = calculator.getTextPaneValueForProgrammerPanel() + SPACE.getValue() + buttonChoice;
+            String updatedTextValue = calculator.getTextPaneValue() + SPACE.getValue() + buttonChoice;
             //calculator.appendTextToPane(updatedTextValue); // KEPT TO SHOW DIFFERENCE. USE METHOD BELOW
             appendTextToProgrammerPane(updatedTextValue);
             calculator.resetCalculatorOperations(true);
@@ -1100,7 +1101,7 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        String textPaneValue = calculator.getTextPaneValueForProgrammerPanel();
+        String textPaneValue = calculator.getTextPaneValue();
         if (BASE_BINARY != calculator.getCalculatorBase()) {
             textPaneValue = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, textPaneValue);
         }
@@ -1412,10 +1413,10 @@ public class ProgrammerPanel extends JPanel
         {
             case BASE_BINARY -> {
                 // TODO: Not just is the correct length but also if the length is less than
-                converted = calculator.getTextPaneValueForProgrammerPanel();
+                converted = calculator.getTextPaneValue();
                 updateValues = getAllowedLengthsOfTextPane().contains(converted.length());
                 if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_OCTAL, calculator.getTextPaneValueForProgrammerPanel());
+                    converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_OCTAL, calculator.getTextPaneValue());
                     calculator.getValues()[calculator.getValuesPosition()] = converted;
                     calculator.setPreviousBase(BASE_BINARY);
                     calculator.setCalculatorBase(BASE_OCTAL);
@@ -1427,7 +1428,7 @@ public class ProgrammerPanel extends JPanel
                 // TODO: Create similar logic as i did for setting this for binary.
                 updateValues = true;
                 if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_OCTAL, BASE_DECIMAL, calculator.getTextPaneValueForProgrammerPanel());
+                    converted = calculator.convertFromBaseToBase(BASE_OCTAL, BASE_DECIMAL, calculator.getTextPaneValue());
                     calculator.getValues()[calculator.getValuesPosition()] = converted;
                     calculator.setPreviousBase(BASE_OCTAL);
                     appendTextToProgrammerPane(calculator.getValues()[calculator.getValuesPosition()]);
@@ -1438,13 +1439,13 @@ public class ProgrammerPanel extends JPanel
                 // TODO: Create similar logic as i did for setting this for binary.
                 updateValues = true;
                 if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, calculator.getTextPaneValueForProgrammerPanel());
+                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, calculator.getTextPaneValue());
                     calculator.setPreviousBase(BASE_DECIMAL);
                     appendTextToProgrammerPane(converted);
                 }
             }
             case BASE_HEXADECIMAL -> {
-                converted = calculator.convertFromBaseToBase(BASE_HEXADECIMAL, BASE_BINARY, calculator.getTextPaneValueForProgrammerPanel());
+                converted = calculator.convertFromBaseToBase(BASE_HEXADECIMAL, BASE_BINARY, calculator.getTextPaneValue());
                 calculator.setCalculatorBase(BASE_BINARY);
                 // TODO: Create similar logic as i did for setting this for binary.
                 updateValues = true;
@@ -1475,7 +1476,7 @@ public class ProgrammerPanel extends JPanel
             var allowedLengthMinusNewLines = getAllowedLengthsOfTextPane();
             // TEST: removed 0 from allowed lengths
             allowedLengthMinusNewLines.remove((Object)0);
-            String textPaneText = calculator.getTextPaneValueForProgrammerPanel();
+            String textPaneText = calculator.getTextPaneValue();
             LOGGER.debug("textPaneText: {}", textPaneText);
             if (allowedLengthMinusNewLines.contains(textPaneText.length()))
             { confirm(calculator, LOGGER, "Byte length "+allowedLengthMinusNewLines+" already reached"); }
@@ -1483,7 +1484,7 @@ public class ProgrammerPanel extends JPanel
             {
                 appendTextToProgrammerPane(separateBits(textPaneText + buttonChoice));
                 calculator.writeHistory(buttonChoice, false);
-                textPaneText = calculator.getTextPaneValueForProgrammerPanel();
+                textPaneText = calculator.getTextPaneValue();
                 if (allowedLengthMinusNewLines.contains(textPaneText.length()))
                 {
                     calculator.setPreviousBase(BASE_BINARY); // set previousBase since number is fully formed
