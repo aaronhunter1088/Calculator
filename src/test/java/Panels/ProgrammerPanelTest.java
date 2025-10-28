@@ -1,7 +1,6 @@
 package Panels;
 
 import Calculators.Calculator;
-import Calculators.CalculatorError;
 import Types.CalculatorView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,8 +11,6 @@ import org.mockito.MockitoAnnotations;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.text.ParseException;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
@@ -42,7 +39,7 @@ public class ProgrammerPanelTest
 
     @AfterAll
     public static void afterAll()
-    { LOGGER.info("Finished running " + ProgrammerPanel.class.getSimpleName()); }
+    { LOGGER.info("Finished running {}", ProgrammerPanel.class.getSimpleName()); }
 
     @BeforeEach
     public void beforeEach() throws Exception 
@@ -73,7 +70,7 @@ public class ProgrammerPanelTest
     }
 
     @Test
-    public void switchingFromBasicToProgrammerConvertsTextArea() throws CalculatorError
+    public void switchingFromBasicToProgrammerConvertsTextArea()
     {
         calculator.appendTextToPane(FOUR.getValue());
         calculator.getValues()[0] = FOUR.getValue();
