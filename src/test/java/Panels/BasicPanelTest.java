@@ -92,8 +92,8 @@ public class BasicPanelTest
         calculator.performNumberButtonAction(actionEvent);
 
         assertEquals(1, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]), "Values[{}] is not 1");
-        assertEquals(ONE.getValue(), calculator.getValueWithoutAnyOperator(), "textPane should be 1");
-        assertTrue(calculator.isPositiveNumber(calculator.getValueWithoutAnyOperator()), "{} is not positive");
+        assertEquals(ONE.getValue(), calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should be 1");
+        assertTrue(calculator.isPositiveNumber(calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue())), "{} is not positive");
         assertTrue(calculator.isFirstNumber(), "We are not on the firstNumber");
     }
 
@@ -482,7 +482,7 @@ public class BasicPanelTest
         calculator.performAdditionButtonAction(actionEvent);
 
         assertEquals(BLANK.getValue(), calculator.getValues()[calculator.getValuesPosition()], "Values[{}] is not empty");
-        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(), "textPane should display 'Enter a Number'");
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should display 'Enter a Number'");
         assertTrue(calculator.isFirstNumber(), "We are not on the firstNumber");
     }
 
@@ -1050,7 +1050,7 @@ public class BasicPanelTest
         calculator.performAdditionButtonAction(actionEvent);
 
         assertEquals(BLANK.getValue(), calculator.getValues()[calculator.getValuesPosition()], "Values[{}] is not empty");
-        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(), "textPane should display 'Enter a Number'");
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should display 'Enter a Number'");
         assertTrue(calculator.isFirstNumber(), "We are not on the firstNumber");
     }
 
@@ -1061,7 +1061,7 @@ public class BasicPanelTest
         calculator.performMultiplicationAction(actionEvent);
 
         assertEquals(BLANK.getValue(), calculator.getValues()[calculator.getValuesPosition()], "Values[{}] is not empty");
-        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(), "textPane should display 'Enter a Number'");
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should display 'Enter a Number'");
         assertTrue(calculator.isFirstNumber(), "We are not on the firstNumber");
     }
 
@@ -1072,7 +1072,7 @@ public class BasicPanelTest
         calculator.performDivideButtonAction(actionEvent);
 
         assertEquals(BLANK.getValue(), calculator.getValues()[calculator.getValuesPosition()], "Values[{}] is not empty");
-        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(), "textPane should display 'Enter a Number'");
+        assertEquals(ENTER_A_NUMBER.getValue(), calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should display 'Enter a Number'");
         assertTrue(calculator.isFirstNumber(), "We are not on the firstNumber");
     }
 
@@ -1465,7 +1465,7 @@ public class BasicPanelTest
         calculator.getTextPane().setText(calculator.addNewLines() + "1088 +");
         calculator.performClearEntryButtonAction(actionEvent);
 
-        assertTrue(StringUtils.isBlank(calculator.getValueWithoutAnyOperator()), "textPane was not cleared");
+        assertTrue(StringUtils.isBlank(calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue())), "textPane was not cleared");
         assertFalse(calculator.isAdding(), "isAdding() expected to be false");
     }
 
