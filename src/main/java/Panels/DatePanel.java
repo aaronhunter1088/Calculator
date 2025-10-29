@@ -151,10 +151,10 @@ public class DatePanel extends JPanel
         setupFromDate();
         setupToDate();
         setupDifferenceLabel();
-        setYearsDifferenceLabel(new JLabel(SAME + SPACE.getValue() + YEAR));
-        setMonthsDifferenceLabel(new JLabel(SAME + SPACE.getValue() + MONTH));
-        setWeeksDifferenceLabel(new JLabel(SAME + SPACE.getValue() + WEEK));
-        setDaysDifferenceLabel(new JLabel(SAME + SPACE.getValue() + DAY.getValue()));
+        setYearsDifferenceLabel(new JLabel(SAME + SPACE + YEAR));
+        setMonthsDifferenceLabel(new JLabel(SAME + SPACE + MONTH));
+        setWeeksDifferenceLabel(new JLabel(SAME + SPACE + WEEK));
+        setDaysDifferenceLabel(new JLabel(SAME + SPACE + DAY));
         setupBlankLabel1();
         setupBlankLabel2();
         setupBlankLabel3();
@@ -193,7 +193,7 @@ public class DatePanel extends JPanel
      */
     private void setupBlankLabel1()
     {
-        setBlankLabel1(new JLabel(SPACE.getValue()));
+        setBlankLabel1(new JLabel(SPACE));
         blankLabel1.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -202,7 +202,7 @@ public class DatePanel extends JPanel
      */
     private void setupBlankLabel2()
     {
-        setBlankLabel2(new JLabel(SPACE.getValue()));
+        setBlankLabel2(new JLabel(SPACE));
         blankLabel2.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -211,7 +211,7 @@ public class DatePanel extends JPanel
      */
     private void setupBlankLabel3()
     {
-        setBlankLabel3(new JLabel(SPACE.getValue()));
+        setBlankLabel3(new JLabel(SPACE));
         blankLabel3.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -220,7 +220,7 @@ public class DatePanel extends JPanel
      */
     private void setupBlankLabel4()
     {
-        setBlankLabel4(new JLabel(SPACE.getValue()));
+        setBlankLabel4(new JLabel(SPACE));
         blankLabel4.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -229,7 +229,7 @@ public class DatePanel extends JPanel
      */
     private void setupBlankLabel5()
     {
-        setBlankLabel5(new JLabel(SPACE.getValue()));
+        setBlankLabel5(new JLabel(SPACE));
         blankLabel5.setHorizontalAlignment(SwingConstants.LEFT);
     }
 
@@ -276,7 +276,7 @@ public class DatePanel extends JPanel
      */
     private void setupYearsLabel()
     {
-        setYearsLabel(new JLabel(YEAR.getValue() + LOWER_CASE_S.getValue()));
+        setYearsLabel(new JLabel(YEAR + LOWER_CASE_S));
         yearsLabel.setFont(verdanaFontBold);
         yearsLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -286,7 +286,7 @@ public class DatePanel extends JPanel
      */
     private void setupYearsTextField()
     {
-        setYearsTextField(new JTextField(BLANK.getValue(), 5));
+        setYearsTextField(new JTextField(BLANK, 5));
         yearsTextField.setEditable(true);
         yearsTextField.setHorizontalAlignment(SwingConstants.LEFT);
         yearsTextField.setFont(mainFont);
@@ -298,7 +298,7 @@ public class DatePanel extends JPanel
      */
     private void setupMonthsLabel()
     {
-        setMonthLabel(new JLabel(MONTH.getValue() + LOWER_CASE_S.getValue()));
+        setMonthLabel(new JLabel(MONTH + LOWER_CASE_S));
         monthLabel.setFont(verdanaFontBold);
         monthLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -308,7 +308,7 @@ public class DatePanel extends JPanel
      */
     private void setupMonthsTextField()
     {
-        setMonthsTextField(new JTextField(BLANK.getValue(), 5));
+        setMonthsTextField(new JTextField(BLANK, 5));
         monthsTextField.setEditable(true);
         monthsTextField.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -319,7 +319,7 @@ public class DatePanel extends JPanel
      */
     private void setupWeeksLabel()
     {
-        setWeeksLabel(new JLabel(WEEK.getValue() + LOWER_CASE_S.getValue()));
+        setWeeksLabel(new JLabel(WEEK + LOWER_CASE_S));
         weeksLabel.setFont(verdanaFontBold);
         weeksLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -329,7 +329,7 @@ public class DatePanel extends JPanel
      */
     private void setupWeeksTextField()
     {
-        setWeeksTextField(new JTextField(BLANK.getValue(), 5));
+        setWeeksTextField(new JTextField(BLANK, 5));
         weeksTextField.setEditable(true);
         weeksTextField.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -340,7 +340,7 @@ public class DatePanel extends JPanel
      */
     private void setupDaysLabel()
     {
-        setDaysLabel(new JLabel(DAY.getValue() + LOWER_CASE_S.getValue()));
+        setDaysLabel(new JLabel(DAY + LOWER_CASE_S));
         daysLabel.setFont(verdanaFontBold);
         daysLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -350,7 +350,7 @@ public class DatePanel extends JPanel
      */
     private void setupDaysTextField()
     {
-        setDaysTextField(new JTextField(BLANK.getValue(), 5));
+        setDaysTextField(new JTextField(BLANK, 5));
         daysTextField.setEditable(true);
         daysTextField.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -379,7 +379,7 @@ public class DatePanel extends JPanel
      */
     private void setupAddOrSubtractResultLabel()
     {
-        setDateLabel(new JLabel(ADD_OR_SUB_RESULT.getValue()));
+        setDateLabel(new JLabel(ADD_OR_SUB_RESULT));
         dateLabel.setFont(verdanaFontBold);
         dateLabel.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -667,10 +667,10 @@ public class DatePanel extends JPanel
         //int dayOfMonth = fromDatePicker.getModel().getDay();
         LocalDateTime localDateTime = LocalDateTime.of(getTheDateFromTheFromDate(), LocalTime.now());
         LOGGER.debug("FromDate is {}", localDateTime.toLocalDate());
-        int years = Integer.parseInt(StringUtils.isBlank(yearsTextField.getText()) ? ZERO.getValue() : yearsTextField.getText());
-        int months = Integer.parseInt(StringUtils.isEmpty(monthsTextField.getText()) ? ZERO.getValue() : monthsTextField.getText());
-        int weeks = Integer.parseInt(StringUtils.isEmpty(weeksTextField.getText()) ? ZERO.getValue() : weeksTextField.getText());
-        int days = Integer.parseInt(StringUtils.isEmpty(daysTextField.getText()) ? ZERO.getValue() : daysTextField.getText());
+        int years = Integer.parseInt(StringUtils.isBlank(yearsTextField.getText()) ? ZERO : yearsTextField.getText());
+        int months = Integer.parseInt(StringUtils.isEmpty(monthsTextField.getText()) ? ZERO : monthsTextField.getText());
+        int weeks = Integer.parseInt(StringUtils.isEmpty(weeksTextField.getText()) ? ZERO : weeksTextField.getText());
+        int days = Integer.parseInt(StringUtils.isEmpty(daysTextField.getText()) ? ZERO : daysTextField.getText());
         LOGGER.debug("Years is {}", years);
         LOGGER.debug("Months is {}", months);
         LOGGER.debug("Weeks is {}", weeks);
@@ -899,43 +899,43 @@ public class DatePanel extends JPanel
     private void updateResultsTextBox()
     {
         int[] numberOfYearsMonthsWeeksAndDays = calculateDifferenceBetweenDates();
-        String wordYear = YEAR.getValue().toLowerCase() + LOWER_CASE_S.getValue();
-        String wordMonth = MONTH.getValue().toLowerCase() + LOWER_CASE_S.getValue();
-        String wordWeek = WEEK.getValue().toLowerCase() + LOWER_CASE_S.getValue();
-        String wordDay = DAY.getValue().toLowerCase() + LOWER_CASE_S.getValue();
+        String wordYear = YEAR.toLowerCase() + LOWER_CASE_S;
+        String wordMonth = MONTH.toLowerCase() + LOWER_CASE_S;
+        String wordWeek = WEEK.toLowerCase() + LOWER_CASE_S;
+        String wordDay = DAY.toLowerCase() + LOWER_CASE_S;
         if (numberOfYearsMonthsWeeksAndDays[0] == 1 || numberOfYearsMonthsWeeksAndDays[0] == -1)
-        { wordYear = YEAR.getValue().toLowerCase(); }
+        { wordYear = YEAR.toLowerCase(); }
         if (numberOfYearsMonthsWeeksAndDays[1] == 1 || numberOfYearsMonthsWeeksAndDays[1] == -1)
-        { wordMonth = MONTH.getValue().toLowerCase(); }
+        { wordMonth = MONTH.toLowerCase(); }
         if (numberOfYearsMonthsWeeksAndDays[2] == 1 || numberOfYearsMonthsWeeksAndDays[2] == -1)
-        { wordWeek = WEEK.getValue().toLowerCase(); }
+        { wordWeek = WEEK.toLowerCase(); }
         if (numberOfYearsMonthsWeeksAndDays[3] == 1 || numberOfYearsMonthsWeeksAndDays[3] == -1)
-        { wordDay = DAY.getValue().toLowerCase(); }
+        { wordDay = DAY.toLowerCase(); }
         LocalDate fromDate = getTheDateFromTheFromDate();
         LocalDate toDate = getTheDateFromTheToDate();
         if (fromDate.isBefore(toDate))
         {
             LOGGER.info("{} is before {}", fromDate, toDate);
-            yearsDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[0] + SPACE.getValue() + wordYear);
-            monthsDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[1] + SPACE.getValue() + wordMonth);
-            weeksDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[2] + SPACE.getValue() + wordWeek);
-            daysDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[3] + SPACE.getValue() + wordDay);
+            yearsDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[0] + SPACE + wordYear);
+            monthsDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[1] + SPACE + wordMonth);
+            weeksDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[2] + SPACE + wordWeek);
+            daysDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[3] + SPACE + wordDay);
         }
         else if (fromDate.isAfter(toDate))
         {
             LOGGER.info("{} is after {}", fromDate, toDate);
-            yearsDifferenceLabel.setText((numberOfYearsMonthsWeeksAndDays[0]) + SPACE.getValue() +  wordYear);
-            monthsDifferenceLabel.setText((numberOfYearsMonthsWeeksAndDays[1]) + SPACE.getValue() +  wordMonth);
-            weeksDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[2] + SPACE.getValue() + wordWeek);
-            daysDifferenceLabel.setText((numberOfYearsMonthsWeeksAndDays[3]) + SPACE.getValue() +  wordDay);
+            yearsDifferenceLabel.setText((numberOfYearsMonthsWeeksAndDays[0]) + SPACE +  wordYear);
+            monthsDifferenceLabel.setText((numberOfYearsMonthsWeeksAndDays[1]) + SPACE +  wordMonth);
+            weeksDifferenceLabel.setText(numberOfYearsMonthsWeeksAndDays[2] + SPACE + wordWeek);
+            daysDifferenceLabel.setText((numberOfYearsMonthsWeeksAndDays[3]) + SPACE +  wordDay);
         }
         else
         {
             LOGGER.info("{} is the same as {}", fromDate, toDate);
-            yearsDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + YEAR.getValue());
-            monthsDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + MONTH.getValue());
-            weeksDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + WEEK.getValue());
-            daysDifferenceLabel.setText(SAME.getValue() + SPACE.getValue() + ADD_OR_SUB_RESULT.getValue());
+            yearsDifferenceLabel.setText(SAME + SPACE + YEAR);
+            monthsDifferenceLabel.setText(SAME + SPACE + MONTH);
+            weeksDifferenceLabel.setText(SAME + SPACE + WEEK);
+            daysDifferenceLabel.setText(SAME + SPACE + ADD_OR_SUB_RESULT);
         }
         LOGGER.info("Difference Results updated");
     }

@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serial;
-import java.util.Objects;
 
 import static Calculators.Calculator.*;
 import static Types.CalculatorConverterType.*;
@@ -246,7 +245,7 @@ public class ConverterPanel extends JPanel
         LOGGER.debug("Pressed {}", buttonValue);
         if (isTextField1Selected)
         {
-            if (textField1.getText().equals(ZERO.getValue())) {
+            if (textField1.getText().equals(ZERO)) {
                 textField1.setText(buttonValue);
             }
             else {
@@ -255,7 +254,7 @@ public class ConverterPanel extends JPanel
         }
         else
         {
-            if (textField2.getText().equals(ZERO.getValue())) {
+            if (textField2.getText().equals(ZERO)) {
                 textField2.setText(buttonValue);
             }
             else {

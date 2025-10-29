@@ -18,7 +18,6 @@ import static Types.CalculatorBase.BASE_BINARY;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
-import static Types.Texts.SPACE;
 
 public class LoggingUtil {
 
@@ -57,29 +56,29 @@ public class LoggingUtil {
                             logger.debug("memoryValues[{}]: {}", i, calculator.getMemoryValues()[i]);
                         }
                     }
-                    logger.debug("addBool: {}", calculator.isAdding() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                    logger.debug("subBool: {}", calculator.isSubtracting() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                    logger.debug("mulBool: {}", calculator.isMultiplying() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                    logger.debug("divBool: {}", calculator.isDividing() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    logger.debug("addBool: {}", calculator.isAdding() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("subBool: {}", calculator.isSubtracting() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("mulBool: {}", calculator.isMultiplying() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("divBool: {}", calculator.isDividing() ? YES.toLowerCase() : NO.toLowerCase());
                     if (VIEW_PROGRAMMER == currentView)
                     {
-                        logger.debug("orBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isOr() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                        logger.debug("modBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isModulus() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                        logger.debug("xorBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isXor() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                        logger.debug("notBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isNot() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                        logger.debug("andBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isAnd() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                        logger.debug("pemdasBool: {}", calculator.isPemdasActive() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                        logger.debug("orBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isOr() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("modBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isModulus() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("xorBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isXor() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("notBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isNot() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("andBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isAnd() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
                     }
                     logger.debug("values[0]: '{}'", calculator.getValues()[0]);
                     logger.debug("values[1]: '{}'", calculator.getValues()[1]);
                     logger.debug("values[2]: '{}'", calculator.getValues()[2]);
                     logger.debug("values[3]: '{}'", calculator.getValues()[3]);
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
-                    logger.debug("isFirstNumber: {}", calculator.isFirstNumber() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                    logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    logger.debug("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     // TODO: exclude if: v[vP] is empty, bc no need to print if an empty value is negative
                     // TODO: exclude if: the negative sign is not present
-                    logger.debug("isNegative: {}", calculator.isNumberNegative() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    logger.debug("isNegative: {}", calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
 
                 }
                 else
@@ -93,29 +92,29 @@ public class LoggingUtil {
                             logger.info("memoryValues[{}]: {}", i, calculator.getMemoryValues()[i]);
                         }
                     }
-                    if (calculator.isAdding()) logger.info("addBool: {}", YES.getValue().toLowerCase());
-                    if (calculator.isSubtracting()) logger.info("subBool: {}", YES.getValue().toLowerCase());
-                    if (calculator.isMultiplying()) logger.info("mulBool: {}", YES.getValue().toLowerCase());
-                    if (calculator.isDividing()) logger.info("divBool: {}", YES.getValue().toLowerCase());
+                    if (calculator.isAdding()) logger.info("addBool: {}", YES.toLowerCase());
+                    if (calculator.isSubtracting()) logger.info("subBool: {}", YES.toLowerCase());
+                    if (calculator.isMultiplying()) logger.info("mulBool: {}", YES.toLowerCase());
+                    if (calculator.isDividing()) logger.info("divBool: {}", YES.toLowerCase());
                     if (calculator.getCalculatorView().equals(VIEW_PROGRAMMER))
                     {
-                        if (calculator.getProgrammerPanel().isOr()) logger.info("orBool: {}", YES.getValue().toLowerCase());
-                        if (calculator.getProgrammerPanel().isModulus()) logger.info("modBool: {}", YES.getValue().toLowerCase());
-                        if (calculator.getProgrammerPanel().isXor()) logger.info("xorBool: {}", YES.getValue().toLowerCase());
-                        if (calculator.getProgrammerPanel().isNot()) logger.info("notBool: {}", YES.getValue().toLowerCase());
-                        if (calculator.getProgrammerPanel().isAnd()) logger.info("andBool: {}", YES.getValue().toLowerCase());
-                        if (calculator.isPemdasActive()) logger.info("pemdasBool: {}", calculator.isPemdasActive() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                        if (calculator.getProgrammerPanel().isOr()) logger.info("orBool: {}", YES.toLowerCase());
+                        if (calculator.getProgrammerPanel().isModulus()) logger.info("modBool: {}", YES.toLowerCase());
+                        if (calculator.getProgrammerPanel().isXor()) logger.info("xorBool: {}", YES.toLowerCase());
+                        if (calculator.getProgrammerPanel().isNot()) logger.info("notBool: {}", YES.toLowerCase());
+                        if (calculator.getProgrammerPanel().isAnd()) logger.info("andBool: {}", YES.toLowerCase());
+                        if (calculator.isPemdasActive()) logger.info("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
                     }
                     if (!calculator.getValues()[0].isEmpty()) logger.info("values[0]: '{}'", calculator.getValues()[0]);
                     if (!calculator.getValues()[1].isEmpty()) logger.info("values[1]: '{}'", calculator.getValues()[1]);
                     if (!calculator.getValues()[2].isEmpty()) logger.info("values[2]: '{}'", calculator.getValues()[2]);
                     if (!calculator.getValues()[3].isEmpty()) logger.info("values[3]: '{}'", calculator.getValues()[3]);
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
-                    logger.info("isFirstNumber: {}", calculator.isFirstNumber() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
-                    logger.info("isDotEnabled: {}", calculator.isDotPressed() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    logger.info("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     // TODO: exclude if: v[vP] is empty, bc no need to print if an empty value is negative
                     // TODO: exclude if: the negative sign is not present
-                    logger.info("isNegative: {}", calculator.isNumberNegative() ? YES.getValue().toLowerCase() : NO.getValue().toLowerCase());
+                    logger.info("isNegative: {}", calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
                 }
             }
             case VIEW_SCIENTIFIC -> {
@@ -127,17 +126,17 @@ public class LoggingUtil {
                 logger.info("dateOperation: {}", currentDateOperation);
                 LocalDateTime date = LocalDateTime.of(((DatePanel)calculator.getDatePanel()).getTheDateFromTheFromDate(), LocalTime.now());
                 var updatedDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));
-                var capitalizedDay = updatedDate.split(SPACE.getValue())[0].toUpperCase();
-                var capitalizedMonth = updatedDate.split(SPACE.getValue())[1].toUpperCase();
-                updatedDate = capitalizedDay + SPACE.getValue() + capitalizedMonth + SPACE.getValue() + updatedDate.split(SPACE.getValue())[2] + SPACE.getValue() + updatedDate.split(SPACE.getValue())[3];
+                var capitalizedDay = updatedDate.split(SPACE)[0].toUpperCase();
+                var capitalizedMonth = updatedDate.split(SPACE)[1].toUpperCase();
+                updatedDate = capitalizedDay + SPACE + capitalizedMonth + SPACE + updatedDate.split(SPACE)[2] + SPACE + updatedDate.split(SPACE)[3];
                 logger.info("From Date: {}", updatedDate);
                 if (currentDateOperation == DIFFERENCE_BETWEEN_DATES)
                 {
                     date = LocalDateTime.of(((DatePanel)calculator.getDatePanel()).getTheDateFromTheToDate(), LocalTime.now());
                     updatedDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));
-                    capitalizedDay = updatedDate.split(SPACE.getValue())[0].toUpperCase();
-                    capitalizedMonth = updatedDate.split(SPACE.getValue())[1].toUpperCase();
-                    updatedDate = capitalizedDay + SPACE.getValue() + capitalizedMonth + SPACE.getValue() + updatedDate.split(SPACE.getValue())[2] + SPACE.getValue() + updatedDate.split(SPACE.getValue())[3];
+                    capitalizedDay = updatedDate.split(SPACE)[0].toUpperCase();
+                    capitalizedMonth = updatedDate.split(SPACE)[1].toUpperCase();
+                    updatedDate = capitalizedDay + SPACE + capitalizedMonth + SPACE + updatedDate.split(SPACE)[2] + SPACE + updatedDate.split(SPACE)[3];
                     logger.info("To Date: {}", updatedDate);
                     logger.info("Difference");
                     logger.info("Year: {}", ((DatePanel) calculator.getDatePanel()).getYearsDifferenceLabel().getText());
@@ -163,9 +162,9 @@ public class LoggingUtil {
             }
             case VIEW_CONVERTER -> {
                 logger.info("Converter: {}", ((ConverterPanel) calculator.getConverterPanel()).getConverterType());
-                logger.info("text field 1: {}", ((ConverterPanel) calculator.getConverterPanel()).getTextField1().getText() + SPACE.getValue()
+                logger.info("text field 1: {}", ((ConverterPanel) calculator.getConverterPanel()).getTextField1().getText() + SPACE
                         + ((ConverterPanel) calculator.getConverterPanel()).getUnitOptions1().getSelectedItem());
-                logger.info("text field 2: {}", ((ConverterPanel) calculator.getConverterPanel()).getTextField2().getText() + SPACE.getValue()
+                logger.info("text field 2: {}", ((ConverterPanel) calculator.getConverterPanel()).getTextField2().getText() + SPACE
                         + ((ConverterPanel) calculator.getConverterPanel()).getUnitOptions2().getSelectedItem());
             }
         }

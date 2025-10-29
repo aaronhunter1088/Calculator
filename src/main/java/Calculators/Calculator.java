@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import java.util.prefs.Preferences;
 
 import static Types.CalculatorByte.*;
+//import static Types.Texts.*;
 import static Types.Texts.*;
 import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
@@ -44,9 +45,9 @@ public class Calculator extends JFrame
     @Serial
     private static final long serialVersionUID = 4L;
     public static final Font
-            mainFont = new Font(SEGOE_UI.getValue(), Font.PLAIN, 12), // all panels
-            mainFontBold = new Font(SEGOE_UI.getValue(), Font.BOLD, 12), // Date panel
-            verdanaFontBold = new Font(VERDANA.getValue(), Font.BOLD, 20); // Converter, Date panels
+            mainFont = new Font(SEGOE_UI, Font.PLAIN, 12), // all panels
+            mainFontBold = new Font(SEGOE_UI, Font.BOLD, 12), // Date panel
+            verdanaFontBold = new Font(VERDANA, Font.BOLD, 20); // Converter, Date panels
     public static final Color
             MOTIF_GRAY = new Color(174,178,195); // Motif look
     // Menubar
@@ -57,29 +58,29 @@ public class Calculator extends JFrame
     private JTextPane textPane;
     // Buttons used by multiple Panels
     private final JButton
-            button0 = new JButton(ZERO.getValue()), button1 = new JButton(ONE.getValue()),
-            button2 = new JButton(TWO.getValue()), button3 = new JButton(THREE.getValue()),
-            button4 = new JButton(FOUR.getValue()), button5 = new JButton(FIVE.getValue()),
-            button6 = new JButton(SIX.getValue()), button7 = new JButton(SEVEN.getValue()),
-            button8 = new JButton(EIGHT.getValue()), button9 = new JButton(NINE.getValue()),
-            buttonClear = new JButton(CLEAR.getValue()), buttonClearEntry = new JButton(CLEAR_ENTRY.getValue()),
-            buttonDelete = new JButton(DELETE.getValue()), buttonDecimal = new JButton(DECIMAL.getValue()),
-            buttonFraction = new JButton(FRACTION.getValue()), buttonPercent = new JButton(PERCENT.getValue()),
-            buttonSquareRoot = new JButton(SQUARE_ROOT.getValue()), buttonMemoryClear = new JButton(MEMORY_CLEAR.getValue()),
-            buttonMemoryRecall = new JButton(MEMORY_RECALL.getValue()), buttonMemoryStore = new JButton(MEMORY_STORE.getValue()),
-            buttonMemoryAddition = new JButton(MEMORY_ADDITION.getValue()), buttonMemorySubtraction = new JButton(MEMORY_SUBTRACTION.getValue()),
-            buttonHistory = new JButton(HISTORY_CLOSED.getValue()), buttonSquared = new JButton(SQUARED.getValue()),
-            buttonAdd = new JButton(ADDITION.getValue()), buttonSubtract = new JButton(SUBTRACTION.getValue()),
-            buttonMultiply = new JButton(MULTIPLICATION.getValue()), buttonDivide = new JButton(DIVISION.getValue()),
-            buttonEquals = new JButton(EQUALS.getValue()), buttonNegate = new JButton(NEGATE.getValue()),
+            button0 = new JButton(ZERO), button1 = new JButton(ONE),
+            button2 = new JButton(TWO), button3 = new JButton(THREE),
+            button4 = new JButton(FOUR), button5 = new JButton(FIVE),
+            button6 = new JButton(SIX), button7 = new JButton(SEVEN),
+            button8 = new JButton(EIGHT), button9 = new JButton(NINE),
+            buttonClear = new JButton(CLEAR), buttonClearEntry = new JButton(CLEAR_ENTRY),
+            buttonDelete = new JButton(DELETE), buttonDecimal = new JButton(DECIMAL),
+            buttonFraction = new JButton(FRACTION), buttonPercent = new JButton(PERCENT),
+            buttonSquareRoot = new JButton(SQUARE_ROOT), buttonMemoryClear = new JButton(MEMORY_CLEAR),
+            buttonMemoryRecall = new JButton(MEMORY_RECALL), buttonMemoryStore = new JButton(MEMORY_STORE),
+            buttonMemoryAddition = new JButton(MEMORY_ADDITION), buttonMemorySubtraction = new JButton(MEMORY_SUBTRACTION),
+            buttonHistory = new JButton(HISTORY_CLOSED), buttonSquared = new JButton(SQUARED),
+            buttonAdd = new JButton(ADDITION), buttonSubtract = new JButton(SUBTRACTION),
+            buttonMultiply = new JButton(MULTIPLICATION), buttonDivide = new JButton(DIVISION),
+            buttonEquals = new JButton(EQUALS), buttonNegate = new JButton(NEGATE),
             // Used in programmer and converter... until an official button is determined
-            buttonBlank1 = new JButton(BLANK.getValue()), buttonBlank2 = new JButton(BLANK.getValue());
+            buttonBlank1 = new JButton(BLANK), buttonBlank2 = new JButton(BLANK);
     // Preferences
     private Preferences preferences;
     // Values used to store inputs. MemoryValues used for storing memory values.
     protected String[]
-            values = new String[]{BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue()}, // firstNum or total, secondNum, copy, temporary storage
-            memoryValues = new String[]{BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue()}; // stores memory values; rolls over after 10 entries
+            values = new String[]{BLANK,BLANK,BLANK,BLANK}, // firstNum or total, secondNum, copy, temporary storage
+            memoryValues = new String[]{BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK}; // stores memory values; rolls over after 10 entries
     // Position of values, memoryValues, and memoryRecall
     protected int valuesPosition = 0, memoryPosition = 0, memoryRecallPosition = 0;
     // Current view, base, byte, date operation, converter type, and panel (view)
@@ -105,7 +106,7 @@ public class Calculator extends JFrame
             isAdding, isSubtracting, isMultiplying, isDividing, isPemdasActive,
             // look options
             isMetal, isSystem, isWindows, isMotif, isGtk, isApple;
-    private String helpString = BLANK.getValue();
+    private String helpString = BLANK;
 
     /* Constructors */
     /**
@@ -224,254 +225,37 @@ public class Calculator extends JFrame
     private void setupLookMenu()
     {
         LOGGER.debug("Configuring Look menu...");
-        JMenuItem metal = new JMenuItem(METAL.getValue());
+        JMenuItem metal = new JMenuItem(METAL);
         metal.setFont(mainFont);
-        metal.setName(METAL.getValue());
-        metal.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (currentPanel instanceof BasicPanel panel)
-                {
-                    if (null != basicPanel.getHistoryTextPane())
-                    {
-                        basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else if (currentPanel instanceof ProgrammerPanel panel)
-                {
-                    if (null != programmerPanel.getHistoryTextPane())
-                    {
-                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else
-                {
-                    LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
-                }
-                updateLookAndFeel();
-                resetLook();
-                setIsMetal(true);
-                preferences.put(LOOK.getValue().toLowerCase(), METAL.getValue());
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem system = new JMenuItem(SYSTEM.getValue());
-        system.setFont(mainFont);
-        system.setName(SYSTEM.getValue());
-        system.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (currentPanel instanceof BasicPanel panel)
-                {
-                    if (null != basicPanel.getHistoryTextPane())
-                    {
-                        basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else if (currentPanel instanceof ProgrammerPanel panel)
-                {
-                    if (null != programmerPanel.getHistoryTextPane())
-                    {
-                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else
-                {
-                    LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
-                }
-                updateLookAndFeel();
-                resetLook();
-                setIsSystem(true);
-                preferences.put(LOOK.getValue().toLowerCase(), SYSTEM.getValue());
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem windows = new JMenuItem(WINDOWS.getValue());
-        windows.setFont(mainFont);
-        windows.setName(WINDOWS.getValue());
-        windows.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (currentPanel instanceof BasicPanel panel)
-                {
-                    if (null != basicPanel.getHistoryTextPane())
-                    {
-                        basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else if (currentPanel instanceof ProgrammerPanel panel)
-                {
-                    if (null != programmerPanel.getHistoryTextPane())
-                    {
-                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else
-                {
-                    LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
-                }
-                updateLookAndFeel();
-                resetLook();
-                setIsWindows(true);
-                preferences.put(LOOK.getValue().toLowerCase(), WINDOWS.getValue());
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem motif = new JMenuItem(MOTIF.getValue());
-        motif.setFont(mainFont);
-        motif.setName(MOTIF.getValue());
-        motif.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(MOTIF_GRAY);
-                    textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
-                }
-                if (currentPanel instanceof BasicPanel panel)
-                {
-                    if (null != basicPanel.getHistoryTextPane())
-                    {
-                        basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else if (currentPanel instanceof ProgrammerPanel panel)
-                {
-                    if (null != programmerPanel.getHistoryTextPane())
-                    {
-                        programmerPanel.getHistoryTextPane().setBackground(MOTIF_GRAY);
-                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
-                    }
-                }
-                else
-                {
-                    LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
-                }
-                updateLookAndFeel();
-                resetLook();
-                setIsMotif(true);
-                preferences.put(LOOK.getValue().toLowerCase(), MOTIF.getValue());
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem gtk = new JMenuItem(GTK.getValue());
-        gtk.setFont(mainFont);
-        gtk.setName(GTK.getValue());
-        gtk.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (currentPanel instanceof BasicPanel panel)
-                {
-                    if (null != basicPanel.getHistoryTextPane())
-                    {
-                        basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else if (currentPanel instanceof ProgrammerPanel panel)
-                {
-                    if (null != programmerPanel.getHistoryTextPane())
-                    {
-                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else
-                {
-                    LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
-                }
-                updateLookAndFeel();
-                resetLook();
-                setIsGtk(true);
-                preferences.put(LOOK.getValue().toLowerCase(), GTK.getValue());
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem apple = new JMenuItem(APPLE.getValue());
-        apple.setFont(mainFont);
-        apple.setName(APPLE.getValue());
-        apple.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (currentPanel instanceof BasicPanel panel)
-                {
-                    if (null != basicPanel.getHistoryTextPane())
-                    {
-                        basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else if (currentPanel instanceof ProgrammerPanel panel)
-                {
-                    if (null != programmerPanel.getHistoryTextPane())
-                    {
-                        programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
-                        programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
-                    }
-                }
-                else
-                {
-                    LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
-                }
-                updateLookAndFeel();
-                resetLook();
-                setIsApple(true);
-                preferences.put(LOOK.getValue().toLowerCase(), APPLE.getValue());
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
+        metal.setName(METAL);
+        metal.addActionListener(this::performLookMenuAction);
 
-        setLookMenu(new JMenu(LOOK.getValue()));
+        JMenuItem system = new JMenuItem(SYSTEM);
+        system.setFont(mainFont);
+        system.setName(SYSTEM);
+        system.addActionListener(this::performLookMenuAction);
+
+        JMenuItem windows = new JMenuItem(WINDOWS);
+        windows.setFont(mainFont);
+        windows.setName(WINDOWS);
+        windows.addActionListener(this::performLookMenuAction);
+
+        JMenuItem motif = new JMenuItem(MOTIF);
+        motif.setFont(mainFont);
+        motif.setName(MOTIF);
+        motif.addActionListener(this::performLookMenuAction);
+
+        JMenuItem gtk = new JMenuItem(GTK);
+        gtk.setFont(mainFont);
+        gtk.setName(GTK);
+        gtk.addActionListener(this::performLookMenuAction);
+
+        JMenuItem apple = new JMenuItem(APPLE);
+        apple.setFont(mainFont);
+        apple.setName(APPLE);
+        apple.addActionListener(this::performLookMenuAction);
+
+        setLookMenu(new JMenu(LOOK));
         lookMenu.add(metal);
         lookMenu.add(motif);
         lookMenu.add(apple);
@@ -482,34 +266,87 @@ public class Calculator extends JFrame
             lookMenu.add(gtk);
             lookMenu.remove(apple);
         }
-        String look = preferences.get(LOOK.getValue().toLowerCase(), "");
-        if (!look.isBlank()) {
-            try {
-                var attempt = Texts.valueOf(look.toUpperCase());
-                switch (attempt) {
-                    case METAL -> metal.doClick();
-                    case SYSTEM -> system.doClick();
-                    case WINDOWS -> windows.doClick();
-                    case MOTIF -> motif.doClick();
-                    case GTK -> gtk.doClick();
-                    case APPLE -> apple.doClick();
-                    default -> {
-                        LOGGER.warn("Look preference not found: '{}'", look);
-                        LOGGER.warn("Defaulting to Metal look");
-                        metal.doClick();
-                    }
-                }
-            }
-            catch (IllegalArgumentException e) {
-                LOGGER.error("Look preference not found: '{}'", look);
-                LOGGER.warn("Defaulting to Metal look");
+        String look = preferences.get(LOOK, "");
+        switch (look) {
+            case METAL -> metal.doClick();
+            case SYSTEM -> system.doClick();
+            case WINDOWS -> windows.doClick();
+            case MOTIF -> motif.doClick();
+            case GTK -> gtk.doClick();
+            case APPLE -> apple.doClick();
+            default -> {
+                LOGGER.warn("Look preference not found: '{}'. Defaulting to Metal.", look);
                 metal.doClick();
             }
         }
         lookMenu.setFont(mainFont);
-        lookMenu.setName(LOOK.getValue());
+        lookMenu.setName(LOOK);
         menuBar.add(lookMenu);
         LOGGER.debug("Look menu configured");
+    }
+
+    private void performLookMenuAction(ActionEvent actionEvent)
+    {
+        try
+        {
+            switch (((JMenuItem)actionEvent.getSource()).getName()) {
+                case METAL -> {
+                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    setIsMetal(true);
+                }
+                case SYSTEM -> {
+                    UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
+                    setIsSystem(true);
+                }
+                case WINDOWS -> {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                    setIsWindows(true);
+                }
+                case MOTIF -> {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                    setIsMotif(true);
+                }
+                case GTK -> {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                    setIsGtk(true);
+                }
+                case APPLE -> {
+                    UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+                    setIsApple(true);
+                }
+            }
+            if (null != textPane) // not used in all Calculators
+            {
+                textPane.setBackground(Color.WHITE);
+                textPane.setBorder(new LineBorder(Color.BLACK));
+            }
+            if (calculatorView == VIEW_BASIC)
+            {
+                if (null != basicPanel.getHistoryTextPane())
+                {
+                    basicPanel.getHistoryTextPane().setBackground(Color.WHITE);
+                    basicPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
+                }
+            }
+            else if (calculatorView == VIEW_PROGRAMMER)
+            {
+                if (null != programmerPanel.getHistoryTextPane())
+                {
+                    programmerPanel.getHistoryTextPane().setBackground(Color.WHITE);
+                    programmerPanel.getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
+                }
+            }
+            else
+            {
+                LOGGER.warn("Implement changing history panel for {}", currentPanel.getName());
+            }
+            updateLookAndFeel();
+            savePreferences();
+            resetLook();
+        }
+        catch (ClassNotFoundException | InstantiationException |
+               IllegalAccessException | UnsupportedLookAndFeelException e)
+        { logException(e); }
     }
 
     /**
@@ -545,14 +382,14 @@ public class Calculator extends JFrame
         converterMenu.add(angleConverter);
         converterMenu.add(areaConverter);
 
-        setViewMenu(new JMenu(VIEW.getValue()));
+        setViewMenu(new JMenu(VIEW));
         viewMenu.add(basic);
         viewMenu.add(programmer);
         viewMenu.add(date);
         viewMenu.addSeparator();
         viewMenu.add(converterMenu);
         viewMenu.setFont(mainFont);
-        viewMenu.setName(VIEW.getValue());
+        viewMenu.setName(VIEW);
         menuBar.add(viewMenu); // add viewMenu to menu bar
         LOGGER.debug("View menu configured");
     }
@@ -564,32 +401,32 @@ public class Calculator extends JFrame
     private void setupEditMenu()
     {
         LOGGER.debug("Configuring Edit menu...");
-        JMenuItem copyItem = new JMenuItem(COPY.getValue());
+        JMenuItem copyItem = new JMenuItem(COPY);
         copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
         copyItem.setFont(mainFont);
-        copyItem.setName(COPY.getValue());
+        copyItem.setName(COPY);
         copyItem.addActionListener(this::performCopyAction);
-        JMenuItem pasteItem = new JMenuItem(PASTE.getValue());
+        JMenuItem pasteItem = new JMenuItem(PASTE);
         pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
         pasteItem.setFont(mainFont);
-        pasteItem.setName(PASTE.getValue());
+        pasteItem.setName(PASTE);
         pasteItem.addActionListener(this::performPasteAction);
-        JMenuItem clearHistoryItem = new JMenuItem(CLEAR_HISTORY.getValue());
+        JMenuItem clearHistoryItem = new JMenuItem(CLEAR_HISTORY);
         clearHistoryItem.setFont(mainFont);
-        clearHistoryItem.setName(CLEAR_HISTORY.getValue());
+        clearHistoryItem.setName(CLEAR_HISTORY);
         clearHistoryItem.addActionListener(this::performClearHistoryTextPaneAction);
-        JMenuItem showMemoriesItem = new JMenuItem(SHOW_MEMORIES.getValue());
+        JMenuItem showMemoriesItem = new JMenuItem(SHOW_MEMORIES);
         showMemoriesItem.setFont(mainFont);
-        showMemoriesItem.setName(SHOW_MEMORIES.getValue());
+        showMemoriesItem.setName(SHOW_MEMORIES);
         showMemoriesItem.addActionListener(this::performShowMemoriesAction);
 
-        setEditMenu(new JMenu(EDIT.getValue()));
+        setEditMenu(new JMenu(EDIT));
         editMenu.add(copyItem);
         editMenu.add(pasteItem);
         editMenu.add(clearHistoryItem);
         editMenu.add(showMemoriesItem);
         editMenu.setFont(mainFont);
-        editMenu.setName(EDIT.getValue());
+        editMenu.setName(EDIT);
         menuBar.add(editMenu);
         LOGGER.debug("Edit menu configured");
     }
@@ -601,7 +438,7 @@ public class Calculator extends JFrame
     private void setupHelpMenu()
     {
         LOGGER.debug("Configuring Help menu...");
-        setHelpMenu(new JMenu(HELP.getValue()));
+        setHelpMenu(new JMenu(HELP));
         JMenuItem showHelpItem = createViewHelpJMenuItem();
         JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
 
@@ -609,7 +446,7 @@ public class Calculator extends JFrame
         helpMenu.addSeparator();
         helpMenu.add(aboutCalculatorItem, 2);
         helpMenu.setFont(mainFont);
-        helpMenu.setName(HELP.getValue());
+        helpMenu.setName(HELP);
         menuBar.add(helpMenu);
         LOGGER.debug("Help menu will finish inside chosen panel...");
     }
@@ -636,8 +473,8 @@ public class Calculator extends JFrame
      */
     public JMenuItem createViewHelpJMenuItem()
     {
-        JMenuItem viewHelpItem = new JMenuItem(VIEW_HELP.getValue());
-        viewHelpItem.setName(VIEW_HELP.getValue());
+        JMenuItem viewHelpItem = new JMenuItem(VIEW_HELP);
+        viewHelpItem.setName(VIEW_HELP);
         viewHelpItem.setFont(mainFont);
         LOGGER.debug("View Help configured. Panel adds text");
         return viewHelpItem;
@@ -648,8 +485,8 @@ public class Calculator extends JFrame
      */
     public JMenuItem createAboutCalculatorJMenuItem()
     {
-        JMenuItem aboutCalculatorItem = new JMenuItem(ABOUT_CALCULATOR.getValue());
-        aboutCalculatorItem.setName(ABOUT_CALCULATOR.getValue());
+        JMenuItem aboutCalculatorItem = new JMenuItem(ABOUT_CALCULATOR);
+        aboutCalculatorItem.setName(ABOUT_CALCULATOR);
         aboutCalculatorItem.setFont(mainFont);
         aboutCalculatorItem.addActionListener(this::performAboutCalculatorAction);
         LOGGER.debug("About Calculator configured");
@@ -743,7 +580,7 @@ public class Calculator extends JFrame
         // Load preferences from storage
         // used as a place holder. when you want to load a preference,
         // copy and place this method here where you want to load that preference
-        String look = preferences.get("look", "");
+        String look = preferences.get(LOOK, "");
 
         // Use the loaded preferences to initialize your Swing components
         // ...
@@ -758,7 +595,13 @@ public class Calculator extends JFrame
         // Save preferences to storage
         // used as a place holder. when you want to save a preference,
         // copy and place this method here where you want to save that preference
-        preferences.put("look", "");
+        if (isMetal) preferences.put(LOOK, METAL);
+        else if (isSystem) preferences.put(LOOK, SYSTEM);
+        else if (isWindows) preferences.put(LOOK, WINDOWS);
+        else if (isMotif) preferences.put(LOOK, MOTIF);
+        else if (isGtk) preferences.put(LOOK, GTK);
+        else if (isApple) preferences.put(LOOK, APPLE);
+        else preferences.put(LOOK, "");
     }
 
     /**
@@ -928,19 +771,19 @@ public class Calculator extends JFrame
             memoryPanelButton.setBorder(new LineBorder(Color.BLACK));
             memoryPanelButton.setEnabled(false);
         });
-        buttonMemoryClear.setName(MEMORY_CLEAR.getValue());
+        buttonMemoryClear.setName(MEMORY_CLEAR);
         buttonMemoryClear.addActionListener(this::performMemoryClearAction);
-        buttonMemoryRecall.setName(MEMORY_RECALL.getValue());
+        buttonMemoryRecall.setName(MEMORY_RECALL);
         buttonMemoryRecall.addActionListener(this::performMemoryRecallAction);
-        buttonMemoryAddition.setName(MEMORY_ADDITION.getValue());
+        buttonMemoryAddition.setName(MEMORY_ADDITION);
         buttonMemoryAddition.addActionListener(this::performMemoryAdditionAction);
-        buttonMemorySubtraction.setName(MEMORY_SUBTRACTION.getValue());
+        buttonMemorySubtraction.setName(MEMORY_SUBTRACTION);
         buttonMemorySubtraction.addActionListener(this::performMemorySubtractionAction);
         buttonMemoryStore.setEnabled(true); // Enable memoryStore
-        buttonMemoryStore.setName(MEMORY_STORE.getValue());
+        buttonMemoryStore.setName(MEMORY_STORE);
         buttonMemoryStore.addActionListener(this::performMemoryStoreAction);
         buttonHistory.setEnabled(true);
-        buttonHistory.setName(HISTORY_CLOSED.getValue());
+        buttonHistory.setName(HISTORY_CLOSED);
         //reset buttons to enabled if memories are saved
         if (!memoryValues[0].isEmpty())
         {
@@ -976,74 +819,74 @@ public class Calculator extends JFrame
             button.setEnabled(true);
         });
 
-        buttonPercent.setName(PERCENT.name());
+        buttonPercent.setName(PERCENT);
         if (calculatorView.equals(VIEW_BASIC))
         { buttonPercent.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performPercentButtonAction(actionEvent)); }
         LOGGER.debug("Percent button configured");
 
-        buttonSquareRoot.setName(SQUARE_ROOT.name());
+        buttonSquareRoot.setName(SQUARE_ROOT);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonSquareRoot.addActionListener(this::performSquareRootButtonAction); }
         LOGGER.debug("SquareRoot button configured");
 
-        buttonSquared.setName(SQUARED.name());
+        buttonSquared.setName(SQUARED);
         if (calculatorView.equals(VIEW_BASIC))
         { buttonSquared.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquaredButtonAction(actionEvent)); }
         LOGGER.debug("Squared button configured");
 
-        buttonFraction.setName(FRACTION.name());
+        buttonFraction.setName(FRACTION);
         if (calculatorView.equals(VIEW_BASIC))
         { buttonFraction.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performFractionButtonAction(actionEvent)); }
         LOGGER.debug("Fraction button configured");
 
-        buttonClearEntry.setName(CLEAR_ENTRY.name());
+        buttonClearEntry.setName(CLEAR_ENTRY);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonClearEntry.addActionListener(this::performClearEntryButtonAction); }
         LOGGER.debug("ClearEntry button configured");
 
-        buttonClear.setName(CLEAR.name());
+        buttonClear.setName(CLEAR);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonClear.addActionListener(this::performClearButtonAction); }
         LOGGER.debug("Clear button configured");
 
-        buttonDelete.setName(DELETE.name());
+        buttonDelete.setName(DELETE);
         if (currentPanel instanceof BasicPanel)
         { buttonDelete.addActionListener(this::performDeleteButtonAction); }
         else if (currentPanel instanceof ProgrammerPanel)
         { buttonDelete.addActionListener(programmerPanel::performButtonDeleteButtonAction); }
         LOGGER.debug("Delete button configured");
 
-        buttonDivide.setName(DIVISION.name());
+        buttonDivide.setName(DIVISION);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonDivide.addActionListener(this::performDivideButtonAction); }
         LOGGER.debug("Divide button configured");
 
-        buttonMultiply.setName(MULTIPLICATION.name());
+        buttonMultiply.setName(MULTIPLICATION);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonMultiply.addActionListener(this::performMultiplicationAction); }
         LOGGER.debug("Multiply button configured");
 
-        buttonSubtract.setName(SUBTRACTION.name());
+        buttonSubtract.setName(SUBTRACTION);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonSubtract.addActionListener(this::performSubtractionButtonAction); }
         LOGGER.debug("Subtract button configured");
 
-        buttonAdd.setName(ADDITION.name());
+        buttonAdd.setName(ADDITION);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonAdd.addActionListener(this::performAdditionButtonAction); }
         LOGGER.debug("Addition button configured");
 
-        buttonNegate.setName(NEGATE.name());
+        buttonNegate.setName(NEGATE);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonNegate.addActionListener(this::performNegateButtonAction); }
         LOGGER.debug("Negate button configured");
 
-        buttonDecimal.setName(DECIMAL.name());
+        buttonDecimal.setName(DECIMAL);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonDecimal.addActionListener(this::performDecimalButtonAction); }
         LOGGER.debug("Decimal button configured");
 
-        buttonEquals.setName(EQUALS.name());
+        buttonEquals.setName(EQUALS);
         if (calculatorView.equals(VIEW_BASIC) || calculatorView.equals(VIEW_PROGRAMMER))
         { buttonEquals.addActionListener(this::performEqualsButtonAction); }
         LOGGER.debug("Equals button configured");
@@ -1064,24 +907,24 @@ public class Calculator extends JFrame
             button.setBorder(new LineBorder(Color.BLACK));
             button.setEnabled(true);
         });
-        buttonBlank1.setName(BLANK.name());
+        buttonBlank1.setName(BLANK);
         LOGGER.debug("Blank button 1 configured");
 
-        buttonBlank2.setName(BLANK.name());
+        buttonBlank2.setName(BLANK);
         LOGGER.debug("Blank button 2 configured");
 
-        buttonClearEntry.setName(CLEAR_ENTRY.name());
-        if (VIEW_CONVERTER.getValue().equals(currentPanel.getName()))
+        buttonClearEntry.setName(CLEAR_ENTRY);
+        if (calculatorView == VIEW_CONVERTER)
         { buttonClearEntry.addActionListener(ConverterPanel::performClearEntryButtonActions); }
         LOGGER.debug("ClearEntry button configured");
 
-        buttonDelete.setName(DELETE.name());
-        if (VIEW_CONVERTER.getValue().equals(currentPanel.getName()))
+        buttonDelete.setName(DELETE);
+        if (calculatorView == VIEW_CONVERTER)
         { buttonDelete.addActionListener(ConverterPanel::performDeleteButtonActions); }
         LOGGER.debug("Delete button configured");
 
-        buttonDecimal.setName(DECIMAL.name());
-        if (VIEW_CONVERTER.getValue().equals(currentPanel.getName()))
+        buttonDecimal.setName(DECIMAL);
+        if (calculatorView == VIEW_CONVERTER)
         { buttonDecimal.addActionListener(ConverterPanel::performDecimalButtonActions); }
         LOGGER.debug("Decimal button configured");
 
@@ -1123,7 +966,7 @@ public class Calculator extends JFrame
         buttonBlank1.setPreferredSize(new Dimension(35, 35));
         buttonBlank1.setBorder(new LineBorder(Color.BLACK));
         buttonBlank1.setEnabled(true);
-        buttonBlank1.setName(BLANK.name());
+        buttonBlank1.setName(BLANK);
         LOGGER.debug("Blank Button1 configured");
     }
 
@@ -1137,7 +980,7 @@ public class Calculator extends JFrame
         buttonBlank2.setPreferredSize(new Dimension(35, 35));
         buttonBlank2.setBorder(new LineBorder(Color.BLACK));
         buttonBlank2.setEnabled(true);
-        buttonBlank2.setName(BLANK.name());
+        buttonBlank2.setName(BLANK);
         LOGGER.debug("Blank Button2 configured");
     }
 
@@ -1237,7 +1080,7 @@ public class Calculator extends JFrame
         logActionButton(buttonChoice, LOGGER);
         if (getTextPaneValue().isBlank())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "No number to add to memory");
         }
         else if (textPaneContainsBadText())
@@ -1292,7 +1135,7 @@ public class Calculator extends JFrame
             setMemoryPosition(getLowestMemoryPosition());
             LOGGER.info("Clearing memoryValue[{}] = {}", memoryPosition, memoryValues[memoryPosition]);
             writeHistoryWithMessage(buttonChoice, false, " Cleared " + memoryValues[memoryPosition] + " from memory location " + (memoryPosition+1));
-            memoryValues[memoryPosition] = BLANK.getValue();
+            memoryValues[memoryPosition] = BLANK;
             memoryRecallPosition += 1;
             confirm(this, LOGGER, "Cleared memory at " + memoryPosition);
             // MemorySuite could now be empty
@@ -1304,7 +1147,7 @@ public class Calculator extends JFrame
                 buttonMemoryRecall.setEnabled(false);
                 buttonMemoryAddition.setEnabled(false);
                 buttonMemorySubtraction.setEnabled(false);
-                appendTextToPane(ZERO.getValue());
+                appendTextToPane(ZERO);
                 confirm(this, LOGGER, "MemorySuite is empty");
             }
         }
@@ -1325,7 +1168,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Cannot add bad text to memories values"); }
         else if (getTextPaneValue().isBlank())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "No number to add to memory");
         }
         else
@@ -1339,7 +1182,7 @@ public class Calculator extends JFrame
             { memoryValues[(memoryPosition-1)] = clearZeroesAndDecimalAtEnd(String.valueOf(result)); }
             else
             { memoryValues[(memoryPosition-1)] = Double.toString(result); }
-            writeHistoryWithMessage(buttonChoice, false, " Added " + getTextPaneValue() + " to memories at " + (memoryPosition) + SPACE.getValue() + EQUALS.getValue() + SPACE.getValue() + memoryValues[(memoryPosition-1)]);
+            writeHistoryWithMessage(buttonChoice, false, " Added " + getTextPaneValue() + " to memories at " + (memoryPosition) + SPACE + EQUALS + SPACE + memoryValues[(memoryPosition-1)]);
             confirm(this, LOGGER, "The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
         }
     }
@@ -1356,7 +1199,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Cannot subtract bad text to memories values"); }
         else if (getTextPaneValue().isBlank())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "No number to subtract from memory");
         }
         else
@@ -1371,7 +1214,7 @@ public class Calculator extends JFrame
             { memoryValues[(memoryPosition-1)] = clearZeroesAndDecimalAtEnd(String.valueOf(result)); }
             else
             { memoryValues[(memoryPosition-1)] = Double.toString(result); }
-            writeHistoryWithMessage(buttonChoice, false, " Subtracted " + getTextPaneValue() + " to memories at " + (memoryPosition) + SPACE.getValue() + EQUALS.getValue() + SPACE.getValue() + memoryValues[(memoryPosition-1)]);
+            writeHistoryWithMessage(buttonChoice, false, " Subtracted " + getTextPaneValue() + " to memories at " + (memoryPosition) + SPACE + EQUALS + SPACE + memoryValues[(memoryPosition-1)]);
             confirm(this, LOGGER, "The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
         }
     }
@@ -1390,7 +1233,7 @@ public class Calculator extends JFrame
             // TODO: Check logic here. Not sure if this is correct.
             if (!isNumberNegative) clearTextInTextPane();
             isFirstNumber = true;
-            if (isNumberNegative && !getTextPaneValue().contains(SUBTRACTION.getValue()))
+            if (isNumberNegative && !getTextPaneValue().contains(SUBTRACTION))
                 isNumberNegative = false;
             if (!isDotPressed())
             {
@@ -1401,8 +1244,8 @@ public class Calculator extends JFrame
         if (performInitialChecks())
         {
             LOGGER.warn("Invalid entry in textPane. Clearing...");
-            appendTextToPane(BLANK.getValue());
-            values[valuesPosition] = BLANK.getValue();
+            appendTextToPane(BLANK);
+            values[valuesPosition] = BLANK;
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
@@ -1418,14 +1261,14 @@ public class Calculator extends JFrame
         }
         if (isNumberNegative && values[valuesPosition].isBlank())
         {
-            values[valuesPosition] = SUBTRACTION.getValue() + buttonChoice;
+            values[valuesPosition] = SUBTRACTION + buttonChoice;
             appendTextToPane(addCommas(values[valuesPosition]));
             writeHistory(buttonChoice, false);
             isNumberNegative = true;
         }
         else if (isNumberNegative && !values[1].isBlank())
         {
-            values[valuesPosition] = SUBTRACTION.getValue() + buttonChoice;
+            values[valuesPosition] = SUBTRACTION + buttonChoice;
             appendTextToPane(addCommas(values[valuesPosition]));
             writeHistory(buttonChoice, false);
             isNumberNegative = true;
@@ -1443,7 +1286,7 @@ public class Calculator extends JFrame
             else if (currentPanel instanceof ProgrammerPanel) {
                 values[valuesPosition] += buttonChoice;
                 var newValue = getTextPaneValue()+buttonChoice;
-                //if (valuesPosition == 1) newValue = getTextPaneValue()+SPACE.getValue()+buttonChoice;
+                //if (valuesPosition == 1) newValue = getTextPaneValue()+SPACE+buttonChoice;
                 programmerPanel.appendTextToProgrammerPane(newValue); // commas should already exist on all numbers
                 writeHistory(buttonChoice, false);
                 confirm(this, LOGGER, "Pressed " + buttonChoice);
@@ -1463,7 +1306,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Cannot perform " + ADDITION); }
         else if (getTextPaneValue().isEmpty() && values[0].isEmpty())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "Cannot perform " + ADDITION + " operation");
         }
         else
@@ -1474,7 +1317,7 @@ public class Calculator extends JFrame
                         && !textPane.getText().isBlank() && !values[valuesPosition].isBlank())
                 {
                     isAdding = true;
-                    appendTextToPane(getTextPaneValue() + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(getTextPaneValue() + SPACE + buttonChoice);
                     writeHistory(buttonChoice, true);
                     isFirstNumber = false;
                     isNumberNegative = false;
@@ -1482,7 +1325,7 @@ public class Calculator extends JFrame
                 }
                 else if (isAdding && !values[1].isEmpty())
                 {
-                    addition(ADDITION.getValue());  // 5 + 3 + ...
+                    addition(ADDITION);  // 5 + 3 + ...
                     isAdding = true;
                     resetCalculatorOperations(false);
                     if (isMaximumValue()) // we can add to the minimum number, not to the maximum
@@ -1493,13 +1336,13 @@ public class Calculator extends JFrame
                     else
                     {
                         isAdding = true;
-                        appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                        appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                         resetCalculatorOperations(true);
                     }
                 }
                 else if (isSubtracting && !values[1].isEmpty())
                 {
-                    subtract(ADDITION.getValue()); // 5 - 3 + ...
+                    subtract(ADDITION); // 5 - 3 + ...
                     isSubtracting = false;
                     isAdding = resetCalculatorOperations(false);
                     if (isMinimumValue() || isMaximumValue())
@@ -1510,13 +1353,13 @@ public class Calculator extends JFrame
                     else
                     {
                         isAdding = true;
-                        appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                        appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                         resetCalculatorOperations(true);
                     }
                 }
                 else if (isMultiplying && !values[1].isEmpty())
                 {
-                    multiply(ADDITION.getValue()); // 5 ✕ 3 + ...
+                    multiply(ADDITION); // 5 ✕ 3 + ...
                     isMultiplying = false;
                     isAdding = resetCalculatorOperations(false);
                     if (isMinimumValue() || isMaximumValue())
@@ -1527,13 +1370,13 @@ public class Calculator extends JFrame
                     else
                     {
                         isAdding = true;
-                        appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                        appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                         resetCalculatorOperations(true);
                     }
                 }
                 else if (isDividing && !values[1].isEmpty())
                 {
-                    divide(ADDITION.getValue()); // 5 ÷ 3 + ...
+                    divide(ADDITION); // 5 ÷ 3 + ...
                     isDividing = false;
                     isAdding = resetCalculatorOperations(false);
                     if (isMinimumValue() || isMaximumValue())
@@ -1544,7 +1387,7 @@ public class Calculator extends JFrame
                     else
                     {
                         isAdding = true;
-                        appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                        appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                         resetCalculatorOperations(true);
                     }
                 }
@@ -1552,8 +1395,8 @@ public class Calculator extends JFrame
                 {
                     LOGGER.error("The user pushed plus but there is no number");
                     LOGGER.info("Setting values[0] to textPane value");
-                    values[0] = getTextPaneValue().replace(COMMA.getValue(), BLANK.getValue());
-                    appendTextToPane(values[0] + SPACE.getValue() + buttonChoice);
+                    values[0] = getTextPaneValue().replace(COMMA, BLANK);
+                    appendTextToPane(values[0] + SPACE + buttonChoice);
                     LOGGER.debug("values[0]: {}", values[0]);
                     writeHistory(buttonChoice, true);
                     isAdding = true;
@@ -1567,7 +1410,7 @@ public class Calculator extends JFrame
                         && !textPane.getText().isBlank() && !values[valuesPosition].isBlank())
                 {
                     isAdding = true;
-                    appendTextToPane(getTextPaneValue() + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(getTextPaneValue() + SPACE + buttonChoice);
                     writeHistory(buttonChoice, true);
                     isFirstNumber = false;
                     isNumberNegative = false;
@@ -1575,7 +1418,7 @@ public class Calculator extends JFrame
                 } else {
                     isAdding = true;
                     writeHistory(buttonChoice, true);
-                    appendTextToPane(getTextPaneValue() + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(getTextPaneValue() + SPACE + buttonChoice);
                 }
             }
             if (isMinimumValue())
@@ -1604,14 +1447,14 @@ public class Calculator extends JFrame
         if (result % 1 == 0)
         {
             LOGGER.info("We have a whole number");
-            writeContinuedHistory(EQUALS.getValue(), ADDITION.getValue(), result, false);
+            writeContinuedHistory(EQUALS, ADDITION, result, false);
             values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
             buttonDecimal.setEnabled(true);
         }
         else
         {
             LOGGER.info("We have a decimal");
-            writeContinuedHistory(EQUALS.getValue(), ADDITION.getValue(), result, false);
+            writeContinuedHistory(EQUALS, ADDITION, result, false);
             buttonDecimal.setEnabled(false);
             values[0] = addCommas(formatNumber(String.valueOf(result)));
         }
@@ -1626,21 +1469,21 @@ public class Calculator extends JFrame
             if (isMinimumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Minimum value met");
-                writeContinuedHistory(continuedOperation, ADDITION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, ADDITION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
             else if (isMaximumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Maximum value met");
-                writeContinuedHistory(continuedOperation, ADDITION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, ADDITION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
             else
             {
                 LOGGER.debug("We have a whole number");
-                writeContinuedHistory(continuedOperation, ADDITION.getValue(), result, true);
+                writeContinuedHistory(continuedOperation, ADDITION, result, true);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
@@ -1650,21 +1493,21 @@ public class Calculator extends JFrame
             if (isMinimumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Minimum value met");
-                writeContinuedHistory(continuedOperation, ADDITION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, ADDITION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
             else if (isMaximumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Maximum value met");
-                writeContinuedHistory(continuedOperation, ADDITION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, ADDITION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
             else
             {
                 LOGGER.info("We have a decimal");
-                writeContinuedHistory(continuedOperation, ADDITION.getValue(), result, true);
+                writeContinuedHistory(continuedOperation, ADDITION, result, true);
                 values[0] = formatNumber(String.valueOf(result));
                 buttonDecimal.setEnabled(false);
             }
@@ -1693,7 +1536,7 @@ public class Calculator extends JFrame
                     && !textPane.getText().isBlank() && !values[valuesPosition].isBlank())
             {
                 isSubtracting = true;
-                appendTextToPane(getTextPaneValue() + SPACE.getValue() + buttonChoice);
+                appendTextToPane(getTextPaneValue() + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
                 isFirstNumber = false;
                 isNumberNegative = false;
@@ -1709,7 +1552,7 @@ public class Calculator extends JFrame
             }
             else if (isAdding && !values[1].isEmpty())
             {
-                addition(SUBTRACTION.getValue()); // 5 + 3 - ...
+                addition(SUBTRACTION); // 5 + 3 - ...
                 isAdding = false;
                 isSubtracting = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -1720,13 +1563,13 @@ public class Calculator extends JFrame
                 else
                 {
                     isSubtracting = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
             else if (isSubtracting && !values[1].isEmpty())
             {
-                subtract(SUBTRACTION.getValue()); // 5 - 3 - ...
+                subtract(SUBTRACTION); // 5 - 3 - ...
                 isSubtracting = true;
                 resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -1737,13 +1580,13 @@ public class Calculator extends JFrame
                 else
                 {
                     isSubtracting = true;
-                    appendTextToPane(values[0] + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(values[0] + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
-                multiply(SUBTRACTION.getValue()); // 5 ✕ 3 - ...
+                multiply(SUBTRACTION); // 5 ✕ 3 - ...
                 isMultiplying = false;
                 isSubtracting = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -1754,13 +1597,13 @@ public class Calculator extends JFrame
                 else
                 {
                     isSubtracting = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
             else if (isDividing && !values[1].isEmpty())
             {
-                divide(SUBTRACTION.getValue()); // 5 ÷ 3 - ...
+                divide(SUBTRACTION); // 5 ÷ 3 - ...
                 isDividing = false;
                 isSubtracting = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -1771,7 +1614,7 @@ public class Calculator extends JFrame
                 else
                 {
                     isSubtracting = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
@@ -1787,7 +1630,7 @@ public class Calculator extends JFrame
                 LOGGER.error("The user pushed subtract but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = getTextPaneValue().replace(",","");
-                appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 isSubtracting = true;
@@ -1806,14 +1649,14 @@ public class Calculator extends JFrame
     {
         logValues(this, LOGGER, 2);
         double result = Double.parseDouble(values[0]) - Double.parseDouble(values[1]);
-        if (String.valueOf(result).contains(SUBTRACTION.getValue()))
+        if (String.valueOf(result).contains(SUBTRACTION))
         {
             isNumberNegative = true;
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number, negating");
                 LOGGER.debug("{} + {} = {}", values[0], convertToPositive(values[1]), result);
-                writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(EQUALS, SUBTRACTION, result, false);
                 values[0] = convertToNegative(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
                 buttonDecimal.setEnabled(true);
             }
@@ -1821,7 +1664,7 @@ public class Calculator extends JFrame
             {
                 LOGGER.info("We have a decimal");
                 LOGGER.debug("{} + {} = {}", values[0], convertToPositive(values[1]), result);
-                writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(EQUALS, SUBTRACTION, result, false);
                 values[0] = convertToNegative(formatNumber(String.valueOf(result)));
                 buttonDecimal.setEnabled(false);
             }
@@ -1832,24 +1675,24 @@ public class Calculator extends JFrame
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
-                if (values[1].contains(SUBTRACTION.getValue())) {
+                if (values[1].contains(SUBTRACTION)) {
                     LOGGER.debug("{} + {} = {}", values[0], convertToPositive(values[1]), result);
                 } else {
                     LOGGER.debug("{} - {} = {}", values[0], values[1], result);
                 }
-                writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(EQUALS, SUBTRACTION, result, false);
                 values[0] = addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
                 buttonDecimal.setEnabled(true);
             }
             else
             {
                 LOGGER.info("We have a decimal");
-                if (values[1].contains(SUBTRACTION.getValue())) {
+                if (values[1].contains(SUBTRACTION)) {
                     LOGGER.debug("{} + {} = {}", values[0], convertToPositive(values[1]), result);
                 } else {
                     LOGGER.debug("{} - {} = {}", values[0], values[1], result);
                 }
-                writeContinuedHistory(EQUALS.getValue(), SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(EQUALS, SUBTRACTION, result, false);
                 values[0] = addCommas(formatNumber(String.valueOf(result)));
                 buttonDecimal.setEnabled(false);
             }
@@ -1867,14 +1710,14 @@ public class Calculator extends JFrame
             if (isMinimumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Minimum value met");
-                writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, SUBTRACTION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
             else if (isMaximumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Maximum value met");
-                writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, SUBTRACTION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
@@ -1883,7 +1726,7 @@ public class Calculator extends JFrame
                 if (isNumberNegative)
                 {
                     LOGGER.debug("We have a negative number");
-                    writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, true);
+                    writeContinuedHistory(continuedOperation, SUBTRACTION, result, true);
                     //isNumberNegative = false;
                     values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                     buttonDecimal.setEnabled(true);
@@ -1892,7 +1735,7 @@ public class Calculator extends JFrame
                 {
                     LOGGER.debug("We have a whole number");
                     LOGGER.debug("{} - {} = {}", values[0], values[1], result);
-                    writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, true);
+                    writeContinuedHistory(continuedOperation, SUBTRACTION, result, true);
                     values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                     buttonDecimal.setEnabled(true);
                 }
@@ -1903,14 +1746,14 @@ public class Calculator extends JFrame
             if (isMinimumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Minimum value met");
-                writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, SUBTRACTION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
             else if (isMaximumValue(String.valueOf(result)))
             {
                 LOGGER.debug("Maximum value met");
-                writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, false);
+                writeContinuedHistory(continuedOperation, SUBTRACTION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));
                 buttonDecimal.setEnabled(true);
             }
@@ -1920,7 +1763,7 @@ public class Calculator extends JFrame
                 {
                     LOGGER.debug("We have a decimal, negating");
                     LOGGER.info("{} + {} = {}", values[0], convertToPositive(values[1]), result);
-                    writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, true);
+                    writeContinuedHistory(continuedOperation, SUBTRACTION, result, true);
                     isNumberNegative = false;
                     values[0] = formatNumber(String.valueOf(result));
                     buttonDecimal.setEnabled(false);
@@ -1929,7 +1772,7 @@ public class Calculator extends JFrame
                 {
                     LOGGER.debug("We have a decimal");
                     LOGGER.info("{} - {} = {}", values[0], convertToPositive(values[1]), result);
-                    writeContinuedHistory(continuedOperation, SUBTRACTION.getValue(), result, true);
+                    writeContinuedHistory(continuedOperation, SUBTRACTION, result, true);
                     values[0] = formatNumber(String.valueOf(result));
                     buttonDecimal.setEnabled(false);
                 }
@@ -1954,7 +1797,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Pressed: " + buttonChoice + " Maximum number met"); }
         if (getTextPaneValue().isEmpty() && values[0].isEmpty())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "Cannot perform " + MULTIPLICATION + " operation");
         }
         else
@@ -1964,14 +1807,14 @@ public class Calculator extends JFrame
                     && !textPane.getText().isBlank() && !values[valuesPosition].isBlank())
             {
                 isMultiplying = true;
-                appendTextToPane(values[valuesPosition] + SPACE.getValue() + buttonChoice);
+                appendTextToPane(values[valuesPosition] + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
                 isFirstNumber = false;
                 valuesPosition += 1;
             }
             else if (isAdding && !values[1].isEmpty())
             {
-                addition(MULTIPLICATION.getValue()); // 5 + 3 ✕...
+                addition(MULTIPLICATION); // 5 + 3 ✕...
                 isAdding = false;
                 isMultiplying = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -1982,13 +1825,13 @@ public class Calculator extends JFrame
                 else
                 {
                     isMultiplying = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
             else if (isSubtracting && !values[1].isEmpty())
             {
-                subtract(MULTIPLICATION.getValue()); // 5 - 3 ✕...
+                subtract(MULTIPLICATION); // 5 - 3 ✕...
                 isSubtracting = false;
                 isMultiplying = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -1999,13 +1842,13 @@ public class Calculator extends JFrame
                 else
                 {
                     isMultiplying = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
-                multiply(MULTIPLICATION.getValue()); // 5 ✕ 3 ✕...
+                multiply(MULTIPLICATION); // 5 ✕ 3 ✕...
                 isMultiplying = true;
                 resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -2016,12 +1859,12 @@ public class Calculator extends JFrame
                 else
                 {
                     isMultiplying = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                 }
             }
             else if (isDividing && !values[1].isEmpty())
             {
-                divide(MULTIPLICATION.getValue()); // 5 ÷ 3 ✕...
+                divide(MULTIPLICATION); // 5 ÷ 3 ✕...
                 isDividing = false;
                 isMultiplying = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -2032,7 +1875,7 @@ public class Calculator extends JFrame
                 else
                 {
                     isMultiplying = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
@@ -2041,7 +1884,7 @@ public class Calculator extends JFrame
                 LOGGER.error("The user pushed multiple but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = getTextPaneValue().replace(",","");
-                appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 isMultiplying = true;
@@ -2067,7 +1910,7 @@ public class Calculator extends JFrame
             int wholeResult = Integer.parseInt(clearZeroesAndDecimalAtEnd(formatNumber(String.valueOf(result))));
             LOGGER.debug("Result is {} but ultimately is a whole number: {}", result, wholeResult);
             LOGGER.info("We have a whole number");
-            writeContinuedHistory(EQUALS.getValue(), MULTIPLICATION.getValue(), result, false);
+            writeContinuedHistory(EQUALS, MULTIPLICATION, result, false);
             values[0] = addCommas(String.valueOf(wholeResult));
             buttonDecimal.setEnabled(true);
         }
@@ -2075,7 +1918,7 @@ public class Calculator extends JFrame
         {
             logException(nfe);
             LOGGER.info("We have a decimal");
-            writeContinuedHistory(EQUALS.getValue(), MULTIPLICATION.getValue(), result, false);
+            writeContinuedHistory(EQUALS, MULTIPLICATION, result, false);
             values[0] = formatNumber(String.valueOf(result));
         }
     }
@@ -2089,7 +1932,7 @@ public class Calculator extends JFrame
             int wholeResult = Integer.parseInt(clearZeroesAndDecimalAtEnd(formatNumber(String.valueOf(result))));
             LOGGER.debug("Result is {} but ultimately is a whole number: {}", result, wholeResult);
             LOGGER.info("We have a whole number");
-            writeContinuedHistory(continuedOperation, MULTIPLICATION.getValue(), result, true);
+            writeContinuedHistory(continuedOperation, MULTIPLICATION, result, true);
             values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(wholeResult));
             buttonDecimal.setEnabled(true);
         }
@@ -2097,7 +1940,7 @@ public class Calculator extends JFrame
         {
             logException(nfe);
             LOGGER.info("We have a decimal");
-            writeContinuedHistory(continuedOperation, MULTIPLICATION.getValue(), result, true);
+            writeContinuedHistory(continuedOperation, MULTIPLICATION, result, true);
             values[0] = formatNumber(String.valueOf(result));
             buttonDecimal.setEnabled(false);
         }
@@ -2120,7 +1963,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Pressed: " + buttonChoice + " Maximum number met"); }
         if (getTextPaneValue().isEmpty() && values[0].isEmpty())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "Cannot perform " + DIVISION + " operation");
         }
         else
@@ -2130,14 +1973,14 @@ public class Calculator extends JFrame
                     && !textPane.getText().isBlank() && !values[valuesPosition].isBlank())
             {
                 isDividing = true;
-                appendTextToPane(values[valuesPosition] + SPACE.getValue() + buttonChoice);
+                appendTextToPane(values[valuesPosition] + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
                 isFirstNumber = false;
                 valuesPosition += 1;
             }
             else if (isAdding && !values[1].isEmpty())
             {
-                addition(DIVISION.getValue()); // 5 + 3 ÷
+                addition(DIVISION); // 5 + 3 ÷
                 isAdding = false;
                 isDividing = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -2148,14 +1991,14 @@ public class Calculator extends JFrame
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
 
             }
             else if (isSubtracting && !values[1].isEmpty())
             {
-                subtract(DIVISION.getValue()); // 5 - 3 ÷
+                subtract(DIVISION); // 5 - 3 ÷
                 isSubtracting = false;
                 isDividing = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -2166,14 +2009,14 @@ public class Calculator extends JFrame
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
 
             }
             else if (isMultiplying && !values[1].isEmpty())
             {
-                multiply(DIVISION.getValue()); // 5 ✕ 3 ÷...
+                multiply(DIVISION); // 5 ✕ 3 ÷...
                 isMultiplying = false;
                 isDividing = resetCalculatorOperations(false);
                 if (isMinimumValue() || isMaximumValue())
@@ -2184,21 +2027,21 @@ public class Calculator extends JFrame
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
             else if (isDividing && !values[1].isEmpty() )
             {
-                divide(DIVISION.getValue()); // 5 ÷ 3 ÷
+                divide(DIVISION); // 5 ÷ 3 ÷
                 isDividing = true;
                 resetCalculatorOperations(false);
-                if (!getValueWithoutAnyOperator(getTextPaneValue()).equals(INFINITY.getValue()) && (isMinimumValue() || isMaximumValue()))
+                if (!getValueWithoutAnyOperator(getTextPaneValue()).equals(INFINITY) && (isMinimumValue() || isMaximumValue()))
                 {
                     isDividing = false;
                     appendTextToPane(addCommas(values[0]));
                 }
-                else if (getValueWithoutAnyOperator(getTextPaneValue()).equals(INFINITY.getValue()))
+                else if (getValueWithoutAnyOperator(getTextPaneValue()).equals(INFINITY))
                 {
                     isDividing = false;
                     valuesPosition = 0;
@@ -2206,7 +2049,7 @@ public class Calculator extends JFrame
                 else
                 {
                     isDividing = true;
-                    appendTextToPane(addCommas(values[0]) + SPACE.getValue() + buttonChoice);
+                    appendTextToPane(addCommas(values[0]) + SPACE + buttonChoice);
                     resetCalculatorOperations(true);
                 }
             }
@@ -2215,7 +2058,7 @@ public class Calculator extends JFrame
                 LOGGER.error("The user pushed divide but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = getTextPaneValue().replace(",","");
-                appendTextToPane(values[0] + SPACE.getValue() + buttonChoice);
+                appendTextToPane(values[0] + SPACE + buttonChoice);
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 isDividing = true;
@@ -2236,14 +2079,14 @@ public class Calculator extends JFrame
     {
         logValues(this, LOGGER, 2);
         double result;
-        if (!ZERO.getValue().equals(values[1]))
+        if (!ZERO.equals(values[1]))
         {
             result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]); // create result forced double
             LOGGER.info("{} / {} = {}", values[0], values[1], result);
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
-                writeContinuedHistory(EQUALS.getValue(), DIVISION.getValue(), result, false);
+                writeContinuedHistory(EQUALS, DIVISION, result, false);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));// textPane changed to whole number, or int
                 appendTextToPane(values[valuesPosition]);
                 buttonDecimal.setEnabled(true);
@@ -2251,17 +2094,17 @@ public class Calculator extends JFrame
             else
             {
                 LOGGER.info("We have a decimal");
-                writeContinuedHistory(EQUALS.getValue(), DIVISION.getValue(), result, false);
+                writeContinuedHistory(EQUALS, DIVISION, result, false);
                 values[0] = addCommas(formatNumber(String.valueOf(result)));
             }
             confirm(this, LOGGER, "Finished dividing");
         }
         else
         {
-            LOGGER.warn("Attempting to divide by zero." + CANNOT_DIVIDE_BY_ZERO.getValue());
-            appendTextToPane(INFINITY.getValue());
-            values[0] = BLANK.getValue();
-            values[1] = BLANK.getValue();
+            LOGGER.warn("Attempting to divide by zero." + CANNOT_DIVIDE_BY_ZERO);
+            appendTextToPane(INFINITY);
+            values[0] = BLANK;
+            values[1] = BLANK;
             isFirstNumber = true;
             confirm(this, LOGGER, "Attempted to divide by 0. Values[0] = 0");
         }
@@ -2270,14 +2113,14 @@ public class Calculator extends JFrame
     {
         logValues(this, LOGGER, 2);
         double result;
-        if (!ZERO.getValue().equals(values[1]))
+        if (!ZERO.equals(values[1]))
         {
             result = Double.parseDouble(values[0]) / Double.parseDouble(values[1]); // create result forced double
             LOGGER.info("{} / {} = {}", values[0], values[1], result);
             if (result % 1 == 0)
             {
                 LOGGER.info("We have a whole number");
-                writeContinuedHistory(continuedOperation, DIVISION.getValue(), result, true);
+                writeContinuedHistory(continuedOperation, DIVISION, result, true);
                 values[0] = clearZeroesAndDecimalAtEnd(String.valueOf(result));// textPane changed to whole number, or int
                 appendTextToPane(values[valuesPosition]);
                 buttonDecimal.setEnabled(true);
@@ -2285,7 +2128,7 @@ public class Calculator extends JFrame
             else
             {
                 LOGGER.info("We have a decimal");
-                writeContinuedHistory(continuedOperation, DIVISION.getValue(), result, true);
+                writeContinuedHistory(continuedOperation, DIVISION, result, true);
                 values[0] = String.valueOf(result);
                 buttonDecimal.setEnabled(false);
             }
@@ -2293,10 +2136,10 @@ public class Calculator extends JFrame
         }
         else
         {
-            LOGGER.warn("Attempting to divide by zero." + CANNOT_DIVIDE_BY_ZERO.getValue());
-            appendTextToPane(INFINITY.getValue());
-            values[0] = BLANK.getValue();
-            values[1] = BLANK.getValue();
+            LOGGER.warn("Attempting to divide by zero." + CANNOT_DIVIDE_BY_ZERO);
+            appendTextToPane(INFINITY);
+            values[0] = BLANK;
+            values[1] = BLANK;
             isFirstNumber = true;
         }
     }
@@ -2314,12 +2157,12 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Cannot perform " + SQUARE_ROOT + " operation"); }
         else if (getTextPaneValue().isEmpty())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "Cannot perform " + SQUARE_ROOT + " when textPane blank");
         }
         else if (isNegativeNumber(values[valuesPosition]))
         {
-            appendTextToPane(ERR.getValue());
+            appendTextToPane(ERR);
             confirm(this, LOGGER, "Cannot perform " + SQUARE_ROOT + " on negative number");
         }
         else
@@ -2355,7 +2198,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, CLEAR_ENTRY + " called... nothing to clear"); }
         else if (valuesPosition == 0 || values[1].isEmpty())
         {
-            values[0] = BLANK.getValue();
+            values[0] = BLANK;
             resetBasicOperators(false);
             if (calculatorView == VIEW_PROGRAMMER)
             { programmerPanel.resetProgrammerOperators(false); }
@@ -2363,19 +2206,19 @@ public class Calculator extends JFrame
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
             clearTextInTextPane();
-            writeHistoryWithMessage(buttonChoice, false, SPACE.getValue() + buttonChoice + " performed");
+            writeHistoryWithMessage(buttonChoice, false, SPACE + buttonChoice + " performed");
             confirm(this, LOGGER, "Pressed: " + buttonChoice);
         }
         else
         {
             String operator = getActiveOperator();
-            values[1] = BLANK.getValue();
+            values[1] = BLANK;
             isFirstNumber = false;
             valuesPosition = 1;
             isNumberNegative = false;
             buttonDecimal.setEnabled(true);
-            appendTextToPane(addCommas(values[0]) + SPACE.getValue() + operator);
-            writeHistoryWithMessage(buttonChoice, false, SPACE.getValue() + buttonChoice + " performed");
+            appendTextToPane(addCommas(values[0]) + SPACE + operator);
+            writeHistoryWithMessage(buttonChoice, false, SPACE + buttonChoice + " performed");
             confirm(this, LOGGER, "Pressed: " + buttonChoice);
         }
     }
@@ -2390,14 +2233,14 @@ public class Calculator extends JFrame
         logActionButton(buttonChoice, LOGGER);
         for (int i=0; i<4; i++)
         {
-            if (i == 0) { values[i] = ZERO.getValue(); }
-            else if (i==3) { values[i] = PUSHED_CLEAR.getValue(); }
-            else { values[i] = BLANK.getValue(); }
+            if (i == 0) { values[i] = ZERO; }
+            else if (i==3) { values[i] = PUSHED_CLEAR; }
+            else { values[i] = BLANK; }
         }
         for(int i=0; i < 10; i++)
-        { memoryValues[i] = BLANK.getValue(); }
-        appendTextToPane(ZERO.getValue());
-        values[3] = BLANK.getValue();
+        { memoryValues[i] = BLANK; }
+        appendTextToPane(ZERO);
+        values[3] = BLANK;
         resetBasicOperators(false);
         valuesPosition = 0;
         memoryPosition = 0;
@@ -2428,7 +2271,7 @@ public class Calculator extends JFrame
         }
         else if (textPaneTextValue.isEmpty() && values[0].isEmpty())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "No need to perform " + DELETE + " operation");
         }
         else
@@ -2465,7 +2308,7 @@ public class Calculator extends JFrame
                 }
             }
             buttonDecimal.setEnabled(!isDecimalNumber(values[valuesPosition]));
-            isNumberNegative = values[valuesPosition].contains(SUBTRACTION.getValue());
+            isNumberNegative = values[valuesPosition].contains(SUBTRACTION);
             writeHistory(buttonChoice, false);
             confirm(this, LOGGER, "Pressed " + buttonChoice);
         }
@@ -2483,14 +2326,14 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Cannot perform " + NEGATE); }
         else if (getTextPaneValue().isEmpty())
         {
-            appendTextToPane(ENTER_A_NUMBER.getValue());
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, "No value to negate");
         }
-        else if (ZERO.getValue().equals(getTextPaneValue()))
+        else if (ZERO.equals(getTextPaneValue()))
         { confirm(this, LOGGER, "Cannot negate zero"); }
         else
         {
-            if (getAppropriateValue().contains(SUBTRACTION.getValue()))
+            if (getAppropriateValue().contains(SUBTRACTION))
             {
                 isNumberNegative = false;
                 String textToConvert = getTextToConvert();
@@ -2535,12 +2378,12 @@ public class Calculator extends JFrame
     {
         if (values[valuesPosition].isBlank() && !isNumberNegative) // !isNegating
         {
-            values[valuesPosition] = ZERO.getValue() + DECIMAL.getValue();
+            values[valuesPosition] = ZERO + DECIMAL;
             appendTextToPane(values[valuesPosition]);
         }
         else if (values[valuesPosition].isBlank() && isNumberNegative) // isNegating
         {
-            values[valuesPosition] = SUBTRACTION.getValue() + ZERO.getValue() + DECIMAL.getValue();
+            values[valuesPosition] = SUBTRACTION + ZERO + DECIMAL;
             appendTextToPane(values[valuesPosition]);
         }
         else
@@ -2582,7 +2425,7 @@ public class Calculator extends JFrame
         LOGGER.info("Performing {} button actions", buttonChoice);
         String operator = getActiveOperator();
         determineAndPerformBasicCalculatorOperation();
-        if (!Stream.of(AND, XOR, OR).map(Texts::getValue).toList().contains(operator)) {
+        if (!Stream.of(AND, XOR, OR).toList().contains(operator)) {
             if (!operator.isEmpty() && !textPaneContainsBadText()) {
                 switch (calculatorBase)
                 {
@@ -2594,8 +2437,8 @@ public class Calculator extends JFrame
                     }
                 }
             }
-            values[0] = BLANK.getValue();
-            values[1] = BLANK.getValue();
+            values[0] = BLANK;
+            values[1] = BLANK;
             isNumberNegative = false;
             isFirstNumber = false;
             valuesPosition = 0;
@@ -2611,18 +2454,18 @@ public class Calculator extends JFrame
     {
         if (isMaximumValue() && (isAdding || isMultiplying))
         {
-            appendTextToPane(ERR.getValue());
-            values[0] = BLANK.getValue();
-            values[1] = BLANK.getValue();
+            appendTextToPane(ERR);
+            values[0] = BLANK;
+            values[1] = BLANK;
             isNumberNegative = false;
             resetBasicOperators(false);
             confirm(this, LOGGER, "Maximum value met");
         }
         else if (isMinimumValue() && (isSubtracting || isDividing))
         {
-            appendTextToPane(ZERO.getValue());
-            values[0] = BLANK.getValue();
-            values[1] = BLANK.getValue();
+            appendTextToPane(ZERO);
+            values[0] = BLANK;
+            values[1] = BLANK;
             isNumberNegative = false;
             resetBasicOperators(false);
             confirm(this, LOGGER, "Minimum value met");
@@ -2657,7 +2500,7 @@ public class Calculator extends JFrame
                     String result = programmerPanel.performAnd();
                     appendTextToPane(result);
                     // TODO: Should AND replace values[0] and values[1]??
-                    writeContinuedHistory(EQUALS.getValue(), AND.getValue(), Double.parseDouble(result), false);
+                    writeContinuedHistory(EQUALS, AND, Double.parseDouble(result), false);
                     programmerPanel.setAnd(false);
                     resetCalculatorOperations(false);
                 }
@@ -2666,7 +2509,7 @@ public class Calculator extends JFrame
                     String orResult = programmerPanel.performOr();
                     var resultInBase = !BASE_BINARY.equals(getCalculatorBase()) ?
                             convertFromBaseToBase(BASE_BINARY, getCalculatorBase(), orResult) : orResult;
-                    writeContinuedHistory(OR.getValue(), OR.getValue(), resultInBase, false);
+                    writeContinuedHistory(OR, OR, resultInBase, false);
                     getValues()[0] = resultInBase;
                     programmerPanel.setOr(false);
                     switch (getCalculatorBase())
@@ -2682,7 +2525,7 @@ public class Calculator extends JFrame
                     String xorResult = programmerPanel.performXor();
                     var resultInBase = !BASE_BINARY.equals(calculatorBase) ?
                             convertFromBaseToBase(BASE_BINARY, calculatorBase, xorResult) : xorResult;
-                    writeContinuedHistory(OR.getValue(), OR.getValue(), resultInBase, false);
+                    writeContinuedHistory(OR, OR, resultInBase, false);
                     getValues()[0] = resultInBase;
                     switch (getCalculatorBase())
                     {
@@ -2709,7 +2552,7 @@ public class Calculator extends JFrame
         StringSelection selection = new StringSelection(values[2]);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
-        confirm(this, LOGGER, "Pressed " + COPY.getValue());
+        confirm(this, LOGGER, "Pressed " + COPY);
     }
 
     /**
@@ -2727,7 +2570,7 @@ public class Calculator extends JFrame
             LOGGER.debug("values[2]: {}", values[2]);
             appendTextToPane(values[2]);
             values[valuesPosition] = getTextPaneValue();
-            confirm(this, LOGGER, "Pressed " + PASTE.getValue());
+            confirm(this, LOGGER, "Pressed " + PASTE);
         }
     }
 
@@ -2738,9 +2581,9 @@ public class Calculator extends JFrame
     {
         LOGGER.info("Action for {} started", actionEvent.getActionCommand());
         if (currentPanel instanceof BasicPanel)
-        { basicPanel.getHistoryTextPane().setText(BLANK.getValue()); }
+        { basicPanel.getHistoryTextPane().setText(BLANK); }
         else if (currentPanel instanceof ProgrammerPanel)
-        { programmerPanel.getHistoryTextPane().setText(BLANK.getValue()); }
+        { programmerPanel.getHistoryTextPane().setText(BLANK); }
         else LOGGER.warn("Add other history panels");
     }
 
@@ -2759,7 +2602,7 @@ public class Calculator extends JFrame
                 for(int i=0; i<memoryPosition; i++)
                 {
                     memoriesString.append("[").append(memoryValues[i]).append("]");
-                    if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(BLANK.getValue()))
+                    if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(BLANK))
                     { memoriesString.append(", "); }
                 }
                 basicPanel.getHistoryTextPane().setText(
@@ -2784,7 +2627,7 @@ public class Calculator extends JFrame
                 for(int i=0; i<memoryPosition; i++)
                 {
                     memoriesString.append("[").append(memoryValues[i]).append("]");
-                    if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(BLANK.getValue()))
+                    if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(BLANK))
                     { memoriesString.append(", "); }
                 }
                 programmerPanel.getHistoryTextPane().setText(
@@ -2822,8 +2665,8 @@ public class Calculator extends JFrame
         JPanel mainPanel = new JPanel();
         mainPanel.add(iconLabel);
         mainPanel.add(textLabel);
-        JOptionPane.showMessageDialog(this, mainPanel, ABOUT_CALCULATOR.getValue(), JOptionPane.PLAIN_MESSAGE);
-        confirm(this, LOGGER, "Pressed " + ABOUT_CALCULATOR.getValue());
+        JOptionPane.showMessageDialog(this, mainPanel, ABOUT_CALCULATOR, JOptionPane.PLAIN_MESSAGE);
+        confirm(this, LOGGER, "Pressed " + ABOUT_CALCULATOR);
     }
 
     /**
@@ -2846,13 +2689,13 @@ public class Calculator extends JFrame
      */
     public String getActiveOperator()
     {
-        String results = BLANK.getValue();
-        if (isAdding) { results = ADDITION.getValue(); }
-        else if (isSubtracting) { results = SUBTRACTION.getValue(); }
-        else if (isMultiplying) { results = MULTIPLICATION.getValue(); }
-        else if (isDividing) { results = DIVISION.getValue(); }
+        String results = BLANK;
+        if (isAdding) { results = ADDITION; }
+        else if (isSubtracting) { results = SUBTRACTION; }
+        else if (isMultiplying) { results = MULTIPLICATION; }
+        else if (isDividing) { results = DIVISION; }
         if (currentPanel instanceof ProgrammerPanel) {
-            if (results.equals(BLANK.getValue())) {
+            if (results.equals(BLANK)) {
                 results = programmerPanel.getActiveProgrammerPanelOperator();
             }
         }
@@ -2902,22 +2745,22 @@ public class Calculator extends JFrame
                 case VIEW_BASIC -> {
                     var paneValue = addCommas(values[valuesPosition]);
                     if (addButtonChoiceToEnd) {
-                        paneValue += SPACE.getValue() + buttonChoice;
+                        paneValue += SPACE + buttonChoice;
                     }
                     basicPanel.getHistoryTextPane().setText(
                         basicPanel.getHistoryTextPane().getText() +
-                        addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                        addNewLines(1) + LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS
                         + " Result: " + paneValue
                     );
                 }
                 case VIEW_PROGRAMMER -> {
                     var paneValue = getTextPaneValueForProgrammerPanel();
                     if (addButtonChoiceToEnd) {
-                        paneValue += SPACE.getValue() + buttonChoice;
+                        paneValue += SPACE + buttonChoice;
                     }
                     programmerPanel.getHistoryTextPane().setText(
                         programmerPanel.getHistoryTextPane().getText() +
-                        addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                        addNewLines(1) + LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS
                         + " Result: " + paneValue
                     );
                 }
@@ -2933,23 +2776,23 @@ public class Calculator extends JFrame
                 case VIEW_BASIC -> {
                     var paneValue = message;
                     if (addButtonChoiceToEnd) {
-                        paneValue += SPACE.getValue() + buttonChoice;
+                        paneValue += SPACE + buttonChoice;
                     }
                     var basicHistoryText = basicPanel.getHistoryTextPane().getText();
                     basicPanel.getHistoryTextPane().setText(
                         basicHistoryText +
-                        addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
+                        addNewLines(1) + LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS
                         + paneValue
                     );
                 }
                 case VIEW_PROGRAMMER -> {
                     var paneValue = message;
                     if (addButtonChoiceToEnd)
-                    { paneValue += SPACE.getValue() + buttonChoice; }
+                    { paneValue += SPACE + buttonChoice; }
                     programmerPanel.getHistoryTextPane().setText(
                         programmerPanel.getHistoryTextPane().getText() +
-                        addNewLines(1) + LEFT_PARENTHESIS.getValue() + buttonChoice + RIGHT_PARENTHESIS.getValue()
-                        + SPACE.getValue() + paneValue
+                        addNewLines(1) + LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS
+                        + SPACE + paneValue
                     );
                 }
                 default -> {
@@ -2972,25 +2815,25 @@ public class Calculator extends JFrame
         LOGGER.info("Writing continued history");
         if (calculatorView == VIEW_BASIC)
         {
-            var paneValue = addCommas(values[0]) + SPACE.getValue() + operation + SPACE.getValue() + addCommas(values[1]) + SPACE.getValue() + EQUALS.getValue() + SPACE.getValue() + addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
+            var paneValue = addCommas(values[0]) + SPACE + operation + SPACE + addCommas(values[1]) + SPACE + EQUALS + SPACE + addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
             if (addContinuedOperationToEnd) {
-                paneValue += SPACE.getValue() + continuedOperation;
+                paneValue += SPACE + continuedOperation;
             }
             basicPanel.getHistoryTextPane().setText(
                 basicPanel.getHistoryTextPane().getText() +
-                addNewLines(1) + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
+                addNewLines(1) + LEFT_PARENTHESIS + continuedOperation + RIGHT_PARENTHESIS
                 + " Result: " + paneValue
             );
         }
         else if (calculatorView == VIEW_PROGRAMMER)
         {
-            var paneValue = addCommas(values[0]) + SPACE.getValue() + operation + SPACE.getValue() + addCommas(values[1]) + SPACE.getValue() + EQUALS.getValue() + SPACE.getValue() + addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
+            var paneValue = addCommas(values[0]) + SPACE + operation + SPACE + addCommas(values[1]) + SPACE + EQUALS + SPACE + addCommas(clearZeroesAndDecimalAtEnd(String.valueOf(result)));
             if (addContinuedOperationToEnd) {
-                paneValue += SPACE.getValue() + continuedOperation;
+                paneValue += SPACE + continuedOperation;
             }
             programmerPanel.getHistoryTextPane().setText(
                 programmerPanel.getHistoryTextPane().getText() +
-                addNewLines(1) + LEFT_PARENTHESIS.getValue() + continuedOperation + RIGHT_PARENTHESIS.getValue()
+                addNewLines(1) + LEFT_PARENTHESIS + continuedOperation + RIGHT_PARENTHESIS
                 + " Result: " + paneValue
             );
         }
@@ -3002,10 +2845,10 @@ public class Calculator extends JFrame
      */
     public void resetValues()
     {
-        values[0] = BLANK.getValue();
-        values[1] = BLANK.getValue();
-        values[2] = BLANK.getValue();
-        values[3] = BLANK.getValue();
+        values[0] = BLANK;
+        values[1] = BLANK;
+        values[2] = BLANK;
+        values[3] = BLANK;
         LOGGER.debug("All values reset");
         isNumberNegative = false;
         LOGGER.debug("isNumberNegative set to false");
@@ -3053,7 +2896,7 @@ public class Calculator extends JFrame
         LOGGER.debug("Resetting calculator operations, operatorBool:{}", operatorBool);
         if (operatorBool)
         {
-            values[1] = BLANK.getValue();
+            values[1] = BLANK;
             valuesPosition = 1;
             buttonDecimal.setEnabled(true); // !isDecimal(values[0])
             isFirstNumber = false;
@@ -3061,7 +2904,7 @@ public class Calculator extends JFrame
         }
         else
         {
-            values[1] = BLANK.getValue();
+            values[1] = BLANK;
             valuesPosition = 0;
             buttonDecimal.setEnabled(!isDecimalNumber(values[0]));
             isFirstNumber = true;
@@ -3084,7 +2927,7 @@ public class Calculator extends JFrame
                 break;
             }
         }
-        LOGGER.debug("memoryValues is empty? {}", result ? YES.getValue() : NO.getValue());
+        LOGGER.debug("memoryValues is empty? {}", result ? YES : NO);
         return result;
     }
 
@@ -3165,8 +3008,8 @@ public class Calculator extends JFrame
      */
     public boolean isDecimalNumber(String number)
     {
-        LOGGER.debug("isDecimalNumber({}): {}", number.replace(addNewLines(1), BLANK.getValue()), number.contains(DECIMAL.getValue()));
-        return number.contains(DECIMAL.getValue());
+        LOGGER.debug("isDecimalNumber({}): {}", number.replace(addNewLines(1), BLANK), number.contains(DECIMAL));
+        return number.contains(DECIMAL);
     }
 
     /**
@@ -3183,19 +3026,19 @@ public class Calculator extends JFrame
             LOGGER.debug("TextPane contains bad text");
             issueFound = true;
         }
-        else if (ZERO.getValue().equals(getValueWithoutAnyOperator(getTextPaneValue())) && VIEW_BASIC.equals(calculatorView))
+        else if (ZERO.equals(getValueWithoutAnyOperator(getTextPaneValue())) && VIEW_BASIC.equals(calculatorView))
         {
             LOGGER.debug("textPane equals 0. Setting to blank.");
-            appendTextToPane(BLANK.getValue());
-            values[valuesPosition] = BLANK.getValue();
+            appendTextToPane(BLANK);
+            values[valuesPosition] = BLANK;
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
-        else if (ZERO.getValue().equals(values[valuesPosition]) && VIEW_PROGRAMMER.equals(calculatorView))
+        else if (ZERO.equals(values[valuesPosition]) && VIEW_PROGRAMMER.equals(calculatorView))
         {
             LOGGER.debug("textPane contains 0. Setting to blank.");
-            ((ProgrammerPanel)currentPanel).appendTextToProgrammerPane(BLANK.getValue());
-            values[valuesPosition] = BLANK.getValue();
+            ((ProgrammerPanel)currentPanel).appendTextToProgrammerPane(BLANK);
+            values[valuesPosition] = BLANK;
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
@@ -3203,7 +3046,7 @@ public class Calculator extends JFrame
         {
             LOGGER.debug("values[0] is blank, values[1] is not");
             values[0] = values[1];
-            values[1] = BLANK.getValue();
+            values[1] = BLANK;
             valuesPosition = 0;
             issueFound = true;
         }
@@ -3237,15 +3080,15 @@ public class Calculator extends JFrame
     {
         var val = getValueWithoutAnyOperator(getTextPaneValue());
         boolean result = false;
-        if (BLANK.getValue().equals(val)) return result;
+        if (BLANK.equals(val)) return result;
         else {
-            result = CANNOT_DIVIDE_BY_ZERO.getValue().equals(val) ||
-                     NOT_A_NUMBER.getValue().equals(val) ||
-                     NUMBER_TOO_BIG.getValue().equals(val) ||
-                     ENTER_A_NUMBER.getValue().equals(val) ||
-                     ONLY_POSITIVES.getValue().equals(val) ||
-                     ERR.getValue().equals(val) || // ERR.getValue().contains(val)
-                     INFINITY.getValue().equals(val);
+            result = CANNOT_DIVIDE_BY_ZERO.equals(val) ||
+                     NOT_A_NUMBER.equals(val) ||
+                     NUMBER_TOO_BIG.equals(val) ||
+                     ENTER_A_NUMBER.equals(val) ||
+                     ONLY_POSITIVES.equals(val) ||
+                     ERR.equals(val) || // ERR.contains(val)
+                     INFINITY.equals(val);
         }
         if (result) LOGGER.debug("textPane contains bad text: {}", val);
         else LOGGER.debug("textPane is clean. text is '{}'", val);
@@ -3258,14 +3101,14 @@ public class Calculator extends JFrame
      */
     public String getBadText()
     {
-        String badText = BLANK.getValue();
-        if (CANNOT_DIVIDE_BY_ZERO.getValue().equals(getTextPaneValue())) badText = CANNOT_DIVIDE_BY_ZERO.getValue();
-        else if (NOT_A_NUMBER.getValue().equals(getTextPaneValue())) badText = NOT_A_NUMBER.getValue();
-        else if (NUMBER_TOO_BIG.getValue().equals(getTextPaneValue())) badText = NUMBER_TOO_BIG.getValue();
-        else if (ENTER_A_NUMBER.getValue().equals(getTextPaneValue())) badText = ENTER_A_NUMBER.getValue();
-        else if (ONLY_POSITIVES.getValue().equals(getTextPaneValue())) badText = ONLY_POSITIVES.getValue();
-        else if (ERR.getValue().equals(getTextPaneValue())) badText = ERR.getValue();
-        else if (INFINITY.getValue().equals(getTextPaneValue())) badText = INFINITY.getValue();
+        String badText = BLANK;
+        if (CANNOT_DIVIDE_BY_ZERO.equals(getTextPaneValue())) badText = CANNOT_DIVIDE_BY_ZERO;
+        else if (NOT_A_NUMBER.equals(getTextPaneValue())) badText = NOT_A_NUMBER;
+        else if (NUMBER_TOO_BIG.equals(getTextPaneValue())) badText = NUMBER_TOO_BIG;
+        else if (ENTER_A_NUMBER.equals(getTextPaneValue())) badText = ENTER_A_NUMBER;
+        else if (ONLY_POSITIVES.equals(getTextPaneValue())) badText = ONLY_POSITIVES;
+        else if (ERR.equals(getTextPaneValue())) badText = ERR;
+        else if (INFINITY.equals(getTextPaneValue())) badText = INFINITY;
         return badText;
     }
 
@@ -3301,10 +3144,10 @@ public class Calculator extends JFrame
                 buttonDecimal.setEnabled(!isDecimalNumber(backupValue));
             }
         }
-        valueToAdjust = valueToAdjust.replace(UNDERSCORE.getValue(), BLANK.getValue())
-                .replace(delimiter, BLANK.getValue())
-                .replace(DECIMAL.getValue(), BLANK.getValue())
-                .replace(SUBTRACTION.getValue(), BLANK.getValue());
+        valueToAdjust = valueToAdjust.replace(UNDERSCORE, BLANK)
+                .replace(delimiter, BLANK)
+                .replace(DECIMAL, BLANK)
+                .replace(SUBTRACTION, BLANK);
         LOGGER.debug("adjusted1: {}", valueToAdjust);
         if (valueToAdjust.length() >= 4)
         {
@@ -3341,23 +3184,23 @@ public class Calculator extends JFrame
         }
         // if number was originally negative, add back negative symbol
         // if the textPane is only the negative symbol, don't add back
-        if ( (isNumberNegative && !SUBTRACTION.getValue().equals(getTextPaneValueForProgrammerPanel()) )
-            || backupValue.contains(SUBTRACTION.getValue())) {
+        if ( (isNumberNegative && !SUBTRACTION.equals(getTextPaneValueForProgrammerPanel()) )
+            || backupValue.contains(SUBTRACTION)) {
             LOGGER.debug("adding '-' to beginning of number");
-            adjusted = SUBTRACTION.getValue() + adjusted;
+            adjusted = SUBTRACTION + adjusted;
         }
 //        if (valuesPosition == 0)
 //        {
 //            String operator = getActiveBasicPanelOperator();
-//            if (!BLANK.getValue().equals(operator))
-//            { adjusted += SPACE.getValue() + operator; }
+//            if (!BLANK.equals(operator))
+//            { adjusted += SPACE + operator; }
 //            else
 //            {
 //                if (VIEW_PROGRAMMER.equals(calculatorView))
 //                {
 //                    operator = ((ProgrammerPanel)currentPanel).getActiveProgrammerPanelOperator();
-//                    if (!BLANK.getValue().equals(operator))
-//                    { adjusted += SPACE.getValue() + operator; }
+//                    if (!BLANK.equals(operator))
+//                    { adjusted += SPACE + operator; }
 //                }
 //            }
 //        }
@@ -3372,7 +3215,7 @@ public class Calculator extends JFrame
      */
     public String removeCommas(String valueToAdjust)
     {
-        return valueToAdjust.replace(COMMA.getValue(), BLANK.getValue());
+        return valueToAdjust.replace(COMMA, BLANK);
     }
 
     /**
@@ -3382,7 +3225,7 @@ public class Calculator extends JFrame
     public String getDecimalDelimiter()
     {
         // TODO: Setup menu option to allow user to choose this value
-        return DECIMAL.getValue();
+        return DECIMAL;
     }
 
     /**
@@ -3392,7 +3235,7 @@ public class Calculator extends JFrame
     public String getDelimiter()
     {
         // TODO: Setup menu option to allow user to choose this value
-        return COMMA.getValue();
+        return COMMA;
     }
 
     /**
@@ -3422,7 +3265,7 @@ public class Calculator extends JFrame
     {
         LOGGER.info("Switching panels...");
         LOGGER.debug("Action: {}", actionEvent.getActionCommand());
-        String currentView = calculatorView.getName();//currentPanel.getClass().getSimpleName(); //.replace("Panel", BLANK.getValue());
+        String currentView = calculatorView.getName();//currentPanel.getClass().getSimpleName(); //.replace("Panel", BLANK);
         String newView = updatedView.getName(); //actionEvent.getActionCommand();
         LOGGER.debug("from '{}' to '{}'", currentView, newView);
         if (currentView.equals(newView))
@@ -3431,7 +3274,7 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, "Not changing panels when the converterType is the same"); }
         else
         {
-            String currentValueInTextPane = BLANK.getValue();
+            String currentValueInTextPane = BLANK;
             switch (updatedView) {
                 case VIEW_BASIC -> {
                     //BasicPanel basicPanel = new BasicPanel();
@@ -3440,7 +3283,7 @@ public class Calculator extends JFrame
                     if (!values[0].isEmpty()) basicPanel.appendTextToBasicPane(values[0]);//appendTextToPane(values[0]);
                     else {
                         // see ProgrammerPanel.displayByteAndBase()
-                        if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
+                        if (!(calculatorByte.getValue() + SPACE + SPACE + getCalculatorBase().getValue()).equals(currentValueInTextPane)) {
                             basicPanel.appendTextToBasicPane(addCommas(currentValueInTextPane));
                         }
                     }
@@ -3448,7 +3291,7 @@ public class Calculator extends JFrame
                         buttonDecimal.setEnabled(false);
                     }
                     if (determineIfAnyBasicOperatorWasPushed()) {
-                        basicPanel.appendTextToBasicPane(textPane.getText() + SPACE.getValue() + getActiveOperator());
+                        basicPanel.appendTextToBasicPane(textPane.getText() + SPACE + getActiveOperator());
                     }
                     setCalculatorView(VIEW_BASIC);
                 }
@@ -3461,7 +3304,7 @@ public class Calculator extends JFrame
                             programmerPanel.appendTextToProgrammerPane(values[0]);
                         } else {
                             // see ProgrammerPanel.displayByteAndBase()
-                            if (!(calculatorByte.getValue() + SPACE.getValue() + SPACE.getValue() + calculatorBase.getValue()).equals(currentValueInTextPane)) {
+                            if (!(calculatorByte.getValue() + SPACE + SPACE + calculatorBase.getValue()).equals(currentValueInTextPane)) {
                                 programmerPanel.appendTextToProgrammerPane(currentValueInTextPane);
                             }
                         }
@@ -3469,7 +3312,7 @@ public class Calculator extends JFrame
                             buttonDecimal.setEnabled(false);
                         }
                         if (determineIfAnyBasicOperatorWasPushed()) {
-                            programmerPanel.appendTextToProgrammerPane(values[0] + SPACE.getValue() + getActiveOperator());
+                            programmerPanel.appendTextToProgrammerPane(values[0] + SPACE + getActiveOperator());
                         }
                     }
                     setCalculatorView(VIEW_PROGRAMMER);
@@ -3523,7 +3366,7 @@ public class Calculator extends JFrame
         int base2Length = base2Number.length();
         int topLength = determineRequiredLength(base2Length);
         int addZeroes = topLength - base2Length;
-        base2Number = ZERO.getValue().repeat(addZeroes) + base2Number;
+        base2Number = ZERO.repeat(addZeroes) + base2Number;
         return base2Number;
     }
 
@@ -3568,10 +3411,10 @@ public class Calculator extends JFrame
      */
     public String getAppropriateValue()
     {
-        String result = values[valuesPosition].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+        String result = values[valuesPosition].replace(COMMA, BLANK).replace(SPACE, BLANK);
         if (result.isEmpty()) {
             if (valuesPosition != 0) {
-                result = values[valuesPosition-1].replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
+                result = values[valuesPosition-1].replace(COMMA, BLANK).replace(SPACE, BLANK);
             }
             if (result.isEmpty()) {
                 result = getTextPaneValue();
@@ -3588,7 +3431,7 @@ public class Calculator extends JFrame
     public String convertValueToBinary()
     {
         String valueToConvert = getAppropriateValue();
-        if (valueToConvert.isEmpty()) return BLANK.getValue();
+        if (valueToConvert.isEmpty()) return BLANK;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_BINARY.getValue());
         String base2Number = Integer.toBinaryString(Integer.parseInt(valueToConvert));
         base2Number = adjustBinaryNumber(base2Number);
@@ -3604,7 +3447,7 @@ public class Calculator extends JFrame
     public String convertValueToOctal()
     {
         String valueToConvert = getAppropriateValue();
-        if (valueToConvert.isEmpty()) return BLANK.getValue();
+        if (valueToConvert.isEmpty()) return BLANK;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_OCTAL.getValue());
         String base8Number = Integer.toOctalString(Integer.parseInt(valueToConvert));
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_OCTAL.getValue(), base8Number);
@@ -3619,7 +3462,7 @@ public class Calculator extends JFrame
     public String convertValueToDecimal()
     {
         String valueToConvert = getAppropriateValue();
-        if (valueToConvert.isEmpty()) return BLANK.getValue();
+        if (valueToConvert.isEmpty()) return BLANK;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_DECIMAL.getValue());
         String base10Number = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix()), 10);
         LOGGER.debug("convert from({}) to({}) = {}", previousBase.getValue(), BASE_DECIMAL.getValue(), base10Number);
@@ -3634,7 +3477,7 @@ public class Calculator extends JFrame
     public String convertValueToHexadecimal()
     {
         String valueToConvert = getAppropriateValue();
-        if (valueToConvert.isEmpty()) return BLANK.getValue();
+        if (valueToConvert.isEmpty()) return BLANK;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_HEXADECIMAL.getValue());
         String base16Number = Integer.toHexString(Integer.parseInt(valueToConvert));
         LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_HEXADECIMAL.getValue(), base16Number);
@@ -3653,8 +3496,8 @@ public class Calculator extends JFrame
      */
     public String convertFromBaseToBase(CalculatorBase fromBase, CalculatorBase toBase, String valueToConvert)
     {
-        valueToConvert = valueToConvert.replace(COMMA.getValue(), BLANK.getValue()).replace(SPACE.getValue(), BLANK.getValue());
-        if (valueToConvert.isEmpty()) return BLANK.getValue();
+        valueToConvert = valueToConvert.replace(COMMA, BLANK).replace(SPACE, BLANK);
+        if (valueToConvert.isEmpty()) return BLANK;
         LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
         String convertedNumber;
         if (!isDecimalNumber(valueToConvert))
@@ -3701,16 +3544,16 @@ public class Calculator extends JFrame
     public String clearZeroesAndDecimalAtEnd(String currentNumber)
     {
         LOGGER.debug("ClearZeroesAndDot: {}", currentNumber);
-        if (currentNumber.contains(ERR.getValue())) return currentNumber;
+        if (currentNumber.contains(ERR)) return currentNumber;
         int index;
-        index = currentNumber.indexOf(DECIMAL.getValue());
+        index = currentNumber.indexOf(DECIMAL);
         LOGGER.debug("decimalIndex: {}", index);
         if (index == -1) return currentNumber;
         else
         {
             getNumberOnLeftSideOfDecimal(currentNumber);
             String toTheRight = getNumberOnRightSideOfDecimal(currentNumber);
-            String expected = ZERO.getValue().repeat(toTheRight.length());
+            String expected = ZERO.repeat(toTheRight.length());
             boolean allZeroes = expected.equals(toTheRight);
             if (allZeroes) currentNumber = currentNumber.substring(0,index);
         }
@@ -3726,18 +3569,18 @@ public class Calculator extends JFrame
     public String getValueWithoutAnyOperator(String valueToAdjust)
     {
         return valueToAdjust
-                .replace(ADDITION.getValue(), BLANK.getValue()) // target, replacement
-                .replace(SUBTRACTION.getValue(), BLANK.getValue())
-                .replace(MULTIPLICATION.getValue(), BLANK.getValue())
-                .replace(DIVISION.getValue(), BLANK.getValue())
-                .replace(MODULUS.getValue(), BLANK.getValue())
-                //.replace(LEFT_PARENTHESIS.getValue(), BLANK.getValue())
-                //.replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
-                .replace(ROL.getValue(), BLANK.getValue())
-                .replace(ROR.getValue(), BLANK.getValue())
-                .replace(XOR.getValue(), BLANK.getValue()) // XOR must be checked before OR, otherwise OR will be replaced when XOR is there, leaving X, which is not desired
-                .replace(OR.getValue(), BLANK.getValue())
-                .replace(AND.getValue(), BLANK.getValue())
+                .replace(ADDITION, BLANK) // target, replacement
+                .replace(SUBTRACTION, BLANK)
+                .replace(MULTIPLICATION, BLANK)
+                .replace(DIVISION, BLANK)
+                .replace(MODULUS, BLANK)
+                //.replace(LEFT_PARENTHESIS, BLANK)
+                //.replace(RIGHT_PARENTHESIS, BLANK)
+                .replace(ROL, BLANK)
+                .replace(ROR, BLANK)
+                .replace(XOR, BLANK) // XOR must be checked before OR, otherwise OR will be replaced when XOR is there, leaving X, which is not desired
+                .replace(OR, BLANK)
+                .replace(AND, BLANK)
                 .strip();
     }
 
@@ -3749,15 +3592,15 @@ public class Calculator extends JFrame
      */
     public String getValueWithOperator(String valueToAdjust)
     {
-        if (isAdding) valueToAdjust += SPACE.getValue() + ADDITION.getValue();
-        else if (isSubtracting) valueToAdjust += SPACE.getValue() + SUBTRACTION.getValue();
-        else if (isMultiplying) valueToAdjust += SPACE.getValue() + MULTIPLICATION.getValue();
-        else if (isDividing) valueToAdjust += SPACE.getValue() + DIVISION.getValue();
+        if (isAdding) valueToAdjust += SPACE + ADDITION;
+        else if (isSubtracting) valueToAdjust += SPACE + SUBTRACTION;
+        else if (isMultiplying) valueToAdjust += SPACE + MULTIPLICATION;
+        else if (isDividing) valueToAdjust += SPACE + DIVISION;
         if (currentPanel instanceof ProgrammerPanel panel) {
-            if (panel.isModulus()) valueToAdjust += SPACE.getValue() + MODULUS.getValue();
-            else if (panel.isOr()) valueToAdjust += SPACE.getValue() + OR.getValue();
-            else if (panel.isXor()) valueToAdjust += SPACE.getValue() + XOR.getValue();
-            else if (panel.isAnd()) valueToAdjust += SPACE.getValue() + AND.getValue();
+            if (panel.isModulus()) valueToAdjust += SPACE + MODULUS;
+            else if (panel.isOr()) valueToAdjust += SPACE + OR;
+            else if (panel.isXor()) valueToAdjust += SPACE + XOR;
+            else if (panel.isAnd()) valueToAdjust += SPACE + AND;
         }
         return valueToAdjust;
     }
@@ -3772,14 +3615,14 @@ public class Calculator extends JFrame
     {
         if (calculatorView == VIEW_BASIC)
         { return textPane.getText()
-                .replaceAll(NEWLINE.getValue(), BLANK.getValue())
+                .replaceAll(NEWLINE, BLANK)
                 .strip(); }
         else if (calculatorView == VIEW_PROGRAMMER)
         { return getTextPaneValueForProgrammerPanel(); }
         else
         {
             LOGGER.warn("Implement");
-            return BLANK.getValue();
+            return BLANK;
         }
     }
 
@@ -3791,7 +3634,7 @@ public class Calculator extends JFrame
      */
     private String getTextPaneValueForProgrammerPanel()
     {
-        String currentValue = BLANK.getValue();
+        String currentValue = BLANK;
         try
         {
             LOGGER.debug("calculatorBase: {}", calculatorBase);
@@ -3804,36 +3647,36 @@ public class Calculator extends JFrame
                     {
                         case BYTE_BYTE,
                              BYTE_WORD -> {
-                            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                    .replace(COMMA.getValue(), BLANK.getValue());
+                            currentValue = textPane.getText().split(NEWLINE)[2]
+                                    .replace(COMMA, BLANK);
                         }
                         case BYTE_DWORD -> {
-                            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                    + textPane.getText().split(NEWLINE.getValue())[3]
-                                    .replace(COMMA.getValue(), BLANK.getValue());
+                            currentValue = textPane.getText().split(NEWLINE)[2]
+                                    + textPane.getText().split(NEWLINE)[3]
+                                    .replace(COMMA, BLANK);
                         }
                         case BYTE_QWORD -> {
-                            currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                                    + textPane.getText().split(NEWLINE.getValue())[3]
-                                    + textPane.getText().split(NEWLINE.getValue())[4]
-                                    + textPane.getText().split(NEWLINE.getValue())[5]
-                                    .replace(COMMA.getValue(), BLANK.getValue());
+                            currentValue = textPane.getText().split(NEWLINE)[2]
+                                    + textPane.getText().split(NEWLINE)[3]
+                                    + textPane.getText().split(NEWLINE)[4]
+                                    + textPane.getText().split(NEWLINE)[5]
+                                    .replace(COMMA, BLANK);
                         }
                     }
-                    currentValue = currentValue.replace(SPACE.getValue(), BLANK.getValue());
+                    currentValue = currentValue.replace(SPACE, BLANK);
                     // TODO: Determine where this was used, then move method to proper location
                     //currentValue = adjustBinaryNumber(currentValue);
                 }
                 case BASE_OCTAL,
                      BASE_DECIMAL,
                      BASE_HEXADECIMAL -> {
-                    currentValue = textPane.getText().split(NEWLINE.getValue())[2]
-                            .replace(COMMA.getValue(), BLANK.getValue());
+                    currentValue = textPane.getText().split(NEWLINE)[2]
+                            .replace(COMMA, BLANK);
                 }
             }
             if (currentValue.isEmpty()) {
                 LOGGER.warn("Attempted to retrieve value from text pane but it was empty. Returning blank.");
-                return BLANK.getValue();
+                return BLANK;
             }
             if (isOperatorActive() || programmerPanel.isProgrammerOperatorActive())
             {
@@ -3845,27 +3688,27 @@ public class Calculator extends JFrame
         {
             try
             {
-                var splitTextValue = textPane.getText().split(NEWLINE.getValue());
+                var splitTextValue = textPane.getText().split(NEWLINE);
                 // TODO: Rework to not use Strings
-                var twoSpaces = SPACE.getValue().repeat(2);
+                var twoSpaces = SPACE.repeat(2);
                 var textPaneTopRowExpectedValues = List.of(
                 BYTE_BYTE.getValue()+twoSpaces+BASE_BINARY.getValue(), "Byte  Octal", "Byte  Decimal", "Byte  Hexadecimal"
                         , "Word  Binary", "Word  Octal", "Word  Decimal", "Word  Hexadecimal"
                         , "DWord  Binary", "DWord  Octal", "DWord  Decimal", "DWord  Hexadecimal"
                         , "QWord  Binary", "QWord  Octal", "QWord  Decimal", "QWord  Hexadecimal");
                 return splitTextValue.length == 1 && textPaneTopRowExpectedValues.contains(splitTextValue[0])
-                        ? BLANK.getValue()
-                        : splitTextValue[2].replace(COMMA.getValue(), BLANK.getValue());
+                        ? BLANK
+                        : splitTextValue[2].replace(COMMA, BLANK);
             } catch (ArrayIndexOutOfBoundsException ae2)
             {
                 logException(new CalculatorError("Attempted to retrieve value from text pane but got ArrayIndexOutOfBoundsException. Returning blank."));
-                return BLANK.getValue();
+                return BLANK;
             }
         }
         catch (Exception e)
         {
             logException(e);
-            return BLANK.getValue();
+            return BLANK;
         }
         return currentValue;
     }
@@ -3877,13 +3720,13 @@ public class Calculator extends JFrame
     public String getBasicHistoryPaneTextWithoutNewLineCharacters()
     {
         if (currentPanel instanceof BasicPanel basicPanel)
-        { return basicPanel.getHistoryTextPane().getText().replace(addNewLines(1), BLANK.getValue()).strip(); }
+        { return basicPanel.getHistoryTextPane().getText().replace(addNewLines(1), BLANK).strip(); }
         else if (currentPanel instanceof ProgrammerPanel programmerPanel)
-        { return programmerPanel.getHistoryTextPane().getText().replace(addNewLines(1), BLANK.getValue()).strip(); }
+        { return programmerPanel.getHistoryTextPane().getText().replace(addNewLines(1), BLANK).strip(); }
         else
         {
             LOGGER.warn("Add other panels history pane if intended to have one");
-            return BLANK.getValue();
+            return BLANK;
         }
     }
 
@@ -3897,12 +3740,12 @@ public class Calculator extends JFrame
         String newLines = null;
         if (newLinesNumber == 0)
         {
-            if (currentPanel instanceof BasicPanel) newLines = NEWLINE.getValue().repeat(1);
-            else if (currentPanel instanceof ProgrammerPanel) newLines = NEWLINE.getValue().repeat(1);
-            else if (currentPanel instanceof ScientificPanel) newLines = NEWLINE.getValue().repeat(3);
+            if (currentPanel instanceof BasicPanel) newLines = NEWLINE.repeat(1);
+            else if (currentPanel instanceof ProgrammerPanel) newLines = NEWLINE.repeat(1);
+            else if (currentPanel instanceof ScientificPanel) newLines = NEWLINE.repeat(3);
         }
         else
-        { newLines = NEWLINE.getValue().repeat(newLinesNumber); }
+        { newLines = NEWLINE.repeat(newLinesNumber); }
         return newLines;
     }
 
@@ -3921,10 +3764,10 @@ public class Calculator extends JFrame
      */
     public String getAboutCalculatorString()
     {
-        LOGGER.debug("Configuring " + ABOUT_CALCULATOR.getValue() + " text...");
+        LOGGER.debug("Configuring " + ABOUT_CALCULATOR + " text...");
         String computerText = "", version = "";
-        if (isMacOperatingSystem()) { computerText = APPLE.getValue(); }
-        else                        { computerText = WINDOWS.getValue(); }
+        if (isMacOperatingSystem()) { computerText = APPLE; }
+        else                        { computerText = WINDOWS; }
         try(InputStream is = CalculatorMain.class.getResourceAsStream("/pom.properties"))
         {
             Properties p = new Properties();
@@ -4016,8 +3859,8 @@ public class Calculator extends JFrame
      */
     public boolean isPositiveNumber(String number)
     {
-        LOGGER.debug("isPositiveNumber({}): {}", number, !number.contains(SUBTRACTION.getValue()));
-        return !number.contains(SUBTRACTION.getValue());
+        LOGGER.debug("isPositiveNumber({}): {}", number, !number.contains(SUBTRACTION));
+        return !number.contains(SUBTRACTION);
     }
 
     /**
@@ -4028,8 +3871,8 @@ public class Calculator extends JFrame
      */
     public boolean isNegativeNumber(String number)
     {
-        LOGGER.debug("isNegativeNumber({}): {}", number, number.contains(SUBTRACTION.getValue()));
-        return number.contains(SUBTRACTION.getValue());
+        LOGGER.debug("isNegativeNumber({}): {}", number, number.contains(SUBTRACTION));
+        return number.contains(SUBTRACTION);
     }
 
     // TODO: Remove isNumberNegative = true; This method should only return a copy of the number in its negative form
@@ -4040,9 +3883,9 @@ public class Calculator extends JFrame
      */
     public String convertToNegative(String number)
     {
-        LOGGER.debug("Converting {} to negative number", number.replaceAll("\n", BLANK.getValue()));
-        if (!number.contains(SUBTRACTION.getValue()))
-            number = SUBTRACTION.getValue() + number.replaceAll("\n", BLANK.getValue());
+        LOGGER.debug("Converting {} to negative number", number.replaceAll("\n", BLANK));
+        if (!number.contains(SUBTRACTION))
+            number = SUBTRACTION + number.replaceAll("\n", BLANK);
         isNumberNegative = true;
         LOGGER.debug("Updated: {}", number);
         return number;
@@ -4056,8 +3899,8 @@ public class Calculator extends JFrame
      */
     public String convertToPositive(String number)
     {
-        LOGGER.debug("Converting {} to positive number", number.replaceAll("\n", BLANK.getValue()));
-        number = number.replaceAll(SUBTRACTION.getValue(), BLANK.getValue()).trim();
+        LOGGER.debug("Converting {} to positive number", number.replaceAll("\n", BLANK));
+        number = number.replaceAll(SUBTRACTION, BLANK).trim();
         isNumberNegative = false;
         LOGGER.debug("Updated: {}", number);
         return number;
@@ -4086,14 +3929,14 @@ public class Calculator extends JFrame
     {
         String leftSide;
         if (!isDecimalNumber(currentNumber)) return currentNumber;
-        int index = currentNumber.indexOf(DECIMAL.getValue());
-        if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = BLANK.getValue();
+        int index = currentNumber.indexOf(DECIMAL);
+        if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = BLANK;
         else
         {
             leftSide = currentNumber.substring(0, index);
             if (StringUtils.isEmpty(leftSide)) {
-                LOGGER.debug("Number to the left of the decimal is empty. Setting to {}", ZERO.getValue());
-                leftSide = ZERO.getValue();
+                LOGGER.debug("Number to the left of the decimal is empty. Setting to {}", ZERO);
+                leftSide = ZERO;
             }
         }
         LOGGER.debug("Number to the left of the decimal: {}", leftSide);
@@ -4109,14 +3952,14 @@ public class Calculator extends JFrame
     protected String getNumberOnRightSideOfDecimal(String currentNumber)
     {
         String rightSide;
-        int index = currentNumber.indexOf(DECIMAL.getValue());
-        if (index < 0 || (index + 1) >= currentNumber.length()) rightSide = BLANK.getValue();
+        int index = currentNumber.indexOf(DECIMAL);
+        if (index < 0 || (index + 1) >= currentNumber.length()) rightSide = BLANK;
         else
         {
             rightSide = currentNumber.substring(index + 1);
             if (StringUtils.isEmpty(rightSide)) {
-                LOGGER.debug("Number to the right of the decimal is empty. Setting to {}", ZERO.getValue());
-                rightSide = ZERO.getValue();
+                LOGGER.debug("Number to the right of the decimal is empty. Setting to {}", ZERO);
+                rightSide = ZERO;
             }
         }
         LOGGER.debug("Number to the right of the decimal: {}", rightSide);
@@ -4178,10 +4021,10 @@ public class Calculator extends JFrame
      */
     public boolean isMinimumValue()
     {
-        boolean v1 = !values[0].isEmpty() && Double.parseDouble(values[0]) <= Double.parseDouble(MIN_VALUE.getValue());
-        LOGGER.debug("is '{}' <= {}: {}", values[0], MIN_VALUE.getValue(), v1);
-        boolean v2 = !values[1].isEmpty() && Double.parseDouble(values[1]) <= Double.parseDouble(MIN_VALUE.getValue());
-        LOGGER.debug("is '{}' <= {}: {}", values[1], MIN_VALUE.getValue(), v2);
+        boolean v1 = !values[0].isEmpty() && Double.parseDouble(values[0]) <= Double.parseDouble(MIN_VALUE);
+        LOGGER.debug("is '{}' <= {}: {}", values[0], MIN_VALUE, v1);
+        boolean v2 = !values[1].isEmpty() && Double.parseDouble(values[1]) <= Double.parseDouble(MIN_VALUE);
+        LOGGER.debug("is '{}' <= {}: {}", values[1], MIN_VALUE, v2);
         return v1 || v2;
     }
 
@@ -4192,8 +4035,8 @@ public class Calculator extends JFrame
      */
     public boolean isMinimumValue(String valueToCheck)
     {
-        boolean v1 = !valueToCheck.isEmpty() && Double.parseDouble(valueToCheck) <= Double.parseDouble(MIN_VALUE.getValue());
-        LOGGER.debug("is '{}' <= {}: {}", valueToCheck, MIN_VALUE.getValue(), v1);
+        boolean v1 = !valueToCheck.isEmpty() && Double.parseDouble(valueToCheck) <= Double.parseDouble(MIN_VALUE);
+        LOGGER.debug("is '{}' <= {}: {}", valueToCheck, MIN_VALUE, v1);
         return v1;
     }
 
@@ -4210,9 +4053,9 @@ public class Calculator extends JFrame
         for (String v : currentValues)
         {
             v = removeCommas(v);
-            var bool = !v.isEmpty() && Double.parseDouble(v) >= Double.parseDouble(MAX_VALUE.getValue());
-            LOGGER.debug("is '{}' >= {}: {}", v, MAX_VALUE.getValue(), bool);
-            var bool2 = !v.isEmpty() && v.contains(E.getValue());
+            var bool = !v.isEmpty() && Double.parseDouble(v) >= Double.parseDouble(MAX_VALUE);
+            LOGGER.debug("is '{}' >= {}: {}", v, MAX_VALUE, bool);
+            var bool2 = !v.isEmpty() && v.contains(E);
             LOGGER.debug("does '{}' contain E: {}", v, bool2);
             if (bool || bool2) {
                 result = true;
@@ -4230,9 +4073,9 @@ public class Calculator extends JFrame
      */
     public boolean isMaximumValue(String valueToCheck)
     {
-        boolean v1 = !valueToCheck.isEmpty() && Double.parseDouble(valueToCheck) >= Double.parseDouble(MAX_VALUE.getValue());
-        LOGGER.debug("is '{}' >= {}: {}", valueToCheck, MAX_VALUE.getValue(), v1);
-        boolean v2 = !valueToCheck.isEmpty() && valueToCheck.contains(E.getValue());
+        boolean v1 = !valueToCheck.isEmpty() && Double.parseDouble(valueToCheck) >= Double.parseDouble(MAX_VALUE);
+        LOGGER.debug("is '{}' >= {}: {}", valueToCheck, MAX_VALUE, v1);
+        boolean v2 = !valueToCheck.isEmpty() && valueToCheck.contains(E);
         LOGGER.debug("does '{}' contain E: {}", valueToCheck, v2);
         return v1 || v2;
     }
@@ -4265,7 +4108,7 @@ public class Calculator extends JFrame
         }
         else if (currentPanel instanceof ProgrammerPanel)
         {
-            if (PUSHED_CLEAR.getValue().equals(values[3]) //||
+            if (PUSHED_CLEAR.equals(values[3]) //||
                 //(!values[valuesPosition].isEmpty() && !text.equals(values[valuesPosition])) ||
                 //(valuesPosition != 0 && !values[valuesPosition-1].isEmpty() && !text.equals(values[valuesPosition-1]))
             ) {
@@ -4284,8 +4127,8 @@ public class Calculator extends JFrame
                     var textPaneValue = getTextPaneValue();
                     //String textWithCommas = addCommas(text); //addCommas(getValueWithoutAnyOperator(noZeroes));
                     //if (valuesPosition == 0) textWithCommas = getValueWithOperator(textWithCommas);
-                    //if (isNumberNegative && !textWithCommas.startsWith(SUBTRACTION.getValue()))
-                    //    textWithCommas = SUBTRACTION.getValue() + textWithCommas;
+                    //if (isNumberNegative && !textWithCommas.startsWith(SUBTRACTION))
+                    //    textWithCommas = SUBTRACTION + textWithCommas;
                     programmerPanel.appendTextToProgrammerPane(text); // (textWithCommas)
                 }
                 case BASE_HEXADECIMAL -> {
@@ -4305,14 +4148,14 @@ public class Calculator extends JFrame
     public void clearTextInTextPane()
     {
         // TODO: replace with the following
-        // textPane.setText(BLANK.getValue());
+        // textPane.setText(BLANK);
         if (currentPanel instanceof BasicPanel basicPanel)
         {
-            basicPanel.appendTextToBasicPane(BLANK.getValue());
+            basicPanel.appendTextToBasicPane(BLANK);
         }
         else if (currentPanel instanceof ProgrammerPanel programmerPanel)
         {
-            programmerPanel.appendTextToProgrammerPane(BLANK.getValue());
+            programmerPanel.appendTextToProgrammerPane(BLANK);
         }
     }
 

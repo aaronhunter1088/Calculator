@@ -233,30 +233,30 @@ public class BasicPanel extends JPanel
                 About Calculator: will describe the current version and licensing information about the Calculator.
                 """
                 .formatted(VIEW_BASIC.getValue(),
-                        ADDITION.getValue(), SUBTRACTION.getValue(), MULTIPLICATION.getValue(), DIVISION.getValue(), EQUALS.getValue(),
-                        PERCENT.getValue(), SQUARE_ROOT.getValue(),SQUARED.getValue(), FRACTION.getValue(), ENTER_A_NUMBER.getValue(),
-                        MEMORY_STORE.getValue(), calculator.getMemoryValues().length, // MemoryStore,
-                        MEMORY_CLEAR.getValue(),
-                        MEMORY_RECALL.getValue(),
-                        MEMORY_ADDITION.getValue(),
-                        MEMORY_SUBTRACTION.getValue(),
-                        HISTORY_CLOSED.getValue(), HISTORY_OPEN.getValue(), PERCENT.name(), PERCENT.getValue(), // H^, Hv, PERCENT, Ex:Percent
-                        PERCENT.getValue(), ENTER_A_NUMBER.getValue(), PERCENT.getValue(), // Percent
-                        SQUARE_ROOT.getValue(), NOT_A_NUMBER.getValue(), ERR.getValue(),
-                        SQUARED.getValue(), ENTER_A_NUMBER.getValue(),
-                        FRACTION.getValue(), ENTER_A_NUMBER.getValue(), FRACTION.getValue(),
-                        CLEAR_ENTRY.getValue(),
-                        CLEAR.getValue(),
-                        DELETE.getValue(),
-                        DIVISION.getValue(), DIVISION.getValue(), ENTER_A_NUMBER.getValue(),
-                        ZERO.getValue(), ONE.getValue(), TWO.getValue(), THREE.getValue(), FOUR.getValue(), FIVE.getValue(),
-                        SIX.getValue(), SEVEN.getValue(), EIGHT.getValue(), NINE.getValue(),
-                        MULTIPLICATION.getValue(), MULTIPLICATION.getValue(), ENTER_A_NUMBER.getValue(),
-                        SUBTRACTION.getValue(), SUBTRACTION.getValue(),
-                        ADDITION.getValue(), ADDITION.getValue(), ENTER_A_NUMBER.getValue(),
-                        NEGATE.getValue(),
-                        DECIMAL.getValue(), DECIMAL.getValue(), DECIMAL.getValue(), DECIMAL.getValue(),
-                        EQUALS.getValue()));
+                        ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS,
+                        PERCENT, SQUARE_ROOT,SQUARED, FRACTION, ENTER_A_NUMBER,
+                        MEMORY_STORE, calculator.getMemoryValues().length, // MemoryStore,
+                        MEMORY_CLEAR,
+                        MEMORY_RECALL,
+                        MEMORY_ADDITION,
+                        MEMORY_SUBTRACTION,
+                        HISTORY_CLOSED, HISTORY_OPEN, PERCENT, PERCENT, // H^, Hv, PERCENT, Ex:Percent
+                        PERCENT, ENTER_A_NUMBER, PERCENT, // Percent
+                        SQUARE_ROOT, NOT_A_NUMBER, ERR,
+                        SQUARED, ENTER_A_NUMBER,
+                        FRACTION, ENTER_A_NUMBER, FRACTION,
+                        CLEAR_ENTRY,
+                        CLEAR,
+                        DELETE,
+                        DIVISION, DIVISION, ENTER_A_NUMBER,
+                        ZERO, ONE, TWO, THREE, FOUR, FIVE,
+                        SIX, SEVEN, EIGHT, NINE,
+                        MULTIPLICATION, MULTIPLICATION, ENTER_A_NUMBER,
+                        SUBTRACTION, SUBTRACTION,
+                        ADDITION, ADDITION, ENTER_A_NUMBER,
+                        NEGATE,
+                        DECIMAL, DECIMAL, DECIMAL, DECIMAL,
+                        EQUALS));
         calculator.updateShowHelp();
     }
 
@@ -315,7 +315,7 @@ public class BasicPanel extends JPanel
     {
         LOGGER.debug("Configuring BasicHistoryZone...");
         constraints.anchor = GridBagConstraints.WEST;
-        calculator.addComponent(this, constraints, historyPanel, new JLabel(HISTORY.getValue()), 0, 0); // space before with jtextarea
+        calculator.addComponent(this, constraints, historyPanel, new JLabel(HISTORY), 0, 0); // space before with jtextarea
 
         calculator.setupHistoryTextPane();
         JScrollPane scrollPane = new JScrollPane(historyTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -343,17 +343,17 @@ public class BasicPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         LOGGER.info("Action for {} started", buttonChoice);
-        if (HISTORY_OPEN.getValue().equals(calculator.getButtonHistory().getText()))
+        if (HISTORY_OPEN.equals(calculator.getButtonHistory().getText()))
         {
             LOGGER.debug("Closing History");
-            calculator.getButtonHistory().setText(HISTORY_CLOSED.getValue());
+            calculator.getButtonHistory().setText(HISTORY_CLOSED);
             basicPanel.remove(historyPanel);
             calculator.addComponent(this, constraints, basicPanel, buttonsPanel, 2, 0);
         }
         else
         {
             LOGGER.debug("Opening history");
-            calculator.getButtonHistory().setText(HISTORY_OPEN.getValue());
+            calculator.getButtonHistory().setText(HISTORY_OPEN);
             basicPanel.remove(buttonsPanel);
             //var currentHistory = basicHistoryTextPane.getText();
             //setupBasicHistoryZone();
@@ -375,7 +375,7 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, "Cannot perform " + PERCENT + " operation"); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
+            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Pressed: " + buttonChoice);
         }
         else
@@ -405,7 +405,7 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, "Cannot perform " + SQUARED + " operation"); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
+            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "No number to square");
         }
         else
@@ -422,7 +422,7 @@ public class BasicPanel extends JPanel
                 calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
                 calculator.getButtonDecimal().setEnabled(false);
             }
-            calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION.getValue()));
+            calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION));
             calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
             //calculator.setIsNumberNegative(false);
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[0]));
@@ -443,7 +443,7 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, "Cannot perform " + FRACTION + " operation"); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER.getValue());
+            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + FRACTION + " operation");
         }
         else
@@ -451,11 +451,11 @@ public class BasicPanel extends JPanel
             double result = Double.parseDouble(calculator.getTextPaneValue());
             result = 1 / result;
             LOGGER.debug("result: " + result);
-            if (INFINITY.getValue().equals(String.valueOf(result)))
+            if (INFINITY.equals(String.valueOf(result)))
             {
                 calculator.getButtonDecimal().setEnabled(true);
-                calculator.getTextPane().setText(calculator.addNewLines() + INFINITY.getValue());
-                calculator.getValues()[calculator.getValuesPosition()] = BLANK.getValue();
+                calculator.getTextPane().setText(calculator.addNewLines() + INFINITY);
+                calculator.getValues()[calculator.getValuesPosition()] = BLANK;
             }
             else if (result % 1 == 0)
             {
