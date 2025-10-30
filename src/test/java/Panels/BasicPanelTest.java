@@ -35,10 +35,6 @@ public class BasicPanelTest
     public static void beforeAll()
     { LOGGER = LogManager.getLogger(BasicPanelTest.class.getSimpleName()); }
 
-    @AfterAll
-    public static void afterAll()
-    { LOGGER.info("Finished running " + BasicPanelTest.class.getSimpleName()); }
-
     @BeforeEach
     public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
@@ -50,7 +46,8 @@ public class BasicPanelTest
     }
 
     @AfterEach
-    public void afterEach() {
+    public void afterEach()
+    {
         if (calculator != null) {
             LOGGER.info("Test complete. Closing the calculator...");
             // Create a WindowEvent with WINDOW_CLOSING event type
@@ -67,16 +64,20 @@ public class BasicPanelTest
         }
     }
 
+    @AfterAll
+    public static void afterAll()
+    { LOGGER.info("Finished running " + BasicPanelTest.class.getSimpleName()); }
+
     @Test
     public void testCreatingBasicPanel()
     {
-        assertEquals(VIEW_BASIC, new BasicPanel().getName(), "Expected panel name to be " + VIEW_BASIC);
+        assertEquals(VIEW_BASIC.getValue(), new BasicPanel().getName(), "Expected panel name to be " + VIEW_BASIC);
     }
 
     @Test
     public void testCreatingBasicPanelWithCalculator()
     {
-        assertEquals(VIEW_BASIC, basicPanel.getName(), "Expected panel name to be " + VIEW_BASIC);
+        assertEquals(VIEW_BASIC.getValue(), basicPanel.getName(), "Expected panel name to be " + VIEW_BASIC);
     }
 
     @Test
@@ -500,39 +501,39 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedAddWithEInTextPane()
+    public void pressedAddWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         calculator.performAdditionButtonAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
     }
 
     @Test
-    public void pressedSubtractWithEInTextPane()
+    public void pressedSubtractWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         calculator.performSubtractionButtonAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
     }
 
     @Test
-    public void pressedMultiplyWithEInTextPane()
+    public void pressedMultiplyWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         calculator.performMultiplicationAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
     }
 
     @Test
-    public void pressedDivideWithEInTextPane()
+    public void pressedDivideWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         calculator.performDivideButtonAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
     }
 
     @Test
@@ -1198,7 +1199,7 @@ public class BasicPanelTest
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
         calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(BLANK, calculator.getTextPaneValue(), "Expected textPane to be blank");
+        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
         assertEquals(BLANK, calculator.getValues()[0], "Expected values[0] to be blank");
         assertEquals(BLANK, calculator.getValues()[1], "Expected values[1] to be blank");
         assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
@@ -1593,9 +1594,9 @@ public class BasicPanelTest
     public void pressedNegateOnTooBigNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(NEGATE);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         calculator.performNegateButtonAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
     }
 
     @Test
@@ -1611,9 +1612,9 @@ public class BasicPanelTest
     public void pressedSquareRootWithTextPaneShowingE()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARE_ROOT);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         calculator.performSquareRootButtonAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected textPane to show error");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected textPane to show error");
     }
 
     @Test
@@ -1633,7 +1634,7 @@ public class BasicPanelTest
         calculator.getValues()[0] = "-5;";
         calculator.setValuesPosition(0);
         calculator.performSquareRootButtonAction(actionEvent);
-        assertEquals(ERR, calculator.getTextPaneValue(), "Expected textPane to show error message");
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected textPane to show error message");
     }
 
     @Test
@@ -1696,7 +1697,7 @@ public class BasicPanelTest
     public void pressedMemoryStoreWhenTextPaneContainInvalidText()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
-        calculator.getTextPane().setText(calculator.addNewLines() + ERR);
+        calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
         assertTrue(calculator.textPaneContainsBadText(), "Expected textPane to contain bad text");
         calculator.performMemoryStoreAction(actionEvent);
         assertTrue(calculator.getMemoryValues()[0].isBlank(), "Expected MemoryValues[0] to be blank");

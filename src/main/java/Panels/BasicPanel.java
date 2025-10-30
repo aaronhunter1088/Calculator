@@ -1,6 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
+import Types.Texts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -242,7 +243,7 @@ public class BasicPanel extends JPanel
                         MEMORY_SUBTRACTION,
                         HISTORY_CLOSED, HISTORY_OPEN, PERCENT, PERCENT, // H^, Hv, PERCENT, Ex:Percent
                         PERCENT, ENTER_A_NUMBER, PERCENT, // Percent
-                        SQUARE_ROOT, NOT_A_NUMBER, ERR,
+                        SQUARE_ROOT, NOT_A_NUMBER, Texts.ERROR,
                         SQUARED, ENTER_A_NUMBER,
                         FRACTION, ENTER_A_NUMBER, FRACTION,
                         CLEAR_ENTRY,

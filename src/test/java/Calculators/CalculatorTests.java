@@ -35,12 +35,12 @@ import static org.mockito.Mockito.*;
 public class CalculatorTests
 {
     private static Logger LOGGER;
-    private static Calculator calculator;
+    private Calculator calculator;
 
     @Mock
     ActionEvent actionEvent;
     @Spy
-    static Calculator calculatorSpy;
+    Calculator calculatorSpy;
 
     @BeforeAll
     public static void beforeAll()
@@ -350,13 +350,14 @@ public class CalculatorTests
     public void switchingFromProgrammerToBasicSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.updateJPanel(new ProgrammerPanel());
+        //calculator.setCalculatorView(VIEW_PROGRAMMER);
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
+        //calculator.updateJPanel(new ProgrammerPanel());
         calculator.appendTextToPane("00000100");
         calculator.getValues()[0] = FOUR;
         assertEquals("00000100", calculator.getTextPaneValue(), "Expected textPane to show Binary representation");
 
-        calculator.switchPanels(actionEvent, VIEW_BASIC);
+        calculator.performViewMenuAction(actionEvent, VIEW_BASIC);
         assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
         assertEquals(VIEW_BASIC.getValue(), calculator.getTitle(), "Expected name to be Basic");
         assertInstanceOf(BasicPanel.class, calculator.getCurrentPanel(), "Expected BasicPanel");
@@ -370,7 +371,7 @@ public class CalculatorTests
         calculator.getValues()[0] = FOUR;
         assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
 
-        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
         assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
         assertEquals(VIEW_PROGRAMMER.getValue(), calculator.getTitle(), "Expected name to be Programmer");
         assertInstanceOf(ProgrammerPanel.class, calculator.getCurrentPanel(), "Expected ProgrammerPanel");
@@ -381,7 +382,7 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_DATE.getValue());
         assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
-        calculator.switchPanels(actionEvent, VIEW_DATE);
+        calculator.performViewMenuAction(actionEvent, VIEW_DATE);
         assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected DATE CalculatorView");
         assertEquals(VIEW_DATE.getValue(), calculator.getTitle(), "Expected name to be Date");
         assertInstanceOf(DatePanel.class, calculator.getCurrentPanel(), "Expected DatePanel");
@@ -393,7 +394,7 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
 
-        calculator.switchPanels(actionEvent, ANGLE);
+        calculator.performViewMenuAction(actionEvent, ANGLE);
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CONVERTER CalculatorView");
         assertEquals(VIEW_CONVERTER.getValue(), calculator.getTitle(), "Expected name to be CONVERTER");
         assertInstanceOf(ConverterPanel.class, calculator.getCurrentPanel(), "Expected ConverterPanel");
@@ -405,14 +406,14 @@ public class CalculatorTests
         when(actionEvent.getActionCommand()).thenReturn(AREA.getValue());
         assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
 
-        calculator.switchPanels(actionEvent, AREA);
+        calculator.performViewMenuAction(actionEvent, AREA);
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CONVERTER CalculatorView");
         assertEquals(VIEW_CONVERTER.getValue(), calculator.getTitle(), "Expected name to be CONVERTER");
         assertInstanceOf(ConverterPanel.class, calculator.getCurrentPanel(), "Expected ConverterPanel");
     }
 
     @Test
-    public void switchingFromSomePanelToSamePanelDoesNotSwitchPanels()
+    public void switchingFromSomePanelToSamePanelDoesNotPerformViewMenuAction()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
         BasicPanel panel = (BasicPanel) calculator.getCurrentPanel();
@@ -420,24 +421,25 @@ public class CalculatorTests
         calculator.getValues()[0]= FOUR;
         assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
 
-        calculator.switchPanels(actionEvent, VIEW_BASIC);
+        calculator.performViewMenuAction(actionEvent, VIEW_BASIC);
         assertEquals(panel.getClass(), calculator.getCurrentPanel().getClass(), "Expected the same panel");
         assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
     }
 
     @Test
-    public void switchingFromSomeConverterToSameConverterDoesNotSwitchPanels()
+    public void switchingFromSomeConverterToSameConverterDoesNotPerformViewMenuAction()
     {
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
         calculator.setCurrentPanel(calculator.getConverterPanel());
         calculator.setupPanel();
-        calculator.updateJPanel(new ConverterPanel());
+        calculator.performViewMenuAction(actionEvent, VIEW_CONVERTER);
+        //calculator.updateJPanel(new ConverterPanel());
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
         assertEquals(ANGLE, calculator.getConverterType(), "Expected converterType to be ANGLE");
 
-        calculator.switchPanels(actionEvent, VIEW_CONVERTER);
+        calculator.performViewMenuAction(actionEvent, VIEW_CONVERTER);
         assertEquals(panel, calculator.getCurrentPanel(), "Expected the same panel");
         assertEquals(ANGLE, calculator.getConverterType(), "Expected converterType to be ANGLE");
     }
@@ -445,6 +447,7 @@ public class CalculatorTests
     @Test
     public void switchingToMetalLookAndFeel()
     {
+        when(actionEvent.getSource()).thenReturn(calculator.getLookMenu());
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for(Component menuItem : lookMenuItems)
         {
@@ -502,6 +505,7 @@ public class CalculatorTests
     @Test
     public void switchingToMotifLookAndFeel()
     {
+        when(actionEvent.getSource()).thenReturn(calculator.getLookMenu());
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for(Component menuItem : lookMenuItems)
         {
@@ -771,7 +775,8 @@ public class CalculatorTests
     {
         calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(ADD_SUBTRACT_DAYS);
-        calculator.updateJPanel(new ProgrammerPanel());
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
+        //calculator.updateJPanel(new ProgrammerPanel());
         confirm(calculator, LOGGER,"Test: Confirm called");
     }
 
@@ -785,7 +790,8 @@ public class CalculatorTests
     @Test
     public void testAddNewLineCharactersForProgrammerPanelAdds3NewLines()
     {
-        calculator.updateJPanel(new ProgrammerPanel());
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
+        //calculator.updateJPanel(new ProgrammerPanel());
         String newLines = calculator.addNewLines();
         assertSame(1, newLines.split(BLANK).length);
     }
@@ -995,9 +1001,8 @@ public class CalculatorTests
     public void testAboutCalculatorShowsWindowsInText()
     {
         doReturn(false).when(calculatorSpy).isMacOperatingSystem();
-        String aboutCalculatorText = calculatorSpy.getAboutCalculatorString();
-        assertTrue(aboutCalculatorText.contains(WINDOWS), "Expected About Calculator Text to have Windows");
-        assertFalse(aboutCalculatorText.contains(APPLE), "Expected About Calculator Text to not have Apple");
+        assertTrue(calculatorSpy.getAboutCalculatorString().contains(WINDOWS), "Expected About Calculator Text to have Windows");
+        assertFalse(calculatorSpy.getAboutCalculatorString().contains(APPLE), "Expected About Calculator Text to not have Apple");
     }
 
     @Test
@@ -1063,7 +1068,7 @@ public class CalculatorTests
     public void test2ConvertFromBaseToBase() throws InterruptedException
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
         sleep(3000);
         String eight0s = ZERO.repeat(8);
         String binary = eight0s+"00000011"; // still 3
@@ -1080,7 +1085,7 @@ public class CalculatorTests
     public void test3ConvertFromBaseToBase() throws InterruptedException
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
         sleep(3000);
         String sixteen0s = ZERO.repeat(16);
         String eight0s = ZERO.repeat(8);
@@ -1098,7 +1103,7 @@ public class CalculatorTests
     public void test4ConvertFromBaseToBase() throws InterruptedException
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
         sleep(3000);
         String forty8zeroes = ZERO.repeat(48);
         String eight0s = ZERO.repeat(8);
@@ -1123,7 +1128,7 @@ public class CalculatorTests
     public void test5ConvertFromBaseToBase() throws InterruptedException
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.switchPanels(actionEvent, VIEW_PROGRAMMER);
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
         sleep(3000);
         String forty7zeroes = ZERO.repeat(47);
         String eight0s = ZERO.repeat(8);

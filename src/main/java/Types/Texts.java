@@ -71,7 +71,7 @@ public class Texts {
     public static final String NUMBER_TOO_BIG = "Number too big";
     public static final String ENTER_A_NUMBER = "Enter a Number";
     public static final String ONLY_POSITIVES = "Only positive numbers";
-    public static final String ERR = "Error";
+    public static final String ERROR = "Error";
     public static final String INFINITY = "Infinity";
     public static final String COMMA = ",";
     public static final String TEXT_PANE_WRONG_VALUE = "Text Pane has the wrong value";
