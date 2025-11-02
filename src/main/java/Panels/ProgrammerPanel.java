@@ -13,9 +13,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,6 +24,15 @@ import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;
 
+/**
+ * ProgrammerPanel
+ * <p>
+ * This class contains components and actions
+ * for the ProgrammerPanel of the Calculator.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class ProgrammerPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanel.class.getSimpleName());
@@ -85,7 +92,7 @@ public class ProgrammerPanel extends JPanel
     {
         if (!isInitialized)
         {
-            this.calculator = calculator;
+            setCalculator(calculator);
             this.programmerPanel = new JPanel(new GridBagLayout());
             this.programmerPanel.setName("ProgrammerPanel");
             this.memoryPanel = new JPanel(new GridBagLayout());
@@ -110,32 +117,14 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**
-     * Clears button actions, sets the CalculatorView,
-     * CalculatorBase, CalculatorConverterType, and finally
-     * sets up the OLDProgrammerPanel and its components
+     * Sets up the programmer panel components
      */
     private void setupProgrammerPanelComponents()
     {
-        List<JButton> allButtons = Stream.of(
-                        calculator.getCommonButtons(),
-                        calculator.getNumberButtons(),
-                        calculator.getAllMemoryPanelButtons())
-                .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
-                .toList();
-        allButtons
-            .forEach(button -> Stream.of(button.getActionListeners())
-                .forEach(al -> {
-                    LOGGER.debug("Removing action listener from button: " + button.getName());
-                    button.removeActionListener(al);
-                }));
-        LOGGER.debug("Actions removed");
-        calculator.setupNumberButtons();
+        calculator.clearButtonActions();
+        calculator.setupProgrammerPanelButtons();
         setupHelpString();
         calculator.setupTextPane();
-        calculator.setupButtonBlank1();
-        calculator.setupMemoryButtons(); // MR MC MS M+ M- H
-        calculator.setupCommonButtons(); // common
-        setupProgrammerPanelButtons();
         LOGGER.info("Finished configuring the buttons");
     }
 
@@ -244,7 +233,7 @@ public class ProgrammerPanel extends JPanel
      * The main method to set up the Programmer
      * button panels not in the memory panel
      */
-    private void setupProgrammerPanelButtons()
+    public void setupProgrammerPanelButtons()
     {
         LOGGER.debug("Configuring Programmer Panel buttons...");
         List<JButton> allButtons =
@@ -1305,7 +1294,7 @@ public class ProgrammerPanel extends JPanel
      */
     public String performRightShift()
     {
-        String positionedValue = calculator.getAppropriateValue();
+        String positionedValue = calculator.getValues()[calculator.getValuesPosition()]; //calculator.getAppropriateValue();
         if (BASE_DECIMAL != calculator.getCalculatorBase()) positionedValue = calculator.convertValueToDecimal();
         String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue)/2);
         valueShiftedRight = switch (calculator.getCalculatorBase()) {
@@ -1368,8 +1357,7 @@ public class ProgrammerPanel extends JPanel
             calculator.addComponent(this, constraints, buttonsPanel, buttonBytes, 0, 2, null, 2, 1, 1, 1, 0,0);
             calculator.addComponent(this, constraints, buttonsPanel, buttonBases, 0, 4, null, 2, 1, 1, 1, 0,0);
         }
-        buttonsPanel.repaint();
-        buttonsPanel.revalidate();
+        calculator.updateLookAndFeel();
     }
 
     /**
@@ -1469,7 +1457,7 @@ public class ProgrammerPanel extends JPanel
     public void performNumberButtonActions(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Programmer Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         if (BASE_BINARY == calculator.getCalculatorBase())
         {
             calculator.performNumberButtonAction(actionEvent);
@@ -1538,13 +1526,13 @@ public class ProgrammerPanel extends JPanel
     public boolean isInitialized() { return isInitialized; }
 
     /**************** SETTERS ****************/
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
-    public void setLayout(GridBagLayout panelLayout) { super.setLayout(panelLayout); }
-    public void setProgrammerHistoryTextPane(JTextPane programmerHistoryTextPane) { this.programmerHistoryTextPane = programmerHistoryTextPane; }
-    public void setOr(boolean or) { isOr = or; }
-    public void setModulus(boolean modulus) { isModulus = modulus; }
-    public void setXor(boolean xor) { isXor = xor; }
-    public void setNot(boolean not) { isNot = not; }
-    public void setAnd(boolean and) { isAnd = and; }
-    public void setShiftPressed(boolean shiftPressed) { isShiftPressed = shiftPressed; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
+    public void setLayout(GridBagLayout panelLayout) { super.setLayout(panelLayout); LOGGER.debug("Layout set"); }
+    public void setProgrammerHistoryTextPane(JTextPane programmerHistoryTextPane) { this.programmerHistoryTextPane = programmerHistoryTextPane; LOGGER.debug("Programmer history text pane set"); }
+    public void setOr(boolean or) { isOr = or; LOGGER.debug("Or set: {}", isOr ? YES.toLowerCase() : NO.toLowerCase()); }
+    public void setModulus(boolean modulus) { isModulus = modulus; LOGGER.debug("Modulus set: {}", isModulus ? YES.toLowerCase() : NO.toLowerCase()); }
+    public void setXor(boolean xor) { isXor = xor; LOGGER.debug("Xor set: {}", isXor ? YES.toLowerCase() : NO.toLowerCase()); }
+    public void setNot(boolean not) { isNot = not; LOGGER.debug("Not set: {}", isNot ? YES.toLowerCase() : NO.toLowerCase()); }
+    public void setAnd(boolean and) { isAnd = and; LOGGER.debug("And set: {}", isAnd ? YES.toLowerCase() : NO.toLowerCase()); }
+    public void setShiftPressed(boolean shiftPressed) { isShiftPressed = shiftPressed; LOGGER.debug("ShiftPressed set: {}", isShiftPressed ? YES.toLowerCase() : NO.toLowerCase()); }
 }

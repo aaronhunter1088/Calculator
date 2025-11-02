@@ -18,6 +18,14 @@ import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * ProgrammerPanelTest
+ * <p>
+ * This class tests the ProgrammerPanel class.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class ProgrammerPanelTest
 {
     static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }

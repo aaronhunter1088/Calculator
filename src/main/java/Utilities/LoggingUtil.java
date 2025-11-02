@@ -19,6 +19,15 @@ import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
 
+/**
+ * LoggingUtil
+ * <p>
+ * This class contains static methods used
+ * for logging throughout the Calculator application
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class LoggingUtil {
 
     /**

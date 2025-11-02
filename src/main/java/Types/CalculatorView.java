@@ -1,5 +1,14 @@
 package Types;
 
+/**
+ * CalculatorView
+ * <p>
+ * This enum contains the different
+ * calculator views for the calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public enum CalculatorView implements CalculatorType
 {
 	VIEW_BASIC("Basic"),

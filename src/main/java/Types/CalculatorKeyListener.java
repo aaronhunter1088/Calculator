@@ -10,6 +10,15 @@ import java.awt.event.KeyListener;
 
 import static Types.Texts.*;
 
+/**
+ * CalculatorKeyListener
+ * <p>
+ * This class contains the KeyListener
+ * implementation for the Calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class CalculatorKeyListener implements KeyListener {
 
     private final Calculator calculator;

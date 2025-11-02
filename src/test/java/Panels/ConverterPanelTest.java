@@ -18,6 +18,14 @@ import static Types.CalculatorConverterType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * ConverterPanelTest
+ * <p>
+ * This class tests the ConverterPanel class.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class ConverterPanelTest
 {
     static { System.setProperty("appName", "ConverterPanelTest"); }

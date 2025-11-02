@@ -12,7 +12,15 @@ import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Utilities.LoggingUtil.confirm;
 
 /**
- * Main Class. Start here!
+ * CalculatorMain
+ * <p>
+ * The main class used to start the Calculator application.
+ * There are several modes ready to be started by uncommenting
+ * the appropriate line in the main method. History is displayed
+ * below.
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
 public class CalculatorMain
 {
@@ -63,9 +71,8 @@ d. FILES INCLUDED: The Java class files, 5 images, log4j2.properties, and pom.pr
 e. PURPOSE: To recreate the Calculator app (from Windows) and provide more functionality
 f. INPUT:  To calculate numbers, dates, units, and more
 g. PRECONDITIONS: Basic view is the default view
-h. OUTPUT: Displays calculated result from input number buttons
-i. POST CONDITIONS: Most Booleans returned to initial state. Some stay switched on, like the decimal boolean,
-                    until explicitly turned off.
+h. OUTPUT: Displays calculated result from input number buttons and operators
+i. POST CONDITIONS: Each equation displays the result in the text area.
 j. ALGORITHM:
 k. ERRORS: Errors are organized by Date and then by what the error was effecting.
 

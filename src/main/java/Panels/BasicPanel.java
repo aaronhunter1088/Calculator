@@ -9,15 +9,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static Types.CalculatorBase.BASE_DECIMAL;
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
 
+/**
+ * BasicPanel
+ * <p>
+ * This class contains components and actions
+ * for the BasicPanel of the Calculator. Most
+ * actions are defined in {@link Calculator}.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class BasicPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(BasicPanel.class.getSimpleName());
@@ -32,7 +39,8 @@ public class BasicPanel extends JPanel
     private JTextPane historyTextPane;
     private boolean isInitialized;
 
-    /* Constructors */
+    /**************** Constructors ****************/
+
     /**
      * A zero argument constructor for creating a BasicPanel
      */
@@ -52,7 +60,8 @@ public class BasicPanel extends JPanel
         LOGGER.info("Basic panel created");
     }
 
-    /* Start of methods here */
+    /**************** START OF METHODS ****************/
+
     /**
      * The main method used to define the BasicPanel
      * and all of its components and their actions
@@ -86,30 +95,15 @@ public class BasicPanel extends JPanel
     }
 
     /**
-     * Clears button actions, sets the CalculatorView,
-     * CalculatorBase, CalculatorConverterType, and finally
-     * sets up the basic panel and its components
+     * Sets up the basic panel components
      */
     private void setupBasicPanelComponents()
     {
-        List<JButton> allButtons = Stream.of(
-                        calculator.getCommonButtons(),
-                        calculator.getNumberButtons(),
-                        calculator.getAllMemoryPanelButtons())
-                .flatMap(Collection::stream) // Flatten the stream of collections into a stream of JButton objects
-                .toList(); // Return as a single list
-        allButtons
-            .forEach(button -> Stream.of(button.getActionListeners())
-                .forEach(al -> {
-                    LOGGER.debug("Removing action listener from button: " + button.getName());
-                    button.removeActionListener(al);
-                }));
-        LOGGER.debug("Actions removed...");
-        calculator.setupNumberButtons();
+        calculator.clearButtonActions();
+        calculator.setupBasicPanelButtons();
         setupHelpString();
         calculator.setupTextPane();
-        calculator.setupMemoryButtons();
-        calculator.setupCommonButtons();
+
         LOGGER.debug("Finished configuring the buttons");
     }
 
@@ -119,7 +113,7 @@ public class BasicPanel extends JPanel
      */
     private void setupHelpString()
     {
-        LOGGER.info("Setting up the help string for basic panel");
+        LOGGER.debug("Setting up the help string for basic panel");
         calculator.setHelpString("""
                 How to use the %s Calculator
                 
@@ -264,7 +258,7 @@ public class BasicPanel extends JPanel
     /**
      * Specifies where each button is placed on the BasicPanel
      */
-    public void addComponentsToPanel()
+    private void addComponentsToPanel()
     {
         calculator.addComponent(this, constraints, basicPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
 
@@ -312,7 +306,7 @@ public class BasicPanel extends JPanel
      * Displays the history for the BasicPanel
      * during each active instance
      */
-    public void setupBasicHistoryZone()
+    private void setupBasicHistoryZone()
     {
         LOGGER.debug("Configuring BasicHistoryZone...");
         constraints.anchor = GridBagConstraints.WEST;
@@ -356,9 +350,6 @@ public class BasicPanel extends JPanel
             LOGGER.debug("Opening history");
             calculator.getButtonHistory().setText(HISTORY_OPEN);
             basicPanel.remove(buttonsPanel);
-            //var currentHistory = basicHistoryTextPane.getText();
-            //setupBasicHistoryZone();
-            //basicHistoryTextPane.setText(currentHistory);
             calculator.addComponent(this, constraints, basicPanel, historyPanel, 2, 0);
         }
         SwingUtilities.updateComponentTreeUI(this);

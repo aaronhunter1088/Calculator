@@ -20,6 +20,14 @@ import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * BasicPanelTest
+ * <p>
+ * This class tests the BasicPanel class.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class BasicPanelTest
 {
     static { System.setProperty("appName", BasicPanelTest.class.getSimpleName()); }

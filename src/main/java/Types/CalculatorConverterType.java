@@ -1,5 +1,14 @@
 package Types;
 
+/**
+ * CalculatorConverterType
+ * <p>
+ * This enum contains the different
+ * converter types for the calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public enum CalculatorConverterType implements CalculatorType
 {
     ANGLE("Angle"),

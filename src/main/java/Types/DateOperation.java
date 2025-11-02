@@ -1,9 +1,13 @@
 package Types;
 
 /**
- * The different types of DatePanels
- * DateOperation.name() returns ENUM value
- * DateOperation.getValue() returns ENUM("thisValue")
+ * DateOperation
+ * <p>
+ * This enum contains the different
+ * date operations for the calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
 public enum DateOperation implements CalculatorType
 {

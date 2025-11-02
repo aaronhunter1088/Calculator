@@ -1,5 +1,14 @@
 package Types;
 
+/**
+ * CalculatorByte
+ * <p>
+ * This enum contains the different
+ * byte units for the calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public enum CalculatorByte implements CalculatorType
 {
     BYTE_BYTE("Byte"),

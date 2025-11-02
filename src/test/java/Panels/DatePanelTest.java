@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -29,6 +28,14 @@ import static org.mockito.Mockito.mock;
 import static Types.DateOperation.*;
 import static org.mockito.Mockito.when;
 
+/**
+ * DatePanelTest
+ * <p>
+ * This class tests the DatePanel class.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class DatePanelTest
 {
     static { System.setProperty("appName", "DatePanelTest"); }
@@ -90,9 +97,9 @@ public class DatePanelTest
     public void testSubtractThenAddBackButtonWorksWithLocalDate()
     {
         LocalDate startDate = LocalDate.of(2021, Month.NOVEMBER, 19);
-        datePanel.setFromCalendarUtil(new UtilCalendarModel());
-        datePanel.getFromCalendarUtil().setDate(startDate.getYear(), startDate.getMonth().getValue()-1, startDate.getDayOfMonth());
-        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendarUtil()));
+        datePanel.setFromCalendar(new UtilCalendarModel());
+        datePanel.getFromCalendar().setDate(startDate.getYear(), startDate.getMonth().getValue()-1, startDate.getDayOfMonth());
+        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendar()));
         datePanel.setFromDatePicker(new JDatePickerImpl(datePanel.getFromDatePanel()));
 
         datePanel.getYearsTextField().setText("29");
@@ -118,10 +125,10 @@ public class DatePanelTest
         // LocalDate month value uses 0 based counting
         LocalDate myBirthday = LocalDate.of(1992, Month.AUGUST, 29);
         LOGGER.info("myBirthday: {}", myBirthday);
-        datePanel.setFromCalendarUtil(new UtilCalendarModel());
+        datePanel.setFromCalendar(new UtilCalendarModel());
         // REMEMBER, the date month uses 0 based counting
-        datePanel.getFromCalendarUtil().setDate(myBirthday.getYear(), myBirthday.getMonth().getValue()-1, myBirthday.getDayOfMonth());
-        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendarUtil()));
+        datePanel.getFromCalendar().setDate(myBirthday.getYear(), myBirthday.getMonth().getValue()-1, myBirthday.getDayOfMonth());
+        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendar()));
         datePanel.setFromDatePicker(new JDatePickerImpl(datePanel.getFromDatePanel()));
 
         datePanel.getYearsTextField().setText("29");
@@ -145,16 +152,16 @@ public class DatePanelTest
         int year = LocalDate.now().getYear();
         int month = LocalDate.now().getMonthValue()-1;
         int day = LocalDate.now().getDayOfMonth();
-        datePanel.setFromCalendarUtil(new UtilCalendarModel());
-        datePanel.getFromCalendarUtil().setDate(year, month, day);
-        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendarUtil()));
+        datePanel.setFromCalendar(new UtilCalendarModel());
+        datePanel.getFromCalendar().setDate(year, month, day);
+        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendar()));
         datePanel.setFromDatePicker(new JDatePickerImpl(datePanel.getFromDatePanel()));
         LocalDateTime todayLDT = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.now());
 
         // get values of from date, set to today's date
-        datePanel.setToCalendarUtil(new UtilCalendarModel());
-        datePanel.getToCalendarUtil().setDate(1992, 7, 29);
-        datePanel.setToDatePanel(new JDatePanelImpl(datePanel.getToCalendarUtil()));
+        datePanel.setToCalendar(new UtilCalendarModel());
+        datePanel.getToCalendar().setDate(1992, 7, 29);
+        datePanel.setToDatePanel(new JDatePanelImpl(datePanel.getToCalendar()));
         datePanel.setToDatePicker(new JDatePickerImpl(datePanel.getToDatePanel()));
         //testTheDatePanel.getToDatePicker().getModel().setDate(1992, 7, 29);
 
@@ -184,9 +191,9 @@ public class DatePanelTest
         int year = LocalDate.now().getYear();
         int month = LocalDate.now().getMonthValue()-1;
         int day = LocalDate.now().getDayOfMonth();
-        datePanel.setToCalendarUtil(new UtilCalendarModel());
-        datePanel.getToCalendarUtil().setDate(year, month, day);
-        datePanel.setToDatePanel(new JDatePanelImpl(datePanel.getToCalendarUtil()));
+        datePanel.setToCalendar(new UtilCalendarModel());
+        datePanel.getToCalendar().setDate(year, month, day);
+        datePanel.setToDatePanel(new JDatePanelImpl(datePanel.getToCalendar()));
         datePanel.setToDatePicker(new JDatePickerImpl(datePanel.getToDatePanel()));
         LocalDateTime todayLDT = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.now());
         // get values of to date, set to today's date
@@ -198,9 +205,9 @@ public class DatePanelTest
         System.out.println("month: " + monthAsStr);
 
         // get values of from date, set to my birthday
-        datePanel.setFromCalendarUtil(new UtilCalendarModel());
-        datePanel.getFromCalendarUtil().setDate(1992, 7, 29);
-        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendarUtil()));
+        datePanel.setFromCalendar(new UtilCalendarModel());
+        datePanel.getFromCalendar().setDate(1992, 7, 29);
+        datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendar()));
         datePanel.setFromDatePicker(new JDatePickerImpl(datePanel.getFromDatePanel()));
         // get values of to date, set to my birthday
         year = datePanel.getTheYearFromTheFromDatePicker();

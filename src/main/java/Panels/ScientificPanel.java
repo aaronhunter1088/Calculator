@@ -7,9 +7,17 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import java.io.Serial;
 
-import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.CalculatorView.VIEW_SCIENTIFIC;
 
+/**
+ * ScientificPanel
+ * <p>
+ * This class contains components and actions
+ * for the ScientificPanel of the Calculator.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class ScientificPanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(ScientificPanel.class.getSimpleName());
@@ -25,7 +33,6 @@ public class ScientificPanel extends JPanel
     {
         setName(VIEW_SCIENTIFIC.getValue());
         setupScientificPanel();
-        isInitialized = false;
         LOGGER.info("Empty Scientific panel created");
     }
 

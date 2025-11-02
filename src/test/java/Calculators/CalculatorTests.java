@@ -32,6 +32,14 @@ import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * CalculatorTests
+ * <p>
+ * This class tests the Calculator class.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class CalculatorTests
 {
     private static Logger LOGGER;
@@ -177,7 +185,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(DIFFERENCE_BETWEEN_DATES);
         calculator.setCurrentPanel(calculator.getDatePanel());
-        calculator.setupPanel();
+        calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see date calculator");
         assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
         assertSame(calculator.getDateOperation(), DIFFERENCE_BETWEEN_DATES, "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
@@ -216,7 +224,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
         calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel();
+        calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
         assertSame(((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE, "Converter operation is not " + ANGLE);
@@ -230,7 +238,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
         calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel();
+        calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
         assertSame(((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE, "Converter operation is not " + ANGLE);
@@ -244,7 +252,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(AREA);
         calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel();
+        calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
         assertSame(((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), AREA, "Converter operation is not " + AREA);
@@ -302,7 +310,7 @@ public class CalculatorTests
     @Test
     public void methodResetCalculatorOperationsWithTrueResultsInAllOperatorsBeingTrue()
     {
-        calculator.resetBasicOperators(true);
+        calculator.resetOperators(true);
         assertTrue(calculator.isAdding(), "isAdding() is not true");
         assertTrue(calculator.isSubtracting(), "isSubtracting() is not true");
         assertTrue(calculator.isMultiplying(), "isMultiplying() is not true");
@@ -312,7 +320,7 @@ public class CalculatorTests
     @Test
     public void methodResetCalculatorOperationsWithFalseResultsInAllOperatorsBeingFalse()
     {
-        calculator.resetBasicOperators(false);
+        calculator.resetOperators(false);
         assertFalse(calculator.isAdding(), "isAdding() is not false");
         assertFalse(calculator.isSubtracting(), "isSubtracting() is not false");
         assertFalse(calculator.isMultiplying(), "isMultiplying() is not false");
@@ -433,7 +441,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
         calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel();
+        calculator.setupPanel(null);
         calculator.performViewMenuAction(actionEvent, VIEW_CONVERTER);
         //calculator.updateJPanel(new ConverterPanel());
         ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
@@ -458,7 +466,7 @@ public class CalculatorTests
                 });
             }
         }
-        if (calculator.isMacOperatingSystem())
+        if (calculator.isOSMac())
             assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.apple.laf.AquaLookAndFeel");
         else assertEquals(UIManager.getSystemLookAndFeelClassName(), "javax.swing.plaf.metal.MetalLookAndFeel");
     }
@@ -476,7 +484,7 @@ public class CalculatorTests
                 });
             }
         }
-        if (!calculator.isMacOperatingSystem())
+        if (!calculator.isOSMac())
         {
             assertEquals(UIManager.getSystemLookAndFeelClassName(), "javax.swing.plaf.system.SystemLookAndFeel");
         }
@@ -496,7 +504,7 @@ public class CalculatorTests
                 });
             }
         }
-        if (!calculator.isMacOperatingSystem())
+        if (!calculator.isOSMac())
         {
             assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }
@@ -516,7 +524,7 @@ public class CalculatorTests
                 });
             }
         }
-        if (calculator.isMacOperatingSystem())
+        if (calculator.isOSMac())
             assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.apple.laf.AquaLookAndFeel");
         else assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
     }
@@ -534,7 +542,7 @@ public class CalculatorTests
                 });
             }
         }
-        if (!calculator.isMacOperatingSystem())
+        if (!calculator.isOSMac())
         {
             assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
         }
@@ -573,13 +581,13 @@ public class CalculatorTests
     }
 
     @Test
-    public void testClearAllOtherBasicCalculatorButtons()
+    public void testClearAllCommonButtons()
     {
         calculator.getCommonButtons().forEach(otherButton -> {
             assertSame(1, otherButton.getActionListeners().length, "Expecting only 1 action on " + otherButton.getName());
         });
 
-        calculator.clearAllOtherBasicCalculatorButtons();
+        calculator.clearAllCommonButtons();
 
         calculator.getCommonButtons().forEach(otherButton -> {
             assertSame(0, otherButton.getActionListeners().length, "Expecting no actions on " + otherButton.getName());
@@ -992,7 +1000,7 @@ public class CalculatorTests
          doAnswer((InvocationOnMock invocationOnMock) ->
                  calculator.getRootPane()
          ).when(calculatorSpy).getRootPane();
-         doReturn(false).when(calculatorSpy).isMacOperatingSystem();
+         doReturn(false).when(calculatorSpy).isOSMac();
          calculatorSpy.configureMenuBar();
          assertEquals(5, calculator.getViewMenu().getMenuComponents().length, "Expected View menu to have 3 options");
     }
@@ -1000,7 +1008,7 @@ public class CalculatorTests
     @Test
     public void testAboutCalculatorShowsWindowsInText()
     {
-        doReturn(false).when(calculatorSpy).isMacOperatingSystem();
+        doReturn(false).when(calculatorSpy).isOSMac();
         assertTrue(calculatorSpy.getAboutCalculatorString().contains(WINDOWS), "Expected About Calculator Text to have Windows");
         assertFalse(calculatorSpy.getAboutCalculatorString().contains(APPLE), "Expected About Calculator Text to not have Apple");
     }
@@ -1116,13 +1124,6 @@ public class CalculatorTests
         assertEquals(THREE, converted, "Expected 3");
     }
 
-    /*
-    This test is failing because the binary number when converted,
-    comes out to 9,223,372,036,854,775,811. This number is too big to store
-    in any primitive type, and therefore, converting from binary to decimal
-    is failing. The method will need to be enhanced to account for this, and
-    return some other result.
-     */
     @Test
     @DisplayName("Convert QWord Binary # to Decimal #")
     public void test5ConvertFromBaseToBase() throws InterruptedException
@@ -1140,5 +1141,23 @@ public class CalculatorTests
         calculator.values[calculator.valuesPosition] = "9223372036854775811";
         String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
         assertEquals("9223372036854775811", converted, "Expected big number");
+    }
+
+    @Test
+    @DisplayName("Convert Largest Binary # to Decimal #")
+    public void test6ConvertFromBaseToBase() throws InterruptedException
+    {
+        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
+        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
+        sleep(3000);
+        String sixtyfour1s = ONE.repeat(64);
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_QWORD);
+        calculator.appendTextToPane(sixtyfour1s);
+        calculator.valuesPosition = 0;
+        calculator.values[calculator.valuesPosition] = "18446744073709551615";
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        assertEquals("18446744073709551615", converted, "Expected big number");
+        assertEquals("18,446,744,073,709,551,615", calculator.addCommas(converted), "Expected big number");
     }
 }

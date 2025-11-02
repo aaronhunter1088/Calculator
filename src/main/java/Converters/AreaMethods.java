@@ -6,8 +6,16 @@ import Types.CalculatorConverterUnits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings("Duplicates")
-public abstract class AreaMethods
+/**
+ * AreaMethods
+ * <p>
+ * This class contains static methods used
+ * for quick area conversions
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
+public class AreaMethods
 {
     private final static Logger LOGGER = LogManager.getLogger(AreaMethods.class.getSimpleName());
 
@@ -24,7 +32,7 @@ public abstract class AreaMethods
         LOGGER.info("unit1: " + unit1);
         LOGGER.info("unit2: " + unit2);
         double number;
-        if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
+        if (calculator.getConverterPanel().isTextField1Selected())
         {
             LOGGER.warn("Implement AREA methods from textArea1 to textArea2");
         }

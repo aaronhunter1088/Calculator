@@ -2,6 +2,12 @@ package Calculators;
 
 import java.io.Serial;
 
+/**
+ * A custom Exception class for Calculator errors
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class CalculatorError extends Exception
 {
     @Serial

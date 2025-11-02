@@ -23,6 +23,15 @@ import static Types.DateOperation.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
 
+/**
+ * DatePanel
+ * <p>
+ * This class contains components and actions
+ * for the DatePanel of the Calculator.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class DatePanel extends JPanel
 {
     private static final Logger LOGGER = LogManager.getLogger(DatePanel.class.getSimpleName());
@@ -31,7 +40,7 @@ public class DatePanel extends JPanel
 
     private GridBagLayout dateLayout;
     private GridBagConstraints constraints;
-    private UtilCalendarModel fromCalendarUtil, toCalendarUtil;
+    private UtilCalendarModel fromCalendar, toCalendar;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
     private Calculator calculator;
@@ -42,12 +51,13 @@ public class DatePanel extends JPanel
                    blankLabel1, blankLabel2, blankLabel3, blankLabel4, blankLabel5;
     private ButtonGroup buttonGroup;
     private JPanel buttonGroupPanel, textFieldsGroupPanel,
-            datePanel1, datePanel2, commonToBothDateCalculators;
+                   datePanel1, datePanel2, commonToBothDateCalculators;
     private JRadioButton addRadioButton, subtractRadioButton;
     private JTextField yearsTextField, monthsTextField, weeksTextField, daysTextField;
     private boolean isInitialized;
 
-    /* Constructors */
+    /**************** Constructors ****************/
+
     /**
      * A zero argument constructor for creating a DatePanel
      */
@@ -68,7 +78,8 @@ public class DatePanel extends JPanel
         LOGGER.info("Date panel created");
     }
 
-    /* Start of methods here */
+    /**************** START OF METHODS ****************/
+
     /**
      * The main method used to define the DatePanel
      * and all of its components and their actions
@@ -79,12 +90,10 @@ public class DatePanel extends JPanel
     {
         if (!isInitialized)
         {
-            this.calculator = calculator;
+            setCalculator(calculator);
             setLayout(new GridBagLayout());
-            this.constraints = new GridBagConstraints();
-            this.calculator.setCalculatorView(VIEW_DATE);
-            this.calculator.setDateOperation(dateOperation != null ? dateOperation : DIFFERENCE_BETWEEN_DATES);
-            setupHelpMenu();
+            setConstraints(new GridBagConstraints());
+            calculator.setDateOperation(dateOperation != null ? dateOperation : DIFFERENCE_BETWEEN_DATES);
             setupDatePanelComponents(this.calculator.getDateOperation());
             createCommonPanel();
             datePanel1 = new JPanel(new GridBagLayout());
@@ -103,9 +112,9 @@ public class DatePanel extends JPanel
             calculator.addComponent(this, constraints, datePanel2);
             setSize(datePanel2.getSize());
         }
+        setupHelpMenu();
         setName(VIEW_DATE.getValue());
-        SwingUtilities.updateComponentTreeUI(this);
-        LOGGER.info("Finished constructing Date panel");
+        LOGGER.info("Finished setting up {} panel", VIEW_DATE.getValue());
     }
 
     /**
@@ -141,9 +150,7 @@ public class DatePanel extends JPanel
     }
 
     /**
-     * Sets the CalculatorView, CalculatorBase,
-     * CalculatorConverterType, and finally
-     * sets up the DatePanel and its components
+     * Sets the date panel components
      */
     private void setupDatePanelComponents(DateOperation dateOperation)
     {
@@ -456,14 +463,14 @@ public class DatePanel extends JPanel
         fromDateLabel.setFont(verdanaFontBold);
         fromDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
         //
-        setFromCalendarUtil(new UtilCalendarModel());
+        setFromCalendar(new UtilCalendarModel());
         LocalDate todaysDate = LocalDate.now();
         int year = todaysDate.getYear();
         int monthInt = todaysDate.getMonthValue()-1;
         int day = todaysDate.getDayOfMonth();
-        fromCalendarUtil.setDate(year, monthInt, day);
-        fromCalendarUtil.setSelected(true);
-        setFromDatePanel(new JDatePanelImpl(fromCalendarUtil));
+        fromCalendar.setDate(year, monthInt, day);
+        fromCalendar.setSelected(true);
+        setFromDatePanel(new JDatePanelImpl(fromCalendar));
         setFromDatePicker(new JDatePickerImpl(fromDatePanel));
         fromDatePicker.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         fromDatePicker.addActionListener(this::performDatePickerFunctionality);
@@ -478,14 +485,14 @@ public class DatePanel extends JPanel
         setToDateLabel(new JLabel("To Date"));
         toDateLabel.setFont(verdanaFontBold);
         toDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        setToCalendarUtil(new UtilCalendarModel());
+        setToCalendar(new UtilCalendarModel());
         LocalDate todaysDate = LocalDate.now();
         int year = todaysDate.getYear();
         int monthInt = todaysDate.getMonthValue()-1;
         int day = todaysDate.getDayOfMonth();
-        toCalendarUtil.setDate(year, monthInt, day); // defaults to today
-        toCalendarUtil.setSelected(true);
-        setToDatePanel(new JDatePanelImpl(toCalendarUtil));
+        toCalendar.setDate(year, monthInt, day); // defaults to today
+        toCalendar.setSelected(true);
+        setToDatePanel(new JDatePanelImpl(toCalendar));
         setToDatePicker(new JDatePickerImpl(toDatePanel));
         toDatePicker.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         toDatePicker.addActionListener(this::performDatePickerFunctionality); //action -> updateResultsTextBox());
@@ -752,18 +759,6 @@ public class DatePanel extends JPanel
     }
 
     /**
-     * Calls the main setup method when switching
-     * from another panel to the DatePanel
-     * @param calculator the Calculator object
-     */
-    public void performDateCalculatorTypeSwitchOperations(Calculator calculator, DateOperation dateOperation)
-    {
-        LOGGER.info("Performing tasks associated to switching to the Date panel");
-        setupDatePanel(calculator, dateOperation);
-        LOGGER.info("Finished tasks associated to switching to the Date panel");
-    }
-
-    /**
      * Calculates the difference between the two dates
      * and sets the years, months, weeks, and day differences
      * @return int[] storing the difference between the dates
@@ -943,8 +938,8 @@ public class DatePanel extends JPanel
     /**************** GETTERS ****************/
     public GridBagLayout getDateLayout() { return dateLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
-    public UtilCalendarModel getFromCalendarUtil() { return fromCalendarUtil; }
-    public UtilCalendarModel getToCalendarUtil() { return toCalendarUtil; }
+    public UtilCalendarModel getFromCalendar() { return fromCalendar; }
+    public UtilCalendarModel getToCalendar() { return toCalendar; }
     public JDatePanelImpl getFromDatePanel() { return fromDatePanel; }
     public JDatePanelImpl getToDatePanel() { return toDatePanel; }
     public JDatePickerImpl getFromDatePicker() { return fromDatePicker; }
@@ -984,41 +979,42 @@ public class DatePanel extends JPanel
     public void setLayout(GridBagLayout dateLayout) {
         super.setLayout(dateLayout);
         this.dateLayout = dateLayout;
+        LOGGER.debug("Layout set");
     }
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
-    private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
-    public void setFromCalendarUtil(UtilCalendarModel fromCalendarUtil) { this.fromCalendarUtil = fromCalendarUtil; }
-    public void setToCalendarUtil(UtilCalendarModel toCalendarUtil) { this.toCalendarUtil = toCalendarUtil; }
-    public void setFromDatePanel(JDatePanelImpl fromDatePanel) { this.fromDatePanel = fromDatePanel; }
-    public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; }
-    public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; }
-    public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; }
-    private void setDateOperationsDropdown(JComboBox<DateOperation> dateOperationsDropdown) { this.dateOperationsDropdown = dateOperationsDropdown; }
-    private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; }
-    private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; }
-    private void setWeeksDifferenceLabel(JLabel weeksDifferenceLabel) { this.weeksDifferenceLabel = weeksDifferenceLabel; }
-    private void setDaysDifferenceLabel(JLabel daysDifferenceLabel) { this.daysDifferenceLabel = daysDifferenceLabel; }
-    private void setFromDateLabel(JLabel fromDateLabel) { this.fromDateLabel = fromDateLabel; }
-    private void setToDateLabel(JLabel toDateLabel) { this.toDateLabel = toDateLabel; }
-    private void setDifferenceLabel(JLabel differenceLabel) { this.differenceLabel = differenceLabel; }
-    private void setBlankLabel1(JLabel blankLabel1) { this.blankLabel1 = blankLabel1; }
-    private void setBlankLabel2(JLabel blankLabel2) { this.blankLabel2 = blankLabel2; }
-    private void setBlankLabel3(JLabel blankLabel3) { this.blankLabel3 = blankLabel3; }
-    private void setBlankLabel4(JLabel blankLabel4) { this.blankLabel4 = blankLabel4; }
-    private void setBlankLabel5(JLabel blankLabel5) { this.blankLabel5 = blankLabel5; }
-    private void setButtonGroup(ButtonGroup buttonGroup) { this.buttonGroup = buttonGroup; }
-    private void setAddRadioButton(JRadioButton addRadioButton) { this.addRadioButton = addRadioButton; }
-    private void setSubtractRadioButton(JRadioButton subtractRadioButton) { this.subtractRadioButton = subtractRadioButton; }
-    private void setButtonGroupPanel(JPanel buttonGroupPanel) { this.buttonGroupPanel = buttonGroupPanel; }
-    private void setDateLabel(JLabel dateLabel) { this.dateLabel = dateLabel; }
-    private void setYearsLabel(JLabel yearsLabel) { this.yearsLabel = yearsLabel; }
-    private void setMonthLabel(JLabel monthLabel) { this.monthLabel = monthLabel; }
-    private void setWeeksLabel(JLabel weeksLabel) { this.weeksLabel = weeksLabel; }
-    private void setDaysLabel(JLabel daysLabel) { this.daysLabel = daysLabel; }
-    private void setTextFieldsGroupPanel(JPanel textFieldsGroupPanel) { this.textFieldsGroupPanel = textFieldsGroupPanel; }
-    private void setYearsTextField(JTextField yearsTextField) { this.yearsTextField = yearsTextField; }
-    private void setMonthsTextField(JTextField monthsTextField) { this.monthsTextField = monthsTextField; }
-    private void setWeeksTextField(JTextField weeksTextField) { this.weeksTextField = weeksTextField; }
-    private void setDaysTextField(JTextField daysTextField) { this.daysTextField = daysTextField; }
-    private void setResultsLabel(JLabel resultsLabel) { this.resultsLabel = resultsLabel; }
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
+    private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
+    public void setFromCalendar(UtilCalendarModel fromCalendar) { this.fromCalendar = fromCalendar; LOGGER.debug("From Calendar set"); }
+    public void setToCalendar(UtilCalendarModel toCalendar) { this.toCalendar = toCalendar; LOGGER.debug("To Calendar set"); }
+    public void setFromDatePanel(JDatePanelImpl fromDatePanel) { this.fromDatePanel = fromDatePanel; LOGGER.debug("From DatePanel set"); }
+    public void setToDatePanel(JDatePanelImpl toDatePanel) { this.toDatePanel = toDatePanel; LOGGER.debug("To DatePanel set"); }
+    public void setFromDatePicker(JDatePickerImpl fromDatePicker) { this.fromDatePicker = fromDatePicker; LOGGER.debug("From DatePicker set"); }
+    public void setToDatePicker(JDatePickerImpl toDatePicker) { this.toDatePicker = toDatePicker; LOGGER.debug("To DatePicker set"); }
+    private void setDateOperationsDropdown(JComboBox<DateOperation> dateOperationsDropdown) { this.dateOperationsDropdown = dateOperationsDropdown; LOGGER.debug("DateOperations Dropdown set"); }
+    private void setYearsDifferenceLabel(JLabel yearsDifferenceLabel) { this.yearsDifferenceLabel = yearsDifferenceLabel; LOGGER.debug("Years Difference Label set"); }
+    private void setMonthsDifferenceLabel(JLabel monthsDifferenceLabel) { this.monthsDifferenceLabel = monthsDifferenceLabel; LOGGER.debug("Months Difference Label set"); }
+    private void setWeeksDifferenceLabel(JLabel weeksDifferenceLabel) { this.weeksDifferenceLabel = weeksDifferenceLabel; LOGGER.debug("Weeks Difference Label set"); }
+    private void setDaysDifferenceLabel(JLabel daysDifferenceLabel) { this.daysDifferenceLabel = daysDifferenceLabel; LOGGER.debug("Days Difference Label set"); }
+    private void setFromDateLabel(JLabel fromDateLabel) { this.fromDateLabel = fromDateLabel; LOGGER.debug("From Date Label set"); }
+    private void setToDateLabel(JLabel toDateLabel) { this.toDateLabel = toDateLabel; LOGGER.debug("To Date Label set"); }
+    private void setDifferenceLabel(JLabel differenceLabel) { this.differenceLabel = differenceLabel; LOGGER.debug("Difference Label set"); }
+    private void setBlankLabel1(JLabel blankLabel1) { this.blankLabel1 = blankLabel1; LOGGER.debug("Blank Label1 set"); }
+    private void setBlankLabel2(JLabel blankLabel2) { this.blankLabel2 = blankLabel2; LOGGER.debug("Blank Label2 set"); }
+    private void setBlankLabel3(JLabel blankLabel3) { this.blankLabel3 = blankLabel3; LOGGER.debug("Blank Label3 set"); }
+    private void setBlankLabel4(JLabel blankLabel4) { this.blankLabel4 = blankLabel4; LOGGER.debug("Blank Label4 set"); }
+    private void setBlankLabel5(JLabel blankLabel5) { this.blankLabel5 = blankLabel5; LOGGER.debug("Blank Label5 set"); }
+    private void setButtonGroup(ButtonGroup buttonGroup) { this.buttonGroup = buttonGroup; LOGGER.debug("Button Group set"); }
+    private void setAddRadioButton(JRadioButton addRadioButton) { this.addRadioButton = addRadioButton; LOGGER.debug("Add RadioButton set"); }
+    private void setSubtractRadioButton(JRadioButton subtractRadioButton) { this.subtractRadioButton = subtractRadioButton; LOGGER.debug("Subtract RadioButton set"); }
+    private void setButtonGroupPanel(JPanel buttonGroupPanel) { this.buttonGroupPanel = buttonGroupPanel; LOGGER.debug("Button Group Panel set"); }
+    private void setDateLabel(JLabel dateLabel) { this.dateLabel = dateLabel; LOGGER.debug("Date Label set"); }
+    private void setYearsLabel(JLabel yearsLabel) { this.yearsLabel = yearsLabel; LOGGER.debug("Years Label set"); }
+    private void setMonthLabel(JLabel monthLabel) { this.monthLabel = monthLabel; LOGGER.debug("Month Label set"); }
+    private void setWeeksLabel(JLabel weeksLabel) { this.weeksLabel = weeksLabel; LOGGER.debug("Weeks Label set"); }
+    private void setDaysLabel(JLabel daysLabel) { this.daysLabel = daysLabel; LOGGER.debug("Days Label set"); }
+    private void setTextFieldsGroupPanel(JPanel textFieldsGroupPanel) { this.textFieldsGroupPanel = textFieldsGroupPanel; LOGGER.debug("Text Fields Group Panel set"); }
+    private void setYearsTextField(JTextField yearsTextField) { this.yearsTextField = yearsTextField; LOGGER.debug("Years TextField set"); }
+    private void setMonthsTextField(JTextField monthsTextField) { this.monthsTextField = monthsTextField; LOGGER.debug("Months TextField set"); }
+    private void setWeeksTextField(JTextField weeksTextField) { this.weeksTextField = weeksTextField; LOGGER.debug("Weeks TextField set"); }
+    private void setDaysTextField(JTextField daysTextField) { this.daysTextField = daysTextField; LOGGER.debug("Days TextField set"); }
+    private void setResultsLabel(JLabel resultsLabel) { this.resultsLabel = resultsLabel; LOGGER.debug("Results Label set"); }
 }

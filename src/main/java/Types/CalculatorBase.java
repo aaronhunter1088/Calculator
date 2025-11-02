@@ -1,5 +1,14 @@
 package Types;
 
+/**
+ * CalculatorBase
+ * <p>
+ * This enum contains the different
+ * calculator bases
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public enum CalculatorBase implements CalculatorType
 {
     BASE_BINARY("Binary", 2),

@@ -1,9 +1,14 @@
 package Types;
 
 /**
+ * Texts
+ * <p>
  * This class defines all texts used within the Calculator application.
- * <br>
+ *
  * Unicode values from <a href="https://www.compart.com/en/unicode/html">Unicodes</a>
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
 public class Texts {
     // Calculator

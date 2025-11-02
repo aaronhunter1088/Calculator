@@ -9,8 +9,16 @@ import org.apache.logging.log4j.Logger;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@SuppressWarnings("Duplicates")
-public abstract class AngleMethods
+/**
+ * AngleMethods
+ * <p>
+ * This class contains static methods used
+ * for quick angle conversions
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
+public class AngleMethods
 {
     private final static Logger LOGGER = LogManager.getLogger(AngleMethods.class.getSimpleName());
 
@@ -25,7 +33,7 @@ public abstract class AngleMethods
         CalculatorConverterUnits unit1 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
         CalculatorConverterUnits unit2 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
         double number;
-        if (((ConverterPanel)calculator.getCurrentPanel()).isTextField1Selected())
+        if (calculator.getConverterPanel().isTextField1Selected())
         {
             if (unit1 == CalculatorConverterUnits.DEGREES) {
                 if (unit2 == CalculatorConverterUnits.DEGREES) {

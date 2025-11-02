@@ -1,5 +1,14 @@
 package Types;
 
+/**
+ * CalculatorConverterUnits
+ * <p>
+ * This enum contains the different
+ * converter units for the calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public enum CalculatorConverterUnits
 {
     // Angle converter units
