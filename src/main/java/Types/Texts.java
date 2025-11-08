@@ -78,10 +78,19 @@ public class Texts {
     public static final String ONLY_POSITIVES = "Only positive numbers";
     public static final String ERROR = "Error";
     public static final String INFINITY = "Infinity";
-    public static final String COMMA = ",";
+    public static final String CANNOT_PERFORM_OPERATION = "Cannot perform %s operation";
+    public static String cannotPerformSpecificOperation(String operation) {
+        return String.format(CANNOT_PERFORM_OPERATION, operation);
+    }
+    // Test Error Messages
     public static final String TEXT_PANE_WRONG_VALUE = "Text Pane has the wrong value";
 
     // Basic
+    public static String pressedButton(String buttonChoice) {
+        return String.format("%s %s", PRESSED, buttonChoice);
+    }
+    public static final String PRESSED = "Pressed";
+    public static final String COMMA = ",";
 
     // Programmer
     public static final String MODULUS = "MOD";

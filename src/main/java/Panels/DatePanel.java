@@ -38,7 +38,7 @@ public class DatePanel extends JPanel
     @Serial
     private static final long serialVersionUID = 4L;
 
-    private GridBagLayout dateLayout;
+    //private GridBagLayout dateLayout;
     private GridBagConstraints constraints;
     private UtilCalendarModel fromCalendar, toCalendar;
     private JDatePanelImpl fromDatePanel, toDatePanel;
@@ -936,7 +936,7 @@ public class DatePanel extends JPanel
     }
 
     /**************** GETTERS ****************/
-    public GridBagLayout getDateLayout() { return dateLayout; }
+    //public GridBagLayout getDateLayout() { return dateLayout; }
     public GridBagConstraints getConstraints() { return constraints; }
     public UtilCalendarModel getFromCalendar() { return fromCalendar; }
     public UtilCalendarModel getToCalendar() { return toCalendar; }
@@ -978,7 +978,7 @@ public class DatePanel extends JPanel
     /**************** SETTERS ****************/
     public void setLayout(GridBagLayout dateLayout) {
         super.setLayout(dateLayout);
-        this.dateLayout = dateLayout;
+        //this.dateLayout = dateLayout;
         LOGGER.debug("Layout set");
     }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }

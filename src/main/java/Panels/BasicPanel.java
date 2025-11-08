@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 
-import static Types.CalculatorBase.BASE_DECIMAL;
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
@@ -71,21 +70,20 @@ public class BasicPanel extends JPanel
     {
         if (!isInitialized)
         {
-            this.calculator = calculator;
-            this.basicPanel = new JPanel(new GridBagLayout());
+            setCalculator(calculator);
+            setBasicPanel(new JPanel(new GridBagLayout()));
             this.basicPanel.setName("BasicPanel");
-            this.memoryPanel = new JPanel(new GridBagLayout());
+            setMemoryPanel(new JPanel(new GridBagLayout()));
             this.memoryPanel.setName("MemoryPanel");
-            this.buttonsPanel = new JPanel(new GridBagLayout());
+            setButtonsPanel(new JPanel(new GridBagLayout()));
             this.buttonsPanel.setName("ButtonsPanel");
-            this.historyPanel = new JPanel(new GridBagLayout());
+            setHistoryPanel(new JPanel(new GridBagLayout()));
             this.historyPanel.setName("HistoryPanel");
             setLayout(new GridBagLayout());
             constraints = new GridBagConstraints();
-            if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
             setSize(new Dimension(200, 336)); // sets main size
             setMinimumSize(new Dimension(200, 336)); // sets minimum size
-            setupBasicHistoryZone();
+            setupBasicHistoryPanel();
         }
         setupBasicPanelComponents();
         addComponentsToPanel();
@@ -103,7 +101,6 @@ public class BasicPanel extends JPanel
         calculator.setupBasicPanelButtons();
         setupHelpString();
         calculator.setupTextPane();
-
         LOGGER.debug("Finished configuring the buttons");
     }
 
@@ -303,12 +300,10 @@ public class BasicPanel extends JPanel
     }
 
     /**
-     * Displays the history for the BasicPanel
-     * during each active instance
+     * Configures the history panel for the Basic Panel
      */
-    private void setupBasicHistoryZone()
+    private void setupBasicHistoryPanel()
     {
-        LOGGER.debug("Configuring BasicHistoryZone...");
         constraints.anchor = GridBagConstraints.WEST;
         calculator.addComponent(this, constraints, historyPanel, new JLabel(HISTORY), 0, 0); // space before with jtextarea
 
@@ -318,7 +313,7 @@ public class BasicPanel extends JPanel
 
         calculator.addComponent(this, constraints, historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
                 1, 6, 0, 0, GridBagConstraints.BOTH, 0);
-        LOGGER.debug("BasicHistoryZone configured");
+        LOGGER.debug("Basic History Panel configured");
     }
 
     /**
@@ -372,14 +367,14 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            double result = Double.parseDouble(calculator.getTextPaneValue());
+            double result = Double.parseDouble(calculator.getValueAtPosition());
             result /= 100;
             LOGGER.debug("result: " + result);
             calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
-            calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
+            calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
             calculator.writeHistory(buttonChoice, false);
             LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
-            LOGGER.debug("textPane: {}", calculator.getTextPane().getText());
+            LOGGER.debug("textPane: {}", calculator.getTextPaneValue());
             calculator.getButtonDecimal().setEnabled(false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
@@ -474,10 +469,11 @@ public class BasicPanel extends JPanel
     public boolean isInitialized() { return isInitialized; }
 
     /**************** SETTERS ****************/
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; }
-    public void setLayout(GridBagLayout panelLayout) {
-        super.setLayout(panelLayout);
-    }
-    public void setHistoryTextPane(JTextPane historyTextPane) { this.historyTextPane = historyTextPane; }
-
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
+    public void setLayout(GridBagLayout layout) { super.setLayout(layout); LOGGER.debug("Layout set"); }
+    public void setHistoryTextPane(JTextPane historyTextPane) { this.historyTextPane = historyTextPane; LOGGER.debug("History TextPane set"); }
+    private void setBasicPanel(JPanel basicPanel) { this.basicPanel = basicPanel; LOGGER.debug("Basic Panel set"); }
+    private void setMemoryPanel(JPanel memoryPanel) { this.memoryPanel = memoryPanel; LOGGER.debug("Memory Panel set"); }
+    private void setButtonsPanel(JPanel buttonsPanel) { this.buttonsPanel = buttonsPanel; LOGGER.debug("Buttons Panel set"); }
+    private void setHistoryPanel(JPanel historyPanel) { this.historyPanel = historyPanel; LOGGER.debug("History Panel set"); }
 }

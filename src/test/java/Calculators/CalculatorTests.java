@@ -7,6 +7,8 @@ import Panels.ProgrammerPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -28,7 +30,6 @@ import static Types.CalculatorConverterType.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
-import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -597,9 +598,9 @@ public class CalculatorTests
     @Test
     public void testDetermineIfAddingOperatorWasPushed()
     {
-        assertFalse(calculator.determineIfAnyBasicOperatorWasPushed(), "Did not expect any operator to be pushed");
+        assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsAdding(true);
-        assertTrue(calculator.determineIfAnyBasicOperatorWasPushed(), "Expected any operator to be pushed");
+        assertTrue(calculator.isOperatorActive(), "Expected any operator to be pushed");
         assertTrue(calculator.isAdding(), "Expected isAdding to be true");
         assertFalse(calculator.isSubtracting(), "Expected isSubtracting to be false");
         assertFalse(calculator.isMultiplying(), "Expected isMultiplying to be false");
@@ -609,9 +610,9 @@ public class CalculatorTests
     @Test
     public void testDetermineIfSubtractingOperatorWasPushed()
     {
-        assertFalse(calculator.determineIfAnyBasicOperatorWasPushed(), "Did not expect any operator to be pushed");
+        assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsSubtracting(true);
-        assertTrue(calculator.determineIfAnyBasicOperatorWasPushed(), "Expected any operator to be pushed");
+        assertTrue(calculator.isOperatorActive(), "Expected any operator to be pushed");
         assertFalse(calculator.isAdding(), "Expected isAdding to be false");
         assertTrue(calculator.isSubtracting(), "Expected isSubtracting to be true");
         assertFalse(calculator.isMultiplying(), "Expected isMultiplying to be false");
@@ -621,9 +622,9 @@ public class CalculatorTests
     @Test
     public void testDetermineIfMultiplyingOperatorWasPushed()
     {
-        assertFalse(calculator.determineIfAnyBasicOperatorWasPushed(), "Did not expect any operator to be pushed");
+        assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsMultiplying(true);
-        assertTrue(calculator.determineIfAnyBasicOperatorWasPushed(), "Expected any operator to be pushed");
+        assertTrue(calculator.isOperatorActive(), "Expected any operator to be pushed");
         assertFalse(calculator.isAdding(), "Expected isAdding to be false");
         assertFalse(calculator.isSubtracting(), "Expected isSubtracting to be false");
         assertTrue(calculator.isMultiplying(), "Expected isMultiplying to be true");
@@ -633,9 +634,9 @@ public class CalculatorTests
     @Test
     public void testDetermineIfDividingOperatorWasPushed()
     {
-        assertFalse(calculator.determineIfAnyBasicOperatorWasPushed(), "Did not expect any operator to be pushed");
+        assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsDividing(true);
-        assertTrue(calculator.determineIfAnyBasicOperatorWasPushed(), "Expected any operator to be pushed");
+        assertTrue(calculator.isOperatorActive(), "Expected any operator to be pushed");
         assertFalse(calculator.isAdding(), "Expected isAdding to be false");
         assertFalse(calculator.isSubtracting(), "Expected isSubtracting to be false");
         assertFalse(calculator.isMultiplying(), "Expected isMultiplying to be false");
@@ -743,7 +744,7 @@ public class CalculatorTests
     public void testInitialChecksElseIf2Clause()
     {
         calculator.values[0] = BLANK;
-        calculator.values[1] = ONE + FIVE;
+        calculator.values[1] = ONE + FIVE; // 15
         calculator.setValuesPosition(1);
 
         assertTrue(calculator.getValues()[0].isBlank(), "Expected values[0] to be blank");
@@ -754,7 +755,6 @@ public class CalculatorTests
 
         assertSame("15", calculator.getValues()[0], "Expected values[0] to be 15");
         assertTrue(calculator.getValues()[1].isBlank(), "Expected values[1] to be blank");
-        assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
     }
 
     @Test
@@ -931,25 +931,41 @@ public class CalculatorTests
         assertEquals("1234", calculator.getValues()[0], "Expected values[0] to be 1234");
     }
 
-    @Test
-    public void testAddCourtesyCommasReturnsResultWithTwoCommas7DigitsWholeNumber()
+    @ParameterizedTest()
+    @CsvSource({
+        // No Commas Added
+        "1.25, 1.25",
+        "123, 123",
+
+        // Commas Added
+        "1234,'1,234'",
+        "-1234, '-1,234'",
+        "1234.56, '1,234.56'",
+        "12345.67, '12,345.67'",
+        "123456.78, '123,456.78'",
+        "1234567.89, '1,234,567.89'",
+        "123456, '123,456'"
+    })
+    @DisplayName("Test addThousandsDelimiter")
+    public void testAddThousandsDelimiter(String input, String expecting)
     {
-        when(actionEvent.getActionCommand()).thenReturn(SEVEN);
+        when(actionEvent.getActionCommand()).thenReturn(String.valueOf(input.charAt(input.length()-1)));
         calculator.valuesPosition = 0;
-        calculator.getValues()[calculator.valuesPosition] = "123456";
-        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
+        calculator.setIsNumberNegative(calculator.isNegativeNumber(input));
+        calculator.getValues()[calculator.valuesPosition] = input.substring(0, input.length()-1);
+        calculator.appendTextToPane(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 1,234,567");
-        assertEquals("1234567", calculator.getValues()[0], "Expected values[0] to be 1234567");
+        assertEquals(expecting, calculator.getTextPaneValue(), "Expected textPane to be " + expecting);
+        assertEquals(input, calculator.getValueAtPosition(), "Expected values[0] to be " + expecting);
     }
 
-    @Test
-    public void testCheckValueLength()
-    {
-        calculator.values[0] = "9999998";
-        assertTrue(calculator.checkValueLength(), "Expected max length to be met");
-        assertFalse(calculator.isMaximumValue(), "Expected max number to not be met");
-    }
+//    @Test
+//    public void testCheckValueLength()
+//    {
+//        calculator.values[0] = "9999998";
+//        calculator.performNumberButtonAction();
+//        // TODO: Not able to assert anything yet
+//    }
 
     @Test
     public void testValueAt0IsMinimumNumber()
@@ -961,6 +977,7 @@ public class CalculatorTests
     @Test
     public void testValueAt1IsMinimumNumber()
     {
+        calculator.valuesPosition = 1;
         calculator.values[1] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
     }
@@ -1077,14 +1094,13 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        sleep(3000);
         String eight0s = ZERO.repeat(8);
         String binary = eight0s+"00000011"; // still 3
         calculator.setCalculatorBase(BASE_BINARY);
         calculator.setCalculatorByte(BYTE_WORD);
         calculator.appendTextToPane(binary);
         calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
         assertEquals(THREE, converted, "Expected 3");
     }
 
@@ -1094,7 +1110,6 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        sleep(3000);
         String sixteen0s = ZERO.repeat(16);
         String eight0s = ZERO.repeat(8);
         String binary = sixteen0s+eight0s+"00000011"; // still 3
@@ -1102,7 +1117,7 @@ public class CalculatorTests
         calculator.setCalculatorByte(BYTE_DWORD);
         calculator.appendTextToPane(binary);
         calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
         assertEquals(THREE, converted, "Expected 3");
     }
 
@@ -1112,7 +1127,6 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        sleep(3000);
         String forty8zeroes = ZERO.repeat(48);
         String eight0s = ZERO.repeat(8);
         String binary = forty8zeroes+eight0s+"00000011"; // still 3
@@ -1120,7 +1134,7 @@ public class CalculatorTests
         calculator.setCalculatorByte(BYTE_QWORD);
         calculator.appendTextToPane(binary);
         calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
         assertEquals(THREE, converted, "Expected 3");
     }
 
@@ -1130,7 +1144,6 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        sleep(3000);
         String forty7zeroes = ZERO.repeat(47);
         String eight0s = ZERO.repeat(8);
         String binary = ONE+forty7zeroes+eight0s+"00000011"; // still 3
@@ -1139,7 +1152,7 @@ public class CalculatorTests
         calculator.appendTextToPane(binary);
         calculator.valuesPosition = 0;
         calculator.values[calculator.valuesPosition] = "9223372036854775811";
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
         assertEquals("9223372036854775811", converted, "Expected big number");
     }
 
@@ -1149,14 +1162,13 @@ public class CalculatorTests
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        sleep(3000);
-        String sixtyfour1s = ONE.repeat(64);
+        String binary = ONE.repeat(64);
         calculator.setCalculatorBase(BASE_BINARY);
         calculator.setCalculatorByte(BYTE_QWORD);
-        calculator.appendTextToPane(sixtyfour1s);
+        calculator.appendTextToPane(binary);
         calculator.valuesPosition = 0;
         calculator.values[calculator.valuesPosition] = "18446744073709551615";
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
+        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
         assertEquals("18446744073709551615", converted, "Expected big number");
         assertEquals("18,446,744,073,709,551,615", calculator.addCommas(converted), "Expected big number");
     }

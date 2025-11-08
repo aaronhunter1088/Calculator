@@ -15,6 +15,7 @@ import Types.DateOperation;
 import org.apache.logging.log4j.Logger;
 
 import static Types.CalculatorBase.BASE_BINARY;
+import static Types.CalculatorView.VIEW_BASIC;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
@@ -40,18 +41,28 @@ public class LoggingUtil {
     public static void confirm(Calculator calculator, Logger logger, String message)
     {
         String textPaneValue = calculator.getTextPaneValue();
-        logger.info("Confirm Results: {}", message);
-        logger.info("----------------");
         CalculatorView currentView = calculator.getCalculatorView();
-        logger.info("View: {}", currentView);
-        switch (calculator.getCalculatorView()) {
+        logger.info("Confirm {} Results: {}", currentView, message);
+        logger.info("----------------");
+        switch (currentView) {
             case VIEW_BASIC, VIEW_PROGRAMMER -> {
-                CalculatorBase currentBase = calculator.getCalculatorBase();
-                logger.info("Base: {}", currentBase);
-                CalculatorByte currentByte = calculator.getCalculatorByte();
-                logger.info("Byte: {}", currentByte);
-                if (BASE_BINARY == currentBase) logger.info("textPane: '{}'", ((ProgrammerPanel) calculator.getProgrammerPanel()).separateBits(textPaneValue));
-                else logger.info("textPane: '{}'", textPaneValue);
+                if (currentView == VIEW_BASIC)
+                {
+                    logger.info("textPane: '{}'", textPaneValue);
+                }
+                if (currentView == VIEW_PROGRAMMER)
+                {
+                    CalculatorBase currentBase = calculator.getCalculatorBase();
+                    logger.info("Base: {}", currentBase);
+                    CalculatorByte currentByte = calculator.getCalculatorByte();
+                    logger.info("Byte: {}", currentByte);
+                    switch (currentBase) {
+                        case BASE_BINARY -> logger.info("textPane: '{}'", calculator.getProgrammerPanel().separateBits(textPaneValue));
+                        //case BASE_OCTAL -> logger.info("octets: {}", calculator.getProgrammerPanel().getOctetsString());
+                        case BASE_DECIMAL -> logger.info("textPane: '{}'", textPaneValue);
+                        //case BASE_HEXADECIMAL -> logger.info("hexadects: {}", calculator.getProgrammerPanel().getHexadectsString());
+                    }
+                }
                 // print out all operators' status versus only the active ones
                 if (logger.isDebugEnabled())
                 {
@@ -69,15 +80,15 @@ public class LoggingUtil {
                     logger.debug("subBool: {}", calculator.isSubtracting() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("mulBool: {}", calculator.isMultiplying() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("divBool: {}", calculator.isDividing() ? YES.toLowerCase() : NO.toLowerCase());
-                    if (VIEW_PROGRAMMER == currentView)
+                    if (currentView == VIEW_PROGRAMMER)
                     {
-                        logger.debug("orBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isOr() ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("modBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isModulus() ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("xorBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isXor() ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("notBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isNot() ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("andBool: {}", ((ProgrammerPanel) calculator.getProgrammerPanel()).isAnd() ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("orBool: {}", calculator.getProgrammerPanel().isOr() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("modBool: {}", calculator.getProgrammerPanel().isModulus() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("xorBool: {}", calculator.getProgrammerPanel().isXor() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("notBool: {}", calculator.getProgrammerPanel().isNot() ? YES.toLowerCase() : NO.toLowerCase());
+                        logger.debug("andBool: {}", calculator.getProgrammerPanel().isAnd() ? YES.toLowerCase() : NO.toLowerCase());
                     }
+                    logger.debug("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("values[0]: '{}'", calculator.getValues()[0]);
                     logger.debug("values[1]: '{}'", calculator.getValues()[1]);
                     logger.debug("values[2]: '{}'", calculator.getValues()[2]);
@@ -85,10 +96,7 @@ public class LoggingUtil {
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
                     logger.debug("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    // TODO: exclude if: v[vP] is empty, bc no need to print if an empty value is negative
-                    // TODO: exclude if: the negative sign is not present
-                    logger.debug("isNegative: {}", calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
-
+                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAtPosition(), calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
                 }
                 else
                 {
@@ -112,18 +120,18 @@ public class LoggingUtil {
                         if (calculator.getProgrammerPanel().isXor()) logger.info("xorBool: {}", YES.toLowerCase());
                         if (calculator.getProgrammerPanel().isNot()) logger.info("notBool: {}", YES.toLowerCase());
                         if (calculator.getProgrammerPanel().isAnd()) logger.info("andBool: {}", YES.toLowerCase());
-                        if (calculator.isPemdasActive()) logger.info("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
                     }
-                    if (!calculator.getValues()[0].isEmpty()) logger.info("values[0]: '{}'", calculator.getValues()[0]);
-                    if (!calculator.getValues()[1].isEmpty()) logger.info("values[1]: '{}'", calculator.getValues()[1]);
+                    if (calculator.isPemdasActive()) logger.info("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
+                    for (int i = 0; i <= calculator.getValuesPosition(); i++) {
+                        logger.info("values[{}]: '{}'", i, calculator.getValues()[i]);
+                    }
+                    // TODO: vP[2] is for copy/paste and vP[3] is for a message
                     if (!calculator.getValues()[2].isEmpty()) logger.info("values[2]: '{}'", calculator.getValues()[2]);
                     if (!calculator.getValues()[3].isEmpty()) logger.info("values[3]: '{}'", calculator.getValues()[3]);
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
                     logger.info("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    // TODO: exclude if: v[vP] is empty, bc no need to print if an empty value is negative
-                    // TODO: exclude if: the negative sign is not present
-                    logger.info("isNegative: {}", calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("is value: '{}' negative?: {}", calculator.getValueAtPosition(), calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
                 }
             }
             case VIEW_SCIENTIFIC -> {
@@ -218,4 +226,16 @@ public class LoggingUtil {
                 calculator.getValuesPosition(),
                 calculator.getValues()[calculator.getValuesPosition()]);
     }
+
+    /**
+     * Logs a failed operation due to a blank second value.
+     * @param operation the operation attempted
+     * @param logger the Logger needed to log the warning
+     */
+    public static void logFailedOperation(String operation, Logger logger)
+    {
+        logger.warn("Attempted to perform {} but values[1] is blank", operation);
+
+    }
+
 }

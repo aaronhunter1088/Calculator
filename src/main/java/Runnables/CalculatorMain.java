@@ -16,18 +16,17 @@ import static Utilities.LoggingUtil.confirm;
  * <p>
  * The main class used to start the Calculator application.
  * There are several modes ready to be started by uncommenting
- * the appropriate line in the main method. History is displayed
- * below.
+ * the appropriate line in the main method.
+ * History of the application is located at the end of this file.
  *
  * @author Michael Ball
  * @version 4.0
  */
 public class CalculatorMain
 {
-    static { System.setProperty("appName", "Calculator"); }
     private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class.getSimpleName());
 
-	public static void main(String[] args) throws Exception
+    public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting calculator...");
         String logLevel = System.getenv("logLevel");
@@ -40,9 +39,9 @@ public class CalculatorMain
         SwingUtilities.invokeLater(() -> {
             try {
                 //Start a basic calculator
-                //Calculator calculator = new Calculator(/*BASIC*/);
+                Calculator calculator = new Calculator(/*VIEW_BASIC*/);
                 //Start a programmer calculator in BINARY mode
-                Calculator calculator = new Calculator(VIEW_PROGRAMMER /*, BINARY*/ );
+                //Calculator calculator = new Calculator(VIEW_PROGRAMMER /*, BINARY*/ );
                 //Start a programmer calculator in DECIMAL mode
                 //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
                 //Start a date calculator with options1 selected

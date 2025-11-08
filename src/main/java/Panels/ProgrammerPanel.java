@@ -441,7 +441,7 @@ public class ProgrammerPanel extends JPanel
         else if (representation.length() < 4) return representation;
         StringBuilder sb = new StringBuilder();
         representation = representation.replace(SPACE, BLANK);
-        boolean operatorSet = calculator.determineIfAnyBasicOperatorWasPushed();
+        boolean operatorSet = calculator.isOperatorActive();
         if (operatorSet) representation = calculator.getValueWithoutAnyOperator(representation);
         String respaced = switch (calculator.getCalculatorByte()) {
             case BYTE_BYTE -> {
@@ -550,8 +550,16 @@ public class ProgrammerPanel extends JPanel
      *
      * @return true if any operator was pushed, false otherwise
      */
-    public boolean isProgrammerOperatorActive()
+    public boolean isOperatorActive()
     { return isOr || isModulus || isXor || isNot || isAnd; }
+
+    /**
+     * This method returns true if no operator is
+     * currently active for the programmer panel.
+     * @return true if no operator is active, false otherwise
+     */
+    public boolean isNoOperatorActive()
+    { return !isOr && !isModulus && !isXor && !isNot && !isAnd; }
 
     /**
      * This method returns the String operator that was activated
@@ -662,7 +670,7 @@ public class ProgrammerPanel extends JPanel
                         calculator.appendTextToPane(substring, updateValue);
                     }
                     // if an operator was pushed, remove operator from text and reset operator
-                    else if (calculator.determineIfAnyBasicOperatorWasPushed())
+                    else if (calculator.isOperatorActive())
                     {
                         LOGGER.debug("An operator has been pushed");
                         if (calculator.getValuesPosition() == 0)
@@ -1096,7 +1104,7 @@ public class ProgrammerPanel extends JPanel
         }
         LOGGER.debug("before operation execution: {}", textPaneValue);
         StringBuilder newBuffer = new StringBuilder();
-        for (int i = 0; i < calculator.determineRequiredLength(textPaneValue.length()); i++) {
+        for (int i = 0; i < calculator.determineBits(textPaneValue.length()); i++) {
             String s = Character.toString(textPaneValue.charAt(i));
             if (s.equals(ZERO))
                 { newBuffer.append(ONE); LOGGER.debug("appending a {}", ONE); }
