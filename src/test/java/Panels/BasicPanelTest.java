@@ -6,13 +6,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
 import static Types.CalculatorView.VIEW_BASIC;
@@ -23,52 +27,50 @@ import static org.mockito.Mockito.*;
 /**
  * BasicPanelTest
  * <p>
- * This class tests the BasicPanel class.
+ * This class tests the {@link BasicPanel} class.
  *
  * @author Michael Ball
  * @version 4.0
  */
+@ExtendWith(MockitoExtension.class)
 public class BasicPanelTest
 {
     static { System.setProperty("appName", BasicPanelTest.class.getSimpleName()); }
-    private static Logger LOGGER;
-    private static Calculator calculator;
-    private static BasicPanel basicPanel;
-    private final double delta = 0.000001d;
+    private static final Logger LOGGER = LogManager.getLogger(BasicPanelTest.class.getSimpleName());
 
+    private Calculator calculator;
+    private BasicPanel basicPanel;
+    private final double delta = 0.000001d;
     @Mock
     ActionEvent actionEvent;
 
     @BeforeAll
     public static void beforeAll()
-    { LOGGER = LogManager.getLogger(BasicPanelTest.class.getSimpleName()); }
+    { }
 
     @BeforeEach
     public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
         LOGGER.info("setting up each before...");
-        MockitoAnnotations.initMocks(this);
         calculator = new Calculator(VIEW_BASIC);
-        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        calculator.setVisible(true);
         basicPanel = (BasicPanel) calculator.getCurrentPanel();
     }
 
     @AfterEach
-    public void afterEach()
+    public void afterEach() throws InterruptedException, InvocationTargetException
     {
-        if (calculator != null) {
+        for (Calculator calculator : java.util.List.of(calculator))
+        {
             LOGGER.info("Test complete. Closing the calculator...");
             // Create a WindowEvent with WINDOW_CLOSING event type
             WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
 
-            // Dispatch the event to the JFrame instance
-            calculator.dispatchEvent(windowClosing);
-
-            // Ensure the clock is no longer visible
+            EventQueue.invokeAndWait(() -> {
+                calculator.setVisible(false);
+                calculator.dispose();
+            });
             assertFalse(calculator.isVisible());
-
-            // Dispose of the JFrame to release resources
-            calculator.dispose();
         }
     }
 

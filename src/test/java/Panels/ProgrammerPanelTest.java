@@ -5,12 +5,16 @@ import Types.CalculatorView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
@@ -21,17 +25,19 @@ import static org.mockito.Mockito.*;
 /**
  * ProgrammerPanelTest
  * <p>
- * This class tests the ProgrammerPanel class.
+ * This class tests the {@link ProgrammerPanel} class.
  *
  * @author Michael Ball
  * @version 4.0
  */
+@ExtendWith(MockitoExtension.class)
 public class ProgrammerPanelTest
 {
     static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
-    private static Logger LOGGER;
-    private static Calculator calculator;
-    private static ProgrammerPanel programmerPanel;
+    private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
+
+    private Calculator calculator;
+    private ProgrammerPanel programmerPanel;
     private final double delta = 0.000001d;
 
     @Mock
@@ -39,41 +45,34 @@ public class ProgrammerPanelTest
 
     @BeforeAll
     public static void beforeAll() throws Exception
+    { }
+
+    @BeforeEach
+    public void beforeEach() throws Exception
     {
-        LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
         calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
         calculator.pack();
+        programmerPanel = calculator.getProgrammerPanel();
     }
 
     @AfterAll
     public static void afterAll()
     { LOGGER.info("Finished running {}", ProgrammerPanel.class.getSimpleName()); }
 
-    @BeforeEach
-    public void beforeEach() throws Exception 
-    {
-        MockitoAnnotations.initMocks(this);
-        calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
-        calculator.pack();
-        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        programmerPanel = (ProgrammerPanel)calculator.getCurrentPanel();
-    }
-
     @AfterEach
-    public void afterEach() {
-        if (calculator != null) {
+    public void afterEach() throws InterruptedException, InvocationTargetException
+    {
+        for (Calculator calculator : java.util.List.of(calculator))
+        {
             LOGGER.info("Test complete. Closing the calculator...");
             // Create a WindowEvent with WINDOW_CLOSING event type
             WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
 
-            // Dispatch the event to the JFrame instance
-            calculator.dispatchEvent(windowClosing);
-
-            // Ensure the clock is no longer visible
+            EventQueue.invokeAndWait(() -> {
+                calculator.setVisible(false);
+                calculator.dispose();
+            });
             assertFalse(calculator.isVisible());
-
-            // Dispose of the JFrame to release resources
-            calculator.dispose();
         }
     }
 

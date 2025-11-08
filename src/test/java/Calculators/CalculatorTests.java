@@ -7,12 +7,14 @@ import Panels.ProgrammerPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Arrays;
 
@@ -36,16 +39,18 @@ import static org.mockito.Mockito.*;
 /**
  * CalculatorTests
  * <p>
- * This class tests the Calculator class.
+ * This class tests the {@link Calculator} class.
  *
  * @author Michael Ball
  * @version 4.0
  */
+@ExtendWith(MockitoExtension.class)
 public class CalculatorTests
 {
-    private static Logger LOGGER;
-    private Calculator calculator;
+    static { System.setProperty("appName", CalculatorTests.class.getSimpleName()); }
+    private static final Logger LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
 
+    private Calculator calculator;
     @Mock
     ActionEvent actionEvent;
     @Spy
@@ -54,17 +59,15 @@ public class CalculatorTests
     @BeforeAll
     public static void beforeAll()
     {
-        LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
+
     }
 
     @BeforeEach
     public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
         LOGGER.info("Setting up beforeEach...");
-        MockitoAnnotations.initMocks(this);
         calculator = new Calculator();
-        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        calculatorSpy = spy(Calculator.class);
+        calculator.setVisible(true);
     }
 
     @AfterAll
@@ -73,20 +76,27 @@ public class CalculatorTests
 
 
     @AfterEach
-    public void afterEach() {
-        if (calculator != null) {
+    public void afterEach() throws InterruptedException, InvocationTargetException {
+        for (Calculator calculator : java.util.List.of(calculator, calculatorSpy))
+        {
             LOGGER.info("Test complete. Closing the calculator...");
             // Create a WindowEvent with WINDOW_CLOSING event type
             WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
 
-            // Dispatch the event to the JFrame instance
-            calculator.dispatchEvent(windowClosing);
-
-            // Ensure the clock is no longer visible
+            EventQueue.invokeAndWait(() -> {
+                calculator.setVisible(false);
+                calculator.dispose();
+            });
             assertFalse(calculator.isVisible());
 
+            // Dispatch the event to the JFrame instance
+            //calculator.dispatchEvent(windowClosing);
+
+            // Ensure the clock is no longer visible
+            //assertFalse(calculator.isVisible());
+
             // Dispose of the JFrame to release resources
-            calculator.dispose();
+            //calculator.dispose();
         }
     }
 
@@ -143,7 +153,7 @@ public class CalculatorTests
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.setCalculatorBase(BASE_OCTAL);
         assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertSame(calculator.getCalculatorBase(), BASE_OCTAL, "Base is not octal");
+        assertEquals(BASE_OCTAL, calculator.getCalculatorBase(), "Base is not octal");
     }
 
     @Test

@@ -14,8 +14,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,15 +33,15 @@ import static org.mockito.Mockito.when;
 /**
  * DatePanelTest
  * <p>
- * This class tests the DatePanel class.
+ * This class tests the {@link DatePanel} class.
  *
  * @author Michael Ball
  * @version 4.0
  */
 public class DatePanelTest
 {
-    static { System.setProperty("appName", "DatePanelTest"); }
-    private static Logger LOGGER;
+    static { System.setProperty("appName", DatePanelTest.class.getSimpleName()); }
+    private static final Logger LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
     private static Calculator calculator;
     private static DatePanel datePanel;
 
@@ -52,7 +54,7 @@ public class DatePanelTest
         calculator = new Calculator(ADD_SUBTRACT_DAYS);
         calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         datePanel = (DatePanel) calculator.getDatePanel();
-        LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
+
     }
 
     @BeforeEach
@@ -60,20 +62,19 @@ public class DatePanelTest
     { MockitoAnnotations.initMocks(this); }
 
     @AfterEach
-    public void afterEach() {
-        if (calculator != null) {
+    public void afterEach() throws InterruptedException, InvocationTargetException
+    {
+        for (Calculator calculator : java.util.List.of(calculator))
+        {
             LOGGER.info("Test complete. Closing the calculator...");
             // Create a WindowEvent with WINDOW_CLOSING event type
             WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
 
-            // Dispatch the event to the JFrame instance
-            calculator.dispatchEvent(windowClosing);
-
-            // Ensure the clock is no longer visible
+            EventQueue.invokeAndWait(() -> {
+                calculator.setVisible(false);
+                calculator.dispose();
+            });
             assertFalse(calculator.isVisible());
-
-            // Dispose of the JFrame to release resources
-            calculator.dispose();
         }
     }
 

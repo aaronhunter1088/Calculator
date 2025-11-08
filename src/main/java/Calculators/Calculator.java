@@ -220,10 +220,11 @@ public class Calculator extends JFrame
         setupPanel(null);
         setupCalculatorImages();
         setMinimumSize(currentPanel.getSize());
-        setVisible(true);
+        //setVisible(true);
         setResizable(false);
         setLocation(750, 250);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         addKeyListener(new CalculatorKeyListener(this)); // controls keyboard input
         addMouseListener(new CalculatorMouseListener(this)); // controls mouse input
         add(currentPanel);
@@ -4239,7 +4240,7 @@ public class Calculator extends JFrame
     public void setCalculatorByte(CalculatorByte calculatorByte) { this.calculatorByte = calculatorByte; LOGGER.debug("CalculatorByte set to {}", calculatorByte); }
     public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; LOGGER.debug("DateOperation set to {}", dateOperation); }
     public void setConverterType(CalculatorConverterType converterType) { this.converterType = converterType; LOGGER.debug("ConverterType set to {}", converterType); }
-    public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; LOGGER.debug("CurrentPanel set to {}", currentPanel); }
+    public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; LOGGER.debug("CurrentPanel set to {}", currentPanel.getName()); }
     public void setCalculatorIcon(ImageIcon calculatorIcon) { this.calculatorIcon = calculatorIcon; }
     public void setMacIcon(ImageIcon macIcon) { this.macIcon = macIcon; }
     public void setWindowsIcon(ImageIcon windowsIcon) { this.windowsIcon = windowsIcon; }

@@ -54,6 +54,7 @@ public class CalculatorMain
                 //Calculator calculator = new Calculator(AREA);
                 //Display the window.
                 calculator.pack();
+                calculator.setVisible(true);
                 confirm(calculator, LOGGER, calculator.getCalculatorView().getValue() + " Calculator started");
             }
             catch (Exception e)

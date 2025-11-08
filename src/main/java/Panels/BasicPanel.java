@@ -305,10 +305,13 @@ public class BasicPanel extends JPanel
     private void setupBasicHistoryPanel()
     {
         constraints.anchor = GridBagConstraints.WEST;
-        calculator.addComponent(this, constraints, historyPanel, new JLabel(HISTORY), 0, 0); // space before with jtextarea
+        JLabel historyLabel = new JLabel(HISTORY);
+        historyLabel.setName("HistoryLabel");
+        calculator.addComponent(this, constraints, historyPanel, historyLabel, 0, 0); // space before with jtextarea
 
         calculator.setupHistoryTextPane();
         JScrollPane scrollPane = new JScrollPane(historyTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setName("HistoryScrollPane");
         scrollPane.setPreferredSize(historyTextPane.getSize());
 
         calculator.addComponent(this, constraints, historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
