@@ -13,6 +13,7 @@ import java.io.Serial;
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
+import static Utilities.LoggingUtil.logActionButton;
 
 /**
  * BasicPanel
@@ -327,7 +328,6 @@ public class BasicPanel extends JPanel
     { calculator.getTextPane().setText(calculator.addNewLines(1) + text); }
 
     /**************** ACTIONS ****************/
-
     /**
      * The actions to perform when History is clicked
      * @param actionEvent the click action
@@ -335,7 +335,7 @@ public class BasicPanel extends JPanel
     public void performHistoryAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         if (HISTORY_OPEN.equals(calculator.getButtonHistory().getText()))
         {
             LOGGER.debug("Closing History");
@@ -350,7 +350,6 @@ public class BasicPanel extends JPanel
             basicPanel.remove(buttonsPanel);
             calculator.addComponent(this, constraints, basicPanel, historyPanel, 2, 0);
         }
-        SwingUtilities.updateComponentTreeUI(this);
     }
 
     /**
@@ -467,6 +466,7 @@ public class BasicPanel extends JPanel
     }
 
     /**************** GETTERS ****************/
+    public JPanel getBasicPanel() { return basicPanel; }
     public JPanel getHistoryPanel() { return historyPanel;}
     public JTextPane getHistoryTextPane() { return historyTextPane; }
     public boolean isInitialized() { return isInitialized; }

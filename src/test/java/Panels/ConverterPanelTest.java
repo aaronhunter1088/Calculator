@@ -5,27 +5,23 @@ import Calculators.CalculatorError;
 import Converters.AngleMethods;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
-import static Types.CalculatorConverterType.*;
-import static Types.CalculatorView.VIEW_BASIC;
+import static Types.CalculatorConverterType.ANGLE;
+import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
 
 /**
  * ConverterPanelTest
@@ -36,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @version 4.0
  */
 @ExtendWith(MockitoExtension.class)
-public class ConverterPanelTest
+class ConverterPanelTest
 {
     static { System.setProperty("appName", ConverterPanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(ConverterPanelTest.class.getSimpleName());
@@ -48,31 +44,25 @@ public class ConverterPanelTest
     ActionEvent ae;
 
     @BeforeAll
-    public static void beforeAll()
-    { }
+    static void beforeAll()
+    {}
 
     @BeforeEach
-    public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
         LOGGER.info("setting up each before...");
         calculator = new Calculator();
         converterPanel = calculator.getConverterPanel();
+        converterPanel.setupConverterPanel(calculator, ANGLE);
         calculator.setCurrentPanel(converterPanel);
     }
 
-    @BeforeEach
-    public void setUp() throws Exception {
-    }
-
     @AfterEach
-    public void afterEach() throws InterruptedException, InvocationTargetException
+    void afterEach() throws InterruptedException, InvocationTargetException
     {
         for (Calculator calculator : java.util.List.of(calculator))
         {
             LOGGER.info("Test complete. Closing the calculator...");
-            // Create a WindowEvent with WINDOW_CLOSING event type
-            WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
-
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
                 calculator.dispose();
@@ -81,8 +71,12 @@ public class ConverterPanelTest
         }
     }
 
+    @AfterAll
+    static void afterAll()
+    { LOGGER.info("Finished running {}", ConverterPanelTest.class.getSimpleName()); }
+
     @Test
-    public void testConvertingFromDegreesToGradiansWorks()
+    void testConvertingFromDegreesToGradiansWorks()
     {
         // 0 grad = 0 degrees
         // 100 grad = 90 degrees
@@ -93,7 +87,7 @@ public class ConverterPanelTest
     }
 
     @Test
-    public void testConvertingFromGradiansToDegreesWorks()
+    void testConvertingFromGradiansToDegreesWorks()
     {
         // 0 degrees = 0 grad
         // 90 degrees = 100 grad
@@ -104,7 +98,7 @@ public class ConverterPanelTest
     }
 
     @Test
-    public void testConvertingFromGradiansToRadiansWorks()
+    void testConvertingFromGradiansToRadiansWorks()
     {
         // 636.62 = 10 rad
         converterPanel.setIsTextField1Selected(true);
@@ -114,12 +108,21 @@ public class ConverterPanelTest
     }
 
     @Test
-    public void testConvertingFromRadiansToGradiansWorks()
+    void testConvertingFromRadiansToGradiansWorks()
     {
         // 10 rad = 636.62 grad
         converterPanel.setIsTextField1Selected(true);
         converterPanel.setTextField1(new JTextField("10"));
         converterPanel.setTextField2(new JTextField("0"));
         assertEquals(636.62, AngleMethods.convertingRadiansToGradians(calculator), 1);
+    }
+
+    @Test
+    void testPerformClearEntryButtonAction()
+    {
+        when(ae.getActionCommand()).thenReturn(CLEAR_ENTRY);
+        converterPanel.performClearEntryButtonActions(ae);
+        assertEquals(ZERO, converterPanel.getTextField1().getText());
+        assertEquals(ZERO, converterPanel.getTextField2().getText());
     }
 }

@@ -1,5 +1,6 @@
 package Utilities;
 
+import java.awt.event.ActionEvent;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -197,6 +198,17 @@ public class LoggingUtil {
     public static void logActionButton(String buttonChoice, Logger logger)
     {
         logger.info("Action for {} started", buttonChoice);
+    }
+
+    /**
+     * This method is used at the start of any action button.
+     * It signifies the start of an action for logging purposes.
+     * @param actionEvent the button that created the action
+     * @param logger the Logger needed to log the action
+     */
+    public static void logActionButton(ActionEvent actionEvent, Logger logger)
+    {
+        logger.info("Action for {} started", actionEvent.getActionCommand());
     }
 
     /**

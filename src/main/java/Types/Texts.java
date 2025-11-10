@@ -79,8 +79,12 @@ public class Texts {
     public static final String ERROR = "Error";
     public static final String INFINITY = "Infinity";
     public static final String CANNOT_PERFORM_OPERATION = "Cannot perform %s operation";
-    public static String cannotPerformSpecificOperation(String operation) {
+    public static String cannotPerformOperation(String operation) {
         return String.format(CANNOT_PERFORM_OPERATION, operation);
+    }
+    public static final String PERFORMED_OPERATION = "Performed %s operation";
+    public static String performedOperation(String operation) {
+        return String.format(PERFORMED_OPERATION, operation);
     }
     // Test Error Messages
     public static final String TEXT_PANE_WRONG_VALUE = "Text Pane has the wrong value";

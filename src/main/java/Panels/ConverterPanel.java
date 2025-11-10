@@ -182,10 +182,9 @@ public class ConverterPanel extends JPanel
     public void performClearEntryButtonActions(ActionEvent actionEvent)
     {
         LOGGER.info("ClearEntryButtonHandler started for Converter");
-        LOGGER.info("button: " + actionEvent.getActionCommand());
-        textField1.setText("0");
-        textField2.setText("0");
-        //calculator.setDotPressed(false);
+        logActionButton(actionEvent, LOGGER);
+        textField1.setText(ZERO);
+        textField2.setText(ZERO);
         calculator.getButtonDecimal().setEnabled(true);
         textField1.requestFocusInWindow();
         isTextField1Selected = true;

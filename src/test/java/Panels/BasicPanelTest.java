@@ -8,13 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -33,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @version 4.0
  */
 @ExtendWith(MockitoExtension.class)
-public class BasicPanelTest
+class BasicPanelTest
 {
     static { System.setProperty("appName", BasicPanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(BasicPanelTest.class.getSimpleName());
@@ -45,27 +43,26 @@ public class BasicPanelTest
     ActionEvent actionEvent;
 
     @BeforeAll
-    public static void beforeAll()
-    { }
+    static void beforeAll()
+    {}
 
     @BeforeEach
-    public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
         LOGGER.info("setting up each before...");
         calculator = new Calculator(VIEW_BASIC);
         calculator.setVisible(true);
-        basicPanel = (BasicPanel) calculator.getCurrentPanel();
+        basicPanel = calculator.getBasicPanel();
+        basicPanel.setupBasicPanel(calculator);
+        calculator.setCurrentPanel(basicPanel);
     }
 
     @AfterEach
-    public void afterEach() throws InterruptedException, InvocationTargetException
+    void afterEach() throws InterruptedException, InvocationTargetException
     {
         for (Calculator calculator : java.util.List.of(calculator))
         {
             LOGGER.info("Test complete. Closing the calculator...");
-            // Create a WindowEvent with WINDOW_CLOSING event type
-            WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
-
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
                 calculator.dispose();
@@ -75,29 +72,29 @@ public class BasicPanelTest
     }
 
     @AfterAll
-    public static void afterAll()
-    { LOGGER.info("Finished running " + BasicPanelTest.class.getSimpleName()); }
+    static void afterAll()
+    { LOGGER.info("Finished running {}", BasicPanelTest.class.getSimpleName()); }
 
     @Test
-    public void testCreatingBasicPanel()
+    void testCreatingBasicPanel()
     {
         assertEquals(VIEW_BASIC.getValue(), new BasicPanel().getName(), "Expected panel name to be " + VIEW_BASIC);
     }
 
     @Test
-    public void testCreatingBasicPanelWithCalculator()
+    void testCreatingBasicPanelWithCalculator()
     {
         assertEquals(VIEW_BASIC.getValue(), basicPanel.getName(), "Expected panel name to be " + VIEW_BASIC);
     }
 
     @Test
-    public void testShowingHelpShowsText()
+    void testShowingHelpShowsText()
     {
         calculator.showHelpPanel("This is a test. Close to proceed.");
     }
 
     @Test
-    public void pressed1()
+    void pressed1()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE);
         calculator.performNumberButtonAction(actionEvent);
@@ -109,7 +106,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5()
+    void pressed1Then5()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(FIVE);
         calculator.performNumberButtonAction(actionEvent);
@@ -128,7 +125,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenNegate()
+    void pressed1ThenNegate()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(NEGATE);
         calculator.performNumberButtonAction(actionEvent);
@@ -141,7 +138,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenNegateThenAdd()
+    void pressed1ThenNegateThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(NEGATE).thenReturn(ADDITION);
         calculator.performNumberButtonAction(actionEvent);
@@ -155,7 +152,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5ThenNegateThenAddThen5ThenNegateThenEquals()
+    void pressed1Then5ThenNegateThenAddThen5ThenNegateThenEquals()
     {
         // -15 + -5 =
         when(actionEvent.getActionCommand())
@@ -210,7 +207,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDecimal()
+    void pressedDecimal()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
         calculator.getValues()[0] = BLANK;
@@ -221,7 +218,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed544ThenDecimal()
+    void pressed544ThenDecimal()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
         calculator.getTextPane().setText(calculator.addNewLines() + "544");
@@ -234,7 +231,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then2Then3Then4ThenDecimal()
+    void pressed1Then2Then3Then4ThenDecimal()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(TWO).thenReturn(THREE)
                 .thenReturn("4").thenReturn(DECIMAL);
@@ -250,7 +247,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDecimalThen9()
+    void pressedDecimalThen9()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL).thenReturn(NINE);
         calculator.performDecimalButtonAction(actionEvent);
@@ -270,7 +267,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDecimalThen5ThenAddThen2()
+    void pressed1ThenDecimalThen5ThenAddThen2()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DECIMAL)
                 .thenReturn(FIVE).thenReturn(ADDITION).thenReturn(TWO);
@@ -284,7 +281,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAdd()
+    void pressed1ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION);
         calculator.performNumberButtonAction(actionEvent);
@@ -301,7 +298,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5ThenAdd()
+    void pressed1Then5ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(FIVE).thenReturn(ADDITION);
         calculator.performNumberButtonAction(actionEvent);
@@ -325,7 +322,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenSubtract()
+    void pressed1ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION);
         calculator.performNumberButtonAction(actionEvent);
@@ -343,7 +340,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5ThenSubtract()
+    void pressed1Then5ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(FIVE).thenReturn(SUBTRACTION);
         calculator.performNumberButtonAction(actionEvent);
@@ -367,7 +364,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5ThenSubtractThen5ThenEquals()
+    void pressed1Then5ThenSubtractThen5ThenEquals()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE).thenReturn(FIVE).thenReturn(SUBTRACTION)
@@ -404,7 +401,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiply()
+    void pressed1ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(MULTIPLICATION);
         calculator.performNumberButtonAction(actionEvent);
@@ -421,7 +418,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5ThenMultiply()
+    void pressed1Then5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(FIVE).thenReturn(MULTIPLICATION);
         calculator.performNumberButtonAction(actionEvent);
@@ -445,7 +442,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then0ThenMultiplyThen1Then0ThenEquals()
+    void pressed1Then0ThenMultiplyThen1Then0ThenEquals()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE).thenReturn(ZERO).thenReturn(MULTIPLICATION)
@@ -487,7 +484,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedAddWithNoNumberInput()
+    void pressedAddWithNoNumberInput()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.performAdditionButtonAction(actionEvent);
@@ -498,7 +495,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAddThenAddAgain()
+    void pressed1ThenAddThenAddAgain()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION);
         calculator.performNumberButtonAction(actionEvent);
@@ -511,7 +508,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedAddWithErrorInTextPane()
+    void pressedAddWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -520,7 +517,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSubtractWithErrorInTextPane()
+    void pressedSubtractWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -529,7 +526,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMultiplyWithErrorInTextPane()
+    void pressedMultiplyWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -538,7 +535,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDivideWithErrorInTextPane()
+    void pressedDivideWithErrorInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -547,7 +544,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedAddWithNumberTooBigInTextPane()
+    void pressedAddWithNumberTooBigInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.getTextPane().setText(calculator.addNewLines() + NUMBER_TOO_BIG);
@@ -556,7 +553,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAddThen5ThenAdd()
+    void pressed1ThenAddThen5ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION)
                 .thenReturn(FIVE).thenReturn(ADDITION);
@@ -569,7 +566,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSubtractThen5()
+    void pressedSubtractThen5()
     {
         when(actionEvent.getActionCommand()).thenReturn(SUBTRACTION).thenReturn(FIVE);
         calculator.performSubtractionButtonAction(actionEvent);
@@ -584,7 +581,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenAddThenSubtract()
+    void pressed5ThenAddThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(ADDITION).thenReturn(SUBTRACTION);
         calculator.setIsNumberNegative(false);
@@ -597,7 +594,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenSubtractThen5ThenAdd()
+    void pressed1ThenSubtractThen5ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(ADDITION);
@@ -613,7 +610,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenSubtractThen5ThenSubtract()
+    void pressed1ThenSubtractThen5ThenSubtract()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE).thenReturn(SUBTRACTION)
@@ -630,7 +627,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSubtractWithDecimalNumbers()
+    void testSubtractWithDecimalNumbers()
     {
         // 4.5 - -2.3 = 6.8
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
@@ -647,7 +644,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedAdditionAfterEquals()
+    void testPressedAdditionAfterEquals()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(EQUALS).thenReturn(ADDITION);
@@ -662,7 +659,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedSubtractAfterEquals()
+    void testPressedSubtractAfterEquals()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(EQUALS).thenReturn(SUBTRACTION);
@@ -677,7 +674,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedMultiplyAfterEquals()
+    void testPressedMultiplyAfterEquals()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(EQUALS).thenReturn(MULTIPLICATION);
@@ -692,7 +689,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedDivideAfterEquals()
+    void testPressedDivideAfterEquals()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(EQUALS).thenReturn(DIVISION);
@@ -707,7 +704,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testContinuedSubtractionWithNegatedNumber()
+    void testContinuedSubtractionWithNegatedNumber()
     {
         // 2 - -5 -  --> 7 -
         when(actionEvent.getActionCommand()).thenReturn(SUBTRACTION);
@@ -724,7 +721,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testContinuedSubtractionWithDecimals()
+    void testContinuedSubtractionWithDecimals()
     {
         when(actionEvent.getActionCommand()).thenReturn(SUBTRACTION);
         calculator.getValues()[0] = "2.3";
@@ -740,7 +737,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testContinuedSubtractionWithDecimalsAndNegatedNumber()
+    void testContinuedSubtractionWithDecimalsAndNegatedNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SUBTRACTION);
         calculator.getValues()[0] = "2.3";
@@ -756,7 +753,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenSubtractThen5ThenMultiply()
+    void pressed1ThenSubtractThen5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(MULTIPLICATION);
@@ -772,7 +769,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDivideThen5ThenSubtract()
+    void pressed1ThenDivideThen5ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DIVISION)
                 .thenReturn(FIVE).thenReturn(SUBTRACTION);
@@ -789,7 +786,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenSubtractThen5ThenDivide()
+    void pressed1ThenSubtractThen5ThenDivide()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE).thenReturn(SUBTRACTION)
@@ -806,7 +803,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiplyThen5ThenAdd()
+    void pressed1ThenMultiplyThen5ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(MULTIPLICATION)
                 .thenReturn(FIVE).thenReturn(ADDITION);
@@ -822,7 +819,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testMultiplyingTwoDecimals()
+    void testMultiplyingTwoDecimals()
     {
         when(actionEvent.getActionCommand()).thenReturn(MULTIPLICATION);
         calculator.getValues()[0] = "4.5";
@@ -836,7 +833,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiplyThen5ThenSubtract()
+    void pressed1ThenMultiplyThen5ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(MULTIPLICATION)
                 .thenReturn(FIVE).thenReturn(SUBTRACTION);
@@ -852,7 +849,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiplyThen5ThenMultiply()
+    void pressed1ThenMultiplyThen5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(MULTIPLICATION)
                 .thenReturn(FIVE).thenReturn(MULTIPLICATION);
@@ -868,7 +865,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiplyThen5ThenDivide()
+    void pressed1ThenMultiplyThen5ThenDivide()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE).thenReturn(MULTIPLICATION)
@@ -885,7 +882,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDivideThen5ThenMultiply()
+    void pressed1ThenDivideThen5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DIVISION)
                 .thenReturn(FIVE).thenReturn(MULTIPLICATION);
@@ -901,7 +898,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiplyThenMultiply()
+    void pressed1ThenMultiplyThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(MULTIPLICATION).thenReturn(MULTIPLICATION);
         calculator.performNumberButtonAction(actionEvent);
@@ -912,7 +909,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDivideThen5ThenAdd()
+    void pressed1ThenDivideThen5ThenAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DIVISION)
                 .thenReturn(FIVE).thenReturn(ADDITION);
@@ -928,7 +925,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDivideThen5ThenDivide()
+    void pressed1ThenDivideThen5ThenDivide()
     {
         // 1 ÷ 5 ÷
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DIVISION)
@@ -945,7 +942,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDivideThenDivide()
+    void pressed1ThenDivideThenDivide()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DIVISION).thenReturn(DIVISION);
         calculator.performNumberButtonAction(actionEvent);
@@ -956,7 +953,7 @@ public class BasicPanelTest
     }
     
     @Test
-    public void pressed1ThenDivideThen0()
+    void pressed1ThenDivideThen0()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DIVISION).thenReturn(ZERO).thenReturn(EQUALS);
         calculator.performNumberButtonAction(actionEvent);
@@ -968,7 +965,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAddThen5ThenSubtract()
+    void pressed1ThenAddThen5ThenSubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION)
                 .thenReturn(FIVE).thenReturn(SUBTRACTION);
@@ -982,7 +979,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAddThen5ThenMultiply()
+    void pressed1ThenAddThen5ThenMultiply()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION)
                 .thenReturn(FIVE).thenReturn(MULTIPLICATION);
@@ -996,7 +993,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAddThen5ThenDivide()
+    void pressed1ThenAddThen5ThenDivide()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE).thenReturn(ADDITION)
@@ -1011,7 +1008,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testAddingTwoNumbersResultsInDecimalNumberThenAdding()
+    void testAddingTwoNumbersResultsInDecimalNumberThenAdding()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION).thenReturn(FIVE);
         calculator.getValues()[0] = "5.5";
@@ -1026,7 +1023,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testAddingTwoNumbersResultsInDecimalNumberThatIsMaxThenAdding()
+    void testAddingTwoNumbersResultsInDecimalNumberThatIsMaxThenAdding()
     {
         when(actionEvent.getActionCommand()).thenReturn(ADDITION);
         calculator.getValues()[0] = "9999998";
@@ -1042,7 +1039,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedAddThenDivideWhenNumberIsMaximum()
+    void pressedAddThenDivideWhenNumberIsMaximum()
     {
         when(actionEvent.getActionCommand()).thenReturn(DIVISION);
         calculator.getValues()[0] = "9999998";
@@ -1055,7 +1052,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSubtractWithNoNumberInput()
+    void pressedSubtractWithNoNumberInput()
     {
         when(actionEvent.getActionCommand()).thenReturn(SUBTRACTION);
         calculator.performAdditionButtonAction(actionEvent);
@@ -1066,7 +1063,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMultiplyWithNoNumberInput()
+    void pressedMultiplyWithNoNumberInput()
     {
         when(actionEvent.getActionCommand()).thenReturn(MULTIPLICATION);
         calculator.performMultiplicationAction(actionEvent);
@@ -1077,7 +1074,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDivideWithNoNumberInput()
+    void pressedDivideWithNoNumberInput()
     {
         when(actionEvent.getActionCommand()).thenReturn(DIVISION);
         calculator.performDivideButtonAction(actionEvent);
@@ -1088,7 +1085,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testAdditionWithWholeNumbers()
+    void testAdditionWithWholeNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsAdding(true);
@@ -1099,7 +1096,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testAdditionWithDecimalNumbers()
+    void testAdditionWithDecimalNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsAdding(true);
@@ -1110,7 +1107,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSubtractionFunctionalityWithWholeNumbers()
+    void testSubtractionFunctionalityWithWholeNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsSubtracting(true);
@@ -1122,7 +1119,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSubtractionFunctionalityWithDecimalNumbers()
+    void testSubtractionFunctionalityWithDecimalNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsSubtracting(true);
@@ -1133,7 +1130,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testMultiplicationFunctionalityWithWholeNumbers()
+    void testMultiplicationFunctionalityWithWholeNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsMultiplying(true);
@@ -1145,7 +1142,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testMultiplicationFunctionalityWithDecimalNumbers()
+    void testMultiplicationFunctionalityWithDecimalNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsMultiplying(true);
@@ -1156,7 +1153,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testDivisionFunctionalityWithWholeNumbers()
+    void testDivisionFunctionalityWithWholeNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsDividing(true);
@@ -1168,7 +1165,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testDivisionFunctionalityWithDecimalNumbers()
+    void testDivisionFunctionalityWithDecimalNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsDividing(true);
@@ -1180,7 +1177,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testDivisionBy0() 
+    void testDivisionBy0() 
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.setIsDividing(true);
@@ -1193,7 +1190,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDelete()
+    void pressedDelete()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + "35");
@@ -1204,7 +1201,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDeleteWhenTextPaneHasBadText()
+    void pressedDeleteWhenTextPaneHasBadText()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
@@ -1222,7 +1219,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testDeleteDoesNothingWhenNothingToDelete()
+    void testDeleteDoesNothingWhenNothingToDelete()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + BLANK);
@@ -1240,7 +1237,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testDeleteClearsTextPaneAfterPressingEquals()
+    void testDeleteClearsTextPaneAfterPressingEquals()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(ADDITION)
                 .thenReturn(THREE).thenReturn(EQUALS).thenReturn(DELETE);
@@ -1262,7 +1259,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then5ThenDecimalThen6ThenAddThenDelete()
+    void pressed1Then5ThenDecimalThen6ThenAddThenDelete()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(DELETE).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + "15.6 +");
@@ -1288,7 +1285,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenSubtractThenDelete()
+    void pressed1ThenSubtractThenDelete()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(ONE)
@@ -1304,7 +1301,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSubtractThen5ThenSubtractThenSubtractThen6ThenEquals()
+    void pressedSubtractThen5ThenSubtractThenSubtractThen6ThenEquals()
     {
         // -5 - 6 =
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
@@ -1322,7 +1319,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSubtractThen5ThenSubtractThen5()
+    void pressedSubtractThen5ThenSubtractThen5()
     {
         // -5 - -5 =
         when(actionEvent.getActionCommand())
@@ -1348,7 +1345,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenMultiplyThenDelete()
+    void pressed1ThenMultiplyThenDelete()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + "1 ✕");
@@ -1363,7 +1360,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenDivideThenDelete()
+    void pressed1ThenDivideThenDelete()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getTextPane().setText(calculator.addNewLines() + "1 ÷");
@@ -1378,7 +1375,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void enteredANumberThenAddThen6DeleteThen5()
+    void enteredANumberThenAddThen6DeleteThen5()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(FIVE);
         calculator.getTextPane().setText(calculator.addNewLines() + SIX);
@@ -1403,7 +1400,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressingClearRestoresCalculatorToStartFunctionality()
+    void pressingClearRestoresCalculatorToStartFunctionality()
     {
         when(actionEvent.getActionCommand()).thenReturn(CLEAR);
         calculator.performClearButtonAction(actionEvent);
@@ -1422,7 +1419,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressingClearEntryWhenOnValuesPosition0ClearsTextPaneAndMainOperatorsAndDecimal()
+    void pressingClearEntryWhenOnValuesPosition0ClearsTextPaneAndMainOperatorsAndDecimal()
     {
         when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY);
         calculator.getTextPane().setText(calculator.addNewLines() + "1088");
@@ -1440,7 +1437,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressingClearEntry()
+    void pressingClearEntry()
     {
         when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY).thenReturn(CLEAR_ENTRY);
         calculator.getTextPane().setText(calculator.addNewLines() + "1088");
@@ -1472,7 +1469,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressingClearEntryAfterPressingAnOperatorResetsTextPaneAndOperator()
+    void pressingClearEntryAfterPressingAnOperatorResetsTextPaneAndOperator()
     {
         when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY);
         calculator.getTextPane().setText(calculator.addNewLines() + "1088 +");
@@ -1483,7 +1480,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedClearEntryWhenTextPaneIsEmpty()
+    void pressedClearEntryWhenTextPaneIsEmpty()
     {
         when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY);
         calculator.performClearEntryButtonAction(actionEvent);
@@ -1498,7 +1495,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquaredButtonWithNoEntry()
+    void pressedSquaredButtonWithNoEntry()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARED);
         basicPanel.performSquaredButtonAction(actionEvent);
@@ -1507,7 +1504,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquaredButtonWithBadText()
+    void pressedSquaredButtonWithBadText()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARED);
         calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
@@ -1516,7 +1513,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenSquaredButton()
+    void pressed5ThenSquaredButton()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(SQUARED);
         calculator.performNumberButtonAction(actionEvent);
@@ -1531,7 +1528,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenDecimalThen0ThenSquaredButton()
+    void pressed5ThenDecimalThen0ThenSquaredButton()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(DECIMAL)
                 .thenReturn(FIVE).thenReturn(SQUARED);
@@ -1550,7 +1547,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenNegateThenSquaredThenNegate()
+    void pressed5ThenNegateThenSquaredThenNegate()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(FIVE).thenReturn(NEGATE)
@@ -1581,7 +1578,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenNegateThenNegate()
+    void pressed5ThenNegateThenNegate()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(NEGATE).thenReturn(NEGATE);
         calculator.performNumberButtonAction(actionEvent);
@@ -1603,7 +1600,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedNegateOnTooBigNumber()
+    void pressedNegateOnTooBigNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(NEGATE);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -1612,7 +1609,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedNegateWhenNoValueInTextPane()
+    void pressedNegateWhenNoValueInTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn(NEGATE);
         calculator.getTextPane().setText(calculator.addNewLines() + BLANK);
@@ -1621,7 +1618,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquareRootWithTextPaneShowingE()
+    void pressedSquareRootWithTextPaneShowingE()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARE_ROOT);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -1630,7 +1627,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquareRootWithTextPaneEmpty()
+    void pressedSquareRootWithTextPaneEmpty()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARE_ROOT);
         calculator.getTextPane().setText(calculator.addNewLines() + BLANK);
@@ -1639,7 +1636,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquareRootWhenCurrentValueIsNegative()
+    void pressedSquareRootWhenCurrentValueIsNegative()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARE_ROOT);
         calculator.getTextPane().setText(calculator.addNewLines() + "-5");
@@ -1650,7 +1647,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquareRootWithWholeNumber()
+    void pressedSquareRootWithWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARE_ROOT);
         calculator.getTextPane().setText(calculator.addNewLines() + "25");
@@ -1661,7 +1658,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedSquareRootWithDecimalNumber()
+    void pressedSquareRootWithDecimalNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SQUARE_ROOT);
         calculator.getTextPane().setText(calculator.addNewLines() + "25.5");
@@ -1673,7 +1670,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMemoryStoreWhenTextPaneIsBlank()
+    void pressedMemoryStoreWhenTextPaneIsBlank()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
         calculator.getTextPane().setText(calculator.addNewLines() + BLANK);
@@ -1683,7 +1680,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMemoryStoreWhenTextPaneContainsValue()
+    void pressedMemoryStoreWhenTextPaneContainsValue()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
         calculator.getTextPane().setText(calculator.addNewLines() + FIVE);
@@ -1694,7 +1691,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMemoryStoreWhenMemoryIsFullOverwritesMemory()
+    void pressedMemoryStoreWhenMemoryIsFullOverwritesMemory()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
         calculator.getTextPane().setText(calculator.addNewLines() + TWO);
@@ -1706,7 +1703,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMemoryStoreWhenTextPaneContainInvalidText()
+    void pressedMemoryStoreWhenTextPaneContainInvalidText()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
         calculator.getTextPane().setText(calculator.addNewLines() + ERROR);
@@ -1716,7 +1713,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMemoryRecall()
+    void pressedMemoryRecall()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_RECALL).thenReturn(MEMORY_RECALL)
                 .thenReturn(MEMORY_RECALL).thenReturn(MEMORY_RECALL);
@@ -1748,7 +1745,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedMemoryClear()
+    void pressedMemoryClear()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_CLEAR);
         calculator.getMemoryValues()[9] = "15";
@@ -1764,7 +1761,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenMemoryAdd()
+    void pressed5ThenMemoryAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
         calculator.getMemoryValues()[0] = "10";
@@ -1779,7 +1776,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSavingAWholeNumberWithMemoryAdd()
+    void testSavingAWholeNumberWithMemoryAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
         calculator.getMemoryValues()[0] = "10";
@@ -1794,7 +1791,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSavingADecimalNumberWithMemoryAdd()
+    void testSavingADecimalNumberWithMemoryAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
         calculator.getMemoryValues()[0] = "10";
@@ -1809,7 +1806,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testMemoryAddFailsWhenSavingBadText()
+    void testMemoryAddFailsWhenSavingBadText()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
         calculator.getMemoryValues()[0] = BLANK;
@@ -1824,7 +1821,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenMemorySub()
+    void pressed5ThenMemorySub()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_SUBTRACTION);
         calculator.getMemoryValues()[0] = "15";
@@ -1839,7 +1836,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSavingAWholeNumberWithMemorySubtract()
+    void testSavingAWholeNumberWithMemorySubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_SUBTRACTION);
         calculator.getMemoryValues()[0] = "15";
@@ -1854,7 +1851,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testSavingADecimalNumberWithMemorySubtract()
+    void testSavingADecimalNumberWithMemorySubtract()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
         calculator.getMemoryValues()[0] = "10";
@@ -1869,7 +1866,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testMemorySubFailsWhenSavingBadText()
+    void testMemorySubFailsWhenSavingBadText()
     {
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
         calculator.getMemoryValues()[0] = BLANK;
@@ -1884,14 +1881,14 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testOpeningHistory()
+    void testOpeningHistory()
     {
         when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
         basicPanel.performHistoryAction(actionEvent);
     }
 
     @Test
-    public void testClosingHistory()
+    void testClosingHistory()
     {
         when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
         when(actionEvent.getActionCommand()).thenReturn(HISTORY_CLOSED);
@@ -1900,7 +1897,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedFractionWhenTextPaneContainsBadText()
+    void pressedFractionWhenTextPaneContainsBadText()
     {
         calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
         basicPanel.performFractionButtonAction(actionEvent);
@@ -1908,7 +1905,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed0ThenFraction()
+    void pressed0ThenFraction()
     {
         when(actionEvent.getActionCommand()).thenReturn(ZERO).thenReturn(FRACTION);
         calculator.performNumberButtonAction(actionEvent);
@@ -1918,7 +1915,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedFractionWhenTextPaneIsBlank()
+    void pressedFractionWhenTextPaneIsBlank()
     {
         calculator.getTextPane().setText(calculator.addNewLines() + BLANK);
         basicPanel.performFractionButtonAction(actionEvent);
@@ -1926,7 +1923,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed5ThenFraction()
+    void pressed5ThenFraction()
     {
         when(actionEvent.getActionCommand()).thenReturn(FRACTION);
         calculator.getTextPane().setText(calculator.addNewLines() + FIVE);
@@ -1937,7 +1934,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedPercentWhenTextPaneContainsBadText()
+    void pressedPercentWhenTextPaneContainsBadText()
     {
         calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
         basicPanel.performPercentButtonAction(actionEvent);
@@ -1945,7 +1942,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedPercentWhenTextPaneIsBlank()
+    void pressedPercentWhenTextPaneIsBlank()
     {
         calculator.getTextPane().setText(calculator.addNewLines() + BLANK);
         basicPanel.performPercentButtonAction(actionEvent);
@@ -1953,7 +1950,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedPercentWithPositiveNumber()
+    void pressedPercentWithPositiveNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(PERCENT);
         calculator.performNumberButtonAction(actionEvent);
@@ -1964,7 +1961,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedPercentWithNegativeNumber()
+    void pressedPercentWithNegativeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SUBTRACTION)
                 .thenReturn(FIVE).thenReturn(PERCENT);
@@ -1977,7 +1974,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1Then0Then6Then5ThenDecimalThen5Then4Then5Then7()
+    void pressed1Then0Then6Then5ThenDecimalThen5Then4Then5Then7()
     {
         when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ZERO)
                 .thenReturn(SIX).thenReturn(FIVE).thenReturn(DECIMAL).thenReturn(FIVE)
@@ -2029,7 +2026,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed0WhenTextPaneHasBadText()
+    void pressed0WhenTextPaneHasBadText()
     {
         when(actionEvent.getActionCommand()).thenReturn(ZERO);
         calculator.getTextPane().setText(calculator.addNewLines() + INFINITY);
@@ -2040,7 +2037,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedDecimalWhenTextPaneHasBadText()
+    void pressedDecimalWhenTextPaneHasBadText()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
         calculator.getTextPane().setText(calculator.addNewLines() + INFINITY);
@@ -2050,7 +2047,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedANumberWhenMaxLengthHasBeenMet()
+    void pressedANumberWhenMaxLengthHasBeenMet()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE);
         calculator.getTextPane().setText(calculator.addNewLines() + "4,500,424");
@@ -2061,7 +2058,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressedPercentThenFraction()
+    void pressedPercentThenFraction()
     {
         // starting panel has 25
         // pressed percent returns 0.25
@@ -2090,7 +2087,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed1ThenAddThen2ThenEqualsThen5()
+    void pressed1ThenAddThen2ThenEqualsThen5()
     {
         // 1 + 2 = 3
         // Pressing 5 Starts new Equation, new number
@@ -2124,7 +2121,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed4Then5ThenMSThenClearThen5ThenMAdd()
+    void pressed4Then5ThenMSThenClearThen5ThenMAdd()
     {
         when(actionEvent.getActionCommand()).thenReturn(FOUR).thenReturn(FIVE)
                 .thenReturn(MEMORY_STORE).thenReturn(CLEAR_ENTRY)
@@ -2140,7 +2137,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressed4Then5ThenMSThenClearThen5ThenMSub()
+    void pressed4Then5ThenMSThenClearThen5ThenMSub()
     {
         when(actionEvent.getActionCommand()).thenReturn(FOUR).thenReturn(FIVE)
                 .thenReturn(MEMORY_STORE).thenReturn(CLEAR_ENTRY)
@@ -2156,7 +2153,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void pressingNumberEnablesDecimal()
+    void pressingNumberEnablesDecimal()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE);
         calculator.getValues()[0] = "10.35";
@@ -2168,7 +2165,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testContinuedDivisionAfterAttemptToDivideByZero()
+    void testContinuedDivisionAfterAttemptToDivideByZero()
     {
         when(actionEvent.getActionCommand()).thenReturn(DIVISION);
         calculator.getValues()[0] = "1";
@@ -2183,7 +2180,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testContinuedDivisionWithWholeNumbers()
+    void testContinuedDivisionWithWholeNumbers()
     {
         when(actionEvent.getActionCommand()).thenReturn(DIVISION);
         calculator.getValues()[0] = "10";
@@ -2198,7 +2195,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedEqualsPrematurelyWithAddition()
+    void testPressedEqualsPrematurelyWithAddition()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.getValues()[0] = SIX;
@@ -2210,7 +2207,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedEqualsPrematurelyWithMultiplication()
+    void testPressedEqualsPrematurelyWithMultiplication()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.getValues()[0] = SIX;
@@ -2222,7 +2219,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedEqualsPrematurelyWithDivision()
+    void testPressedEqualsPrematurelyWithDivision()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.getValues()[0] = SIX;
@@ -2234,7 +2231,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testPressedEqualsPrematurelyWithSubtraction()
+    void testPressedEqualsPrematurelyWithSubtraction()
     {
         when(actionEvent.getActionCommand()).thenReturn(EQUALS);
         calculator.getValues()[0] = "-6";
@@ -2246,7 +2243,7 @@ public class BasicPanelTest
     }
 
     @Test
-    public void testingMathPow() {
+    void testingMathPow() {
         double delta = 0.000001d;
         Number num = 8.0;
         assertEquals(num.doubleValue(), Math.pow(2,3), delta);

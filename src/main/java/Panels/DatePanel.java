@@ -22,6 +22,7 @@ import static Types.CalculatorView.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
+import static Utilities.LoggingUtil.logActionButton;
 
 /**
  * DatePanel
@@ -57,7 +58,6 @@ public class DatePanel extends JPanel
     private boolean isInitialized;
 
     /**************** Constructors ****************/
-
     /**
      * A zero argument constructor for creating a DatePanel
      */
@@ -79,7 +79,6 @@ public class DatePanel extends JPanel
     }
 
     /**************** START OF METHODS ****************/
-
     /**
      * The main method used to define the DatePanel
      * and all of its components and their actions
@@ -128,22 +127,16 @@ public class DatePanel extends JPanel
         String helpString = "How to use the %s Calculator".formatted(this.calculator.getDateOperation());
         switch (calculator.getDateOperation())
         {
-            case DIFFERENCE_BETWEEN_DATES -> {
-                helpString += """
-                \n
+            case DIFFERENCE_BETWEEN_DATES -> helpString += """
                 Enter a date into either field, From or To.
                 Only 1 date is required to change to show a difference.
                 See the difference between the two dates below.
-                """; // .formatted();
-            }
-            case ADD_SUBTRACT_DAYS -> {
-                helpString += """
-                \n
+            """; // .formatted();
+            case ADD_SUBTRACT_DAYS -> helpString += """
                 Select a date from the drop down option.
                 Enter values in the choices: Years, Months, Weeks and/or Days.
                 Click Add or Subtract to execute that action using your values and date.
-                """; //.formatted();
-            }
+            """; //.formatted();
         }
         calculator.setHelpString(helpString);
         calculator.updateShowHelp();
@@ -513,7 +506,7 @@ public class DatePanel extends JPanel
             int month = getTheMonthFromTheFromDatePicker()+1;
             int dayOfMonth = getTheDayOfTheMonthFromTheFromDatePicker();
             LocalDateTime localDateTime = LocalDateTime.of(LocalDate.of(year, month, dayOfMonth), LocalTime.now());
-            LOGGER.debug("new date selected: " + localDateTime.toLocalDate());
+            LOGGER.debug("new date selected: {}", localDateTime.toLocalDate());
             updateResultsLabel(localDateTime);
         }
         LOGGER.info("Finished performing date picker logic");
@@ -667,11 +660,8 @@ public class DatePanel extends JPanel
     public void performRadioButtonFunctionality(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         LOGGER.debug("Add or Subtract radiobutton");
-        //int year = fromDatePicker.getModel().getYear();
-        //int month = fromDatePicker.getModel().getMonth()+1; // zero-based
-        //int dayOfMonth = fromDatePicker.getModel().getDay();
         LocalDateTime localDateTime = LocalDateTime.of(getTheDateFromTheFromDate(), LocalTime.now());
         LOGGER.debug("FromDate is {}", localDateTime.toLocalDate());
         int years = Integer.parseInt(StringUtils.isBlank(yearsTextField.getText()) ? ZERO : yearsTextField.getText());

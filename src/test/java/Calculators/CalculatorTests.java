@@ -4,33 +4,38 @@ import Panels.BasicPanel;
 import Panels.ConverterPanel;
 import Panels.DatePanel;
 import Panels.ProgrammerPanel;
+import Types.CalculatorConverterType;
+import Types.CalculatorView;
+import Types.DateOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
-import static Types.CalculatorByte.*;
-import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
-import static Types.CalculatorConverterType.*;
-import static Types.DateOperation.*;
+import static Types.CalculatorByte.*;
+import static Types.CalculatorConverterType.ANGLE;
+import static Types.CalculatorConverterType.AREA;
+import static Types.CalculatorView.*;
+import static Types.DateOperation.ADD_SUBTRACT_DAYS;
+import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.confirm;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +50,7 @@ import static org.mockito.Mockito.*;
  * @version 4.0
  */
 @ExtendWith(MockitoExtension.class)
-public class CalculatorTests
+class CalculatorTests
 {
     static { System.setProperty("appName", CalculatorTests.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
@@ -57,13 +62,13 @@ public class CalculatorTests
     Calculator calculatorSpy;
 
     @BeforeAll
-    public static void beforeAll()
+    static void beforeAll()
     {
 
     }
 
     @BeforeEach
-    public void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
         LOGGER.info("Setting up beforeEach...");
         calculator = new Calculator();
@@ -71,38 +76,27 @@ public class CalculatorTests
     }
 
     @AfterAll
-    public static void afterAll()
+    static void afterAll()
     { LOGGER.info("Finished running {}", CalculatorTests.class.getSimpleName()); }
 
 
     @AfterEach
-    public void afterEach() throws InterruptedException, InvocationTargetException {
+    void afterEach() throws InterruptedException, InvocationTargetException
+    {
         for (Calculator calculator : java.util.List.of(calculator, calculatorSpy))
         {
             LOGGER.info("Test complete. Closing the calculator...");
-            // Create a WindowEvent with WINDOW_CLOSING event type
-            WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
-
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
                 calculator.dispose();
             });
             assertFalse(calculator.isVisible());
-
-            // Dispatch the event to the JFrame instance
-            //calculator.dispatchEvent(windowClosing);
-
-            // Ensure the clock is no longer visible
-            //assertFalse(calculator.isVisible());
-
-            // Dispose of the JFrame to release resources
-            //calculator.dispose();
         }
     }
 
     /************* Basic Calculator Tests ******************/
     @Test
-    public void createBasicCalculatorDefault() throws Exception
+    void createBasicCalculatorDefault()
     {
         //calculator = new Calculator();
         assertTrue(calculator.isVisible(), "Cannot see basic calculator");
@@ -110,7 +104,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void createBasicCalculatorEnforced() throws Exception
+    void createBasicCalculatorEnforced()
     {
         LOGGER.info("createBasicCalculator enforced...");
         //calculator = new Calculator(VIEW_BASIC);
@@ -121,7 +115,7 @@ public class CalculatorTests
 
     /************* Programmer Calculator Tests ******************/
     @Test
-    public void createProgrammerCalculator() throws Exception
+    void createProgrammerCalculator()
     {
         LOGGER.info("createProgrammerCalculator...");
         //calculator = new Calculator(VIEW_PROGRAMMER);
@@ -130,26 +124,33 @@ public class CalculatorTests
         calculator.setIsMotif(true);
         assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
         assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(calculator.getCalculatorBase(), BASE_DECIMAL, "Base is not decimal");
+        assertSame(BASE_DECIMAL, calculator.getCalculatorBase(), "Base is not decimal");
     }
 
     @Test
-    public void createProgrammerCalculatorInBinaryEnforced() throws Exception
+    void createProgrammerCalculatorWithBaseAndByte() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
-        LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_BINARY);
-        //calculator = new Calculator(BASE_BINARY);
+        calculator = new Calculator(BASE_BINARY, BYTE_WORD);
+        calculator.setVisible(true);
+        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
+        assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
+        assertSame(BASE_BINARY, calculator.getCalculatorBase(), "Base is not binary");
+        assertSame(BYTE_WORD, calculator.getCalculatorByte(), "Byte is not WORD");
+    }
+
+    @Test
+    void createProgrammerCalculatorInBinaryEnforced()
+    {
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.setCalculatorBase(BASE_BINARY);
         assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
         assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(calculator.getCalculatorBase(), BASE_BINARY, "Base is not binary");
+        assertSame(BASE_BINARY, calculator.getCalculatorBase(), "Base is not binary");
     }
 
     @Test
-    public void createProgrammerCalculatorInOctalEnforced() throws Exception
+    void createProgrammerCalculatorInOctalEnforced()
     {
-        LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_OCTAL);
-        //calculator = new Calculator(BASE_OCTAL);
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.setCalculatorBase(BASE_OCTAL);
         assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
@@ -157,31 +158,29 @@ public class CalculatorTests
     }
 
     @Test
-    public void createProgrammerCalculatorInDecimalEnforced() throws Exception
+    void createProgrammerCalculatorInDecimalEnforced()
     {
-        LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_DECIMAL);
-        //calculator = new Calculator(BASE_DECIMAL);
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.setCalculatorBase(BASE_DECIMAL);
         assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
         assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(calculator.getCalculatorBase(), BASE_DECIMAL, "Base is not decimal");
+        assertSame(BASE_DECIMAL, calculator.getCalculatorBase(), "Base is not decimal");
     }
 
     @Test
-    public void createProgrammerCalculatorInHexadecimalEnforced() throws Exception
+    void createProgrammerCalculatorInHexadecimalEnforced()
     {
         LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_HEXADECIMAL);
         //calculator = new Calculator(BASE_HEXADECIMAL);
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.setCalculatorBase(BASE_HEXADECIMAL);
         assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertSame(calculator.getCalculatorBase(), BASE_HEXADECIMAL, "Base is not binary");
+        assertSame(BASE_HEXADECIMAL, calculator.getCalculatorBase(), "Base is not binary");
     }
 
     /************* Scientific Calculator Tests ******************/
     @Test
-    public void createScientificCalculator()
+    void createScientificCalculator()
     {
         LOGGER.warn("createScientificCalculator...");
         LOGGER.warn("IMPLEMENT...");
@@ -189,7 +188,7 @@ public class CalculatorTests
 
     /************* Date Calculator Tests ******************/
     @Test
-    public void createDateCalculator() throws Exception
+    void createDateCalculator()
     {
         LOGGER.info("createDateCalculator...");
         //calculator = new Calculator(VIEW_DATE);
@@ -199,23 +198,38 @@ public class CalculatorTests
         calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see date calculator");
         assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(calculator.getDateOperation(), DIFFERENCE_BETWEEN_DATES, "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
+        assertSame(DIFFERENCE_BETWEEN_DATES, calculator.getDateOperation(), "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDateOperations")
+    void testCreateDateCalculatorWithDateOperationEnforced(DateOperation dateOperation) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        calculator = new Calculator(dateOperation);
+        calculator.setVisible(true);
+        assertTrue(calculator.isVisible(), "Cannot see date calculator");
+        assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
+        assertSame(dateOperation, calculator.getDateOperation(), "Date operation is not " + dateOperation);
+    }
+    private static Stream<Arguments> provideDateOperations() {
+        return Stream.of(
+                Arguments.of(DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ADD_SUBTRACT_DAYS)
+        );
     }
 
     @Test
-    public void createDateCalculatorWithDateOperation1Enforced() throws Exception
+    void createDateCalculatorWithDateOperation1Enforced()
     {
-        LOGGER.info("createDateCalculator with {} enforced...", DIFFERENCE_BETWEEN_DATES);
-        //calculator = new Calculator(DIFFERENCE_BETWEEN_DATES);
         calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(DIFFERENCE_BETWEEN_DATES);
         assertTrue(calculator.isVisible(), "Cannot see date calculator");
         assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(calculator.getDateOperation(), DIFFERENCE_BETWEEN_DATES, "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
+        assertSame(DIFFERENCE_BETWEEN_DATES, calculator.getDateOperation(), "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
     }
 
     @Test
-    public void createDateCalculatorWithDateOperation2Enforced() throws Exception
+    void createDateCalculatorWithDateOperation2Enforced()
     {
         LOGGER.info("createDateCalculator with {} enforced...", ADD_SUBTRACT_DAYS);
         //calculator = new Calculator(ADD_SUBTRACT_DAYS);
@@ -223,12 +237,12 @@ public class CalculatorTests
         calculator.setDateOperation(ADD_SUBTRACT_DAYS);
         assertTrue(calculator.isVisible(), "Cannot see date calculator");
         assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(calculator.getDateOperation(), ADD_SUBTRACT_DAYS, "Date operation is not " + ADD_SUBTRACT_DAYS);
+        assertSame(ADD_SUBTRACT_DAYS, calculator.getDateOperation(), "Date operation is not " + ADD_SUBTRACT_DAYS);
     }
 
     /************* Converter Calculator Tests ******************/
     @Test
-    public void createConverterCalculator() throws Exception
+    void createConverterCalculator()
     {
         LOGGER.info("createConverterCalculator...");
         //calculator = new Calculator(VIEW_CONVERTER);
@@ -238,25 +252,40 @@ public class CalculatorTests
         calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE, "Converter operation is not " + ANGLE);
+        assertSame(ANGLE, calculator.getConverterType(), "Converter operation is not " + ANGLE);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideConverterTypes")
+    void testCreateConverterCalculatorWithTypeEnforced(CalculatorConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        calculator = new Calculator(converterType);
+        calculator.setVisible(true);
+        assertTrue(calculator.isVisible(), "Cannot see converter calculator");
+        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
+        assertSame(converterType, calculator.getConverterType(), "Converter operation is not " + converterType);
+    }
+    private static Stream<Arguments> provideConverterTypes() {
+        return Stream.of(
+                Arguments.of(ANGLE),
+                Arguments.of(AREA)
+        );
     }
 
     @Test
-    public void createConverterCalculatorWithAngleEnforced() throws Exception
+    void createConverterCalculatorWithAngleEnforced()
     {
-        LOGGER.info("createConverterCalculator with {} enforced...", ANGLE);
-        //calculator = new Calculator(ANGLE);
         calculator.setCalculatorView(VIEW_CONVERTER);
         calculator.setConverterType(ANGLE);
         calculator.setCurrentPanel(calculator.getConverterPanel());
         calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), ANGLE, "Converter operation is not " + ANGLE);
+        assertSame(ANGLE, calculator.getConverterType(), "Converter operation is not " + ANGLE);
     }
 
     @Test
-    public void createConverterCalculatorWithAreaEnforced() throws Exception
+    void createConverterCalculatorWithAreaEnforced()
     {
         LOGGER.info("createConverterCalculator with {} enforced...", AREA);
         //calculator = new Calculator(AREA);
@@ -266,60 +295,80 @@ public class CalculatorTests
         calculator.setupPanel(null);
         assertTrue(calculator.isVisible(), "Cannot see converter calculator");
         assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(((ConverterPanel)calculator.getCurrentPanel()).getConverterType(), AREA, "Converter operation is not " + AREA);
+        assertSame(AREA, calculator.getConverterType(), "Converter operation is not " + AREA);
+    }
+
+    /************* Create Calculator By View ******************/
+    @ParameterizedTest
+    @MethodSource("provideCalculatorViews")
+    void createCalculatorByView(CalculatorView calculatorView) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        calculator = new Calculator(calculatorView);
+        calculator.setVisible(true);
+        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView.getValue());
+        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView.getValue());
+    }
+    private static Stream<Arguments> provideCalculatorViews() {
+        return Stream.of(
+                Arguments.of(VIEW_BASIC),
+                Arguments.of(VIEW_PROGRAMMER),
+                Arguments.of(VIEW_SCIENTIFIC),
+                Arguments.of(VIEW_DATE),
+                Arguments.of(VIEW_CONVERTER)
+        );
     }
 
     /************* All Calculator Tests ******************/
     @Test
-    public void testConvertingToPositive()
+    void testConvertingToPositive()
     {
         assertEquals("5.02", calculator.convertToPositive("-5.02"), "Number is not positive");
     }
 
     @Test
-    public void testConvertingToNegative()
+    void testConvertingToNegative()
     {
         assertEquals("-5.02", calculator.convertToNegative("5.02"), "Number is not negative");
     }
 
     @Test
-    public void testIsPositiveReturnsTrue()
+    void testIsPositiveReturnsTrue()
     {
         assertTrue(calculator.isPositiveNumber(SIX), "IsPositive did not return true");
     }
 
     @Test
-    public void testIsPositiveReturnsFalse()
+    void testIsPositiveReturnsFalse()
     {
         assertFalse(calculator.isPositiveNumber("-6"), "IsPositive did not return false");
     }
 
     @Test
-    public void testIsNegativeReturnsTrue()
+    void testIsNegativeReturnsTrue()
     {
         assertTrue(calculator.isNegativeNumber("-6"), "IsNegative did not return true");
     }
 
     @Test
-    public void testIsNegativeReturnsFalse()
+    void testIsNegativeReturnsFalse()
     {
         assertFalse(calculator.isNegativeNumber(SIX), "IsNegative did not return false");
     }
 
     @Test
-    public void testIsDecimalNumberReturnsTrue()
+    void testIsDecimalNumberReturnsTrue()
     {
         assertTrue(calculator.isDecimalNumber("5.02"), "Number should contain the decimal");
     }
 
     @Test
-    public void testIsDecimalNumberReturnsFalse()
+    void testIsDecimalNumberReturnsFalse()
     {
         assertFalse(calculator.isDecimalNumber(FIVE), "Number should not contain the decimal");
     }
 
     @Test
-    public void methodResetCalculatorOperationsWithTrueResultsInAllOperatorsBeingTrue()
+    void methodResetCalculatorOperationsWithTrueResultsInAllOperatorsBeingTrue()
     {
         calculator.resetOperators(true);
         assertTrue(calculator.isAdding(), "isAdding() is not true");
@@ -329,7 +378,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void methodResetCalculatorOperationsWithFalseResultsInAllOperatorsBeingFalse()
+    void methodResetCalculatorOperationsWithFalseResultsInAllOperatorsBeingFalse()
     {
         calculator.resetOperators(false);
         assertFalse(calculator.isAdding(), "isAdding() is not false");
@@ -339,7 +388,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void methodResetCalculatorOperationsWithFalse()
+    void methodResetCalculatorOperationsWithFalse()
     {
         calculator.getValues()[0] = FIVE;
         boolean resetResult = calculator.resetCalculatorOperations(false);
@@ -348,7 +397,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void methResetCalculatorOperationsWithTrue()
+    void methResetCalculatorOperationsWithTrue()
     {
         calculator.getValues()[0] = FIVE;
         boolean resetResult = calculator.resetCalculatorOperations(true);
@@ -357,7 +406,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testSetImageIconsWorksAsExpected()
+    void testSetImageIconsWorksAsExpected()
     {
         assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
         assertNotNull( calculator.getMacIcon(), "Expected mac icon");
@@ -366,7 +415,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromProgrammerToBasicSwitchesPanels()
+    void switchingFromProgrammerToBasicSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
         //calculator.setCalculatorView(VIEW_PROGRAMMER);
@@ -383,7 +432,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToProgrammerSwitchesPanels()
+    void switchingFromBasicToProgrammerSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.getTextPane().setText(FOUR);
@@ -397,7 +446,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToDateSwitchesPanels()
+    void switchingFromBasicToDateSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_DATE.getValue());
         assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
@@ -408,7 +457,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToAngleConverterSwitchesPanels()
+    void switchingFromBasicToAngleConverterSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
@@ -420,7 +469,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromBasicToAreaConverterSwitchesPanels()
+    void switchingFromBasicToAreaConverterSwitchesPanels()
     {
         when(actionEvent.getActionCommand()).thenReturn(AREA.getValue());
         assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
@@ -432,7 +481,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromSomePanelToSamePanelDoesNotPerformViewMenuAction()
+    void switchingFromSomePanelToSamePanelDoesNotPerformViewMenuAction()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
         BasicPanel panel = (BasicPanel) calculator.getCurrentPanel();
@@ -446,7 +495,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingFromSomeConverterToSameConverterDoesNotPerformViewMenuAction()
+    void switchingFromSomeConverterToSameConverterDoesNotPerformViewMenuAction()
     {
         when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
         calculator.setCalculatorView(VIEW_CONVERTER);
@@ -464,7 +513,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToMetalLookAndFeel()
+    void switchingToMetalLookAndFeel()
     {
         when(actionEvent.getSource()).thenReturn(calculator.getLookMenu());
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
@@ -472,9 +521,8 @@ public class CalculatorTests
         {
             if (METAL.equals(menuItem.getName()))
             {
-                Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
-                    listener.actionPerformed(actionEvent);
-                });
+                Arrays.stream(menuItem.getListeners(ActionListener.class))
+                        .forEach(listener -> listener.actionPerformed(actionEvent));
             }
         }
         if (calculator.isOSMac())
@@ -483,16 +531,15 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToSystemLookAndFeel()
+    void switchingToSystemLookAndFeel()
     {
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
             if (SYSTEM.equals(menuItem.getName()))
             {
-                Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
-                    listener.actionPerformed(actionEvent);
-                });
+                Arrays.stream(menuItem.getListeners(ActionListener.class))
+                        .forEach(listener -> listener.actionPerformed(actionEvent));
             }
         }
         if (!calculator.isOSMac())
@@ -503,16 +550,15 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToWindowsLookAndFeel()
+    void switchingToWindowsLookAndFeel()
     {
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
             if (WINDOWS.equals(menuItem.getName()))
             {
-                Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
-                    listener.actionPerformed(actionEvent);
-                });
+                Arrays.stream(menuItem.getListeners(ActionListener.class))
+                        .forEach(listener -> listener.actionPerformed(actionEvent));
             }
         }
         if (!calculator.isOSMac())
@@ -522,7 +568,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToMotifLookAndFeel()
+    void switchingToMotifLookAndFeel()
     {
         when(actionEvent.getSource()).thenReturn(calculator.getLookMenu());
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
@@ -530,9 +576,8 @@ public class CalculatorTests
         {
             if (MOTIF.equals(menuItem.getName()))
             {
-                Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
-                    listener.actionPerformed(actionEvent);
-                });
+                Arrays.stream(menuItem.getListeners(ActionListener.class))
+                        .forEach(listener -> listener.actionPerformed(actionEvent));
             }
         }
         if (calculator.isOSMac())
@@ -541,16 +586,15 @@ public class CalculatorTests
     }
 
     @Test
-    public void switchingToGTKLookAndFeel()
+    void switchingToGTKLookAndFeel()
     {
         var lookMenuItems = calculator.getLookMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
             if (GTK.equals(menuItem.getName()))
             {
-                Arrays.stream(menuItem.getListeners(ActionListener.class)).forEach(listener -> {
-                    listener.actionPerformed(actionEvent);
-                });
+                Arrays.stream(menuItem.getListeners(ActionListener.class))
+                        .forEach(listener -> listener.actionPerformed(actionEvent));
             }
         }
         if (!calculator.isOSMac())
@@ -560,7 +604,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testResetValues()
+    void testResetValues()
     {
         calculator.values[0] = ONE + FIVE;
         calculator.values[1] = TWO + SIX;
@@ -578,35 +622,35 @@ public class CalculatorTests
     }
 
     @Test
-    public void testClearNumberButtonActions()
+    void testClearNumberButtonActions()
     {
-        calculator.getNumberButtons().forEach(numberButton -> {
-            assertSame(1, numberButton.getActionListeners().length, "Expecting only 1 action on " + numberButton.getName());
-        });
+        calculator.getNumberButtons()
+                .forEach(numberButton ->
+                        assertSame(1, numberButton.getActionListeners().length, "Expecting only 1 action on " + numberButton.getName()));
 
         calculator.clearNumberButtonActions();
 
-        calculator.getNumberButtons().forEach(numberButton -> {
-            assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName());
-        });
+        calculator.getNumberButtons()
+                .forEach(numberButton ->
+                        assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName()));
     }
 
     @Test
-    public void testClearAllCommonButtons()
+    void testClearAllCommonButtons()
     {
-        calculator.getCommonButtons().forEach(otherButton -> {
-            assertSame(1, otherButton.getActionListeners().length, "Expecting only 1 action on " + otherButton.getName());
-        });
+        calculator.getCommonButtons()
+                .forEach(otherButton ->
+                        assertSame(1, otherButton.getActionListeners().length, "Expecting only 1 action on " + otherButton.getName()));
 
         calculator.clearAllCommonButtons();
 
-        calculator.getCommonButtons().forEach(otherButton -> {
-            assertSame(0, otherButton.getActionListeners().length, "Expecting no actions on " + otherButton.getName());
-        });
+        calculator.getCommonButtons()
+                .forEach(otherButton ->
+                        assertSame(0, otherButton.getActionListeners().length, "Expecting no actions on " + otherButton.getName()));
     }
 
     @Test
-    public void testDetermineIfAddingOperatorWasPushed()
+    void testDetermineIfAddingOperatorWasPushed()
     {
         assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsAdding(true);
@@ -618,7 +662,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfSubtractingOperatorWasPushed()
+    void testDetermineIfSubtractingOperatorWasPushed()
     {
         assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsSubtracting(true);
@@ -630,7 +674,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfMultiplyingOperatorWasPushed()
+    void testDetermineIfMultiplyingOperatorWasPushed()
     {
         assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsMultiplying(true);
@@ -642,7 +686,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDetermineIfDividingOperatorWasPushed()
+    void testDetermineIfDividingOperatorWasPushed()
     {
         assertFalse(calculator.isOperatorActive(), "Did not expect any operator to be pushed");
         calculator.setIsDividing(true);
@@ -654,7 +698,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testResetOperatorIfClause()
+    void testResetOperatorIfClause()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
         calculator.setIsAdding(true);
@@ -671,7 +715,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testResetOperatorElseClause()
+    void testResetOperatorElseClause()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
         calculator.setIsAdding(false);
@@ -689,13 +733,13 @@ public class CalculatorTests
     }
 
     @Test
-    public void testIsMemoryValuesEmptyIsTrue() throws Exception
+    void testIsMemoryValuesEmptyIsTrue()
     {
         assertTrue(calculator.isMemoryValuesEmpty());
     }
 
     @Test
-    public void testIsMemoryValuesEmptyIsFalseForBasicCalculator()
+    void testIsMemoryValuesEmptyIsFalseForBasicCalculator()
     {
         calculator.getTextPane().setText(FIVE);
         calculator.getMemoryValues()[0] = FIVE;
@@ -705,7 +749,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testIsMemoryValuesEmptyIsFalseForProgrammerCalculator()
+    void testIsMemoryValuesEmptyIsFalseForProgrammerCalculator()
     {
         calculator.setCalculatorView(VIEW_PROGRAMMER);
         calculator.getTextPane().setText(FIVE);
@@ -715,7 +759,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testInitialChecksIfClause()
+    void testInitialChecksIfClause()
     {
         calculator.getValues()[0] = NOT_A_NUMBER;
         calculator.getTextPane().setText(NOT_A_NUMBER);
@@ -732,7 +776,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testInitialChecksElseIf1Clause()
+    void testInitialChecksElseIf1Clause()
     {
         calculator.values[0] = ZERO;
         calculator.getTextPane().setText(calculator.addNewLines() + ZERO);
@@ -751,7 +795,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testInitialChecksElseIf2Clause()
+    void testInitialChecksElseIf2Clause()
     {
         calculator.values[0] = BLANK;
         calculator.values[1] = ONE + FIVE; // 15
@@ -763,33 +807,33 @@ public class CalculatorTests
 
         calculator.performInitialChecks();
 
-        assertSame("15", calculator.getValues()[0], "Expected values[0] to be 15");
+        assertSame(ONE+FIVE, calculator.getValues()[0], "Expected values[0] to be 15");
         assertTrue(calculator.getValues()[1].isBlank(), "Expected values[1] to be blank");
     }
 
     @Test
-    public void testInitialChecksDoesNotEnterAnyClause()
+    void testInitialChecksDoesNotEnterAnyClause()
     {
         calculator.getTextPane().setText(FIVE);
         calculator.performInitialChecks();
     }
 
     @Test
-    public void testTextPaneContainsBadTextTrue()
+    void testTextPaneContainsBadTextTrue()
     {
         calculator.getTextPane().setText(NOT_A_NUMBER);
         assertTrue(calculator.textPaneContainsBadText(), "Expected textPane to contain error");
     }
 
     @Test
-    public void testTextPaneContainsBadTextFalse()
+    void testTextPaneContainsBadTextFalse()
     {
         calculator.getTextPane().setText(FIVE);
         assertFalse(calculator.textPaneContainsBadText(), "Expected textPane to contain valid text");
     }
 
     @Test
-    public void testConfirmCalledForDatePanelWithDateOperation2()
+    void testConfirmCalledForDatePanelWithDateOperation2()
     {
         calculator.setCalculatorView(VIEW_DATE);
         calculator.setDateOperation(ADD_SUBTRACT_DAYS);
@@ -799,14 +843,14 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddNewLineCharactersForBasicPanelAdds1NewLine()
+    void testAddNewLineCharactersForBasicPanelAdds1NewLine()
     {
         String newLines = calculator.addNewLines();
         assertSame(1, newLines.split(BLANK).length);
     }
 
     @Test
-    public void testAddNewLineCharactersForProgrammerPanelAdds3NewLines()
+    void testAddNewLineCharactersForProgrammerPanelAdds3NewLines()
     {
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
         //calculator.updateJPanel(new ProgrammerPanel());
@@ -815,38 +859,32 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDynamicAddNewLineCharacters()
+    void testDynamicAddNewLineCharacters()
     {
         String newLines = calculator.addNewLines(10);
         assertSame(10, newLines.split(BLANK).length);
     }
 
     @Test
-    public void testGetAboutCalculatorStringReturnsText() throws Exception
-    {
-        // Later
-    }
-
-    @Test
-    public void testAboutCalculatorOpensAboutCalculatorPanel()
+    void testAboutCalculatorOpensAboutCalculatorPanel()
     {
         calculator.performAboutCalculatorAction(actionEvent);
     }
 
     @Test
-    public void testGetTheNumberToTheLeftOfTheDecimal()
+    void testGetTheNumberToTheLeftOfTheDecimal()
     {
         assertEquals("123", calculator.getNumberOnLeftSideOfDecimal("123.456"));
     }
 
     @Test
-    public void testGetTheNumberToTheRightOfTheDecimal()
+    void testGetTheNumberToTheRightOfTheDecimal()
     {
         assertEquals("456", calculator.getNumberOnRightSideOfDecimal("123.456"));
     }
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         calculator.getTextPane().setText(FIVE);
         assertTrue(calculator.getValues()[2].isBlank(), "Expected values[2] to be blank");
@@ -857,7 +895,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testPaste()
+    void testPaste()
     {
         calculator.performPasteAction(actionEvent);
         assertTrue(calculator.getValues()[2].isBlank(), "Expected values[2] to be blank");
@@ -877,14 +915,14 @@ public class CalculatorTests
     }
 
     @Test
-    public void testClearingZeroesAtTheEnd() throws Exception
+    void testClearingZeroesAtTheEnd()
     {
         calculator.getValues()[0] = "15.0";
         assertEquals("15", calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]), "Expected values[0] to be 15");
     }
 
     @Test
-    public void testAddCourtesyCommasAddsNoCommas()
+    void testAddCourtesyCommasAddsNoCommas()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE);
         calculator.getValues()[0] = "2";
@@ -894,7 +932,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber()
+    void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE);
         calculator.setCalculatorBase(BASE_DECIMAL);
@@ -907,7 +945,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber()
+    void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(FIVE);
         calculator.valuesPosition = 0;
@@ -919,7 +957,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber()
+    void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber()
     {
         when(actionEvent.getActionCommand()).thenReturn(SIX);
         calculator.valuesPosition = 0;
@@ -931,7 +969,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testDeletingADigitAdjustsCourtesyCommas()
+    void testDeletingADigitAdjustsCourtesyCommas()
     {
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
         calculator.getValues()[0] = "12345";
@@ -957,7 +995,7 @@ public class CalculatorTests
         "123456, '123,456'"
     })
     @DisplayName("Test addThousandsDelimiter")
-    public void testAddThousandsDelimiter(String input, String expecting)
+    void testAddThousandsDelimiter(String input, String expecting)
     {
         when(actionEvent.getActionCommand()).thenReturn(String.valueOf(input.charAt(input.length()-1)));
         calculator.valuesPosition = 0;
@@ -969,23 +1007,15 @@ public class CalculatorTests
         assertEquals(input, calculator.getValueAtPosition(), "Expected values[0] to be " + expecting);
     }
 
-//    @Test
-//    public void testCheckValueLength()
-//    {
-//        calculator.values[0] = "9999998";
-//        calculator.performNumberButtonAction();
-//        // TODO: Not able to assert anything yet
-//    }
-
     @Test
-    public void testValueAt0IsMinimumNumber()
+    void testValueAt0IsMinimumNumber()
     {
         calculator.values[0] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
     }
 
     @Test
-    public void testValueAt1IsMinimumNumber()
+    void testValueAt1IsMinimumNumber()
     {
         calculator.valuesPosition = 1;
         calculator.values[1] = "-9999999"; //"0.0000001";
@@ -993,21 +1023,21 @@ public class CalculatorTests
     }
 
     @Test
-    public void testValueIsMinimumNumber()
+    void testValueIsMinimumNumber()
     {
         calculator.getValues()[0] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(calculator.getValues()[0]), "Expected maximum number to be met");
     }
 
     @Test
-    public void testValuesAt0IsMaximumNumber()
+    void testValuesAt0IsMaximumNumber()
     {
         calculator.values[0] = "9999999";
         assertTrue(calculator.isMaximumValue(), "Expected maximum number to be met");
     }
 
     @Test
-    public void testValuesAt1IsMaximumNumber()
+    void testValuesAt1IsMaximumNumber()
     {
         calculator.valuesPosition = 1;
         calculator.values[calculator.valuesPosition] = "9999999";
@@ -1015,25 +1045,25 @@ public class CalculatorTests
     }
 
     @Test
-    public void testValueIsMaximumNumber()
+    void testValueIsMaximumNumber()
     {
         calculator.values[0] = "9999999";
         assertTrue(calculator.isMaximumValue(calculator.getValues()[0]), "Expected maximum number to be met");
     }
 
     @Test
-    public void testMenuOptionsForWindowsAdded()
+    void testMenuOptionsForViewMenu()
     {
-         doAnswer((InvocationOnMock invocationOnMock) ->
-                 calculator.getRootPane()
-         ).when(calculatorSpy).getRootPane();
-         doReturn(false).when(calculatorSpy).isOSMac();
-         calculatorSpy.configureMenuBar();
-         assertEquals(5, calculator.getViewMenu().getMenuComponents().length, "Expected View menu to have 3 options");
+         assertEquals(VIEW_BASIC.getValue(), calculator.getViewMenu().getMenuComponents()[0].getName(), "Expected Basic View Menu Item");
+         assertEquals(VIEW_PROGRAMMER.getValue(), calculator.getViewMenu().getMenuComponents()[1].getName(), "Expected Programmer View Menu Item");
+         assertEquals(VIEW_DATE.getValue(), calculator.getViewMenu().getMenuComponents()[2].getName(), "Expected Date View Menu Item");
+         assertEquals(VIEW_CONVERTER.getValue(), calculator.getViewMenu().getMenuComponents()[4].getName(), "Expected Converter View Menu Item");
+         assertEquals(ANGLE.getValue(), ((JMenu)calculator.getViewMenu().getMenuComponents()[4]).getMenuComponents()[0].getName(), "Expected Angle Converter Menu Item");
+         assertEquals(AREA.getValue(), ((JMenu)calculator.getViewMenu().getMenuComponents()[4]).getMenuComponents()[1].getName(), "Expected Area Converter Menu Item");
     }
 
     @Test
-    public void testAboutCalculatorShowsWindowsInText()
+    void testAboutCalculatorShowsWindowsInText()
     {
         doReturn(false).when(calculatorSpy).isOSMac();
         assertTrue(calculatorSpy.getAboutCalculatorString().contains(WINDOWS), "Expected About Calculator Text to have Windows");
@@ -1041,7 +1071,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testGetLowestMemoryValuePosition()
+    void testGetLowestMemoryValuePosition()
     {
         calculator.getMemoryValues()[0] = ONE;
         calculator.getMemoryValues()[1] = TWO;
@@ -1051,7 +1081,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testShowMemoryValuesShowsNoMemoriesSaved()
+    void testShowMemoryValuesShowsNoMemoriesSaved()
     {
         when(actionEvent.getActionCommand()).thenReturn("Show Memory Values");
         calculator.performShowMemoriesAction(actionEvent);
@@ -1061,7 +1091,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testClearBasicHistoryTextPane()
+    void testClearBasicHistoryTextPane()
     {
         when(actionEvent.getActionCommand()).thenReturn("Clearing BasicHistoryTextPane");
         calculator.performClearHistoryTextPaneAction(actionEvent);
@@ -1071,7 +1101,7 @@ public class CalculatorTests
     }
 
     @Test
-    public void testShowMemoryValuesInHistoryPane()
+    void testShowMemoryValuesInHistoryPane()
     {
         when(actionEvent.getActionCommand()).thenReturn("Show Memory Values");
         calculator.getMemoryValues()[0] = ONE;
@@ -1087,7 +1117,7 @@ public class CalculatorTests
 
     @Test
     @DisplayName("Convert Byte Binary 3 to Decimal 3")
-    public void testConvertFromBaseToBase()
+    void testConvertFromBaseToBase()
     {
         String binary = "00000011";
         calculator.setCalculatorBase(BASE_BINARY);
@@ -1100,7 +1130,7 @@ public class CalculatorTests
 
     @Test
     @DisplayName("Convert Word Binary 3 to Decimal 3")
-    public void test2ConvertFromBaseToBase() throws InterruptedException
+    void test2ConvertFromBaseToBase()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
@@ -1116,7 +1146,7 @@ public class CalculatorTests
 
     @Test
     @DisplayName("Convert DWord Binary 3 to Decimal 3")
-    public void test3ConvertFromBaseToBase() throws InterruptedException
+    void test3ConvertFromBaseToBase()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
@@ -1133,7 +1163,7 @@ public class CalculatorTests
 
     @Test
     @DisplayName("Convert QWord Binary 3 to Decimal 3")
-    public void test4ConvertFromBaseToBase() throws InterruptedException
+    void test4ConvertFromBaseToBase()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
@@ -1150,7 +1180,7 @@ public class CalculatorTests
 
     @Test
     @DisplayName("Convert QWord Binary # to Decimal #")
-    public void test5ConvertFromBaseToBase() throws InterruptedException
+    void test5ConvertFromBaseToBase()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
@@ -1168,7 +1198,7 @@ public class CalculatorTests
 
     @Test
     @DisplayName("Convert Largest Binary # to Decimal #")
-    public void test6ConvertFromBaseToBase() throws InterruptedException
+    void test6ConvertFromBaseToBase()
     {
         when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
         calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);

@@ -1,33 +1,32 @@
 package Panels;
 
 import Calculators.Calculator;
+import Calculators.CalculatorError;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.Locale;
 
+import static Types.DateOperation.ADD_SUBTRACT_DAYS;
 import static Utilities.LoggingUtil.confirm;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static Types.DateOperation.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -38,38 +37,38 @@ import static org.mockito.Mockito.when;
  * @author Michael Ball
  * @version 4.0
  */
-public class DatePanelTest
+@ExtendWith(MockitoExtension.class)
+class DatePanelTest
 {
     static { System.setProperty("appName", DatePanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
-    private static Calculator calculator;
-    private static DatePanel datePanel;
+
+    private Calculator calculator;
+    private DatePanel datePanel;
 
     @Mock
     ActionEvent actionEvent;
 
     @BeforeAll
-    public static void beforeAll() throws Exception
-    {
-        calculator = new Calculator(ADD_SUBTRACT_DAYS);
-        calculator.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        datePanel = (DatePanel) calculator.getDatePanel();
-
-    }
+    static void beforeAll()
+    {}
 
     @BeforeEach
-    public void beforeEach()
-    { MockitoAnnotations.initMocks(this); }
+    void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        calculator = new Calculator(ADD_SUBTRACT_DAYS);
+        calculator.setVisible(true);
+        datePanel = calculator.getDatePanel();
+        datePanel.setupDatePanel(calculator, ADD_SUBTRACT_DAYS);
+        calculator.setCurrentPanel(datePanel);
+    }
 
     @AfterEach
-    public void afterEach() throws InterruptedException, InvocationTargetException
+    void afterEach() throws InterruptedException, InvocationTargetException
     {
         for (Calculator calculator : java.util.List.of(calculator))
         {
             LOGGER.info("Test complete. Closing the calculator...");
-            // Create a WindowEvent with WINDOW_CLOSING event type
-            WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
-
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
                 calculator.dispose();
@@ -77,6 +76,10 @@ public class DatePanelTest
             assertFalse(calculator.isVisible());
         }
     }
+
+    @AfterAll
+    static void afterAll()
+    { LOGGER.info("Finished running {}", DatePanelTest.class.getSimpleName()); }
 
     @Test
     public void testSubtractRadioButtonWorks()

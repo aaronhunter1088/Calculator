@@ -7,20 +7,18 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 
-import static Types.CalculatorBase.*;
-import static Types.CalculatorByte.*;
+import static Types.CalculatorBase.BASE_BINARY;
+import static Types.CalculatorBase.BASE_DECIMAL;
+import static Types.CalculatorByte.BYTE_BYTE;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * ProgrammerPanelTest
@@ -31,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @version 4.0
  */
 @ExtendWith(MockitoExtension.class)
-public class ProgrammerPanelTest
+class ProgrammerPanelTest
 {
     static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
@@ -44,30 +42,25 @@ public class ProgrammerPanelTest
     ActionEvent actionEvent;
 
     @BeforeAll
-    public static void beforeAll() throws Exception
-    { }
+    static void beforeAll()
+    {}
 
     @BeforeEach
-    public void beforeEach() throws Exception
+    void beforeEach() throws Exception
     {
         calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
         calculator.pack();
         programmerPanel = calculator.getProgrammerPanel();
+        programmerPanel.setupProgrammerPanel(calculator);
+        calculator.setCurrentPanel(programmerPanel);
     }
 
-    @AfterAll
-    public static void afterAll()
-    { LOGGER.info("Finished running {}", ProgrammerPanel.class.getSimpleName()); }
-
     @AfterEach
-    public void afterEach() throws InterruptedException, InvocationTargetException
+    void afterEach() throws InterruptedException, InvocationTargetException
     {
         for (Calculator calculator : java.util.List.of(calculator))
         {
             LOGGER.info("Test complete. Closing the calculator...");
-            // Create a WindowEvent with WINDOW_CLOSING event type
-            WindowEvent windowClosing = new WindowEvent(calculator, WindowEvent.WINDOW_CLOSING);
-
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
                 calculator.dispose();
@@ -75,6 +68,10 @@ public class ProgrammerPanelTest
             assertFalse(calculator.isVisible());
         }
     }
+
+    @AfterAll
+    static void afterAll()
+    { LOGGER.info("Finished running {}", ProgrammerPanel.class.getSimpleName()); }
 
     @Test
     public void switchingFromBasicToProgrammerConvertsTextArea()
@@ -181,7 +178,7 @@ public class ProgrammerPanelTest
         calculator.getValues()[0] = FIVE;
         calculator.getValues()[1] = BLANK;
         calculator.setValuesPosition(0);
-        programmerPanel.performButtonModulusAction(actionEvent);
+        programmerPanel.performModulusButtonAction(actionEvent);
         // TODO: Uncomment and fix
         //assertEquals(TEXT_PANE_WRONG_VALUE, number+" Mod", calculator.getTextPaneValueForProgrammerPanel());
         assertNotEquals("Values[0] should not match ", calculator.getValues()[0], calculator.getTextPaneValue());
@@ -272,7 +269,7 @@ public class ProgrammerPanelTest
         when(actionEvent.getActionCommand()).thenReturn(MODULUS);
         calculator.getValues()[0] = FOUR;
         calculator.getValues()[1] = THREE;
-        programmerPanel.performButtonModulusAction(actionEvent);
+        programmerPanel.performModulusButtonAction(actionEvent);
         assertEquals(ONE, calculator.getValues()[0], "Modulus not as expected");
     }
 
@@ -282,7 +279,7 @@ public class ProgrammerPanelTest
         when(actionEvent.getActionCommand()).thenReturn(MODULUS);
         calculator.getValues()[0] = FOUR;
         calculator.getValues()[1] = ZERO;
-        programmerPanel.performButtonModulusAction(actionEvent);
+        programmerPanel.performModulusButtonAction(actionEvent);
         assertEquals(ZERO, calculator.getValues()[0], "Modulus not as expected");
     }
 

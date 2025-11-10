@@ -93,18 +93,16 @@ public class ProgrammerPanel extends JPanel
         if (!isInitialized)
         {
             setCalculator(calculator);
-            this.programmerPanel = new JPanel(new GridBagLayout());
+            setProgrammerPanel(new JPanel(new GridBagLayout()));
             this.programmerPanel.setName("ProgrammerPanel");
-            this.memoryPanel = new JPanel(new GridBagLayout());
+            setMemoryPanel(new JPanel(new GridBagLayout()));
             this.memoryPanel.setName("MemoryPanel");
-            this.buttonsPanel = new JPanel(new GridBagLayout());
+            setButtonsPanel(new JPanel(new GridBagLayout()));
             this.buttonsPanel.setName("ButtonsPanel");
-            this.historyPanel = new JPanel(new GridBagLayout());
+            setHistoryPanel(new JPanel(new GridBagLayout()));
             this.historyPanel.setName("HistoryPanel");
             setLayout(new GridBagLayout());
             constraints = new GridBagConstraints();
-            if (calculator.getCalculatorBase() == null) { calculator.setCalculatorBase(BASE_DECIMAL); }
-            if (calculator.getCalculatorByte() == null) { calculator.setCalculatorByte(BYTE_BYTE); }
             setSize(new Dimension(227,383)); // sets main size
             setMinimumSize(new Dimension(227, 383)); // sets minimum size
             setupProgrammerHistoryZone();
@@ -216,17 +214,20 @@ public class ProgrammerPanel extends JPanel
      */
     public void setupProgrammerHistoryZone()
     {
-        LOGGER.debug("Configuring ProgrammerHistoryZone...");
+        LOGGER.debug("Configuring Programmer History Panel...");
         constraints.anchor = GridBagConstraints.WEST;
-        calculator.addComponent(this, constraints, historyPanel, new JLabel(HISTORY), 0, 0); // space before with jtextarea
+        JLabel historyLabel = new JLabel(HISTORY);
+        historyLabel.setName("HistoryLabel");
+        calculator.addComponent(this, constraints, historyPanel, historyLabel, 0, 0); // space before with jtextarea
 
         calculator.setupHistoryTextPane();
         JScrollPane scrollPane = new JScrollPane(programmerHistoryTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setName("HistoryScrollPane");
         scrollPane.setPreferredSize(programmerHistoryTextPane.getSize());
 
         calculator.addComponent(this, constraints, historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
                 1, 6, 0, 0, GridBagConstraints.BOTH, 0);
-        LOGGER.debug("ProgrammerHistoryZone configured");
+        LOGGER.debug("Programmer History Panel configured");
     }
 
     /**
@@ -249,38 +250,49 @@ public class ProgrammerPanel extends JPanel
             button.setEnabled(true);
         });
         buttonModulus.setName(MODULUS);
-        buttonModulus.addActionListener(this::performButtonModulusAction);
+        buttonModulus.addActionListener(this::performModulusButtonAction);
         LOGGER.debug("Modulus button configured");
+
         buttonLeftParenthesis.setName(LEFT_PARENTHESIS);
         buttonLeftParenthesis.addActionListener(this::performLeftParenthesisButtonAction);
         LOGGER.warn("Right Parenthesis button needs to be configured");
+
         buttonRightParenthesis.setName(RIGHT_PARENTHESIS);
         buttonRightParenthesis.addActionListener(this::performRightParenthesisButtonAction);
         LOGGER.warn("Right Parenthesis button needs to be configured");
+
         buttonRotateLeft.setName(ROL);
         buttonRotateLeft.addActionListener(this::performRotateLeftButtonAction);
         LOGGER.debug("RoL button configured");
+
         buttonRotateRight.setName(ROR);
         buttonRotateRight.addActionListener(this::performRotateRightButtonAction);
         LOGGER.debug("RoR button configured");
+
         buttonOr.setName(OR);
         buttonOr.addActionListener(this::performOrButtonAction);
         LOGGER.debug("Or button configured");
+
         buttonXor.setName(XOR);
         buttonXor.addActionListener(this::performXorButtonAction);
         LOGGER.debug("Xor button configured");
+
         buttonShiftLeft.setName(LSH);
         buttonShiftLeft.addActionListener(this::performLeftShiftButtonAction);
         LOGGER.debug("Left Shift button configured");
+
         buttonShiftRight.setName(RSH);
         buttonShiftRight.addActionListener(this::performRightShiftButtonAction);
         LOGGER.debug("Right Shift button configured");
+
         buttonNot.setName(NOT);
         buttonNot.addActionListener(this::performNotButtonAction);
         LOGGER.debug("Not button configured");
+
         buttonAnd.setName(AND);
         buttonAnd.addActionListener(this::performAndButtonAction);
         LOGGER.debug("And button configured");
+
         buttonA.setName(A);
         buttonB.setName(B);
         buttonC.setName(C);
@@ -294,14 +306,17 @@ public class ProgrammerPanel extends JPanel
             hexadecimalNumberButton.addActionListener(this::performNumberButtonActions);
         });
         LOGGER.debug("Hexadecimal buttons configured");
+
         enableDisableNumberButtonsBasedOnBase();
         buttonShift.setName(SHIFT);
         buttonShift.addActionListener(this::performShiftButtonAction);
         LOGGER.debug("Shift button configured");
+
         buttonBytes.setName(BYTE + LOWER_CASE_S);
         buttonBytes.setPreferredSize(new Dimension(70, 35) );
         buttonBytes.addActionListener(this::performByteButtonAction);
         LOGGER.debug("Bytes button configured");
+
         buttonBases.setName(BASE + LOWER_CASE_S);
         buttonBases.setPreferredSize(new Dimension(70, 35) );
         buttonBases.addActionListener(this::performBaseButtonAction);
@@ -628,12 +643,11 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**************** ACTIONS ****************/
-
     /**
      * The programmer actions to perform when the Delete button is clicked
      * @param actionEvent the click action
      */
-    public void performButtonDeleteButtonAction(ActionEvent actionEvent)
+    public void performDeleteButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
@@ -707,7 +721,7 @@ public class ProgrammerPanel extends JPanel
      * Modulus returns the remainder of a division operation.
      * @param actionEvent the click action
      */
-    public void performButtonModulusAction(ActionEvent actionEvent)
+    public void performModulusButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
@@ -1136,22 +1150,22 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + AND); }
-        else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty())
+        { confirm(calculator, LOGGER, cannotPerformOperation(AND)); }
+        else if (calculator.getValueAtPosition().isEmpty())
         {
             calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Cannot perform " + AND + " operation");
+            confirm(calculator, LOGGER, cannotPerformOperation(AND));
         }
-        // v[0] is set, then pushes And
-        else if (!calculator.getTextPaneValue().isEmpty() && calculator.getValues()[1].isEmpty())
+        else if (!calculator.getValueAtPosition(0).isEmpty() && calculator.getValueAtPosition(1).isEmpty())
         {
             setAnd(true);
-            calculator.appendTextToPane(calculator.getValues()[calculator.getValuesPosition()] + SPACE + buttonChoice);
+            String value = calculator.addCommas(calculator.getValueAtPosition());
+            calculator.appendTextToPane(value + SPACE + buttonChoice);
             calculator.writeHistory(buttonChoice, true);
             calculator.setIsFirstNumber(false);
             calculator.setIsNumberNegative(false);
             calculator.setValuesPosition(1);
-            confirm(calculator, LOGGER, AND + " performed");
+            confirm(calculator, LOGGER, performedOperation(AND));
         }
         // v[0] and v[1] are set, isAnd is true, continued operation
         else
@@ -1163,7 +1177,7 @@ public class ProgrammerPanel extends JPanel
             calculator.resetCalculatorOperations(true);
             calculator.writeContinuedHistory(AND, AND, Double.parseDouble(result), true);
             setAnd(true);
-            calculator.resetCalculatorOperations(true);
+            confirm(calculator, LOGGER, performedOperation(AND));
         }
     }
     /**
@@ -1177,23 +1191,24 @@ public class ProgrammerPanel extends JPanel
      */
     public String performAnd()
     {
-        LOGGER.info("value[0]: '{}'", calculator.getValues()[0]);
-        LOGGER.info("value[1]: '{}'", calculator.getValues()[1]);
-        String v1InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[0] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
-        String v2InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[1] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
-        String v1AndV2 = BLANK;
+        logValues(calculator, LOGGER, 2);
+        String v1InBinary = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValueAtPosition(0));
+        String v2InBinary = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValueAtPosition(1));
+        StringBuilder v1AndV2 = new StringBuilder(BLANK);
         int counter = 0;
         for (char a : v1InBinary.toCharArray()) {
             char b = v2InBinary.charAt(counter);
-            if (a == b && a == ONE.charAt(0) && b == ONE.charAt(0)) {
-                v1AndV2 +=  ONE;
+            if (a == ONE.charAt(0) && b == ONE.charAt(0)) {
+                v1AndV2.append(ONE);
             } else {
-                v1AndV2 += ZERO;
+                v1AndV2.append(ZERO);
             }
             counter++;
         }
-        String andResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2);
-        LOGGER.info("{} AND {} = {}", calculator.getValues()[0], calculator.getValues()[1], andResult);
+        String andResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
+        LOGGER.info("{} AND {} = {} in base {}",
+                calculator.getValueAtPosition(0), calculator.getValueAtPosition(1),
+                andResult, calculator.getCalculatorBase());
         return andResult;
     }
 
@@ -1506,21 +1521,22 @@ public class ProgrammerPanel extends JPanel
     public void performHistoryAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.debug("Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         if (HISTORY_OPEN.equals(calculator.getButtonHistory().getText()))
         {
+            LOGGER.debug("Closing History");
             calculator.getButtonHistory().setText(HISTORY_CLOSED);
             programmerPanel.remove(historyPanel);
             calculator.addComponent(this, constraints, programmerPanel, buttonsPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
         }
         else
         {
+            LOGGER.debug("Opening history");
             calculator.getButtonHistory().setText(HISTORY_OPEN);
             programmerPanel.remove(buttonsPanel);
             calculator.addComponent(this, constraints, programmerPanel, historyPanel, 2, 0);
-            SwingUtilities.updateComponentTreeUI(this);
         }
+        calculator.updateLookAndFeel();
     }
 
     /**************** GETTERS ****************/
@@ -1543,4 +1559,8 @@ public class ProgrammerPanel extends JPanel
     public void setNot(boolean not) { isNot = not; LOGGER.debug("Not set: {}", isNot ? YES.toLowerCase() : NO.toLowerCase()); }
     public void setAnd(boolean and) { isAnd = and; LOGGER.debug("And set: {}", isAnd ? YES.toLowerCase() : NO.toLowerCase()); }
     public void setShiftPressed(boolean shiftPressed) { isShiftPressed = shiftPressed; LOGGER.debug("ShiftPressed set: {}", isShiftPressed ? YES.toLowerCase() : NO.toLowerCase()); }
+    public void setProgrammerPanel(JPanel programmerPanel) { this.programmerPanel = programmerPanel; LOGGER.debug("Programmer panel set"); }
+    public void setMemoryPanel(JPanel memoryPanel) { this.memoryPanel = memoryPanel; LOGGER.debug("Memory panel set"); }
+    public void setButtonsPanel(JPanel buttonsPanel) { this.buttonsPanel = buttonsPanel; LOGGER.debug("Buttons panel set"); }
+    public void setHistoryPanel(JPanel historyPanel) { this.historyPanel = historyPanel; LOGGER.debug("History panel set"); }
 }
