@@ -51,7 +51,7 @@ public class Texts {
     public static final String YES = "YES";
     public static final String NO = "NO";
     // Menu Choices
-    public static final String LOOK = "Look";
+    public static final String STYLE = "Style";
     public static final String VIEW = "View";
     public static final String EDIT = "Edit";
     public static final String HELP = "Help";

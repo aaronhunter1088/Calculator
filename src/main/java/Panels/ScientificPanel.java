@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.Serial;
 
 import static Types.CalculatorView.VIEW_SCIENTIFIC;
@@ -20,9 +21,15 @@ import static Types.CalculatorView.VIEW_SCIENTIFIC;
  */
 public class ScientificPanel extends JPanel
 {
-    private static final Logger LOGGER = LogManager.getLogger(ScientificPanel.class.getSimpleName());
     @Serial
     private static final long serialVersionUID = 4L;
+    private static final Logger LOGGER = LogManager.getLogger(ScientificPanel.class.getSimpleName());
+
+    private Calculator calculator;
+    private GridBagConstraints constraints;
+    private JPanel scientificPanel,
+                   memoryPanel,
+                   buttonsPanel;
     private boolean isInitialized;
 
     /* Constructors */
@@ -32,8 +39,16 @@ public class ScientificPanel extends JPanel
     public ScientificPanel()
     {
         setName(VIEW_SCIENTIFIC.getValue());
-        setupScientificPanel();
+        setConstraints(new GridBagConstraints());
         LOGGER.info("Empty Scientific panel created");
+    }
+
+    public ScientificPanel(Calculator calculator)
+    {
+        this.calculator = calculator;
+        setName(VIEW_SCIENTIFIC.getValue());
+        setupScientificPanel();
+        LOGGER.info("Scientific panel created with calculator");
     }
 
     public void setupScientificPanel()
@@ -42,5 +57,17 @@ public class ScientificPanel extends JPanel
         LOGGER.debug("Set isInitialized to true once implemented");
     }
 
+    /**************** GETTERS ****************/
+    public Calculator getCalculator() { return calculator; }
+    public GridBagConstraints getConstraints() { return constraints; }
+    public JPanel getScientificPanel() { return scientificPanel; }
+    public JPanel getMemoryPanel() { return memoryPanel; }
+    public JPanel getButtonsPanel() { return buttonsPanel; }
     public boolean isInitialized() { return isInitialized; }
+
+    /**************** SETTERS ****************/
+    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
+    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
+    public void setLayout(GridBagLayout panelLayout) { super.setLayout(panelLayout); LOGGER.debug("Layout set"); }
+
 }

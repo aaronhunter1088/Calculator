@@ -515,8 +515,8 @@ class CalculatorTests
     @Test
     void switchingToMetalLookAndFeel()
     {
-        when(actionEvent.getSource()).thenReturn(calculator.getLookMenu());
-        var lookMenuItems = calculator.getLookMenu().getMenuComponents();
+        when(actionEvent.getSource()).thenReturn(calculator.getStyleMenu());
+        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
         for(Component menuItem : lookMenuItems)
         {
             if (METAL.equals(menuItem.getName()))
@@ -533,7 +533,7 @@ class CalculatorTests
     @Test
     void switchingToSystemLookAndFeel()
     {
-        var lookMenuItems = calculator.getLookMenu().getMenuComponents();
+        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
             if (SYSTEM.equals(menuItem.getName()))
@@ -552,7 +552,7 @@ class CalculatorTests
     @Test
     void switchingToWindowsLookAndFeel()
     {
-        var lookMenuItems = calculator.getLookMenu().getMenuComponents();
+        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
             if (WINDOWS.equals(menuItem.getName()))
@@ -570,8 +570,8 @@ class CalculatorTests
     @Test
     void switchingToMotifLookAndFeel()
     {
-        when(actionEvent.getSource()).thenReturn(calculator.getLookMenu());
-        var lookMenuItems = calculator.getLookMenu().getMenuComponents();
+        when(actionEvent.getSource()).thenReturn(calculator.getStyleMenu());
+        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
         for(Component menuItem : lookMenuItems)
         {
             if (MOTIF.equals(menuItem.getName()))
@@ -588,7 +588,7 @@ class CalculatorTests
     @Test
     void switchingToGTKLookAndFeel()
     {
-        var lookMenuItems = calculator.getLookMenu().getMenuComponents();
+        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
         for (Component menuItem : lookMenuItems)
         {
             if (GTK.equals(menuItem.getName()))
