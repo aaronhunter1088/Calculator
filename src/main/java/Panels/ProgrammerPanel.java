@@ -1536,6 +1536,7 @@ public class ProgrammerPanel extends JPanel
             programmerPanel.remove(buttonsPanel);
             calculator.addComponent(this, constraints, programmerPanel, historyPanel, 2, 0);
         }
+        // TODO: Why is this needed here but not in BasicPanel's performHistoryAction??
         calculator.updateLookAndFeel();
     }
 

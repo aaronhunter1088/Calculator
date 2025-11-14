@@ -97,7 +97,7 @@ public class LoggingUtil {
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
                     logger.debug("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAtPosition(), calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAtPosition(), calculator.isNegativeNumber(calculator.getValueAtPosition()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
                 else
                 {
@@ -132,7 +132,7 @@ public class LoggingUtil {
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
                     logger.info("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.info("is value: '{}' negative?: {}", calculator.getValueAtPosition(), calculator.isNumberNegative() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("is value: '{}' negative?: {}", calculator.getValueAtPosition(), calculator.isNegativeNumber(calculator.getValueAtPosition()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
             }
             case VIEW_SCIENTIFIC -> {

@@ -123,7 +123,7 @@ public class BasicPanel extends JPanel
                 
                 Using the function operators:
                 Step 1. Enter the first number.
-                Step 2. Press a function operator (%s, %s, %s, %s). The operator will not be visible alongside the first number.
+                Step 2. Press a function operator (%s, %s, %s, %s, %s). The operator will not be visible alongside the first number.
                 Step 3. Observe the output.
                 Note: Attempting to use a function operator without first entering a number will yield an error message '%s'.
                 
@@ -226,8 +226,9 @@ public class BasicPanel extends JPanel
                 About Calculator: will describe the current version and licensing information about the Calculator.
                 """
                 .formatted(VIEW_BASIC.getValue(),
-                        ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS,
-                        PERCENT, SQUARE_ROOT,SQUARED, FRACTION, ENTER_A_NUMBER,
+                        ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS, // Basic Operators
+                        PERCENT, SQUARE_ROOT,SQUARED, FRACTION, NEGATE,          // Function Operators
+                        ENTER_A_NUMBER,
                         MEMORY_STORE, calculator.getMemoryValues().length, // MemoryStore,
                         MEMORY_CLEAR,
                         MEMORY_RECALL,
@@ -269,6 +270,7 @@ public class BasicPanel extends JPanel
 
         calculator.addComponent(this, constraints, basicPanel, memoryPanel, 1, 0, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
 
+        //constraints.fill = GridBagConstraints.BOTH;
         calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonPercent(), 0, 0);
         calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonSquareRoot(), 0, 1);
         calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonSquared(), 0, 2);
@@ -293,6 +295,7 @@ public class BasicPanel extends JPanel
         calculator.addComponent(this, constraints, buttonsPanel, calculator.getButton0(), 5, 1);
         calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonDecimal(), 5, 2);
         calculator.addComponent(this, constraints, buttonsPanel, calculator.getButtonEquals(), 5, 3);
+        //constraints.fill = 0;
 
         calculator.addComponent(this, constraints, basicPanel, buttonsPanel, 2, 0);
 
@@ -437,9 +440,9 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            double result = Double.parseDouble(calculator.getTextPaneValue());
-            result = 1 / result;
-            LOGGER.debug("result: " + result);
+            double value = Double.parseDouble(calculator.getTextPaneValue());
+            double result = 1 / value;
+            LOGGER.debug("1/{} = {}: ", value, result);
             if (INFINITY.equals(String.valueOf(result)))
             {
                 calculator.getButtonDecimal().setEnabled(true);

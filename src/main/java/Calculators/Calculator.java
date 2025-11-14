@@ -472,6 +472,74 @@ public class Calculator extends JFrame
     }
 
     /**
+     * Configures the buttons used on the Basic Panel
+     */
+    public void setupBasicPanelButtons()
+    {
+        LOGGER.debug("Configuring Basic Panel buttons...");
+        setupNumberButtons();
+        LOGGER.debug("Number buttons configured for Basic Panel");
+
+        setupMemoryButtons();
+        setupCommonButtons();
+    }
+
+    /**
+     * Configures the buttons used on the Programmer Panel
+     */
+    public void setupProgrammerPanelButtons()
+    {
+        LOGGER.debug("Configuring Programmer Panel buttons...");
+        setupNumberButtons();
+        LOGGER.debug("Number buttons configured for Programmer Panel");
+
+        setupButtonBlank1();
+        setupMemoryButtons(); // MR MC MS M+ M- H
+        setupCommonButtons(); // common
+
+        programmerPanel.setupProgrammerPanelButtons();
+    }
+
+    /**
+     * Configures the buttons used on the Converter Panel
+     */
+    public void setupConverterPanelButtons()
+    {
+        LOGGER.debug("Configuring Converter Panel buttons...");
+        setupNumberButtons();
+        LOGGER.debug("Number buttons configured for Converter Panel");
+
+        Arrays.asList(buttonBlank1, buttonBlank2, buttonClearEntry, buttonDelete, buttonDecimal).forEach(button -> {
+            button.setFont(mainFont);
+            button.setPreferredSize(new Dimension(35, 35));
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setEnabled(true);
+        });
+        buttonBlank1.setName(BLANK);
+        LOGGER.debug("Blank button 1 configured");
+
+        buttonBlank2.setName(BLANK);
+        LOGGER.debug("Blank button 2 configured");
+
+        buttonClearEntry.setName(CLEAR_ENTRY);
+        if (calculatorView == VIEW_CONVERTER)
+        { buttonClearEntry.addActionListener(converterPanel::performClearEntryButtonActions); }
+        LOGGER.debug("ClearEntry button configured");
+
+        buttonDelete.setName(DELETE);
+        if (calculatorView == VIEW_CONVERTER)
+        { buttonDelete.addActionListener(converterPanel::performDeleteButtonActions); }
+        LOGGER.debug("Delete button configured");
+
+        buttonDecimal.setName(DECIMAL);
+        if (calculatorView == VIEW_CONVERTER)
+        { buttonDecimal.addActionListener(converterPanel::performDecimalButtonActions); }
+        LOGGER.debug("Decimal button configured");
+
+        LOGGER.debug("Converter Panel buttons configured");
+    }
+
+    /**
      * The main method to set up the Memory buttons. This
      * also includes the History button since it is included
      * in the panel that renders it
@@ -522,7 +590,12 @@ public class Calculator extends JFrame
         LOGGER.debug("Configuring common buttons...");
         getCommonButtons().forEach(button -> {
             button.setFont(mainFont);
-            button.setPreferredSize(new Dimension(35, 35) );
+            if (calculatorView == VIEW_BASIC)
+                // larger buttons
+                //button.setPreferredSize(new Dimension(45, 45));
+                button.setPreferredSize(new Dimension(35, 35));
+            else if (calculatorView == VIEW_PROGRAMMER)
+                button.setPreferredSize(new Dimension(35, 35));
             button.setBorder(new LineBorder(Color.BLACK));
             button.setEnabled(true);
         });
@@ -603,74 +676,6 @@ public class Calculator extends JFrame
     }
 
     /**
-     * Configures the buttons used on the Basic Panel
-     */
-    public void setupBasicPanelButtons()
-    {
-        LOGGER.debug("Configuring Basic Panel buttons...");
-        setupNumberButtons();
-        LOGGER.debug("Number buttons configured for Basic Panel");
-
-        setupMemoryButtons();
-        setupCommonButtons();
-    }
-
-    /**
-     * Configures the buttons used on the Programmer Panel
-     */
-    public void setupProgrammerPanelButtons()
-    {
-        LOGGER.debug("Configuring Programmer Panel buttons...");
-        setupNumberButtons();
-        LOGGER.debug("Number buttons configured for Programmer Panel");
-
-        setupButtonBlank1();
-        setupMemoryButtons(); // MR MC MS M+ M- H
-        setupCommonButtons(); // common
-
-        programmerPanel.setupProgrammerPanelButtons();
-    }
-
-    /**
-     * Configures the buttons used on the Converter Panel
-     */
-    public void setupConverterPanelButtons()
-    {
-        LOGGER.debug("Configuring Converter Panel buttons...");
-        setupNumberButtons();
-        LOGGER.debug("Number buttons configured for Converter Panel");
-
-        Arrays.asList(buttonBlank1, buttonBlank2, buttonClearEntry, buttonDelete, buttonDecimal).forEach(button -> {
-            button.setFont(mainFont);
-            button.setPreferredSize(new Dimension(35, 35));
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setEnabled(true);
-        });
-        buttonBlank1.setName(BLANK);
-        LOGGER.debug("Blank button 1 configured");
-
-        buttonBlank2.setName(BLANK);
-        LOGGER.debug("Blank button 2 configured");
-
-        buttonClearEntry.setName(CLEAR_ENTRY);
-        if (calculatorView == VIEW_CONVERTER)
-        { buttonClearEntry.addActionListener(converterPanel::performClearEntryButtonActions); }
-        LOGGER.debug("ClearEntry button configured");
-
-        buttonDelete.setName(DELETE);
-        if (calculatorView == VIEW_CONVERTER)
-        { buttonDelete.addActionListener(converterPanel::performDeleteButtonActions); }
-        LOGGER.debug("Delete button configured");
-
-        buttonDecimal.setName(DECIMAL);
-        if (calculatorView == VIEW_CONVERTER)
-        { buttonDecimal.addActionListener(converterPanel::performDecimalButtonActions); }
-        LOGGER.debug("Decimal button configured");
-
-        LOGGER.debug("Converter Panel buttons configured");
-    }
-
-    /**
      * The main method to set up all number buttons, 0-9
      */
     public void setupNumberButtons()
@@ -680,7 +685,12 @@ public class Calculator extends JFrame
         getNumberButtons().forEach(button -> {
             button.setFont(mainFont);
             button.setEnabled(true);
-            button.setPreferredSize(new Dimension(35, 35));
+            if (calculatorView == VIEW_BASIC)
+                // larger buttons
+                //button.setPreferredSize(new Dimension(45, 45));
+                button.setPreferredSize(new Dimension(35, 35));
+            else if (calculatorView == VIEW_PROGRAMMER)
+                button.setPreferredSize(new Dimension(35, 35));
             button.setBorder(new LineBorder(Color.BLACK));
             button.setName(String.valueOf(i.getAndAdd(1)));
             if (calculatorView.equals(VIEW_BASIC))
@@ -2549,6 +2559,7 @@ public class Calculator extends JFrame
             LOGGER.debug("obtaining second number...");
             clearTextInTextPane();
             isFirstNumber = true;
+            setIsNumberNegative(false);
         }
         if (performInitialChecks())
         {
@@ -2558,14 +2569,11 @@ public class Calculator extends JFrame
             isFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
-        else
-        {
-            values[valuesPosition] += buttonChoice;
-            if (isNumberNegative && !isNegativeNumber(values[valuesPosition])) values[valuesPosition] = SUBTRACTION + values[valuesPosition];
-            appendTextToPane(addCommas(values[valuesPosition]));
-            writeHistory(buttonChoice, false);
-            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
-        }
+        values[valuesPosition] += buttonChoice;
+        if (isNumberNegative && !isNegativeNumber(values[valuesPosition])) values[valuesPosition] = SUBTRACTION + values[valuesPosition];
+        appendTextToPane(addCommas(values[valuesPosition]));
+        writeHistory(buttonChoice, false);
+        confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
     }
 
     /**
