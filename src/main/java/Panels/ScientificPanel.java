@@ -27,12 +27,10 @@ public class ScientificPanel extends JPanel
 
     private Calculator calculator;
     private GridBagConstraints constraints;
-    private JPanel scientificPanel,
-                   memoryPanel,
-                   buttonsPanel;
+    private JPanel scientificPanel;
     private boolean isInitialized;
 
-    /* Constructors */
+    /**************** CONSTRUCTORS ****************/
     /**
      * A zero argument constructor for creating a OLDProgrammerPanel
      */
@@ -43,6 +41,10 @@ public class ScientificPanel extends JPanel
         LOGGER.info("Empty Scientific panel created");
     }
 
+    /**
+     * The main constructor for creating a ScientificPanel
+     * @param calculator the calculator to associate with the panel
+     */
     public ScientificPanel(Calculator calculator)
     {
         this.calculator = calculator;
@@ -51,23 +53,27 @@ public class ScientificPanel extends JPanel
         LOGGER.info("Scientific panel created with calculator");
     }
 
+    /**************** START OF METHODS ****************/
+    /**
+     * Sets up the Scientific Panel
+     */
     public void setupScientificPanel()
     {
         LOGGER.warn("IMPLEMENT SCIENTIFIC PANEL");
         LOGGER.debug("Set isInitialized to true once implemented");
     }
 
+    /**************** ACTIONS ****************/
+    /* TODO: Add actions here */
+
     /**************** GETTERS ****************/
     public Calculator getCalculator() { return calculator; }
     public GridBagConstraints getConstraints() { return constraints; }
     public JPanel getScientificPanel() { return scientificPanel; }
-    public JPanel getMemoryPanel() { return memoryPanel; }
-    public JPanel getButtonsPanel() { return buttonsPanel; }
     public boolean isInitialized() { return isInitialized; }
 
     /**************** SETTERS ****************/
     public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
-    public void setLayout(GridBagLayout panelLayout) { super.setLayout(panelLayout); LOGGER.debug("Layout set"); }
 
 }

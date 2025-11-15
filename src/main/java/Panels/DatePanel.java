@@ -35,16 +35,15 @@ import static Utilities.LoggingUtil.logActionButton;
  */
 public class DatePanel extends JPanel
 {
-    private static final Logger LOGGER = LogManager.getLogger(DatePanel.class.getSimpleName());
     @Serial
     private static final long serialVersionUID = 4L;
+    private static final Logger LOGGER = LogManager.getLogger(DatePanel.class.getSimpleName());
 
-    //private GridBagLayout dateLayout;
+    private Calculator calculator;
     private GridBagConstraints constraints;
     private UtilCalendarModel fromCalendar, toCalendar;
     private JDatePanelImpl fromDatePanel, toDatePanel;
     private JDatePickerImpl fromDatePicker, toDatePicker;
-    private Calculator calculator;
     private JComboBox<DateOperation> dateOperationsDropdown;
     private JLabel fromDateLabel, toDateLabel, differenceLabel, dateLabel,
                    yearsLabel, monthLabel, weeksLabel, daysLabel, resultsLabel,
@@ -57,7 +56,7 @@ public class DatePanel extends JPanel
     private JTextField yearsTextField, monthsTextField, weeksTextField, daysTextField;
     private boolean isInitialized;
 
-    /**************** Constructors ****************/
+    /**************** CONSTRUCTORS ****************/
     /**
      * A zero argument constructor for creating a DatePanel
      */
@@ -286,7 +285,7 @@ public class DatePanel extends JPanel
      */
     private void setupYearsTextField()
     {
-        setYearsTextField(new JTextField(BLANK, 5));
+        setYearsTextField(new JTextField(EMPTY, 5));
         yearsTextField.setEditable(true);
         yearsTextField.setHorizontalAlignment(SwingConstants.LEFT);
         yearsTextField.setFont(mainFont);
@@ -308,7 +307,7 @@ public class DatePanel extends JPanel
      */
     private void setupMonthsTextField()
     {
-        setMonthsTextField(new JTextField(BLANK, 5));
+        setMonthsTextField(new JTextField(EMPTY, 5));
         monthsTextField.setEditable(true);
         monthsTextField.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -329,7 +328,7 @@ public class DatePanel extends JPanel
      */
     private void setupWeeksTextField()
     {
-        setWeeksTextField(new JTextField(BLANK, 5));
+        setWeeksTextField(new JTextField(EMPTY, 5));
         weeksTextField.setEditable(true);
         weeksTextField.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -350,7 +349,7 @@ public class DatePanel extends JPanel
      */
     private void setupDaysTextField()
     {
-        setDaysTextField(new JTextField(BLANK, 5));
+        setDaysTextField(new JTextField(EMPTY, 5));
         daysTextField.setEditable(true);
         daysTextField.setHorizontalAlignment(SwingConstants.LEFT);
     }
@@ -966,11 +965,6 @@ public class DatePanel extends JPanel
     public boolean isInitialized() { return isInitialized; }
 
     /**************** SETTERS ****************/
-    public void setLayout(GridBagLayout dateLayout) {
-        super.setLayout(dateLayout);
-        //this.dateLayout = dateLayout;
-        LOGGER.debug("Layout set");
-    }
     public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
     private void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
     public void setFromCalendar(UtilCalendarModel fromCalendar) { this.fromCalendar = fromCalendar; LOGGER.debug("From Calendar set"); }

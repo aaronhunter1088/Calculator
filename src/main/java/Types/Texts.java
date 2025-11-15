@@ -45,7 +45,7 @@ public class Texts {
     public static final String DIVISION = "÷";
     public static final String EQUALS = "=";
     public static final String NEGATE = "±";
-    public static final String BLANK = "";
+    public static final String EMPTY = "";
     public static final String SPACE = " ";
     public static final String SQUARED = "x²";
     public static final String YES = "YES";

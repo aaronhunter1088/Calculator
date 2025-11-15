@@ -44,11 +44,9 @@ public class BasicPanel extends JPanel
     private Calculator calculator;
     private GridBagConstraints constraints;
     private JPanel basicPanel;
-    private JTextPane historyTextPane;
     private boolean isInitialized;
 
-    /**************** Constructors ****************/
-
+    /**************** CONSTRUCTORS ****************/
     /**
      * A zero argument constructor for creating a BasicPanel
      */
@@ -70,7 +68,6 @@ public class BasicPanel extends JPanel
     }
 
     /**************** START OF METHODS ****************/
-
     /**
      * The main method used to define the BasicPanel
      * and all of its components and their actions
@@ -83,12 +80,6 @@ public class BasicPanel extends JPanel
             setCalculator(calculator);
             setBasicPanel(new JPanel(new GridBagLayout()));
             basicPanel.setName("BasicPanel");
-            //setMemoryPanel(new JPanel(new GridBagLayout()));
-            //this.memoryPanel.setName("MemoryPanel");
-            //setButtonsPanel(new JPanel(new GridBagLayout()));
-            //this.buttonsPanel.setName("ButtonsPanel");
-            //setHistoryPanel(new JPanel(new GridBagLayout()));
-            //this.historyPanel.setName("HistoryPanel");
             setLayout(new GridBagLayout());
             setConstraints(new GridBagConstraints());
             setSize(new Dimension(200, 336)); // sets main size
@@ -107,10 +98,9 @@ public class BasicPanel extends JPanel
     private void setupBasicPanelComponents()
     {
         calculator.clearButtonActions();
+        calculator.setupTextPane();
         calculator.setupBasicPanelButtons();
         setupHelpString();
-        calculator.setupTextPane();
-        //setupBasicHistoryPanel();
         LOGGER.debug("Finished configuring the buttons");
     }
 
@@ -313,61 +303,7 @@ public class BasicPanel extends JPanel
         LOGGER.debug("Buttons added to the frame");
     }
 
-    /**
-     * Configures the history panel for the Basic Panel
-     */
-    @Deprecated(since = "History panel setup moved to Calculator class")
-    private void setupBasicHistoryPanel()
-    {
-        constraints.anchor = GridBagConstraints.WEST;
-        JLabel historyLabel = new JLabel(HISTORY);
-        historyLabel.setName("HistoryLabel");
-        calculator.addComponent(this, constraints, calculator.getHistoryPanel(), historyLabel, 0, 0); // space before with jtextarea
-
-        calculator.setupHistoryTextPane();
-        JScrollPane scrollPane = new JScrollPane(calculator.getHistoryTextPane(), ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setName("HistoryScrollPane");
-        scrollPane.setPreferredSize(calculator.getHistoryTextPane().getSize());
-
-        calculator.addComponent(this, constraints, calculator.getHistoryPanel(), scrollPane, 1, 0, new Insets(0,0,0,0),
-                1, 6, 0, 0, GridBagConstraints.BOTH, 0);
-        LOGGER.debug("Basic History Panel configured");
-    }
-
-    /**
-     * Add text to the text pane when using the basic panel
-     * @param text the text to add
-     */
-    public void appendTextToBasicPane(String text)
-    { calculator.getTextPane().setText(calculator.addNewLines(1) + text); }
-
     /**************** ACTIONS ****************/
-    /**
-     * The actions to perform when History is clicked
-     * @param actionEvent the click action
-     */
-    @Deprecated(since = "History action moved to Calculator class")
-    public void performHistoryAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        if (HISTORY_OPEN.equals(calculator.getButtonHistory().getText()))
-        {
-            LOGGER.debug("Closing History");
-            calculator.getButtonHistory().setText(HISTORY_CLOSED);
-            basicPanel.remove(calculator.getHistoryPanel());
-            calculator.addComponent(this, constraints, basicPanel, calculator.getButtonsPanel(), 2, 0);
-        }
-        else
-        {
-            LOGGER.debug("Opening history");
-            calculator.getButtonHistory().setText(HISTORY_OPEN);
-            basicPanel.remove(calculator.getButtonsPanel());
-            calculator.addComponent(this, constraints, basicPanel, calculator.getHistoryPanel(), 2, 0);
-        }
-        calculator.updateLookAndFeel();
-    }
-
     /**
      * The actions to perform when the Percent button is clicked
      * @param actionEvent the click action
@@ -375,23 +311,21 @@ public class BasicPanel extends JPanel
     public void performPercentButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + PERCENT + " operation"); }
+        { confirm(calculator, LOGGER, cannotPerformOperation(PERCENT)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
+            calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Pressed: " + buttonChoice);
         }
         else
         {
-            double result = Double.parseDouble(calculator.getValueAtPosition());
-            result /= 100;
-            LOGGER.debug("result: " + result);
-            calculator.getValues()[calculator.getValuesPosition()] = Double.toString(result);
-            calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
+            double result = Double.parseDouble(calculator.getValueAtPosition()) / 100;
+            LOGGER.debug("{} / 100 = {}", calculator.getValueAtPosition(), result);
+            calculator.appendTextToPane(calculator.addCommas(String.valueOf(result)), true);
             calculator.writeHistory(buttonChoice, false);
-            LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValues()[calculator.getValuesPosition()]);
+            LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValueAtPosition());
             LOGGER.debug("textPane: {}", calculator.getTextPaneValue());
             calculator.getButtonDecimal().setEnabled(false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
@@ -405,18 +339,18 @@ public class BasicPanel extends JPanel
     public void performSquaredButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + SQUARED + " operation"); }
+        { confirm(calculator, LOGGER, cannotPerformOperation(SQUARED)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
+            calculator.appendTextToPane(calculator.addNewLines() + ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "No number to square");
         }
         else
         {
-            double result = Math.pow(Double.parseDouble(calculator.getValues()[0]), 2);
-            LOGGER.debug("result: " + result);
+            double result = Math.pow(Double.parseDouble(calculator.getValueAtPosition()), 2);
+            LOGGER.debug("{} squared = {}", calculator.getValueAtPosition(), result);
             if (result % 1 == 0)
             {
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
@@ -427,10 +361,8 @@ public class BasicPanel extends JPanel
                 calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
                 calculator.getButtonDecimal().setEnabled(false);
             }
-            calculator.setIsNumberNegative(String.valueOf(result).contains(SUBTRACTION));
-            calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-            //calculator.setIsNumberNegative(false);
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[0]));
+            calculator.setIsNumberNegative(calculator.isNegativeNumber(String.valueOf(result)));
+            calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
@@ -443,39 +375,36 @@ public class BasicPanel extends JPanel
     public void performFractionButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        LOGGER.info("Action for {} started", buttonChoice);
+        logActionButton(buttonChoice, LOGGER);
         if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + FRACTION + " operation"); }
+        { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.getTextPane().setText(calculator.addNewLines() + ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Cannot perform " + FRACTION + " operation");
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
         }
         else
         {
-            double value = Double.parseDouble(calculator.getTextPaneValue());
-            double result = 1 / value;
-            LOGGER.debug("1/{} = {}: ", value, result);
+            double result = 1 / Double.parseDouble(calculator.getValueAtPosition());
+            LOGGER.debug("1 / {} = {}: ", calculator.getValueAtPosition(), result);
             if (INFINITY.equals(String.valueOf(result)))
             {
                 calculator.getButtonDecimal().setEnabled(true);
-                calculator.getTextPane().setText(calculator.addNewLines() + INFINITY);
-                calculator.getValues()[calculator.getValuesPosition()] = BLANK;
+                calculator.appendTextToPane(INFINITY);
+                calculator.getValues()[calculator.getValuesPosition()] = EMPTY;
             }
             else if (result % 1 == 0)
             {
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.getButtonDecimal().setEnabled(true);
+                calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
             }
             else
             {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.formatNumber(String.valueOf(result));
-                calculator.getTextPane().setText(calculator.addNewLines() + calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]));
-                calculator.getButtonDecimal().setEnabled(false);
+                calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
+                calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
             }
-            calculator.setIsNumberNegative(false);
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[0]));
+            calculator.setIsNumberNegative(calculator.isNegativeNumber(String.valueOf(result)));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
@@ -484,13 +413,10 @@ public class BasicPanel extends JPanel
     /**************** GETTERS ****************/
     public GridBagConstraints getConstraints() { return constraints; }
     public JPanel getBasicPanel() { return basicPanel; }
-    public JTextPane getHistoryTextPane() { return historyTextPane; }
     public boolean isInitialized() { return isInitialized; }
 
     /**************** SETTERS ****************/
     public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
-    public void setLayout(GridBagLayout layout) { super.setLayout(layout); LOGGER.debug("Layout set"); }
-    public void setHistoryTextPane(JTextPane historyTextPane) { this.historyTextPane = historyTextPane; LOGGER.debug("History TextPane set"); }
     private void setBasicPanel(JPanel basicPanel) { this.basicPanel = basicPanel; LOGGER.debug("Basic Panel set"); }
 }

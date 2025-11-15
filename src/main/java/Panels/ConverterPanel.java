@@ -32,9 +32,9 @@ import static Utilities.LoggingUtil.logActionButton;
  */
 public class ConverterPanel extends JPanel
 {
-    private static final Logger LOGGER = LogManager.getLogger(ConverterPanel.class.getSimpleName());
     @Serial
     private static final long serialVersionUID = 4L;
+    private static final Logger LOGGER = LogManager.getLogger(ConverterPanel.class.getSimpleName());
 
     private Calculator calculator;
     private GridBagConstraints constraints;
@@ -45,8 +45,7 @@ public class ConverterPanel extends JPanel
     private JPanel currentConverterPanel;
     private boolean isTextField1Selected, isInitialized;
 
-    /************* Constructors ******************/
-
+    /************* CONSTRUCTORS ******************/
     /**
      * A zero argument constructor for creating a ConverterPanel
      */
@@ -74,8 +73,7 @@ public class ConverterPanel extends JPanel
     public ConverterPanel(Calculator calculator, CalculatorConverterType converterType)
     { setupConverterPanel(calculator, converterType); }
 
-    /************* Start of methods here ******************/
-
+    /**************** START OF METHODS ****************/
     /**
      * The main method used to define the ConverterPanel
      * and all of its components and their actions
@@ -87,12 +85,12 @@ public class ConverterPanel extends JPanel
         if (!isInitialized)
         {
             setCalculator(calculator);
-            setConverterType(converterType);
             setLayout(new GridBagLayout());
             setConstraints(new GridBagConstraints()); // instantiate constraints
             setSize(new Dimension(200,400)); // keep!!
         }
-        setupConverterPanelComponents(converterType != null ? converterType: ANGLE);
+        setConverterType(converterType == null ? ANGLE : converterType);
+        setupConverterPanelComponents(getConverterType());
         setupHelpMenu(getConverterType());
         addComponentsToPanel();
         setName(VIEW_CONVERTER.getValue());
@@ -134,11 +132,10 @@ public class ConverterPanel extends JPanel
     {
         LOGGER.info("Add components to converter panel");
         // Logic is similar to updatingJPanel() in Calculator. Remove previous panel if present. Was overlapping due to recent changes
-        if (currentConverterPanel == null) currentConverterPanel = new JPanel(new GridBagLayout());
-        else {
+        if (currentConverterPanel != null) {
             remove(currentConverterPanel);
-            currentConverterPanel = new JPanel(new GridBagLayout());
         }
+        currentConverterPanel = new JPanel(new GridBagLayout());
 
         JPanel entryPanel = new JPanel(new GridBagLayout());
         calculator.addComponent(this, constraints, entryPanel, converterTypeName, 0,0, null, 1,1, 1.0,1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
@@ -405,8 +402,6 @@ public class ConverterPanel extends JPanel
         setConverterType(ANGLE);
         setUnitOptions1(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
         setUnitOptions2(new JComboBox<>(){{ addItem(DEGREES); addItem(RADIANS); addItem(GRADIANS); }});
-        //setBottomSpaceAboveNumbers(new JTextArea(1,10));
-        //bottomSpaceAboveNumbers.setEnabled(false);
         getUnitOptions1().addActionListener(this::performAngleUnitsSwitch);
         getUnitOptions2().addActionListener(this::performAngleUnitsSwitch);
         LOGGER.info("Ending Angle specific setup");
@@ -535,17 +530,11 @@ public class ConverterPanel extends JPanel
     public JTextField getTextField2() { return textField2; }
     public JComboBox<CalculatorConverterUnits> getUnitOptions1() { return unitOptions1; }
     public JComboBox<CalculatorConverterUnits> getUnitOptions2() { return unitOptions2; }
-    //public JTextArea getBottomSpaceAboveNumbers() { return bottomSpaceAboveNumbers; }
     public Calculator getCalculator() { return calculator; }
-    //public JPanel getNumbersPanel() { return numbersPanel; }
     public boolean isTextField1Selected() { return isTextField1Selected; }
     public boolean isInitialized() { return isInitialized; }
 
     /**************** SETTERS ****************/
-    public void setLayout(GridBagLayout converterLayout) {
-        super.setLayout(converterLayout);
-        //this.converterLayout = converterLayout;
-    }
     public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; }
     public void setConverterTypeName(JLabel converterTypeName) { this.converterTypeName = converterTypeName; LOGGER.debug("Converter Name: {}", converterTypeName); }
     public void setConverterType(CalculatorConverterType converterType) { this.converterType = converterType; LOGGER.debug("Converter Type: {}", converterType); }
