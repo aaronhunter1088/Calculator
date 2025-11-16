@@ -6,16 +6,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import Calculators.Calculator;
-import Panels.ConverterPanel;
 import Panels.DatePanel;
-import Panels.ProgrammerPanel;
 import Types.CalculatorBase;
 import Types.CalculatorByte;
 import Types.CalculatorView;
 import Types.DateOperation;
 import org.apache.logging.log4j.Logger;
 
-import static Types.CalculatorBase.BASE_BINARY;
 import static Types.CalculatorView.VIEW_BASIC;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
@@ -98,7 +95,7 @@ public class LoggingUtil {
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
                     logger.debug("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAtPosition(), (calculator.isNegativeNumber(calculator.getValueAtPosition()) || calculator.isNumberNegative()) ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAtPosition(), (calculator.isNegativeNumber(calculator.getValueAtPosition()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
                 else
                 {
@@ -249,13 +246,15 @@ public class LoggingUtil {
     }
 
     /**
-     * Logs a failed operation due to a blank second value.
+     * Logs a failed operation due to a blank value.
      * @param operation the operation attempted
+     * @param calculator the calculator
      * @param logger the Logger needed to log the warning
      */
-    public static void logFailedOperation(String operation, Logger logger)
+    public static void logEmptyValue(String operation, Calculator calculator, Logger logger)
     {
-        logger.warn("Attempted to perform {} but values[1] is blank", operation);
+        logger.warn("Attempted to perform {} but values[{}] is blank",
+                operation, calculator.getValuesPosition());
 
     }
 

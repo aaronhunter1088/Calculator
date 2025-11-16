@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
+import java.math.BigDecimal;
 
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
@@ -317,18 +318,17 @@ public class BasicPanel extends JPanel
         else if (calculator.getTextPaneValue().isEmpty())
         {
             calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Pressed: " + buttonChoice);
+            confirm(calculator, LOGGER, cannotPerformOperation(PERCENT));
         }
         else
         {
-            double result = Double.parseDouble(calculator.getValueAtPosition()) / 100;
-            LOGGER.debug("{} / 100 = {}", calculator.getValueAtPosition(), result);
-            calculator.appendTextToPane(calculator.addCommas(String.valueOf(result)), true);
+            calculator.setActiveOperator(buttonChoice);
+            String result = calculator.performMathOperation().toPlainString();
+            calculator.appendTextToPane(calculator.addCommas(result), true);
+            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAtPosition()));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
             calculator.writeHistory(buttonChoice, false);
-            LOGGER.debug("values[{}] is {}", calculator.getValuesPosition(), calculator.getValueAtPosition());
-            LOGGER.debug("textPane: {}", calculator.getTextPaneValue());
-            calculator.getButtonDecimal().setEnabled(false);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+            confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
     }
 
@@ -344,27 +344,18 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, cannotPerformOperation(SQUARED)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
-            calculator.appendTextToPane(calculator.addNewLines() + ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "No number to square");
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, cannotPerformOperation(SQUARED));
         }
         else
         {
-            double result = Math.pow(Double.parseDouble(calculator.getValueAtPosition()), 2);
-            LOGGER.debug("{} squared = {}", calculator.getValueAtPosition(), result);
-            if (result % 1 == 0)
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.getButtonDecimal().setEnabled(true);
-            }
-            else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
-                calculator.getButtonDecimal().setEnabled(false);
-            }
-            calculator.setIsNumberNegative(calculator.isNegativeNumber(String.valueOf(result)));
-            calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
+            calculator.setActiveOperator(buttonChoice);
+            String result = calculator.performMathOperation().toPlainString();
+            calculator.appendTextToPane(calculator.addCommas(result), true);
+            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAtPosition()));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
             calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+            confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
     }
 
@@ -385,28 +376,16 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            double result = 1 / Double.parseDouble(calculator.getValueAtPosition());
-            LOGGER.debug("1 / {} = {}: ", calculator.getValueAtPosition(), result);
-            if (INFINITY.equals(String.valueOf(result)))
-            {
-                calculator.getButtonDecimal().setEnabled(true);
-                calculator.appendTextToPane(INFINITY);
-                calculator.getValues()[calculator.getValuesPosition()] = EMPTY;
-            }
-            else if (result % 1 == 0)
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.clearZeroesAndDecimalAtEnd(String.valueOf(result));
-                calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
-            }
+            calculator.setActiveOperator(buttonChoice);
+            BigDecimal result = calculator.performMathOperation();
+            if (calculator.textPaneContainsBadText())
+                calculator.appendTextToPane(calculator.getBadText());
             else
-            {
-                calculator.getValues()[calculator.getValuesPosition()] = String.valueOf(result);
-                calculator.appendTextToPane(calculator.addCommas(calculator.getValueAtPosition()));
-            }
+                calculator.appendTextToPane(calculator.addCommas(String.valueOf(result)), true);
             calculator.setIsNumberNegative(calculator.isNegativeNumber(String.valueOf(result)));
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
             calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+            confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
     }
 

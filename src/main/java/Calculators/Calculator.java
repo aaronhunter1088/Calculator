@@ -129,15 +129,14 @@ public class Calculator extends JFrame
     // Flags
     private boolean
             isFirstNumber = true,
-            isNumberNegative, // used to determine is current value is negative or not
-            //isNegating = false,
+            negativeNumber, // used to determine is current value is negative or not
             // main operators
             isPemdasActive,
             // look options
             isMetal, isSystem, isWindows, isMotif, isGtk, isApple;
     private String helpString = EMPTY;
 
-    /* Constructors */
+    /**************** CONSTRUCTORS ****************/
     /**
      * Starts the calculator with the BASIC CalculatorView
      *
@@ -1542,7 +1541,7 @@ public class Calculator extends JFrame
         }
         else
         {
-            logFailedOperation(buttonChoice, LOGGER);
+            confirm(this, LOGGER, "No history panel setup for " + calculatorView.getName());
         }
     }
 
@@ -1596,7 +1595,7 @@ public class Calculator extends JFrame
         LOGGER.debug("valuesPosition: {}", valuesPosition);
         if (getTextPaneValue().isEmpty())
         { confirm(this, LOGGER, CLEAR_ENTRY + " called... nothing to clear"); }
-        else if (valuesPosition == 0 || values[1].isEmpty())
+        else if (valuesPosition == 0 || getValueAtPosition(1).isEmpty())
         {
             values[0] = EMPTY;
             resetOperators(false);
@@ -1609,13 +1608,14 @@ public class Calculator extends JFrame
         }
         else
         {
-            String operator = getActiveOperator();
+            //String operator = getActiveOperator();
             values[1] = EMPTY;
             isFirstNumber = false;
             valuesPosition = 1;
-            isNumberNegative = false;
+            negativeNumber = false;
             buttonDecimal.setEnabled(true);
-            appendTextToPane(addCommas(values[0]) + SPACE + operator);
+            //appendTextToPane(addCommas(values[0]) + SPACE + operator);
+            clearTextInTextPane(); // replaced with above.
             writeHistoryWithMessage(buttonChoice, false, SPACE + buttonChoice + " performed");
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
         }
@@ -1631,19 +1631,17 @@ public class Calculator extends JFrame
         logActionButton(buttonChoice, LOGGER);
         for (int i=0; i<4; i++)
         {
-            if (i == 0) { values[i] = ZERO; }
-            //else if (i==3) { values[i] = PUSHED_CLEAR; }
-            else { values[i] = EMPTY; }
+            values[i] = EMPTY;
         }
+        values[0] = ZERO;
         for(int i=0; i < 10; i++)
         { memoryValues[i] = EMPTY; }
         appendTextToPane(ZERO);
-        //values[3] = BLANK;
         resetOperators(false);
         valuesPosition = 0;
         memoryPosition = 0;
         isFirstNumber = true;
-        isNumberNegative = false;
+        negativeNumber = false;
         buttonMemoryRecall.setEnabled(false);
         buttonMemoryClear.setEnabled(false);
         buttonMemoryAddition.setEnabled(false);
@@ -1704,7 +1702,7 @@ public class Calculator extends JFrame
                 }
             }
             buttonDecimal.setEnabled(!isDecimalNumber(getValueAtPosition()));
-            isNumberNegative = getValueAtPosition().startsWith(SUBTRACTION);
+            negativeNumber = getValueAtPosition().startsWith(SUBTRACTION);
             writeHistory(buttonChoice, false);
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
         }
@@ -1742,7 +1740,7 @@ public class Calculator extends JFrame
                     appendTextToPane(textPaneValue + SPACE + buttonChoice);
                     writeHistory(buttonChoice, true);
                     isFirstNumber = false;
-                    isNumberNegative = false;
+                    negativeNumber = false;
                     valuesPosition += 1;
                 }
                 else if (values[2].equals(ADDITION) && !values[1].isEmpty())
@@ -1831,7 +1829,7 @@ public class Calculator extends JFrame
                     appendTextToPane(textPaneValue + SPACE + buttonChoice);
                     writeHistory(buttonChoice, true);
                     isFirstNumber = false;
-                    isNumberNegative = false;
+                    negativeNumber = false;
                     valuesPosition += 1;
                 }
                 else
@@ -1854,7 +1852,7 @@ public class Calculator extends JFrame
      */
     private BigDecimal addition(String continuedOperation)
     {
-        BigDecimal result = performOperation();
+        BigDecimal result = performBinaryOperation();
         if (continuedOperation != null)
             writeContinuedHistory(continuedOperation, ADDITION, result, true);
         else
@@ -1888,7 +1886,7 @@ public class Calculator extends JFrame
                 appendTextToPane(getValueAtPosition() + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
                 isFirstNumber = false;
-                isNumberNegative = false;
+                negativeNumber = false;
                 valuesPosition += 1;
             }
             // No operator pushed, textPane is empty
@@ -1897,7 +1895,7 @@ public class Calculator extends JFrame
                 values[valuesPosition] = EMPTY;
                 appendTextToPane(buttonChoice);
                 writeHistory(buttonChoice, true);
-                isNumberNegative = true;
+                negativeNumber = true;
                 values[2] = EMPTY;
             }
             else if (values[2].equals(ADDITION) && !getValueAtPosition(1).isEmpty())
@@ -1965,12 +1963,12 @@ public class Calculator extends JFrame
                     resetCalculatorOperations(true);
                 }
             }
-            else if (isOperatorActive() && !isNumberNegative)
+            else if (isOperatorActive() && !negativeNumber)
             {
                 LOGGER.info("operator already selected. then clicked subtract button. second number will be negated");
                 writeHistory(buttonChoice, true);
                 appendTextToPane(buttonChoice);
-                isNumberNegative = true;
+                negativeNumber = true;
             }
             else if (!getTextPaneValue().isBlank() && values[0].isBlank() )//&& !isNegativeNumber(getTextPaneValue()))
             {
@@ -1994,7 +1992,7 @@ public class Calculator extends JFrame
      */
     private BigDecimal subtract(String continuedOperation)
     {
-        BigDecimal result = performOperation();
+        BigDecimal result = performBinaryOperation();
         if (continuedOperation != null)
             writeContinuedHistory(continuedOperation, SUBTRACTION, result, true);
         else
@@ -2042,7 +2040,7 @@ public class Calculator extends JFrame
                 values[valuesPosition] = getTextPaneValue();
                 appendTextToPane(getValueAtPosition() + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
-                isNumberNegative = isNegativeNumber(getValueAtPosition());
+                negativeNumber = isNegativeNumber(getValueAtPosition());
                 values[2] = buttonChoice;
             }
             else if (values[2].equals(ADDITION) && !values[1].isEmpty())
@@ -2090,6 +2088,7 @@ public class Calculator extends JFrame
                 else
                 {
                     appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
+                    resetCalculatorOperations(true);
                 }
             }
             else if (values[2].equals(DIVISION) && !values[1].isEmpty())
@@ -2131,7 +2130,7 @@ public class Calculator extends JFrame
      */
     private BigDecimal multiply(String continuedOperation)
     {
-        BigDecimal result = performOperation();
+        BigDecimal result = performBinaryOperation();
         if (continuedOperation != null)
             writeContinuedHistory(continuedOperation, MULTIPLICATION, result, true);
         else
@@ -2281,7 +2280,7 @@ public class Calculator extends JFrame
         }
         else
         {
-            result = performOperation();
+            result = performBinaryOperation();
             if (continuedOperation != null)
                 writeContinuedHistory(continuedOperation, DIVISION, result, true);
             else
@@ -2307,7 +2306,6 @@ public class Calculator extends JFrame
             LOGGER.debug("obtaining second number...");
             clearTextInTextPane();
             isFirstNumber = true;
-            //setIsNumberNegative(false);
         }
         if (performInitialChecks())
         {
@@ -2318,7 +2316,7 @@ public class Calculator extends JFrame
             buttonDecimal.setEnabled(true);
         }
         values[valuesPosition] += buttonChoice;
-        if (isNumberNegative && !isNegativeNumber(getValueAtPosition()))
+        if (negativeNumber && !isNegativeNumber(getValueAtPosition()))
             values[valuesPosition] = convertToNegative(getValueAtPosition());
         appendTextToPane(addCommas(getValueAtPosition()));
         writeHistory(buttonChoice, false);
@@ -2333,35 +2331,27 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String textPaneValue = getTextPaneValue();
-        if (textPaneContainsBadText() || isMaximumValue())
+        String valueToNegate = getValueAtPosition();
+        if (valueToNegate.isEmpty()) valueToNegate = getTextPaneValue();
+        if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(NEGATE)); }
-        else if (textPaneValue.isEmpty())
+        else if (valueToNegate.isEmpty())
         {
             appendTextToPane(ENTER_A_NUMBER);
-            confirm(this, LOGGER, "No value to negate");
+            confirm(this, LOGGER, cannotPerformOperation(NEGATE));
         }
-        else if (textPaneValue.contains(getActiveOperator()) && !getActiveOperator().equals(EMPTY))
-        {
-            confirm(this, LOGGER, "Cannot negate when an operator is present");
-        }
-        else if (ZERO.equals(textPaneValue))
-        { confirm(this, LOGGER, "Cannot negate zero"); }
+        else if (isOperatorActive() && valueToNegate.contains(getActiveOperator()))
+        { confirm(this, LOGGER, cannotPerformOperation(NEGATE)); }
+        else if (ZERO.equals(valueToNegate))
+        { confirm(this, LOGGER, cannotPerformOperation(NEGATE)); }
         else
         {
-            if (isNegativeNumber(getValueAtPosition()))
-            {
-                isNumberNegative = false;
-                values[valuesPosition] = convertToPositive(textPaneValue);
-                writeHistory(buttonChoice, false);
-            }
+            if (isNegativeNumber(valueToNegate))
+                appendTextToPane(addCommas(convertToPositive(valueToNegate)), true);
             else
-            {
-                isNumberNegative = true;
-                values[valuesPosition] = convertToNegative(textPaneValue);
-                writeHistory(buttonChoice, false);
-            }
-            appendTextToPane(addCommas(values[valuesPosition]));
+                appendTextToPane(addCommas(convertToNegative(valueToNegate)), true);
+            setIsNumberNegative(isNegativeNumber(getValueAtPosition()));
+            writeHistory(buttonChoice, false);
             confirm(this, LOGGER, pressedButton(buttonChoice));
         }
     }
@@ -2378,7 +2368,6 @@ public class Calculator extends JFrame
         { confirm(this, LOGGER, cannotPerformOperation(DECIMAL)); }
         else
         {
-            LOGGER.info("Basic dot operations");
             performDecimal(buttonChoice);
             writeHistory(buttonChoice, false);
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
@@ -2391,12 +2380,12 @@ public class Calculator extends JFrame
     private void performDecimal(String buttonChoice)
     {
         final var appropriateValue = getValueAtPosition();
-        if (appropriateValue.isBlank() && !isNumberNegative) // !isNegating
+        if (appropriateValue.isBlank() && !negativeNumber) // !isNegating
         {
             values[valuesPosition] = ZERO + DECIMAL;
             appendTextToPane(values[valuesPosition]);
         }
-        else if (appropriateValue.isBlank() && isNumberNegative) // isNegating
+        else if (appropriateValue.isBlank() && negativeNumber) // isNegating
         {
             values[valuesPosition] = SUBTRACTION + ZERO + DECIMAL;
             appendTextToPane(values[valuesPosition]);
@@ -2417,20 +2406,17 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String operator = getActiveOperator();
-        if (getValueAtPosition(0).isEmpty() || getValueAtPosition(1).isEmpty())
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(EQUALS)); }
+        else if (getValueAtPosition(0).isEmpty() || getValueAtPosition(1).isEmpty())
         {
-            logFailedOperation(buttonChoice, LOGGER);
-            confirm(this, LOGGER, cannotPerformOperation(buttonChoice));
-        }
-        else if (operator.isEmpty())
-        {
-            logFailedOperation(EQUALS, LOGGER);
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(buttonChoice));
         }
         else
         {
-            BigDecimal result = performMathOperation(operator);
+            BigDecimal result = performMathOperation();
             if (textPaneContainsBadText())
                 appendTextToPane(getBadText());
             else
@@ -2441,21 +2427,21 @@ public class Calculator extends JFrame
     }
     /**
      * This method determines which operation to perform,
-     * performs that operation, and resets the operator
+     * performs that operation, stores the result in v[3]
+     * and resets any necessary flags.
      */
-    private BigDecimal performMathOperation(String operator)
+    public BigDecimal performMathOperation()
     {
         BigDecimal result = new BigDecimal(ZERO);
-        switch (operator)
-        {
+        switch (getActiveOperator()) {
             case ADDITION ->
             {
-                result = addition(null); // calling 'addition' versus 'performAdditionAction'
+                result = addition(null);
                 resetCalculatorOperations(true);
             }
             case SUBTRACTION ->
             {
-                result = subtract(null); // or 'subtraction' versus 'performSubtractionAction'
+                result = subtract(null);
                 resetCalculatorOperations(true);
             }
             case MULTIPLICATION ->
@@ -2467,6 +2453,18 @@ public class Calculator extends JFrame
             {
                 result = divide(null); // from each operation in this performMathOperation method
                 resetCalculatorOperations(true);
+            }
+            case PERCENT ->
+            {
+                result = performUnaryOperation();
+            }
+            case SQUARED ->
+            {
+                result = performUnaryOperation();
+            }
+            case FRACTION ->
+            {
+                result = performUnaryOperation();
             }
             case AND ->
             {
@@ -2496,50 +2494,58 @@ public class Calculator extends JFrame
         }
         return result;
     }
+
     /**
-     * Performs the appropriate operation by
-     * setting up BigDecimal values and performing
-     * the operation set in values[2]. It logs the
+     * Performs the appropriate binary operation
+     * with values[0] and values[1], performing
+     * the operation in values[2]. It logs the
      * operation performed and returns the result.
-     * The result is stripped of any trailing zeros.
-     * @return the result of the operation as BigDecimal
+     * The result may be stripped of any trailing zeros.
+     * @return the result of the operation
      */
-    private BigDecimal performOperation()
+    private BigDecimal performBinaryOperation()
     {
-        BigDecimal a = new BigDecimal(values[0]);
-        BigDecimal b = new BigDecimal(values[1]);
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        // TODO: Change to String result = EMPTY;
         BigDecimal result = new BigDecimal(ZERO);
         valuesPosition = 3;
-        switch (getActiveOperator()) {
-            case ADDITION -> {
-                result = a.add(b);
+        switch (getActiveOperator())
+        {
+            case ADDITION ->
+            {
+                result = firstNumber.add(secondNumber);
                 if (isDecimalNumber(String.valueOf(result)))
                 {
                     result = result.stripTrailingZeros();
                 }
             }
-            case SUBTRACTION -> {
-                result = a.subtract(b);
+            case SUBTRACTION ->
+            {
+                result = firstNumber.subtract(secondNumber);
                 if (isDecimalNumber(String.valueOf(result)))
                 {
                     result = result.stripTrailingZeros();
                 }
             }
-            case MULTIPLICATION -> {
-                result = a.multiply(b);
+            case MULTIPLICATION ->
+            {
+                result = firstNumber.multiply(secondNumber);
                 if (isDecimalNumber(String.valueOf(result)))
                 {
                     result = result.stripTrailingZeros();
                 }
             }
-            case DIVISION -> {
-                result = a.divide(b);
+            case DIVISION ->
+            {
+                result = firstNumber.divide(secondNumber);
                 if (isDecimalNumber(String.valueOf(result)))
                 {
                     result = result.stripTrailingZeros();
                 }
             }
-            case AND -> {
+            case AND ->
+            {
                 String andResult = programmerPanel.performAnd();
                 andResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, andResult);
                 result = new BigDecimal(andResult); // TODO: check
@@ -2547,7 +2553,8 @@ public class Calculator extends JFrame
                 //resetValues();
                 //resetCalculatorOperations(false);
             }
-            case OR -> {
+            case OR ->
+            {
                 String orResult = programmerPanel.performOr();
                 orResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, orResult);
                 result = new BigDecimal(orResult); // TODO: check
@@ -2556,7 +2563,8 @@ public class Calculator extends JFrame
                 //programmerPanel.getCalculator().getValues()[2] = EMPTY;
                 //resetCalculatorOperations(false);
             }
-            case XOR -> {
+            case XOR ->
+            {
                 String xorResult = programmerPanel.performXor();
                 xorResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, xorResult);
                 result = new BigDecimal(xorResult); // TODO: check
@@ -2569,6 +2577,76 @@ public class Calculator extends JFrame
         values[valuesPosition] = String.valueOf(result);
         buttonDecimal.setEnabled(isDecimalNumber(getValueAtPosition()));
         logOperation(LOGGER, values);
+        return result;
+    }
+
+    /**
+     * Performs the appropriate unary operation
+     * on the current value at position, and logs
+     * the operation performed.
+     * @return
+     */
+    private BigDecimal performUnaryOperation()
+    {
+        BigDecimal result = new BigDecimal(ZERO);
+        BigDecimal firstNumber = new BigDecimal(getValueAtPosition());
+        switch (getActiveOperator())
+        {
+            case PERCENT ->
+            {
+                BigDecimal oneHundred = new BigDecimal(ONE+ZERO+ZERO);
+                if (ZERO.equals(getValueAtPosition()))
+                {
+                    appendTextToPane(INFINITY);
+                    values[0] = EMPTY;
+                    values[1] = EMPTY;
+                    values[2] = EMPTY;
+                    values[3] = EMPTY;
+                    isFirstNumber = true;
+                    confirm(this, LOGGER, cannotPerformOperation(PERCENT));
+                }
+                else
+                {
+                    result = firstNumber.divide(oneHundred);
+                    if (isDecimalNumber(String.valueOf(result)))
+                    {
+                        result = result.stripTrailingZeros();
+                    }
+                    LOGGER.debug("{} / {} = {}%", firstNumber, oneHundred, result);
+                }
+            }
+            case SQUARED ->
+            {
+                double number = firstNumber.doubleValue();
+                result = BigDecimal.valueOf(Math.pow(number, 2));
+                if (isDecimalNumber(String.valueOf(result)))
+                {
+                    result = result.stripTrailingZeros();
+                }
+                LOGGER.debug("{} squared = {}", number, result.toPlainString());
+            }
+            case FRACTION ->
+            {
+                BigDecimal one = new BigDecimal(ONE);
+                if (ZERO.equals(getValueAtPosition()))
+                {
+                    appendTextToPane(INFINITY);
+                    values[0] = EMPTY;
+                    values[1] = EMPTY;
+                    values[2] = EMPTY;
+                    values[3] = EMPTY;
+                    isFirstNumber = true;
+                    confirm(this, LOGGER, cannotPerformOperation(FRACTION));
+                }
+                else
+                {
+                    result = one.divide(firstNumber);
+                    LOGGER.debug("{} / {} = {}", one, firstNumber, result);
+                }
+            }
+            default -> LOGGER.warn("Unknown unary operation: {}", getActiveOperator());
+        }
+        values[3] = result.toPlainString();
         return result;
     }
 
@@ -2590,42 +2668,27 @@ public class Calculator extends JFrame
      *
      * @return true if any operator was pushed, false otherwise
      */
-    public boolean isOperatorActive()
-    {
-        return !getValueAtPosition(2).isEmpty();
-    }
+    public boolean isOperatorActive() { return !getValueAtPosition(2).isEmpty(); }
 
     /**
      * This method returns true if no operator is active
      * independent of the current view.
      * @return true if no operator is active, false otherwise
      */
-    public boolean isNoOperatorActive()
-    {
-        return getValueAtPosition(2).isEmpty();
-    }
+    public boolean isNoOperatorActive()  { return getValueAtPosition(2).isEmpty(); }
 
     /**
      * This method returns the operator
      * that was pushed.
      * @return the operator that was pushed
      */
-    public String getActiveOperator()
-    {
-        String results = EMPTY;
-        results = values[2];
-//        if (isAdding) { results = ADDITION; }
-//        else if (isSubtracting) { results = SUBTRACTION; }
-//        else if (isMultiplying) { results = MULTIPLICATION; }
-//        else if (isDividing) { results = DIVISION; }
-//        if (calculatorView == VIEW_PROGRAMMER) {
-//            if (results.isEmpty()) {
-//                results = programmerPanel.getActiveProgrammerPanelOperator();
-//            }
-//        }
-        LOGGER.info(results.isEmpty() ? "no operator pushed" : "operator: {}", results);
-        return results;
-    }
+    public String getActiveOperator() { return getValueAtPosition(2); }
+
+    /**
+     * Sets the active operator
+     * @param operator the operator to set
+     */
+    public void setActiveOperator(String operator) { values[2] = operator; }
 
     /**
      * Records the buttonChoice to the appropriate history panel
@@ -2660,20 +2723,19 @@ public class Calculator extends JFrame
         {
             paneValue += SPACE + buttonChoice;
         }
-        var historyText = getHistoryTextPane().getText();
+        var currentHistoryText = getHistoryTextPane().getText();
         if (message == null)
         {
             paneValue = " Result: " + paneValue;
         }
         getHistoryTextPane().setText(
-                historyText + addNewLines(1) +
-                LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS +
-                paneValue
+            currentHistoryText + NEWLINE +
+            LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS + paneValue
         );
     }
 
     /**
-     * Records the buttonChoice specifically if it was a continued operator
+     * Records the buttonChoice specifically if it was a continued operation
      * Ex: Already entered 5 + 6, then press +, History shows: (+) Result: 5 + 6 = 11 +
      * @param continuedOperation String whether to display the operation or equals
      * @param operation String the operation performed (add, subtract, etc)
@@ -2688,11 +2750,10 @@ public class Calculator extends JFrame
         {
             paneValue += SPACE + continuedOperation;
         }
-        var historyText = getHistoryTextPane().getText();
+        var currentHistory = getHistoryTextPane().getText();
         getHistoryTextPane().setText(
-                historyText + addNewLines(1) +
-                LEFT_PARENTHESIS + continuedOperation + RIGHT_PARENTHESIS
-                + " Result: " + paneValue
+            currentHistory + NEWLINE +
+            LEFT_PARENTHESIS + continuedOperation + RIGHT_PARENTHESIS + " Result: " + paneValue
         );
     }
 
@@ -2866,15 +2927,12 @@ public class Calculator extends JFrame
     }
 
     /**
-     * Tests whether a number has the "." symbol in it or not
-     *
+     * Tests whether a number contains the "." symbol or not
      * @param number the number to test
-     * @return boolean if the given number contains a decimal
+     * @return true if the number contains a decimal point,
+     * false otherwise
      */
-    public boolean isDecimalNumber(String number)
-    {
-        return number.contains(DECIMAL);
-    }
+    public boolean isDecimalNumber(String number)  { return number.contains(DECIMAL); }
 
     /**
      * When we hit a number button this method is called
@@ -2984,19 +3042,21 @@ public class Calculator extends JFrame
     public String addCommas(String valueToAdjust)
     {
         String delimiter = getThousandsDelimiter();
-        if (valueToAdjust.contains(delimiter)) return valueToAdjust;
+        boolean control = isNegativeNumber(valueToAdjust);
+        //if (valueToAdjust.contains(delimiter)) return valueToAdjust;
+        if (valueToAdjust.contains(delimiter)) valueToAdjust = removeCommas(valueToAdjust);
         if (valueToAdjust.isBlank()) return valueToAdjust;
-        if (isNegativeNumber(valueToAdjust)) {
+        if (control) {
             valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
         }
         if (!isDecimalNumber(valueToAdjust) && valueToAdjust.length() <= 3) {
-            if (isNumberNegative) return SUBTRACTION + valueToAdjust;
+            if (control) return SUBTRACTION + valueToAdjust;
             else return valueToAdjust;
         }
         else {
             String numberOnLeft = getNumberOnLeftSideOfDecimal(valueToAdjust);
             if (numberOnLeft.length() <= 3) {
-                if (isNumberNegative) return SUBTRACTION + valueToAdjust;
+                if (control) return SUBTRACTION + valueToAdjust;
                 else return valueToAdjust;
             }
         }
@@ -3038,7 +3098,7 @@ public class Calculator extends JFrame
         }
         adjusted = new StringBuffer(adjusted).reverse();
         if (adjusted.toString().endsWith(COMMA)) adjusted = new StringBuffer(adjusted.substring(0, adjusted.length() - 1));
-        if (isNumberNegative) adjusted = new StringBuffer(SUBTRACTION).append(adjusted);
+        if (control) adjusted = new StringBuffer(SUBTRACTION).append(adjusted);
         LOGGER.debug("commas added: {}", adjusted);
         return adjusted.toString();
     }
@@ -3048,10 +3108,7 @@ public class Calculator extends JFrame
      * @param valueToAdjust the number to adjust
      * @return the value without commas
      */
-    public String removeCommas(String valueToAdjust)
-    {
-        return valueToAdjust.replace(COMMA, EMPTY);
-    }
+    public String removeCommas(String valueToAdjust)  { return valueToAdjust.replace(COMMA, EMPTY); }
 
     /**
      * Returns the delimiter used to separate thousands
@@ -3475,21 +3532,21 @@ public class Calculator extends JFrame
     }
 
     /**
-     * Adds a specific newLinesNumber of newLine characters
-     * @param newLinesNumber int the newLinesNumber of newLine characters to add
+     * Adds a specific amount of newLine characters
+     * @param amount int the amount of newLine characters to add
      * @return String representing newLine characters
      */
-    public String addNewLines(int newLinesNumber)
+    public String addNewLines(int amount)
     {
         String newLines = null;
-        if (newLinesNumber == 0)
+        if (amount == 0)
         {
-            if (currentPanel instanceof BasicPanel) newLines = NEWLINE.repeat(1);
-            else if (currentPanel instanceof ProgrammerPanel) newLines = NEWLINE.repeat(1);
-            else if (currentPanel instanceof ScientificPanel) newLines = NEWLINE.repeat(3);
+            if (calculatorView == VIEW_BASIC) newLines = NEWLINE.repeat(1);
+            else if (calculatorView == VIEW_PROGRAMMER) newLines = NEWLINE.repeat(1);
+            else if (calculatorView == VIEW_SCIENTIFIC) newLines = NEWLINE.repeat(3);
         }
         else
-        { newLines = NEWLINE.repeat(newLinesNumber); }
+        { newLines = NEWLINE.repeat(amount); }
         return newLines;
     }
 
@@ -3663,28 +3720,6 @@ public class Calculator extends JFrame
     }
 
     /**
-     * Formats the number based on the length
-     * @param numberToFormat the number to format
-     * @return String the number formatted
-     */
-    public String formatNumber(String numberToFormat)
-    {
-        return numberToFormat;
-//        int number1DecimalLength = getNumberOnRightSideOfDecimal(getValueAtPosition(0)).length();
-//        int number2DecimalLength = getNumberOnRightSideOfDecimal(getValueAtPosition(1)).length();
-//        int maxDecimalCount = Math.max(number1DecimalLength, number2DecimalLength);
-//        LOGGER.debug("Number to format: {}", numberToFormat);
-//        LOGGER.debug("Initial decimal count: {}", number1DecimalLength);
-//        LOGGER.debug("Max decimal count: {}", maxDecimalCount);
-//        DecimalFormat df = new DecimalFormat("0." + ZERO.repeat(maxDecimalCount));
-//        double number = Double.parseDouble(numberToFormat);
-//        number = Double.parseDouble(df.format(number));
-//        String numberAsStr = Double.toString(number);
-//        LOGGER.debug("Formatted: {}", numberToFormat);
-//        return numberAsStr;
-    }
-
-    /**
      * Resets the look and feel booleans to false
      */
     public void resetLook()
@@ -3713,14 +3748,14 @@ public class Calculator extends JFrame
             LOGGER.debug("is v[0]: '{}' <= {}: {}", values[0], MIN_VALUE, v1);
             v2 = !values[1].isEmpty() && Double.parseDouble(values[1]) <= Double.parseDouble(MIN_VALUE);
             LOGGER.debug("is v[1]: '{}' <= {}: {}", values[1], MIN_VALUE, v2);
-            return v1 || v2;
+
         }
         else
         {
             v1 = !values[0].isEmpty() && Double.parseDouble(values[0]) <= Double.parseDouble(MIN_VALUE);
             LOGGER.debug("is v[0]: '{}' <= {}: {}", values[0], MIN_VALUE, v1);
-            return v1;
         }
+        return v1 || v2;
     }
 
     /**
@@ -3781,10 +3816,11 @@ public class Calculator extends JFrame
     {
         appendTextToPane(text);
         LOGGER.debug("Text appended to pane. Updating values? {}", updateValues);
+        boolean negativeControl = isNegativeNumber(text);
         if (updateValues) {
             values[valuesPosition] = removeCommas(getValueWithoutAnyOperator(text));
         }
-        if (isNumberNegative) {
+        if (negativeControl) {
             values[valuesPosition] = convertToNegative(values[valuesPosition]);
         }
     }
@@ -3918,7 +3954,7 @@ public class Calculator extends JFrame
     public ImageIcon getBlankIcon() { return blankIcon; }
     public JMenuBar getCalculatorMenuBar() { return menuBar; }
     public boolean isFirstNumber() { return isFirstNumber; }
-    public boolean isNumberNegative() { return isNumberNegative; }
+    public boolean isNegativeNumber() { return negativeNumber; }
     public boolean isPemdasActive() { return isPemdasActive; }
     public boolean isDotPressed() { return buttonDecimal.isEnabled(); }
     public JMenu getStyleMenu() { return styleMenu; }
@@ -3970,7 +4006,7 @@ public class Calculator extends JFrame
     public void setWindowsIcon(ImageIcon windowsIcon) { this.windowsIcon = windowsIcon; }
     public void setBlankIcon(ImageIcon blankIcon) { this.blankIcon = blankIcon; }
     public void setIsFirstNumber(boolean firstNumber) { this.isFirstNumber = firstNumber; LOGGER.debug("isFirstNumber set to {}", firstNumber); }
-    public void setIsNumberNegative(boolean numberNegative) { this.isNumberNegative = numberNegative; LOGGER.debug("isNumberNegative set to {}", numberNegative); }
+    public void setIsNumberNegative(boolean numberNegative) { this.negativeNumber = numberNegative; LOGGER.debug("isNumberNegative set to {}", numberNegative); }
     public void setIsPemdasActive(boolean isPemdasActive) { this.isPemdasActive = isPemdasActive; }
     public void setCalculatorMenuBar(JMenuBar menuBar) { this.menuBar = menuBar; setJMenuBar(menuBar); LOGGER.debug("Menubar set"); }
     public void setStyleMenu(JMenu styleMenu) { this.styleMenu = styleMenu; LOGGER.debug("Style Menu set"); }

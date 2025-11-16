@@ -718,7 +718,7 @@ class CalculatorTests
         assertTrue(calculator.isFirstNumber(), "Expected to be firstNumber");
         assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
         assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be enabled");
-        assertFalse(calculator.isNumberNegative(), "Expecting isNumberNegative to be false");
+        assertFalse(calculator.isNegativeNumber(), "Expecting isNumberNegative to be false");
     }
 
     @Test
