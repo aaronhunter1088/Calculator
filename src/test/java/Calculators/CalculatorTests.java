@@ -951,7 +951,7 @@ class CalculatorTests
         calculator.appendTextToPane(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertEquals(expecting, calculator.getTextPaneValue(), "Expected textPane to be " + expecting);
-        assertEquals(input, calculator.getValueAtPosition(), "Expected values[0] to be " + expecting);
+        assertEquals(input, calculator.getValueAt(), "Expected values[0] to be " + expecting);
     }
 
     @Test
@@ -995,7 +995,7 @@ class CalculatorTests
     void testValueIsMaximumNumber()
     {
         calculator.values[0] = "9999999";
-        assertTrue(calculator.isMaximumValue(calculator.getValueAtPosition(0)), "Expected maximum number to be met");
+        assertTrue(calculator.isMaximumValue(calculator.getValueAt(0)), "Expected maximum number to be met");
     }
 
     @Test

@@ -323,10 +323,10 @@ public class BasicPanel extends JPanel
         else
         {
             calculator.setActiveOperator(buttonChoice);
-            String result = calculator.performMathOperation().toPlainString();
+            String result = calculator.performMathOperation(null).toPlainString();
             calculator.appendTextToPane(calculator.addCommas(result), true);
-            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAtPosition()));
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
+            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAt()));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
@@ -350,10 +350,10 @@ public class BasicPanel extends JPanel
         else
         {
             calculator.setActiveOperator(buttonChoice);
-            String result = calculator.performMathOperation().toPlainString();
+            String result = calculator.performMathOperation(null).toPlainString();
             calculator.appendTextToPane(calculator.addCommas(result), true);
-            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAtPosition()));
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
+            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAt()));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
@@ -377,13 +377,13 @@ public class BasicPanel extends JPanel
         else
         {
             calculator.setActiveOperator(buttonChoice);
-            BigDecimal result = calculator.performMathOperation();
+            BigDecimal result = calculator.performMathOperation(null);
             if (calculator.textPaneContainsBadText())
                 calculator.appendTextToPane(calculator.getBadText());
             else
                 calculator.appendTextToPane(calculator.addCommas(String.valueOf(result)), true);
             calculator.setIsNumberNegative(calculator.isNegativeNumber(String.valueOf(result)));
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAtPosition()));
+            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }

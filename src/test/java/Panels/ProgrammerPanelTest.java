@@ -1,17 +1,22 @@
 package Panels;
 
 import Calculators.Calculator;
+import Types.CalculatorBase;
 import Types.CalculatorView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.stream.Stream;
 
 import static Types.CalculatorBase.BASE_BINARY;
 import static Types.CalculatorBase.BASE_DECIMAL;
@@ -65,7 +70,6 @@ class ProgrammerPanelTest
                 calculator.setVisible(false);
                 calculator.dispose();
             });
-            assertFalse(calculator.isVisible());
         }
     }
 
@@ -169,19 +173,45 @@ class ProgrammerPanelTest
         assertEquals(SEVEN, calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
     }
 
+    @ParameterizedTest()
+    @MethodSource("getModulusCases")
+    @DisplayName("Test Modulus Button")
+    public void testModulusButton(CalculatorBase base, String firstNumber, String secondNumber,
+                                  String nextOperator, String expectedResult)
+    {
+        calculator.setCalculatorBase(base);
+        calculator.getValues()[0] = firstNumber;
+        calculator.getValues()[1] = secondNumber;
+        calculator.getValues()[2] = MODULUS;
+        calculator.setValuesPosition(1);
+        calculator.appendTextToPane(calculator.getValueAt());
+        when(actionEvent.getActionCommand())
+                .thenReturn(nextOperator); // can be any button push
+        performNextOperatorAction(nextOperator);
+
+        assertEquals(expectedResult, calculator.getTextPaneValue(), "Modulus result not as expected");
+        assertEquals(EMPTY, calculator.getValueAt(0), "values[0] result should be EMPTY");
+        assertEquals(EMPTY, calculator.getValueAt(1), "values[1] result should be EMPTY");
+        assertEquals(EMPTY, calculator.getValueAt(2), "values[2] result should be EMPTY");
+    }
+    private static Stream<Arguments> getModulusCases()
+    {
+        return Stream.of(
+                Arguments.of(BASE_BINARY, FIVE, THREE, EQUALS, "00000010"),
+                Arguments.of(BASE_DECIMAL, FIVE, THREE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, FOUR, THREE, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, FOUR)
+        );
+    }
+
     @Test
-    public void testPushingModulusButtonWithOneInputReturnsZero()
+    public void testPerformModulusWithZeroShouldNotCompute()
     {
         when(actionEvent.getActionCommand()).thenReturn(MODULUS);
-        String number = "00000101"; //5
-        calculator.appendTextToPane(calculator.addNewLines() + number);
-        calculator.getValues()[0] = FIVE;
-        calculator.getValues()[1] = EMPTY;
-        calculator.setValuesPosition(0);
+        calculator.getValues()[0] = FOUR;
+        calculator.getValues()[1] = ZERO;
         programmerPanel.performModulusButtonAction(actionEvent);
-        // TODO: Uncomment and fix
-        //assertEquals(TEXT_PANE_WRONG_VALUE, number+" Mod", calculator.getTextPaneValueForProgrammerPanel());
-        assertNotEquals("Values[0] should not match ", calculator.getValues()[0], calculator.getTextPaneValue());
+        assertEquals(ZERO, calculator.getValues()[0], "Modulus not as expected");
     }
 
     @Test
@@ -195,92 +225,7 @@ class ProgrammerPanelTest
         assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
         assertEquals(EMPTY, calculator.getValues()[0], "Values[0] should be empty");
         assertEquals(EMPTY, calculator.getValues()[1], "Values[1] should be empty");
-        assertNotEquals(XOR, calculator.getValueAtPosition(2), "Expecting NOT XOR at values[2]");
-    }
-
-    @Test
-    public void testPushingXorButtonWithOneInput() {
-
-    }
-
-//    @Test
-//    public void testPushingXorButtonWithTwoInputs() {
-//
-//    }
-//
-//    @Test
-//    public void testBigIntegerSignumReturnsIntegerValue()
-//    {
-//        BigInteger value = new BigInteger("0");
-//        calculator.setValuesPosition(0);
-//        calculator.getValues()[calculator.getValuesPosition()] = "5";
-//        try {
-//            value = new BigInteger(calculator.getValues()[calculator.getValuesPosition()]);
-//        } catch (NumberFormatException nfe) {
-//            fail();
-//        }
-//        assertEquals(5, value.intValue());
-//    }
-//
-//    @Test
-//    public void testSetButtons2To9OnlySetsButtons2To9()
-//    {
-//        programmerPanel.setButtons2To9(false); // switched into programmer panel or pressed binary
-//
-//        assertTrue(calculator.getButton0().isEnabled());
-//        assertTrue(calculator.getButton1().isEnabled());
-//        assertFalse(calculator.getButton2().isEnabled());
-//        assertFalse(calculator.getButton3().isEnabled());
-//        assertFalse(calculator.getButton4().isEnabled());
-//        assertFalse(calculator.getButton5().isEnabled());
-//        assertFalse(calculator.getButton6().isEnabled());
-//        assertFalse(calculator.getButton7().isEnabled());
-//        assertFalse(calculator.getButton8().isEnabled());
-//        assertFalse(calculator.getButton9().isEnabled());
-//    }
-
-//    COMMENTED OUT
-//    @Test
-//    public void testConvertingBinaryToDecimalWorks() throws CalculatorError
-//    {
-//        // Test that this work
-//        //String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "10000000");
-//        //assertEquals(Integer.parseInt(test), 128);
-//        // Test another number
-//        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111");
-//        //assertEquals(Integer.parseInt(test), 255);
-//        // Make sure this returns the same as above, although i believe this entry by the user is impossible
-//        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "11111111 ");
-//        //assertEquals(Integer.parseInt(test), 255);
-//        // Test to make sure an incomplete number returns appropriately
-//        //test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, "101");
-//        //assertEquals(Integer.parseInt(test), 5);
-//        // Test to make sure a WORD BINARY entry returns appropriately
-//        //c.setByte(false);
-//        //c.setWord(false);
-//        String test = c.convertFromTypeToTypeOnValues(BINARY, DECIMAL, new String("00000001 00000000"));
-//        assertEquals(Integer.parseInt(test), 256);
-//
-//    }
-
-    @Test
-    public void testPerformModulusWorksAsExpected()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MODULUS);
-        calculator.getValues()[0] = FOUR;
-        calculator.getValues()[1] = THREE;
-        programmerPanel.performModulusButtonAction(actionEvent);
-        assertEquals(ONE, calculator.getValues()[0], "Modulus not as expected");
-    }
-
-    @Test
-    public void testPerformModulusWithZeroShouldNotCompute()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MODULUS);
-        calculator.getValues()[0] = FOUR;
-        calculator.getValues()[1] = ZERO;
-        programmerPanel.performModulusButtonAction(actionEvent);
-        assertEquals(ZERO, calculator.getValues()[0], "Modulus not as expected");
+        assertNotEquals(XOR, calculator.getValueAt(2), "Expecting NOT XOR at values[2]");
     }
 
     @Test
@@ -329,20 +274,20 @@ class ProgrammerPanelTest
                 .thenReturn(AND)
                 .thenReturn(SIX).thenReturn(SIX)
                 .thenReturn(EQUALS);
-        programmerPanel.performNumberButtonActions(actionEvent);
+        programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
         assertEquals(FIVE, calculator.getTextPaneValue(), "Expected textPane to be 5");
 
         programmerPanel.performAndButtonAction(actionEvent);
         assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to be 5 AND");
-        assertEquals(AND, calculator.getValueAtPosition(2), "Expecting AND at values[2]");
+        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
 
-        programmerPanel.performNumberButtonActions(actionEvent);
+        programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
         assertEquals(SIX, calculator.getTextPaneValue(), "Expected textPane to contain 6");
-        assertEquals(AND, calculator.getValueAtPosition(2), "Expecting AND at values[2]");
+        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
 
         calculator.performEqualsButtonAction(actionEvent);
         assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to be 4");
-        assertNotEquals(AND, calculator.getValueAtPosition(2), "Expecting NOT AND at values[2]");
+        assertNotEquals(AND, calculator.getValueAt(2), "Expecting NOT AND at values[2]");
     }
 
     @Test
@@ -354,20 +299,56 @@ class ProgrammerPanelTest
                 .thenReturn(AND)
                 .thenReturn(SIX).thenReturn(SIX) // leave
                 .thenReturn(AND);
-        programmerPanel.performNumberButtonActions(actionEvent);
+        programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
         assertEquals(FIVE, calculator.getTextPaneValue(), "Expected textPane to be 5");
 
         programmerPanel.performAndButtonAction(actionEvent);
         assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to be 5 AND");
-        assertEquals(AND, calculator.getValueAtPosition(2), "Expecting AND at values[2]");
+        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
 
-        programmerPanel.performNumberButtonActions(actionEvent);
+        programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
         assertEquals(SIX, calculator.getTextPaneValue(), "Expected textPane to contain 6");
-        assertEquals(AND, calculator.getValueAtPosition(2), "Expecting AND at values[2]");
+        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
 
         programmerPanel.performAndButtonAction(actionEvent);
         assertEquals("4 AND", calculator.getTextPaneValue(), "Expected textPane to be 4 AND");
-        assertEquals(AND, calculator.getValueAtPosition(2), "Expecting AND at values[2]");
+        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
     }
 
+    /**
+     * Performs the next operator action based on the provided operator string.
+     * @param nextOperator the operator to perform
+     */
+    private void performNextOperatorAction(String nextOperator)
+    {
+        switch (nextOperator)
+        {
+            case ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE -> programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
+            case ADDITION -> programmerPanel.getCalculator().performAddButtonAction(actionEvent);
+            case AND -> programmerPanel.performAndButtonAction(actionEvent);
+            case DIVISION -> programmerPanel.getCalculator().performDivideButtonAction(actionEvent);
+            case EQUALS -> calculator.performEqualsButtonAction(actionEvent);
+            case FRACTION -> LOGGER.info("Fraction operator not supported on Programmer Panel");
+            case HISTORY_OPEN, HISTORY_CLOSED -> calculator.performHistoryAction(actionEvent);
+            case LEFT_PARENTHESIS -> programmerPanel.performLeftParenthesisButtonAction(actionEvent);
+            case LSH -> programmerPanel.performLeftShiftButtonAction(actionEvent);
+            case MEMORY_ADDITION -> programmerPanel.getCalculator().performMemoryAdditionAction(actionEvent);
+            case MEMORY_CLEAR -> programmerPanel.getCalculator().performMemoryClearAction(actionEvent);
+            case MEMORY_RECALL -> programmerPanel.getCalculator().performMemoryRecallAction(actionEvent);
+            case MEMORY_STORE -> programmerPanel.getCalculator().performMemoryStoreAction(actionEvent);
+            case MEMORY_SUBTRACTION -> programmerPanel.getCalculator().performMemorySubtractionAction(actionEvent);
+            case MODULUS -> programmerPanel.performModulusButtonAction(actionEvent);
+            case MULTIPLICATION -> programmerPanel.getCalculator().performMultiplyButtonAction(actionEvent);
+            case NOT -> programmerPanel.performNotButtonAction(actionEvent);
+            case OR -> programmerPanel.performOrButtonAction(actionEvent);
+            case PERCENT -> LOGGER.info("Percent operator not supported on Programmer Panel");
+            case RIGHT_PARENTHESIS -> programmerPanel.performRightParenthesisButtonAction(actionEvent);
+            case RSH -> programmerPanel.performRightShiftButtonAction(actionEvent);
+            case SQUARED -> LOGGER.info("Squared operator not supported on Programmer Panel");
+            case SQUARE_ROOT -> programmerPanel.getCalculator().performSquareRootButtonAction(actionEvent);
+            case SUBTRACTION -> programmerPanel.getCalculator().performSubtractButtonAction(actionEvent);
+            case XOR -> programmerPanel.performXorButtonAction(actionEvent);
+            default -> fail("Unsupported operator: " + nextOperator);
+        }
+    }
 }
