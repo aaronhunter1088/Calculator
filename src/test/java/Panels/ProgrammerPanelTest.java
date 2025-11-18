@@ -143,7 +143,7 @@ class ProgrammerPanelTest
         calculator.getValues()[0] = EMPTY;
         calculator.getValues()[1] = "50";
         programmerPanel.performOrButtonAction(actionEvent);
-        assertTrue(calculator.isFirstNumber(), "Expected isFirstNumber to be true");
+        assertTrue(calculator.isObtainingFirstNumber(), "Expected isFirstNumber to be true");
         assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be empty");
         assertEquals("50", calculator.getValues()[1], "Expected values[1] to be 50");
     }
@@ -189,7 +189,7 @@ class ProgrammerPanelTest
                 .thenReturn(nextOperator); // can be any button push
         performNextOperatorAction(nextOperator);
 
-        assertEquals(expectedResult, calculator.getTextPaneValue(), "Modulus result not as expected");
+        assertEquals(expectedResult, calculator.getTextPaneValue(), "Text Pane result not as expected");
         assertEquals(EMPTY, calculator.getValueAt(0), "values[0] result should be EMPTY");
         assertEquals(EMPTY, calculator.getValueAt(1), "values[1] result should be EMPTY");
         assertEquals(EMPTY, calculator.getValueAt(2), "values[2] result should be EMPTY");
@@ -200,18 +200,9 @@ class ProgrammerPanelTest
                 Arguments.of(BASE_BINARY, FIVE, THREE, EQUALS, "00000010"),
                 Arguments.of(BASE_DECIMAL, FIVE, THREE, EQUALS, TWO),
                 Arguments.of(BASE_DECIMAL, FOUR, THREE, EQUALS, ONE),
-                Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, FOUR)
+                Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, INFINITY),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION+FOUR, TWO, EQUALS, ZERO)
         );
-    }
-
-    @Test
-    public void testPerformModulusWithZeroShouldNotCompute()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MODULUS);
-        calculator.getValues()[0] = FOUR;
-        calculator.getValues()[1] = ZERO;
-        programmerPanel.performModulusButtonAction(actionEvent);
-        assertEquals(ZERO, calculator.getValues()[0], "Modulus not as expected");
     }
 
     @Test

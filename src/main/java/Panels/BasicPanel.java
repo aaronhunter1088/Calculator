@@ -323,13 +323,37 @@ public class BasicPanel extends JPanel
         else
         {
             calculator.setActiveOperator(buttonChoice);
-            String result = calculator.performMathOperation(null).toPlainString();
+            String result = calculator.performOperation().toPlainString();
             calculator.appendTextToPane(calculator.addCommas(result), true);
             calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAt()));
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
+    }
+    /**
+     * The inner logic for performing the Percent operation
+     * @return the result of the Percent operation
+     */
+    public BigDecimal performPercent()
+    {
+        BigDecimal result = BigDecimal.ZERO;
+        BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
+        BigDecimal oneHundred = new BigDecimal(ONE+ZERO+ZERO);
+        if (ZERO.equals(calculator.getValueAt()))
+        {
+            calculator.dividedByZero();
+        }
+        else
+        {
+            result = currentNumber.divide(oneHundred);
+            if (calculator.isDecimalNumber(String.valueOf(result)))
+            {
+                result = result.stripTrailingZeros();
+            }
+            LOGGER.debug("{} / {} = {}%", currentNumber, oneHundred, result);
+        }
+        return result;
     }
 
     /**
@@ -350,13 +374,29 @@ public class BasicPanel extends JPanel
         else
         {
             calculator.setActiveOperator(buttonChoice);
-            String result = calculator.performMathOperation(null).toPlainString();
+            String result = calculator.performOperation().toPlainString();
             calculator.appendTextToPane(calculator.addCommas(result), true);
             calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAt()));
             calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
+    }
+    /**
+     * The inner logic for performing the Squared operation
+     * @return the result of the Squared operation
+     */
+    public BigDecimal performSquared()
+    {
+        BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
+        double number = currentNumber.doubleValue();
+        BigDecimal result = BigDecimal.valueOf(Math.pow(number, 2));
+        if (calculator.isDecimalNumber(String.valueOf(result)))
+        {
+            result = result.stripTrailingZeros();
+        }
+        LOGGER.debug("{} squared = {}", number, result.toPlainString());
+        return result;
     }
 
     /**
@@ -374,10 +414,13 @@ public class BasicPanel extends JPanel
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
         }
+        // TODO: Check if this is the proper location to check this
+        else if (calculator.isOperatorActive())
+        { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         else
         {
             calculator.setActiveOperator(buttonChoice);
-            BigDecimal result = calculator.performMathOperation(null);
+            BigDecimal result = calculator.performOperation();
             if (calculator.textPaneContainsBadText())
                 calculator.appendTextToPane(calculator.getBadText());
             else
@@ -387,6 +430,26 @@ public class BasicPanel extends JPanel
             calculator.writeHistory(buttonChoice, false);
             confirm(calculator, LOGGER, pressedButton(buttonChoice));
         }
+    }
+    /**
+     * The inner logic for performing the Fraction operation
+     * @return the result of the Fraction operation
+     */
+    public BigDecimal performFraction()
+    {
+        BigDecimal result = BigDecimal.ZERO;
+        BigDecimal one = new BigDecimal(ONE);
+        BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
+        if (ZERO.equals(calculator.getValueAt()))
+        {
+            calculator.dividedByZero();
+        }
+        else
+        {
+            result = one.divide(currentNumber);
+            LOGGER.debug("{} / {} = {}", one, currentNumber, result);
+        }
+        return result;
     }
 
     /**************** GETTERS ****************/

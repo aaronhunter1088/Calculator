@@ -93,7 +93,7 @@ public class LoggingUtil {
                     logger.debug("values[3]: '{}'", calculator.getValues()[3]); // result
                     logger.debug("values[4]: '{}'", calculator.getValues()[4]); // copy value
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
-                    logger.debug("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("isFirstNumber: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (calculator.isNegativeNumber(calculator.getValueAt()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
@@ -128,7 +128,7 @@ public class LoggingUtil {
                     if (!calculator.getValues()[3].isEmpty()) logger.info("values[3]: '{}'", calculator.getValueAt(3));
                     if (!calculator.getValues()[4].isEmpty()) logger.info("values[4]: '{}'", calculator.getValueAt(4));
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
-                    logger.info("isFirstNumber: {}", calculator.isFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("isFirstNumber: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("is value: '{}' negative?: {}", calculator.getValueAt(), calculator.isNegativeNumber(calculator.getValueAt()) ? YES.toLowerCase() : NO.toLowerCase());
                 }

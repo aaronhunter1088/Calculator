@@ -371,7 +371,7 @@ class CalculatorTests
     void methodResetCalculatorOperationsWithTrueResultsInAllOperatorsBeingTrue()
     {
         calculator.resetOperators(true);
-        assertTrue(calculator.isFirstNumber(), "isFirstNumber() is not true");
+        assertTrue(calculator.isObtainingFirstNumber(), "isFirstNumber() is not true");
         assertTrue(calculator.isPemdasActive(), "isPemdasActive() is not true");
     }
 
@@ -379,7 +379,7 @@ class CalculatorTests
     void methodResetCalculatorOperationsWithFalseResultsInAllOperatorsBeingFalse()
     {
         calculator.resetOperators(false);
-        assertFalse(calculator.isFirstNumber(), "isFirstNumber() is not false");
+        assertFalse(calculator.isObtainingFirstNumber(), "isFirstNumber() is not false");
         assertFalse(calculator.isPemdasActive(), "isPemdasActive() is not false");
     }
 
@@ -652,13 +652,13 @@ class CalculatorTests
         calculator.performDecimalButtonAction(actionEvent);
         assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
         assertFalse(calculator.isDotPressed(), "Expected dot button to be disabled");
-        assertTrue(calculator.isFirstNumber(), "Expected to be on the firstNumber");
+        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
 
         calculator.resetCalculatorOperations(true);
 
         assertSame(1, calculator.getValuesPosition(), "Expected valuesPosition to be 1");
         assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
-        assertFalse(calculator.isFirstNumber(), "Expected to not be on the firstNumber");
+        assertFalse(calculator.isObtainingFirstNumber(), "Expected to not be on the firstNumber");
     }
 
     @Test
@@ -668,14 +668,14 @@ class CalculatorTests
         calculator.performDecimalButtonAction(actionEvent);
         assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
         assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be disabled");
-        assertTrue(calculator.isFirstNumber(), "Expected to be on the firstNumber");
+        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
 
         calculator.resetCalculatorOperations(false);
 
         assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
         assertFalse(calculator.isDotPressed(), "Expected dot button to be disabled");
         assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected dot button to not be enabled");
-        assertTrue(calculator.isFirstNumber(), "Expected to be on the firstNumber");
+        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
     }
 
     @Test
@@ -715,7 +715,7 @@ class CalculatorTests
 
         assertFalse(calculator.getTextPaneValue().isEmpty(), "Expected textPane to show error");
         assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertTrue(calculator.isFirstNumber(), "Expected to be firstNumber");
+        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be firstNumber");
         assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
         assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be enabled");
         assertFalse(calculator.isNegativeNumber(), "Expecting isNumberNegative to be false");
@@ -735,7 +735,7 @@ class CalculatorTests
 
         assertTrue(calculator.getTextPaneValue().isBlank(), "Expected textPane to be blank");
         assertTrue(calculator.getValues()[0].isBlank(), "Expected values[0] to be blank");
-        assertTrue(calculator.isFirstNumber(), "Expected to be on the firstNumber");
+        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
         assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
         assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be enabled");
     }

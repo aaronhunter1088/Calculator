@@ -658,6 +658,8 @@ public class ProgrammerPanel extends JPanel
             {
                 calculator.getValues()[2] = buttonChoice;
                 appendTextForProgrammerPanel(calculator.getTextPaneValue() + SPACE + buttonChoice);
+                calculator.setIsNumberNegative(false);
+                calculator.getButtonDecimal().setEnabled(true);
                 calculator.resetCalculatorOperations(true);
                 confirm(calculator, LOGGER, "Pressed " + buttonChoice);
             }
@@ -665,9 +667,11 @@ public class ProgrammerPanel extends JPanel
             else
             {
                 calculator.getValues()[2] = MODULUS;
-                String modulusResult = performModulus();
-                calculator.getValues()[3] = modulusResult;
-                calculator.appendTextToPane(calculator.addCommas(modulusResult));
+                String result = performModulus().toPlainString();
+                calculator.setValuesPosition(3);
+                calculator.appendTextToPane(calculator.addCommas(result), true);
+                calculator.setIsNumberNegative(calculator.isNegativeNumber(result));
+                calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
                 calculator.resetCalculatorOperations(true);
                 confirm(calculator, LOGGER, "Modulus Actions finished");
             }
@@ -676,24 +680,23 @@ public class ProgrammerPanel extends JPanel
     /**
      * The inner logic for modulus
      */
-    public String performModulus()
+    public BigDecimal performModulus()
     {
-        String result = EMPTY;
+        BigDecimal result = new BigDecimal(0);
         if (ZERO.equals(calculator.getValueAt(1)))
         {
-            calculator.appendTextToPane(calculator.getValueAt(0));
+            calculator.appendTextToPane(INFINITY);
             calculator.getValues()[0] = EMPTY;
             calculator.getValues()[1] = EMPTY;
             calculator.getValues()[2] = EMPTY;
             calculator.getValues()[3] = EMPTY;
-            calculator.setIsFirstNumber(true);
-            //confirm(calculator, LOGGER, pressedButton(MODULUS));
+            calculator.setObtainingFirstNumber(true);
         }
         else
         {
             result = new BigDecimal(calculator.getValues()[0])
                     .remainder(new BigDecimal(calculator.getValues()[1]))
-                    .toPlainString();
+                    .abs();
             logOperation(LOGGER, calculator.getValues());
         }
         return result;
@@ -919,7 +922,7 @@ public class ProgrammerPanel extends JPanel
         {
             calculator.getValues()[2] = OR;
             LOGGER.debug("Appending {} to text pane", buttonChoice);
-            calculator.setIsFirstNumber(false);
+            calculator.setObtainingFirstNumber(false);
             calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
             calculator.writeHistory(buttonChoice, true);
             calculator.setValuesPosition(1);
@@ -965,10 +968,11 @@ public class ProgrammerPanel extends JPanel
             counter++;
         }
         String orResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        calculator.getValues()[3] = orResult; // store raw result
         calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addCommas(orResult));
-        LOGGER.info("{} OR {} = {}", calculator.getValues()[0], calculator.getValues()[1], orResult);
+        calculator.appendTextToPane(calculator.addCommas(orResult), true);
+        calculator.writeContinuedHistory(OR, OR, orResult, false);
+        logOperation(LOGGER, calculator.getValues());
+        calculator.resetCalculatorOperations(false);
         return v1AndV2.toString();
     }
 
@@ -1021,9 +1025,6 @@ public class ProgrammerPanel extends JPanel
      */
     public String performXor()
     {
-        LOGGER.info("Performing {}", XOR);
-        LOGGER.info("value[0]: '{}'", calculator.getValues()[0]);
-        LOGGER.info("value[1]: '{}'", calculator.getValues()[1]);
         String v1InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[0] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
         String v2InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[1] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
         StringBuilder v1AndV2 = new StringBuilder();
@@ -1040,10 +1041,11 @@ public class ProgrammerPanel extends JPanel
             counter++;
         }
         String xorResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        LOGGER.info("{} XOR {} = {}", calculator.getValues()[0], calculator.getValues()[1], xorResult);
-        calculator.getValues()[3] = xorResult; // store raw result
         calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addCommas(xorResult));
+        calculator.appendTextToPane(calculator.addCommas(xorResult), true);
+        calculator.writeContinuedHistory(OR, OR, xorResult, false);
+        logOperation(LOGGER, calculator.getValues());
+        calculator.resetCalculatorOperations(false);
         return xorResult;
     }
 
@@ -1104,7 +1106,7 @@ public class ProgrammerPanel extends JPanel
             String value = calculator.addCommas(calculator.getValueAt());
             calculator.appendTextToPane(value + SPACE + buttonChoice);
             calculator.writeHistory(buttonChoice, true);
-            calculator.setIsFirstNumber(false);
+            calculator.setObtainingFirstNumber(false);
             calculator.setIsNumberNegative(false);
             calculator.setValuesPosition(1);
             confirm(calculator, LOGGER, performedOperation(AND));
@@ -1148,12 +1150,11 @@ public class ProgrammerPanel extends JPanel
             counter++;
         }
         String andResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        LOGGER.info("{} AND {} = {} in base {}",
-                calculator.getValueAt(0), calculator.getValueAt(1),
-                andResult, calculator.getCalculatorBase());
-        calculator.getValues()[3] = andResult; // store raw result
         calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addCommas(andResult));
+        calculator.appendTextToPane(calculator.addCommas(andResult), true);
+        calculator.writeContinuedHistory(EQUALS, AND, andResult, false);
+        logOperation(LOGGER, calculator.getValues());
+        calculator.resetCalculatorOperations(false);
         return andResult;
     }
 

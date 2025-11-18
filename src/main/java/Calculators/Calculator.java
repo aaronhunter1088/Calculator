@@ -128,7 +128,7 @@ public class Calculator extends JFrame
     private ImageIcon calculatorIcon, macIcon, windowsIcon, blankIcon;
     // Flags
     private boolean
-            isFirstNumber = true,
+            obtainingFirstNumber = true,
             negativeNumber, // used to determine is current value is negative or not
             // main operators
             isPemdasActive,
@@ -1614,7 +1614,7 @@ public class Calculator extends JFrame
             values[0] = EMPTY;
             resetOperators(false);
             valuesPosition = 0;
-            isFirstNumber = true;
+            obtainingFirstNumber = true;
             buttonDecimal.setEnabled(true);
             clearTextInTextPane();
             writeHistoryWithMessage(buttonChoice, false, SPACE + buttonChoice + " performed");
@@ -1623,7 +1623,7 @@ public class Calculator extends JFrame
         else
         {
             values[1] = EMPTY;
-            isFirstNumber = false;
+            obtainingFirstNumber = false;
             valuesPosition = 1;
             negativeNumber = false;
             buttonDecimal.setEnabled(true);
@@ -1652,7 +1652,7 @@ public class Calculator extends JFrame
         resetOperators(false);
         valuesPosition = 0;
         memoryPosition = 0;
-        isFirstNumber = true;
+        obtainingFirstNumber = true;
         negativeNumber = false;
         buttonMemoryRecall.setEnabled(false);
         buttonMemoryClear.setEnabled(false);
@@ -1731,7 +1731,7 @@ public class Calculator extends JFrame
         String textPaneValue = removeCommas(getTextPaneValue());
         if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(ADDITION)); }
-        else if (getValueAt(0).isEmpty() || getValueAt(1).isEmpty() || textPaneValue.isEmpty())
+        else if (textPaneValue.isEmpty())
         {
             logEmptyValue(buttonChoice, this, LOGGER);
             appendTextToPane(ENTER_A_NUMBER);
@@ -1748,7 +1748,7 @@ public class Calculator extends JFrame
                 values[2] = buttonChoice;
                 appendTextToPane(textPaneValue + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 negativeNumber = false;
                 valuesPosition = 1;
                 confirm(this, LOGGER, pressedButton(buttonChoice));
@@ -1756,17 +1756,18 @@ public class Calculator extends JFrame
             else if (isOperatorActive() && !getValueAt(1).isEmpty())
             {
                 // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 + ...
-                String result = performMathOperation(ADDITION).toPlainString();
+                performOperation();
+                writeContinuedHistory(ADDITION, getActiveOperator(), getValueAt(3), true);
                 setActiveOperator(buttonChoice);
                 resetCalculatorOperations(false);
-                if (isMaximumValue(result)) // we can add to the minimum number, not to the maximum
+                if (isMaximumValue(getValueAt(3))) // we can add to the minimum number, not to the maximum
                 {
                     values[2] = EMPTY;
-                    appendTextToPane(addCommas(result));
+                    appendTextToPane(addCommas(getValueAt(3)));
                 }
                 else
                 {
-                    appendTextToPane(addCommas(result) + SPACE + buttonChoice, true);
+                    appendTextToPane(addCommas(getValueAt(3)) + SPACE + buttonChoice, true);
                     resetCalculatorOperations(true);
                 }
                 confirm(this, LOGGER, pressedButton(buttonChoice));
@@ -1778,7 +1779,7 @@ public class Calculator extends JFrame
                 appendTextToPane(textPaneValue + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
                 values[2] = buttonChoice;
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 valuesPosition = 1;
                 confirm(this, LOGGER, pressedButton(buttonChoice));
             }
@@ -1793,15 +1794,17 @@ public class Calculator extends JFrame
      * resets dotPRESSED + SPACE to false, enables buttonDot and stores the result
      * back in values[0]
      */
-    private BigDecimal addition(String continuedOperation)
+    private BigDecimal addition()
     {
-        BigDecimal result = performBinaryOperation();
-        if (continuedOperation != null)
-            writeContinuedHistory(continuedOperation, ADDITION, result, true);
-        else
-            writeContinuedHistory(EQUALS, ADDITION, result, false);
-        buttonDecimal.setEnabled(isDecimalNumber(values[3]));
-        confirm(this, LOGGER, "Finished adding");
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        // TODO: Change to String result = EMPTY;
+        BigDecimal result = firstNumber.add(secondNumber);
+        if (isDecimalNumber(String.valueOf(result)))
+        {
+            result = result.stripTrailingZeros();
+        }
+        logOperation(LOGGER, values);
         return result;
     }
 
@@ -1827,7 +1830,7 @@ public class Calculator extends JFrame
                 values[valuesPosition] = getTextPaneValue();
                 appendTextToPane(getValueAt() + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 negativeNumber = false;
                 valuesPosition += 1;
             }
@@ -1840,70 +1843,24 @@ public class Calculator extends JFrame
                 negativeNumber = true;
                 values[2] = EMPTY;
             }
-            else if (values[2].equals(ADDITION) && !getValueAt(1).isEmpty())
+            else if (isOperatorActive() && !getValueAt(1).isEmpty())
             {
-                addition(SUBTRACTION); // 5 + 3 - ...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                values[2] = buttonChoice;
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
-            }
-            else if (values[2].equals(SUBTRACTION) && !values[1].isEmpty())
-            {
-                subtract(SUBTRACTION); // 5 - 3 - ...
-                values[2] = buttonChoice;
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 - ...
+                performOperation();
+                writeContinuedHistory(SUBTRACTION, getActiveOperator(), getValueAt(3), true);
+                setActiveOperator(buttonChoice);
                 resetCalculatorOperations(false);
                 if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
                 {
                     values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
+                    appendTextToPane(addCommas(getValueAt(3)));
                 }
                 else
                 {
-                    appendTextToPane(values[3] + SPACE + buttonChoice, true);
+                    appendTextToPane(addCommas(getValueAt(3)) + SPACE + buttonChoice, true);
                     resetCalculatorOperations(true);
                 }
-            }
-            else if (values[2].equals(MULTIPLICATION) && !values[1].isEmpty())
-            {
-                multiply(SUBTRACTION); // 5 ✕ 3 - ...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
-            }
-            else if (values[2].equals(DIVISION) && !values[1].isEmpty())
-            {
-                divide(SUBTRACTION); // 5 ÷ 3 - ...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
             }
             else if (isOperatorActive() && !negativeNumber)
             {
@@ -1922,7 +1879,7 @@ public class Calculator extends JFrame
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 values[2] = buttonChoice;
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 valuesPosition += 1;
             }
             buttonDecimal.setEnabled(true);
@@ -1932,18 +1889,17 @@ public class Calculator extends JFrame
     /**
      * The inner logic for subtracting
      */
-    private BigDecimal subtract(String continuedOperation)
+    private BigDecimal subtract()
     {
-        BigDecimal result = performBinaryOperation();
-        if (continuedOperation != null)
-            writeContinuedHistory(continuedOperation, SUBTRACTION, result, true);
-        else
-            writeContinuedHistory(EQUALS, SUBTRACTION, result, false);
-        values[3] = String.valueOf(result);
-        appendTextToPane(addCommas(values[3]));
-        setIsNumberNegative(isNegativeNumber(values[3]));
-        buttonDecimal.setEnabled(isDecimalNumber(values[3]));
-        confirm(this, LOGGER, "Finished subtracting");
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        // TODO: Change to String result = EMPTY;
+        BigDecimal result = firstNumber.subtract(secondNumber);
+        if (isDecimalNumber(String.valueOf(result)))
+        {
+            result = result.stripTrailingZeros();
+        }
+        logOperation(LOGGER, values);
         return result;
     }
 
@@ -1973,81 +1929,27 @@ public class Calculator extends JFrame
                 values[2] = buttonChoice;
                 appendTextToPane(getValueAt() + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 valuesPosition = 1;
             }
-            // No basic operator pushed, textPane is empty, and values is not set
-            else if (isNoOperatorActive())
+            else if (isOperatorActive() && !getValueAt(1).isEmpty())
             {
-                values[valuesPosition] = getTextPaneValue();
-                appendTextToPane(getValueAt() + SPACE + buttonChoice);
-                writeHistory(buttonChoice, true);
-                negativeNumber = isNegativeNumber(getValueAt());
-                values[2] = buttonChoice;
-            }
-            else if (values[2].equals(ADDITION) && !values[1].isEmpty())
-            {
-                addition(MULTIPLICATION); // 5 + 3 ✕...
-                values[2] = buttonChoice;
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 - ...
+                performOperation();
+                writeContinuedHistory(MULTIPLICATION, getActiveOperator(), getValueAt(3), true);
+                setActiveOperator(buttonChoice);
                 resetCalculatorOperations(false);
                 if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
                 {
                     values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
+                    appendTextToPane(addCommas(getValueAt(3)));
                 }
                 else
                 {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
+                    appendTextToPane(addCommas(getValueAt(3)) + SPACE + buttonChoice, true);
                     resetCalculatorOperations(true);
                 }
-            }
-            else if (values[2].equals(SUBTRACTION) && !values[1].isEmpty())
-            {
-                subtract(MULTIPLICATION); // 5 - 3 ✕...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
-            }
-            else if (values[2].equals(MULTIPLICATION) && !values[1].isEmpty())
-            {
-                multiply(MULTIPLICATION); // 5 ✕ 3 ✕...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
-            }
-            else if (values[2].equals(DIVISION) && !values[1].isEmpty())
-            {
-                divide(MULTIPLICATION); // 5 ÷ 3 ✕...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice);
-                    resetCalculatorOperations(true);
-                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
             }
             else if (!getTextPaneValue().isBlank() && values[0].isBlank())
             {
@@ -2058,7 +1960,7 @@ public class Calculator extends JFrame
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 values[2] = buttonChoice;
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 valuesPosition += 1;
             }
             else if (isOperatorActive())
@@ -2070,17 +1972,17 @@ public class Calculator extends JFrame
     /**
      * The inner logic for multiplying
      */
-    private BigDecimal multiply(String continuedOperation)
+    private BigDecimal multiply()
     {
-        BigDecimal result = performBinaryOperation();
-        if (continuedOperation != null)
-            writeContinuedHistory(continuedOperation, MULTIPLICATION, result, true);
-        else
-            writeContinuedHistory(EQUALS, MULTIPLICATION, result, false);
-        values[3] = String.valueOf(result);
-        appendTextToPane(addCommas(values[3]));
-        buttonDecimal.setEnabled(isDecimalNumber(values[3]));
-        confirm(this, LOGGER, "Finished multiplying");
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        // TODO: Change to String result = EMPTY;
+        BigDecimal result = firstNumber.multiply(secondNumber);
+        if (isDecimalNumber(String.valueOf(result)))
+        {
+            result = result.stripTrailingZeros();
+        }
+        logOperation(LOGGER, values);
         return result;
     }
 
@@ -2111,80 +2013,27 @@ public class Calculator extends JFrame
                 values[2] = buttonChoice;
                 appendTextToPane(values[valuesPosition] + SPACE + buttonChoice);
                 writeHistory(buttonChoice, true);
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 valuesPosition += 1;
             }
-            else if (values[2].equals(ADDITION) && !values[1].isEmpty())
+            else if (isOperatorActive() && !getValueAt(1).isEmpty())
             {
-                addition(DIVISION); // 5 + 3 ÷
-                values[2] = buttonChoice;
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 - ...
+                performOperation();
+                writeContinuedHistory(DIVISION, getActiveOperator(), getValueAt(3), true);
+                setActiveOperator(buttonChoice);
                 resetCalculatorOperations(false);
                 if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
                 {
                     values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
+                    appendTextToPane(addCommas(getValueAt(3)));
                 }
                 else
                 {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
+                    appendTextToPane(addCommas(getValueAt(3)) + SPACE + buttonChoice, true);
                     resetCalculatorOperations(true);
                 }
-
-            }
-            else if (values[2].equals(SUBTRACTION) && !values[1].isEmpty())
-            {
-                subtract(DIVISION); // 5 - 3 ÷
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
-
-            }
-            else if (values[2].equals(MULTIPLICATION) && !values[1].isEmpty())
-            {
-                multiply(DIVISION); // 5 ✕ 3 ÷...
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[3]));
-                }
-                else
-                {
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
-            }
-            else if (values[2].equals(DIVISION) && !values[1].isEmpty())
-            {
-                divide(DIVISION); // 5 ÷ 3 ÷
-                values[2] = buttonChoice;
-                resetCalculatorOperations(false);
-                if (!getTextPaneValue().equals(INFINITY) && (isMinimumValue(values[3]) || isMaximumValue(values[3])))
-                {
-                    values[2] = EMPTY;
-                    appendTextToPane(addCommas(values[0]));
-                }
-                else if (getTextPaneValue().equals(INFINITY))
-                {
-                    values[2] = EMPTY;
-                    valuesPosition = 0;
-                }
-                else
-                {
-                    values[2] = buttonChoice;
-                    appendTextToPane(addCommas(values[3]) + SPACE + buttonChoice, true);
-                    resetCalculatorOperations(true);
-                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
             }
             else if (!getTextPaneValue().isBlank() && values[0].isBlank())
             {
@@ -2195,7 +2044,7 @@ public class Calculator extends JFrame
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
                 values[2] = buttonChoice;
-                isFirstNumber = false;
+                obtainingFirstNumber = false;
                 valuesPosition += 1;
             }
             else if (isOperatorActive())
@@ -2207,31 +2056,25 @@ public class Calculator extends JFrame
     /**
      * The inner logic for dividing
      */
-    private BigDecimal divide(String continuedOperation)
+    private BigDecimal divide()
     {
         BigDecimal result = new BigDecimal(ZERO);
         if (ZERO.equals(getValueAt(1)))
         {
-            appendTextToPane(INFINITY);
-            values[0] = EMPTY;
-            values[1] = EMPTY;
-            values[2] = EMPTY;
-            values[3] = EMPTY;
-            isFirstNumber = true;
-            confirm(this, LOGGER, cannotPerformOperation(DIVISION));
+            dividedByZero();
         }
         else
         {
-            result = performBinaryOperation();
-            if (continuedOperation != null)
-                writeContinuedHistory(continuedOperation, DIVISION, result, true);
-            else
-                writeContinuedHistory(EQUALS, DIVISION, result, false);
-            values[3] = String.valueOf(result);
-            appendTextToPane(addCommas(values[3]));
-            //buttonDecimal.setEnabled(isDecimalNumber(values[3]));
-            confirm(this, LOGGER, "Finished dividing");
+            BigDecimal firstNumber = new BigDecimal(values[0]);
+            BigDecimal secondNumber = new BigDecimal(values[1]);
+            // TODO: Change to String result = EMPTY;
+            result = firstNumber.divide(secondNumber);
+            if (isDecimalNumber(String.valueOf(result)))
+            {
+                result = result.stripTrailingZeros();
+            }
         }
+        logOperation(LOGGER, values);
         return result;
     }
 
@@ -2243,21 +2086,22 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (!isFirstNumber && !isPemdasActive) // second number
+        if (!obtainingFirstNumber && !isPemdasActive) // second number
         {
             LOGGER.debug("obtaining second number...");
             clearTextInTextPane();
-            isFirstNumber = true;
+            obtainingFirstNumber = true;
         }
         if (performInitialChecks())
         {
             LOGGER.warn("Invalid entry in textPane. Clearing...");
             appendTextToPane(EMPTY);
             values[valuesPosition] = EMPTY;
-            isFirstNumber = true;
+            obtainingFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
         values[valuesPosition] += buttonChoice;
+        // TODO: Fix
         if (negativeNumber && !isNegativeNumber(getValueAt()))
             values[valuesPosition] = convertToNegative(getValueAt());
         if (BASE_BINARY == getCalculatorBase())
@@ -2388,11 +2232,12 @@ public class Calculator extends JFrame
         }
         else
         {
-            BigDecimal result = performMathOperation(null);
+            BigDecimal result = performOperation();
             if (textPaneContainsBadText())
                 appendTextToPane(getBadText());
             else
                 appendTextToPane(addCommas(String.valueOf(result)));
+            writeContinuedHistory(EQUALS, getActiveOperator(), result, false);
             resetValues();
             confirm(this, LOGGER, pressedButton(buttonChoice));
         }
@@ -2402,231 +2247,72 @@ public class Calculator extends JFrame
      * performs that operation, stores the result in v[3]
      * and resets any necessary flags.
      */
-    public BigDecimal performMathOperation(String continuedOperation)
+    public BigDecimal performOperation()
     {
         BigDecimal result = new BigDecimal(ZERO);
+        valuesPosition = 3;
         switch (getActiveOperator()) {
             case ADDITION ->
             {
-                result = addition(continuedOperation);
-                resetCalculatorOperations(true);
+                result = addition();
+                //resetCalculatorOperations(true);
             }
             case SUBTRACTION ->
             {
-                result = subtract(continuedOperation);
-                resetCalculatorOperations(true);
+                result = subtract();
+                //resetCalculatorOperations(true);
             }
             case MULTIPLICATION ->
             {
-                result = multiply(continuedOperation);
-                resetCalculatorOperations(true);
+                result = multiply();
+                //resetCalculatorOperations(true);
             }
             case DIVISION ->
             {
-                result = divide(continuedOperation);
-                resetCalculatorOperations(true);
+                result = divide();
+                //resetCalculatorOperations(true);
             }
             case PERCENT ->
             {
-                result = performUnaryOperation();
+                result = basicPanel.performPercent();
             }
             case SQUARED ->
             {
-                result = performUnaryOperation();
+                result = basicPanel.performSquared();
             }
             case FRACTION ->
             {
-                result = performUnaryOperation();
+                result = basicPanel.performFraction();
             }
             case AND ->
             {
                 String andResult = programmerPanel.performAnd();
-                //andResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, andResult);
-                //values[3] = andResult;
                 result = new BigDecimal(andResult);
+                // TODO: Move to performAndButtonActionMethod
                 writeContinuedHistory(EQUALS, AND, andResult, false);
                 resetCalculatorOperations(false);
             }
             case OR ->
             {
                 String orResult = programmerPanel.performOr();
-                //values[3] = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, orResult);
                 result = new BigDecimal(orResult);
+                // TODO: Move to performAndButtonActionMethod
                 writeContinuedHistory(OR, OR, orResult, false);
                 resetCalculatorOperations(false);
             }
             case XOR ->
             {
                 String xorResult = programmerPanel.performXor();
-                //values[3] = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, xorResult);
                 result = new BigDecimal(xorResult);
+                // TODO: Move to performAndButtonActionMethod
                 writeContinuedHistory(OR, OR, xorResult, false);
                 resetCalculatorOperations(false);
             }
             case MODULUS ->
             {
-                result = performBinaryOperation();
+                result = programmerPanel.performModulus();
             }
             default -> LOGGER.warn("Unknown operation: {}", getActiveOperator());
-        }
-        return result;
-    }
-
-    /**
-     * Performs the appropriate binary operation
-     * with values[0] and values[1], performing
-     * the operation in values[2]. It logs the
-     * operation performed and stored in values[3].
-     * The result may be stripped of any trailing
-     * zeros but ultimately returned.
-     * @return the result of the operation
-     */
-    private BigDecimal performBinaryOperation()
-    {
-        BigDecimal firstNumber = new BigDecimal(values[0]);
-        BigDecimal secondNumber = new BigDecimal(values[1]);
-        // TODO: Change to String result = EMPTY;
-        BigDecimal result = new BigDecimal(ZERO);
-        valuesPosition = 3;
-        switch (getActiveOperator())
-        {
-            case ADDITION ->
-            {
-                result = firstNumber.add(secondNumber);
-                if (isDecimalNumber(String.valueOf(result)))
-                {
-                    result = result.stripTrailingZeros();
-                }
-            }
-            case SUBTRACTION ->
-            {
-                result = firstNumber.subtract(secondNumber);
-                if (isDecimalNumber(String.valueOf(result)))
-                {
-                    result = result.stripTrailingZeros();
-                }
-            }
-            case MULTIPLICATION ->
-            {
-                result = firstNumber.multiply(secondNumber);
-                if (isDecimalNumber(String.valueOf(result)))
-                {
-                    result = result.stripTrailingZeros();
-                }
-            }
-            case DIVISION ->
-            {
-                result = firstNumber.divide(secondNumber);
-                if (isDecimalNumber(String.valueOf(result)))
-                {
-                    result = result.stripTrailingZeros();
-                }
-            }
-            case AND ->
-            {
-                String andResult = programmerPanel.performAnd();
-                andResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, andResult);
-                result = new BigDecimal(andResult); // TODO: check
-                //writeContinuedHistory(EQUALS, AND, Double.parseDouble(andResult), false);
-                //resetValues();
-                //resetCalculatorOperations(false);
-            }
-            case OR ->
-            {
-                String orResult = programmerPanel.performOr();
-                orResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, orResult);
-                result = new BigDecimal(orResult); // TODO: check
-                //writeContinuedHistory(OR, OR, resultInBase, false);
-                //values[3] = resultInBase;
-                //programmerPanel.getCalculator().getValues()[2] = EMPTY;
-                //resetCalculatorOperations(false);
-            }
-            case XOR ->
-            {
-                String xorResult = programmerPanel.performXor();
-                xorResult = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, xorResult);
-                result = new BigDecimal(xorResult); // TODO: check
-                //writeContinuedHistory(OR, OR, resultInBase, false);
-                //values[3] = resultInBase;
-                //resetCalculatorOperations(false);
-            }
-            case MODULUS ->
-            {
-                result = new BigDecimal(programmerPanel.performModulus());
-            }
-            default -> LOGGER.warn("Unknown operation: {}", values[2]);
-        }
-        values[valuesPosition] = String.valueOf(result);
-        buttonDecimal.setEnabled(isDecimalNumber(getValueAt()));
-        logOperation(LOGGER, values);
-        return result;
-    }
-
-    /**
-     * Performs the appropriate unary operation
-     * on the current value at position, and logs
-     * the operation performed.
-     * @return
-     */
-    private BigDecimal performUnaryOperation()
-    {
-        BigDecimal result = new BigDecimal(ZERO);
-        BigDecimal firstNumber = new BigDecimal(getValueAt());
-        switch (getActiveOperator())
-        {
-            case PERCENT ->
-            {
-                BigDecimal oneHundred = new BigDecimal(ONE+ZERO+ZERO);
-                if (ZERO.equals(getValueAt()))
-                {
-                    appendTextToPane(INFINITY);
-                    values[0] = EMPTY;
-                    values[1] = EMPTY;
-                    values[2] = EMPTY;
-                    values[3] = EMPTY;
-                    isFirstNumber = true;
-                    confirm(this, LOGGER, cannotPerformOperation(PERCENT));
-                }
-                else
-                {
-                    result = firstNumber.divide(oneHundred);
-                    if (isDecimalNumber(String.valueOf(result)))
-                    {
-                        result = result.stripTrailingZeros();
-                    }
-                    LOGGER.debug("{} / {} = {}%", firstNumber, oneHundred, result);
-                }
-            }
-            case SQUARED ->
-            {
-                double number = firstNumber.doubleValue();
-                result = BigDecimal.valueOf(Math.pow(number, 2));
-                if (isDecimalNumber(String.valueOf(result)))
-                {
-                    result = result.stripTrailingZeros();
-                }
-                LOGGER.debug("{} squared = {}", number, result.toPlainString());
-            }
-            case FRACTION ->
-            {
-                BigDecimal one = new BigDecimal(ONE);
-                if (ZERO.equals(getValueAt()))
-                {
-                    appendTextToPane(INFINITY);
-                    values[0] = EMPTY;
-                    values[1] = EMPTY;
-                    values[2] = EMPTY;
-                    values[3] = EMPTY;
-                    isFirstNumber = true;
-                    confirm(this, LOGGER, cannotPerformOperation(FRACTION));
-                }
-                else
-                {
-                    result = one.divide(firstNumber);
-                    LOGGER.debug("{} / {} = {}", one, firstNumber, result);
-                }
-            }
-            default -> LOGGER.warn("Unknown unary operation: {}", getActiveOperator());
         }
         values[3] = result.toPlainString();
         return result;
@@ -2719,23 +2405,23 @@ public class Calculator extends JFrame
     /**
      * Records the buttonChoice specifically if it was a continued operation
      * Ex: Already entered 5 + 6, then press +, History shows: (+) Result: 5 + 6 = 11 +
-     * @param continuedOperation String whether to display the operation or equals
+     * @param prevOperation String whether to display the operation or equals
      * @param operation String the operation performed (add, subtract, etc)
      * @param result double the result from the operation
      * @param addContinuedOperationToEnd boolean whether to append the operation to the end
      */
-    public void writeContinuedHistory(String continuedOperation, String operation, Object result, boolean addContinuedOperationToEnd)
+    public void writeContinuedHistory(String prevOperation, String operation, Object result, boolean addContinuedOperationToEnd)
     {
         LOGGER.info("Writing continued history");
         var paneValue = addCommas(values[0]) + SPACE + operation + SPACE + addCommas(values[1]) + SPACE + EQUALS + SPACE + addCommas(String.valueOf(result));
         if (addContinuedOperationToEnd)
         {
-            paneValue += SPACE + continuedOperation;
+            paneValue += SPACE + prevOperation;
         }
         var currentHistory = getHistoryTextPane().getText();
         getHistoryTextPane().setText(
             currentHistory + NEWLINE +
-            LEFT_PARENTHESIS + continuedOperation + RIGHT_PARENTHESIS + " Result: " + paneValue
+            LEFT_PARENTHESIS + prevOperation + RIGHT_PARENTHESIS + " Result: " + paneValue
         );
     }
 
@@ -2745,14 +2431,15 @@ public class Calculator extends JFrame
      */
     public void resetValues()
     {
+        buttonDecimal.setEnabled(!isDecimalNumber(values[3]));
+        setIsNumberNegative(isNegativeNumber(values[3]));
+        isPemdasActive = false;
+        setObtainingFirstNumber(false);
         values[0] = EMPTY;
         values[1] = EMPTY;
         values[2] = EMPTY;
         values[3] = EMPTY;
         valuesPosition = 0;
-        buttonDecimal.setEnabled(true);
-        setIsNumberNegative(false);
-        resetOperators(false);
         LOGGER.debug("Reset values");
     }
 
@@ -2773,14 +2460,14 @@ public class Calculator extends JFrame
         if (operatorBool)
         {
             valuesPosition = 1;
-            isFirstNumber = false;
+            obtainingFirstNumber = false;
             buttonDecimal.setEnabled(true); // !isDecimal(values[0])
             return false;
         }
         else
         {
             valuesPosition = 0;
-            isFirstNumber = true;
+            obtainingFirstNumber = true;
             buttonDecimal.setEnabled(!isDecimalNumber(getValueAt()));
             return true;
         }
@@ -2929,7 +2616,7 @@ public class Calculator extends JFrame
             LOGGER.debug("textPane equals 0. Setting to blank.");
             appendTextToPane(EMPTY);
             values[valuesPosition] = EMPTY;
-            isFirstNumber = true;
+            obtainingFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
         boolean issueFound = false;
@@ -3601,10 +3288,7 @@ public class Calculator extends JFrame
      * @param number the value to test
      * @return either true or false based on result
      */
-    public boolean isPositiveNumber(String number)
-    {
-        return !number.startsWith(SUBTRACTION);
-    }
+    public boolean isPositiveNumber(String number) { return !number.startsWith(SUBTRACTION); }
 
     /**
      * Determines whether a number is negative
@@ -3612,10 +3296,7 @@ public class Calculator extends JFrame
      * @param number the value to test
      * @return either true or false based on result
      */
-    public boolean isNegativeNumber(String number)
-    {
-        return number.startsWith(SUBTRACTION);
-    }
+    public boolean isNegativeNumber(String number) { return number.startsWith(SUBTRACTION); }
 
     /**
      * Converts a number to its negative equivalent
@@ -3648,10 +3329,10 @@ public class Calculator extends JFrame
      * Resets the operators to the boolean passed in
      * @param reset a boolean to reset the operators to
      */
+    @Deprecated(since = "Use resetValues()")
     public void resetOperators(boolean reset)
     {
-        isPemdasActive = reset;
-        setIsFirstNumber(reset);
+
         values[2] = EMPTY; // operator
         LOGGER.debug("All operators reset to {}", reset);
     }
@@ -3878,6 +3559,19 @@ public class Calculator extends JFrame
                 performHistoryAction(actionEvent);
         }
     }
+
+    /**
+     * Sets the state when divided by zero occurs
+     */
+    public void dividedByZero()
+    {
+        appendTextToPane(INFINITY);
+        values[0] = EMPTY;
+        values[1] = EMPTY;
+        values[2] = EMPTY;
+        values[3] = EMPTY;
+        setObtainingFirstNumber(true);
+    }
     /**************** END HELPER METHODS ****************/
 
     /**************** GETTERS ****************/
@@ -3931,7 +3625,7 @@ public class Calculator extends JFrame
     public ImageIcon getWindowsIcon() { return windowsIcon; }
     public ImageIcon getBlankIcon() { return blankIcon; }
     public JMenuBar getCalculatorMenuBar() { return menuBar; }
-    public boolean isFirstNumber() { return isFirstNumber; }
+    public boolean isObtainingFirstNumber() { return obtainingFirstNumber; }
     public boolean isNegativeNumber() { return negativeNumber; }
     public boolean isPemdasActive() { return isPemdasActive; }
     public boolean isDotPressed() { return buttonDecimal.isEnabled(); }
@@ -3983,7 +3677,7 @@ public class Calculator extends JFrame
     public void setMacIcon(ImageIcon macIcon) { this.macIcon = macIcon; }
     public void setWindowsIcon(ImageIcon windowsIcon) { this.windowsIcon = windowsIcon; }
     public void setBlankIcon(ImageIcon blankIcon) { this.blankIcon = blankIcon; }
-    public void setIsFirstNumber(boolean firstNumber) { this.isFirstNumber = firstNumber; LOGGER.debug("isFirstNumber set to {}", firstNumber); }
+    public void setObtainingFirstNumber(boolean firstNumber) { this.obtainingFirstNumber = firstNumber; LOGGER.debug("isFirstNumber set to {}", firstNumber); }
     public void setIsNumberNegative(boolean numberNegative) { this.negativeNumber = numberNegative; LOGGER.debug("isNumberNegative set to {}", numberNegative); }
     public void setIsPemdasActive(boolean isPemdasActive) { this.isPemdasActive = isPemdasActive; }
     public void setCalculatorMenuBar(JMenuBar menuBar) { this.menuBar = menuBar; setJMenuBar(menuBar); LOGGER.debug("Menubar set"); }
