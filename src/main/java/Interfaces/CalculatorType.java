@@ -1,4 +1,4 @@
-package Types;
+package Interfaces;
 
 /**
  * The different types of Calculators available

@@ -55,6 +55,7 @@ public class Texts {
     public static final String VIEW = "View";
     public static final String EDIT = "Edit";
     public static final String HELP = "Help";
+    public static final String MENU = "Menu";
     // Look Menu Options
     public static final String METAL = "Metal";
     public static final String SYSTEM = "System";
@@ -67,6 +68,22 @@ public class Texts {
     public static final String PASTE = "Paste";
     public static final String CLEAR_HISTORY = "Clear History";
     public static final String SHOW_MEMORIES = "Show Memories";
+    public static final String NO_MEMORIES_STORED = "No Memories Stored";
+    public static final String MEMORIES = "Memories:";
+    public static final String RESULT = "Result: ";
+    public static final String SAVED_MEMORY = "Saved: %s to memory position %s";
+    public static String savedMemory(String memory, int position) {
+        return String.format(SAVED_MEMORY, memory, position);
+    }
+    public static final String ADDED_TO_MEMORY = "Added: %s to memories[%s] = %s";
+    public static String addedToMemory(String oldValue, int position, String newValue) {
+        return String.format("Added: %s to memories[%s] = %s", oldValue, position, newValue);
+    }
+    public static final String SUBTRACTED_FROM_MEMORY = "Subtracted: %s from memories[%s] = %s";
+    public static String subtractedFromMemory(String oldValue, int position, String newValue) {
+        return String.format(SUBTRACTED_FROM_MEMORY, oldValue, position, newValue);
+    }
+
     // Help Menu Options
     public static final String VIEW_HELP = "View Help";
     public static final String ABOUT_CALCULATOR = "About Calculator";
@@ -100,6 +117,8 @@ public class Texts {
     public static final String MODULUS = "MOD";
     public static final String LEFT_PARENTHESIS = "(";
     public static final String RIGHT_PARENTHESIS = ")";
+    public static final String LEFT_BRACKET = "[";
+    public static final String RIGHT_BRACKET = "]";
     public static final String ROL = "ROL";
     public static final String ROR = "ROR";
     public static final String OR = "OR";
@@ -138,6 +157,7 @@ public class Texts {
     public static final String PUSHED_CLEAR = "Pushed clear";
     public static final String NEWLINE = "\n";
     public static final String UNDERSCORE = "_";
+    // TODO: Update values according to ??
     public static final String MAX_VALUE = "9999999";
     public static final String MIN_VALUE = "-9999999";
 

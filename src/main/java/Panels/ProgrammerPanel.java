@@ -112,6 +112,7 @@ public class ProgrammerPanel extends JPanel
         calculator.clearButtonActions();
         calculator.setupTextPane();
         calculator.setupProgrammerPanelButtons();
+        this.setupProgrammerPanelButtons();
         setupHelpString();
         LOGGER.info("Finished configuring the buttons");
     }
@@ -369,7 +370,7 @@ public class ProgrammerPanel extends JPanel
         return switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
             case BASE_OCTAL -> calculator.convertValueToOctal(); // TODO: add similar separateBits method for octal, grouping by 3s
-            case BASE_DECIMAL -> calculator.addCommas(calculator.getValues()[calculator.getValuesPosition()]);
+            case BASE_DECIMAL -> calculator.addThousandsDelimiter(calculator.getValues()[calculator.getValuesPosition()]);
             case BASE_HEXADECIMAL -> calculator.getValues()[calculator.getValuesPosition()]; // TODO: may need to add separateBits for hexa numbers
         };
     }
@@ -434,7 +435,7 @@ public class ProgrammerPanel extends JPanel
                 sb.append(representation, 8, 12);
                 sb.append(SPACE);
                 sb.append(representation, 12, 16);
-                sb.append(calculator.addNewLines(1));
+                sb.append(NEWLINE);
                 sb.append(representation, 16, 20);
                 sb.append(SPACE);
                 sb.append(representation, 20, 24);
@@ -452,7 +453,7 @@ public class ProgrammerPanel extends JPanel
                 sb.append(representation, 8, 12);
                 sb.append(SPACE);
                 sb.append(representation, 12, 16);
-                sb.append(calculator.addNewLines(1));
+                sb.append(NEWLINE);
                 sb.append(representation, 16, 20);
                 sb.append(SPACE);
                 sb.append(representation, 20, 24);
@@ -460,7 +461,7 @@ public class ProgrammerPanel extends JPanel
                 sb.append(representation, 24, 28);
                 sb.append(SPACE);
                 sb.append(representation, 28, 32);
-                sb.append(calculator.addNewLines(1));
+                sb.append(NEWLINE);
                 sb.append(representation, 32, 36);
                 sb.append(SPACE);
                 sb.append(representation, 36, 40);
@@ -468,7 +469,7 @@ public class ProgrammerPanel extends JPanel
                 sb.append(representation, 40, 44);
                 sb.append(SPACE);
                 sb.append(representation, 44, 48);
-                sb.append(calculator.addNewLines(1));
+                sb.append(NEWLINE);
                 sb.append(representation, 48, 52);
                 sb.append(SPACE);
                 sb.append(representation, 52, 56);
@@ -505,27 +506,7 @@ public class ProgrammerPanel extends JPanel
             doc.insertString(doc.getLength(), NEWLINE+text+NEWLINE, doc.getStyle("alignRight"));
             doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
         }
-        catch (BadLocationException e) { calculator.logException(e); }
-    }
-
-    /**
-     * This method returns the String operator that was activated
-     * Results could be: 'OR', 'MOD', 'XOR', 'NOT' or 'AND'
-     * operator was recorded as being activated
-     * @return String the basic operation that was pushed
-     */
-    public String getActiveProgrammerPanelOperator()
-    {
-        String results = EMPTY;
-        results = calculator.getValueAt(2);
-//        if (isOr) { results = OR; }
-//        else if (isModulus) { results = MODULUS; }
-//        else if (isXor) { results = XOR; }
-//        else if (isNot) { results = NOT; }
-//        else if (isAnd) { results = AND; }
-        if (results.isEmpty()) { LOGGER.info("no programmer operator pushed"); }
-        else { LOGGER.info("operator: {}", results); }
-        return results;
+        catch (BadLocationException e) { logException(e, LOGGER); }
     }
 
     /**
@@ -570,6 +551,7 @@ public class ProgrammerPanel extends JPanel
      * The programmer actions to perform when the Delete button is clicked
      * @param actionEvent the click action
      */
+    @Deprecated(since = "Use Calculator.performDeleteButtonAction instead", forRemoval = true)
     public void performDeleteButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
@@ -620,8 +602,8 @@ public class ProgrammerPanel extends JPanel
                             calculator.appendTextToPane(substring);
                         }
                     }
-                    calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValues()[calculator.getValuesPosition()]));
-                    calculator.setIsNumberNegative(calculator.getValues()[calculator.getValuesPosition()].contains(SUBTRACTION));
+                    calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValues()[calculator.getValuesPosition()]));
+                    calculator.setNegativeNumber(calculator.getValues()[calculator.getValuesPosition()].contains(SUBTRACTION));
                     calculator.writeHistory(buttonChoice, false);
                     confirm(calculator, LOGGER, "Pressed " + buttonChoice);
                 }
@@ -658,46 +640,64 @@ public class ProgrammerPanel extends JPanel
             {
                 calculator.getValues()[2] = buttonChoice;
                 appendTextForProgrammerPanel(calculator.getTextPaneValue() + SPACE + buttonChoice);
-                calculator.setIsNumberNegative(false);
+                calculator.setNegativeNumber(false);
                 calculator.getButtonDecimal().setEnabled(true);
-                calculator.resetCalculatorOperations(true);
+                calculator.finishedObtainingFirstNumber(true);
                 confirm(calculator, LOGGER, "Pressed " + buttonChoice);
             }
-            // TODO: Add continuation logic
-            else
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty())
             {
-                calculator.getValues()[2] = MODULUS;
-                String result = performModulus().toPlainString();
-                calculator.setValuesPosition(3);
-                calculator.appendTextToPane(calculator.addCommas(result), true);
-                calculator.setIsNumberNegative(calculator.isNegativeNumber(result));
-                calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
-                calculator.resetCalculatorOperations(true);
-                confirm(calculator, LOGGER, "Modulus Actions finished");
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
+                calculator.performOperation();
+                calculator.setActiveOperator(buttonChoice);
+                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
+                calculator.writeContinuedHistory(MODULUS, calculator.getActiveOperator(), calculator.getValueAt(3), true);
+                if (calculator.isMaximumValue(calculator.getValueAt(3)) || calculator.isMinimumValue(calculator.getValueAt(3)))
+                {
+                    calculator.getValues()[2] = EMPTY;
+                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)));
+                    //calculator.resetCalculatorOperations(false);
+                }
+                else
+                {
+                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)) + SPACE + buttonChoice, true);
+                    //calculator.resetCalculatorOperations(true);
+                }
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
+            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank())
+            {
+                logEmptyValue(buttonChoice, calculator, LOGGER);
+                LOGGER.info("Setting values[0] to textPane value");
+                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.setActiveOperator(buttonChoice);
+                calculator.setObtainingFirstNumber(false);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (calculator.isOperatorActive())
+            { confirm(calculator, LOGGER, cannotPerformOperation(AND)); }
         }
     }
     /**
      * The inner logic for modulus
      */
-    public BigDecimal performModulus()
+    public String performModulus()
     {
-        BigDecimal result = new BigDecimal(0);
+        String result;
         if (ZERO.equals(calculator.getValueAt(1)))
         {
-            calculator.appendTextToPane(INFINITY);
-            calculator.getValues()[0] = EMPTY;
-            calculator.getValues()[1] = EMPTY;
-            calculator.getValues()[2] = EMPTY;
-            calculator.getValues()[3] = EMPTY;
+            //calculator.dividedByZero();
             calculator.setObtainingFirstNumber(true);
+            result = INFINITY;
         }
         else
         {
-            result = new BigDecimal(calculator.getValues()[0])
-                    .remainder(new BigDecimal(calculator.getValues()[1]))
-                    .abs();
-            logOperation(LOGGER, calculator.getValues());
+            result = new BigDecimal(calculator.getValueAt(0))
+                    .remainder(new BigDecimal(calculator.getValueAt(1)))
+                    .abs()
+            .toPlainString();
         }
         return result;
     }
@@ -911,40 +911,66 @@ public class ProgrammerPanel extends JPanel
         logActionButton(buttonChoice, LOGGER);
         // Ex: 2
         if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + OR); }
-        else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty())
+        { confirm(calculator, LOGGER, cannotPerformOperation(OR)); }
+        else if (calculator.getTextPaneValue().isEmpty())
         {
+            logEmptyValue(buttonChoice, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Cannot perform " + OR + " operation");
+            confirm(calculator, LOGGER, cannotPerformOperation(OR));
         }
-        // v[0] is set, then pushes OR
-        else if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank())
+        else if (calculator.isMaximumValue())
+        { confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met"); }
+        else if (calculator.isMinimumValue())
+        { confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met"); }
+        else
         {
-            calculator.getValues()[2] = OR;
-            LOGGER.debug("Appending {} to text pane", buttonChoice);
-            calculator.setObtainingFirstNumber(false);
-            calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
-            calculator.writeHistory(buttonChoice, true);
-            calculator.setValuesPosition(1);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-        }
-        // v[0] & v[1] set, OR set, then pushes OR, continued operation
-        else //if (!calculator.getValues()[0].isBlank() && !calculator.getValues()[1].isBlank() && isOr)
-        {
-            String orResult = performOr();
-            var resultInBase = BASE_BINARY != calculator.getCalculatorBase() ?
-                    calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), orResult) : orResult;
-            calculator.writeContinuedHistory(OR, OR, resultInBase, true);
-            calculator.getValues()[0] = resultInBase;
-            switch (calculator.getCalculatorBase())
+            // v[0] is set, then pushes OR
+            if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank())
             {
-                case BASE_BINARY -> { calculator.appendTextToPane(orResult); }
-                case BASE_OCTAL -> { calculator.appendTextToPane(calculator.convertValueToOctal()); }
-                case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
-                case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
+                calculator.getValues()[2] = OR;
+                LOGGER.debug("Appending {} to text pane", buttonChoice);
+                calculator.setObtainingFirstNumber(false);
+                calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
+                calculator.writeHistory(buttonChoice, true);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, "Pressed " + buttonChoice);
             }
-            calculator.resetCalculatorOperations(false);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+            // v[0] & v[1] set, OR set, then pushes OR, continued operation
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty())
+            {
+                // TODO: Fix
+                String orResult = performOr();
+                var resultInBase = BASE_BINARY != calculator.getCalculatorBase() ?
+                        calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), orResult) : orResult;
+                calculator.writeContinuedHistory(OR, OR, resultInBase, true);
+
+                //writeContinuedHistory(OR, OR, orResult, false);
+                //finishedObtainingFirstNumber(false);
+
+                calculator.getValues()[0] = resultInBase;
+                switch (calculator.getCalculatorBase())
+                {
+                    case BASE_BINARY -> { calculator.appendTextToPane(orResult); }
+                    case BASE_OCTAL -> { calculator.appendTextToPane(calculator.convertValueToOctal()); }
+                    case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
+                    case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
+                }
+                calculator.finishedObtainingFirstNumber(false);
+                confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+            }
+            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank())
+            {
+                logEmptyValue(buttonChoice, calculator, LOGGER);
+                LOGGER.info("Setting values[0] to textPane value");
+                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.getValues()[2] = buttonChoice;
+                calculator.setObtainingFirstNumber(false);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (calculator.isOperatorActive())
+            { confirm(calculator, LOGGER, cannotPerformOperation(ADDITION)); }
         }
     }
     /**
@@ -969,10 +995,10 @@ public class ProgrammerPanel extends JPanel
         }
         String orResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
         calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addCommas(orResult), true);
+        calculator.appendTextToPane(calculator.addThousandsDelimiter(orResult), true);
         calculator.writeContinuedHistory(OR, OR, orResult, false);
-        logOperation(LOGGER, calculator.getValues());
-        calculator.resetCalculatorOperations(false);
+        logOperation(LOGGER, calculator);
+        calculator.finishedObtainingFirstNumber(false);
         return v1AndV2.toString();
     }
 
@@ -997,7 +1023,7 @@ public class ProgrammerPanel extends JPanel
             LOGGER.debug("Appending {} to text pane", buttonChoice);
             calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
             calculator.writeHistory(buttonChoice, true);
-            calculator.resetCalculatorOperations(true);
+            calculator.finishedObtainingFirstNumber(true);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
         else //if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
@@ -1007,6 +1033,10 @@ public class ProgrammerPanel extends JPanel
             var resultInBase = !BASE_BINARY.equals(calculator.getCalculatorBase()) ?
                     calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), xorResult) : xorResult;
             calculator.writeContinuedHistory(OR, OR, resultInBase, true);
+
+            //writeContinuedHistory(OR, OR, xorResult, false);
+            //finishedObtainingFirstNumber(false);
+
             calculator.getValues()[0] = resultInBase;
             switch (calculator.getCalculatorBase())
             {
@@ -1015,7 +1045,7 @@ public class ProgrammerPanel extends JPanel
                 case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
                 case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
             }
-            calculator.resetCalculatorOperations(false);
+            calculator.finishedObtainingFirstNumber(false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
     }
@@ -1041,11 +1071,11 @@ public class ProgrammerPanel extends JPanel
             counter++;
         }
         String xorResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addCommas(xorResult), true);
-        calculator.writeContinuedHistory(OR, OR, xorResult, false);
-        logOperation(LOGGER, calculator.getValues());
-        calculator.resetCalculatorOperations(false);
+        //calculator.setValuesPosition(3);
+        //calculator.appendTextToPane(calculator.addCommas(xorResult), true);
+        //calculator.writeContinuedHistory(OR, OR, xorResult, false);
+        //logOperation(LOGGER, calculator.getValues());
+        //calculator.finishedObtainingFirstNumber(false);
         return xorResult;
     }
 
@@ -1100,28 +1130,51 @@ public class ProgrammerPanel extends JPanel
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(AND));
         }
-        else if (!calculator.getValueAt(0).isEmpty() && calculator.getValueAt(1).isEmpty())
-        {
-            calculator.getValues()[2] = AND;
-            String value = calculator.addCommas(calculator.getValueAt());
-            calculator.appendTextToPane(value + SPACE + buttonChoice);
-            calculator.writeHistory(buttonChoice, true);
-            calculator.setObtainingFirstNumber(false);
-            calculator.setIsNumberNegative(false);
-            calculator.setValuesPosition(1);
-            confirm(calculator, LOGGER, performedOperation(AND));
-        }
-        // v[0] and v[1] are set, isAnd is true, continued operation
         else
         {
-            String result = performAnd();
-            calculator.setValuesPosition(0);
-            calculator.appendTextToPane(result + SPACE + buttonChoice);
-            // TODO: Should AND replace values[0] and values[1]??
-            calculator.resetCalculatorOperations(true);
-            calculator.writeContinuedHistory(AND, AND, Double.parseDouble(result), true);
-            calculator.getValues()[2] = AND;
-            confirm(calculator, LOGGER, performedOperation(AND));
+            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty())
+            {
+                calculator.getValues()[2] = AND;
+                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt()) + SPACE + buttonChoice);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.setObtainingFirstNumber(false);
+                calculator.setNegativeNumber(false);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, performedOperation(AND));
+            }
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty())
+            {
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
+                calculator.performOperation();
+                calculator.setActiveOperator(buttonChoice);
+                calculator.writeContinuedHistory(AND, calculator.getActiveOperator(), calculator.getValueAt(3), true);
+
+                if (calculator.isMaximumValue(calculator.getValueAt(3)) || calculator.isMinimumValue(calculator.getValueAt(3)))
+                {
+                    calculator.getValues()[2] = EMPTY;
+                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)));
+                    calculator.finishedObtainingFirstNumber(false);
+                }
+                else
+                {
+                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)) + SPACE + buttonChoice, true);
+                    calculator.finishedObtainingFirstNumber(true);
+                }
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank())
+            {
+                logEmptyValue(buttonChoice, calculator, LOGGER);
+                LOGGER.info("Setting values[0] to textPane value");
+                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.getValues()[2] = buttonChoice;
+                calculator.setObtainingFirstNumber(false);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (calculator.isOperatorActive())
+            { confirm(calculator, LOGGER, cannotPerformOperation(AND)); }
         }
     }
     /**
@@ -1149,13 +1202,7 @@ public class ProgrammerPanel extends JPanel
             }
             counter++;
         }
-        String andResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addCommas(andResult), true);
-        calculator.writeContinuedHistory(EQUALS, AND, andResult, false);
-        logOperation(LOGGER, calculator.getValues());
-        calculator.resetCalculatorOperations(false);
-        return andResult;
+        return calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
     }
 
     /**

@@ -1,12 +1,10 @@
 package Calculators;
 
-import Panels.BasicPanel;
-import Panels.ConverterPanel;
-import Panels.DatePanel;
-import Panels.ProgrammerPanel;
-import Types.CalculatorConverterType;
-import Types.CalculatorView;
-import Types.DateOperation;
+import Interfaces.CalculatorType;
+import Interfaces.OSDetector;
+import Panels.*;
+import Parent.TestParent;
+import Types.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
@@ -16,30 +14,31 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
-import static Types.CalculatorConverterType.ANGLE;
-import static Types.CalculatorConverterType.AREA;
+import static Types.CalculatorConverterType.*;
 import static Types.CalculatorView.*;
-import static Types.DateOperation.ADD_SUBTRACT_DAYS;
-import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
+import static Types.DateOperation.*;
 import static Types.Texts.*;
-import static Utilities.LoggingUtil.confirm;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * CalculatorTests
@@ -50,266 +49,153 @@ import static org.mockito.Mockito.*;
  * @version 4.0
  */
 @ExtendWith(MockitoExtension.class)
-class CalculatorTests
+class CalculatorTests extends TestParent
 {
     static { System.setProperty("appName", CalculatorTests.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
 
-    private Calculator calculator;
     @Mock
-    ActionEvent actionEvent;
-    @Spy
-    Calculator calculatorSpy;
+    public OSDetector systemDetector;
+    @Mock
+    public ActionEvent actionEvent;
 
     @BeforeAll
     static void beforeAll()
-    {
-
-    }
+    { mocks = MockitoAnnotations.openMocks(CalculatorTests.class); }
 
     @BeforeEach
-    void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    void beforeEach() throws InterruptedException, InvocationTargetException
     {
-        LOGGER.info("Setting up beforeEach...");
-        calculator = new Calculator();
-        calculator.setVisible(true);
+        SwingUtilities.invokeAndWait(() -> {
+            try
+            {
+                LOGGER.info("Starting test");
+                calculator = spy(new Calculator());
+                Preferences.userNodeForPackage(Calculator.class).clear(); // remove keys
+                calculator.setSystemDetector(systemDetector);
+            }
+            catch (Exception ignored) {}
+        });
     }
-
-    @AfterAll
-    static void afterAll()
-    { LOGGER.info("Finished running {}", CalculatorTests.class.getSimpleName()); }
-
 
     @AfterEach
     void afterEach() throws InterruptedException, InvocationTargetException
     {
-        for (Calculator calculator : java.util.List.of(calculator, calculatorSpy))
-        {
-            LOGGER.info("Test complete. Closing the calculator...");
-            EventQueue.invokeAndWait(() -> {
+        SwingUtilities.invokeAndWait(() -> {
+            try
+            {
+                LOGGER.info("Test complete. Closing the calculator...");
                 calculator.setVisible(false);
                 calculator.dispose();
-            });
-            assertFalse(calculator.isVisible());
+            }
+            catch (Exception e)
+            {
+                LOGGER.error("Error closing calculator: {}", e.getMessage(), e);
+            }
+        });
+    }
+
+    @AfterAll
+    static void afterAll()
+    {
+        LOGGER.info("Finished running {}", CalculatorTests.class.getSimpleName());
+        try
+        {
+            if (mocks != null)
+            { mocks.close(); }
         }
+        catch (Exception e)
+        { LOGGER.error("Error closing mocks: {}", e.getMessage()); }
     }
 
-    /************* Basic Calculator Tests ******************/
-    @Test
-    void createBasicCalculatorDefault()
-    {
-        //calculator = new Calculator();
-        assertTrue(calculator.isVisible(), "Cannot see basic calculator");
-        assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_BASIC);
-    }
-
-    @Test
-    void createBasicCalculatorEnforced()
-    {
-        LOGGER.info("createBasicCalculator enforced...");
-        //calculator = new Calculator(VIEW_BASIC);
-        calculator.setCalculatorView(VIEW_BASIC);
-        assertTrue(calculator.isVisible(), "Cannot see basic calculator");
-        assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_BASIC);
-    }
-
-    /************* Programmer Calculator Tests ******************/
-    @Test
-    void createProgrammerCalculator()
-    {
-        LOGGER.info("createProgrammerCalculator...");
-        //calculator = new Calculator(VIEW_PROGRAMMER);
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.setCalculatorBase(BASE_DECIMAL);
-        calculator.setIsMotif(true);
-        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(BASE_DECIMAL, calculator.getCalculatorBase(), "Base is not decimal");
-    }
-
-    @Test
-    void createProgrammerCalculatorWithBaseAndByte() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        calculator = new Calculator(BASE_BINARY, BYTE_WORD);
-        calculator.setVisible(true);
-        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(BASE_BINARY, calculator.getCalculatorBase(), "Base is not binary");
-        assertSame(BYTE_WORD, calculator.getCalculatorByte(), "Byte is not WORD");
-    }
-
-    @Test
-    void createProgrammerCalculatorInBinaryEnforced()
-    {
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.setCalculatorBase(BASE_BINARY);
-        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(BASE_BINARY, calculator.getCalculatorBase(), "Base is not binary");
-    }
-
-    @Test
-    void createProgrammerCalculatorInOctalEnforced()
-    {
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.setCalculatorBase(BASE_OCTAL);
-        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertEquals(BASE_OCTAL, calculator.getCalculatorBase(), "Base is not octal");
-    }
-
-    @Test
-    void createProgrammerCalculatorInDecimalEnforced()
-    {
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.setCalculatorBase(BASE_DECIMAL);
-        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertEquals(VIEW_PROGRAMMER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_PROGRAMMER);
-        assertSame(BASE_DECIMAL, calculator.getCalculatorBase(), "Base is not decimal");
-    }
-
-    @Test
-    void createProgrammerCalculatorInHexadecimalEnforced()
-    {
-        LOGGER.info("createProgrammerCalculator in {} enforced...", BASE_HEXADECIMAL);
-        //calculator = new Calculator(BASE_HEXADECIMAL);
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.setCalculatorBase(BASE_HEXADECIMAL);
-        assertTrue(calculator.isVisible(), "Cannot see programmer calculator");
-        assertSame(BASE_HEXADECIMAL, calculator.getCalculatorBase(), "Base is not binary");
-    }
-
-    /************* Scientific Calculator Tests ******************/
-    @Test
-    void createScientificCalculator()
-    {
-        LOGGER.warn("createScientificCalculator...");
-        LOGGER.warn("IMPLEMENT...");
-    }
-
-    /************* Date Calculator Tests ******************/
-    @Test
-    void createDateCalculator()
-    {
-        LOGGER.info("createDateCalculator...");
-        //calculator = new Calculator(VIEW_DATE);
-        calculator.setCalculatorView(VIEW_DATE);
-        calculator.setDateOperation(DIFFERENCE_BETWEEN_DATES);
-        calculator.setCurrentPanel(calculator.getDatePanel());
-        calculator.setupPanel(null);
-        assertTrue(calculator.isVisible(), "Cannot see date calculator");
-        assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(DIFFERENCE_BETWEEN_DATES, calculator.getDateOperation(), "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
-    }
-
+    /*############## Test Constructors ##################*/
     @ParameterizedTest
-    @MethodSource("provideDateOperations")
-    void testCreateDateCalculatorWithDateOperationEnforced(DateOperation dateOperation) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    @DisplayName("Create A Specific Calculator")
+    @MethodSource("createCalculatorCases")
+    void createACalculator(Class<?> panelInstance, CalculatorView calculatorView, CalculatorBase calculatorBase,
+                           CalculatorByte calculatorByte, CalculatorConverterType converterType, DateOperation dateOperation)
+            throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
-        calculator = new Calculator(dateOperation);
-        calculator.setVisible(true);
-        assertTrue(calculator.isVisible(), "Cannot see date calculator");
-        assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(dateOperation, calculator.getDateOperation(), "Date operation is not " + dateOperation);
+        switch (calculatorView)
+        {
+            case VIEW_BASIC -> calculator = new Calculator(calculatorView);
+            case VIEW_PROGRAMMER,
+                 VIEW_SCIENTIFIC -> calculator = new Calculator(calculatorView, calculatorBase, calculatorByte);
+            case VIEW_DATE -> calculator = new Calculator(dateOperation);
+            case VIEW_CONVERTER -> calculator = new Calculator(converterType);
+            default -> calculator = new Calculator();
+        }
+        postConstructCalculator();
+        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView);
+        assertInstanceOf(panelInstance, calculator.getCurrentPanel(), "Expected currentPanel to be instanceOf " + panelInstance.getSimpleName());
+        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView);
+        assertEquals(calculatorBase, calculator.getCalculatorBase(), "Expected CalculatorBase to be " + calculatorBase);
+        assertEquals(calculatorByte, calculator.getCalculatorByte(), "Expected CalculatorByte to be " + calculatorByte);
+        assertEquals(converterType, calculator.getConverterType(), "Expected ConverterType to be " + converterType);
+        assertEquals(dateOperation, calculator.getDateOperation(), "Expected DateOperation to be " + dateOperation);
+        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
+        assertNotNull( calculator.getMacIcon(), "Expected mac icon");
+        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
+        assertNull(calculator.getBlankIcon(), "Expected no icon");
     }
-    private static Stream<Arguments> provideDateOperations() {
+    private static Stream<Arguments> createCalculatorCases()
+    {
         return Stream.of(
-                Arguments.of(DIFFERENCE_BETWEEN_DATES),
-                Arguments.of(ADD_SUBTRACT_DAYS)
+                Arguments.of(BasicPanel.class, VIEW_BASIC, BASE_DECIMAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_BINARY, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_BINARY, BYTE_WORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_BINARY, BYTE_DWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_BINARY, BYTE_QWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_OCTAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_OCTAL, BYTE_WORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_OCTAL, BYTE_DWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_OCTAL, BYTE_QWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_DECIMAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_DECIMAL, BYTE_WORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_DECIMAL, BYTE_DWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_DECIMAL, BYTE_QWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_HEXADECIMAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_HEXADECIMAL, BYTE_WORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_HEXADECIMAL, BYTE_DWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ProgrammerPanel.class, VIEW_PROGRAMMER, BASE_HEXADECIMAL, BYTE_QWORD, AREA, DIFFERENCE_BETWEEN_DATES),
+
+                Arguments.of(ScientificPanel.class, VIEW_SCIENTIFIC, BASE_DECIMAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+
+                Arguments.of(DatePanel.class, VIEW_DATE, BASE_DECIMAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(DatePanel.class, VIEW_DATE, BASE_DECIMAL, BYTE_BYTE, AREA, ADD_SUBTRACT_DAYS),
+
+                Arguments.of(ConverterPanel.class, VIEW_CONVERTER, BASE_DECIMAL, BYTE_BYTE, AREA, DIFFERENCE_BETWEEN_DATES),
+                Arguments.of(ConverterPanel.class, VIEW_CONVERTER, BASE_DECIMAL, BYTE_BYTE, ANGLE, DIFFERENCE_BETWEEN_DATES)
         );
     }
 
-    @Test
-    void createDateCalculatorWithDateOperation1Enforced()
-    {
-        calculator.setCalculatorView(VIEW_DATE);
-        calculator.setDateOperation(DIFFERENCE_BETWEEN_DATES);
-        assertTrue(calculator.isVisible(), "Cannot see date calculator");
-        assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(DIFFERENCE_BETWEEN_DATES, calculator.getDateOperation(), "Date operation is not " + DIFFERENCE_BETWEEN_DATES);
-    }
-
-    @Test
-    void createDateCalculatorWithDateOperation2Enforced()
-    {
-        LOGGER.info("createDateCalculator with {} enforced...", ADD_SUBTRACT_DAYS);
-        //calculator = new Calculator(ADD_SUBTRACT_DAYS);
-        calculator.setCalculatorView(VIEW_DATE);
-        calculator.setDateOperation(ADD_SUBTRACT_DAYS);
-        assertTrue(calculator.isVisible(), "Cannot see date calculator");
-        assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_DATE);
-        assertSame(ADD_SUBTRACT_DAYS, calculator.getDateOperation(), "Date operation is not " + ADD_SUBTRACT_DAYS);
-    }
-
-    /************* Converter Calculator Tests ******************/
-    @Test
-    void createConverterCalculator()
-    {
-        LOGGER.info("createConverterCalculator...");
-        //calculator = new Calculator(VIEW_CONVERTER);
-        calculator.setCalculatorView(VIEW_CONVERTER);
-        calculator.setConverterType(ANGLE);
-        calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel(null);
-        assertTrue(calculator.isVisible(), "Cannot see converter calculator");
-        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(ANGLE, calculator.getConverterType(), "Converter operation is not " + ANGLE);
-    }
-
     @ParameterizedTest
-    @MethodSource("provideConverterTypes")
-    void testCreateConverterCalculatorWithTypeEnforced(CalculatorConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        calculator = new Calculator(converterType);
-        calculator.setVisible(true);
-        assertTrue(calculator.isVisible(), "Cannot see converter calculator");
-        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(converterType, calculator.getConverterType(), "Converter operation is not " + converterType);
-    }
-    private static Stream<Arguments> provideConverterTypes() {
-        return Stream.of(
-                Arguments.of(ANGLE),
-                Arguments.of(AREA)
-        );
-    }
-
-    @Test
-    void createConverterCalculatorWithAngleEnforced()
-    {
-        calculator.setCalculatorView(VIEW_CONVERTER);
-        calculator.setConverterType(ANGLE);
-        calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel(null);
-        assertTrue(calculator.isVisible(), "Cannot see converter calculator");
-        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(ANGLE, calculator.getConverterType(), "Converter operation is not " + ANGLE);
-    }
-
-    @Test
-    void createConverterCalculatorWithAreaEnforced()
-    {
-        LOGGER.info("createConverterCalculator with {} enforced...", AREA);
-        //calculator = new Calculator(AREA);
-        calculator.setCalculatorView(VIEW_CONVERTER);
-        calculator.setConverterType(AREA);
-        calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel(null);
-        assertTrue(calculator.isVisible(), "Cannot see converter calculator");
-        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CalculatorView to be " + VIEW_CONVERTER);
-        assertSame(AREA, calculator.getConverterType(), "Converter operation is not " + AREA);
-    }
-
-    /************* Create Calculator By View ******************/
-    @ParameterizedTest
+    @DisplayName("Create A Calculator By View")
     @MethodSource("provideCalculatorViews")
-    void createCalculatorByView(CalculatorView calculatorView) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    void createACalculatorByView(CalculatorView calculatorView) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
-        calculator = new Calculator(calculatorView);
-        calculator.setVisible(true);
+        if (calculatorView != null)
+            calculator = new Calculator(calculatorView);
+        else {
+            calculator = new Calculator();
+            calculatorView = calculator.getCalculatorView();
+        }
+        postConstructCalculator();
         assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView.getValue());
         assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView.getValue());
+        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
+        assertNotNull( calculator.getMacIcon(), "Expected mac icon");
+        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
+        assertNull(calculator.getBlankIcon(), "Expected no icon");
     }
-    private static Stream<Arguments> provideCalculatorViews() {
+    private static Stream<Arguments> provideCalculatorViews()
+    {
         return Stream.of(
+                Arguments.of((Object) null),
                 Arguments.of(VIEW_BASIC),
                 Arguments.of(VIEW_PROGRAMMER),
                 Arguments.of(VIEW_SCIENTIFIC),
@@ -318,612 +204,535 @@ class CalculatorTests
         );
     }
 
-    /************* All Calculator Tests ******************/
-    @Test
-    void testConvertingToPositive()
+    /*############## Test Menu Actions ##################*/
+    @ParameterizedTest
+    @DisplayName("Test Changing Styles")
+    @MethodSource("changeStyleCases")
+    void changeCalculatorStyle(String style, boolean isOSWindows) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
-        assertEquals("5.02", calculator.convertToPositive("-5.02"), "Number is not positive");
-    }
-
-    @Test
-    void testConvertingToNegative()
-    {
-        assertEquals("-5.02", calculator.convertToNegative("5.02"), "Number is not negative");
-    }
-
-    @Test
-    void testIsPositiveReturnsTrue()
-    {
-        assertTrue(calculator.isPositiveNumber(SIX), "IsPositive did not return true");
-    }
-
-    @Test
-    void testIsPositiveReturnsFalse()
-    {
-        assertFalse(calculator.isPositiveNumber("-6"), "IsPositive did not return false");
-    }
-
-    @Test
-    void testIsNegativeReturnsTrue()
-    {
-        assertTrue(calculator.isNegativeNumber("-6"), "IsNegative did not return true");
-    }
-
-    @Test
-    void testIsNegativeReturnsFalse()
-    {
-        assertFalse(calculator.isNegativeNumber(SIX), "IsNegative did not return false");
-    }
-
-    @Test
-    void testIsDecimalNumberReturnsTrue()
-    {
-        assertTrue(calculator.isDecimalNumber("5.02"), "Number should contain the decimal");
-    }
-
-    @Test
-    void testIsDecimalNumberReturnsFalse()
-    {
-        assertFalse(calculator.isDecimalNumber(FIVE), "Number should not contain the decimal");
-    }
-
-    @Test
-    void methodResetCalculatorOperationsWithTrueResultsInAllOperatorsBeingTrue()
-    {
-        calculator.resetOperators(true);
-        assertTrue(calculator.isObtainingFirstNumber(), "isFirstNumber() is not true");
-        assertTrue(calculator.isPemdasActive(), "isPemdasActive() is not true");
-    }
-
-    @Test
-    void methodResetCalculatorOperationsWithFalseResultsInAllOperatorsBeingFalse()
-    {
-        calculator.resetOperators(false);
-        assertFalse(calculator.isObtainingFirstNumber(), "isFirstNumber() is not false");
-        assertFalse(calculator.isPemdasActive(), "isPemdasActive() is not false");
-    }
-
-    @Test
-    void methodResetCalculatorOperationsWithFalse()
-    {
-        calculator.getValues()[0] = FIVE;
-        boolean resetResult = calculator.resetCalculatorOperations(false);
-        assertTrue(resetResult, "Expected result to be true");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be disabled");
-    }
-
-    @Test
-    void methResetCalculatorOperationsWithTrue()
-    {
-        calculator.getValues()[0] = FIVE;
-        boolean resetResult = calculator.resetCalculatorOperations(true);
-        assertFalse(resetResult, "Expected result to be false");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
-    }
-
-    @Test
-    void testSetImageIconsWorksAsExpected()
-    {
-        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
-        assertNotNull( calculator.getMacIcon(), "Expected mac icon");
-        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
-        assertNull(calculator.getBlankIcon(), "Expected no icon");
-    }
-
-    @Test
-    void switchingFromProgrammerToBasicSwitchesPanels()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
-        //calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        //calculator.updateJPanel(new ProgrammerPanel());
-        calculator.appendTextToPane("00000100");
-        calculator.getValues()[0] = FOUR;
-        assertEquals("00000100", calculator.getTextPaneValue(), "Expected textPane to show Binary representation");
-
-        calculator.performViewMenuAction(actionEvent, VIEW_BASIC);
-        assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
-        assertEquals(VIEW_BASIC.getValue(), calculator.getTitle(), "Expected name to be Basic");
-        assertInstanceOf(BasicPanel.class, calculator.getCurrentPanel(), "Expected BasicPanel");
-    }
-
-    @Test
-    void switchingFromBasicToProgrammerSwitchesPanels()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.getTextPane().setText(FOUR);
-        calculator.getValues()[0] = FOUR;
-        assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
-
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
-        assertEquals(VIEW_PROGRAMMER.getValue(), calculator.getTitle(), "Expected name to be Programmer");
-        assertInstanceOf(ProgrammerPanel.class, calculator.getCurrentPanel(), "Expected ProgrammerPanel");
-    }
-
-    @Test
-    void switchingFromBasicToDateSwitchesPanels()
-    {
-        //when(actionEvent.getActionCommand()).thenReturn(VIEW_DATE.getValue());
-        assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
-        calculator.performViewMenuAction(actionEvent, VIEW_DATE);
-        assertEquals(VIEW_DATE, calculator.getCalculatorView(), "Expected DATE CalculatorView");
-        assertEquals(VIEW_DATE.getValue(), calculator.getTitle(), "Expected name to be Date");
-        assertInstanceOf(DatePanel.class, calculator.getCurrentPanel(), "Expected DatePanel");
-    }
-
-    @Test
-    void switchingFromBasicToAngleConverterSwitchesPanels()
-    {
-        //when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
-        assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
-
-        calculator.performViewMenuAction(actionEvent, ANGLE);
-        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CONVERTER CalculatorView");
-        assertEquals(VIEW_CONVERTER.getValue(), calculator.getTitle(), "Expected name to be CONVERTER");
-        assertInstanceOf(ConverterPanel.class, calculator.getCurrentPanel(), "Expected ConverterPanel");
-    }
-
-    @Test
-    void switchingFromBasicToAreaConverterSwitchesPanels()
-    {
-        //when(actionEvent.getActionCommand()).thenReturn(AREA.getValue());
-        assertEquals(VIEW_BASIC, calculator.getCalculatorView(), "Expected BASIC CalculatorView");
-
-        calculator.performViewMenuAction(actionEvent, AREA);
-        assertEquals(VIEW_CONVERTER, calculator.getCalculatorView(), "Expected CONVERTER CalculatorView");
-        assertEquals(VIEW_CONVERTER.getValue(), calculator.getTitle(), "Expected name to be CONVERTER");
-        assertInstanceOf(ConverterPanel.class, calculator.getCurrentPanel(), "Expected ConverterPanel");
-    }
-
-    @Test
-    void switchingFromSomePanelToSamePanelDoesNotPerformViewMenuAction()
-    {
-        //when(actionEvent.getActionCommand()).thenReturn(VIEW_BASIC.getValue());
-        BasicPanel panel = (BasicPanel) calculator.getCurrentPanel();
-        calculator.getTextPane().setText(FOUR);
-        calculator.getValues()[0]= FOUR;
-        assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
-
-        calculator.performViewMenuAction(actionEvent, VIEW_BASIC);
-        assertEquals(panel.getClass(), calculator.getCurrentPanel().getClass(), "Expected the same panel");
-        assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to show Decimal representation");
-    }
-
-    @Test
-    void switchingFromSomeConverterToSameConverterDoesNotPerformViewMenuAction()
-    {
-        //when(actionEvent.getActionCommand()).thenReturn(ANGLE.getValue());
-        calculator.setCalculatorView(VIEW_CONVERTER);
-        calculator.setConverterType(ANGLE);
-        calculator.setCurrentPanel(calculator.getConverterPanel());
-        calculator.setupPanel(null);
-        calculator.performViewMenuAction(actionEvent, VIEW_CONVERTER);
-        //calculator.updateJPanel(new ConverterPanel());
-        ConverterPanel panel = (ConverterPanel) calculator.getCurrentPanel();
-        assertEquals(ANGLE, calculator.getConverterType(), "Expected converterType to be ANGLE");
-
-        calculator.performViewMenuAction(actionEvent, VIEW_CONVERTER);
-        assertEquals(panel, calculator.getCurrentPanel(), "Expected the same panel");
-        assertEquals(ANGLE, calculator.getConverterType(), "Expected converterType to be ANGLE");
-    }
-
-    @Test
-    void switchingToMetalLookAndFeel()
-    {
-        when(actionEvent.getSource()).thenReturn(calculator.getStyleMenu());
-        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
-        for(Component menuItem : lookMenuItems)
+        when(systemDetector.isWindows()).thenReturn(isOSWindows);
+        Calculator calculator = new Calculator(VIEW_BASIC, BASE_DECIMAL, BYTE_BYTE,
+                AREA, DIFFERENCE_BETWEEN_DATES, systemDetector);
+        postConstructCalculator();
+        // find the matching menu item and ensure actionEvent returns it as the source
+        JMenuItem styleMenuItem = (JMenuItem) Arrays.stream(calculator.getStyleMenu()
+                        .getMenuComponents())
+                .filter(menuItem -> style.equals(menuItem.getName()))
+                .findFirst().orElse(null);
+        if (styleMenuItem != null)
         {
-            if (METAL.equals(menuItem.getName()))
-            {
-                Arrays.stream(menuItem.getListeners(ActionListener.class))
-                        .forEach(listener -> listener.actionPerformed(actionEvent));
-            }
-        }
-        if (calculator.isOSMac())
-            assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.apple.laf.AquaLookAndFeel");
-        else assertEquals(UIManager.getSystemLookAndFeelClassName(), "javax.swing.plaf.metal.MetalLookAndFeel");
-    }
+            when(actionEvent.getSource()).thenReturn(styleMenuItem);
 
-    @Test
-    void switchingToSystemLookAndFeel()
-    {
-        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
-        for (Component menuItem : lookMenuItems)
-        {
-            if (SYSTEM.equals(menuItem.getName()))
-            {
-                Arrays.stream(menuItem.getListeners(ActionListener.class))
-                        .forEach(listener -> listener.actionPerformed(actionEvent));
-            }
-        }
-        if (!calculator.isOSMac())
-        {
-            assertEquals(UIManager.getSystemLookAndFeelClassName(), "javax.swing.plaf.system.SystemLookAndFeel");
-        }
-
-    }
-
-    @Test
-    void switchingToWindowsLookAndFeel()
-    {
-        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
-        for (Component menuItem : lookMenuItems)
-        {
-            if (WINDOWS.equals(menuItem.getName()))
-            {
-                Arrays.stream(menuItem.getListeners(ActionListener.class))
-                        .forEach(listener -> listener.actionPerformed(actionEvent));
-            }
-        }
-        if (!calculator.isOSMac())
-        {
-            assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            calculator.performStyleMenuAction(actionEvent);
+            assertEquals(style, calculator.getCalculatorStyle(), "Expected style to be " + style);
+        } else {
+            assertEquals(METAL, calculator.getCalculatorStyle(), "Expected style to be " + METAL);
         }
     }
-
-    @Test
-    void switchingToMotifLookAndFeel()
+    private static Stream<Arguments> changeStyleCases()
     {
-        when(actionEvent.getSource()).thenReturn(calculator.getStyleMenu());
-        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
-        for(Component menuItem : lookMenuItems)
+        return Stream.of(
+                Arguments.of(APPLE, true),
+                Arguments.of(APPLE, false),
+                Arguments.of(GTK, true),
+                Arguments.of(GTK, false),
+                Arguments.of(METAL, true),
+                Arguments.of(METAL, false),
+                Arguments.of(MOTIF, true),
+                Arguments.of(MOTIF, false),
+                Arguments.of(SYSTEM, true),
+                Arguments.of(SYSTEM, false),
+                Arguments.of(WINDOWS, true),
+                Arguments.of(WINDOWS, false)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test Changing Views")
+    @MethodSource("changeViewsCases")
+    void changeCalculatorViews(Calculator calcInTest, CalculatorType selectedView)
+    {
+        calculator = calcInTest;
+        postConstructCalculator();
+        calcInTest.performViewMenuAction(actionEvent, selectedView);
+
+        String calculatorView = selectedView.getName();
+        if (selectedView.getClass().isInstance(CalculatorConverterType.class))
         {
-            if (MOTIF.equals(menuItem.getName()))
-            {
-                Arrays.stream(menuItem.getListeners(ActionListener.class))
-                        .forEach(listener -> listener.actionPerformed(actionEvent));
-            }
+            calculatorView = selectedView.getName();
         }
-        if (calculator.isOSMac())
-            assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.apple.laf.AquaLookAndFeel");
-        else assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        assertEquals(selectedView.getName(), calculatorView, "Expected CalculatorView to be " + selectedView);
+    }
+    private static Stream<Arguments> changeViewsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        return Stream.of(
+                // From BASIC
+                Arguments.of(new Calculator(VIEW_BASIC), VIEW_BASIC),
+                Arguments.of(new Calculator(VIEW_BASIC), VIEW_PROGRAMMER),
+                Arguments.of(new Calculator(VIEW_BASIC), VIEW_SCIENTIFIC),
+                Arguments.of(new Calculator(VIEW_BASIC), VIEW_DATE),
+                Arguments.of(new Calculator(VIEW_BASIC), AREA),
+                Arguments.of(new Calculator(VIEW_BASIC), ANGLE),
+                // From PROGRAMMER
+                Arguments.of(new Calculator(VIEW_PROGRAMMER), VIEW_BASIC),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER), VIEW_PROGRAMMER),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER), VIEW_SCIENTIFIC),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER), VIEW_DATE),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER), AREA),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER), ANGLE),
+                // From SCIENTIFIC
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC), VIEW_BASIC),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC), VIEW_PROGRAMMER),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC), VIEW_SCIENTIFIC),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC), VIEW_DATE),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC), AREA),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC), ANGLE),
+                // From DATE
+                Arguments.of(new Calculator(VIEW_DATE), VIEW_BASIC),
+                Arguments.of(new Calculator(VIEW_DATE), VIEW_PROGRAMMER),
+                Arguments.of(new Calculator(VIEW_DATE), VIEW_SCIENTIFIC),
+                Arguments.of(new Calculator(VIEW_DATE), VIEW_DATE),
+                Arguments.of(new Calculator(VIEW_DATE), AREA),
+                Arguments.of(new Calculator(VIEW_DATE), ANGLE),
+                // From CONVERTER
+                Arguments.of(new Calculator(VIEW_CONVERTER), VIEW_BASIC),
+                Arguments.of(new Calculator(VIEW_CONVERTER), VIEW_PROGRAMMER),
+                Arguments.of(new Calculator(VIEW_CONVERTER), VIEW_SCIENTIFIC),
+                Arguments.of(new Calculator(VIEW_CONVERTER), VIEW_DATE),
+                Arguments.of(new Calculator(VIEW_CONVERTER), AREA),
+                Arguments.of(new Calculator(VIEW_CONVERTER), ANGLE)
+        );
     }
 
-    @Test
-    void switchingToGTKLookAndFeel()
+    @ParameterizedTest
+    @DisplayName("Test Copy Action")
+    @MethodSource("copyCases")
+    void testCopyMenuAction(String currentTextPaneValue)
     {
-        var lookMenuItems = calculator.getStyleMenu().getMenuComponents();
-        for (Component menuItem : lookMenuItems)
-        {
-            if (GTK.equals(menuItem.getName()))
-            {
-                Arrays.stream(menuItem.getListeners(ActionListener.class))
-                        .forEach(listener -> listener.actionPerformed(actionEvent));
-            }
-        }
-        if (!calculator.isOSMac())
-        {
-            assertEquals(UIManager.getSystemLookAndFeelClassName(), "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-        }
-    }
-
-    @Test
-    void testResetValues()
-    {
-        calculator.values[0] = ONE + FIVE;
-        calculator.values[1] = TWO + SIX;
-        calculator.values[2] = FIVE;
-
-        assertEquals(15, Integer.parseInt(calculator.getValues()[0]), "Expected values[0] to be 15");
-        assertEquals(26, Integer.parseInt(calculator.getValues()[1]), "Expected values[1] to be 26");
-        assertEquals(5, Integer.parseInt(calculator.getValues()[2]), "Expected values[2] to be 5");
-
-        calculator.resetValues();
-
-        assertTrue(calculator.getValues()[0].isEmpty(), "Expected values[0] to be blank");
-        assertTrue(calculator.getValues()[1].isEmpty(), "Expected values[1] to be blank");
-        assertTrue(calculator.getValues()[2].isEmpty(), "Expected values[2] to be blank");
-    }
-
-    @Test
-    void testClearNumberButtonActions()
-    {
-        calculator.getNumberButtons()
-                .forEach(numberButton ->
-                        assertSame(1, numberButton.getActionListeners().length, "Expecting only 1 action on " + numberButton.getName()));
-
-        calculator.clearNumberButtonActions();
-
-        calculator.getNumberButtons()
-                .forEach(numberButton ->
-                        assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName()));
-    }
-
-    @Test
-    void testClearAllCommonButtons()
-    {
-        calculator.getCommonButtons()
-                .forEach(otherButton ->
-                        assertSame(1, otherButton.getActionListeners().length, "Expecting only 1 action on " + otherButton.getName()));
-
-        calculator.clearAllCommonButtons();
-
-        calculator.getCommonButtons()
-                .forEach(otherButton ->
-                        assertSame(0, otherButton.getActionListeners().length, "Expecting no actions on " + otherButton.getName()));
-    }
-
-    @Test
-    void testResetOperatorIfClause()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
-        calculator.performDecimalButtonAction(actionEvent);
-        assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertFalse(calculator.isDotPressed(), "Expected dot button to be disabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-
-        calculator.resetCalculatorOperations(true);
-
-        assertSame(1, calculator.getValuesPosition(), "Expected valuesPosition to be 1");
-        assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
-        assertFalse(calculator.isObtainingFirstNumber(), "Expected to not be on the firstNumber");
-    }
-
-    @Test
-    void testResetOperatorElseClause()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
-        calculator.performDecimalButtonAction(actionEvent);
-        assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be disabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-
-        calculator.resetCalculatorOperations(false);
-
-        assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertFalse(calculator.isDotPressed(), "Expected dot button to be disabled");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected dot button to not be enabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-    }
-
-    @Test
-    void testIsMemoryValuesEmptyIsTrue()
-    {
-        assertTrue(calculator.isMemoryValuesEmpty());
-    }
-
-    @Test
-    void testIsMemoryValuesEmptyIsFalseForBasicCalculator()
-    {
-        calculator.getTextPane().setText(FIVE);
-        calculator.getMemoryValues()[0] = FIVE;
-        calculator.setMemoryPosition(1);
-        assertFalse(calculator.isMemoryValuesEmpty());
-        confirm(calculator, LOGGER, "Test: isMemoryValuesEmpty -> False");
-    }
-
-    @Test
-    void testIsMemoryValuesEmptyIsFalseForProgrammerCalculator()
-    {
-        calculator.setCalculatorView(VIEW_PROGRAMMER);
-        calculator.getTextPane().setText(FIVE);
-        calculator.getMemoryValues()[0] = FIVE;
-        calculator.setMemoryPosition(1);
-        assertFalse(calculator.isMemoryValuesEmpty());
-    }
-
-    @Test
-    void testInitialChecksIfClause()
-    {
-        calculator.getValues()[0] = NOT_A_NUMBER;
-        calculator.getTextPane().setText(NOT_A_NUMBER);
-        assertEquals(NOT_A_NUMBER, calculator.getTextPaneValue(), "Expected error message in textPane");
-
-        calculator.performInitialChecks();
-
-        assertFalse(calculator.getTextPaneValue().isEmpty(), "Expected textPane to show error");
-        assertSame(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be firstNumber");
-        assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be enabled");
-        assertFalse(calculator.isNegativeNumber(), "Expecting isNumberNegative to be false");
-    }
-
-    @Test
-    void testInitialChecksElseIf1Clause()
-    {
-        calculator.values[0] = ZERO;
-        calculator.getTextPane().setText(calculator.addNewLines() + ZERO);
-
-        assertEquals(ZERO, calculator.getTextPaneValue(), "Expected textPane to contain 0");
-        assertEquals(VIEW_BASIC.getValue(), calculator.getCalculatorView().getValue(), "Expected BASIC CalculatorView");
-        assertEquals(ZERO, calculator.getValues()[0], "Expected values[0] to be 0");
-
-        calculator.performInitialChecks();
-
-        assertTrue(calculator.getTextPaneValue().isBlank(), "Expected textPane to be blank");
-        assertTrue(calculator.getValues()[0].isBlank(), "Expected values[0] to be blank");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-        assertTrue(calculator.isDotPressed(), "Expected dot button to be enabled");
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected dot button to be enabled");
-    }
-
-    @Test
-    void testInitialChecksElseIf2Clause()
-    {
-        calculator.values[0] = EMPTY;
-        calculator.values[1] = ONE + FIVE; // 15
-        calculator.setValuesPosition(1);
-
-        assertTrue(calculator.getValues()[0].isBlank(), "Expected values[0] to be blank");
-        assertSame(ONE + FIVE, calculator.getValues()[1], "Expected values[1] to be 15");
-        assertSame(1, calculator.getValuesPosition(), "Expected valuesPosition to be 1");
-
-        calculator.performInitialChecks();
-
-        assertSame(ONE+FIVE, calculator.getValues()[0], "Expected values[0] to be 15");
-        assertTrue(calculator.getValues()[1].isBlank(), "Expected values[1] to be blank");
-    }
-
-    @Test
-    void testInitialChecksDoesNotEnterAnyClause()
-    {
-        calculator.getTextPane().setText(FIVE);
-        calculator.performInitialChecks();
-    }
-
-    @Test
-    void testTextPaneContainsBadTextTrue()
-    {
-        calculator.getTextPane().setText(NOT_A_NUMBER);
-        assertTrue(calculator.textPaneContainsBadText(), "Expected textPane to contain error");
-    }
-
-    @Test
-    void testTextPaneContainsBadTextFalse()
-    {
-        calculator.getTextPane().setText(FIVE);
-        assertFalse(calculator.textPaneContainsBadText(), "Expected textPane to contain valid text");
-    }
-
-    @Test
-    void testConfirmCalledForDatePanelWithDateOperation2()
-    {
-        calculator.setCalculatorView(VIEW_DATE);
-        calculator.setDateOperation(ADD_SUBTRACT_DAYS);
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        //calculator.updateJPanel(new ProgrammerPanel());
-        confirm(calculator, LOGGER,"Test: Confirm called");
-    }
-
-    @Test
-    void testAddNewLineCharactersForBasicPanelAdds1NewLine()
-    {
-        String newLines = calculator.addNewLines();
-        assertSame(1, newLines.split(EMPTY).length);
-    }
-
-    @Test
-    void testAddNewLineCharactersForProgrammerPanelAdds3NewLines()
-    {
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        //calculator.updateJPanel(new ProgrammerPanel());
-        String newLines = calculator.addNewLines();
-        assertSame(1, newLines.split(EMPTY).length);
-    }
-
-    @Test
-    void testDynamicAddNewLineCharacters()
-    {
-        String newLines = calculator.addNewLines(10);
-        assertSame(10, newLines.split(EMPTY).length);
-    }
-
-    // TODO: See if we can close the panel in the test
-    @Test
-    void testAboutCalculatorOpensAboutCalculatorPanel()
-    {
-        calculator.performAboutCalculatorAction(actionEvent);
-    }
-
-    @Test
-    void testGetTheNumberToTheLeftOfTheDecimal()
-    {
-        assertEquals("123", calculator.getNumberOnLeftSideOfDecimal("123.456"));
-    }
-
-    @Test
-    void testGetTheNumberToTheRightOfTheDecimal()
-    {
-        assertEquals("456", calculator.getNumberOnRightSideOfDecimal("123.456"));
-    }
-
-    @Test
-    void testCopy()
-    {
-        calculator.getTextPane().setText(FIVE);
-        assertTrue(calculator.getValues()[2].isBlank(), "Expected values[2] to be blank");
+        when(actionEvent.getActionCommand())
+                .thenReturn(COPY);
+        postConstructCalculator();
+        calculator.appendTextToPane(currentTextPaneValue);
 
         calculator.performCopyAction(actionEvent);
-        assertFalse(calculator.getValues()[2].isBlank(), "Expected values[2] to be 5");
-        assertEquals(FIVE, calculator.getValues()[2], "Expected values[2] to be 5");
+
+        // Get clipboard copy value
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        String clipboardText = EMPTY;
+        if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                Object data = contents.getTransferData(DataFlavor.stringFlavor);
+                if (data instanceof String) {
+                    clipboardText = (String) data;
+                } else {
+                    throw new CalculatorError("Clipboard data is not a string");
+                }
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
+        }
+        assertEquals(currentTextPaneValue, clipboardText, "Clipboard value is incorrect");
+    }
+    private static Stream<Arguments> copyCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("1,234.56")
+        );
     }
 
-    @Test
-    void testPaste()
+    @ParameterizedTest
+    @DisplayName("Test Paste Action")
+    @MethodSource("pasteCases")
+    void testPasteMenuAction(String currentTextPaneValue)
     {
+        when(actionEvent.getActionCommand())
+                .thenReturn(COPY)
+                .thenReturn(PASTE);
+        postConstructCalculator();
+        calculator.appendTextToPane(currentTextPaneValue);
+        calculator.performCopyAction(actionEvent);
+        calculator.clearTextInTextPane();
         calculator.performPasteAction(actionEvent);
-        assertTrue(calculator.getValues()[2].isBlank(), "Expected values[2] to be blank");
 
-        calculator.values[2] = "10";
-        calculator.getTextPane().setText(calculator.addNewLines() + FIVE);
-
-        calculator.performPasteAction(actionEvent);
-        assertEquals("10", calculator.getTextPaneValue(), "Expected textPane to be 10");
-        assertEquals("10", calculator.getValues()[0], "Expected values[0] to be 10");
-
-        calculator.setValuesPosition(1);
-        calculator.performPasteAction(actionEvent);
-        assertEquals("10", calculator.getTextPaneValue(), "Expected textPane to be 10");
-        assertEquals("10", calculator.getValues()[0], "Expected values[1] to be 10");
-
+        assertEquals(currentTextPaneValue, calculator.getTextPaneValue(), "TextPane value is incorrect");
     }
-
-    @Test
-    void testClearingZeroesAtTheEnd()
+    private static Stream<Arguments> pasteCases()
     {
-        calculator.getValues()[0] = "15.0";
-        assertEquals("15", calculator.clearZeroesAndDecimalAtEnd(calculator.getValues()[0]), "Expected values[0] to be 15");
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("1,234.56")
+        );
     }
 
-    @Test
-    void testAddCourtesyCommasAddsNoCommas()
+    @ParameterizedTest
+    @DisplayName("Test Clear History Action")
+    @MethodSource("clearHistoryCases")
+    void testClearHistoryMenuAction(String historyCase)
     {
-        when(actionEvent.getActionCommand()).thenReturn(FIVE);
-        calculator.getValues()[0] = "2";
-        calculator.performNumberButtonAction(actionEvent);
-        assertFalse(calculator.getValues()[0].contains("_"), "Expected no commas");
-        assertEquals("25", calculator.getValues()[0], "Expected values[0] to be 25");
-    }
+        when(actionEvent.getActionCommand())
+                .thenReturn(CLEAR_HISTORY);
+        postConstructCalculator();
+        calculator.getHistoryTextPane().setText(historyCase);
 
-    @Test
-    void testAddCourtesyCommasAdds1Comma4DigitsWholeNumber()
+        calculator.performClearHistoryAction(actionEvent);
+
+        assertTrue(calculator.getHistoryTextPane().getText().isEmpty(), "History text is incorrect");
+    }
+    private static Stream<Arguments> clearHistoryCases()
     {
-        when(actionEvent.getActionCommand()).thenReturn(FIVE);
-        calculator.setCalculatorBase(BASE_DECIMAL);
-        calculator.valuesPosition = 0;
-        calculator.values[calculator.valuesPosition] = "999";
-        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
-        calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 9,995");
-        assertEquals("9995", calculator.values[calculator.valuesPosition], "Expected values[0] to be 9995");
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("(1) Result: 1\n(2) Result: 2\n(3) Result: 3")
+        );
     }
 
-    @Test
-    void testAddCourtesyCommasReturnsResultWithOneComma5DigitsWholeNumber()
+    @ParameterizedTest
+    @DisplayName("Test Show Memories Action")
+    @MethodSource("showMemoriesCases")
+    void testShowMemories(String memoryValue1, String memoryValue2)
     {
-        when(actionEvent.getActionCommand()).thenReturn(FIVE);
-        calculator.valuesPosition = 0;
-        calculator.values[calculator.valuesPosition] = "1234";
-        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
-        calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 12,345");
-        assertEquals("12345", calculator.getValues()[0], "Expected values[0] to be 12345");
-    }
+        when(actionEvent.getActionCommand())
+                .thenReturn(SHOW_MEMORIES);
+        postConstructCalculator();
+        calculator.storeValueInMemory(memoryValue1);
+        calculator.storeValueInMemory(memoryValue2);
 
-    @Test
-    void testAddCourtesyCommasReturnsResultWithOneComma6DigitsWholeNumber()
+        String previousHistory = calculator.getHistoryTextPane().getText();
+        calculator.performShowMemoriesAction(actionEvent);
+
+        String actualHistory = calculator.getHistoryTextPane().getText();
+        if (calculator.isMemoryValuesEmpty())
+        {
+            assertEquals(previousHistory+NEWLINE+NO_MEMORIES_STORED, actualHistory,
+                    "History text is incorrect when no memories stored");
+        }
+        else
+        {
+            assertEquals(previousHistory+NEWLINE+MEMORIES+" ["+memoryValue1+"], ["+memoryValue2+"]", actualHistory,
+                    "History text is incorrect when memories are stored");
+        }
+    }
+    private static Stream<Arguments> showMemoriesCases()
     {
-        when(actionEvent.getActionCommand()).thenReturn(SIX);
-        calculator.valuesPosition = 0;
-        calculator.values[calculator.valuesPosition] = "12345";
-        calculator.getTextPane().setText(calculator.values[calculator.valuesPosition]);
-        calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 123,456");
-        assertEquals("123456", calculator.getValues()[0], "Expected values[0] to be 123456");
+        return Stream.of(
+                Arguments.of(EMPTY, EMPTY),
+                Arguments.of("1", "2"),
+                Arguments.of("1.2", "3")
+        );
     }
 
+    // Requires manual intervention to close help panel
+    @ParameterizedTest
+    @DisplayName("Test Calculator's Help Action")
+    @MethodSource("getShowHelpCases")
+    void testShowingHelpShowsText(Calculator calcInTest)
+    {
+        calculator = calcInTest;
+        postConstructCalculator();
+        calculator.setHelpString(calculator.getHelpString());
+        assertDoesNotThrow(() -> calculator.performShowHelpAction(actionEvent));
+    }
+    private static Stream<Arguments> getShowHelpCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        return Stream.of(
+                Arguments.of(new Calculator(VIEW_BASIC)),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER)),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC)),
+                Arguments.of(new Calculator(DIFFERENCE_BETWEEN_DATES)),
+                Arguments.of(new Calculator(ADD_SUBTRACT_DAYS)),
+                Arguments.of(new Calculator(AREA)),
+                Arguments.of(new Calculator(ANGLE))
+        );
+    }
+
+    // Requires manual intervention to close about calculator panel
+    @ParameterizedTest
+    @DisplayName("Test About Calculator Action")
+    @MethodSource("getAboutCalculatorCases")
+    void testAboutCalculatorOpensAboutCalculatorPanel(boolean isOSMac)
+    {
+        postConstructCalculator();
+        when(systemDetector.isMac()).thenReturn(isOSMac);
+        calculator.performAboutCalculatorAction(actionEvent);
+        if (isOSMac)
+            assertTrue(calculator.getAboutCalculatorString().startsWith("<html> "+APPLE), "Expected About Calculator Text to have Apple icon");
+        else
+            assertTrue(calculator.getAboutCalculatorString().startsWith("<html> "+WINDOWS), "Expected About Calculator Text to have Window icon");
+    }
+    private static Stream<Arguments> getAboutCalculatorCases()
+    {
+        return Stream.of(
+                Arguments.of(true),
+                Arguments.of(false)
+        );
+    }
+
+    /*############## Test Button Actions ##################*/
     @Test
     void testDeletingADigitAdjustsCourtesyCommas()
     {
+        postConstructCalculator();
         when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.getValues()[0] = "12345";
+        calculator.values[0] = "12345";
         calculator.getTextPane().setText("12345");
         calculator.performDeleteButtonAction(actionEvent);
         assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 1,234");
-        assertEquals("1234", calculator.getValues()[0], "Expected values[0] to be 1234");
+        assertEquals("1234", calculator.values[0], "Expected values[0] to be 1234");
+    }
+
+    @Test
+    void testOpeningHistory()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
+        calculator.performHistoryAction(actionEvent);
+
+        assertEquals(HISTORY_OPEN, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_OPEN);
+    }
+
+    @Test
+    void testClosingHistory()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
+        when(actionEvent.getActionCommand()).thenReturn(HISTORY_CLOSED);
+        calculator.performHistoryAction(actionEvent);
+        calculator.performHistoryAction(actionEvent);
+
+        assertEquals(HISTORY_CLOSED, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_CLOSED);
+    }
+
+    /*############## Test Helper Methods ##################*/
+    @ParameterizedTest
+    @DisplayName("Test ConvertToPositive()")
+    @CsvSource({
+            "-5.02, 5.02",
+            "-123456, 123456",
+            "-0.0001, 0.0001",
+            "-6, 6"
+    })
+    void testConvertToPositive(String valueToTest, String expectedValue)
+    {
+        postConstructCalculator();
+        String actualValue = calculator.convertToPositive(valueToTest);
+        assertEquals(expectedValue, actualValue, "Number is not positive");
+        assertTrue(calculator.isPositiveNumber(actualValue), "Number is not positive");
+        assertFalse(calculator.isNegativeNumber(actualValue), "Number is still negative");
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test ConvertToNegative()")
+    @CsvSource({
+            "5.02, -5.02",
+            "123456, -123456",
+            "0.0001, -0.0001",
+            "6, -6"
+    })
+    void testConvertToNegative(String valueToTest, String expectedValue)
+    {
+        postConstructCalculator();
+        String actualValue = calculator.convertToNegative(valueToTest);
+        assertEquals(expectedValue, actualValue, "Number is not negative");
+        assertTrue(calculator.isNegativeNumber(actualValue), "Number is not negative");
+        assertFalse(calculator.isPositiveNumber(actualValue), "Number is still positive");
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test IsFractionalNumber()")
+    @CsvSource({
+            "-5.02, true",
+            "0.0001, true",
+
+            "-123456, false",
+            "123, false"
+    })
+    void testIsFractionalNumber(String valueToTest, boolean expectedValue)
+    {
+        postConstructCalculator();
+        boolean actualValue = calculator.isFractionalNumber(valueToTest);
+        assertEquals(expectedValue, actualValue, "Expected fractional check to be " + expectedValue);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test FinishedObtainingFirstNumber()")
+    @MethodSource("firstNumberCases")
+    void testFinishedObtainingFirstNumber(boolean finishedCase)
+    {
+        postConstructCalculator();
+        calculator.values[calculator.valuesPosition] = FIVE; // has a value currently
+        calculator.finishedObtainingFirstNumber(finishedCase);
+
+        if (finishedCase)
+        {
+            assertEquals(1, calculator.getValuesPosition(), "Expected valuesPosition to be 1");
+        }
+        else
+        {
+            assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
+        }
+    }
+    private static Stream<Arguments> firstNumberCases()
+    {
+        return Stream.of(
+                Arguments.of(false),
+                Arguments.of(true)
+        );
+    }
+
+    @Test
+    @DisplayName("Test ResetValues()")
+    void testResetValues()
+    {
+        postConstructCalculator();
+        calculator.values[0] = ONE + FIVE;
+        calculator.values[1] = TWO + SIX;
+        calculator.values[2] = FIVE;
+        // values[3] could or could not already have a value
+
+        assertEquals("15", calculator.values[0], "Expected values[0] to be 15");
+        assertEquals("26", calculator.values[1], "Expected values[1] to be 26");
+        assertEquals("5", calculator.values[2], "Expected values[2] to be 5");
+
+        calculator.resetValues();
+
+        assertTrue(calculator.values[0].isEmpty(), "Expected first number to be blank");
+        assertTrue(calculator.values[1].isEmpty(), "Expected second number to be blank");
+        assertTrue(calculator.values[2].isEmpty(), "Expected operator to be blank");
+        assertTrue(calculator.values[3].isEmpty(), "Expected result to be blank");
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test ClearButtonActions()")
+    @MethodSource("clearButtonActionsCases")
+    void testClearNumberButtonActions(java.util.List<JButton> buttonsToTest)
+    {
+        postConstructCalculator();
+        buttonsToTest.forEach(btn ->
+            assertSame(1, btn.getActionListeners().length, "Expecting only 1 action on " + btn.getName()));
+
+        calculator.clearButtonActions(buttonsToTest);
+
+        buttonsToTest.forEach(numberButton ->
+            assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName()));
+    }
+    private static Stream<Arguments> clearButtonActionsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        Calculator testCalc = new Calculator();
+        return Stream.of(
+                Arguments.of(testCalc.getNumberButtons()),
+                Arguments.of(testCalc.getCommonButtons()),
+                Arguments.of(testCalc.getAllMemoryPanelButtons())
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test IsMemoryValuesEmpty()")
+    @MethodSource("memoryValuesCases")
+    void testIsMemoryValuesEmpty(String memoryValues)
+    {
+        postConstructCalculator();
+        if (memoryValues.equals(EMPTY)) assertTrue(calculator.isMemoryValuesEmpty());
+        else
+        {
+            when(actionEvent.getActionCommand())
+                    .thenReturn(FIVE)
+                    .thenReturn(MEMORY_STORE);
+            calculator.performNumberButtonAction(actionEvent);
+            calculator.performMemoryStoreAction(actionEvent);
+            assertFalse(calculator.isMemoryValuesEmpty());
+        }
+    }
+    private static Stream<Arguments> memoryValuesCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of(FIVE)
+        );
+    }
+
+    @Test
+    void testGetLowestMemoryValuePosition()
+    {
+        postConstructCalculator();
+        calculator.getMemoryValues()[0] = ONE;
+        calculator.getMemoryValues()[1] = TWO;
+        calculator.getMemoryValues()[2] = THREE;
+        calculator.getMemoryValues()[3] = FOUR;
+        assertEquals(0, calculator.getLowestMemoryPosition(), "Expected lowest memoryPosition to be 0");
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test InitialChecks()")
+    @MethodSource("initialChecksCases")
+    void testInitialChecksIfClause(String textPaneValue, boolean expectedIssues)
+    {
+        postConstructCalculator();
+        calculator.appendTextToPane(textPaneValue, true);
+        assertEquals(textPaneValue, calculator.getTextPaneValue(), "Expected error message in textPane");
+
+        boolean issuesFound = calculator.performInitialChecks();
+
+        assertEquals(expectedIssues, issuesFound, "Expected issues found to be true");
+    }
+    private static Stream<Arguments> initialChecksCases()
+    {
+        return Stream.of(
+                Arguments.of(NOT_A_NUMBER, true),
+                Arguments.of(FIVE, false)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test TextPaneContainsBadText()")
+    @MethodSource("textPaneBadTextCases")
+    void testTextPaneContainsBadTextTrue(String textPaneValue, boolean expectedContainsBadText)
+    {
+        postConstructCalculator();
+        calculator.appendTextToPane(textPaneValue);
+        assertEquals(expectedContainsBadText, calculator.textPaneContainsBadText(),"Expected textPane to contain error");
+    }
+    private static Stream<Arguments> textPaneBadTextCases()
+    {
+        return Stream.of(
+                // Bad text
+                Arguments.of(NOT_A_NUMBER, true),
+                Arguments.of(NUMBER_TOO_BIG, true),
+                Arguments.of(ENTER_A_NUMBER, true),
+                Arguments.of(ONLY_POSITIVES, true),
+                Arguments.of(ERROR, true),
+                Arguments.of(INFINITY, true),
+                // No bad text
+                Arguments.of(FIVE, false)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test GetNumberOnLeftSideOfDecimal() and GetNumberOnRightSideOfDecimal()")
+    @CsvSource({
+            "123.456, 123, 456",
+            "0.001, 0, 001",
+            "9999.0001, 9999, 0001",
+            "100, 100, ''",
+            "0, 0, ''"
+    })
+    void testGetTheNumberToTheLeftAndRightOfTheDecimal(String numberToTest, String expectedLeftSide, String expectedRightSide)
+    {
+        postConstructCalculator();
+        assertEquals(expectedLeftSide, calculator.getNumberOnLeftSideOfDecimal(numberToTest));
+        assertEquals(expectedRightSide, calculator.getNumberOnRightSideOfDecimal(numberToTest));
+    }
+
+    @Test
+    void testClearBasicHistoryTextPane()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn("Clearing BasicHistoryTextPane");
+        calculator.performClearHistoryAction(actionEvent);
+        assertEquals(EMPTY,
+                calculator.getHistoryPaneTextWithoutNewLineCharacters(),
+                "Expected HistoryTextPane to be blank");
     }
 
     @ParameterizedTest()
@@ -931,7 +740,7 @@ class CalculatorTests
         // No Commas Added
         "1.25, 1.25",
         "123, 123",
-
+        "-123, -123",
         // Commas Added
         "1234,'1,234'",
         "-1234, '-1,234'",
@@ -944,26 +753,82 @@ class CalculatorTests
     @DisplayName("Test addThousandsDelimiter")
     void testAddThousandsDelimiter(String input, String expecting)
     {
-        when(actionEvent.getActionCommand()).thenReturn(String.valueOf(input.charAt(input.length()-1)));
+        postConstructCalculator();
+        when(actionEvent.getActionCommand())
+                .thenReturn(String.valueOf(input.charAt(input.length()-1)));
         calculator.valuesPosition = 0;
-        calculator.setIsNumberNegative(calculator.isNegativeNumber(input));
-        calculator.getValues()[calculator.valuesPosition] = input.substring(0, input.length()-1);
+        calculator.setNegativeNumber(calculator.isNegativeNumber(input));
+        calculator.values[calculator.valuesPosition] = input.substring(0, input.length()-1);
         calculator.appendTextToPane(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertEquals(expecting, calculator.getTextPaneValue(), "Expected textPane to be " + expecting);
         assertEquals(input, calculator.getValueAt(), "Expected values[0] to be " + expecting);
     }
 
+    @ParameterizedTest
+    @DisplayName("Convert FromBaseToBase()")
+    @CsvSource({
+            "00000011, 3, BASE_BINARY, BYTE_BYTE, BASE_DECIMAL",
+            "0000000000000011, 3, BASE_BINARY, BYTE_WORD, BASE_DECIMAL",
+            "00000000000000000000000000000011, 3, BASE_BINARY, BYTE_DWORD, BASE_DECIMAL",
+            "0000000000000000000000000000000000000000000000000000000000000011, 3, BASE_BINARY, BYTE_QWORD, BASE_DECIMAL",
+    })
+    void testConvertFromBaseToBase(String convertValue, String expect, CalculatorBase fromBase,
+                                   CalculatorByte calculatorByte, CalculatorBase toBase)
+    {
+        calculator.setCalculatorBase(fromBase);
+        calculator.setCalculatorByte(calculatorByte);
+
+        calculator.appendTextToPane(convertValue);
+        String converted = calculator.convertFromBaseToBase(fromBase, toBase, calculator.getTextPaneValue());
+        assertEquals(expect, converted, "Expected " + expect);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test EndsWithOperator()")
+    @MethodSource("endsWithOperatorCases")
+    void testEndsWithOperator(String valueToTest, boolean expectedEndsWithOperator)
+    {
+        postConstructCalculator();
+        // Because the endsWithOperator method will use the current panels buttons,
+        // setting to a different view will default to check all operators
+        calculator.performViewMenuAction(actionEvent, VIEW_DATE); // any view should do
+
+        boolean actualEndsWithOperator = calculator.endsWithOperator(valueToTest);
+        assertEquals(expectedEndsWithOperator, actualEndsWithOperator,
+                "Expected " + valueToTest + " to be " + expectedEndsWithOperator);
+    }
+    private static Stream<Arguments> endsWithOperatorCases()
+    {
+        return Stream.of(
+                Arguments.of("123 "+ADDITION, true),
+                Arguments.of("456 "+SUBTRACTION, true),
+                Arguments.of("789 "+MULTIPLICATION, true),
+                Arguments.of("100 "+DIVISION, true),
+                Arguments.of("543 "+OR, true),
+                Arguments.of("382 "+XOR, true),
+                Arguments.of("321 "+AND, true),
+                Arguments.of("123.45 "+MODULUS, true),
+                Arguments.of("123", false),
+                Arguments.of("123.", false),
+                Arguments.of("456.78", false),
+                Arguments.of("-999", false)
+        );
+    }
+
+    // TODO: These min/max tests could be improved to test edge cases better
     @Test
     void testValueAt0IsMinimumNumber()
     {
-        calculator.values[0] = "-9999999"; //"0.0000001";
+        postConstructCalculator();
+        calculator.values[0] = "-9999999";
         assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
     }
 
     @Test
     void testValueAt1IsMinimumNumber()
     {
+        postConstructCalculator();
         calculator.valuesPosition = 1;
         calculator.values[1] = "-9999999"; //"0.0000001";
         assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
@@ -972,13 +837,15 @@ class CalculatorTests
     @Test
     void testValueIsMinimumNumber()
     {
-        calculator.getValues()[0] = "-9999999"; //"0.0000001";
-        assertTrue(calculator.isMinimumValue(calculator.getValues()[0]), "Expected maximum number to be met");
+        postConstructCalculator();
+        calculator.values[0] = "-9999999"; //"0.0000001";
+        assertTrue(calculator.isMinimumValue(calculator.values[0]), "Expected maximum number to be met");
     }
 
     @Test
     void testValuesAt0IsMaximumNumber()
     {
+        postConstructCalculator();
         calculator.values[0] = "9999999";
         assertTrue(calculator.isMaximumValue(), "Expected maximum number to be met");
     }
@@ -986,6 +853,7 @@ class CalculatorTests
     @Test
     void testValuesAt1IsMaximumNumber()
     {
+        postConstructCalculator();
         calculator.valuesPosition = 1;
         calculator.values[calculator.valuesPosition] = "9999999";
         assertTrue(calculator.isMaximumValue(), "Expected maximum number to be met");
@@ -994,169 +862,9 @@ class CalculatorTests
     @Test
     void testValueIsMaximumNumber()
     {
+        postConstructCalculator();
         calculator.values[0] = "9999999";
         assertTrue(calculator.isMaximumValue(calculator.getValueAt(0)), "Expected maximum number to be met");
     }
 
-    @Test
-    void testMenuOptionsForViewMenu()
-    {
-         assertEquals(VIEW_BASIC.getValue(), calculator.getViewMenu().getMenuComponents()[0].getName(), "Expected Basic View Menu Item");
-         assertEquals(VIEW_PROGRAMMER.getValue(), calculator.getViewMenu().getMenuComponents()[1].getName(), "Expected Programmer View Menu Item");
-         assertEquals(VIEW_DATE.getValue(), calculator.getViewMenu().getMenuComponents()[2].getName(), "Expected Date View Menu Item");
-         assertEquals(VIEW_CONVERTER.getValue(), calculator.getViewMenu().getMenuComponents()[4].getName(), "Expected Converter View Menu Item");
-         assertEquals(ANGLE.getValue(), ((JMenu)calculator.getViewMenu().getMenuComponents()[4]).getMenuComponents()[0].getName(), "Expected Angle Converter Menu Item");
-         assertEquals(AREA.getValue(), ((JMenu)calculator.getViewMenu().getMenuComponents()[4]).getMenuComponents()[1].getName(), "Expected Area Converter Menu Item");
-    }
-
-    @Test
-    void testAboutCalculatorShowsWindowsInText()
-    {
-        doReturn(false).when(calculatorSpy).isOSMac();
-        assertTrue(calculatorSpy.getAboutCalculatorString().contains(WINDOWS), "Expected About Calculator Text to have Windows");
-        assertFalse(calculatorSpy.getAboutCalculatorString().contains(APPLE), "Expected About Calculator Text to not have Apple");
-    }
-
-    @Test
-    void testGetLowestMemoryValuePosition()
-    {
-        calculator.getMemoryValues()[0] = ONE;
-        calculator.getMemoryValues()[1] = TWO;
-        calculator.getMemoryValues()[2] = THREE;
-        calculator.getMemoryValues()[3] = FOUR;
-        assertEquals(0, calculator.getLowestMemoryPosition(), "Expected lowest memoryPosition to be 0");
-    }
-
-    @Test
-    void testShowMemoryValuesShowsNoMemoriesSaved()
-    {
-        when(actionEvent.getActionCommand()).thenReturn("Show Memory Values");
-        calculator.performShowMemoriesAction(actionEvent);
-        assertEquals("No Memories Stored",
-                calculator.getHistoryPaneTextWithoutNewLineCharacters(),
-                "Expected HistoryTextPane to say 'No Memories Stored'");
-    }
-
-    @Test
-    void testClearBasicHistoryTextPane()
-    {
-        when(actionEvent.getActionCommand()).thenReturn("Clearing BasicHistoryTextPane");
-        calculator.performClearHistoryTextPaneAction(actionEvent);
-        assertEquals(EMPTY,
-                calculator.getHistoryPaneTextWithoutNewLineCharacters(),
-                "Expected HistoryTextPane to be blank");
-    }
-
-    @Test
-    void testShowMemoryValuesInHistoryPane()
-    {
-        when(actionEvent.getActionCommand()).thenReturn("Show Memory Values");
-        calculator.getMemoryValues()[0] = ONE;
-        calculator.getMemoryValues()[1] = TWO;
-        calculator.getMemoryValues()[2] = THREE;
-        calculator.getMemoryValues()[3] = FOUR;
-        calculator.setMemoryPosition(4);
-        calculator.performShowMemoriesAction(actionEvent);
-        assertEquals("Memories: [1], [2], [3], [4]",
-                calculator.getHistoryPaneTextWithoutNewLineCharacters(),
-                "Expected memories to be in HistoryTextPane");
-    }
-
-    @Test
-    @DisplayName("Convert Byte Binary 3 to Decimal 3")
-    void testConvertFromBaseToBase()
-    {
-        String binary = "00000011";
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_BYTE);
-        calculator.appendTextToPane(binary);
-        calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, calculator.getTextPaneValue());
-        assertEquals(THREE, converted, "Expected 3");
-    }
-
-    @Test
-    @DisplayName("Convert Word Binary 3 to Decimal 3")
-    void test2ConvertFromBaseToBase()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        String eight0s = ZERO.repeat(8);
-        String binary = eight0s+"00000011"; // still 3
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_WORD);
-        calculator.appendTextToPane(binary);
-        calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
-        assertEquals(THREE, converted, "Expected 3");
-    }
-
-    @Test
-    @DisplayName("Convert DWord Binary 3 to Decimal 3")
-    void test3ConvertFromBaseToBase()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        String sixteen0s = ZERO.repeat(16);
-        String eight0s = ZERO.repeat(8);
-        String binary = sixteen0s+eight0s+"00000011"; // still 3
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_DWORD);
-        calculator.appendTextToPane(binary);
-        calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
-        assertEquals(THREE, converted, "Expected 3");
-    }
-
-    @Test
-    @DisplayName("Convert QWord Binary 3 to Decimal 3")
-    void test4ConvertFromBaseToBase()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        String forty8zeroes = ZERO.repeat(48);
-        String eight0s = ZERO.repeat(8);
-        String binary = forty8zeroes+eight0s+"00000011"; // still 3
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_QWORD);
-        calculator.appendTextToPane(binary);
-        calculator.getValues()[0] = THREE;
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
-        assertEquals(THREE, converted, "Expected 3");
-    }
-
-    @Test
-    @DisplayName("Convert QWord Binary # to Decimal #")
-    void test5ConvertFromBaseToBase()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        String forty7zeroes = ZERO.repeat(47);
-        String eight0s = ZERO.repeat(8);
-        String binary = ONE+forty7zeroes+eight0s+"00000011"; // still 3
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_QWORD);
-        calculator.appendTextToPane(binary);
-        calculator.valuesPosition = 0;
-        calculator.values[calculator.valuesPosition] = "9223372036854775811";
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
-        assertEquals("9223372036854775811", converted, "Expected big number");
-    }
-
-    @Test
-    @DisplayName("Convert Largest Binary # to Decimal #")
-    void test6ConvertFromBaseToBase()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(VIEW_PROGRAMMER.getValue());
-        calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
-        String binary = ONE.repeat(64);
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_QWORD);
-        calculator.appendTextToPane(binary);
-        calculator.valuesPosition = 0;
-        calculator.values[calculator.valuesPosition] = "18446744073709551615";
-        String converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, binary);
-        assertEquals("18446744073709551615", converted, "Expected big number");
-        assertEquals("18,446,744,073,709,551,615", calculator.addCommas(converted), "Expected big number");
-    }
 }

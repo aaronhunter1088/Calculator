@@ -38,6 +38,7 @@ public class CalculatorError extends Exception
     public CalculatorError(Exception exception)
     {
         super(exception);
+        if (exception != null) setMessage(exception.getMessage());
         setException(exception);
     }
     /**

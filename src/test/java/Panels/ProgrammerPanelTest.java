@@ -1,8 +1,10 @@
 package Panels;
 
 import Calculators.Calculator;
+import Parent.TestParent;
 import Types.CalculatorBase;
 import Types.CalculatorView;
+import Types.SystemDetector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
@@ -11,8 +13,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -21,8 +25,11 @@ import java.util.stream.Stream;
 import static Types.CalculatorBase.BASE_BINARY;
 import static Types.CalculatorBase.BASE_DECIMAL;
 import static Types.CalculatorByte.BYTE_BYTE;
+import static Types.CalculatorView.VIEW_BASIC;
+import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
@@ -34,17 +41,17 @@ import static org.mockito.Mockito.when;
  * @version 4.0
  */
 @ExtendWith(MockitoExtension.class)
-class ProgrammerPanelTest
+class ProgrammerPanelTest extends TestParent
 {
     static { System.setProperty("appName", ProgrammerPanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanelTest.class);
 
-    private Calculator calculator;
     private ProgrammerPanel programmerPanel;
-    private final double delta = 0.000001d;
 
     @Mock
-    ActionEvent actionEvent;
+    public SystemDetector systemDetector;
+    @Mock
+    public ActionEvent actionEvent;
 
     @BeforeAll
     static void beforeAll()
@@ -53,25 +60,30 @@ class ProgrammerPanelTest
     @BeforeEach
     void beforeEach() throws Exception
     {
-        calculator = new Calculator(CalculatorView.VIEW_PROGRAMMER);
-        calculator.pack();
-        programmerPanel = calculator.getProgrammerPanel();
-        programmerPanel.setupProgrammerPanel(calculator);
-        calculator.setCurrentPanel(programmerPanel);
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                LOGGER.info("Starting test");
+                mocks = MockitoAnnotations.openMocks(this);
+                calculator = spy(new Calculator(VIEW_PROGRAMMER));
+                calculator.setSystemDetector(systemDetector);
+                programmerPanel = calculator.getProgrammerPanel();
+                programmerPanel.setupProgrammerPanel(calculator);
+            } catch (Exception ignored) {}
+        });
     }
 
-    @AfterEach
-    void afterEach() throws InterruptedException, InvocationTargetException
-    {
-        for (Calculator calculator : java.util.List.of(calculator))
-        {
-            LOGGER.info("Test complete. Closing the calculator...");
-            EventQueue.invokeAndWait(() -> {
-                calculator.setVisible(false);
-                calculator.dispose();
-            });
-        }
-    }
+//    @AfterEach
+//    void afterEach() throws InterruptedException, InvocationTargetException
+//    {
+//        for (Calculator calculator : java.util.List.of(calculator))
+//        {
+//            LOGGER.info("Test complete. Closing the calculator...");
+//            EventQueue.invokeAndWait(() -> {
+//                calculator.setVisible(false);
+//                calculator.dispose();
+//            });
+//        }
+//    }
 
     @AfterAll
     static void afterAll()
@@ -201,7 +213,24 @@ class ProgrammerPanelTest
                 Arguments.of(BASE_DECIMAL, FIVE, THREE, EQUALS, TWO),
                 Arguments.of(BASE_DECIMAL, FOUR, THREE, EQUALS, ONE),
                 Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, INFINITY),
-                Arguments.of(BASE_DECIMAL, SUBTRACTION+FOUR, TWO, EQUALS, ZERO)
+                Arguments.of(BASE_DECIMAL, SUBTRACTION+FOUR, TWO, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, ONE+ZERO, THREE, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, ONE+SEVEN, FIVE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, THREE, SEVEN, EQUALS, THREE),
+                Arguments.of(BASE_DECIMAL, FOUR, ONE+ZERO, EQUALS, FOUR),
+                Arguments.of(BASE_DECIMAL, SEVEN, SEVEN, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, TWO+FIVE, FOUR, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, ONE+ZERO+ZERO, THREE+ZERO, EQUALS, ONE+ZERO),
+                Arguments.of(BASE_DECIMAL, TWO+FOUR, SIX, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, EIGHT+ONE, NINE, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION+ONE+ZERO, THREE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION+FIVE, SEVEN, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, ONE+ZERO, SUBTRACTION+THREE, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION+TWO+ZERO, SUBTRACTION+SIX, EQUALS, FOUR),
+                Arguments.of(BASE_DECIMAL, ONE+ZERO.repeat(5), SEVEN, EQUALS, FOUR),
+                Arguments.of(BASE_DECIMAL, TWO+TWO, FIVE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, TWO+ZERO, SIX, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, TWO, FOUR, EQUALS, TWO)
         );
     }
 
@@ -317,6 +346,8 @@ class ProgrammerPanelTest
             case ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE -> programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
             case ADDITION -> programmerPanel.getCalculator().performAddButtonAction(actionEvent);
             case AND -> programmerPanel.performAndButtonAction(actionEvent);
+            case CLEAR -> programmerPanel.getCalculator().performClearButtonAction(actionEvent);
+            case CLEAR_ENTRY -> programmerPanel.getCalculator().performClearButtonAction(actionEvent);
             case DIVISION -> programmerPanel.getCalculator().performDivideButtonAction(actionEvent);
             case EQUALS -> calculator.performEqualsButtonAction(actionEvent);
             case FRACTION -> LOGGER.info("Fraction operator not supported on Programmer Panel");

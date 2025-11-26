@@ -10,11 +10,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
-import static Utilities.LoggingUtil.confirm;
-import static Utilities.LoggingUtil.logActionButton;
+import static Utilities.LoggingUtil.*;
 
 /**
  * BasicPanel
@@ -317,41 +317,46 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, cannotPerformOperation(PERCENT)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
+            logEmptyValue(PERCENT, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(PERCENT));
         }
         else
         {
-            calculator.setActiveOperator(buttonChoice);
-            String result = calculator.performOperation().toPlainString();
-            calculator.appendTextToPane(calculator.addCommas(result), true);
-            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAt()));
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
-            calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            String value = calculator.getAppropriateValue();
+            if (!value.isEmpty() && !calculator.endsWithOperator(value))
+            {
+                if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
+                String currentOperator = calculator.getActiveOperator();
+                calculator.setActiveOperator(buttonChoice);
+                calculator.performOperation();
+                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
+                calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
+                calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt(3)));
+                calculator.writeHistory(buttonChoice, false);
+                calculator.setActiveOperator(currentOperator);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            // Needs to be here!
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(value))
+            { confirm(calculator, LOGGER, cannotPerformOperation(PERCENT)); }
         }
     }
     /**
      * The inner logic for performing the Percent operation
      * @return the result of the Percent operation
      */
-    public BigDecimal performPercent()
+    public String performPercent()
     {
-        BigDecimal result = BigDecimal.ZERO;
-        BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
+        String result = EMPTY;
+        //BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
+        String currentNum = calculator.getAppropriateValue();
+        BigDecimal currentNumber = new BigDecimal(currentNum);
         BigDecimal oneHundred = new BigDecimal(ONE+ZERO+ZERO);
-        if (ZERO.equals(calculator.getValueAt()))
+        result = currentNumber.divide(oneHundred, MathContext.DECIMAL128).toPlainString();
+        if (calculator.isFractionalNumber(result))
         {
-            calculator.dividedByZero();
-        }
-        else
-        {
-            result = currentNumber.divide(oneHundred);
-            if (calculator.isDecimalNumber(String.valueOf(result)))
-            {
-                result = result.stripTrailingZeros();
-            }
-            LOGGER.debug("{} / {} = {}%", currentNumber, oneHundred, result);
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
         }
         return result;
     }
@@ -368,34 +373,44 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, cannotPerformOperation(SQUARED)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
+            logEmptyValue(SQUARED, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(SQUARED));
         }
         else
         {
-            calculator.setActiveOperator(buttonChoice);
-            String result = calculator.performOperation().toPlainString();
-            calculator.appendTextToPane(calculator.addCommas(result), true);
-            calculator.setIsNumberNegative(calculator.isNegativeNumber(calculator.getValueAt()));
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
-            calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            if (!calculator.getAppropriateValue().isEmpty())
+            {
+                if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
+                String currentOperator = calculator.getActiveOperator();
+                calculator.setActiveOperator(buttonChoice);
+                calculator.performOperation();
+                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
+                calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
+                calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt(3)));
+                calculator.writeHistory(buttonChoice, false);
+                calculator.setActiveOperator(currentOperator);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            // Needs to be here!
+            else if (calculator.isOperatorActive())
+            { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         }
     }
     /**
      * The inner logic for performing the Squared operation
      * @return the result of the Squared operation
      */
-    public BigDecimal performSquared()
+    public String performSquared()
     {
-        BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
+        String currentNum = calculator.getAppropriateValue();
+        BigDecimal currentNumber = new BigDecimal(currentNum);
         double number = currentNumber.doubleValue();
-        BigDecimal result = BigDecimal.valueOf(Math.pow(number, 2));
-        if (calculator.isDecimalNumber(String.valueOf(result)))
+        String result = BigDecimal.valueOf(Math.pow(number, 2)).toPlainString();
+        if (calculator.isFractionalNumber(result))
         {
-            result = result.stripTrailingZeros();
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
         }
-        LOGGER.debug("{} squared = {}", number, result.toPlainString());
         return result;
     }
 
@@ -411,48 +426,59 @@ public class BasicPanel extends JPanel
         { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         else if (calculator.getTextPaneValue().isEmpty())
         {
+            logEmptyValue(FRACTION, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
         }
-        // TODO: Check if this is the proper location to check this
-        else if (calculator.isOperatorActive())
-        { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         else
         {
-            calculator.setActiveOperator(buttonChoice);
-            BigDecimal result = calculator.performOperation();
-            if (calculator.textPaneContainsBadText())
-                calculator.appendTextToPane(calculator.getBadText());
-            else
-                calculator.appendTextToPane(calculator.addCommas(String.valueOf(result)), true);
-            calculator.setIsNumberNegative(calculator.isNegativeNumber(String.valueOf(result)));
-            calculator.getButtonDecimal().setEnabled(!calculator.isDecimalNumber(calculator.getValueAt()));
-            calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            if (!calculator.getAppropriateValue().isEmpty())
+            {
+                if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
+                calculator.getValues()[calculator.getValuesPosition()] = calculator.getAppropriateValue();
+                String currentOperator = calculator.getActiveOperator();
+                calculator.setActiveOperator(buttonChoice);
+                calculator.performOperation();
+                if (calculator.textPaneContainsBadText())
+                    calculator.appendTextToPane(calculator.getBadText());
+                else
+                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
+                calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
+                calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt()));
+                calculator.writeHistory(buttonChoice, false);
+                calculator.setActiveOperator(currentOperator);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            // Needs to be here!
+            else if (calculator.isOperatorActive())
+            { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         }
     }
     /**
      * The inner logic for performing the Fraction operation
      * @return the result of the Fraction operation
      */
-    public BigDecimal performFraction()
+    public String performFraction()
     {
-        BigDecimal result = BigDecimal.ZERO;
+        String result;
         BigDecimal one = new BigDecimal(ONE);
-        BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
-        if (ZERO.equals(calculator.getValueAt()))
+        String currentNum = calculator.getAppropriateValue();
+        BigDecimal currentNumber = new BigDecimal(currentNum);
+        if (BigDecimal.ZERO.equals(currentNumber))
         {
-            calculator.dividedByZero();
+            calculator.appendTextToPane(INFINITY, true);
+            calculator.setObtainingFirstNumber(true);
+            result = INFINITY;
         }
         else
         {
-            result = one.divide(currentNumber);
-            LOGGER.debug("{} / {} = {}", one, currentNumber, result);
+            result = one.divide(currentNumber, MathContext.DECIMAL128).toPlainString();
         }
         return result;
     }
 
     /**************** GETTERS ****************/
+    public Calculator getCalculator() { return calculator; }
     public GridBagConstraints getConstraints() { return constraints; }
     public JPanel getBasicPanel() { return basicPanel; }
     public boolean isInitialized() { return isInitialized; }

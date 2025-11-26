@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import Calculators.Calculator;
+import Calculators.CalculatorError;
 import Panels.DatePanel;
 import Types.CalculatorBase;
 import Types.CalculatorByte;
@@ -70,31 +71,17 @@ public class LoggingUtil {
                     {
                         logger.debug("memoryPosition: {}", calculator.getMemoryPosition());
                         logger.debug("memoryRecallPosition: {}", calculator.getMemoryRecallPosition());
-                        for (int i = 0; i < 10; i++) {
+                        for (int i = 0; i < calculator.getMemoryPosition(); i++) {
                             logger.debug("memoryValues[{}]: {}", i, calculator.getMemoryValues()[i]);
                         }
                     }
-                    logger.debug("addBool: {}", calculator.getValueAt(2).equals(ADDITION) ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("subBool: {}", calculator.getValueAt(2).equals(SUBTRACTION) ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("mulBool: {}", calculator.getValueAt(2).equals(MULTIPLICATION) ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("divBool: {}", calculator.getValueAt(2).equals(DIVISION) ? YES.toLowerCase() : NO.toLowerCase());
-                    if (currentView == VIEW_PROGRAMMER)
-                    {
-                        logger.debug("OR set: {}", calculator.getValueAt(2).equals(OR) ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("MODULUS set: {}", calculator.getValueAt(2).equals(MODULUS) ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("XOR set: {}", calculator.getValueAt(2).equals(XOR) ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("NOT set: {}", calculator.getValueAt(2).equals(NOT) ? YES.toLowerCase() : NO.toLowerCase());
-                        logger.debug("AND set: {}", calculator.getValueAt(2).equals(AND) ? YES.toLowerCase() : NO.toLowerCase());
-                    }
-                    logger.debug("PEMDAS active: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("values[0]: '{}'", calculator.getValues()[0]); // first number
                     logger.debug("values[1]: '{}'", calculator.getValues()[1]); // second number
                     logger.debug("values[2]: '{}'", calculator.getValues()[2]); // operator
                     logger.debug("values[3]: '{}'", calculator.getValues()[3]); // result
-                    logger.debug("values[4]: '{}'", calculator.getValues()[4]); // copy value
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
-                    logger.debug("isFirstNumber: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("is dot enabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (calculator.isNegativeNumber(calculator.getValueAt()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
                 else
@@ -108,28 +95,14 @@ public class LoggingUtil {
                             logger.info("memoryValues[{}]: {}", i, calculator.getMemoryValues()[i]);
                         }
                     }
-                    if (calculator.getValueAt(2).equals(ADDITION)) logger.info("addBool: {}", YES.toLowerCase());
-                    if (calculator.getValueAt(2).equals(SUBTRACTION)) logger.info("subBool: {}", YES.toLowerCase());
-                    if (calculator.getValueAt(2).equals(MULTIPLICATION)) logger.info("mulBool: {}", YES.toLowerCase());
-                    if (calculator.getValueAt(2).equals(DIVISION)) logger.info("divBool: {}", YES.toLowerCase());
-                    if (calculator.getCalculatorView().equals(VIEW_PROGRAMMER))
-                    {
-                        if (calculator.getValueAt(2).equals(OR)) logger.info("OR set: {}", YES.toLowerCase());
-                        if (calculator.getValueAt(2).equals(MODULUS)) logger.info("MODULUS set: {}", YES.toLowerCase());
-                        if (calculator.getValueAt(2).equals(XOR)) logger.info("XOR set: {}", YES.toLowerCase());
-                        if (calculator.getValueAt(2).equals(NOT)) logger.info("NOT set: {}", YES.toLowerCase());
-                        if (calculator.getValueAt(2).equals(AND)) logger.info("AND set: {}", YES.toLowerCase());
-                    }
-                    if (calculator.isPemdasActive()) logger.info("pemdasBool: {}", calculator.isPemdasActive() ? YES.toLowerCase() : NO.toLowerCase());
                     for (int i = 0; i <= calculator.getValuesPosition(); i++) {
                         logger.info("values[{}]: '{}'", i, calculator.getValues()[i]);
                     }
                     if (!calculator.getValues()[2].isEmpty()) logger.info("values[2]: '{}'", calculator.getValueAt(2));
                     if (!calculator.getValues()[3].isEmpty()) logger.info("values[3]: '{}'", calculator.getValueAt(3));
-                    if (!calculator.getValues()[4].isEmpty()) logger.info("values[4]: '{}'", calculator.getValueAt(4));
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
-                    logger.info("isFirstNumber: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.info("isDotEnabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("is dot enabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("is value: '{}' negative?: {}", calculator.getValueAt(), calculator.isNegativeNumber(calculator.getValueAt()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
             }
@@ -140,7 +113,7 @@ public class LoggingUtil {
             case VIEW_DATE -> {
                 DateOperation currentDateOperation = calculator.getDateOperation();
                 logger.info("dateOperation: {}", currentDateOperation);
-                LocalDateTime date = LocalDateTime.of(((DatePanel)calculator.getDatePanel()).getTheDateFromTheFromDate(), LocalTime.now());
+                LocalDateTime date = LocalDateTime.of(calculator.getDatePanel().getTheDateFromTheFromDate(), LocalTime.now());
                 var updatedDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));
                 var capitalizedDay = updatedDate.split(SPACE)[0].toUpperCase();
                 var capitalizedMonth = updatedDate.split(SPACE)[1].toUpperCase();
@@ -148,32 +121,32 @@ public class LoggingUtil {
                 logger.info("From Date: {}", updatedDate);
                 if (currentDateOperation == DIFFERENCE_BETWEEN_DATES)
                 {
-                    date = LocalDateTime.of(((DatePanel)calculator.getDatePanel()).getTheDateFromTheToDate(), LocalTime.now());
+                    date = LocalDateTime.of(calculator.getDatePanel().getTheDateFromTheToDate(), LocalTime.now());
                     updatedDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"));
                     capitalizedDay = updatedDate.split(SPACE)[0].toUpperCase();
                     capitalizedMonth = updatedDate.split(SPACE)[1].toUpperCase();
                     updatedDate = capitalizedDay + SPACE + capitalizedMonth + SPACE + updatedDate.split(SPACE)[2] + SPACE + updatedDate.split(SPACE)[3];
                     logger.info("To Date: {}", updatedDate);
                     logger.info("Difference");
-                    logger.info("Year: {}", ((DatePanel) calculator.getDatePanel()).getYearsDifferenceLabel().getText());
-                    logger.info("Month: {}", ((DatePanel) calculator.getDatePanel()).getMonthsDifferenceLabel().getText());
-                    logger.info("Weeks: {}", ((DatePanel) calculator.getDatePanel()).getWeeksDifferenceLabel().getText());
-                    logger.info("Days: {}", ((DatePanel) calculator.getDatePanel()).getDaysDifferenceLabel().getText());
+                    logger.info("Year: {}", calculator.getDatePanel().getYearsDifferenceLabel().getText());
+                    logger.info("Month: {}", calculator.getDatePanel().getMonthsDifferenceLabel().getText());
+                    logger.info("Weeks: {}", calculator.getDatePanel().getWeeksDifferenceLabel().getText());
+                    logger.info("Days: {}", calculator.getDatePanel().getDaysDifferenceLabel().getText());
                 }
                 else // dateOperation == ADD_SUBTRACT_DAYS
                 {
-                    boolean isAddSelected = ((DatePanel) calculator.getDatePanel()).getAddRadioButton().isSelected();
+                    boolean isAddSelected = calculator.getDatePanel().getAddRadioButton().isSelected();
                     if (isAddSelected) logger.info("Add Selected");
                     else               logger.info("Subtract Selected");
-                    var addSubYears = ((DatePanel) calculator.getDatePanel()).getYearsTextField().getText();
+                    var addSubYears = calculator.getDatePanel().getYearsTextField().getText();
                     if (!addSubYears.isBlank()) logger.info("Years: {}", addSubYears);
-                    var addSubMonths = ((DatePanel) calculator.getDatePanel()).getMonthsTextField().getText();
+                    var addSubMonths = calculator.getDatePanel().getMonthsTextField().getText();
                     if (!addSubMonths.isBlank()) logger.info("Months: {}", addSubMonths);
-                    var addSubWeeks = ((DatePanel) calculator.getDatePanel()).getWeeksTextField().getText();
+                    var addSubWeeks = calculator.getDatePanel().getWeeksTextField().getText();
                     if (!addSubWeeks.isBlank()) logger.info("Weeks: {}", addSubWeeks);
-                    var addSubDays = ((DatePanel) calculator.getDatePanel()).getDaysTextField().getText();
+                    var addSubDays = calculator.getDatePanel().getDaysTextField().getText();
                     if (!addSubDays.isBlank()) logger.info("Days: {}", addSubDays);
-                    logger.info("Result: " + ((DatePanel) calculator.getDatePanel()).getResultsLabel().getText());
+                    logger.info("Result: " + calculator.getDatePanel().getResultsLabel().getText());
                 }
             }
             case VIEW_CONVERTER -> {
@@ -184,7 +157,7 @@ public class LoggingUtil {
                         + calculator.getConverterPanel().getUnitOptions2().getSelectedItem());
             }
         }
-        logger.info("-------- End Confirm Results --------{}", calculator.addNewLines(1));
+        logger.info("--- End Confirm Results ---{}", NEWLINE);
     }
 
     /**
@@ -194,9 +167,7 @@ public class LoggingUtil {
      * @param logger the Logger needed to log the action
      */
     public static void logActionButton(String buttonChoice, Logger logger)
-    {
-        logger.info("Action for {} started", buttonChoice);
-    }
+    { logger.info("Action for {} started", buttonChoice); }
 
     /**
      * This method is used at the start of any action button.
@@ -205,16 +176,27 @@ public class LoggingUtil {
      * @param logger the Logger needed to log the action
      */
     public static void logActionButton(ActionEvent actionEvent, Logger logger)
-    {
-        logger.info("Action for {} started", actionEvent.getActionCommand());
-    }
+    { logger.info("Action for {} started", actionEvent.getActionCommand()); }
+
+    public static void logException(Exception e, Logger logger)
+    { logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e); }
 
     /**
      * Logs the operation being performed.
      */
-    public static void logOperation(Logger logger, String[] values)
+    public static void logOperation(Logger logger, Calculator calculator)
     {
-        logger.info("{} {} {} = {}", values[0], values[2], values[1], values[3]);
+        switch (calculator.getValueAt(2))
+        {
+            case PERCENT -> logger.debug("{} / {} = {}%", calculator.getAppropriateValue(), 100, calculator.getValueAt(3));
+            case SQUARE_ROOT -> logger.debug("{} squared = {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
+            case SQUARED -> logger.debug("{} squared = {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
+            case FRACTION -> logger.info("{} / {} = {}", 1, calculator.getAppropriateValue(), calculator.textPaneContainsBadText() ? calculator.getBadText() : calculator.getValueAt(3));
+            case NEGATE -> logger.info("{} negated is {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
+            case MEMORY_ADDITION -> logger.info("{} + {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
+            case MEMORY_SUBTRACTION -> logger.info("{} - {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
+            default -> logger.info("{} {} {} = {}", calculator.getValueAt(0), calculator.getValueAt(2), calculator.getValueAt(1), calculator.getValueAt(3));
+        }
     }
 
     /**
@@ -246,16 +228,30 @@ public class LoggingUtil {
     }
 
     /**
+     * Logs the current value in the text pane of the calculator.
+     * @param calculator the Calculator object containing the text pane
+     * @param logger the Logger needed to log the text pane value
+     */
+    public static void logValueInTextPane(Calculator calculator, Logger logger)
+    { logger.debug("textPane: {}", calculator.getTextPaneValue()); }
+
+    /**
      * Logs a failed operation due to a blank value.
      * @param operation the operation attempted
      * @param calculator the calculator
      * @param logger the Logger needed to log the warning
      */
     public static void logEmptyValue(String operation, Calculator calculator, Logger logger)
-    {
-        logger.warn("Attempted to perform {} but values[{}] is blank",
-                operation, calculator.getValuesPosition());
+    { logger.warn("Attempted to perform {} but values[{}] is empty", operation, calculator.getValuesPosition()); }
 
-    }
+    /**
+     * Logs a warning when the user attempts to use a button
+     * but there is no number, so the textPane value is used instead.
+     * @param buttonChoice the button the user pushed
+     * @param calculator the calculator
+     * @param logger the Logger needed to log the warning
+     */
+    public static void logUseTextPaneValueWarning(Calculator calculator, Logger logger, String buttonChoice)
+    { logger.warn("The user pushed {} but there is no number. Using textPane value: '{}'", buttonChoice, calculator.getTextPaneValue()); }
 
 }

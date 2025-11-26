@@ -6,17 +6,18 @@
     <parent>
         <groupId>com.skvllprodvctions</groupId>
         <artifactId>parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>Calculator</artifactId>
-    <version>4.5</version>
+    <version>4.6</version>
     <name>Calculator</name>
     <description>This is a Calculator Swing App</description>
 
     <properties>
         <outputDirectory>${basedir}/dist/version4</outputDirectory>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <main.class>Runnables.CalculatorMain</main.class>
     </properties>
 
     <dependencies>
@@ -30,6 +31,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
+        <dependency>
+            <groupId>net.sourceforge.jdatepicker</groupId>
+            <artifactId>jdatepicker</artifactId>
+        </dependency>
         <!-- Managed in Parent Dependency Management section -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -39,13 +45,15 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
         </dependency>
-
         <!-- Test dependencies -->
-
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Optionally: parameterized tests support -->
@@ -54,7 +62,6 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
         <!-- mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -66,188 +73,33 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
-        <dependency>
-            <groupId>net.sourceforge.jdatepicker</groupId>
-            <artifactId>jdatepicker</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/**</include>
-                </includes>
-            </resource>
-        </resources>
+        <!-- source and test directories defined in parent -->
+        <!-- resources defined in parent -->
 
         <!-- NOTES -->
         <!-- Assembly:single creates Calculator-#.jar -->
         <!-- Mvn:package creates Calculator-#-jar-with-dependencies.jar -->
         <!-- Mvn:install adds Calculator-#-jar-with-dependencies.jar to local repo -->
         <plugins>
-            <!-- Compile -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <release>${java.version}</release>
-                    <compilerArgs>
-                        <!--<arg>#doubledash#enable-preview</arg>-->
-                        <arg>-verbose</arg>
-                        <arg>-Xlint:all,-options,-path</arg>
-                    </compilerArgs>
-                    <!-- for surefire plugin -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Test-compile -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <!-- Generate resources -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>write-project-properties</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${basedir}/src/main/resources/pom.properties</outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Binds to Package phase, but will not run... -->
-            <!-- When creating a jar, update MANIFEST.MF file and place JAR in specified outputDirectory
-                 Run Command: mvn install -DskipTests -DskipITs -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <finalName>${finalName}</finalName>
-                    <outputDirectory>${outputDirectory}</outputDirectory>
-                    <archive>
-                        <index>true</index>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>Runnables.CalculatorMain</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
-                            <!--suppress UnresolvedMavenProperty -->
-                            <Creation-Time>${build.time}</Creation-Time>
-                            <mainClass>Runnables.CalculatorMain</mainClass>
-                        </manifestEntries>
-                    </archive>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <!-- Assembly:Single creates runnable jar with dependencies
-                 Run Command: mvn clean package (-Dmaven.test.skip=true) -->
-            <plugin>
-                <!-- don't need group id since org.apache.maven.plugins is assumed -->
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>build-calculator</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <appendAssemblyId>true</appendAssemblyId> <!-- If false, jar-with-dependencies is not appended to jar name -->
-                            <!-- archive required to create executable jar -->
-                            <archive>
-                                <index>true</index>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                    <addClasspath>true</addClasspath>
-                                    <mainClass>Runnables.CalculatorMain</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Creation-Time>${maven.build.timestamp}</Creation-Time>
-                                    <Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
-                                </manifestEntries>
-                            </archive>
-                            <finalName>${finalName}</finalName>
-                            <outputDirectory>${outputDirectory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Attach sources -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- configures the JaCoCo Maven plugin for code coverage analysis in the project. -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration>
-                    <!-- Include/Exclude classes from code coverage -->
-                </configuration>
-                <executions>
-                    <!-- prepares the JaCoCo agent -->
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <!-- generates the code coverage report during the test phase -->
-                    <execution>
-                        <id>generate-code-coverage-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Compile found in parent -->
+            <!-- Test-compile found in parent -->
+            <!-- Generate resources found in parent -->
+            <!-- Defined in parent
+                 Binds to Package phase, but will not run...
+                 When creating a jar, update MANIFEST.MF file
+                 and place JAR in specified outputDirectory
+                 Run command: mvn install -DskipTests -DskipITs -->
+            <!-- Assembly:Single Creates Calculator-version.jar
+                 and Calculator-version-jar-with-dependencies.jar
+                 Run Command: mvn clean package (-Dmaven.test.skip=true)
+                 Found in parent -->
+            <!-- Attach sources
+                 Found in parent -->
+            <!-- JaCoCo configuration for code analysis
+                 Found in parent -->
         </plugins>
     </build>
 </project>

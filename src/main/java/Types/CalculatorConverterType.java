@@ -1,5 +1,7 @@
 package Types;
 
+import Interfaces.CalculatorType;
+
 /**
  * CalculatorConverterType
  * <p>
