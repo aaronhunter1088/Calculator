@@ -6,8 +6,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import Calculators.Calculator;
-import Calculators.CalculatorError;
-import Panels.DatePanel;
 import Types.CalculatorBase;
 import Types.CalculatorByte;
 import Types.CalculatorView;
@@ -81,7 +79,7 @@ public class LoggingUtil {
                     logger.debug("values[3]: '{}'", calculator.getValues()[3]); // result
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
                     logger.debug("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("is dot enabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("is dot enabled: {}", calculator.isDecimalPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (calculator.isNegativeNumber(calculator.getValueAt()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
                 else
@@ -102,7 +100,7 @@ public class LoggingUtil {
                     if (!calculator.getValues()[3].isEmpty()) logger.info("values[3]: '{}'", calculator.getValueAt(3));
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
                     logger.info("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.info("is dot enabled: {}", calculator.isDotPressed() ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("is dot enabled: {}", calculator.isDecimalPressed() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("is value: '{}' negative?: {}", calculator.getValueAt(), calculator.isNegativeNumber(calculator.getValueAt()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
             }
@@ -191,7 +189,7 @@ public class LoggingUtil {
             case PERCENT -> logger.debug("{} / {} = {}%", calculator.getAppropriateValue(), 100, calculator.getValueAt(3));
             case SQUARE_ROOT -> logger.debug("{} squared = {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
             case SQUARED -> logger.debug("{} squared = {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
-            case FRACTION -> logger.info("{} / {} = {}", 1, calculator.getAppropriateValue(), calculator.textPaneContainsBadText() ? calculator.getBadText() : calculator.getValueAt(3));
+            case FRACTION -> logger.info("{} / {} = {}", 1, calculator.getAppropriateValue(), calculator.textPaneContainsBadText() ? calculator.getBadText(EMPTY) : calculator.getValueAt(3));
             case NEGATE -> logger.info("{} negated is {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
             case MEMORY_ADDITION -> logger.info("{} + {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
             case MEMORY_SUBTRACTION -> logger.info("{} - {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));

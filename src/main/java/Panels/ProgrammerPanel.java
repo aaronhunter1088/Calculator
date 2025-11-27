@@ -340,8 +340,8 @@ public class ProgrammerPanel extends JPanel
     /**
      * Returns the programmer specific calculator buttons. This
      * includes Modulus, LeftParenthesis, RightParenthesis,
-     * RotateLeft, RotateRight, Or, ExclusiveOr, LeftShift,
-     * RightShift, Not, and And.
+     * RotateLeft, RotateRight, Or, Xor, LeftShift,
+     * RightShift, Not, And, Shift, Bytes, and Bases.
      * It does not include the hexadecimal buttons.
      *
      * @return Collection of buttons
@@ -562,7 +562,6 @@ public class ProgrammerPanel extends JPanel
             case BASE_BINARY -> {
                 if (calculator.textPaneContainsBadText())
                 {
-                    calculator.appendTextToPane(calculator.getBadText());
                     confirm(calculator, LOGGER, "Contains bad text. Pressed " + buttonChoice);
                 }
                 else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())

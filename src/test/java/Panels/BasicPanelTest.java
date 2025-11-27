@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
@@ -92,64 +91,53 @@ class BasicPanelTest extends TestParent
         { LOGGER.error("Error closing mocks: {}", e.getMessage()); }
     }
 
-    /*############## Test Memory Button Actions ##################*/
+    /* Valid MEMORY STORE */
     @ParameterizedTest
-    @DisplayName("Test MemoryStoreButtonAction()")
-    @MethodSource("memoryStoreButtonActionProvider")
-    void testMemoryStoreButtonAction(ArgumentsAccessor arguments)
+    @DisplayName("Test Valid MemoryStore Button Action")
+    @MethodSource("validMemoryStoreButtonActionProvider")
+    void testValidMemoryStoreButtonAction(ArgumentsAccessor arguments)
     {
+        postConstructCalculator();
         String firstNumber = calculator.removeThousandsDelimiter(arguments.getString(0));
         int firstNumLength = firstNumber != null ? firstNumber.length() : 0;
-        String operatorBeforeMS = arguments.getString(1);
+        String firstOperator = arguments.getString(1);
         String expectedResult = calculator.removeThousandsDelimiter(arguments.getString(2));
-        AtomicInteger idx = new AtomicInteger(0);
-        when(actionEvent.getActionCommand()).thenAnswer(invocation -> {
-            int i = idx.getAndIncrement();
-            if (i < firstNumLength) return String.valueOf(firstNumber.charAt(i));
-            else if (i == firstNumLength) return operatorBeforeMS;
-            else return MEMORY_STORE;
-        });
-        for (int i=0; i<firstNumLength; i++)
+
+        setupWhenThen(actionEvent, MEMORY_STORE, firstNumber, firstOperator);
+
+        if (firstNumLength != 0) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
+        if (firstOperator != null && !firstOperator.isEmpty())
         {
-            calculator.performNumberButtonAction(actionEvent);
-            if ((i+1) == firstNumLength)
-                assertEquals(calculator.addThousandsDelimiter(firstNumber), calculator.getTextPaneValue(), "textPane value is not as expected");
-            else
-                assertEquals(firstNumber.substring(0,(i+1)), calculator.getTextPaneValue(), "textPane value is not as expected");
-        }
-        if (operatorBeforeMS != null && !operatorBeforeMS.isEmpty())
-        {
-            performNextOperatorAction(operatorBeforeMS);
-            assertEquals(calculator.addThousandsDelimiter(firstNumber) + SPACE + operatorBeforeMS,
+            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
+            assertEquals(calculator.addThousandsDelimiter(firstNumber) + SPACE + firstOperator,
                     calculator.getTextPaneValue(),
-                    "Expecting textPane to show: " + firstNumber + SPACE + operatorBeforeMS);
+                    "Expecting textPane to show: " + firstNumber + SPACE + firstOperator);
         }
         String previousHistory = calculator.getHistoryTextPane().getText();
         calculator.performMemoryStoreAction(actionEvent);
 
         String actualMemoryAtPosition = calculator.getMemoryValues()[calculator.getLowestMemoryPosition()];
-        assertEquals(expectedResult, actualMemoryAtPosition, "Memory value is not as expected");
-        if (operatorBeforeMS != null && operatorBeforeMS.isEmpty())
+        if (!actualMemoryAtPosition.isEmpty())
         {
+            assertEquals(calculator.addThousandsDelimiter(firstNumber), calculator.getTextPaneValue(), "TextPane value is not as expected");
+            assertEquals(firstNumber, calculator.getValues()[0], "values[0] is not as expected");
+            assertEquals(expectedResult, actualMemoryAtPosition, "Memory value is not as expected");
             assertEquals(previousHistory+NEWLINE+"(MS) "+savedMemory(actualMemoryAtPosition,calculator.getLowestMemoryPosition()),
                     calculator.getHistoryTextPane().getText(),
                     "History textPane should show memory");
         }
 
     }
-    private static Stream<Arguments> memoryStoreButtonActionProvider()
+    private static Stream<Arguments> validMemoryStoreButtonActionProvider()
     {
-        /* Input, Operator, MemoryStore, Result of MemoryStore
-        String firstNumber, (null or 0 or more digits, thousands delimiter will be removed)
-        String possibleOperator, (any Basic operator or null)
+        /* Input, Optional Operator, (MemoryStore), Result of MemoryStore
+        String firstNumber, (EMPTY or 1 or more digits, thousands delimiter will be removed)
+        String optionalOperator, (EMPTY or ANY Unary operator)
         (MS button pressed, not pass in as it is understood)
         String resultStoredInMemory, (expected result in memories[0] after MS pressed)
          */
         return Stream.of(
-                Arguments.of("1,234", null, "1,234"),
-                Arguments.of("10", ADDITION, EMPTY),
-                Arguments.of(null, null, EMPTY),
-                Arguments.of(INFINITY, null, EMPTY)
+                Arguments.of("1,234", EMPTY, "1,234")
         );
     }
 
@@ -157,6 +145,7 @@ class BasicPanelTest extends TestParent
     @DisplayName("Test MemoryStore overwrites memory when memory is full")
     void testMemoryStoreOverwritesMemoryWhenMemoryIsFull()
     {
+        postConstructCalculator();
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
         calculator.getTextPane().setText(TWO);
         calculator.getMemoryValues()[0] = "15";
@@ -166,9 +155,64 @@ class BasicPanelTest extends TestParent
         assertEquals(TWO, calculator.getMemoryValues()[0], "Expected memoryValues[0] to be 2");
     }
 
+    /* Invalid MEMORY STORE */
+    @ParameterizedTest
+    @DisplayName("Test Invalid MemoryStore Button Action")
+    @MethodSource("invalidMemoryStoreButtonActionProvider")
+    void testInvalidMemoryStoreButtonAction(ArgumentsAccessor arguments)
+    {
+        postConstructCalculator();
+        String firstNumber = calculator.removeThousandsDelimiter(arguments.getString(0));
+        int firstNumberLength = firstNumber != null ? firstNumber.length() : 0;
+        String firstOperator = arguments.getString(1);
+        String firstExpectedResult = calculator.removeThousandsDelimiter(arguments.getString(2));
+
+        setupInvalidWhenThen(actionEvent, MEMORY_STORE, firstNumber, firstOperator);
+
+        if (firstNumberLength != 0) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
+        if (firstOperator != null && !firstOperator.isEmpty())
+        {
+            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
+            assertEquals(calculator.addThousandsDelimiter(firstNumber) + SPACE + firstOperator,
+                    calculator.getTextPaneValue(),
+                    "Expecting textPane to show: " + firstNumber + SPACE + firstOperator);
+        }
+        String previousHistory = calculator.getHistoryTextPane().getText();
+        calculator.performMemoryStoreAction(actionEvent);
+
+        String actualMemoryAtPosition = calculator.getMemoryValues()[calculator.getLowestMemoryPosition()];
+        if (!actualMemoryAtPosition.isEmpty())
+        {
+            assertEquals(calculator.addThousandsDelimiter(firstNumber), calculator.getTextPaneValue(), "TextPane value is not as expected");
+            assertEquals(firstNumber, calculator.getValues()[0], "values[0] is not as expected");
+            assertEquals(firstExpectedResult, actualMemoryAtPosition, "Memory value is not as expected");
+            assertEquals(previousHistory+NEWLINE+"(MS) "+savedMemory(actualMemoryAtPosition,calculator.getLowestMemoryPosition()),
+                    calculator.getHistoryTextPane().getText(),
+                    "History textPane should show memory");
+        }
+
+    }
+    private static Stream<Arguments> invalidMemoryStoreButtonActionProvider()
+    {
+        /* Input, Operator, MemoryStore, Result of MemoryStore
+        String firstNumber, (EMPTY or 1 or more digits, thousands delimiter will be removed)
+        String possibleOperator, (EMPTY or ANY Basic operator)
+        (MS button pressed, not pass in as it is understood)
+        String resultStoredInMemory, (expected result in memories[0] after MS pressed)
+         */
+        return Stream.of(
+                Arguments.of("10", ADDITION, EMPTY),
+                Arguments.of(EMPTY, EMPTY, ENTER_A_NUMBER),
+                Arguments.of(INFINITY, EMPTY, EMPTY)
+        );
+    }
+
+    /* Valid MEMORY RECALL */
     @Test
+    @DisplayName("Test MemoryRecall Button Action")
     void pressedMemoryRecall()
     {
+        postConstructCalculator();
         when(actionEvent.getActionCommand())
                 .thenReturn(MEMORY_RECALL);
         calculator.getMemoryValues()[0] = "15";
@@ -198,9 +242,12 @@ class BasicPanelTest extends TestParent
         assertSame(6, calculator.getMemoryPosition(), "Expected memoryPosition to be 6");
     }
 
+    /* Valid MEMORY CLEAR */
     @Test
+    @DisplayName("Test MemoryClear Button Action")
     void pressedMemoryClear()
     {
+        postConstructCalculator();
         when(actionEvent.getActionCommand()).thenReturn(MEMORY_CLEAR);
         calculator.getMemoryValues()[9] = "15";
         calculator.setMemoryPosition(10);
@@ -214,13 +261,14 @@ class BasicPanelTest extends TestParent
         assertFalse(calculator.getButtonMemorySubtraction().isEnabled(), "Expected memorySubtract to be disabled, no more memories");
     }
 
+    /* Valid MEMORY ADD */
     @ParameterizedTest
-    @DisplayName("Test MemoryAdditionButtonAction()")
+    @DisplayName("Test Valid MemoryAddition Button Action")
     @MethodSource("memoryAddButtonCases")
     void testMemoryAdditionButtonAction(ArgumentsAccessor arguments)
     {
+        postConstructCalculator();
         String initialMemory = arguments.getString(0);
-
         String numberToAdd = arguments.getString(1);
 
         boolean numberToAddEndsWithOperator = calculator.getBasicPanelOperators()
@@ -240,10 +288,13 @@ class BasicPanelTest extends TestParent
         calculator.performMemoryAdditionAction(actionEvent);
         String actualMemoryAtPosition = calculator.getMemoryValues()[0];
         assertEquals(expectedResult, actualMemoryAtPosition, "Memory value is not as expected");
+        assertSame(1, calculator.getMemoryPosition(), "Expected memoryPosition to be 0");
+        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
     }
     private static Stream<Arguments> memoryAddButtonCases()
     {
-        /* Initial Memory,
+        /* Initial Memory, Number to Add, (optional operator at end), Resulting Memory
+        Initial Memory,
         Number to Add, (optional operator at end)
         Resulting Memory
          */
@@ -252,19 +303,22 @@ class BasicPanelTest extends TestParent
                 Arguments.of("0", "0", "0"),
                 Arguments.of("-5", "10", "5"),
                 Arguments.of("100.5", "99.5", "200"),
-                Arguments.of("10", ENTER_A_NUMBER, "10"),
-                Arguments.of("10", EMPTY, "10"),
-                Arguments.of("10", "5 +", "10")
+                Arguments.of("-12.25", "1", "-11.25"),
+                Arguments.of("10", ENTER_A_NUMBER, "10"), // invalid case
+                Arguments.of(EMPTY, ENTER_A_NUMBER, EMPTY), // invalid case
+                Arguments.of("10", EMPTY, "10"), // invalid case
+                Arguments.of("10", "5 +", "10") // invalid case
         );
     }
 
+    /* Valid MEMORY SUBTRACT */
     @ParameterizedTest
-    @DisplayName("Test MemorySubtractionButtonAction()")
+    @DisplayName("Test Valid MemorySubtraction Button Action")
     @MethodSource("memorySubtractButtonCases")
     void testMemorySubtractionButtonAction(ArgumentsAccessor arguments)
     {
+        postConstructCalculator();
         String initialMemory = arguments.getString(0);
-
         String numberToSubtract = arguments.getString(1);
 
         boolean numberToSubtractEndsWithOperator = calculator.getBasicPanelOperators()
@@ -287,7 +341,8 @@ class BasicPanelTest extends TestParent
     }
     private static Stream<Arguments> memorySubtractButtonCases()
     {
-        /* Initial Memory,
+        /* Initial Memory, Number to Subtract, (optional operator at end), Resulting Memory
+        Initial Memory,
         Number to Subtract, (optional operator at end)
         Resulting Memory
          */
@@ -296,49 +351,104 @@ class BasicPanelTest extends TestParent
                 Arguments.of("0", "0", "0"),
                 Arguments.of("-5", "10", "-15"),
                 Arguments.of("100.5", "99.5", "1"),
-                Arguments.of("10", ENTER_A_NUMBER, "10"),
-                Arguments.of("10", EMPTY, "10"),
-                Arguments.of("10", "5 +", "10")
+                Arguments.of("-12.25", "1", "-13.25"),
+                Arguments.of("10", ENTER_A_NUMBER, "10"), // invalid case
+                Arguments.of("10", EMPTY, "10"), // invalid case
+                Arguments.of("10", "5 +", "10") // invalid case
         );
     }
 
-    /*############## Test Unary Operation Button Actions ##################*/
+    /* Valid PERCENT */
     @ParameterizedTest
-    @DisplayName("Test Percent Button Action")
-    @MethodSource("getPercentButtonCases")
-    void pressedPercentWhenTextPaneContainsBadText(ArgumentsAccessor arguments)
+    @DisplayName("Test Valid Percent Button Action")
+    @MethodSource("validPercentButtonCases")
+    void testValidPercentButtonCases(ArgumentsAccessor arguments)
     {
         postConstructCalculator();
-        when(actionEvent.getActionCommand())
-                .thenReturn(arguments.getString(0)) // firstNumber
-                .thenReturn(PERCENT)
-                //
-                .thenReturn(arguments.size() > 2 ? arguments.getString(2) : EMPTY) // first Op
-                .thenReturn(arguments.size() > 2 ? arguments.getString(3) : EMPTY) // secondNumber
-                .thenReturn(PERCENT)
-                //
-                .thenReturn(arguments.size() > 4 ? arguments.getString(5) : EMPTY);
+        String firstNumber = arguments.getString(0); // firstNumber
+        String firstExpectedResult = arguments.getString(1); // firstExpectedResult
+        String firstOperator = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
+        String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
+        String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
+        String secondOperator = arguments.size() >= 5 ? arguments.getString(5) : EMPTY; // secondOperator
 
-        calculator.performNumberButtonAction(actionEvent);
+        setupWhenThen(actionEvent, PERCENT, firstNumber, firstOperator, secondNumber, secondOperator);
+
+        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
         basicPanel.performPercentButtonAction(actionEvent);
-        assertEquals(arguments.getString(1), calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
-        if (!calculator.textPaneContainsBadText()) assertEquals(arguments.getString(1), calculator.getValueAt(0), "values[0] returned unexpected result");
-        assertEquals(!calculator.isDotPressed(), arguments.getString(1).contains(DECIMAL), "Decimal state not as expected");
+        assertEquals(firstExpectedResult, calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
+        if (!calculator.textPaneContainsBadText()) assertEquals(firstExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
+        assertEquals(!calculator.isDecimalPressed(), firstExpectedResult.contains(DECIMAL), "Decimal state not as expected");
 
         if (arguments.size() > 2) {
-            performNextOperatorAction(arguments.getString(2)); // firstOperator
-            calculator.performNumberButtonAction(actionEvent);
+            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
+            if (!secondNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
             basicPanel.performPercentButtonAction(actionEvent);
-            assertEquals(arguments.getString(4), calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "Second TextPane value not as expected");
-            assertEquals(arguments.getString(4), calculator.getValueAt(1), "values[1] returned unexpected result");
+            assertEquals(secondExpectedResult, calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "Second textPane value not as expected");
+            if (!calculator.textPaneContainsBadText()) assertEquals(secondExpectedResult, calculator.getValueAt(1), "values[1] returned unexpected result");
 
             if (arguments.size() > 4) {
-                performNextOperatorAction(arguments.getString(5)); // secondOperator
+                performNextOperatorAction(calculator, actionEvent, LOGGER, secondOperator);
                 assertEquals(arguments.getString(5), calculator.getValueAt(2), "values[2] not equal to " + arguments.getString(5));
             }
         }
     }
-    private static Stream<Arguments> getPercentButtonCases()
+    private static Stream<Arguments> validPercentButtonCases()
+    {
+        /*
+        String firstNumber, (PERCENT button pressed) String firstResult,
+        String firstOperator, String secondNumber, (PERCENT button pressed) String secondResult,
+        String secondOperator
+         */
+        return Stream.of(
+                Arguments.of("0", "0"),
+                Arguments.of("5", "0.05"),
+                Arguments.of("-5", "-0.05"),
+                Arguments.of("0.25", "0.0025"),
+
+                Arguments.of("4", "0.04", ADDITION, "2", "0.02", SUBTRACTION),
+                Arguments.of("10", "0.1", ADDITION, "20", "0.2", SUBTRACTION)
+        );
+    }
+
+    /* Invalid PERCENT */
+    @ParameterizedTest
+    @DisplayName("Test Invalid Percent Button Action")
+    @MethodSource("invalidPercentButtonCases")
+    void testInvalidPercentButtonCases(ArgumentsAccessor arguments)
+    {
+        postConstructCalculator();
+        String firstNumber = arguments.getString(0); // firstNumber
+        String firstExpectedResult = arguments.getString(1); // firstExpectedResult
+        String firstOperator = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
+        String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
+        String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
+
+        setupWhenThen(actionEvent, PERCENT, firstNumber, firstOperator, secondNumber, EMPTY);
+
+        if (!calculator.badTexts().contains(firstNumber))
+        {
+            performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
+        }
+        else
+        {
+            calculator.appendTextToPane(firstNumber, true);
+        }
+        basicPanel.performPercentButtonAction(actionEvent);
+        assertEquals(firstExpectedResult, calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
+        if (!calculator.textPaneContainsBadText()) assertEquals(firstExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
+        assertEquals(!calculator.isDecimalPressed(), firstExpectedResult.contains(DECIMAL), "Decimal state not as expected");
+
+        if (arguments.size() > 2) {
+            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
+            if (!secondNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
+            basicPanel.performPercentButtonAction(actionEvent);
+            assertEquals(secondExpectedResult, calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "Second textPane value not as expected");
+            if (!secondNumber.isEmpty()) assertEquals(secondExpectedResult, calculator.getValueAt(1), "values[1] returned unexpected result");
+            assertEquals(firstOperator, calculator.getValueAt(2), "values[2] not equal to " + firstOperator);
+        }
+    }
+    private static Stream<Arguments> invalidPercentButtonCases()
     {
         /*
         String firstNumber, (PERCENT button pressed) String firstResult,
@@ -347,85 +457,64 @@ class BasicPanelTest extends TestParent
          */
         return Stream.of(
                 Arguments.of(EMPTY, ENTER_A_NUMBER),
-                Arguments.of("0", "0"),
-                Arguments.of("5", "0.05"),
-                Arguments.of("-5", "-0.05"),
-                Arguments.of("0.25", "0.0025"),
-
-                Arguments.of("4", "0.04", ADDITION, "2", "0.02", SUBTRACTION)
+                Arguments.of(INFINITY, INFINITY),
+                Arguments.of(ENTER_A_NUMBER, ENTER_A_NUMBER),
+                Arguments.of("5", "0.05", ADDITION, EMPTY, "0.05 +")
         );
     }
 
+    /* Valid SQUARE ROOT */
+    /* Invalid SQUARE ROOT */
+
+    /* Valid SQUARED */
     @Test
-    void pressedPercentWhenTextPaneIsBlank()
+    void testingMathPow()
     {
-        calculator.getTextPane().setText(EMPTY);
-        basicPanel.performPercentButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to show bad text");
+        postConstructCalculator();
+
+        double delta = 0.000001d;
+        Number num = 8.0;
+        assertEquals(num.doubleValue(), Math.pow(2,3), delta);
     }
 
-    @Test
-    void pressedPercentWithPositiveNumber()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(PERCENT);
-        calculator.performNumberButtonAction(actionEvent);
-        basicPanel.performPercentButtonAction(actionEvent);
-        assertEquals("0.05", calculator.getTextPaneValue(), "Expected textPane to be 0.05");
-        assertEquals("0.05", calculator.getValues()[0], "Expected values[0] to be 0.05");
-        assertFalse(calculator.isDotPressed(), "Expected decimal to be disabled");
-    }
-
-    @Test
-    @DisplayName("-5 %")
-    void pressedPercentWithNegativeNumber()
-    {
-        when(actionEvent.getActionCommand())
-                .thenReturn(SUBTRACTION)
-                .thenReturn(FIVE)
-                .thenReturn(PERCENT);
-        calculator.performSubtractButtonAction(actionEvent);
-        calculator.performNumberButtonAction(actionEvent);
-        basicPanel.performPercentButtonAction(actionEvent);
-        assertEquals("-0.05", calculator.getTextPaneValue(), "Expected textPane to be -0.05");
-        assertEquals("-0.05", calculator.getValueAt(0), "Expected values[0] to be -0.05");
-        assertFalse(calculator.isDotPressed(), "Expected decimal to be disabled");
-    }
-
+    /* Valid FRACTION */
     @ParameterizedTest()
-    @MethodSource("getValidFractionCases")
-    @DisplayName("Test Valid Fraction Button")
+    @DisplayName("Test Valid Fraction Button Action")
+    @MethodSource("validFractionCases")
     void testValidFractionButtonCases(ArgumentsAccessor arguments)
     {
-        when(actionEvent.getActionCommand())
-                .thenReturn(arguments.getString(0)) // firstNumber
-                .thenReturn(FRACTION)
-                //
-                .thenReturn(arguments.size() > 2 ? arguments.getString(2) : EMPTY) // first Op
-                .thenReturn(arguments.size() > 2 ? arguments.getString(3) : EMPTY) // secondNumber
-                .thenReturn(FRACTION)
-                //
-                .thenReturn(arguments.size() > 4 ? arguments.getString(5) : EMPTY);
+        postConstructCalculator();
+        String firstNumber = arguments.getString(0); // firstNumber
+        String firstExpectedResult = arguments.getString(1); // firstExpectedResult
+        String firstOperator = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
+        String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
+        String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
+        String secondOperator = arguments.size() >= 5 ? arguments.getString(5) : EMPTY; // secondOperator
 
-        calculator.performNumberButtonAction(actionEvent);
+        setupWhenThen(actionEvent, FRACTION, firstNumber, firstOperator, secondNumber, secondOperator);
+
+        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
         basicPanel.performFractionButtonAction(actionEvent);
-        assertEquals(arguments.getString(1), calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
-        assertEquals(arguments.getString(1), calculator.getValueAt(0), "values[0] returned unexpected result");
-        assertEquals(!calculator.isDotPressed(), arguments.getString(1).contains(DECIMAL), "Decimal state not as expected");
+        assertEquals(firstExpectedResult, calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
+        if (!calculator.textPaneContainsBadText()) assertEquals(firstExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
+        assertEquals(!calculator.isDecimalPressed(), firstExpectedResult.contains(DECIMAL), "Decimal state not as expected");
 
-        if (arguments.size() > 2) {
-            performNextOperatorAction(arguments.getString(2)); // firstOperator
-            calculator.performNumberButtonAction(actionEvent);
+        if (arguments.size() > 2)
+        {
+            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
+            if (!secondNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
             basicPanel.performFractionButtonAction(actionEvent);
             assertEquals(arguments.getString(4), calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
-            assertEquals(arguments.getString(4), calculator.getValueAt(1), "values[1] returned unexpected result");
+            if (!calculator.textPaneContainsBadText()) assertEquals(secondExpectedResult, calculator.getValueAt(1), "values[1] returned unexpected result");
 
-            if (arguments.size() > 4) {
-                performNextOperatorAction(arguments.getString(5)); // secondOperator
-                assertEquals(arguments.getString(5), calculator.getValueAt(2), "values[2] not equal to " + arguments.getString(5));
+            if (arguments.size() > 4)
+            {
+                performNextOperatorAction(calculator, actionEvent, LOGGER, secondOperator);
+                assertEquals(secondOperator, calculator.getValueAt(2), "values[2] not equal to " + arguments.getString(5));
             }
         }
     }
-    private static Stream<Arguments> getValidFractionCases()
+    private static Stream<Arguments> validFractionCases()
     {
         /*
         String firstNumber, (FRACTION button pressed) String firstResult,
@@ -441,39 +530,46 @@ class BasicPanelTest extends TestParent
         );
     }
 
+    /* Invalid FRACTION */
     @ParameterizedTest()
+    @DisplayName("Test Invalid Fraction Button Action")
     @MethodSource("getInvalidFractionCases")
-    @DisplayName("Test Invalid Fraction Button")
     void testInvalidFractionButtonCases(ArgumentsAccessor arguments)
     {
-        String firstArg = arguments.getString(0) == null
-                ? null : arguments.getString(0);
+        postConstructCalculator();
+        String firstInput = arguments.getString(0); // firstInput
+        String textPaneExpectedResult = arguments.getString(1); // firstExpectedResult
+        String valuesExpectedResult = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
+        //String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
+        //String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
+        //String secondOperator = arguments.size() >= 5 ? arguments.getString(5) : EMPTY; // secondOperator
+
         when(actionEvent.getActionCommand())
-                .thenReturn(firstArg) // any button
+                .thenReturn(firstInput) // any button
                 .thenReturn(FRACTION);
-        calculator.getMemoryValues()[0] = "5"; // set for memory button scenarios
-        if (calculator.getBadText().equals(firstArg))
+        calculator.getMemoryValues()[0] = FIVE; // set for memory button scenarios, not from arguments
+        if (calculator.getBadText(EMPTY).equals(firstInput))
         {
-            calculator.appendTextToPane(firstArg);
+            calculator.appendTextToPane(firstInput);
         }
 
-        if (firstArg != null) performNextOperatorAction(firstArg); // any button or no button
+        if (firstInput != null) performNextOperatorAction(calculator, actionEvent, LOGGER, firstInput); // any button or no button
         basicPanel.performFractionButtonAction(actionEvent); // press fraction
 
-        assertEquals(arguments.getString(1), calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
-        assertEquals(arguments.getString(2), calculator.getValueAt(0), "values[0] returned unexpected result");
+        assertEquals(textPaneExpectedResult, calculator.removeThousandsDelimiter(calculator.getTextPaneValue()), "TextPane value not as expected");
+        assertEquals(valuesExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
     }
     private static Stream<Arguments> getInvalidFractionCases()
     {
         /*
-        buttonChoice, result, values[0]
+        buttonChoice, textPaneResult, values[0]Result
          */
         return Stream.of(
                 Arguments.of(null, ENTER_A_NUMBER, EMPTY),
                 Arguments.of(ENTER_A_NUMBER, ENTER_A_NUMBER, EMPTY),
                 Arguments.of(MEMORY_STORE, ENTER_A_NUMBER, EMPTY),
                 Arguments.of(MEMORY_RECALL, "0.2", "0.2"),
-                Arguments.of(MEMORY_CLEAR, "0", "0"), // look into
+                Arguments.of(MEMORY_CLEAR, INFINITY, INFINITY), // look into
                 Arguments.of(PERCENT, ENTER_A_NUMBER, EMPTY),
                 Arguments.of(SQUARE_ROOT, ENTER_A_NUMBER, EMPTY),
                 Arguments.of(SQUARED, ENTER_A_NUMBER, EMPTY),
@@ -483,10 +579,356 @@ class BasicPanelTest extends TestParent
         );
     }
 
+    /* Valid CLEAR ENTRY */
+    @ParameterizedTest
+    @DisplayName("Test Clear Entry Button Action")
+    @MethodSource("validClearEntryCases")
+    void testValidClearEntryButtonCases(ArgumentsAccessor arguments)
+    {
+        postConstructCalculator();
+        String firstNumber = arguments.getString(0); // firstNumber
+        String firstOperator = arguments.size() > 1 ? arguments.getString(1) : EMPTY; // first Op
+        String secondNumber = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // secondNumber
+        String secondOperator = arguments.size() > 3 ? arguments.getString(3) : EMPTY; // secondOperator
 
-    /*############## Test Binary Button Actions ##################*/
-    /*############## Test Button Actions ##################*/
+        setupWhenThen(actionEvent, CLEAR_ENTRY, firstNumber, firstOperator, secondNumber, secondOperator);
 
+        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
+        if (!firstOperator.isEmpty()) performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
+        calculator.performClearEntryButtonAction(actionEvent);
+
+        assertTrue(calculator.getTextPaneValue().isEmpty(), "textPane was not cleared");
+        if (calculator.getValuesPosition() == 0)
+        {
+            assertEquals(EMPTY, calculator.getValueAt(0), "Expecting values[0] to be empty");
+        }
+        else
+        {
+            assertEquals(firstNumber, calculator.getValueAt(0), "Expecting values[0] to be " + firstNumber);
+            assertEquals(EMPTY, calculator.getValueAt(1), "Expecting values[1] to be empty");
+        }
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting values[2] to be EMPTY");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
+        assertFalse(calculator.isDecimalPressed(), "Expected decimal button to be enabled");
+        if (!firstNumber.isEmpty()) assertFalse(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be false");
+        else assertTrue(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be true");
+        if (!secondOperator.isEmpty())
+        {
+            performNextOperatorAction(calculator, actionEvent, LOGGER, secondOperator);
+        }
+        if (secondOperator.equals(CLEAR_ENTRY))
+        {
+            assertEquals(EMPTY, calculator.getValueAt(0), "Expecting values[0] to be EMPTY");
+            assertEquals(EMPTY, calculator.getValueAt(1), "Expecting values[1] to be EMPTY");
+            assertEquals(EMPTY, calculator.getValueAt(2), "Expecting values[2] to be EMPTY");
+            assertEquals(EMPTY, calculator.getValueAt(3), "Expecting values[3] to be EMPTY");
+            assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
+            assertFalse(calculator.isDecimalPressed(), "Expected decimalPressed to be false");
+            assertFalse(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be false");
+        }
+        else
+        {
+            LOGGER.debug("{} completed, no further assertions. Add other assertions as needed", secondOperator);
+        }
+    }
+    private static Stream<Arguments> validClearEntryCases()
+    {
+        /*
+        String firstNumber, (EMPTY or some value)
+        String firstOperator, (EMPTY or any BINARY operator (not any UNARY operator))
+        String secondNumber, (EMPTY or some value)
+        String secondOperator (EMPTY or ANY operator)
+         */
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("100"),
+                Arguments.of("100", ADDITION),
+                Arguments.of("2727", SUBTRACTION, "100"),
+                Arguments.of("3.14", MULTIPLICATION, "2727", CLEAR_ENTRY)
+        );
+    }
+
+    /* Invalid CLEAR ENTRY */
+
+    /* Valid CLEAR */
+    @Test
+    void pressingClearRestoresCalculatorToStartFunctionality()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(CLEAR);
+        calculator.performClearButtonAction(actionEvent);
+        assertEquals(ZERO, calculator.getValues()[0], "Values[0] should be 0");
+        for ( int i=1; i<3; i++) {
+            assertTrue(calculator.getValues()[i].isBlank(), "Values["+i+"] is not blank");
+        }
+        assertEquals(ZERO, calculator.getTextPaneValue(), "textPane is not 0");
+        assertEquals(0, calculator.getValuesPosition(), "Values position is not 0");
+        assertTrue(calculator.isObtainingFirstNumber(), "FirstNumBool is not true");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
+    }
+
+    /* Invalid CLEAR */
+
+    /* Valid DELETE */
+    @Test
+    @DisplayName("Pressed ⌫")
+    void pressedDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE);
+        calculator.getTextPane().setText("35");
+        calculator.getValues()[0] = "35";
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(3, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not 3");
+        assertEquals(THREE, calculator.getTextPaneValue(), "textPane does not equal 3");
+    }
+
+    @Test
+    @DisplayName("Pressed ⌫ bad text in textPane")
+    void pressedDeleteWhenTextPaneHasBadText()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE);
+        calculator.getTextPane().setText(ENTER_A_NUMBER);
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
+        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be blank");
+        assertEquals(EMPTY, calculator.getValues()[1], "Expected values[1] to be blank");
+        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to be false");
+        assertTrue(calculator.isDecimalPressed(), "Expected dot to be enabled");
+    }
+
+    @Test
+    void testDeleteDoesNothingWhenNothingToDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE);
+        calculator.getTextPane().setText(EMPTY);
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to show error");
+        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be blank");
+        assertEquals(EMPTY, calculator.getValues()[1], "Expected values[1] to be blank");
+        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to be false");
+        assertTrue(calculator.isDecimalPressed(), "Expected dot to be enabled");
+    }
+
+    @Test
+    void testDeleteClearsTextPaneAfterPressingEquals()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(ADDITION)
+                .thenReturn(THREE).thenReturn(EQUALS).thenReturn(DELETE);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performAddButtonAction(actionEvent);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performEqualsButtonAction(actionEvent);
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(EMPTY, calculator.getTextPaneValue(), "Expected textPane to be blank");
+        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be blank");
+        assertEquals(EMPTY, calculator.getValues()[1], "Expected values[1] to be blank");
+        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to be false");
+        assertTrue(calculator.isDecimalPressed(), "Expected dot to be enabled");
+    }
+
+    @Test
+    void pressed1Then5ThenDecimalThen6ThenAddThenDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(DELETE).thenReturn(DELETE);
+        calculator.getValues()[0] = "15.6";
+        calculator.getValues()[1] = EMPTY;
+        calculator.getValues()[2] = ADDITION;
+        calculator.appendTextToPane(calculator.getValueAt(0) + SPACE + ADDITION);
+        //calculator.setDotPressed(true);
+        calculator.getButtonDecimal().setEnabled(false);
+        calculator.getValues()[2] = ADDITION;
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(15.6, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.6");
+        assertEquals("15.6", calculator.getTextPaneValue(), "textPane does not equal 15.6");
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be disabled");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(15., Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.");
+        assertEquals("15.", calculator.getTextPaneValue(), "textPane does not equal 15.");
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be disabled");
+
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(15, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15");
+        assertEquals("15", calculator.getTextPaneValue(), "textPane does not equal 15");
+        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
+    }
+
+    @Test
+    void pressed1ThenSubtractThenDelete()
+    {
+        when(actionEvent.getActionCommand())
+                .thenReturn(ONE)
+                .thenReturn(SUBTRACTION)
+                .thenReturn(DELETE);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performSubtractButtonAction(actionEvent);
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(1, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 1");
+        assertEquals(ONE, calculator.getTextPaneValue(), "textPane does not equal 1");
+        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+    }
+
+    @Test
+    @DisplayName("1 ✕ ⌫")
+    void pressed1ThenMultiplyThenDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE);
+        calculator.getTextPane().setText("1 ✕");
+        calculator.getValues()[0] = ONE;
+        calculator.getButtonDecimal().setEnabled(false);
+        calculator.getValues()[2] = MULTIPLICATION;
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(1, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 1");
+        assertEquals(ONE, calculator.getTextPaneValue(), "textPane does not equal 1");
+        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+    }
+
+    @Test
+    void pressed1ThenDivideThenDelete()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE);
+        calculator.getTextPane().setText("1 ÷");
+        calculator.getValues()[0] = ONE;
+        calculator.getButtonDecimal().setEnabled(false);
+        calculator.getValues()[2] = DIVISION;
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(1, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 1");
+        assertEquals(ONE, calculator.getTextPaneValue(), "textPane does not equal 1");
+        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
+        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
+    }
+
+    @Test
+    void enteredANumberThenAddThen6DeleteThen5()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(FIVE);
+        calculator.getTextPane().setText(SIX);
+        calculator.getValues()[0] = "15.6";
+        calculator.getValues()[1] = SIX;
+        calculator.setValuesPosition(1);
+        calculator.getButtonDecimal().setEnabled(true);
+        calculator.getValues()[2] = ADDITION;
+        assertEquals(6, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 6");
+
+        calculator.performDeleteButtonAction(actionEvent);
+        assertEquals(15.6, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.6");
+        assertEquals(EMPTY, calculator.getTextPaneValue(), "textPane is not blank");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal button is enabled");
+        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
+
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 5");
+        assertEquals(FIVE, calculator.getTextPaneValue(), "textPane does not equal blank");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal button is enabled");
+        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
+    }
+
+    /* Invalid DELETE */
+
+    /* Valid ADD */
+    @Test
+    @DisplayName("+")
+    void pressedAddWithNoNumberInput()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.performAddButtonAction(actionEvent);
+
+        assertEquals(EMPTY, calculator.getValues()[calculator.getValuesPosition()], "Values[{}] is not empty");
+        assertEquals(ENTER_A_NUMBER, calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should display 'Enter a Number'");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+    }
+
+    @Test
+    void pressed1ThenAddThenAddAgain()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performAddButtonAction(actionEvent);
+        calculator.performAddButtonAction(actionEvent); // no thenReturn necessary. Uses last value sent to method
+
+        assertEquals(ONE, calculator.getValues()[0], "Values[{}] is not 1");
+        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
+        assertFalse(calculator.isObtainingFirstNumber(), "We are still on the firstNumber");
+    }
+
+    @Test
+    void pressedAddWithErrorInTextPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.getTextPane().setText(ERROR);
+        calculator.performAddButtonAction(actionEvent);
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+    }
+
+    @Test
+    void pressedAddWithNumberTooBigInTextPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.getTextPane().setText(NUMBER_TOO_BIG);
+        calculator.performAddButtonAction(actionEvent);
+        assertEquals(NUMBER_TOO_BIG, calculator.getTextPaneValue(), "Expected error message in textPane");
+    }
+
+    /* Invalid ADD */
+
+    /* Valid SUBTRACT */
+    @Test
+    void pressedSubtractWithErrorInTextPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.getTextPane().setText(ERROR);
+        calculator.performSubtractButtonAction(actionEvent);
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+    }
+
+    /* Invalid SUBTRACT */
+
+    /* Valid MULTIPLY */
+    @Test
+    void pressedMultiplyWithErrorInTextPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.getTextPane().setText(ERROR);
+        calculator.performMultiplyButtonAction(actionEvent);
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+    }
+
+    /* Invalid MULTIPLY */
+
+    /* Valid DIVIDE */
+    @Test
+    void pressedDivideWithErrorInTextPane()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.getTextPane().setText(ERROR);
+        calculator.performDivideButtonAction(actionEvent);
+        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+    }
+
+    /* Invalid DIVIDE */
+    @Test
+    @DisplayName("15.5 / 0 =")
+    void testDivisionBy0()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
+        calculator.getValues()[0] = ONE+FIVE+DECIMAL+FIVE;
+        calculator.getValues()[1] = ZERO;
+        calculator.getValues()[2] = DIVISION;
+        calculator.setCalculatorView(VIEW_BASIC);
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be empty");
+        assertEquals(INFINITY, calculator.getTextPaneValue(), "Expected textPane to show INFINITY");
+    }
+
+    /* Valid NUMBERS */
     @Test
     @DisplayName("1")
     void pressed1()
@@ -518,170 +960,6 @@ class BasicPanelTest extends TestParent
         assertEquals("15", calculator.getTextPaneValue(), "textPane should be 15");
         assertTrue(calculator.isPositiveNumber(String.valueOf(calculator.getValues()[calculator.getValuesPosition()])), "{} is not positive");
         assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-    }
-
-    @Test
-    @DisplayName("1 ±")
-    void pressed1ThenNegate()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(NEGATE);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performNegateButtonAction(actionEvent);
-
-        assertEquals(-1, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]), "Values[{}] is not -1");
-        assertEquals("-1", calculator.getTextPaneValue(), "textPane should be -1");
-        assertTrue(calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]), "{} is not negative");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-    }
-
-    @Test
-    @DisplayName("1 ± +")
-    void pressed1ThenNegateThenAdd()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(NEGATE).thenReturn(ADDITION);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performNegateButtonAction(actionEvent);
-        calculator.performAddButtonAction(actionEvent);
-
-        assertEquals(-1, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not -1");
-        assertEquals("-1 +", calculator.getTextPaneValue(), "textPane should be -1 +");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at position 2");
-        assertFalse(calculator.isObtainingFirstNumber(), "We are still on the firstNumber");
-    }
-
-    @Test
-    @DisplayName("15 ± + 5 ± =")
-    void pressed1Then5ThenNegateThenAddThen5ThenNegateThenEquals()
-    {
-        when(actionEvent.getActionCommand())
-                .thenReturn(ONE).thenReturn(FIVE)
-                .thenReturn(NEGATE)
-                .thenReturn(ADDITION)
-                .thenReturn(FIVE)
-                .thenReturn(NEGATE)
-                .thenReturn(EQUALS);
-        calculator.performNumberButtonAction(actionEvent);
-        assertEquals(1, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not 1");
-        assertEquals(ONE, calculator.getTextPaneValue(), "textPane should be 1");
-        assertSame(0, calculator.getValuesPosition(), "ValuesPosition should be 0");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-
-        calculator.performNumberButtonAction(actionEvent);
-        assertEquals(15, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not 15");
-        assertEquals("15", calculator.getTextPaneValue(), "textPane should be 15");
-        assertSame(0, calculator.getValuesPosition(), "ValuesPosition should be 0");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-
-        calculator.performNegateButtonAction(actionEvent);
-        assertEquals(-15, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not -15");
-        assertEquals("-15", calculator.getTextPaneValue(), "textPane should be -15");
-        assertSame(0, calculator.getValuesPosition(), "ValuesPosition should be 0");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-
-        calculator.performAddButtonAction(actionEvent);
-        assertEquals(-15, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not -15");
-        assertEquals("-15 +", calculator.getTextPaneValue(), "textPane should be -15 +");
-        assertSame(1, calculator.getValuesPosition(), "ValuesPosition should be 1");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at position 2");
-        assertFalse(calculator.isObtainingFirstNumber(), "We are still on the firstNumber");
-        assertFalse(calculator.isNegativeNumber(), "Expecting isNumberNegative to be false");
-
-        calculator.performNumberButtonAction(actionEvent);
-        assertEquals(5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 5");
-        assertEquals(FIVE, calculator.getTextPaneValue(), "textPane should be 5");
-        assertSame(1, calculator.getValuesPosition(), "ValuesPosition should be 1");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-
-        calculator.performNegateButtonAction(actionEvent);
-        assertEquals(-5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not -5");
-        assertEquals("-5", calculator.getTextPaneValue(), "textPane should be -5");
-        assertSame(1, calculator.getValuesPosition(), "ValuesPosition should be 1");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals("-20", calculator.getTextPaneValue(), "textPane is not -20");
-        assertEquals(EMPTY, calculator.getValues()[1], "Values[1] is not empty");
-        assertEquals("-20", calculator.getTextPaneValue(), "textPane should be -20");
-        assertFalse(calculator.isObtainingFirstNumber(), "Expected firstNumber to be false");
-    }
-
-    @Test
-    @DisplayName(".")
-    void pressedDecimal()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
-        calculator.getValues()[0] = EMPTY;
-        calculator.getTextPane().setText(EMPTY);
-        calculator.performDecimalButtonAction(actionEvent);
-        assertEquals("0.", calculator.getTextPaneValue(), "textPane is not as expected");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "buttonDot should be disabled");
-    }
-
-    @Test
-    @DisplayName("544.")
-    void pressed544ThenDecimal()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
-        calculator.getTextPane().setText("544");
-        calculator.getValues()[0] = "544";
-        calculator.performDecimalButtonAction(actionEvent);
-        assertEquals("544.", calculator.getTextPaneValue(), "textPane is not as expected");
-        assertEquals("544.", calculator.getValues()[0], "Values[0]");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "buttonDot should be disabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-    }
-
-    @Test
-    @DisplayName("1234.")
-    void pressed1Then2Then3Then4ThenDecimal()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(TWO).thenReturn(THREE)
-                .thenReturn("4").thenReturn(DECIMAL);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performDecimalButtonAction(actionEvent);
-        assertEquals("1,234.", calculator.getTextPaneValue(), "textPane is not as expected");
-        assertEquals("1234.", calculator.getValues()[0], "Expected  v[0] to be 1234.");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal to be disabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-    }
-
-    @Test
-    @DisplayName(".9")
-    void pressedDecimalThen9()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DECIMAL).thenReturn(NINE);
-        calculator.performDecimalButtonAction(actionEvent);
-
-        assertEquals("0.", calculator.getValues()[0], "Values[0] is not 0.");
-        assertEquals("0.", calculator.getTextPaneValue(), "textPane should be 0.");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected dot to be disabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-
-        calculator.performNumberButtonAction(actionEvent);
-        if (calculator.isNegativeNumber(calculator.getValues()[0])) fail("Number is negative");
-
-        assertEquals( 0.9f, Double.parseDouble(calculator.getValues()[0]), delta); // 0.8999999761581421
-        assertEquals("0.9", calculator.getTextPaneValue(), "textPane should be 0.9");
-        assertFalse(calculator.isDotPressed(), "Expecting decimal to be disabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-    }
-
-    @Test
-    @DisplayName("1.5 + 2")
-    void pressed1ThenDecimalThen5ThenAddThen2()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DECIMAL)
-                .thenReturn(FIVE).thenReturn(ADDITION).thenReturn(TWO);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performDecimalButtonAction(actionEvent);
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be disabled");
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performAddButtonAction(actionEvent);
-        calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
     }
 
     @Test
@@ -897,75 +1175,240 @@ class BasicPanelTest extends TestParent
         verify(actionEvent, times(6)).getActionCommand();
     }
 
-    @Test
-    @DisplayName("+")
-    void pressedAddWithNoNumberInput()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.performAddButtonAction(actionEvent);
+    /* Invalid NUMBERS ?? */
 
-        assertEquals(EMPTY, calculator.getValues()[calculator.getValuesPosition()], "Values[{}] is not empty");
-        assertEquals(ENTER_A_NUMBER, calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue()), "textPane should display 'Enter a Number'");
+    /* Valid NEGATE */
+    @Test
+    @DisplayName("1 ±")
+    void pressed1ThenNegate()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(NEGATE);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performNegateButtonAction(actionEvent);
+
+        assertEquals(-1, Integer.parseInt(calculator.getValues()[calculator.getValuesPosition()]), "Values[{}] is not -1");
+        assertEquals("-1", calculator.getTextPaneValue(), "textPane should be -1");
+        assertTrue(calculator.isNegativeNumber(calculator.getValues()[calculator.getValuesPosition()]), "{} is not negative");
         assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
     }
 
     @Test
-    void pressed1ThenAddThenAddAgain()
+    @DisplayName("1 ± +")
+    void pressed1ThenNegateThenAdd()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(ADDITION);
+        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(NEGATE).thenReturn(ADDITION);
         calculator.performNumberButtonAction(actionEvent);
+        calculator.performNegateButtonAction(actionEvent);
         calculator.performAddButtonAction(actionEvent);
-        calculator.performAddButtonAction(actionEvent); // no thenReturn necessary. Uses last value sent to method
 
-        assertEquals(ONE, calculator.getValues()[0], "Values[{}] is not 1");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
+        assertEquals(-1, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not -1");
+        assertEquals("-1 +", calculator.getTextPaneValue(), "textPane should be -1 +");
+        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at position 2");
         assertFalse(calculator.isObtainingFirstNumber(), "We are still on the firstNumber");
     }
 
     @Test
-    void pressedAddWithErrorInTextPane()
+    @DisplayName("15 ± + 5 ± =")
+    void pressed1Then5ThenNegateThenAddThen5ThenNegateThenEquals()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(ERROR);
+        when(actionEvent.getActionCommand())
+                .thenReturn(ONE).thenReturn(FIVE)
+                .thenReturn(NEGATE)
+                .thenReturn(ADDITION)
+                .thenReturn(FIVE)
+                .thenReturn(NEGATE)
+                .thenReturn(EQUALS);
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(1, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not 1");
+        assertEquals(ONE, calculator.getTextPaneValue(), "textPane should be 1");
+        assertSame(0, calculator.getValuesPosition(), "ValuesPosition should be 0");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(15, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not 15");
+        assertEquals("15", calculator.getTextPaneValue(), "textPane should be 15");
+        assertSame(0, calculator.getValuesPosition(), "ValuesPosition should be 0");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+
+        calculator.performNegateButtonAction(actionEvent);
+        assertEquals(-15, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not -15");
+        assertEquals("-15", calculator.getTextPaneValue(), "textPane should be -15");
+        assertSame(0, calculator.getValuesPosition(), "ValuesPosition should be 0");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+
         calculator.performAddButtonAction(actionEvent);
-        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        assertEquals(-15, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not -15");
+        assertEquals("-15 +", calculator.getTextPaneValue(), "textPane should be -15 +");
+        assertSame(1, calculator.getValuesPosition(), "ValuesPosition should be 1");
+        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at position 2");
+        assertFalse(calculator.isObtainingFirstNumber(), "We are still on the firstNumber");
+        assertFalse(calculator.isNegativeNumber(), "Expecting isNumberNegative to be false");
+
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 5");
+        assertEquals(FIVE, calculator.getTextPaneValue(), "textPane should be 5");
+        assertSame(1, calculator.getValuesPosition(), "ValuesPosition should be 1");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+
+        calculator.performNegateButtonAction(actionEvent);
+        assertEquals(-5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not -5");
+        assertEquals("-5", calculator.getTextPaneValue(), "textPane should be -5");
+        assertSame(1, calculator.getValuesPosition(), "ValuesPosition should be 1");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals("-20", calculator.getTextPaneValue(), "textPane is not -20");
+        assertEquals(EMPTY, calculator.getValues()[1], "Values[1] is not empty");
+        assertEquals("-20", calculator.getTextPaneValue(), "textPane should be -20");
+        assertFalse(calculator.isObtainingFirstNumber(), "Expected firstNumber to be false");
+    }
+
+    /* Invalid NEGATE */
+
+    /* Valid DECIMAL */
+    @Test
+    @DisplayName(".")
+    void pressedDecimal()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
+        calculator.getValues()[0] = EMPTY;
+        calculator.getTextPane().setText(EMPTY);
+        calculator.performDecimalButtonAction(actionEvent);
+        assertEquals("0.", calculator.getTextPaneValue(), "textPane is not as expected");
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "buttonDot should be disabled");
     }
 
     @Test
-    void pressedSubtractWithErrorInTextPane()
+    @DisplayName("544.")
+    void pressed544ThenDecimal()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(ERROR);
-        calculator.performSubtractButtonAction(actionEvent);
-        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
+        calculator.getTextPane().setText("544");
+        calculator.getValues()[0] = "544";
+        calculator.performDecimalButtonAction(actionEvent);
+        assertEquals("544.", calculator.getTextPaneValue(), "textPane is not as expected");
+        assertEquals("544.", calculator.getValues()[0], "Values[0]");
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "buttonDot should be disabled");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
     }
 
     @Test
-    void pressedMultiplyWithErrorInTextPane()
+    @DisplayName("1234.")
+    void pressed1Then2Then3Then4ThenDecimal()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(ERROR);
-        calculator.performMultiplyButtonAction(actionEvent);
-        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(TWO).thenReturn(THREE)
+                .thenReturn("4").thenReturn(DECIMAL);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performDecimalButtonAction(actionEvent);
+        assertEquals("1,234.", calculator.getTextPaneValue(), "textPane is not as expected");
+        assertEquals("1234.", calculator.getValues()[0], "Expected  v[0] to be 1234.");
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal to be disabled");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
     }
 
     @Test
-    void pressedDivideWithErrorInTextPane()
+    @DisplayName(".9")
+    void pressedDecimalThen9()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(ERROR);
-        calculator.performDivideButtonAction(actionEvent);
-        assertEquals(ERROR, calculator.getTextPaneValue(), "Expected error message in textPane");
+        when(actionEvent.getActionCommand()).thenReturn(DECIMAL).thenReturn(NINE);
+        calculator.performDecimalButtonAction(actionEvent);
+
+        assertEquals("0.", calculator.getValues()[0], "Values[0] is not 0.");
+        assertEquals("0.", calculator.getTextPaneValue(), "textPane should be 0.");
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected dot to be disabled");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
+
+        calculator.performNumberButtonAction(actionEvent);
+        if (calculator.isNegativeNumber(calculator.getValues()[0])) fail("Number is negative");
+
+        assertEquals( 0.9f, Double.parseDouble(calculator.getValues()[0]), delta); // 0.8999999761581421
+        assertEquals("0.9", calculator.getTextPaneValue(), "textPane should be 0.9");
+        assertFalse(calculator.isDecimalPressed(), "Expecting decimal to be disabled");
+        assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
     }
 
     @Test
-    void pressedAddWithNumberTooBigInTextPane()
+    @DisplayName("1.5 + 2")
+    void pressed1ThenDecimalThen5ThenAddThen2()
     {
-        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
-        calculator.getTextPane().setText(NUMBER_TOO_BIG);
+        when(actionEvent.getActionCommand()).thenReturn(ONE).thenReturn(DECIMAL)
+                .thenReturn(FIVE).thenReturn(ADDITION).thenReturn(TWO);
+        calculator.performNumberButtonAction(actionEvent);
+        calculator.performDecimalButtonAction(actionEvent);
+        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be disabled");
+        calculator.performNumberButtonAction(actionEvent);
         calculator.performAddButtonAction(actionEvent);
-        assertEquals(NUMBER_TOO_BIG, calculator.getTextPaneValue(), "Expected error message in textPane");
+        calculator.performNumberButtonAction(actionEvent);
+        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
     }
+
+    /* Invalid DECIMAL */
+
+    /* EQUALS */
+
+    /* Invalid EQUALS (that's it) */
+    @Test
+    @DisplayName("6 + =")
+    void testPressedEqualsPrematurelyWithAddition()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
+        calculator.getValues()[0] = SIX;
+        calculator.getValues()[2] = ADDITION;
+        calculator.setValuesPosition(1);
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
+        assertEquals(SIX, calculator.getValues()[0], "Expected textPane to be 6");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
+    }
+
+    @Test
+    @DisplayName("6 ✕ =")
+    void testPressedEqualsPrematurelyWithMultiplication()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
+        calculator.getValues()[0] = SIX;
+        calculator.getValues()[2] = MULTIPLICATION;
+        calculator.setValuesPosition(1);
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(MULTIPLICATION, calculator.getValueAt(2), "Expecting MULTIPLICATION at values[2]");
+        assertEquals(SIX, calculator.getValues()[0], "Expected textPane to be 6");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
+    }
+
+    @Test
+    @DisplayName("6 / =")
+    void testPressedEqualsPrematurelyWithDivision()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
+        calculator.getValues()[0] = SIX;
+        calculator.getValues()[2] = DIVISION;
+        calculator.setValuesPosition(1);
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(DIVISION, calculator.getValueAt(2), "Expecting DIVISION at values[2]");
+        assertEquals(SIX, calculator.getValues()[0], "Expected textPane to be 6");
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
+    }
+
+    @Test
+    void testPressedEqualsPrematurelyWithSubtraction()
+    {
+        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
+        calculator.getValues()[0] = "-6";
+        calculator.getValues()[2] = SUBTRACTION;
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(SUBTRACTION, calculator.getValueAt(2), "Expecting SUBTRACTION at values[2]");
+        assertEquals("-6", calculator.getValues()[0], "Expected textPane to be -6");
+        assertTrue(calculator.isNegativeNumber(), "Expected isNegative to be false");
+    }
+
+
+    /*############## Test Button Actions ##################*/
+
+
+
 
     @Test
     void pressed1ThenAddThen5ThenAdd()
@@ -1055,7 +1498,7 @@ class BasicPanelTest extends TestParent
         assertEquals("6.8", calculator.getTextPaneValue(), "Expected textPane shows 6.8");
         assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
         assertFalse(calculator.isNegativeNumber(), "Expected isNumberNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be disabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be disabled");
     }
 
     @Test
@@ -1132,7 +1575,7 @@ class BasicPanelTest extends TestParent
         assertEquals("7", calculator.getValues()[0], "Expected values[0] to be 7");
         assertEquals(SUBTRACTION, calculator.getValueAt(2), "Expecting SUBTRACTION at values[2]");
         assertFalse(calculator.isNegativeNumber(), "Expected isNumberNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
     @Test
@@ -1148,7 +1591,7 @@ class BasicPanelTest extends TestParent
         assertEquals("4.4", calculator.getValues()[0], "Expected values[0] to be 4.4");
         assertEquals(SUBTRACTION, calculator.getValueAt(2), "Expecting SUBTRACTION at values[2]");
         assertFalse(calculator.isNegativeNumber(), "Expected isNumberNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
     @Test
@@ -1174,7 +1617,7 @@ class BasicPanelTest extends TestParent
         assertEquals("0.2", calculator.getValues()[0], "Expected values[0] to be 0.2");
         assertEquals(SUBTRACTION, calculator.getValueAt(2), "Expecting SUBTRACTION at values[2]");
         assertFalse(calculator.isNegativeNumber(), "Expected isNumberNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
     @Test
@@ -1261,7 +1704,7 @@ class BasicPanelTest extends TestParent
         assertEquals("10.35 ✕", calculator.getTextPaneValue(), "Expected textPane shows 10.35 ✕");
         assertEquals(MULTIPLICATION, calculator.getValueAt(2), "Expecting MULTIPLICATION at values[2]");
         assertFalse(calculator.isNegativeNumber(), "Expected isNumberNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
     @Test
@@ -1613,125 +2056,9 @@ class BasicPanelTest extends TestParent
         assertEquals("3.1", calculator.getTextPaneValue(), "Did not get back expected result");
     }
 
-    @Test
-    @DisplayName("15.5 / 0 =")
-    void testDivisionBy0() 
-    {
-        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
-        calculator.getValues()[0] = ONE+FIVE+DECIMAL+FIVE;
-        calculator.getValues()[1] = ZERO;
-        calculator.getValues()[2] = DIVISION;
-        calculator.setCalculatorView(VIEW_BASIC);
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be empty");
-        assertEquals(INFINITY, calculator.getTextPaneValue(), "Expected textPane to show INFINITY");
-    }
 
-    @Test
-    @DisplayName("Pressed ⌫")
-    void pressedDelete()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.getTextPane().setText("35");
-        calculator.getValues()[0] = "35";
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(3, Integer.parseInt(calculator.getValues()[0]), "Values[0] is not 3");
-        assertEquals(THREE, calculator.getTextPaneValue(), "textPane does not equal 3");
-    }
 
-    @Test
-    @DisplayName("Pressed ⌫ bad text in textPane")
-    void pressedDeleteWhenTextPaneHasBadText()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.getTextPane().setText(ENTER_A_NUMBER);
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
-        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be blank");
-        assertEquals(EMPTY, calculator.getValues()[1], "Expected values[1] to be blank");
-        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected dot to be enabled");
-    }
 
-    @Test
-    void testDeleteDoesNothingWhenNothingToDelete()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.getTextPane().setText(EMPTY);
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to show error");
-        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be blank");
-        assertEquals(EMPTY, calculator.getValues()[1], "Expected values[1] to be blank");
-        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected dot to be enabled");
-    }
-
-    @Test
-    void testDeleteClearsTextPaneAfterPressingEquals()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(FIVE).thenReturn(ADDITION)
-                .thenReturn(THREE).thenReturn(EQUALS).thenReturn(DELETE);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performAddButtonAction(actionEvent);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performEqualsButtonAction(actionEvent);
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(EMPTY, calculator.getTextPaneValue(), "Expected textPane to be blank");
-        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be blank");
-        assertEquals(EMPTY, calculator.getValues()[1], "Expected values[1] to be blank");
-        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to be false");
-        assertTrue(calculator.isDotPressed(), "Expected dot to be enabled");
-    }
-
-    @Test
-    void pressed1Then5ThenDecimalThen6ThenAddThenDelete()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(DELETE).thenReturn(DELETE);
-        calculator.getValues()[0] = "15.6";
-        calculator.getValues()[1] = EMPTY;
-        calculator.getValues()[2] = ADDITION;
-        calculator.appendTextToPane(calculator.getValueAt(0) + SPACE + ADDITION);
-        //calculator.setDotPressed(true);
-        calculator.getButtonDecimal().setEnabled(false);
-        calculator.getValues()[2] = ADDITION;
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(15.6, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.6");
-        assertEquals("15.6", calculator.getTextPaneValue(), "textPane does not equal 15.6");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be disabled");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(15., Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.");
-        assertEquals("15.", calculator.getTextPaneValue(), "textPane does not equal 15.");
-        assertFalse(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be disabled");
-
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(15, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15");
-        assertEquals("15", calculator.getTextPaneValue(), "textPane does not equal 15");
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
-    }
-
-    @Test
-    void pressed1ThenSubtractThenDelete()
-    {
-        when(actionEvent.getActionCommand())
-                .thenReturn(ONE)
-                .thenReturn(SUBTRACTION)
-                .thenReturn(DELETE);
-        calculator.performNumberButtonAction(actionEvent);
-        calculator.performSubtractButtonAction(actionEvent);
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(1, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 1");
-        assertEquals(ONE, calculator.getTextPaneValue(), "textPane does not equal 1");
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-    }
 
     @Test
     void pressedSubtractThen5ThenSubtractThenSubtractThen6ThenEquals()
@@ -1777,142 +2104,11 @@ class BasicPanelTest extends TestParent
         assertEquals(ZERO, calculator.getTextPaneValue(), "textPane does not equal 0");
     }
 
-    @Test
-    @DisplayName("1 ✕ ⌫")
-    void pressed1ThenMultiplyThenDelete()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.getTextPane().setText("1 ✕");
-        calculator.getValues()[0] = ONE;
-        calculator.getButtonDecimal().setEnabled(false);
-        calculator.getValues()[2] = MULTIPLICATION;
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(1, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 1");
-        assertEquals(ONE, calculator.getTextPaneValue(), "textPane does not equal 1");
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-    }
 
-    @Test
-    void pressed1ThenDivideThenDelete()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.getTextPane().setText("1 ÷");
-        calculator.getValues()[0] = ONE;
-        calculator.getButtonDecimal().setEnabled(false);
-        calculator.getValues()[2] = DIVISION;
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(1, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 1");
-        assertEquals(ONE, calculator.getTextPaneValue(), "textPane does not equal 1");
-        assertTrue(calculator.getButtonDecimal().isEnabled(), "Expected decimal button to be enabled");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-    }
 
-    @Test
-    void enteredANumberThenAddThen6DeleteThen5()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(FIVE);
-        calculator.getTextPane().setText(SIX);
-        calculator.getValues()[0] = "15.6";
-        calculator.getValues()[1] = SIX;
-        calculator.setValuesPosition(1);
-        calculator.getButtonDecimal().setEnabled(true);
-        calculator.getValues()[2] = ADDITION;
-        assertEquals(6, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 6");
 
-        calculator.performDeleteButtonAction(actionEvent);
-        assertEquals(15.6, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.6");
-        assertEquals(EMPTY, calculator.getTextPaneValue(), "textPane is not blank");
-        assertTrue(calculator.isDotPressed(), "Expected decimal button is enabled");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
 
-        calculator.performNumberButtonAction(actionEvent);
-        assertEquals(5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 5");
-        assertEquals(FIVE, calculator.getTextPaneValue(), "textPane does not equal blank");
-        assertTrue(calculator.isDotPressed(), "Expected decimal button is enabled");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
-    }
 
-    @Test
-    void pressingClearRestoresCalculatorToStartFunctionality()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(CLEAR);
-        calculator.performClearButtonAction(actionEvent);
-        assertEquals(ZERO, calculator.getValues()[0], "Values[0] should be 0");
-        for ( int i=1; i<3; i++) {
-            assertTrue(calculator.getValues()[i].isBlank(), "Values["+i+"] is not blank");
-        }
-        assertEquals(ZERO, calculator.getTextPaneValue(), "textPane is not 0");
-        assertEquals(0, calculator.getValuesPosition(), "Values position is not 0");
-        assertTrue(calculator.isObtainingFirstNumber(), "FirstNumBool is not true");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
-    }
-
-    @Test
-    void pressingClearEntryWhenOnValuesPosition0ClearsTextPaneAndMainOperatorsAndDecimal()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY);
-        calculator.setValuesPosition(0);
-        calculator.getValues()[0] = "1088";
-        calculator.appendTextToPane(calculator.getValueAt(0));
-        calculator.performClearEntryButtonAction(actionEvent);
-
-        assertTrue(StringUtils.isBlank(calculator.getTextPaneValue()), "textPane was not cleared");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertTrue(calculator.isDotPressed(), "Expected decimal button to be enabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-    }
-
-    @Test
-    @DisplayName("Pressed CE twice")
-    void pressingClearEntry()
-    {
-        when(actionEvent.getActionCommand())
-                .thenReturn(CLEAR_ENTRY)
-                .thenReturn(CLEAR_ENTRY);
-        calculator.getValues()[0] = ONE+ZERO+ZERO;
-        calculator.getValues()[1] = ONE+ZERO+EIGHT+EIGHT;
-        calculator.getValues()[2] = ADDITION;
-        calculator.setValuesPosition(1);
-        calculator.appendTextToPane(calculator.getValueAt(1));
-
-        calculator.performClearEntryButtonAction(actionEvent);
-        assertEquals(ONE+ZERO+ZERO, calculator.getValues()[0], "Expected textPane to show values[0]");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
-        assertTrue(calculator.isDotPressed(), "Expected decimal button to be enabled");
-        assertFalse(calculator.isObtainingFirstNumber(), "Expected not to be on the firstNumber");
-        assertEquals(1, calculator.getValuesPosition(), "Expected vP to be 1");
-
-        calculator.performClearEntryButtonAction(actionEvent);
-        assertEquals(ONE+ZERO+ZERO, calculator.getValueAt(0), "Expected textPane to show values[0]");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertTrue(calculator.isDotPressed(), "Expected decimal button to be enabled");
-        assertFalse(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-        assertEquals(1, calculator.getValuesPosition(), "Expected vP to be 1");
-    }
-
-    @Test
-    void pressingClearEntryAfterPressingAnOperatorResetsTextPaneAndOperator()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY);
-        calculator.getTextPane().setText("1088 +");
-        calculator.performClearEntryButtonAction(actionEvent);
-
-        assertTrue(StringUtils.isBlank(calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue())), "textPane was not cleared");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-    }
-
-    @Test
-    void pressedClearEntryWhenTextPaneIsEmpty()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(CLEAR_ENTRY);
-        calculator.performClearEntryButtonAction(actionEvent);
-        assertEquals(EMPTY, calculator.getValues()[0], "Expected textPane to be blank");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertTrue(calculator.isDotPressed(), "Expected decimal button to be enabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected to be on the firstNumber");
-        assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
-    }
 
     @Test
     void pressedSquaredButtonWithNoEntry()
@@ -1963,7 +2159,7 @@ class BasicPanelTest extends TestParent
         assertEquals(30.25, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 30.25");
         assertEquals("30.25", calculator.getTextPaneValue(), "textPane should be 30.25");
         assertTrue(calculator.isObtainingFirstNumber(), "We are not on the firstNumber");
-        assertFalse(calculator.isDotPressed(), "Expected decimal button to be disabled");
+        assertFalse(calculator.isDecimalPressed(), "Expected decimal button to be disabled");
     }
 
     @Test
@@ -2086,74 +2282,14 @@ class BasicPanelTest extends TestParent
         calculator.appendTextToPane(calculator.getValueAt(0));
         calculator.performSquareRootButtonAction(actionEvent);
         assertEquals(5.049752469181039, Double.parseDouble(calculator.getTextPaneValue()), delta, "Expected result to be 5.049752469181039");
-        assertFalse(calculator.isDotPressed(), "Expected dot to be disable");
+        assertFalse(calculator.isDecimalPressed(), "Expected dot to be disable");
     }
 
 
 
 
 
-    @Test
-    void pressed5ThenMemoryAdd()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
-        calculator.getMemoryValues()[0] = "10";
-        calculator.setMemoryPosition(1);
-        calculator.getTextPane().setText(FIVE);
-        calculator.setValuesPosition(0);
-        calculator.getValues()[0] = FIVE;
-        calculator.performMemoryAdditionAction(actionEvent);
-        assertEquals("15", calculator.getMemoryValues()[0], "Expected memoryValues[0] to be 15");
-        assertSame(1, calculator.getMemoryPosition(), "Expected memoryPosition to be 1");
-        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
-        assertEquals(FIVE, calculator.getTextPaneValue(), "Expected textPane to show 5");
-    }
 
-    @Test
-    void testSavingAWholeNumberWithMemoryAdd()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
-        calculator.getMemoryValues()[0] = "10";
-        calculator.setMemoryPosition(1);
-        calculator.getTextPane().setText(EMPTY);
-        calculator.setValuesPosition(0);
-        calculator.performMemoryAdditionAction(actionEvent);
-        assertEquals("10", calculator.getMemoryValues()[0], "Expected memoryValues[0] to be 10");
-        assertSame(1, calculator.getMemoryPosition(), "Expected memoryPosition to be 1");
-        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to show error");
-    }
-
-    @Test
-    void testSavingADecimalNumberWithMemoryAdd()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
-        calculator.getMemoryValues()[0] = "10";
-        calculator.setMemoryPosition(1);
-        calculator.appendTextToPane("5.5");
-        calculator.setValuesPosition(0);
-        calculator.getValues()[0] = "5.5";
-        calculator.performMemoryAdditionAction(actionEvent);
-        assertEquals("15.5", calculator.getMemoryValues()[0], "Expected memoryValues[0] to be 15.5");
-        assertSame(1, calculator.getMemoryPosition(), "Expected memoryPosition to be 1");
-        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
-        assertEquals("5.5", calculator.getTextPaneValue(), "Expected textPane to show 5.5");
-    }
-
-    @Test
-    void testMemoryAddFailsWhenSavingBadText()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
-        calculator.getMemoryValues()[0] = EMPTY;
-        calculator.setMemoryPosition(0);
-        calculator.getTextPane().setText(ENTER_A_NUMBER);
-        calculator.setValuesPosition(0);
-        calculator.performMemoryAdditionAction(actionEvent);
-        assertEquals(EMPTY, calculator.getMemoryValues()[0], "Expected memoryValues[0] to be blank");
-        assertSame(0, calculator.getMemoryPosition(), "Expected memoryPosition to be 0");
-        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to show error");
-    }
 
     @Test
     void pressed5ThenMemorySub()
@@ -2229,22 +2365,22 @@ class BasicPanelTest extends TestParent
                 .thenReturn(SIX).thenReturn(FIVE).thenReturn(DECIMAL).thenReturn(FIVE)
                 .thenReturn(FOUR).thenReturn(FIVE).thenReturn(SEVEN);
         calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
         assertEquals(ONE, calculator.getValues()[0], "Expected values[0] to be 1");
         assertEquals(ONE, calculator.getTextPaneValue(), "Expected textPane to be 1");
 
         calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
         assertEquals("10", calculator.getValues()[0], "Expected values[0] to be 10");
         assertEquals("10", calculator.getTextPaneValue(), "Expected textPane to be 10");
 
         calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
         assertEquals("106", calculator.getValues()[0], "Expected values[0] to be 106");
         assertEquals("106", calculator.getTextPaneValue(), "Expected textPane to be 106");
 
         calculator.performNumberButtonAction(actionEvent);
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
         assertEquals("1065", calculator.getValues()[0], "Expected values[0] to be 1065");
         assertEquals("1,065", calculator.getTextPaneValue(), "Expected textPane to be 1,065");
 
@@ -2381,7 +2517,7 @@ class BasicPanelTest extends TestParent
         calculator.getValues()[2] = ADDITION;
         calculator.setObtainingFirstNumber(false);
         calculator.performNumberButtonAction(actionEvent);
-        assertFalse(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertFalse(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
     @Test
@@ -2396,7 +2532,7 @@ class BasicPanelTest extends TestParent
         assertEquals(INFINITY, calculator.getTextPaneValue(), "Expected textPane to show error");
         assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
         assertEquals(EMPTY, calculator.getValueAt(2), "Expecting EMPTY at values[2]");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
     @Test
@@ -2412,98 +2548,11 @@ class BasicPanelTest extends TestParent
         assertEquals("5 ÷", calculator.getTextPaneValue(), "Expected textPane to show 5 ÷");
         assertEquals("5", calculator.getValues()[0], "Expected values[0] to be 5");
         assertEquals(DIVISION, calculator.getValueAt(2), "Expecting DIVISION at values[2]");
-        assertTrue(calculator.isDotPressed(), "Expected decimal to be enabled");
+        assertTrue(calculator.isDecimalPressed(), "Expected decimal to be enabled");
     }
 
-    @Test
-    @DisplayName("6 + =")
-    void testPressedEqualsPrematurelyWithAddition()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
-        calculator.getValues()[0] = SIX;
-        calculator.getValues()[2] = ADDITION;
-        calculator.setValuesPosition(1);
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
-        assertEquals(SIX, calculator.getValues()[0], "Expected textPane to be 6");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
-    }
 
-    @Test
-    @DisplayName("6 ✕ =")
-    void testPressedEqualsPrematurelyWithMultiplication()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
-        calculator.getValues()[0] = SIX;
-        calculator.getValues()[2] = MULTIPLICATION;
-        calculator.setValuesPosition(1);
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(MULTIPLICATION, calculator.getValueAt(2), "Expecting MULTIPLICATION at values[2]");
-        assertEquals(SIX, calculator.getValues()[0], "Expected textPane to be 6");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
-    }
 
-    @Test
-    @DisplayName("6 / =")
-    void testPressedEqualsPrematurelyWithDivision()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
-        calculator.getValues()[0] = SIX;
-        calculator.getValues()[2] = DIVISION;
-        calculator.setValuesPosition(1);
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(DIVISION, calculator.getValueAt(2), "Expecting DIVISION at values[2]");
-        assertEquals(SIX, calculator.getValues()[0], "Expected textPane to be 6");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
-    }
 
-    @Test
-    void testPressedEqualsPrematurelyWithSubtraction()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
-        calculator.getValues()[0] = "-6";
-        calculator.getValues()[2] = SUBTRACTION;
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(SUBTRACTION, calculator.getValueAt(2), "Expecting SUBTRACTION at values[2]");
-        assertEquals("-6", calculator.getValues()[0], "Expected textPane to be -6");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegative to now be false");
-    }
 
-    @Test
-    void testingMathPow()
-    {
-        double delta = 0.000001d;
-        Number num = 8.0;
-        assertEquals(num.doubleValue(), Math.pow(2,3), delta);
-    }
-
-    /**
-     * Performs the next operator action based on the provided operator string.
-     * @param nextOperator the operator to perform
-     */
-    private void performNextOperatorAction(String nextOperator)
-    {
-        switch (nextOperator)
-        {
-            case ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE -> basicPanel.getCalculator().performNumberButtonAction(actionEvent);
-            case ADDITION -> basicPanel.getCalculator().performAddButtonAction(actionEvent);
-            case CLEAR -> basicPanel.getCalculator().performClearButtonAction(actionEvent);
-            case CLEAR_ENTRY -> basicPanel.getCalculator().performClearEntryButtonAction(actionEvent);
-            case DIVISION -> basicPanel.getCalculator().performDivideButtonAction(actionEvent);
-            case EQUALS -> calculator.performEqualsButtonAction(actionEvent);
-            case FRACTION -> basicPanel.performFractionButtonAction(actionEvent);
-            case HISTORY_OPEN, HISTORY_CLOSED -> calculator.performHistoryAction(actionEvent);
-            case MEMORY_ADDITION -> basicPanel.getCalculator().performMemoryAdditionAction(actionEvent);
-            case MEMORY_CLEAR -> basicPanel.getCalculator().performMemoryClearAction(actionEvent);
-            case MEMORY_RECALL -> basicPanel.getCalculator().performMemoryRecallAction(actionEvent);
-            case MEMORY_STORE -> basicPanel.getCalculator().performMemoryStoreAction(actionEvent);
-            case MEMORY_SUBTRACTION -> basicPanel.getCalculator().performMemorySubtractionAction(actionEvent);
-            case MULTIPLICATION -> basicPanel.getCalculator().performMultiplyButtonAction(actionEvent);
-            case PERCENT -> basicPanel.performPercentButtonAction(actionEvent);
-            case SQUARED -> basicPanel.performSquaredButtonAction(actionEvent);
-            case SQUARE_ROOT -> basicPanel.getCalculator().performSquareRootButtonAction(actionEvent);
-            case SUBTRACTION -> basicPanel.getCalculator().performSubtractButtonAction(actionEvent);
-            default -> LOGGER.warn("No operator selected: '{}'", nextOperator);
-        }
-    }
 }

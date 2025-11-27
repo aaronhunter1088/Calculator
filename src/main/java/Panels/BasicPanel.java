@@ -324,7 +324,7 @@ public class BasicPanel extends JPanel
         else
         {
             String value = calculator.getAppropriateValue();
-            if (!value.isEmpty() && !calculator.endsWithOperator(value))
+            if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 String currentOperator = calculator.getActiveOperator();
@@ -338,7 +338,7 @@ public class BasicPanel extends JPanel
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
-            else if (calculator.isOperatorActive() && calculator.endsWithOperator(value))
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue()))
             { confirm(calculator, LOGGER, cannotPerformOperation(PERCENT)); }
         }
     }
@@ -379,7 +379,8 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            if (!calculator.getAppropriateValue().isEmpty())
+            String value = calculator.getAppropriateValue();
+            if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 String currentOperator = calculator.getActiveOperator();
@@ -393,7 +394,7 @@ public class BasicPanel extends JPanel
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
-            else if (calculator.isOperatorActive())
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue()))
             { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         }
     }
@@ -432,16 +433,15 @@ public class BasicPanel extends JPanel
         }
         else
         {
-            if (!calculator.getAppropriateValue().isEmpty())
+            String value = calculator.getAppropriateValue();
+            if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 calculator.getValues()[calculator.getValuesPosition()] = calculator.getAppropriateValue();
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.performOperation();
-                if (calculator.textPaneContainsBadText())
-                    calculator.appendTextToPane(calculator.getBadText());
-                else
+                if (!calculator.textPaneContainsBadText())
                     calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
                 calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt()));
@@ -450,7 +450,7 @@ public class BasicPanel extends JPanel
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
-            else if (calculator.isOperatorActive())
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue()))
             { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
         }
     }

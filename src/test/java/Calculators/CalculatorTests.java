@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
@@ -581,6 +582,32 @@ class CalculatorTests extends TestParent
         );
     }
 
+    @ParameterizedTest
+    @DisplayName("Test ClearButtonActions()")
+    @MethodSource("clearButtonActionsCases")
+    void testClearNumberButtonActions(List<JButton> buttonsToTest)
+    {
+        postConstructCalculator();
+        buttonsToTest.forEach(btn ->
+                assertSame(1, btn.getActionListeners().length, "Expecting only 1 action on " + btn.getName()));
+
+        calculator.clearButtonActions(buttonsToTest);
+
+        buttonsToTest.forEach(numberButton ->
+                assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName()));
+    }
+    private static Stream<Arguments> clearButtonActionsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        Calculator testCalc = new Calculator();
+        return Stream.of(
+                Arguments.of(testCalc.getNumberButtons()),
+                Arguments.of(testCalc.getCommonButtons()),
+                Arguments.of(testCalc.getAllMemoryPanelButtons()),
+                Arguments.of(testCalc.getProgrammerPanel().getAllHexadecimalButtons()),
+                Arguments.of(testCalc.getProgrammerPanel().getAllProgrammerOperatorButtons())
+        );
+    }
+
     @Test
     @DisplayName("Test ResetValues()")
     void testResetValues()
@@ -595,36 +622,15 @@ class CalculatorTests extends TestParent
         assertEquals("26", calculator.values[1], "Expected values[1] to be 26");
         assertEquals("5", calculator.values[2], "Expected values[2] to be 5");
 
-        calculator.resetValues();
+        calculator.resetValues(false);
 
+        assertEquals(0, calculator.valuesPosition, "Expected valuesPosition to be 0");
         assertTrue(calculator.values[0].isEmpty(), "Expected first number to be blank");
         assertTrue(calculator.values[1].isEmpty(), "Expected second number to be blank");
         assertTrue(calculator.values[2].isEmpty(), "Expected operator to be blank");
         assertTrue(calculator.values[3].isEmpty(), "Expected result to be blank");
-    }
-
-    @ParameterizedTest
-    @DisplayName("Test ClearButtonActions()")
-    @MethodSource("clearButtonActionsCases")
-    void testClearNumberButtonActions(java.util.List<JButton> buttonsToTest)
-    {
-        postConstructCalculator();
-        buttonsToTest.forEach(btn ->
-            assertSame(1, btn.getActionListeners().length, "Expecting only 1 action on " + btn.getName()));
-
-        calculator.clearButtonActions(buttonsToTest);
-
-        buttonsToTest.forEach(numberButton ->
-            assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName()));
-    }
-    private static Stream<Arguments> clearButtonActionsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        Calculator testCalc = new Calculator();
-        return Stream.of(
-                Arguments.of(testCalc.getNumberButtons()),
-                Arguments.of(testCalc.getCommonButtons()),
-                Arguments.of(testCalc.getAllMemoryPanelButtons())
-        );
+        assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
+        assertFalse(calculator.isDecimalPressed(), "Expected decimalPressed to be false");
     }
 
     @ParameterizedTest

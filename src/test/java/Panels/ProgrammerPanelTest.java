@@ -199,7 +199,7 @@ class ProgrammerPanelTest extends TestParent
         calculator.appendTextToPane(calculator.getValueAt());
         when(actionEvent.getActionCommand())
                 .thenReturn(nextOperator); // can be any button push
-        performNextOperatorAction(nextOperator);
+        performNextOperatorAction(calculator, actionEvent, LOGGER, nextOperator);
 
         assertEquals(expectedResult, calculator.getTextPaneValue(), "Text Pane result not as expected");
         assertEquals(EMPTY, calculator.getValueAt(0), "values[0] result should be EMPTY");
@@ -335,42 +335,4 @@ class ProgrammerPanelTest extends TestParent
         assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
     }
 
-    /**
-     * Performs the next operator action based on the provided operator string.
-     * @param nextOperator the operator to perform
-     */
-    private void performNextOperatorAction(String nextOperator)
-    {
-        switch (nextOperator)
-        {
-            case ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE -> programmerPanel.getCalculator().performNumberButtonAction(actionEvent);
-            case ADDITION -> programmerPanel.getCalculator().performAddButtonAction(actionEvent);
-            case AND -> programmerPanel.performAndButtonAction(actionEvent);
-            case CLEAR -> programmerPanel.getCalculator().performClearButtonAction(actionEvent);
-            case CLEAR_ENTRY -> programmerPanel.getCalculator().performClearButtonAction(actionEvent);
-            case DIVISION -> programmerPanel.getCalculator().performDivideButtonAction(actionEvent);
-            case EQUALS -> calculator.performEqualsButtonAction(actionEvent);
-            case FRACTION -> LOGGER.info("Fraction operator not supported on Programmer Panel");
-            case HISTORY_OPEN, HISTORY_CLOSED -> calculator.performHistoryAction(actionEvent);
-            case LEFT_PARENTHESIS -> programmerPanel.performLeftParenthesisButtonAction(actionEvent);
-            case LSH -> programmerPanel.performLeftShiftButtonAction(actionEvent);
-            case MEMORY_ADDITION -> programmerPanel.getCalculator().performMemoryAdditionAction(actionEvent);
-            case MEMORY_CLEAR -> programmerPanel.getCalculator().performMemoryClearAction(actionEvent);
-            case MEMORY_RECALL -> programmerPanel.getCalculator().performMemoryRecallAction(actionEvent);
-            case MEMORY_STORE -> programmerPanel.getCalculator().performMemoryStoreAction(actionEvent);
-            case MEMORY_SUBTRACTION -> programmerPanel.getCalculator().performMemorySubtractionAction(actionEvent);
-            case MODULUS -> programmerPanel.performModulusButtonAction(actionEvent);
-            case MULTIPLICATION -> programmerPanel.getCalculator().performMultiplyButtonAction(actionEvent);
-            case NOT -> programmerPanel.performNotButtonAction(actionEvent);
-            case OR -> programmerPanel.performOrButtonAction(actionEvent);
-            case PERCENT -> LOGGER.info("Percent operator not supported on Programmer Panel");
-            case RIGHT_PARENTHESIS -> programmerPanel.performRightParenthesisButtonAction(actionEvent);
-            case RSH -> programmerPanel.performRightShiftButtonAction(actionEvent);
-            case SQUARED -> LOGGER.info("Squared operator not supported on Programmer Panel");
-            case SQUARE_ROOT -> programmerPanel.getCalculator().performSquareRootButtonAction(actionEvent);
-            case SUBTRACTION -> programmerPanel.getCalculator().performSubtractButtonAction(actionEvent);
-            case XOR -> programmerPanel.performXorButtonAction(actionEvent);
-            default -> fail("Unsupported operator: " + nextOperator);
-        }
-    }
 }

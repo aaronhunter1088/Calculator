@@ -1432,7 +1432,7 @@ public class Calculator extends JFrame
         logActionButton(buttonChoice, LOGGER);
         if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(MEMORY_STORE)); }
-        else if (getTextPaneValue().isBlank())
+        else if (getTextPaneValue().isEmpty())
         {
             logEmptyValue(MEMORY_STORE, this, LOGGER);
             appendTextToPane(ENTER_A_NUMBER);
@@ -1509,7 +1509,7 @@ public class Calculator extends JFrame
             writeHistoryWithMessage(buttonChoice, false, " Cleared " + memoryValues[memoryPosition] + " from memory location " + (memoryPosition+1));
             memoryValues[memoryPosition] = EMPTY;
             memoryRecallPosition += 1;
-            confirm(this, LOGGER, "Cleared memory at " + memoryPosition);
+            LOGGER.debug("Cleared memory at memories[{}]", memoryPosition);
             // MemorySuite could now be empty
             if (isMemoryValuesEmpty())
             {
@@ -1723,23 +1723,24 @@ public class Calculator extends JFrame
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         if (getTextPaneValue().isEmpty())
-        { confirm(this, LOGGER, cannotPerformOperation(CLEAR_ENTRY)); }
+        { confirm(this, LOGGER, cannotPerformOperation(buttonChoice)); }
         else
         {
             if (valuesPosition == 0 || values[1].isEmpty())
-            { resetValues(); }
+            { resetValues(false); }
             else
             {
-                values[1] = EMPTY;
-                valuesPosition = 1;
-                setObtainingFirstNumber(false);
                 setNegativeNumber(false);
-                buttonDecimal.setEnabled(true);
+                setObtainingFirstNumber(false);
+                values[1] = EMPTY;
+                values[2] = EMPTY;
+                values[3] = EMPTY;
+                setValuesPosition(1);
             }
             clearTextInTextPane();
             writeHistoryWithMessage(buttonChoice, false, performedOperation(buttonChoice));
             updateMemoryButtonsState();
-            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+            confirm(this, LOGGER, performedOperation(buttonChoice));
         }
     }
 
@@ -2338,12 +2339,10 @@ public class Calculator extends JFrame
         else
         {
             performOperation();
-            if (textPaneContainsBadText())
-                appendTextToPane(getBadText());
-            else
+            if (!textPaneContainsBadText())
                 appendTextToPane(addThousandsDelimiter(values[3]));
             writeContinuedHistory(EQUALS, getActiveOperator(), values[3], false);
-            resetValues();
+            resetValues(true);
             updateMemoryButtonsState();
             confirm(this, LOGGER, pressedButton(buttonChoice));
         }
@@ -2535,7 +2534,10 @@ public class Calculator extends JFrame
      * @return list of programmer panel operators
      */
     public List<String> getProgrammerPanelOperators()
-    { return List.of(LSH, RSH, OR, XOR, NOT, AND, MODULUS, ROL, ROR); }
+    {
+
+        return List.of(LSH, RSH, OR, XOR, NOT, AND, MODULUS, ROL, ROR);
+    }
 
     /**
      * Returns a list of operators found
@@ -2569,12 +2571,22 @@ public class Calculator extends JFrame
 
     /**
      * This method resets default values
+     * @param softReset used to determine if the
+     * decimal button and negative number flag
+     * should be reset or not.
      */
-    public void resetValues()
+    public void resetValues(boolean softReset)
     {
-        buttonDecimal.setEnabled(!isFractionalNumber(values[3]));
-        setNegativeNumber(isNegativeNumber(values[3]));
-        isPemdasActive = false;
+        if (softReset)
+        {
+            buttonDecimal.setEnabled(!isFractionalNumber(values[3]));
+            setNegativeNumber(isNegativeNumber(values[3]));
+        }
+        else
+        {
+            buttonDecimal.setEnabled(true);
+            setNegativeNumber(false);
+        }
         setObtainingFirstNumber(false);
         values[0] = EMPTY;
         values[1] = EMPTY;
@@ -2859,20 +2871,35 @@ public class Calculator extends JFrame
     }
 
     /**
-     * Returns the bad text in the textPane
-     * @return String the bad text
+     * Returns the bad text if the value
+     * is equal to one of the known bad texts.
+     * If no value is sent in, the textPane
+     * value will be tested.
+     * @param valueToTest the value to test
+     * @return the bad text or the value
      */
-    public String getBadText()
+    public String getBadText(String valueToTest)
     {
-        String badText = EMPTY;
-        if (CANNOT_DIVIDE_BY_ZERO.equals(getTextPaneValue())) badText = CANNOT_DIVIDE_BY_ZERO;
+        String badText = valueToTest.isEmpty() ? getTextPaneValue() : valueToTest;
+        if (CANNOT_DIVIDE_BY_ZERO.equals(badText)) badText = CANNOT_DIVIDE_BY_ZERO;
         else if (NOT_A_NUMBER.equals(getTextPaneValue())) badText = NOT_A_NUMBER;
         else if (NUMBER_TOO_BIG.equals(getTextPaneValue())) badText = NUMBER_TOO_BIG;
         else if (ENTER_A_NUMBER.equals(getTextPaneValue())) badText = ENTER_A_NUMBER;
         else if (ONLY_POSITIVES.equals(getTextPaneValue())) badText = ONLY_POSITIVES;
         else if (Texts.ERROR.equals(getTextPaneValue())) badText = Texts.ERROR;
         else if (INFINITY.equals(getTextPaneValue())) badText = INFINITY;
+        else badText = EMPTY;
         return badText;
+    }
+
+    /**
+     * Returns a list of all bad texts
+     * @return list of bad texts
+     */
+    public List<String> badTexts()
+    {
+        return List.of(CANNOT_DIVIDE_BY_ZERO, NOT_A_NUMBER, NUMBER_TOO_BIG,
+                ENTER_A_NUMBER, ONLY_POSITIVES, Texts.ERROR, INFINITY);
     }
 
     /**
@@ -3579,6 +3606,7 @@ public class Calculator extends JFrame
         {
             programmerPanel.appendTextForProgrammerPanel(EMPTY);
         }
+        buttonDecimal.setEnabled(true); // natural side effect of clearing textPane
     }
 
     /**
@@ -3680,7 +3708,7 @@ public class Calculator extends JFrame
     public boolean isObtainingFirstNumber() { return obtainingFirstNumber; }
     public boolean isNegativeNumber() { return negativeNumber; }
     public boolean isPemdasActive() { return isPemdasActive; }
-    public boolean isDotPressed() { return buttonDecimal.isEnabled(); }
+    public boolean isDecimalPressed() { return !buttonDecimal.isEnabled(); }
     public JMenu getStyleMenu() { return styleMenu; }
     public JMenu getViewMenu() { return viewMenu; }
     public JMenu getEditMenu() { return editMenu; }
