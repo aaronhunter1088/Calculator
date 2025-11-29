@@ -5,17 +5,21 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static Types.CalculatorUtility.addThousandsDelimiter;
+import static Types.CalculatorUtility.removeThousandsDelimiter;
 import static Types.Texts.*;
-import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TestParent
+public abstract class TestParent
 {
     public Calculator calculator;
 
@@ -23,8 +27,14 @@ public class TestParent
 
     public void postConstructCalculator()
     {
-        calculator.pack();
-        calculator.setVisible(true);
+        try
+        {
+            SwingUtilities.invokeAndWait(() -> {
+                calculator.pack();
+                calculator.setVisible(true);
+            });
+        }
+        catch (Exception ignored) {}
     }
 
     /**
@@ -34,7 +44,7 @@ public class TestParent
      * @param actionEvent the action event
      * @param operatorUnderTest the operator under test
      */
-    public void setupInvalidWhenThen(ActionEvent actionEvent, String operatorUnderTest, String firstNumber, String firstOperator)
+    public void setupWhenThenFirstOperatorThenOperatorUnderTest(ActionEvent actionEvent, String operatorUnderTest, String firstNumber, String firstOperator)
     {
         AtomicInteger idx = new AtomicInteger(0);
         int firstNumberLength = firstNumber.length();
@@ -196,18 +206,76 @@ public class TestParent
 //                .thenReturn(secondOperator);
     }
 
+    public void setupWhenThen(ActionEvent actionEvent, ArgumentsForTests arguments)
+    {
+        List<String> characters = setupCharacters(arguments);
+        AtomicInteger idx = new AtomicInteger(0);
+        when(actionEvent.getActionCommand()).thenAnswer(invocation -> {
+            int i = idx.getAndIncrement();
+            return characters.get(i);
+        });
+    }
+
+    private List<String> setupCharacters(ArgumentsForTests arguments)
+    {
+        List<String> characters = new ArrayList<>();
+        // First Number, can be empty
+        String firstNumber = removeThousandsDelimiter(arguments.getFirstNumber(), calculator.getThousandsDelimiter());
+        int firstNumberLength = firstNumber.length();
+        if (firstNumberLength == 0) characters.add(EMPTY);
+        else if (calculator.getBadText(firstNumber).equals(firstNumber)) {
+            calculator.appendTextToPane(firstNumber);
+            characters.add(EMPTY);
+        }
+        else characters.addAll(firstNumber.chars().mapToObj(c -> String.valueOf((char) c)).toList());
+
+        // First Unary Operator, can be empty
+        String firstUnaryOperator = arguments.getFirstUnaryOperator();
+        if (firstUnaryOperator.isEmpty()) characters.add(EMPTY);
+        else characters.add(firstUnaryOperator);
+
+        // First Binary Operator, can be empty
+        String firstBinaryOperator = arguments.getFirstBinaryOperator();
+        if (firstBinaryOperator.isEmpty()) characters.add(EMPTY);
+        else characters.add(firstBinaryOperator);
+
+        // Second Number, can be empty
+        String secondNumber = removeThousandsDelimiter(arguments.getSecondNumber(), calculator.getThousandsDelimiter());
+        int secondNumberLength = secondNumber.length();
+        if (secondNumberLength == 0) characters.add(EMPTY);
+        else if (calculator.getBadText(secondNumber).equals(secondNumber)) {
+            calculator.appendTextToPane(secondNumber);
+            characters.add(EMPTY);
+        }
+        else characters.addAll(secondNumber.chars().mapToObj(c -> String.valueOf((char) c)).toList());
+
+        // Second Unary Operator, can be empty
+        String secondUnaryOperator = arguments.getSecondUnaryOperator();
+        if (secondUnaryOperator.isEmpty()) characters.add(EMPTY);
+        else characters.add(secondUnaryOperator);
+
+        // Second Binary Operator, can be empty
+        String secondBinaryOperator = arguments.getSecondBinaryOperator();
+        if (secondBinaryOperator.isEmpty()) characters.add(EMPTY);
+        else characters.add(secondBinaryOperator);
+
+        return characters;
+    }
+
     /**
      * Performs the number button action for each
      * character in the given number string.
      * Works with any positive, negative, whole,
-     * or fractional numbers.
+     * or fractional numbers. It then asserts that
+     * the textPane and values[valuesPosition] are
+     * as expected after each character input.
      * @param actionEvent the actionEvent
      * @param number the number
      */
     public void performNumberButtonActionForEachCharacter(ActionEvent actionEvent, String number)
     {
         int firstNumLength = number.length();
-        if (firstNumLength == 0 || calculator.getBadText(EMPTY).contains(number))
+        if (firstNumLength == 0)
         {
             assertEquals(number, calculator.getTextPaneValue(), "textPane value is not as expected");
         }
@@ -222,10 +290,14 @@ public class TestParent
                     calculator.performDecimalButtonAction(actionEvent);
                 else
                     calculator.performNumberButtonAction(actionEvent);
-                if ((i+1) == firstNumLength)
-                    assertEquals(calculator.addThousandsDelimiter(number), calculator.getTextPaneValue(), "textPane value is not as expected");
-                else
-                    assertEquals(number.substring(0,(i+1)), calculator.getTextPaneValue(), "textPane value is not as expected");
+                if ((i+1) == firstNumLength) {
+                    assertEquals(addThousandsDelimiter(number, calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "textPane value is not as expected");
+                    assertEquals(number, calculator.getValues()[calculator.getValuesPosition()], "value[valuesPosition] is not as expected");
+                }
+                else {
+                    assertEquals(addThousandsDelimiter(number.substring(0,(i+1)), calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "textPane value is not as expected");
+                    assertEquals(number.substring(0,(i+1)), calculator.getValues()[calculator.getValuesPosition()], "value[valuesPosition] is not as expected");
+                }
             }
         }
     }
@@ -245,6 +317,7 @@ public class TestParent
             case CLEAR -> calculator.performClearButtonAction(actionEvent);
             case CLEAR_ENTRY -> calculator.performClearEntryButtonAction(actionEvent);
             case DECIMAL -> calculator.performDecimalButtonAction(actionEvent);
+            case DELETE -> calculator.performDeleteButtonAction(actionEvent);
             case DIVISION -> calculator.performDivideButtonAction(actionEvent);
             case EQUALS -> calculator.performEqualsButtonAction(actionEvent);
             case FRACTION -> calculator.getBasicPanel().performFractionButtonAction(actionEvent);
@@ -270,4 +343,30 @@ public class TestParent
             default -> logger.warn("Unknown operator selected: '{}'", nextOperator);
         }
     }
+
+    public void exhaustActionEvent(String value, ActionEvent actionEvent, Logger logger)
+    {
+        String exhausted = actionEvent.getActionCommand();
+        logger.info("Exhausted ActionEvent with button choice: '{}:{}'", exhausted, value);
+    }
+
+    /**
+     * Returns a list of unary operators. Unary operators
+     * are operators that requires a valid value in the
+     * text pane to perform that operation.
+     * @return list of basic panel unary operators
+     */
+    public List<String> getBasicPanelUnaryOperators()
+    { return List.of(PERCENT, SQUARE_ROOT, SQUARED, FRACTION,
+            CLEAR_ENTRY, CLEAR,   DELETE,  NEGATE,
+            DECIMAL, MEMORY_STORE, MEMORY_ADDITION, MEMORY_SUBTRACTION); }
+
+    /**
+     * Returns a list of binary operators. Binary operators
+     * are operators that requires values[0] and values[1]
+     * to perform an operation.
+     * @return list of basic panel binary operators
+     */
+    public List<String> getBasicPanelBinaryOperators()
+    { return List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS); }
 }

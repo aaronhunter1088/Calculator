@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import static Calculators.Calculator.mainFont;
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
+import static Types.CalculatorUtility.*;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;
@@ -370,7 +371,7 @@ public class ProgrammerPanel extends JPanel
         return switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
             case BASE_OCTAL -> calculator.convertValueToOctal(); // TODO: add similar separateBits method for octal, grouping by 3s
-            case BASE_DECIMAL -> calculator.addThousandsDelimiter(calculator.getValues()[calculator.getValuesPosition()]);
+            case BASE_DECIMAL -> addThousandsDelimiter(calculator.getValues()[calculator.getValuesPosition()], calculator.getThousandsDelimiter());
             case BASE_HEXADECIMAL -> calculator.getValues()[calculator.getValuesPosition()]; // TODO: may need to add separateBits for hexa numbers
         };
     }
@@ -409,7 +410,7 @@ public class ProgrammerPanel extends JPanel
         StringBuilder sb = new StringBuilder();
         representation = representation.replace(SPACE, EMPTY);
         boolean operatorSet = calculator.isOperatorActive();
-        if (operatorSet) representation = calculator.getValueWithoutAnyOperator(representation);
+        if (operatorSet) representation = getValueWithoutAnyOperator(representation);
         String respaced = switch (calculator.getCalculatorByte()) {
             case BYTE_BYTE -> {
                 sb.append(representation, 0, 4);
@@ -592,7 +593,7 @@ public class ProgrammerPanel extends JPanel
                         if (calculator.getValuesPosition() == 0)
                         {
                             calculator.getValues()[2] = EMPTY; // reset operator
-                            String textWithoutOperator = calculator.getValueWithoutAnyOperator(calculator.getTextPaneValue());
+                            String textWithoutOperator = getValueWithoutAnyOperator(calculator.getTextPaneValue());
                             calculator.appendTextToPane(textWithoutOperator);
                         }
                         else
@@ -601,7 +602,7 @@ public class ProgrammerPanel extends JPanel
                             calculator.appendTextToPane(substring);
                         }
                     }
-                    calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValues()[calculator.getValuesPosition()]));
+                    calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValues()[calculator.getValuesPosition()]));
                     calculator.setNegativeNumber(calculator.getValues()[calculator.getValuesPosition()].contains(SUBTRACTION));
                     calculator.writeHistory(buttonChoice, false);
                     confirm(calculator, LOGGER, "Pressed " + buttonChoice);
@@ -649,17 +650,17 @@ public class ProgrammerPanel extends JPanel
                 // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
                 calculator.performOperation();
                 calculator.setActiveOperator(buttonChoice);
-                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
                 calculator.writeContinuedHistory(MODULUS, calculator.getActiveOperator(), calculator.getValueAt(3), true);
-                if (calculator.isMaximumValue(calculator.getValueAt(3)) || calculator.isMinimumValue(calculator.getValueAt(3)))
+                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3)))
                 {
                     calculator.getValues()[2] = EMPTY;
-                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)));
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
                     //calculator.resetCalculatorOperations(false);
                 }
                 else
                 {
-                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)) + SPACE + buttonChoice, true);
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
                     //calculator.resetCalculatorOperations(true);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
@@ -791,28 +792,28 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("rotated left: {} or {} converted", valueRotatedLeft, rotatedAndConverted);
         valueRotatedLeft = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield valueRotatedLeft;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_OCTAL -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_DECIMAL -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_HEXADECIMAL -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
                 } else {
                     yield positionedValue;
@@ -870,28 +871,28 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("rotated right: {} or {} converted", valueRotatedRight, rotatedAndConverted);
         valueRotatedRight = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield valueRotatedRight;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_OCTAL -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_DECIMAL -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_HEXADECIMAL -> {
-                if (!calculator.isMaximumValue(rotatedAndConverted)) {
+                if (!isMaximumValue(rotatedAndConverted)) {
                     yield rotatedAndConverted;
                 } else {
                     yield positionedValue;
@@ -917,9 +918,9 @@ public class ProgrammerPanel extends JPanel
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(OR));
         }
-        else if (calculator.isMaximumValue())
+        else if (isMaximumValue(calculator.getValueAt()))
         { confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met"); }
-        else if (calculator.isMinimumValue())
+        else if (isMinimumValue(calculator.getValueAt()))
         { confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met"); }
         else
         {
@@ -994,7 +995,7 @@ public class ProgrammerPanel extends JPanel
         }
         String orResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
         calculator.setValuesPosition(3);
-        calculator.appendTextToPane(calculator.addThousandsDelimiter(orResult), true);
+        calculator.appendTextToPane(addThousandsDelimiter(orResult, calculator.getThousandsDelimiter()), true);
         calculator.writeContinuedHistory(OR, OR, orResult, false);
         logOperation(LOGGER, calculator);
         calculator.finishedObtainingFirstNumber(false);
@@ -1134,7 +1135,7 @@ public class ProgrammerPanel extends JPanel
             if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty())
             {
                 calculator.getValues()[2] = AND;
-                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt()) + SPACE + buttonChoice);
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(), calculator.getThousandsDelimiter()) + SPACE + buttonChoice);
                 calculator.writeHistory(buttonChoice, true);
                 calculator.setObtainingFirstNumber(false);
                 calculator.setNegativeNumber(false);
@@ -1148,15 +1149,15 @@ public class ProgrammerPanel extends JPanel
                 calculator.setActiveOperator(buttonChoice);
                 calculator.writeContinuedHistory(AND, calculator.getActiveOperator(), calculator.getValueAt(3), true);
 
-                if (calculator.isMaximumValue(calculator.getValueAt(3)) || calculator.isMinimumValue(calculator.getValueAt(3)))
+                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3)))
                 {
                     calculator.getValues()[2] = EMPTY;
-                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)));
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
                     calculator.finishedObtainingFirstNumber(false);
                 }
                 else
                 {
-                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)) + SPACE + buttonChoice, true);
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
                     calculator.finishedObtainingFirstNumber(true);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
@@ -1253,14 +1254,14 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("shifted left: {} or {} converted", valueShiftedLeft, shiftedAndConverted);
         valueShiftedLeft = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                if (!calculator.isMaximumValue(shiftedAndConverted)) {
+                if (!isMaximumValue(shiftedAndConverted)) {
                     yield valueShiftedLeft;
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_OCTAL -> {
-                if (!calculator.isMaximumValue(shiftedAndConverted)) {
+                if (!isMaximumValue(shiftedAndConverted)) {
                     yield shiftedAndConverted;
                 } else {
                     yield positionedValue;
@@ -1268,7 +1269,7 @@ public class ProgrammerPanel extends JPanel
             }
             case BASE_DECIMAL -> valueShiftedLeft;
             case BASE_HEXADECIMAL -> {
-                if (!calculator.isMaximumValue(shiftedAndConverted)) {
+                if (!isMaximumValue(shiftedAndConverted)) {
                     yield shiftedAndConverted;
                 } else {
                     yield positionedValue;
@@ -1314,14 +1315,14 @@ public class ProgrammerPanel extends JPanel
         String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue)/2);
         valueShiftedRight = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                if (!calculator.isMaximumValue(valueShiftedRight)) {
+                if (!isMaximumValue(valueShiftedRight)) {
                     yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, valueShiftedRight);
                 } else {
                     yield positionedValue;
                 }
             }
             case BASE_OCTAL -> {
-                if (!calculator.isMaximumValue(valueShiftedRight)) {
+                if (!isMaximumValue(valueShiftedRight)) {
                     yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, valueShiftedRight);
                 } else {
                     yield positionedValue;
@@ -1329,7 +1330,7 @@ public class ProgrammerPanel extends JPanel
             }
             case BASE_DECIMAL -> valueShiftedRight;
             case BASE_HEXADECIMAL -> {
-                if (!calculator.isMaximumValue(valueShiftedRight)) {
+                if (!isMaximumValue(valueShiftedRight)) {
                     yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, valueShiftedRight);
                 } else {
                     yield positionedValue;

@@ -4,7 +4,7 @@ package Types;
  * Texts
  * <p>
  * This class defines all texts used within the Calculator application.
- *
+ * <p>
  * Unicode values from <a href="https://www.compart.com/en/unicode/html">Unicodes</a>
  *
  * @author Michael Ball
@@ -50,6 +50,7 @@ public class Texts {
     public static final String SQUARED = "x²";
     public static final String YES = "YES";
     public static final String NO = "NO";
+    public static final String ARGUMENT_SEPARATOR = "|";
     // Menu Choices
     public static final String STYLE = "Style";
     public static final String VIEW = "View";

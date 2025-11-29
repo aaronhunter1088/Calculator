@@ -1,6 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
+import Types.CalculatorUtility;
 import Types.Texts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+import static Types.CalculatorUtility.*;
 import static Types.CalculatorView.*;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;
@@ -330,9 +332,9 @@ public class BasicPanel extends JPanel
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.performOperation();
-                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
-                calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
-                calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt(3)));
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
+                calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
+                calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
                 calculator.setActiveOperator(currentOperator);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
@@ -354,7 +356,7 @@ public class BasicPanel extends JPanel
         BigDecimal currentNumber = new BigDecimal(currentNum);
         BigDecimal oneHundred = new BigDecimal(ONE+ZERO+ZERO);
         result = currentNumber.divide(oneHundred, MathContext.DECIMAL128).toPlainString();
-        if (calculator.isFractionalNumber(result))
+        if (isFractionalNumber(result))
         {
             result = new BigDecimal(result).stripTrailingZeros().toPlainString();
         }
@@ -386,9 +388,9 @@ public class BasicPanel extends JPanel
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.performOperation();
-                calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
-                calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
-                calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt(3)));
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
+                calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
+                calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
                 calculator.setActiveOperator(currentOperator);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
@@ -408,7 +410,7 @@ public class BasicPanel extends JPanel
         BigDecimal currentNumber = new BigDecimal(currentNum);
         double number = currentNumber.doubleValue();
         String result = BigDecimal.valueOf(Math.pow(number, 2)).toPlainString();
-        if (calculator.isFractionalNumber(result))
+        if (isFractionalNumber(result))
         {
             result = new BigDecimal(result).stripTrailingZeros().toPlainString();
         }
@@ -442,9 +444,9 @@ public class BasicPanel extends JPanel
                 calculator.setActiveOperator(buttonChoice);
                 calculator.performOperation();
                 if (!calculator.textPaneContainsBadText())
-                    calculator.appendTextToPane(calculator.addThousandsDelimiter(calculator.getValueAt(3)), true);
-                calculator.setNegativeNumber(calculator.isNegativeNumber(calculator.getValueAt(3)));
-                calculator.getButtonDecimal().setEnabled(!calculator.isFractionalNumber(calculator.getValueAt()));
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
+                calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
+                calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt()));
                 calculator.writeHistory(buttonChoice, false);
                 calculator.setActiveOperator(currentOperator);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));

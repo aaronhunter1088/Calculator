@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
 import static Types.CalculatorConverterType.*;
+import static Types.CalculatorUtility.*;
 import static Types.CalculatorView.*;
 import static Types.DateOperation.*;
 import static Types.Texts.*;
@@ -517,10 +518,10 @@ class CalculatorTests extends TestParent
     void testConvertToPositive(String valueToTest, String expectedValue)
     {
         postConstructCalculator();
-        String actualValue = calculator.convertToPositive(valueToTest);
+        String actualValue = convertToPositive(valueToTest);
         assertEquals(expectedValue, actualValue, "Number is not positive");
-        assertTrue(calculator.isPositiveNumber(actualValue), "Number is not positive");
-        assertFalse(calculator.isNegativeNumber(actualValue), "Number is still negative");
+        assertTrue(isPositiveNumber(actualValue), "Number is not positive");
+        assertFalse(CalculatorUtility.isNegativeNumber(actualValue), "Number is still negative");
     }
 
     @ParameterizedTest
@@ -534,10 +535,10 @@ class CalculatorTests extends TestParent
     void testConvertToNegative(String valueToTest, String expectedValue)
     {
         postConstructCalculator();
-        String actualValue = calculator.convertToNegative(valueToTest);
+        String actualValue = convertToNegative(valueToTest);
         assertEquals(expectedValue, actualValue, "Number is not negative");
-        assertTrue(calculator.isNegativeNumber(actualValue), "Number is not negative");
-        assertFalse(calculator.isPositiveNumber(actualValue), "Number is still positive");
+        assertTrue(CalculatorUtility.isNegativeNumber(actualValue), "Number is not negative");
+        assertFalse(isPositiveNumber(actualValue), "Number is still positive");
     }
 
     @ParameterizedTest
@@ -552,7 +553,7 @@ class CalculatorTests extends TestParent
     void testIsFractionalNumber(String valueToTest, boolean expectedValue)
     {
         postConstructCalculator();
-        boolean actualValue = calculator.isFractionalNumber(valueToTest);
+        boolean actualValue = isFractionalNumber(valueToTest);
         assertEquals(expectedValue, actualValue, "Expected fractional check to be " + expectedValue);
     }
 
@@ -726,8 +727,8 @@ class CalculatorTests extends TestParent
     void testGetTheNumberToTheLeftAndRightOfTheDecimal(String numberToTest, String expectedLeftSide, String expectedRightSide)
     {
         postConstructCalculator();
-        assertEquals(expectedLeftSide, calculator.getNumberOnLeftSideOfDecimal(numberToTest));
-        assertEquals(expectedRightSide, calculator.getNumberOnRightSideOfDecimal(numberToTest));
+        assertEquals(expectedLeftSide, getNumberOnLeftSideOfDecimal(numberToTest));
+        assertEquals(expectedRightSide, getNumberOnRightSideOfDecimal(numberToTest));
     }
 
     @Test
@@ -763,7 +764,7 @@ class CalculatorTests extends TestParent
         when(actionEvent.getActionCommand())
                 .thenReturn(String.valueOf(input.charAt(input.length()-1)));
         calculator.valuesPosition = 0;
-        calculator.setNegativeNumber(calculator.isNegativeNumber(input));
+        calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(input));
         calculator.values[calculator.valuesPosition] = input.substring(0, input.length()-1);
         calculator.appendTextToPane(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
@@ -828,7 +829,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         calculator.values[0] = "-9999999";
-        assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
+        assertTrue(isMinimumValue(calculator.values[0]), "Expected maximum number to be met");
     }
 
     @Test
@@ -837,7 +838,7 @@ class CalculatorTests extends TestParent
         postConstructCalculator();
         calculator.valuesPosition = 1;
         calculator.values[1] = "-9999999"; //"0.0000001";
-        assertTrue(calculator.isMinimumValue(), "Expected maximum number to be met");
+        assertTrue(isMinimumValue(calculator.values[1]), "Expected maximum number to be met");
     }
 
     @Test
@@ -845,7 +846,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         calculator.values[0] = "-9999999"; //"0.0000001";
-        assertTrue(calculator.isMinimumValue(calculator.values[0]), "Expected maximum number to be met");
+        assertTrue(isMinimumValue(calculator.values[0]), "Expected maximum number to be met");
     }
 
     @Test
@@ -853,7 +854,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         calculator.values[0] = "9999999";
-        assertTrue(calculator.isMaximumValue(), "Expected maximum number to be met");
+        assertTrue(isMaximumValue(calculator.values[0]), "Expected maximum number to be met");
     }
 
     @Test
@@ -862,7 +863,7 @@ class CalculatorTests extends TestParent
         postConstructCalculator();
         calculator.valuesPosition = 1;
         calculator.values[calculator.valuesPosition] = "9999999";
-        assertTrue(calculator.isMaximumValue(), "Expected maximum number to be met");
+        assertTrue(isMaximumValue(calculator.values[calculator.valuesPosition]), "Expected maximum number to be met");
     }
 
     @Test
@@ -870,7 +871,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         calculator.values[0] = "9999999";
-        assertTrue(calculator.isMaximumValue(calculator.getValueAt(0)), "Expected maximum number to be met");
+        assertTrue(isMaximumValue(calculator.getValueAt(0)), "Expected maximum number to be met");
     }
 
 }

@@ -6,10 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import Calculators.Calculator;
-import Types.CalculatorBase;
-import Types.CalculatorByte;
-import Types.CalculatorView;
-import Types.DateOperation;
+import Types.*;
 import org.apache.logging.log4j.Logger;
 
 import static Types.CalculatorView.VIEW_BASIC;
@@ -80,7 +77,7 @@ public class LoggingUtil {
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
                     logger.debug("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("is dot enabled: {}", calculator.isDecimalPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (calculator.isNegativeNumber(calculator.getValueAt()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (CalculatorUtility.isNegativeNumber(calculator.getValueAt()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
                 else
                 {
@@ -101,7 +98,7 @@ public class LoggingUtil {
                     logger.info("valuesPosition: {}", calculator.getValuesPosition());
                     logger.info("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.info("is dot enabled: {}", calculator.isDecimalPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.info("is value: '{}' negative?: {}", calculator.getValueAt(), calculator.isNegativeNumber(calculator.getValueAt()) ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.info("is value: '{}' negative?: {}", calculator.getValueAt(), CalculatorUtility.isNegativeNumber(calculator.getValueAt()) ? YES.toLowerCase() : NO.toLowerCase());
                 }
             }
             case VIEW_SCIENTIFIC -> {
