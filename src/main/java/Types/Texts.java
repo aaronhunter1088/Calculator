@@ -34,8 +34,8 @@ public class Texts {
     public static final String MEMORY_CLEAR = "MC";
     public static final String MEMORY_RECALL = "MR";
     public static final String MEMORY_STORE = "MS";
-    public static final String MEMORY_ADDITION = "M+";
-    public static final String MEMORY_SUBTRACTION = "M-";
+    public static final String MEMORY_ADD = "M+";
+    public static final String MEMORY_SUBTRACT = "M-";
     public static final String HISTORY_CLOSED = "H▼";
     public static final String HISTORY_OPEN = "H▲";
     public static final String HISTORY = "History";
@@ -51,6 +51,7 @@ public class Texts {
     public static final String YES = "YES";
     public static final String NO = "NO";
     public static final String ARGUMENT_SEPARATOR = "|";
+    public static final String ARGUMENT_REGEX = "\\|";
     // Menu Choices
     public static final String STYLE = "Style";
     public static final String VIEW = "View";

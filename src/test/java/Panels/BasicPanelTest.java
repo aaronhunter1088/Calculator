@@ -12,11 +12,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
@@ -35,17 +33,12 @@ import static org.mockito.Mockito.*;
  * @author Michael Ball
  * @version 4.0
  */
-//@ExtendWith(MockitoExtension.class)
 class BasicPanelTest extends TestParent
 {
     static { System.setProperty("appName", BasicPanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(BasicPanelTest.class.getSimpleName());
 
     BasicPanel basicPanel;
-    //private final double delta = 0.000001d;
-
-    @Mock
-    public ActionEvent actionEvent;
 
     @BeforeAll
     static void beforeAll()
@@ -91,141 +84,6 @@ class BasicPanelTest extends TestParent
         { LOGGER.error("Error closing mocks: {}", e.getMessage()); }
     }
 
-    /*
-    Used by all tests
-     */
-    private String performTest(ArgumentsForTests arguments, String previousHistory)
-    {
-        // Extract arguments, place in variables
-        String firstNumber = removeThousandsDelimiter(arguments.getFirstNumber(), calculator.getThousandsDelimiter());
-        String firstUnaryOperator = arguments.getFirstUnaryOperator();
-        String firstUnaryTextPaneResult = arguments.getFirstUnaryResult();
-        String firstUnaryValuesResult = removeThousandsDelimiter(firstUnaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (firstUnaryTextPaneResult.split("\\|").length > 1) // "0|INFINITY or 35|35 +"
-        {
-            firstUnaryValuesResult = removeThousandsDelimiter(firstUnaryTextPaneResult.split("\\|")[0], calculator.getThousandsDelimiter());
-            firstUnaryTextPaneResult = firstUnaryTextPaneResult.split("\\|")[1];
-        }
-        String firstBinaryOperator = arguments.getFirstBinaryOperator();
-        String firstBinaryTextPaneResult = arguments.getFirstBinaryResult();
-        String firstBinaryValuesResult = removeThousandsDelimiter(firstBinaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (firstBinaryTextPaneResult.split("\\|").length > 1)
-        {
-            firstBinaryValuesResult = removeThousandsDelimiter(firstBinaryTextPaneResult.split("\\|")[0], calculator.getThousandsDelimiter());
-            firstBinaryTextPaneResult = firstBinaryTextPaneResult.split("\\|")[1];
-        }
-        String secondNumber = removeThousandsDelimiter(arguments.getSecondNumber(), calculator.getThousandsDelimiter());
-        String secondUnaryOperator = arguments.getSecondUnaryOperator();
-        String secondUnaryTextPaneResult = arguments.getSecondUnaryResult();
-        String secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (secondUnaryTextPaneResult.split("\\|").length > 1)
-        {
-            secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult.split("\\|")[0], calculator.getThousandsDelimiter());
-            secondUnaryTextPaneResult = secondUnaryTextPaneResult.split("\\|")[1];
-        }
-        String secondBinaryOperator = arguments.getSecondBinaryOperator();
-        String secondBinaryTextPaneResult = arguments.getSecondBinaryResult();
-        String secondBinaryValuesResult = removeThousandsDelimiter(secondBinaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (secondBinaryTextPaneResult.split("\\|").length > 1)
-        {
-            secondBinaryValuesResult = removeThousandsDelimiter(secondBinaryTextPaneResult.split("\\|")[0], calculator.getThousandsDelimiter());
-            secondBinaryTextPaneResult = secondBinaryTextPaneResult.split("\\|")[1];
-        }
-
-        // Start test
-        if (!firstNumber.isEmpty() && !calculator.getBadText(firstNumber).equals(firstNumber))
-        {
-            performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-            previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent("firstNumber", actionEvent, LOGGER);
-
-        if (!firstUnaryOperator.isEmpty())
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, firstUnaryOperator);
-            assertEquals(firstUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
-            assertEquals(firstUnaryValuesResult, calculator.getValues()[0], "Values[0] is not as expected");
-            previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent("firstUnaryOperator", actionEvent, LOGGER);
-
-        if (!firstBinaryOperator.isEmpty())
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, firstBinaryOperator);
-            assertEquals(firstBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
-            assertEquals(firstBinaryValuesResult, calculator.getValues()[0], "Values[0] is not as expected");
-            previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent("firstBinaryOperator", actionEvent, LOGGER);
-
-        if (!secondNumber.isEmpty())
-        {
-            performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
-            previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent("secondNumber", actionEvent, LOGGER);
-
-        if (!secondUnaryOperator.isEmpty())
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, secondUnaryOperator);
-            assertEquals(secondUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
-            assertEquals(secondUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "Values[vP] is not as expected");
-            previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent("secondUnaryOperator", actionEvent, LOGGER);
-
-        if (!secondBinaryOperator.isEmpty())
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, secondBinaryOperator);
-            assertEquals(secondBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
-            assertEquals(secondBinaryValuesResult, calculator.getValues()[1], "Values[1] is not as expected");
-            previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent("secondBinaryOperator", actionEvent, LOGGER);
-
-        return previousHistory;
-    }
-
-    /**
-     * Tests that the history is as expected after
-     * pushing a button.
-     * Method writeHistory calls writeHistoryWithMessage.
-     *
-     * @param arguments for the test
-     * @param previousHistory the previous history before the button was pushed
-     */
-    private void assertHistory(ArgumentsForTests arguments, String previousHistory)
-    {
-        String firstNumber = arguments.getFirstNumber();
-        String firstUnaryTextPaneResult = arguments.getFirstUnaryResult();
-        String firstUnaryValuesResult = firstUnaryTextPaneResult;
-        if (firstUnaryTextPaneResult.split("\\|").length > 1) // "0|INFINITY or 35|35 +"
-        {
-            firstUnaryValuesResult = firstUnaryTextPaneResult.split("\\|")[0];
-            firstUnaryTextPaneResult = firstUnaryTextPaneResult.split("\\|")[1];
-        }
-        String buttonText = LEFT_PARENTHESIS + arguments.getOperatorUnderTest() + RIGHT_PARENTHESIS + SPACE;
-
-        switch (arguments.getOperatorUnderTest())
-        {
-            case MEMORY_STORE -> {
-                assertEquals(previousHistory, calculator.getHistoryTextPane().getText(),
-                        "History textPane should show memory");
-            }
-            case DELETE -> {
-                // calls writeHistory
-                assertEquals(previousHistory, calculator.getHistoryTextPane().getText(),
-                        "History textPane should show the button pressed");
-            }
-            default -> {
-                // TODO: Fix
-                assertEquals(previousHistory + NEWLINE + buttonText,
-                        calculator.getHistoryTextPane().getText(),
-                        "History textPane should show the button pressed");
-            }
-        }
-    }
-
     /* Valid MEMORY STORE */
     @ParameterizedTest
     @DisplayName("Test Valid MemoryStore Button Action")
@@ -236,26 +94,18 @@ class BasicPanelTest extends TestParent
 
         setupWhenThen(actionEvent, arguments);
 
-        String previousHistory = calculator.getHistoryTextPane().getText();
-        previousHistory = performTest(arguments, previousHistory);
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        assertHistory(arguments, previousHistory);
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> validMemoryStoreButtonActionProvider()
     {
-        /* Input, Optional Operator, (MemoryStore), Result of MemoryStore
-        String firstNumber, (EMPTY or 1 or more digits, thousands delimiter will be removed)
-        String optionalOperator, (EMPTY or ANY Unary operator)
-        (MS button pressed, not pass in as it is understood)
-        String resultStoredInMemory, (expected result in memories[0] after MS pressed)
-         */
+        /*
+        * case 1: store normal number is successful
+        */
         return Stream.of(
-//                Arguments.of("1,234", EMPTY, "1,234"),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE)
-                        .firstNumber("1,234")
-                        .firstUnaryOperator(MEMORY_STORE)
-                        .firstUnaryResult("1,234")
-                        .build())
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("1,234").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("1,234").build())
         );
     }
 
@@ -277,51 +127,28 @@ class BasicPanelTest extends TestParent
     @ParameterizedTest
     @DisplayName("Test Invalid MemoryStore Button Action")
     @MethodSource("invalidMemoryStoreButtonActionProvider")
-    void testInvalidMemoryStoreButtonAction(ArgumentsAccessor arguments)
+    void testInvalidMemoryStoreButtonAction(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstNumber = removeThousandsDelimiter(arguments.getString(0), calculator.getThousandsDelimiter());
-        int firstNumberLength = firstNumber != null ? firstNumber.length() : 0;
-        String firstOperator = arguments.getString(1);
-        String firstExpectedResult = removeThousandsDelimiter(arguments.getString(2), calculator.getThousandsDelimiter());
 
-        setupWhenThenFirstOperatorThenOperatorUnderTest(actionEvent, MEMORY_STORE, firstNumber, firstOperator);
+        setupWhenThen(actionEvent, arguments);
 
-        if (firstNumberLength != 0) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-        if (firstOperator != null && !firstOperator.isEmpty())
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
-            assertEquals(addThousandsDelimiter(firstNumber, calculator.getThousandsDelimiter()) + SPACE + firstOperator,
-                    calculator.getTextPaneValue(),
-                    "Expecting textPane to show: " + firstNumber + SPACE + firstOperator);
-        }
-        String previousHistory = calculator.getHistoryTextPane().getText();
-        calculator.performMemoryStoreAction(actionEvent);
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        String actualMemoryAtPosition = calculator.getMemoryValues()[calculator.getLowestMemoryPosition()];
-        if (!actualMemoryAtPosition.isEmpty())
-        {
-            assertEquals(addThousandsDelimiter(firstNumber , calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "TextPane value is not as expected");
-            assertEquals(firstNumber, calculator.getValues()[0], "values[0] is not as expected");
-            assertEquals(firstExpectedResult, actualMemoryAtPosition, "Memory value is not as expected");
-            assertEquals(previousHistory+NEWLINE+"(MS) "+savedMemory(actualMemoryAtPosition,calculator.getLowestMemoryPosition()),
-                    calculator.getHistoryTextPane().getText(),
-                    "History textPane should show memory");
-        }
-
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> invalidMemoryStoreButtonActionProvider()
     {
-        /* Input, Operator, MemoryStore, Result of MemoryStore
-        String firstNumber, (EMPTY or 1 or more digits, thousands delimiter will be removed)
-        String possibleOperator, (EMPTY or ANY Basic operator)
-        (MS button pressed, not pass in as it is understood)
-        String resultStoredInMemory, (expected result in memories[0] after MS pressed)
-         */
+        /*
+        * case 1: cannot store value when operator is active
+        * case 2: cannot store when textPane is empty
+        * case 3: cannot store INFINITY, or badText
+        */
         return Stream.of(
-                Arguments.of("10", ADDITION, EMPTY),
-                Arguments.of(EMPTY, EMPTY, ENTER_A_NUMBER),
-                Arguments.of(INFINITY, EMPTY, EMPTY)
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("10").firstBinaryOperator(ADDITION).firstBinaryResult("10|10 "+ADDITION).build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber(INFINITY).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+INFINITY).build())
         );
     }
 
@@ -381,98 +208,173 @@ class BasicPanelTest extends TestParent
 
     /* Valid MEMORY ADD */
     @ParameterizedTest
-    @DisplayName("Test Valid MemoryAddition Button Action")
-    @MethodSource("memoryAddButtonCases")
-    void testMemoryAdditionButtonAction(ArgumentsAccessor arguments)
+    @DisplayName("Test Valid MemoryAdd Button Action")
+    @MethodSource("validMemoryAddButtonCases")
+    void testValidMemoryAdditionButtonAction(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String initialMemory = arguments.getString(0);
-        String numberToAdd = arguments.getString(1);
 
-        boolean numberToAddEndsWithOperator = calculator.getBasicPanelOperators()
-                .stream().anyMatch(op -> numberToAdd.endsWith(op));
-        String operator = initialMemory != null && numberToAddEndsWithOperator ?
-                String.valueOf(numberToAdd.charAt(initialMemory.length()-1)) : EMPTY;
-        String expectedResult = arguments.getString(2);
-        when(actionEvent.getActionCommand())
-                .thenReturn(MEMORY_ADDITION);
-        calculator.getMemoryValues()[0] = initialMemory;
-        calculator.appendTextToPane(numberToAdd, true);
-        if (!operator.isEmpty()) {
-            calculator.setActiveOperator(operator);
-            calculator.setValuesPosition(1);
-        }
-        calculator.setMemoryPosition(1);
-        calculator.performMemoryAdditionAction(actionEvent);
-        String actualMemoryAtPosition = calculator.getMemoryValues()[0];
-        assertEquals(expectedResult, actualMemoryAtPosition, "Memory value is not as expected");
-        assertSame(1, calculator.getMemoryPosition(), "Expected memoryPosition to be 0");
-        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
     }
-    private static Stream<Arguments> memoryAddButtonCases()
+    private static Stream<Arguments> validMemoryAddButtonCases()
     {
-        /* Initial Memory, Number to Add, (optional operator at end), Resulting Memory
-        Initial Memory,
-        Number to Add, (optional operator at end)
-        Resulting Memory
+        /*
+        * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
+        * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
+        * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
+        * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
+        * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
          */
         return Stream.of(
-                Arguments.of("10", "5", "15"),
-                Arguments.of("0", "0", "0"),
-                Arguments.of("-5", "10", "5"),
-                Arguments.of("100.5", "99.5", "200"),
-                Arguments.of("-12.25", "1", "-11.25"),
-                Arguments.of("10", ENTER_A_NUMBER, "10"), // invalid case
-                Arguments.of(EMPTY, ENTER_A_NUMBER, EMPTY), // invalid case
-                Arguments.of("10", EMPTY, "10"), // invalid case
-                Arguments.of("10", "5 +", "10") // invalid case
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("15|5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("0").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("0")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("10").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("5|10")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                         .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
+                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
+                        .secondNumber("99.5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("200|99.5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("1").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("-11.25|1")
+                        .build())
+        );
+    }
+
+    /* Invalid MEMORY ADD */
+    @ParameterizedTest
+    @DisplayName("Test Invalid MemoryAdd Button Action")
+    @MethodSource("invalidMemoryAddButtonCases")
+    void testInvalidMemoryAdditionButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> invalidMemoryAddButtonCases()
+    {
+        /*
+        * case 1: cannot add to memory when textPane contains badText
+        * case 2: cannot add to memory if memory is present but textPane is empty
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
+                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 "+ADDITION)
+                        .secondBinaryOperator(MEMORY_ADD).secondBinaryResult("5|5 +")
+                        .build())
         );
     }
 
     /* Valid MEMORY SUBTRACT */
     @ParameterizedTest
-    @DisplayName("Test Valid MemorySubtraction Button Action")
-    @MethodSource("memorySubtractButtonCases")
-    void testMemorySubtractionButtonAction(ArgumentsAccessor arguments)
+    @DisplayName("Test Valid MemorySubtract Button Action")
+    @MethodSource("validMemorySubtractButtonCases")
+    void testMemorySubtractButtonAction(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String initialMemory = arguments.getString(0);
-        String numberToSubtract = arguments.getString(1);
 
-        boolean numberToSubtractEndsWithOperator = calculator.getBasicPanelOperators()
-                .stream().anyMatch(op -> numberToSubtract.endsWith(op));
-        String operator = initialMemory != null && numberToSubtractEndsWithOperator ?
-                String.valueOf(numberToSubtract.charAt(initialMemory.length()-1)) : EMPTY;
-        String expectedResult = arguments.getString(2);
-        when(actionEvent.getActionCommand())
-                .thenReturn(MEMORY_SUBTRACTION);
-        calculator.getMemoryValues()[0] = initialMemory;
-        calculator.appendTextToPane(numberToSubtract, true);
-        if (!operator.isEmpty()) {
-            calculator.setActiveOperator(operator);
-            calculator.setValuesPosition(1);
-        }
-        calculator.setMemoryPosition(1);
-        calculator.performMemorySubtractionAction(actionEvent);
-        String actualMemoryAtPosition = calculator.getMemoryValues()[0];
-        assertEquals(expectedResult, actualMemoryAtPosition, "Memory value is not as expected");
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
     }
-    private static Stream<Arguments> memorySubtractButtonCases()
+    private static Stream<Arguments> validMemorySubtractButtonCases()
     {
-        /* Initial Memory, Number to Subtract, (optional operator at end), Resulting Memory
-        Initial Memory,
-        Number to Subtract, (optional operator at end)
-        Resulting Memory
+        /*
+         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
+         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
+         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
+         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
+         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
          */
         return Stream.of(
-                Arguments.of("10", "5", "5"),
-                Arguments.of("0", "0", "0"),
-                Arguments.of("-5", "10", "-15"),
-                Arguments.of("100.5", "99.5", "1"),
-                Arguments.of("-12.25", "1", "-13.25"),
-                Arguments.of("10", ENTER_A_NUMBER, "10"), // invalid case
-                Arguments.of("10", EMPTY, "10"), // invalid case
-                Arguments.of("10", "5 +", "10") // invalid case
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("0").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("0")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("10").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-15|10")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
+                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
+                        .secondNumber("99.5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("1|99.5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("1").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-13.25|1")
+                        .build())
+        );
+    }
+
+    /* Invalid MEMORY SUBTRACT */
+    @ParameterizedTest
+    @DisplayName("Test Invalid MemorySubtract Button Action")
+    @MethodSource("invalidMemorySubtractButtonCases")
+    void testInvalidMemorySubtractButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> invalidMemorySubtractButtonCases()
+    {
+        /*
+         * case 1: cannot subtract from memory when textPane contains badText
+         * case 2: cannot subtract from memory if memory is present but textPane is empty
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
+                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 "+ADDITION)
+                        .secondBinaryOperator(MEMORY_SUBTRACT).secondBinaryResult("5|5 +")
+                        .build())
         );
     }
 
@@ -480,52 +382,46 @@ class BasicPanelTest extends TestParent
     @ParameterizedTest
     @DisplayName("Test Valid Percent Button Action")
     @MethodSource("validPercentButtonCases")
-    void testValidPercentButtonCases(ArgumentsAccessor arguments)
+    void testValidPercentButtonCases(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstNumber = arguments.getString(0); // firstNumber
-        String firstExpectedResult = arguments.getString(1); // firstExpectedResult
-        String firstOperator = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
-        String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
-        String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
-        String secondOperator = arguments.size() >= 5 ? arguments.getString(5) : EMPTY; // secondOperator
 
-        setupWhenThen(actionEvent, PERCENT, firstNumber, firstOperator, secondNumber, secondOperator);
+        setupWhenThen(actionEvent, arguments);
 
-        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-        basicPanel.performPercentButtonAction(actionEvent);
-        assertEquals(firstExpectedResult, removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "TextPane value not as expected");
-        if (!calculator.textPaneContainsBadText()) assertEquals(firstExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
-        assertEquals(!calculator.isDecimalPressed(), firstExpectedResult.contains(DECIMAL), "Decimal state not as expected");
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        if (arguments.size() > 2) {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
-            if (!secondNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
-            basicPanel.performPercentButtonAction(actionEvent);
-            assertEquals(secondExpectedResult, removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "Second textPane value not as expected");
-            if (!calculator.textPaneContainsBadText()) assertEquals(secondExpectedResult, calculator.getValueAt(1), "values[1] returned unexpected result");
-
-            if (arguments.size() > 4) {
-                performNextOperatorAction(calculator, actionEvent, LOGGER, secondOperator);
-                assertEquals(arguments.getString(5), calculator.getValueAt(2), "values[2] not equal to " + arguments.getString(5));
-            }
-        }
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> validPercentButtonCases()
     {
         /*
-        String firstNumber, (PERCENT button pressed) String firstResult,
-        String firstOperator, String secondNumber, (PERCENT button pressed) String secondResult,
-        String secondOperator
+        * case 1: Input 0, press %, expect 0
+        * case 2: Input 5, press %, expect 0.05
+        * case 3: Input -5, press %, expect -0.05
+        * case 4: Input 0.25, press %, expect 0.0025
+        * case 5: Input 4, press %, expect 0.04, press +, expect 0.04 +, Input 2, expect 2, press %, expect 0.02, press -, expect 0.06
+        * case 6: Input 10, press %, expect 0.1, press +, expect 0.1 +, Input 20, expect 20, press %, expect 0.2, press -, expect 0.3
          */
         return Stream.of(
-                Arguments.of("0", "0"),
-                Arguments.of("5", "0.05"),
-                Arguments.of("-5", "-0.05"),
-                Arguments.of("0.25", "0.0025"),
-
-                Arguments.of("4", "0.04", ADDITION, "2", "0.02", SUBTRACTION),
-                Arguments.of("10", "0.1", ADDITION, "20", "0.2", SUBTRACTION)
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber("0").firstUnaryOperator(PERCENT).firstUnaryResult("0").build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber("5").firstUnaryOperator(PERCENT).firstUnaryResult("0.05").build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                .firstNumber("-5").firstUnaryOperator(PERCENT).firstUnaryResult("-0.05").build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber("0.25").firstUnaryOperator(PERCENT).firstUnaryResult("0.0025").build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                .firstNumber("4").firstUnaryOperator(PERCENT).firstUnaryResult("0.04")
+                        .firstBinaryOperator(ADDITION).firstBinaryResult("0.04|0.04 +")
+                        .secondNumber("2").secondUnaryOperator(PERCENT).secondUnaryResult("0.02")
+                        .secondBinaryOperator(SUBTRACTION).secondBinaryResult("0.06|0.06 -").build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber("10").firstUnaryOperator(PERCENT).firstUnaryResult("0.1")
+                        .firstBinaryOperator(ADDITION).firstBinaryResult("0.1|0.1 +")
+                        .secondNumber("20").secondUnaryOperator(PERCENT).secondUnaryResult("0.2")
+                        .secondBinaryOperator(SUBTRACTION).secondBinaryResult("0.3|0.3 -").build())
         );
     }
 
@@ -533,51 +429,35 @@ class BasicPanelTest extends TestParent
     @ParameterizedTest
     @DisplayName("Test Invalid Percent Button Action")
     @MethodSource("invalidPercentButtonCases")
-    void testInvalidPercentButtonCases(ArgumentsAccessor arguments)
+    void testInvalidPercentButtonCases(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstNumber = arguments.getString(0); // firstNumber
-        String firstExpectedResult = arguments.getString(1); // firstExpectedResult
-        String firstOperator = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
-        String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
-        String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
 
-        setupWhenThen(actionEvent, PERCENT, firstNumber, firstOperator, secondNumber, EMPTY);
+        setupWhenThen(actionEvent, arguments);
 
-        if (!calculator.badTexts().contains(firstNumber))
-        {
-            performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-        }
-        else
-        {
-            calculator.appendTextToPane(firstNumber, true);
-        }
-        basicPanel.performPercentButtonAction(actionEvent);
-        assertEquals(firstExpectedResult, removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "TextPane value not as expected");
-        if (!calculator.textPaneContainsBadText()) assertEquals(firstExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
-        assertEquals(calculator.isDecimalPressed(), firstExpectedResult.contains(DECIMAL), "Decimal state not as expected");
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        if (arguments.size() > 2) {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
-            if (!secondNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
-            basicPanel.performPercentButtonAction(actionEvent);
-            assertEquals(secondExpectedResult, removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "Second textPane value not as expected");
-            if (!secondNumber.isEmpty()) assertEquals(secondExpectedResult, calculator.getValueAt(1), "values[1] returned unexpected result");
-            assertEquals(firstOperator, calculator.getValueAt(2), "values[2] not equal to " + firstOperator);
-        }
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> invalidPercentButtonCases()
     {
         /*
-        String firstNumber, (PERCENT button pressed) String firstResult,
-        String firstOperator, String secondNumber, (PERCENT button pressed) String secondResult,
-        String secondOperator
+         * case 1: cannot press % when textPane is empty
+         * case 2: cannot press % when textPane is badText (INFINITY)
+         * case 3: cannot press % when textPane is badText (ENTER_A_NUMBER)
+         * case 4: cannot press % when operator is active
          */
         return Stream.of(
-                Arguments.of(EMPTY, ENTER_A_NUMBER),
-                Arguments.of(INFINITY, INFINITY),
-                Arguments.of(ENTER_A_NUMBER, ENTER_A_NUMBER),
-                Arguments.of("5", "0.05", ADDITION, EMPTY, "0.05 +")
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber(EMPTY).firstUnaryOperator(PERCENT).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber(INFINITY).firstUnaryOperator(PERCENT).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+INFINITY).build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(PERCENT).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(PERCENT)
+                        .firstNumber("0.05").firstUnaryOperator(ADDITION).firstUnaryResult("0.05|0.05 +")
+                        .firstBinaryOperator(PERCENT).firstBinaryResult("0.05|0.05 +").build())
         );
     }
 
@@ -599,38 +479,16 @@ class BasicPanelTest extends TestParent
     @ParameterizedTest()
     @DisplayName("Test Valid Fraction Button Action")
     @MethodSource("validFractionCases")
-    void testValidFractionButtonCases(ArgumentsAccessor arguments)
+    void testValidFractionButtonCases(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstNumber = arguments.getString(0); // firstNumber
-        String firstExpectedResult = arguments.getString(1); // firstExpectedResult
-        String firstOperator = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
-        String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
-        String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
-        String secondOperator = arguments.size() >= 5 ? arguments.getString(5) : EMPTY; // secondOperator
 
-        setupWhenThen(actionEvent, FRACTION, firstNumber, firstOperator, secondNumber, secondOperator);
+        setupWhenThen(actionEvent, arguments);
 
-        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-        basicPanel.performFractionButtonAction(actionEvent);
-        assertEquals(firstExpectedResult, removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "TextPane value not as expected");
-        if (!calculator.textPaneContainsBadText()) assertEquals(firstExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
-        assertEquals(!calculator.isDecimalPressed(), firstExpectedResult.contains(DECIMAL), "Decimal state not as expected");
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        if (arguments.size() > 2)
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
-            if (!secondNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
-            basicPanel.performFractionButtonAction(actionEvent);
-            assertEquals(arguments.getString(4), removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "TextPane value not as expected");
-            if (!calculator.textPaneContainsBadText()) assertEquals(secondExpectedResult, calculator.getValueAt(1), "values[1] returned unexpected result");
-
-            if (arguments.size() > 4)
-            {
-                performNextOperatorAction(calculator, actionEvent, LOGGER, secondOperator);
-                assertEquals(secondOperator, calculator.getValueAt(2), "values[2] not equal to " + arguments.getString(5));
-            }
-        }
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> validFractionCases()
     {
@@ -640,60 +498,54 @@ class BasicPanelTest extends TestParent
         String secondOperator
          */
         return Stream.of(
-                Arguments.of("0", INFINITY),
-                Arguments.of("5", "0.2"),
-                Arguments.of("0.25", "4"),
-
-                Arguments.of("4", "0.25", ADDITION, "2", "0.5", SUBTRACTION)
+                Arguments.of(ArgumentsForTests.builder(FRACTION)
+                        .firstNumber("0").firstUnaryOperator(FRACTION).firstUnaryResult("0|"+INFINITY).build()),
+                Arguments.of(ArgumentsForTests.builder(FRACTION)
+                        .firstNumber("5").firstUnaryOperator(FRACTION).firstUnaryResult("0.2").build()),
+                Arguments.of(ArgumentsForTests.builder(FRACTION)
+                        .firstNumber("0.25").firstUnaryOperator(FRACTION).firstUnaryResult("4").build()),
+                Arguments.of(ArgumentsForTests.builder(FRACTION)
+                        .firstNumber("4").firstUnaryOperator(FRACTION).firstUnaryResult("0.25")
+                        .firstBinaryOperator(ADDITION).firstBinaryResult("0.25|0.25 +")
+                        .secondNumber("2").secondUnaryOperator(FRACTION).secondUnaryResult("0.5")
+                        .secondBinaryOperator(SUBTRACTION).secondBinaryResult("0.75|0.75 -").build())
         );
+//
+//                Arguments.of("0", INFINITY),
+//                Arguments.of("5", "0.2"),
+//                Arguments.of("0.25", "4"),
+//                Arguments.of("4", "0.25", ADDITION, "2", "0.5", SUBTRACTION)
+//        );
     }
 
     /* Invalid FRACTION */
     @ParameterizedTest()
     @DisplayName("Test Invalid Fraction Button Action")
     @MethodSource("getInvalidFractionCases")
-    void testInvalidFractionButtonCases(ArgumentsAccessor arguments)
+    void testInvalidFractionButtonCases(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstInput = arguments.getString(0); // firstInput
-        String textPaneExpectedResult = arguments.getString(1); // firstExpectedResult
-        String valuesExpectedResult = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // first Op
-        //String secondNumber = arguments.size() > 2 ? arguments.getString(3) : EMPTY; // secondNumber
-        //String secondExpectedResult = arguments.size() > 4 ? arguments.getString(4) : EMPTY; // secondExpectedResult
-        //String secondOperator = arguments.size() >= 5 ? arguments.getString(5) : EMPTY; // secondOperator
 
-        when(actionEvent.getActionCommand())
-                .thenReturn(firstInput) // any button
-                .thenReturn(FRACTION);
-        calculator.getMemoryValues()[0] = FIVE; // set for memory button scenarios, not from arguments
-        if (calculator.getBadText(EMPTY).equals(firstInput))
-        {
-            calculator.appendTextToPane(firstInput);
-        }
+        setupWhenThen(actionEvent, arguments);
 
-        if (firstInput != null) performNextOperatorAction(calculator, actionEvent, LOGGER, firstInput); // any button or no button
-        basicPanel.performFractionButtonAction(actionEvent); // press fraction
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        assertEquals(textPaneExpectedResult, removeThousandsDelimiter(calculator.getTextPaneValue(), calculator.getThousandsDelimiter()), "TextPane value not as expected");
-        assertEquals(valuesExpectedResult, calculator.getValueAt(0), "values[0] returned unexpected result");
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> getInvalidFractionCases()
     {
         /*
-        buttonChoice, textPaneResult, values[0]Result
+         * case 1: cannot press FRACTION when textPane is empty
+         * case 2: cannot press FRACTION when textPane is badText (INFINITY)
+         * case 3: cannot press FRACTION when textPane is badText (ENTER_A_NUMBER)
+         * case 4: cannot press FRACTION when operator is active
          */
         return Stream.of(
-                Arguments.of(null, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(ENTER_A_NUMBER, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(MEMORY_STORE, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(MEMORY_RECALL, "0.2", "0.2"),
-                Arguments.of(MEMORY_CLEAR, INFINITY, INFINITY), // look into
-                Arguments.of(PERCENT, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(SQUARE_ROOT, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(SQUARED, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(FRACTION, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(CLEAR_ENTRY, ENTER_A_NUMBER, EMPTY),
-                Arguments.of(CLEAR, INFINITY, INFINITY)
+                Arguments.of(ArgumentsForTests.builder(FRACTION).firstUnaryOperator(FRACTION).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber(ENTER_A_NUMBER).firstUnaryOperator(FRACTION).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber(INFINITY).firstUnaryOperator(FRACTION).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+INFINITY).build()),
+                Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber("5").firstUnaryOperator(ADDITION).firstUnaryResult("5|5 "+ADDITION).firstBinaryOperator(FRACTION).firstBinaryResult("5|5 "+ADDITION).build())
         );
     }
 
@@ -701,69 +553,32 @@ class BasicPanelTest extends TestParent
     @ParameterizedTest
     @DisplayName("Test Valid ClearEntry Button Action")
     @MethodSource("validClearEntryCases")
-    void testValidClearEntryButtonCases(ArgumentsAccessor arguments)
+    void testValidClearEntryButtonCases(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstNumber = arguments.getString(0); // firstNumber
-        String firstOperator = arguments.size() > 1 ? arguments.getString(1) : EMPTY; // first Op
-        String secondNumber = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // secondNumber
-        String secondOperator = arguments.size() > 3 ? arguments.getString(3) : EMPTY; // secondOperator
 
-        setupWhenThen(actionEvent, CLEAR_ENTRY, firstNumber, firstOperator, secondNumber, secondOperator);
+        setupWhenThen(actionEvent, arguments);
 
-        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-        if (!firstOperator.isEmpty()) performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
-        calculator.performClearEntryButtonAction(actionEvent);
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        assertTrue(calculator.getTextPaneValue().isEmpty(), "textPane was not cleared");
-        if (calculator.getValuesPosition() == 0)
-        {
-            assertEquals(EMPTY, calculator.getValueAt(0), "Expecting values[0] to be empty");
-        }
-        else
-        {
-            assertEquals(firstNumber, calculator.getValueAt(0), "Expecting values[0] to be " + firstNumber);
-            assertEquals(EMPTY, calculator.getValueAt(1), "Expecting values[1] to be empty");
-        }
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting values[2] to be EMPTY");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
-        assertFalse(calculator.isDecimalPressed(), "Expected decimal button to be enabled");
-        if (!firstNumber.isEmpty()) assertFalse(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be false");
-        else assertTrue(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be true");
-        if (!secondOperator.isEmpty())
-        {
-            performNextOperatorAction(calculator, actionEvent, LOGGER, secondOperator);
-        }
-        if (secondOperator.equals(CLEAR_ENTRY))
-        {
-            assertEquals(EMPTY, calculator.getValueAt(0), "Expecting values[0] to be EMPTY");
-            assertEquals(EMPTY, calculator.getValueAt(1), "Expecting values[1] to be EMPTY");
-            assertEquals(EMPTY, calculator.getValueAt(2), "Expecting values[2] to be EMPTY");
-            assertEquals(EMPTY, calculator.getValueAt(3), "Expecting values[3] to be EMPTY");
-            assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
-            assertFalse(calculator.isDecimalPressed(), "Expected decimalPressed to be false");
-            assertFalse(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be false");
-        }
-        else
-        {
-            LOGGER.debug("{} completed, no further assertions. Add other assertions as needed", secondOperator);
-        }
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> validClearEntryCases()
     {
         /*
-        String firstNumber, (EMPTY or some value)
-        String firstOperator, (EMPTY or any BINARY operator (not any UNARY operator))
-        (CLEAR_ENTRY button pressed, not passed in as it is understood)
-        String secondNumber, (EMPTY or some value)
-        String secondOperator (EMPTY or ANY operator)
+         * case 1: CLEAR ENTRY when textPane is empty -> remains empty
+         * case 2: CLEAR ENTRY when textPane has a number -> becomes empty
+         * case 3: CLEAR ENTRY when first number and operator are present -> clears textPane
+         * case 4: CLEAR ENTRY when first number, operator, and second number are present
+         * case 5: CLEAR ENTRY when first number, operator, second number, and decimal are present
          */
         return Stream.of(
-                Arguments.of(EMPTY),
-                Arguments.of("100"),
-                Arguments.of("100", ADDITION),
-                Arguments.of("2727", SUBTRACTION, "100"),
-                Arguments.of("3.14", MULTIPLICATION, "2727", CLEAR_ENTRY)
+                Arguments.of(ArgumentsForTests.builder(CLEAR_ENTRY).firstNumber(EMPTY).firstUnaryOperator(CLEAR_ENTRY).firstUnaryResult(EMPTY).build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR_ENTRY).firstNumber("100").firstUnaryOperator(CLEAR_ENTRY).firstUnaryResult(EMPTY).build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR_ENTRY).firstNumber("100").firstBinaryOperator(ADDITION).firstBinaryResult("100|100 "+ADDITION).secondUnaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY).build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR_ENTRY).firstNumber("2,727").firstBinaryOperator(SUBTRACTION).firstBinaryResult("2,727|2,727 "+SUBTRACTION).secondNumber("100").secondUnaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY).build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR_ENTRY).firstNumber("3.14").firstBinaryOperator(MULTIPLICATION).firstBinaryResult("3.14|3.14 "+MULTIPLICATION).secondNumber("2,727").secondUnaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY).build())
         );
     }
 
@@ -773,56 +588,30 @@ class BasicPanelTest extends TestParent
     @ParameterizedTest
     @DisplayName("Test Valid Clear Button Action")
     @MethodSource("validClearButtonCases")
-    void testValidClearButtonCases(ArgumentsAccessor arguments)
+    void testValidClearButtonCases(ArgumentsForTests arguments)
     {
         postConstructCalculator();
-        String firstNumber = arguments.getString(0); // firstNumber
-        String firstOperator = arguments.size() > 1 ? arguments.getString(1) : EMPTY; // first Op
-        String secondNumber = arguments.size() > 2 ? arguments.getString(2) : EMPTY; // secondNumber
-        String secondOperator = arguments.size() > 3 ? arguments.getString(3) : EMPTY; // secondOperator
 
-        setupWhenThen(actionEvent, CLEAR_ENTRY, firstNumber, firstOperator, secondNumber, secondOperator);
-        //setupWhenThenFirstOperatorThenOperatorUnderTest(actionEvent, CLEAR_ENTRY, firstNumber, firstOperator, secondNumber, secondOperator);
+        setupWhenThen(actionEvent, arguments);
 
-        if (!firstNumber.isEmpty()) performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
-        if (!firstOperator.isEmpty()) performNextOperatorAction(calculator, actionEvent, LOGGER, firstOperator);
-        calculator.performClearButtonAction(actionEvent);
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
-        assertEquals(ZERO, calculator.getTextPaneValue(), "textPane should be set to 0");
-        assertEquals(0, calculator.getValuesPosition(), "valuesPosition was not reset to 0");
-        assertEquals(0, calculator.getMemoryPosition(), "memoryPosition was not reset to 0");
-        assertEquals(EMPTY, calculator.getValueAt(0), "Expecting values[0] to be empty");
-        assertEquals(EMPTY, calculator.getValueAt(1), "Expecting values[1] to be empty");
-        assertEquals(EMPTY, calculator.getValueAt(2), "Expecting values[2] to be EMPTY");
-        assertEquals(EMPTY, calculator.getValueAt(3), "Expecting values[3] to be EMPTY");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
-        assertFalse(calculator.isDecimalPressed(), "Expected decimal button to be enabled");
-        assertTrue(calculator.isObtainingFirstNumber(), "Expecting obtainingFirstNumber to be true");
-        for (String memory : calculator.getMemoryValues())
-        {
-            assertEquals(EMPTY, memory, "Expecting all memory values to be EMPTY");
-        }
-        assertTrue(calculator.getButtonMemoryStore().isEnabled(), "Button memory store should be enabled");
-        assertFalse(calculator.getButtonMemoryClear().isEnabled(), "Expected memoryClear button to be disabled");
-        assertFalse(calculator.getButtonMemoryRecall().isEnabled(), "Expected memoryRecall button to be disabled");
-        assertFalse(calculator.getButtonMemoryAddition().isEnabled(), "Expected memoryAdd button to be disabled");
-        assertFalse(calculator.getButtonMemorySubtraction().isEnabled(), "Expected memorySubtract button to be disabled");
+        assertHistory(arguments, calculatorHistory);
     }
     private static Stream<Arguments> validClearButtonCases()
     {
         /*
-        String firstNumber, (EMPTY or some value)
-        String firstOperator, (EMPTY or any BINARY operator (not any UNARY operator))
-        (CLEAR button pressed, not passed in as it is understood)
-        String secondNumber, (EMPTY or some value)
-        String secondOperator (EMPTY or ANY operator)
+         * case 1: CLEAR when textPane is empty -> textPane shows 0
+         * case 2: CLEAR when textPane has a number -> textPane shows 0
+         * case 3: CLEAR when first number and operator are present -> clears all, textPane shows 0
+         * case 4: CLEAR when first number, operator, and second number are present -> clears all, textPane shows 0
          */
         return Stream.of(
-                Arguments.of(EMPTY),
-                Arguments.of("100"),
-                Arguments.of("100", ADDITION),
-                Arguments.of("2727", SUBTRACTION, "100"),
-                Arguments.of("3.14", MULTIPLICATION, "2727", CLEAR)
+                Arguments.of(ArgumentsForTests.builder(CLEAR).firstNumber(EMPTY).firstUnaryOperator(CLEAR).firstUnaryResult(EMPTY+"|0").build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR).firstNumber("100").firstUnaryOperator(CLEAR).firstUnaryResult(EMPTY+"|0").build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR).firstNumber("100").firstBinaryOperator(ADDITION).firstBinaryResult("100|100 "+ADDITION).secondUnaryOperator(CLEAR).secondUnaryResult(EMPTY+"|0").build()),
+                Arguments.of(ArgumentsForTests.builder(CLEAR).firstNumber("2,727").firstBinaryOperator(SUBTRACTION).firstBinaryResult("2,727|2,727 "+SUBTRACTION).secondNumber("100").secondUnaryOperator(CLEAR).secondUnaryResult(EMPTY+"|0").build())
         );
     }
 
@@ -839,7 +628,7 @@ class BasicPanelTest extends TestParent
         setupWhenThen(actionEvent, arguments);
 
         String previousHistory = calculator.getHistoryTextPaneValue();
-        previousHistory = performTest(arguments, previousHistory);
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
 
         assertHistory(arguments, previousHistory);
     }
@@ -847,36 +636,38 @@ class BasicPanelTest extends TestParent
     {
         return Stream.of(
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35").firstUnaryOperator(DELETE).firstUnaryResult("3")),
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("3").firstUnaryOperator(DELETE).firstUnaryResult(EMPTY)),
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35.12").firstUnaryOperator(DELETE).firstUnaryResult("35.1")),
-                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35").firstUnaryOperator(EMPTY).firstUnaryResult(EMPTY).firstBinaryOperator(ADDITION).firstBinaryResult("35|35 "+ADDITION).secondUnaryOperator(DELETE).secondUnaryResult("35")),
-                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("1").firstUnaryOperator(EMPTY).firstUnaryResult(EMPTY).firstBinaryOperator(SUBTRACTION).firstBinaryResult("1|1 "+SUBTRACTION).secondUnaryOperator(DELETE).secondUnaryResult("1")),
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35.1").firstUnaryOperator(DELETE).firstUnaryResult("35.")),
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("3").firstUnaryOperator(DELETE).firstUnaryResult(EMPTY).firstBinaryResult(DELETE).firstBinaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)),
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35").firstBinaryOperator(ADDITION).firstBinaryResult("35|35 "+ADDITION).secondUnaryOperator(DELETE).secondUnaryResult("35")),
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("1").firstBinaryOperator(SUBTRACTION).firstBinaryResult("1|1 "+SUBTRACTION).secondUnaryOperator(DELETE).secondUnaryResult("1")),
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber(ENTER_A_NUMBER).firstUnaryResult(DELETE).firstUnaryResult(EMPTY)),
-                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber(EMPTY).firstUnaryOperator(DELETE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER))
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstUnaryOperator(DELETE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER))
         );
     }
 
     @Test
     void enteredANumberThenAddThen6DeleteThen5()
     {
-        when(actionEvent.getActionCommand()).thenReturn(DELETE).thenReturn(FIVE);
-        calculator.getTextPane().setText(SIX);
+        when(actionEvent.getActionCommand())
+                .thenReturn(DELETE)
+                .thenReturn(FIVE);
         calculator.getValues()[0] = "15.6";
-        calculator.getValues()[1] = SIX;
-        calculator.setValuesPosition(1);
-        calculator.getButtonDecimal().setEnabled(true);
+        calculator.getValues()[1] = "6";
         calculator.getValues()[2] = ADDITION;
-        assertEquals(6, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 6");
+        calculator.setValuesPosition(1);
+        calculator.appendTextToPane(calculator.getValueAt(1));
+        calculator.getButtonDecimal().setEnabled(true);
 
         calculator.performDeleteButtonAction(actionEvent);
-        //assertEquals(15.6, Double.parseDouble(calculator.getValues()[0]), delta, "Values[0] is not 15.6");
         assertEquals(EMPTY, calculator.getTextPaneValue(), "textPane is not blank");
-        assertTrue(calculator.isDecimalPressed(), "Expected decimal button is enabled");
-        assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
+        assertEquals(1, calculator.getValuesPosition(), "Values position is not 1");
 
         calculator.performNumberButtonAction(actionEvent);
         assertEquals(5, Integer.parseInt(calculator.getValues()[1]), "Values[1] is not 5");
         assertEquals(FIVE, calculator.getTextPaneValue(), "textPane does not equal blank");
-        assertTrue(calculator.isDecimalPressed(), "Expected decimal button is enabled");
+        assertFalse(calculator.isDecimalPressed(), "Expected decimal button to be enabled");
         assertEquals(ADDITION, calculator.getValueAt(2), "Expecting ADDITION at values[2]");
     }
 
@@ -1316,7 +1107,7 @@ class BasicPanelTest extends TestParent
 
     /* Valid DECIMAL */
     @Test
-    @DisplayName(".")
+    @DisplayName("Test Decimal")
     void pressedDecimal()
     {
         when(actionEvent.getActionCommand()).thenReturn(DECIMAL);
@@ -2323,7 +2114,7 @@ class BasicPanelTest extends TestParent
     @Test
     void pressed5ThenMemorySub()
     {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_SUBTRACTION);
+        when(actionEvent.getActionCommand()).thenReturn(MEMORY_SUBTRACT);
         calculator.getMemoryValues()[0] = "15";
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText(FIVE);
@@ -2339,7 +2130,7 @@ class BasicPanelTest extends TestParent
     @Test
     void testSavingAWholeNumberWithMemorySubtract()
     {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_SUBTRACTION);
+        when(actionEvent.getActionCommand()).thenReturn(MEMORY_SUBTRACT);
         calculator.getMemoryValues()[0] = "15";
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText(EMPTY);
@@ -2354,7 +2145,7 @@ class BasicPanelTest extends TestParent
     @Test
     void testSavingADecimalNumberWithMemorySubtract()
     {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
+        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADD);
         calculator.getMemoryValues()[0] = "10";
         calculator.setMemoryPosition(1);
         calculator.getTextPane().setText("5.5");
@@ -2370,7 +2161,7 @@ class BasicPanelTest extends TestParent
     @Test
     void testMemorySubFailsWhenSavingBadText()
     {
-        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADDITION);
+        when(actionEvent.getActionCommand()).thenReturn(MEMORY_ADD);
         calculator.getMemoryValues()[0] = EMPTY;
         calculator.setMemoryPosition(0);
         calculator.getTextPane().setText(ENTER_A_NUMBER);
@@ -2510,7 +2301,7 @@ class BasicPanelTest extends TestParent
     {
         when(actionEvent.getActionCommand()).thenReturn(FOUR).thenReturn(FIVE)
                 .thenReturn(MEMORY_STORE).thenReturn(CLEAR_ENTRY)
-                .thenReturn(FIVE).thenReturn(MEMORY_ADDITION);
+                .thenReturn(FIVE).thenReturn(MEMORY_ADD);
         calculator.performNumberButtonAction(actionEvent);
         calculator.performNumberButtonAction(actionEvent);
         calculator.performMemoryStoreAction(actionEvent);
@@ -2526,7 +2317,7 @@ class BasicPanelTest extends TestParent
     {
         when(actionEvent.getActionCommand()).thenReturn(FOUR).thenReturn(FIVE)
                 .thenReturn(MEMORY_STORE).thenReturn(CLEAR_ENTRY)
-                .thenReturn(FIVE).thenReturn(MEMORY_SUBTRACTION);
+                .thenReturn(FIVE).thenReturn(MEMORY_SUBTRACT);
         calculator.performNumberButtonAction(actionEvent);
         calculator.performNumberButtonAction(actionEvent);
         calculator.performMemoryStoreAction(actionEvent);

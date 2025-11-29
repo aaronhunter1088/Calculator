@@ -5,7 +5,6 @@ import Interfaces.OSDetector;
 import Panels.*;
 import Runnables.CalculatorMain;
 import Types.*;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -96,7 +95,7 @@ public class Calculator extends JFrame
             buttonFraction = new JButton(FRACTION), buttonPercent = new JButton(PERCENT),
             buttonSquareRoot = new JButton(SQUARE_ROOT), buttonMemoryClear = new JButton(MEMORY_CLEAR),
             buttonMemoryRecall = new JButton(MEMORY_RECALL), buttonMemoryStore = new JButton(MEMORY_STORE),
-            buttonMemoryAddition = new JButton(MEMORY_ADDITION), buttonMemorySubtraction = new JButton(MEMORY_SUBTRACTION),
+            buttonMemoryAddition = new JButton(MEMORY_ADD), buttonMemorySubtraction = new JButton(MEMORY_SUBTRACT),
             buttonHistory = new JButton(HISTORY_CLOSED), buttonSquared = new JButton(SQUARED),
             buttonAdd = new JButton(ADDITION), buttonSubtract = new JButton(SUBTRACTION),
             buttonMultiply = new JButton(MULTIPLICATION), buttonDivide = new JButton(DIVISION),
@@ -754,9 +753,9 @@ public class Calculator extends JFrame
         buttonMemoryClear.addActionListener(this::performMemoryClearAction);
         buttonMemoryRecall.setName(MEMORY_RECALL);
         buttonMemoryRecall.addActionListener(this::performMemoryRecallAction);
-        buttonMemoryAddition.setName(MEMORY_ADDITION);
+        buttonMemoryAddition.setName(MEMORY_ADD);
         buttonMemoryAddition.addActionListener(this::performMemoryAdditionAction);
-        buttonMemorySubtraction.setName(MEMORY_SUBTRACTION);
+        buttonMemorySubtraction.setName(MEMORY_SUBTRACT);
         buttonMemorySubtraction.addActionListener(this::performMemorySubtractionAction);
         buttonMemoryStore.setEnabled(true); // Enable memoryStore
         buttonMemoryStore.setName(MEMORY_STORE);
@@ -1448,6 +1447,7 @@ public class Calculator extends JFrame
                 storeValueInMemory(valueToStore);
                 writeHistoryWithMessage(buttonChoice, false, savedMemory(memoryValues[memoryPosition-1], (memoryPosition - 1)));
                 updateMemoryButtonsState();
+                setActiveOperator(EMPTY); // memory store does not keep operator active
                 confirm(this, LOGGER, savedMemory(memoryValues[memoryPosition-1], (memoryPosition - 1)));
             }
             // Needs to be here!
@@ -1467,10 +1467,7 @@ public class Calculator extends JFrame
         { setMemoryPosition(0); }
         memoryValues[memoryPosition] = valueToStore; //getTextPaneValue();
         setMemoryPosition(memoryPosition + 1);
-        buttonMemoryRecall.setEnabled(true);
-        buttonMemoryClear.setEnabled(true);
-        buttonMemoryAddition.setEnabled(true);
-        buttonMemorySubtraction.setEnabled(true);
+        updateMemoryButtonsState();
     }
 
     /**
@@ -1538,7 +1535,7 @@ public class Calculator extends JFrame
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         if (textPaneContainsBadText())
-        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_ADDITION)); }
+        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_ADD)); }
         else
         {
             String value = getAppropriateValue();
@@ -1554,7 +1551,7 @@ public class Calculator extends JFrame
             }
             // Needs to be here!
             else if (isOperatorActive())
-            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_ADDITION)); }
+            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_ADD)); }
         }
     }
     /**
@@ -1584,7 +1581,7 @@ public class Calculator extends JFrame
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         if (textPaneContainsBadText())
-        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_SUBTRACTION)); }
+        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_SUBTRACT)); }
         else
         {
             String value = getAppropriateValue();
@@ -1599,7 +1596,7 @@ public class Calculator extends JFrame
             }
             // Needs to be here!
             else if (isOperatorActive())
-            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_SUBTRACTION)); }
+            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_SUBTRACT)); }
         }
     }
     /**
@@ -1793,12 +1790,11 @@ public class Calculator extends JFrame
             String value = textPaneTextValue;
             logValuesAtPosition(this, LOGGER);
             logValueInTextPane(this, LOGGER);
-            if (isNoOperatorActive())
+            if (!endsWithOperator(value))
             {
-                appendTextToPane(addThousandsDelimiter(values[valuesPosition]
-                        .substring(0, values[valuesPosition].length()-1), getThousandsDelimiter()), true);
+                appendTextToPane(addThousandsDelimiter(value.substring(0, value.length()-1), getThousandsDelimiter()), true);
             }
-            else if (isOperatorActive())
+            else if (endsWithOperator(value))
             {
                 LOGGER.debug("Removing active operator from textPane");
                 value = getValueWithoutAnyOperator(value);
@@ -1840,8 +1836,8 @@ public class Calculator extends JFrame
         {
             if (isNoOperatorActive() && !values[0].isEmpty())
             {
-                values[2] = buttonChoice;
-                appendTextToPane(textPaneValue + SPACE + buttonChoice);
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
                 obtainingFirstNumber = false;
                 negativeNumber = false;
@@ -1919,9 +1915,8 @@ public class Calculator extends JFrame
         {
             if (isNoOperatorActive() && !values[0].isEmpty())
             {
-                values[2] = buttonChoice;
-                values[valuesPosition] = getTextPaneValue();
-                appendTextToPane(values[valuesPosition] + SPACE + buttonChoice);
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
                 obtainingFirstNumber = false;
                 negativeNumber = false;
@@ -2018,8 +2013,8 @@ public class Calculator extends JFrame
         {
             if (isNoOperatorActive() && !values[0].isBlank())
             {
-                values[2] = buttonChoice;
-                appendTextToPane(values[valuesPosition] + SPACE + buttonChoice);
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
                 obtainingFirstNumber = false;
                 valuesPosition = 1;
@@ -2101,8 +2096,8 @@ public class Calculator extends JFrame
             // No basic operator pushed, textPane has a value, and values is set
             if (isNoOperatorActive() && !getTextPaneValue().isEmpty() && !values[valuesPosition].isBlank())
             {
-                values[2] = buttonChoice;
-                appendTextToPane(values[valuesPosition] + SPACE + buttonChoice);
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
                 obtainingFirstNumber = false;
                 valuesPosition += 1;
@@ -2380,11 +2375,11 @@ public class Calculator extends JFrame
             {
                 result = basicPanel.performFraction();
             }
-            case MEMORY_ADDITION ->
+            case MEMORY_ADD ->
             {
                 result = performMemoryAdd();
             }
-            case MEMORY_SUBTRACTION ->
+            case MEMORY_SUBTRACT ->
             {
                 result = performMemorySubtract();
             }

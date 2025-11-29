@@ -188,8 +188,8 @@ public class LoggingUtil {
             case SQUARED -> logger.debug("{} squared = {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
             case FRACTION -> logger.info("{} / {} = {}", 1, calculator.getAppropriateValue(), calculator.textPaneContainsBadText() ? calculator.getBadText(EMPTY) : calculator.getValueAt(3));
             case NEGATE -> logger.info("{} negated is {}", calculator.getAppropriateValue(), calculator.getValueAt(3));
-            case MEMORY_ADDITION -> logger.info("{} + {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
-            case MEMORY_SUBTRACTION -> logger.info("{} - {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
+            case MEMORY_ADD -> logger.info("{} + {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
+            case MEMORY_SUBTRACT -> logger.info("{} - {} = {}", calculator.getMemoryValues()[calculator.getMemoryPosition()-1], calculator.getAppropriateValue(), calculator.getValueAt(3));
             default -> logger.info("{} {} {} = {}", calculator.getValueAt(0), calculator.getValueAt(2), calculator.getValueAt(1), calculator.getValueAt(3));
         }
     }

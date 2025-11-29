@@ -234,8 +234,8 @@ public class BasicPanel extends JPanel
                         MEMORY_STORE, calculator.getMemoryValues().length, // MemoryStore,
                         MEMORY_CLEAR,
                         MEMORY_RECALL,
-                        MEMORY_ADDITION,
-                        MEMORY_SUBTRACTION,
+                        MEMORY_ADD,
+                        MEMORY_SUBTRACT,
                         HISTORY_CLOSED, HISTORY_OPEN, PERCENT, PERCENT, // H^, Hv, PERCENT, Ex:Percent
                         PERCENT, ENTER_A_NUMBER, PERCENT, // Percent
                         SQUARE_ROOT, NOT_A_NUMBER, Texts.ERROR,
@@ -443,10 +443,10 @@ public class BasicPanel extends JPanel
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.performOperation();
-                if (!calculator.textPaneContainsBadText())
-                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
+                boolean updateValue = !calculator.textPaneContainsBadText();
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), updateValue);
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
-                calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt()));
+                calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
                 calculator.setActiveOperator(currentOperator);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
@@ -468,7 +468,7 @@ public class BasicPanel extends JPanel
         BigDecimal currentNumber = new BigDecimal(currentNum);
         if (BigDecimal.ZERO.equals(currentNumber))
         {
-            calculator.appendTextToPane(INFINITY, true);
+            calculator.appendTextToPane(INFINITY);
             calculator.setObtainingFirstNumber(true);
             result = INFINITY;
         }
