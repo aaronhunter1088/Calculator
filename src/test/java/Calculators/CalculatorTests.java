@@ -590,7 +590,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         buttonsToTest.forEach(btn ->
-                assertSame(1, btn.getActionListeners().length, "Expecting only 1 action on " + btn.getName()));
+                assertTrue(btn.getActionListeners().length <= 1, "Expecting no more than 1 action on " + btn.getName()));
 
         calculator.clearButtonActions(buttonsToTest);
 

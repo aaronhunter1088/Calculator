@@ -3,7 +3,6 @@ package Panels;
 import Calculators.Calculator;
 import Parent.TestParent;
 import Types.CalculatorBase;
-import Types.CalculatorView;
 import Types.SystemDetector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,15 +16,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import static Types.CalculatorBase.BASE_BINARY;
 import static Types.CalculatorBase.BASE_DECIMAL;
 import static Types.CalculatorByte.BYTE_BYTE;
-import static Types.CalculatorView.VIEW_BASIC;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.*;
