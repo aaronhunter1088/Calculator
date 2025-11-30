@@ -1709,7 +1709,13 @@ public class Calculator extends JFrame
     public String performSquareRoot()
     {
         double value = new BigDecimal(getAppropriateValue()).doubleValue();
-        return String.valueOf(Math.sqrt(value));
+        //return String.valueOf(Math.sqrt(value));
+        String result = String.valueOf(Math.sqrt(value));
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        return result;
     }
 
     /**
@@ -2239,18 +2245,24 @@ public class Calculator extends JFrame
         logActionButton(buttonChoice, LOGGER);
         if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(NEGATE)); }
+        else if (getTextPaneValue().isEmpty())
+        {
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(NEGATE));
+        }
         else
         {
             if (!getAppropriateValue().isEmpty())
             {
+                String currentOperator = getActiveOperator();
                 setActiveOperator(buttonChoice);
                 performOperation();
-                setNegativeNumber(true);
                 appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()), true);
                 setNegativeNumber(CalculatorUtility.isNegativeNumber(values[3]));
                 getButtonDecimal().setEnabled(!isFractionalNumber(values[3]));
                 writeHistory(buttonChoice, false);
-                setActiveOperator(EMPTY);
+                setActiveOperator(currentOperator);
                 confirm(this, LOGGER, pressedButton(buttonChoice));
             }
             else if (isOperatorActive())
@@ -2288,13 +2300,13 @@ public class Calculator extends JFrame
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         if (textPaneContainsBadText())
-        { confirm(this, LOGGER, cannotPerformOperation(DECIMAL)); }
-        else
         {
-            performDecimal(buttonChoice);
-            writeHistory(buttonChoice, false);
-            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+            clearTextInTextPane();
+            obtainingFirstNumber = true;
         }
+        performDecimal(buttonChoice);
+        writeHistory(buttonChoice, false);
+        confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
     }
     /**
      * The inner logic of performing Dot actions

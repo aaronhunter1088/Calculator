@@ -3,7 +3,6 @@ package Parent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static Types.CalculatorUtility.removeThousandsDelimiter;
 import static Types.Texts.*;
 
 public class ArgumentsForTests

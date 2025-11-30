@@ -349,6 +349,7 @@ public abstract class TestParent
             case MEMORY_SUBTRACT -> calculator.performMemorySubtractionAction(actionEvent);
             case MODULUS -> calculator.getProgrammerPanel().performModulusButtonAction(actionEvent);
             case MULTIPLICATION -> calculator.performMultiplyButtonAction(actionEvent);
+            case NEGATE -> calculator.performNegateButtonAction(actionEvent);
             case NOT -> calculator.getProgrammerPanel().performNotButtonAction(actionEvent);
             case OR -> calculator.getProgrammerPanel().performOrButtonAction(actionEvent);
             case PERCENT -> calculator.getBasicPanel().performPercentButtonAction(actionEvent);
@@ -358,7 +359,7 @@ public abstract class TestParent
             case SQUARE_ROOT -> calculator.performSquareRootButtonAction(actionEvent);
             case SUBTRACTION -> calculator.performSubtractButtonAction(actionEvent);
             case XOR -> calculator.getProgrammerPanel().performXorButtonAction(actionEvent);
-            default -> logger.warn("Unknown operator selected: '{}'", nextOperator);
+            default -> logger.warn("Unknown operator selected: '{}'. Add it here.", nextOperator);
         }
     }
 
