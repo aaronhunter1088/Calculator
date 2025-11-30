@@ -5,6 +5,40 @@ import java.util.Map;
 
 import static Types.Texts.*;
 
+/**
+ * ArgumentsForTests
+ * <p>
+ * This class defines the arguments for tests in a builder pattern.
+ * <p>
+ * First Number: The first number to be used in the test. Commas can
+ * be provided but will be removed when necessary.
+ * First Unary Operator: The first unary operator to be used in the test.
+ * This can be any operator but typically is one of the unary operators.
+ * First Unary Result: The expected result of the first unary operation.
+ * If the values[vP] is different to the textPane display, separate the
+ * two by using the ARGUMENT_SEPARATOR constant.
+ * First Binary Operator: The first binary operator to be used in the test.
+ * This can be any operator but typically is one of the binary operators.
+ * First Binary Result: The expected result of the first binary operation.
+ * If the values[vP] is different to the textPane display, separate the
+ * two by using the ARGUMENT_SEPARATOR constant.
+ * Second Number: The second number to be used in the test. Commas can
+ * be provided but will be removed when necessary.
+ * Second Unary Operator: The second unary operator to be used in the test.
+ * This can be any operator but typically is one of the unary operators.
+ * Second Unary Result: The expected result of the second unary operation.
+ * If the values[vP] is different to the textPane display, separate the
+ * two by using the ARGUMENT_SEPARATOR constant.
+ * Second Binary Operator: The second binary operator to be used in the test.
+ * This can be any operator but typically is one of the binary operators.
+ * Second Binary Result: The expected result of the second binary operation.
+ * If the values[vP] is different to the textPane display, separate the
+ * two by using the ARGUMENT_SEPARATOR constant.
+ * Operator Under Test: The operator that is being tested in this test case.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class ArgumentsForTests
 {
     public static ArgumentsForTests builder(String operatorUnderTest)
