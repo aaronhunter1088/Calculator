@@ -3,6 +3,7 @@ package Calculators;
 import Interfaces.CalculatorType;
 import Interfaces.OSDetector;
 import Panels.*;
+import Parent.ArgumentsForTests;
 import Parent.TestParent;
 import Types.*;
 import org.apache.logging.log4j.LogManager;
@@ -55,11 +56,6 @@ class CalculatorTests extends TestParent
 {
     static { System.setProperty("appName", CalculatorTests.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
-
-    @Mock
-    public OSDetector systemDetector;
-    @Mock
-    public ActionEvent actionEvent;
 
     @BeforeAll
     static void beforeAll()
@@ -484,28 +480,6 @@ class CalculatorTests extends TestParent
         assertEquals("1234", calculator.values[0], "Expected values[0] to be 1234");
     }
 
-    @Test
-    void testOpeningHistory()
-    {
-        postConstructCalculator();
-        when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
-        calculator.performHistoryAction(actionEvent);
-
-        assertEquals(HISTORY_OPEN, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_OPEN);
-    }
-
-    @Test
-    void testClosingHistory()
-    {
-        postConstructCalculator();
-        when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
-        when(actionEvent.getActionCommand()).thenReturn(HISTORY_CLOSED);
-        calculator.performHistoryAction(actionEvent);
-        calculator.performHistoryAction(actionEvent);
-
-        assertEquals(HISTORY_CLOSED, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_CLOSED);
-    }
-
     /*############## Test Helper Methods ##################*/
     @ParameterizedTest
     @DisplayName("Test ConvertToPositive()")
@@ -873,5 +847,323 @@ class CalculatorTests extends TestParent
         calculator.values[0] = "9999999";
         assertTrue(isMaximumValue(calculator.getValueAt(0)), "Expected maximum number to be met");
     }
+
+    /* Valid MEMORY STORE */
+    @ParameterizedTest
+    @DisplayName("Test Valid MemoryStore Button Action")
+    @MethodSource("validMemoryStoreButtonActionProvider")
+    void testValidMemoryStoreButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> validMemoryStoreButtonActionProvider()
+    {
+        /*
+         * case 1: store normal number is successful
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("1,234").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("1,234").build())
+        );
+    }
+
+    @Test
+    @DisplayName("Test MemoryStore overwrites memory when memory is full")
+    void testMemoryStoreOverwritesMemoryWhenMemoryIsFull()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn(MEMORY_STORE);
+        calculator.getTextPane().setText(TWO);
+        calculator.getMemoryValues()[0] = "15";
+        calculator.setMemoryPosition(10);
+        assertEquals("15", calculator.getMemoryValues()[0], "Expected memoryValues[0] to be 15");
+        calculator.performMemoryStoreAction(actionEvent);
+        assertEquals(TWO, calculator.getMemoryValues()[0], "Expected memoryValues[0] to be 2");
+    }
+
+    /* Invalid MEMORY STORE */
+    @ParameterizedTest
+    @DisplayName("Test Invalid MemoryStore Button Action")
+    @MethodSource("invalidMemoryStoreButtonActionProvider")
+    void testInvalidMemoryStoreButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> invalidMemoryStoreButtonActionProvider()
+    {
+        /*
+         * case 1: cannot store value when operator is active
+         * case 2: cannot store when textPane is empty
+         * case 3: cannot store INFINITY, or badText
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("10").firstBinaryOperator(ADDITION).firstBinaryResult("10|10 "+ADDITION).build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber(INFINITY).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+INFINITY).build())
+        );
+    }
+
+    /* Valid MEMORY RECALL */
+    @Test
+    @DisplayName("Test MemoryRecall Button Action")
+    void pressedMemoryRecall()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand())
+                .thenReturn(MEMORY_RECALL);
+        calculator.getMemoryValues()[0] = "15";
+        calculator.getMemoryValues()[1] = "534";
+        calculator.getMemoryValues()[2] = "-9";
+        calculator.getMemoryValues()[3] = "75";
+        calculator.getMemoryValues()[4] = TWO;
+        calculator.getMemoryValues()[5] = "1080";
+        calculator.setMemoryPosition(6);
+        calculator.setMemoryRecallPosition(0);
+        calculator.performMemoryRecallAction(actionEvent);
+        assertEquals("15", calculator.getTextPaneValue(), "Expected textPane to show 15");
+        assertSame(1, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 1");
+        assertSame(6, calculator.getMemoryPosition(), "Expected memoryPosition to be 6");
+        calculator.performMemoryRecallAction(actionEvent);
+        assertEquals("534", calculator.getTextPaneValue(), "Expected textPane to show 534");
+        assertSame(2, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 2");
+        assertSame(6, calculator.getMemoryPosition(), "Expected memoryPosition to be 6");
+        calculator.performMemoryRecallAction(actionEvent);
+        assertEquals("-9", calculator.getTextPaneValue(), "Expected textPane to show -9");
+        assertSame(3, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 3");
+        assertSame(6, calculator.getMemoryPosition(), "Expected memoryPosition to be 6");
+        calculator.setMemoryRecallPosition(10);
+        calculator.performMemoryRecallAction(actionEvent);
+        assertEquals("15", calculator.getTextPaneValue(), "Expected textPane to show 15");
+        assertSame(1, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 1");
+        assertSame(6, calculator.getMemoryPosition(), "Expected memoryPosition to be 6");
+    }
+
+    /* Valid MEMORY CLEAR */
+    @Test
+    @DisplayName("Test MemoryClear Button Action")
+    void pressedMemoryClear()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn(MEMORY_CLEAR);
+        calculator.getMemoryValues()[9] = "15";
+        calculator.setMemoryPosition(10);
+        calculator.performMemoryClearAction(actionEvent);
+        assertTrue(calculator.getMemoryValues()[9].isBlank(), "Expected memoryValues[9] to be empty");
+        assertSame(0, calculator.getMemoryPosition(), "Expected memoryPosition to be 0");
+        assertSame(0, calculator.getMemoryRecallPosition(), "Expected memoryRecallPosition to be 0");
+        assertFalse(calculator.getButtonMemoryClear().isEnabled(), "Expected memoryClear to be disabled, no more memories");
+        assertFalse(calculator.getButtonMemoryRecall().isEnabled(), "Expected memoryRecall to be disabled, no more memories");
+        assertFalse(calculator.getButtonMemoryAddition().isEnabled(), "Expected memoryAdd to be disabled, no more memories");
+        assertFalse(calculator.getButtonMemorySubtraction().isEnabled(), "Expected memorySubtract to be disabled, no more memories");
+    }
+
+    /* Valid MEMORY ADD */
+    @ParameterizedTest
+    @DisplayName("Test Valid MemoryAdd Button Action")
+    @MethodSource("validMemoryAddButtonCases")
+    void testValidMemoryAdditionButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> validMemoryAddButtonCases()
+    {
+        /*
+         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
+         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
+         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
+         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
+         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("15|5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("0").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("0")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("10").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("5|10")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
+                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
+                        .secondNumber("99.5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("200|99.5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("1").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("-11.25|1")
+                        .build())
+        );
+    }
+
+    /* Invalid MEMORY ADD */
+    @ParameterizedTest
+    @DisplayName("Test Invalid MemoryAdd Button Action")
+    @MethodSource("invalidMemoryAddButtonCases")
+    void testInvalidMemoryAdditionButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> invalidMemoryAddButtonCases()
+    {
+        /*
+         * case 1: cannot add to memory when textPane contains badText
+         * case 2: cannot add to memory if memory is present but textPane is empty
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
+                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 "+ADDITION)
+                        .secondBinaryOperator(MEMORY_ADD).secondBinaryResult("5|5 +")
+                        .build())
+        );
+    }
+
+    /* Valid MEMORY SUBTRACT */
+    @ParameterizedTest
+    @DisplayName("Test Valid MemorySubtract Button Action")
+    @MethodSource("validMemorySubtractButtonCases")
+    void testMemorySubtractButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> validMemorySubtractButtonCases()
+    {
+        /*
+         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
+         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
+         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
+         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
+         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("0").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("0")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("10").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-15|10")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
+                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
+                        .secondNumber("99.5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("1|99.5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("1").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-13.25|1")
+                        .build())
+        );
+    }
+
+    /* Invalid MEMORY SUBTRACT */
+    @ParameterizedTest
+    @DisplayName("Test Invalid MemorySubtract Button Action")
+    @MethodSource("invalidMemorySubtractButtonCases")
+    void testInvalidMemorySubtractButtonAction(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String calculatorHistory = calculator.getHistoryTextPane().getText();
+        calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
+
+        assertHistory(arguments, calculatorHistory);
+    }
+    private static Stream<Arguments> invalidMemorySubtractButtonCases()
+    {
+        /*
+         * case 1: cannot subtract from memory when textPane contains badText
+         * case 2: cannot subtract from memory if memory is present but textPane is empty
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
+                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 "+ADDITION)
+                        .secondBinaryOperator(MEMORY_SUBTRACT).secondBinaryResult("5|5 +")
+                        .build())
+        );
+    }
+
+    /* History Button */
+    @Test
+    void testOpeningHistory()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
+        calculator.performHistoryAction(actionEvent);
+
+        assertEquals(HISTORY_OPEN, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_OPEN);
+    }
+
+    @Test
+    void testClosingHistory()
+    {
+        postConstructCalculator();
+        when(actionEvent.getActionCommand()).thenReturn(HISTORY_OPEN);
+        when(actionEvent.getActionCommand()).thenReturn(HISTORY_CLOSED);
+        calculator.performHistoryAction(actionEvent);
+        calculator.performHistoryAction(actionEvent);
+
+        assertEquals(HISTORY_CLOSED, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_CLOSED);
+    }
+
 
 }

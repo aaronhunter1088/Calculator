@@ -439,7 +439,7 @@ public class BasicPanel extends JPanel
             if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
-                calculator.getValues()[calculator.getValuesPosition()] = calculator.getAppropriateValue();
+                calculator.getValues()[calculator.getValuesPosition()] = value;
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.performOperation();

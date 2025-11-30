@@ -1845,9 +1845,9 @@ public class Calculator extends JFrame
                 setActiveOperator(buttonChoice);
                 appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
-                obtainingFirstNumber = false;
-                negativeNumber = false;
-                valuesPosition = 1;
+                setObtainingFirstNumber(false);
+                setNegativeNumber(false);
+                setValuesPosition(1);
                 confirm(this, LOGGER, pressedButton(buttonChoice));
             }
             else if (isOperatorActive() && !values[1].isEmpty())
@@ -2451,6 +2451,7 @@ public class Calculator extends JFrame
         pack();
     }
 
+    // TODO: Verify.
     /**
      * This method returns the value at the current
      * position. If the value is empty and no operator
@@ -2466,6 +2467,9 @@ public class Calculator extends JFrame
             currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         else if (!currentNum.isEmpty() && isOperatorActive())
             currentNum = removeThousandsDelimiter(getValueWithoutAnyOperator(getTextPaneValue()), getThousandsDelimiter());
+        // rare cases when v[0] & v[1] are empty but textPane has a value and operator is active
+        else if (currentNum.isEmpty() && isOperatorActive())
+            currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         return currentNum;
     }
 

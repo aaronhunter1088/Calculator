@@ -1,6 +1,7 @@
 package Parent;
 
 import Calculators.Calculator;
+import Interfaces.OSDetector;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,6 +30,8 @@ public abstract class TestParent
 
     @Mock
     public ActionEvent actionEvent;
+    @Mock
+    public OSDetector systemDetector;
 
     public static AutoCloseable mocks;
 
@@ -111,6 +114,68 @@ public abstract class TestParent
         else characters.add(secondBinaryOperator);
 
         return characters;
+    }
+
+    /**
+     * Sets up the initial state of the calculator. This will
+     * happen based upon the order of the arguments provided.
+     * FirstNumber is placed in values[0] if not empty.
+     * FirstUnaryOperator places the value into values[2].
+     * FirstUnaryResult is placed in values[0] and appended
+     * to the textPane, appropriately splitting the values
+     * if the ARGUMENT_REGEX is present.
+     * FirstBinaryResult is not used as this would simply
+     * overwrite the FirstUnaryResults.
+     * SecondNumber is placed in values[1] if not empty.
+     * SecondUnaryResult is placed in values[1] and appended
+     * to the textPane, appropriately splitting the values
+     * if the ARGUMENT_REGEX is present.
+     *
+     * @param arguments the initial arguments for the test
+     */
+    public void setupInitialState(ArgumentsForTests arguments)
+    {
+        if (arguments.getInitialState() != null)
+        {
+            ArgumentsForTests initialState = arguments.getInitialState();
+            if (!initialState.getFirstNumber().isEmpty())
+            {
+                String firstNumber = removeThousandsDelimiter(initialState.getFirstNumber(), calculator.getThousandsDelimiter());
+                calculator.getValues()[0] = firstNumber;
+            }
+            if (!initialState.getFirstUnaryOperator().isEmpty())
+            {
+                calculator.setActiveOperator(initialState.getFirstUnaryOperator());
+            }
+            if (!initialState.getFirstUnaryResult().isEmpty())
+            {
+                String firstUnaryTextPaneResult = initialState.getFirstUnaryResult();
+                String firstUnaryValuesResult = removeThousandsDelimiter(firstUnaryTextPaneResult, calculator.getThousandsDelimiter());
+                if (firstUnaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) // "0|INFINITY or 35|35 +"
+                {
+                    firstUnaryValuesResult = removeThousandsDelimiter(firstUnaryTextPaneResult.split(ARGUMENT_REGEX)[0], calculator.getThousandsDelimiter());
+                    firstUnaryTextPaneResult = firstUnaryTextPaneResult.split(ARGUMENT_REGEX)[1];
+                }
+                calculator.getValues()[0] = firstUnaryValuesResult;
+                calculator.appendTextToPane(firstUnaryTextPaneResult);
+            }
+            if (!initialState.getSecondNumber().isEmpty()) {
+                String secondNumber = removeThousandsDelimiter(initialState.getSecondNumber(), calculator.getThousandsDelimiter());
+                calculator.getValues()[1] = secondNumber;
+            }
+            if (!initialState.getSecondUnaryResult().isEmpty())
+            {
+                String secondUnaryTextPaneResult = initialState.getSecondUnaryResult();
+                String secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult, calculator.getThousandsDelimiter());
+                if (secondUnaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) // "0|INFINITY or 35|35 +"
+                {
+                    secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult.split(ARGUMENT_REGEX)[0], calculator.getThousandsDelimiter());
+                    secondUnaryTextPaneResult = secondUnaryTextPaneResult.split(ARGUMENT_REGEX)[1];
+                }
+                calculator.getValues()[1] = secondUnaryValuesResult;
+                calculator.appendTextToPane(secondUnaryTextPaneResult);
+            }
+        }
     }
 
     /**
