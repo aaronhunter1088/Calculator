@@ -8,26 +8,20 @@ import Types.SystemDetector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
 import static Types.CalculatorBase.BASE_BINARY;
 import static Types.CalculatorBase.BASE_DECIMAL;
-import static Types.CalculatorByte.BYTE_BYTE;
-import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -87,104 +81,132 @@ class ProgrammerPanelTest extends TestParent
     /* Invalid RSH */
 
     /* Valid OR */
-    @Test
-    public void testPushOrWithDecimalInput()
+    @ParameterizedTest
+    @DisplayName("Test Valid OR Button Cases")
+    @MethodSource("validOrButtonCases")
+    void testValidOrButtonCases(ArgumentsForTests arguments)
     {
-        when(actionEvent.getActionCommand()).thenReturn(OR);
-        calculator.setCalculatorBase(BASE_DECIMAL); // BYTE_BYTE default
-        calculator.appendTextToPane(FIVE);
-        calculator.getValues()[0] = FIVE;
-        calculator.getProgrammerPanel().performOrButtonAction(actionEvent);
-        // TODO: Uncomment and fix
-        assertEquals(TEXT_PANE_WRONG_VALUE, "5 OR", calculator.getTextPaneValue());
-        assertEquals("5", calculator.getValues()[0], "Values[0] is not in decimal base form");
-    }
+        postConstructCalculator();
 
-    @Test
-    public void testPushOrWithBothValuesSetWithDecimalInputReturnsResult()
+        setupWhenThen(actionEvent, arguments);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+    private static Stream<ArgumentsForTests> validOrButtonCases()
     {
-        when(actionEvent.getActionCommand()).thenReturn(OR);
-        calculator.setCalculatorBase(BASE_DECIMAL); // BYTE_BYTE default
-        calculator.getValues()[0] = FIVE;
-        calculator.getValues()[1] = THREE;
-        calculator.appendTextToPane(THREE);
-        calculator.getProgrammerPanel().performOrButtonAction(actionEvent);
-        assertEquals(SEVEN, calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
+        return Stream.of(
+                ArgumentsForTests.builder(OR)
+                        .firstNumber("5").secondUnaryResult(OR).firstUnaryResult("5 OR").build(),
+                ArgumentsForTests.builder(OR)
+                        .firstNumber("5").secondBinaryResult(OR).firstBinaryResult("5 OR").build()
+                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("3").build()
+        );
     }
 
     /* Invalid OR */
-    @Test
-    public void testPushOrWhenValuesAtZeroNotSet()
+    @ParameterizedTest
+    @DisplayName("Test Invalid OR Button Cases")
+    @MethodSource("invalidOrButtonCases")
+    void testPushOrWhenValuesAtZeroNotSet(ArgumentsForTests arguments)
     {
-        when(actionEvent.getActionCommand()).thenReturn(OR);
-        calculator.getValues()[0] = EMPTY;
-        calculator.getValues()[1] = "50";
-        calculator.getProgrammerPanel().performOrButtonAction(actionEvent);
-        assertTrue(calculator.isObtainingFirstNumber(), "Expected isFirstNumber to be true");
-        assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be empty");
-        assertEquals("50", calculator.getValues()[1], "Expected values[1] to be 50");
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+    private static Stream<ArgumentsForTests> invalidOrButtonCases()
+    {
+        return Stream.of(
+                // TODO: Add cases
+        );
     }
 
     /* Valid XOR */
 
     /* Invalid XOR */
-    @Test
-    public void testPushingXorButtonWithBlankInputsDoesNothing()
+    @ParameterizedTest
+    @DisplayName("Test Invalid XOR Button Cases")
+    @MethodSource("invalidXorButtonCases")
+    void testInvalidXorButtonCases(ArgumentsForTests arguments)
     {
-        when(actionEvent.getActionCommand()).thenReturn(XOR);
-        calculator.getValues()[0] = EMPTY;
-        calculator.getValues()[1] = EMPTY;
-        calculator.setValuesPosition(1);
-        calculator.getProgrammerPanel().performXorButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
-        assertEquals(EMPTY, calculator.getValues()[0], "Values[0] should be empty");
-        assertEquals(EMPTY, calculator.getValues()[1], "Values[1] should be empty");
-        assertNotEquals(XOR, calculator.getValueAt(2), "Expecting NOT XOR at values[2]");
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+    private static Stream<ArgumentsForTests> invalidXorButtonCases()
+    {
+        return Stream.of(
+                // TODO: Add cases
+                ArgumentsForTests.builder(XOR).firstBinaryResult(XOR).firstBinaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()
+        );
     }
 
     /* Valid NOT */
-    @Test
-    public void pressingNotButtonReversesAllBits()
+    @ParameterizedTest
+    @DisplayName("Test Valid NOT Button Cases")
+    @MethodSource("validNotButtonCases")
+    void testValidNotButtonCases(ArgumentsForTests arguments)
     {
-        when(actionEvent.getActionCommand()).thenReturn(NOT);
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.getProgrammerPanel().appendTextForProgrammerPanel("0000 1011");
-        calculator.getProgrammerPanel().performNotButtonAction(actionEvent);
-        assertEquals("topQWord not as expected", ""); // lots of 1's
-        assertEquals("1111 0100", calculator.getProgrammerPanel().separateBits(calculator.getTextPaneValue()), TEXT_PANE_WRONG_VALUE);
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+    private static Stream<ArgumentsForTests> validNotButtonCases()
+    {
+        // TODO: Need a way to set the base and byte
+        return Stream.of(
+                ArgumentsForTests.builder(NOT)
+                        .firstNumber("0000 1011").firstUnaryResult("1111 0100").build(),
+                ArgumentsForTests.builder(NOT)
+                        .firstNumber("5").firstUnaryResult("...11111010").build()
+        );
     }
 
     /* Invalid NOT */
 
     /* Valid AND */
-    @Test
-    @DisplayName("Test And Button")
-    public void testPerformAdd()
+    @ParameterizedTest
+    @DisplayName("Test Valid AND Button Cases")
+    @MethodSource("validAndButtonCases")
+    void testPerformAdd(ArgumentsForTests arguments)
     {
-        when(actionEvent.getActionCommand())
-                .thenReturn(FIVE).thenReturn(FIVE)
-                .thenReturn(AND)
-                .thenReturn(SIX).thenReturn(SIX)
-                .thenReturn(EQUALS);
-        calculator.getProgrammerPanel().getCalculator().performNumberButtonAction(actionEvent);
-        assertEquals(FIVE, calculator.getTextPaneValue(), "Expected textPane to be 5");
+        postConstructCalculator();
 
-        calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
-        assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to be 5 AND");
-        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
+        setupWhenThen(actionEvent, arguments);
 
-        calculator.getProgrammerPanel().getCalculator().performNumberButtonAction(actionEvent);
-        assertEquals(SIX, calculator.getTextPaneValue(), "Expected textPane to contain 6");
-        assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
 
-        calculator.performEqualsButtonAction(actionEvent);
-        assertEquals(FOUR, calculator.getTextPaneValue(), "Expected textPane to be 4");
-        assertNotEquals(AND, calculator.getValueAt(2), "Expecting NOT AND at values[2]");
+        assertHistory(arguments, previousHistory);
+    }
+    private static Stream<ArgumentsForTests> validAndButtonCases()
+    {
+        return Stream.of(
+                ArgumentsForTests.builder(AND).firstNumber("5").firstBinaryOperator(AND).firstBinaryResult("5|5 "+AND)
+                        .secondNumber("6").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+"|4").build()
+        );
     }
 
     @Test
     @DisplayName("Test And Button continued operation")
-    public void testPerformAndContinuedOperation()
+    void testPerformAndContinuedOperation()
     {
         when(actionEvent.getActionCommand())
                 .thenReturn(FIVE).thenReturn(FIVE) // leave,
@@ -207,26 +229,9 @@ class ProgrammerPanelTest extends TestParent
         assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
     }
 
-    /* Invalid AND */
+    // Why could 0 AND some other number not work?
     @Test
-    public void testClickedButtonAndWhenTextPaneBlank()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(AND);
-        calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
-    }
-
-    @Test
-    public void testClickedButtonAndWhenTextPaneContainsBadText()
-    {
-        when(actionEvent.getActionCommand()).thenReturn(AND);
-        calculator.appendTextToPane(ENTER_A_NUMBER);
-        calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
-        assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
-    }
-
-    @Test
-    public void testClickedButtonAndWhenValuesAtZeroIsEmpty()
+    void testClickedButtonAndWhenValuesAtZeroIsEmpty()
     {
         when(actionEvent.getActionCommand()).thenReturn(AND);
         calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
@@ -234,15 +239,34 @@ class ProgrammerPanelTest extends TestParent
         assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
     }
 
-    @Test
-    public void testClickedButtonAndWhenValuesAtOneIsEmpty()
+    /* Invalid AND */
+    @ParameterizedTest
+    @DisplayName("Test Invalid AND Button Cases")
+    @MethodSource("invalidAndButtonCases")
+    void testClickedButtonAndWhenTextPaneBlank(ArgumentsForTests arguments)
     {
-        when(actionEvent.getActionCommand()).thenReturn(AND);
-        calculator.getValues()[0] = FIVE;
-        calculator.appendTextToPane(FIVE);
-        calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
-        assertEquals(FIVE, calculator.getValues()[0], "Expected values[0] to be 5");
-        assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to say 5 AND");
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+    private static Stream<ArgumentsForTests> invalidAndButtonCases()
+    {
+        /*
+         * case 1: Clicked AND when textPane is blank, expect prompt to enter a number
+         * case 2: Clicked AND when textPane contains badText (ENTER_A_NUMBER), expect prompt to enter a number
+         * case 3: Enter 1 number. Click AND. Click AND again. Expect prompt to enter a number
+         */
+        return Stream.of(
+                ArgumentsForTests.builder(AND).firstBinaryOperator(AND).firstBinaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build(),
+                ArgumentsForTests.builder(AND).firstNumber(ENTER_A_NUMBER).firstUnaryResult(AND).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build(),
+                ArgumentsForTests.builder(AND).firstNumber(FIVE).firstBinaryOperator(AND).firstBinaryResult("5|5 "+AND)
+                        .secondBinaryOperator(AND).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()
+        );
     }
 
     /* Valid SHIFT */
@@ -253,7 +277,7 @@ class ProgrammerPanelTest extends TestParent
     @ParameterizedTest()
     @MethodSource("getModulusCases")
     @DisplayName("Test Modulus Button")
-    public void testModulusButton(CalculatorBase base, String firstNumber, String secondNumber,
+    void testModulusButton(CalculatorBase base, String firstNumber, String secondNumber,
                                   String nextOperator, String expectedResult)
     {
         calculator.setCalculatorBase(base);

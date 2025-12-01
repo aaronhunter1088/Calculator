@@ -1,8 +1,5 @@
 package Parent;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static Types.Texts.*;
 
 /**
@@ -41,7 +38,7 @@ import static Types.Texts.*;
  */
 public class ArgumentsForTests
 {
-    private String simpleName = EMPTY;
+    private String testName = EMPTY;
     private String firstNumber = EMPTY;
     private String secondNumber = EMPTY;
     private String firstUnaryOperator = EMPTY;
@@ -68,21 +65,21 @@ public class ArgumentsForTests
     }
 
     /**
-     * Sets the simple name for this test
-     * @param simpleName the simple name to set
+     * Sets the test name for this test
+     * @param testName the test name to set
      * @return this test object
      */
-    public ArgumentsForTests simpleName(String simpleName)
+    public ArgumentsForTests testName(String testName)
     {
-        this.simpleName = simpleName;
+        this.testName = testName;
         return this;
     }
 
     /**
-     * Gets the simple name for this test
-     * @return the simple name
+     * Gets the test name for this test
+     * @return the test name
      */
-    public String getSimpleName() { return simpleName; }
+    public String getTestName() { return testName; }
 
     /**
      * Sets the first number
@@ -326,9 +323,9 @@ public class ArgumentsForTests
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("{");
-        if (!simpleName.isEmpty())
+        if (!testName.isEmpty())
         {
-            sb.append(simpleName);
+            sb.append(testName);
         }
         else
         {

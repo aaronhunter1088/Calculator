@@ -208,7 +208,7 @@ public abstract class TestParent
                 else
                     calculator.performNumberButtonAction(actionEvent);
                 if ((i+1) == firstNumLength) {
-                    assertEquals(addThousandsDelimiter(number, calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "textPane value is not as expected");
+                    assertEquals(addThousandsDelimiter(number, calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
                     assertEquals(number, calculator.getValues()[calculator.getValuesPosition()], "value[valuesPosition] is not as expected");
                 }
                 else {
