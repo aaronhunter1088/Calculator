@@ -167,8 +167,8 @@ class BasicPanelTest extends TestParent
                 Arguments.of(ArgumentsForTests.builder(PERCENT)
                         .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(PERCENT).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
                 Arguments.of(ArgumentsForTests.builder(PERCENT)
-                        .firstNumber("0.05").firstUnaryOperator(ADDITION).firstUnaryResult("0.05|0.05 +")
-                        .firstBinaryOperator(PERCENT).firstBinaryResult("0.05|0.05 +").build())
+                        .firstNumber("0.05").firstBinaryOperator(ADDITION).firstBinaryResult("0.05|0.05 "+ADDITION)
+                        .secondUnaryOperator(PERCENT).secondUnaryResult(EMPTY+"|0.05 "+ADDITION).build())
         );
     }
 
@@ -225,6 +225,7 @@ class BasicPanelTest extends TestParent
          * case 2: cannot press SQUARE ROOT when textPane is badText (INFINITY)
          * case 3: cannot press SQUARE ROOT when textPane is badText (ENTER_A_NUMBER)
          * case 4: cannot press SQUARE ROOT when current value is negative
+         * case 5: cannot press SQUARE ROOT when operator is active
          */
         return Stream.of(
                 Arguments.of(ArgumentsForTests.builder(SQUARE_ROOT)
@@ -234,7 +235,10 @@ class BasicPanelTest extends TestParent
                 Arguments.of(ArgumentsForTests.builder(SQUARE_ROOT)
                         .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(SQUARE_ROOT).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
                 Arguments.of(ArgumentsForTests.builder(SQUARE_ROOT)
-                        .firstNumber("-5").firstUnaryOperator(SQUARE_ROOT).firstUnaryResult("-5|"+ONLY_POSITIVES).build())
+                        .firstNumber("-5").firstUnaryOperator(SQUARE_ROOT).firstUnaryResult("-5|"+ONLY_POSITIVES).build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARE_ROOT)
+                        .firstNumber("16").firstBinaryOperator(ADDITION).firstBinaryResult("16|16 "+ADDITION)
+                        .secondUnaryOperator(SQUARE_ROOT).secondUnaryResult(EMPTY+"|16 "+ADDITION).build())
         );
     }
 
@@ -265,13 +269,14 @@ class BasicPanelTest extends TestParent
          * case 7: Input 5.5. Press SQUARED. Expect 30.25.
          */
         return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(SQUARED).firstNumber("5").firstUnaryOperator(SQUARED).firstUnaryResult("25").build()),
-                Arguments.of(ArgumentsForTests.builder(SQUARED).firstNumber("-4").firstUnaryOperator(SQUARED).firstUnaryResult("16").build()),
-                Arguments.of(ArgumentsForTests.builder(SQUARED).firstNumber("0").firstUnaryOperator(SQUARED).firstUnaryResult("0").build()),
-                Arguments.of(ArgumentsForTests.builder(SQUARED).firstNumber("-5").firstUnaryOperator(SQUARED).firstUnaryResult("25").build()),
-                Arguments.of(ArgumentsForTests.builder(SQUARED).firstNumber("2.5").firstUnaryOperator(SQUARED).firstUnaryResult("6.25").build()),
-                Arguments.of(ArgumentsForTests.builder(SQUARED).firstNumber("5.5").firstUnaryOperator(SQUARED).firstUnaryResult("30.25").build())
-        );
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("5²").firstNumber("5").firstUnaryOperator(SQUARED).firstUnaryResult("25").build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("-4²").firstNumber("-4").firstUnaryOperator(SQUARED).firstUnaryResult("16").build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("0²").firstNumber("0").firstUnaryOperator(SQUARED).firstUnaryResult("0").build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("-5²").firstNumber("-5").firstUnaryOperator(SQUARED).firstUnaryResult("25").build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("2.5²").firstNumber("2.5").firstUnaryOperator(SQUARED).firstUnaryResult("6.25").build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("5.5²").firstNumber("5.5").firstUnaryOperator(SQUARED).firstUnaryResult("30.25").build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED).simpleName("5² + 4²").firstNumber("5").firstUnaryOperator(SQUARED).firstUnaryResult("25").firstBinaryOperator(ADDITION).firstBinaryResult("25|25 "+ADDITION).secondNumber("4").secondUnaryOperator(SQUARED).secondUnaryResult("16").build())
+                );
     }
 
     /* Invalid SQUARED */
@@ -294,12 +299,16 @@ class BasicPanelTest extends TestParent
         /*
          * case 1: No firstNumber. Pressed SQUARED. Expect ENTER_A_NUMBER
          * case 2: firstNumber is badText. Press SQUARED. Expect ENTER_A_NUMBER
+         * case 3: Enter number. Enter binary operator. Press SQUARED. Expect number + operator
          */
         return Stream.of(
                 Arguments.of(ArgumentsForTests.builder(SQUARED)
                         .firstUnaryOperator(SQUARED).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
                 Arguments.of(ArgumentsForTests.builder(SQUARED)
-                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(SQUARED).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build())
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(SQUARED).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(SQUARED)
+                        .firstNumber("5").firstBinaryOperator(ADDITION).firstBinaryResult("5|5 "+ADDITION)
+                        .secondUnaryOperator(SQUARED).secondUnaryResult(EMPTY+"|5 "+ADDITION).build())
         );
     }
 
@@ -373,7 +382,8 @@ class BasicPanelTest extends TestParent
                 Arguments.of(ArgumentsForTests.builder(FRACTION).firstUnaryOperator(FRACTION).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
                 Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber(ENTER_A_NUMBER).firstUnaryOperator(FRACTION).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
                 Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber(INFINITY).firstUnaryOperator(FRACTION).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+INFINITY).build()),
-                Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber("5").firstUnaryOperator(ADDITION).firstUnaryResult("5|5 "+ADDITION).firstBinaryOperator(FRACTION).firstBinaryResult("5|5 "+ADDITION).build())
+                Arguments.of(ArgumentsForTests.builder(FRACTION).firstNumber("5").firstBinaryOperator(ADDITION).firstBinaryResult("5|5 "+ADDITION)
+                        .secondUnaryOperator(FRACTION).secondUnaryResult(EMPTY+"|5 "+ADDITION).build())
         );
     }
 
@@ -462,6 +472,18 @@ class BasicPanelTest extends TestParent
     }
     private static Stream<Arguments> validDeleteButtonCases()
     {
+        /*
+         * case 1: Enter 35, press DELETE -> textPane shows 3
+         * case 2: Enter 3, press DELETE -> textPane shows EMPTY
+         * case 3: Enter 35.12, press DELETE -> textPane shows 35.1
+         * case 4: Enter 35.1, press DELETE -> textPane shows 35.
+         * case 5: Enter 3, press DELETE -> textPane shows EMPTY, history shows DELETE and ENTER_A_NUMBER
+         * case 6: Enter 35, press ADDITION, textPane shows 35 +, press DELETE -> textPane shows 35
+         * case 7: Enter 1, press SUBTRACTION, textPane shows 1 -, press DELETE -> textPane shows 1
+         * case 8: textPane shows ENTER_A_NUMBER, press DELETE -> textPane shows EMPTY
+         * case 9: textPane is EMPTY, press DELETE -> textPane shows ENTER_A_NUMBER
+         * case 10: Enter 12,345, press DELETE -> textPane shows 1,234
+         */
         return Stream.of(
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35").firstUnaryOperator(DELETE).firstUnaryResult("3")),
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("3").firstUnaryOperator(DELETE).firstUnaryResult(EMPTY)),
@@ -471,10 +493,10 @@ class BasicPanelTest extends TestParent
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("35").firstBinaryOperator(ADDITION).firstBinaryResult("35|35 "+ADDITION).secondUnaryOperator(DELETE).secondUnaryResult("35")),
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("1").firstBinaryOperator(SUBTRACTION).firstBinaryResult("1|1 "+SUBTRACTION).secondUnaryOperator(DELETE).secondUnaryResult("1")),
                 Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber(ENTER_A_NUMBER).firstUnaryResult(DELETE).firstUnaryResult(EMPTY)),
-                Arguments.of(ArgumentsForTests.builder(DELETE).firstUnaryOperator(DELETE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER))
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstUnaryOperator(DELETE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)),
+                Arguments.of(ArgumentsForTests.builder(DELETE).firstNumber("12,345").firstUnaryOperator(DELETE).firstUnaryResult("1,234"))
         );
     }
-
     /* Invalid DELETE */
 
     /* Valid ADD */
@@ -502,10 +524,13 @@ class BasicPanelTest extends TestParent
          *         secondUnaryResult has EMPTY|6 because it checks values[1] but we are now at values[0]
          */
         return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(ADDITION).firstNumber("1").firstBinaryOperator(ADDITION).firstBinaryResult("1|1 "+ADDITION)),
-                Arguments.of(ArgumentsForTests.builder(ADDITION).firstNumber("1").firstBinaryOperator(ADDITION).firstBinaryResult("1|1 "+ADDITION).secondNumber("2").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"3")),
-                Arguments.of(ArgumentsForTests.builder(ADDITION).firstNumber("1.5").firstBinaryOperator(ADDITION).firstBinaryResult("1.5|1.5 "+ADDITION).secondNumber("2.3").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"3.8")),
-                Arguments.of(ArgumentsForTests.builder(ADDITION).firstNumber("1").firstBinaryOperator(ADDITION).firstBinaryResult("1|1 "+ADDITION).secondNumber("5").secondUnaryOperator(EQUALS).secondUnaryResult(EMPTY+ARGUMENT_SEPARATOR+"6").secondBinaryOperator(ADDITION).secondBinaryResult(EMPTY+"|6 "+ADDITION).build())
+                Arguments.of(ArgumentsForTests.builder(ADDITION).simpleName("1 +").firstNumber("1").firstBinaryOperator(ADDITION).firstBinaryResult("1|1 "+ADDITION)),
+                Arguments.of(ArgumentsForTests.builder(ADDITION).simpleName("1 + 2 = 3").firstNumber("1").firstBinaryOperator(ADDITION).firstBinaryResult("1|1 "+ADDITION).secondNumber("2").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"3")),
+                Arguments.of(ArgumentsForTests.builder(ADDITION).simpleName("1.5 + 2.3 = 3.8").firstNumber("1.5").firstBinaryOperator(ADDITION).firstBinaryResult("1.5|1.5 "+ADDITION).secondNumber("2.3").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"3.8")),
+                Arguments.of(ArgumentsForTests.builder(ADDITION).simpleName("1 + 5 = 6 +")
+                        .firstNumber("1").firstBinaryOperator(ADDITION).firstBinaryResult("1|1 "+ADDITION)
+                        .secondNumber("5").secondUnaryOperator(EQUALS).secondUnaryResult(EMPTY+ARGUMENT_SEPARATOR+"6")
+                        .secondBinaryOperator(ADDITION).secondBinaryResult(EMPTY+"|6 "+ADDITION).build())
         );
     }
 
@@ -778,7 +803,6 @@ class BasicPanelTest extends TestParent
         postConstructCalculator();
 
         setupWhenThen(actionEvent, arguments);
-        setupInitialState(arguments);
 
         String calculatorHistory = calculator.getHistoryTextPane().getText();
         calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
@@ -855,11 +879,11 @@ class BasicPanelTest extends TestParent
          * case 5: Enter -5, press NEGATE, press ADDITION, enter 2, press NEGATE, press ADDITION -> results in 3 +
          */
         return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(NEGATE).firstNumber("1").firstUnaryOperator(NEGATE).firstUnaryResult("-1").build()),
-                Arguments.of(ArgumentsForTests.builder(NEGATE).firstNumber("-1").firstUnaryOperator(NEGATE).firstUnaryResult("1").build()),
-                Arguments.of(ArgumentsForTests.builder(NEGATE).firstNumber("1").firstUnaryOperator(NEGATE).firstUnaryResult("-1").firstBinaryOperator(NEGATE).firstBinaryResult("1").build()),
-                Arguments.of(ArgumentsForTests.builder(NEGATE).firstNumber("1").firstUnaryOperator(NEGATE).firstUnaryResult("-1").firstBinaryOperator(ADDITION).firstBinaryResult("-1|-1 "+ADDITION).build()),
-                Arguments.of(ArgumentsForTests.builder(NEGATE).firstNumber("-5").firstUnaryOperator(NEGATE).firstUnaryResult("5").firstBinaryOperator(ADDITION).firstBinaryResult("5|5 "+ADDITION).secondNumber("2").secondUnaryOperator(NEGATE).secondUnaryResult("-2").secondBinaryOperator(ADDITION).secondBinaryResult("3|3 "+ADDITION).build())
+                Arguments.of(ArgumentsForTests.builder(NEGATE).simpleName("1 NEGATE").firstNumber("1").firstUnaryOperator(NEGATE).firstUnaryResult("-1").build()),
+                Arguments.of(ArgumentsForTests.builder(NEGATE).simpleName("-1 NEGATE").firstNumber("-1").firstUnaryOperator(NEGATE).firstUnaryResult("1").build()),
+                Arguments.of(ArgumentsForTests.builder(NEGATE).simpleName("1 NEGATE NEGATE").firstNumber("1").firstUnaryOperator(NEGATE).firstUnaryResult("-1").firstBinaryOperator(NEGATE).firstBinaryResult("1").build()),
+                Arguments.of(ArgumentsForTests.builder(NEGATE).simpleName("1 NEGATE +").firstNumber("1").firstUnaryOperator(NEGATE).firstUnaryResult("-1").firstBinaryOperator(ADDITION).firstBinaryResult("-1|-1 "+ADDITION).build()),
+                Arguments.of(ArgumentsForTests.builder(NEGATE).simpleName("5 NEGATE + 2 NEGATE + 3 +").firstNumber("-5").firstUnaryOperator(NEGATE).firstUnaryResult("5").firstBinaryOperator(ADDITION).firstBinaryResult("5|5 "+ADDITION).secondNumber("2").secondUnaryOperator(NEGATE).secondUnaryResult("-2").secondBinaryOperator(ADDITION).secondBinaryResult("3|3 "+ADDITION).build())
         );
     }
 
@@ -958,7 +982,7 @@ class BasicPanelTest extends TestParent
                 Arguments.of(ArgumentsForTests.builder(SUBTRACTION).firstNumber("1").firstBinaryOperator(SUBTRACTION).firstBinaryResult("1|1 "+SUBTRACTION).secondNumber("2").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"-1")),
                 Arguments.of(ArgumentsForTests.builder(MULTIPLICATION).firstNumber("1").firstBinaryOperator(MULTIPLICATION).firstBinaryResult("1|1 "+MULTIPLICATION).secondNumber("2").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"2")),
                 Arguments.of(ArgumentsForTests.builder(DIVISION).firstNumber("1").firstBinaryOperator(DIVISION).firstBinaryResult("1|1 "+DIVISION).secondNumber("2").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY+ARGUMENT_SEPARATOR+"0.5")),
-                Arguments.of(ArgumentsForTests.builder(ADDITION)
+                Arguments.of(ArgumentsForTests.builder(ADDITION).simpleName("5 SQUARED + 4 SQUARED = 41")
                         .firstNumber("5")
                         .firstUnaryOperator(SQUARED).firstUnaryResult("25")
                         .firstBinaryOperator(ADDITION).firstBinaryResult("25|25 "+ADDITION)

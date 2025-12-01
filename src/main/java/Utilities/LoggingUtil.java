@@ -67,7 +67,7 @@ public class LoggingUtil {
                         logger.debug("memoryPosition: {}", calculator.getMemoryPosition());
                         logger.debug("memoryRecallPosition: {}", calculator.getMemoryRecallPosition());
                         for (int i = 0; i < calculator.getMemoryPosition(); i++) {
-                            logger.debug("memoryValues[{}]: {}", i, calculator.getMemoryValues()[i]);
+                            logger.debug("memories[{}]: {}", i, calculator.getMemoryValues()[i]);
                         }
                     }
                     logger.debug("values[0]: '{}'", calculator.getValues()[0]); // first number
@@ -87,7 +87,7 @@ public class LoggingUtil {
                         logger.info("memoryPosition: {}", calculator.getMemoryPosition());
                         logger.info("memoryRecallPosition: {}", calculator.getMemoryRecallPosition());
                         for (int i = 0; i < calculator.getMemoryPosition(); i++) {
-                            logger.info("memoryValues[{}]: {}", i, calculator.getMemoryValues()[i]);
+                            logger.info("memories[{}]: {}", i, calculator.getMemoryValues()[i]);
                         }
                     }
                     for (int i = 0; i <= calculator.getValuesPosition(); i++) {
@@ -217,7 +217,7 @@ public class LoggingUtil {
      */
     public static void logValuesAtPosition(Calculator calculator, Logger logger)
     {
-        logger.debug("values[{}]: {}",
+        logger.debug("values[{}]: '{}'",
                 calculator.getValuesPosition(),
                 calculator.getValues()[calculator.getValuesPosition()]);
     }

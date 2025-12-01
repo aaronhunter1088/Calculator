@@ -61,6 +61,7 @@ public abstract class TestParent
             int i = idx.getAndIncrement();
             return characters.get(i);
         });
+        setupInitialState(arguments);
     }
 
     /**
@@ -360,11 +361,11 @@ public abstract class TestParent
         {
             performNextOperatorAction(calculator, actionEvent, logger, firstUnaryOperator);
             if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstUnaryOperator) && !calculator.textPaneContainsBadText())
-            { assertEquals(firstUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "Memories[mP] is not as expected"); }
+            { assertEquals(firstUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
             else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstUnaryOperator))
-            { assertEquals(firstUnaryValuesResult, calculator.getValues()[0], "Values[0] is not as expected"); }
+            { assertEquals(firstUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
             else
-            { assertEquals(firstUnaryValuesResult, calculator.getValues()[0], "Values[0] is not as expected"); }
+            { assertEquals(firstUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected"); }
             assertEquals(firstUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
         }
@@ -373,10 +374,12 @@ public abstract class TestParent
         if (!firstBinaryOperator.isEmpty())
         {
             performNextOperatorAction(calculator, actionEvent, logger, firstBinaryOperator);
-            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstBinaryOperator))
-            { assertEquals(firstBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "Memories[mP] is not as expected"); }
+            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstBinaryOperator) && !calculator.textPaneContainsBadText())
+            { assertEquals(firstBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
+            else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstBinaryOperator))
+            { assertEquals(firstBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
             else
-            { assertEquals(firstBinaryValuesResult, calculator.getValues()[0], "Values[0] is not as expected"); }
+            { assertEquals(firstBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected"); }
             assertEquals(firstBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
         }
@@ -398,11 +401,11 @@ public abstract class TestParent
         {
             performNextOperatorAction(calculator, actionEvent, logger, secondUnaryOperator);
             if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondUnaryOperator) && !calculator.textPaneContainsBadText())
-            { assertEquals(secondUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "Memories[mP] is not as expected"); }
+            { assertEquals(secondUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
             else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondUnaryOperator))
-            { assertEquals(secondUnaryValuesResult, calculator.getValues()[0], "Values[0] is not as expected"); }
+            { assertEquals(secondUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
             else
-            { assertEquals(secondUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "Values[vP] is not as expected"); }
+            { assertEquals(secondUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected"); }
             assertEquals(secondUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
         }
@@ -411,10 +414,13 @@ public abstract class TestParent
         if (!secondBinaryOperator.isEmpty())
         {
             performNextOperatorAction(calculator, actionEvent, logger, secondBinaryOperator);
-            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondBinaryOperator))
-            { assertEquals(secondBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "Memories[mP] is not as expected"); }
+            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondBinaryOperator) && !calculator.textPaneContainsBadText())
+            { assertEquals(secondBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
+            else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondBinaryOperator))
+            { assertEquals(secondBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
             else
-            { assertEquals(secondBinaryValuesResult, calculator.getValues()[1], "Values[1] is not as expected"); }
+            { assertEquals(secondBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected"); }
+
             assertEquals(secondBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
         }

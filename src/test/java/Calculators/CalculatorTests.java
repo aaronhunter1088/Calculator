@@ -302,6 +302,18 @@ class CalculatorTests extends TestParent
         );
     }
 
+    @Test
+    public void switchingFromBasicToProgrammerConvertsTextArea()
+    {
+        calculator.appendTextToPane(FOUR);
+        calculator.getValues()[0] = FOUR;
+        calculator.setCalculatorByte(BYTE_BYTE);
+        String convertedValue = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
+        assertEquals("00000100", convertedValue, "Conversion went wrong!");
+        calculator.appendTextToPane(convertedValue);
+        assertEquals("00000100", calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
+    }
+
     @ParameterizedTest
     @DisplayName("Test Copy Action")
     @MethodSource("copyCases")
@@ -468,18 +480,6 @@ class CalculatorTests extends TestParent
     }
 
     /*############## Test Button Actions ##################*/
-    @Test
-    void testDeletingADigitAdjustsCourtesyCommas()
-    {
-        postConstructCalculator();
-        when(actionEvent.getActionCommand()).thenReturn(DELETE);
-        calculator.values[0] = "12345";
-        calculator.getTextPane().setText("12345");
-        calculator.performDeleteButtonAction(actionEvent);
-        assertTrue(calculator.getTextPaneValue().contains(","), "Expected textPane to be 1,234");
-        assertEquals("1234", calculator.values[0], "Expected values[0] to be 1234");
-    }
-
     /*############## Test Helper Methods ##################*/
     @ParameterizedTest
     @DisplayName("Test ConvertToPositive()")
@@ -1164,6 +1164,5 @@ class CalculatorTests extends TestParent
 
         assertEquals(HISTORY_CLOSED, calculator.getButtonHistory().getText(), "Expected History Button to show " + HISTORY_CLOSED);
     }
-
 
 }

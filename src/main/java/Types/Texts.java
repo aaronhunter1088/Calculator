@@ -48,6 +48,9 @@ public class Texts {
     public static final String EMPTY = "";
     public static final String SPACE = " ";
     public static final String SQUARED = "x²";
+    public static final String CUBED = "x³";
+    public static final String TO_THE_POWER_OF = "xʸ";
+    public static final String EXPONENT_TWO = "²";
     public static final String YES = "YES";
     public static final String NO = "NO";
     public static final String ARGUMENT_SEPARATOR = "|";

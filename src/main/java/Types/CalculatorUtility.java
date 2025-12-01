@@ -39,11 +39,10 @@ public class CalculatorUtility
     public static String addThousandsDelimiter(String valueToAdjust, String delimiter)
     {
         if (valueToAdjust.isEmpty()) return valueToAdjust;
-        //String delimiter = getThousandsDelimiter();
+        if (valueToAdjust.contains(delimiter)) valueToAdjust = removeThousandsDelimiter(valueToAdjust, delimiter);
         try { new BigDecimal(valueToAdjust); }
         catch (NumberFormatException nfe) { return valueToAdjust; }
         boolean negativeControl = isNegativeNumber(valueToAdjust);
-        if (valueToAdjust.contains(delimiter)) valueToAdjust = removeThousandsDelimiter(valueToAdjust, delimiter);
         valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
         // Keep negative sign just for length checks
         if (!isFractionalNumber(valueToAdjust) && valueToAdjust.length() <= 3) {
@@ -113,7 +112,7 @@ public class CalculatorUtility
     {
         LOGGER.debug("Converting {} to negative number", number.replaceAll(NEWLINE, EMPTY));
         if (!number.startsWith(SUBTRACTION))
-            number = SUBTRACTION + number.replace(NEWLINE, EMPTY);
+            number = SUBTRACTION + number;
         return number;
     }
 

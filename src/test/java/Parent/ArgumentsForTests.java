@@ -41,6 +41,7 @@ import static Types.Texts.*;
  */
 public class ArgumentsForTests
 {
+    private String simpleName = EMPTY;
     private String firstNumber = EMPTY;
     private String secondNumber = EMPTY;
     private String firstUnaryOperator = EMPTY;
@@ -65,6 +66,23 @@ public class ArgumentsForTests
         test.operatorUnderTest(operatorUnderTest);
         return test;
     }
+
+    /**
+     * Sets the simple name for this test
+     * @param simpleName the simple name to set
+     * @return this test object
+     */
+    public ArgumentsForTests simpleName(String simpleName)
+    {
+        this.simpleName = simpleName;
+        return this;
+    }
+
+    /**
+     * Gets the simple name for this test
+     * @return the simple name
+     */
+    public String getSimpleName() { return simpleName; }
 
     /**
      * Sets the first number
@@ -305,49 +323,38 @@ public class ArgumentsForTests
     public static final String OPERATOR_UNDER_TEST = "operatorUnderTest";
     public static final String INITIAL_STATE = "initialState";
 
-    private static Map<String, String> createArgumentsMap()
-    {
-        Map<String, String> args = new HashMap<>();
-        args.put(FIRST_NUMBER, EMPTY);
-        args.put(SECOND_NUMBER, EMPTY);
-        args.put(FIRST_UNARY_OPERATOR, EMPTY);
-        args.put(SECOND_UNARY_OPERATOR, EMPTY);
-        args.put(FIRST_BINARY_OPERATOR, EMPTY);
-        args.put(SECOND_BINARY_OPERATOR, EMPTY);
-        args.put(FIRST_UNARY_RESULT, EMPTY);
-        args.put(SECOND_UNARY_RESULT, EMPTY);
-        args.put(FIRST_BINARY_RESULT, EMPTY);
-        args.put(SECOND_BINARY_RESULT, EMPTY);
-        args.put(INITIAL_STATE, EMPTY);
-        args.put(OPERATOR_UNDER_TEST, EMPTY);
-        return args;
-    }
-
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("{");
-        //sb.append("OperatorUnderTest='").append(argumentsMap.get(OPERATOR_UNDER_TEST)).append('\'').append(COMMA).append(SPACE);
-        if (!firstNumber.isEmpty())
-            sb.append("firstNumber='").append(firstNumber).append('\'').append(COMMA).append(SPACE);
-        if (!firstUnaryOperator.isEmpty())
-            sb.append("firstUOp='").append(firstUnaryOperator).append('\'').append(COMMA).append(SPACE);
-        if (!firstUnaryResult.isEmpty())
-            sb.append("firstUnaryResult='").append(firstUnaryResult).append('\'').append(COMMA).append(SPACE);
-        if (!firstBinaryOperator.isEmpty())
-            sb.append("firstBOp='").append(firstBinaryOperator).append('\'').append(COMMA).append(SPACE);
-        if (!firstBinaryResult.isEmpty())
-            sb.append("firstBinaryResult='").append(firstBinaryResult).append('\'').append(COMMA).append(SPACE);
-        if (!secondNumber.isEmpty())
-            sb.append("secondNumber='").append(secondNumber).append('\'').append(COMMA).append(SPACE);
-        if (!secondUnaryOperator.isEmpty())
-            sb.append("secondUOp='").append(secondUnaryOperator).append('\'').append(COMMA).append(SPACE);
-        if (!secondUnaryResult.isEmpty())
-            sb.append("secondUnaryResult='").append(secondUnaryResult).append('\'').append(COMMA).append(SPACE);
-        if (!secondBinaryOperator.isEmpty())
-            sb.append("secondBOp='").append(secondBinaryOperator).append('\'').append(COMMA).append(SPACE);
-        if (!secondBinaryResult.isEmpty())
-            sb.append("secondBinaryResult='").append(secondBinaryResult).append('\'').append(COMMA).append(SPACE);
-        sb.append('}');
+        if (!simpleName.isEmpty())
+        {
+            sb.append(simpleName);
+        }
+        else
+        {
+            //sb.append("OperatorUnderTest='").append(argumentsMap.get(OPERATOR_UNDER_TEST)).append('\'').append(COMMA).append(SPACE);
+            if (!firstNumber.isEmpty())
+                sb.append("firstNumber='").append(firstNumber).append('\'').append(COMMA).append(SPACE);
+            if (!firstUnaryOperator.isEmpty())
+                sb.append("firstUOp='").append(firstUnaryOperator).append('\'').append(COMMA).append(SPACE);
+            if (!firstUnaryResult.isEmpty())
+                sb.append("firstUnaryResult='").append(firstUnaryResult).append('\'').append(COMMA).append(SPACE);
+            if (!firstBinaryOperator.isEmpty())
+                sb.append("firstBOp='").append(firstBinaryOperator).append('\'').append(COMMA).append(SPACE);
+            if (!firstBinaryResult.isEmpty())
+                sb.append("firstBinaryResult='").append(firstBinaryResult).append('\'').append(COMMA).append(SPACE);
+            if (!secondNumber.isEmpty())
+                sb.append("secondNumber='").append(secondNumber).append('\'').append(COMMA).append(SPACE);
+            if (!secondUnaryOperator.isEmpty())
+                sb.append("secondUOp='").append(secondUnaryOperator).append('\'').append(COMMA).append(SPACE);
+            if (!secondUnaryResult.isEmpty())
+                sb.append("secondUnaryResult='").append(secondUnaryResult).append('\'').append(COMMA).append(SPACE);
+            if (!secondBinaryOperator.isEmpty())
+                sb.append("secondBOp='").append(secondBinaryOperator).append('\'').append(COMMA).append(SPACE);
+            if (!secondBinaryResult.isEmpty())
+                sb.append("secondBinaryResult='").append(secondBinaryResult).append('\'').append(COMMA).append(SPACE);
+            sb.append('}');
+        }
         return sb.toString();
     }
 }

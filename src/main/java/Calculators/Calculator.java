@@ -1686,15 +1686,25 @@ public class Calculator extends JFrame
         }
         else
         {
-            if (!getAppropriateValue().isEmpty())
+            String value = getAppropriateValue();
+            boolean endsWithBinaryOperator = getBasicPanelBinaryOperators().contains(getActiveOperator()) && getTextPaneValue().endsWith(getActiveOperator());
+            if (!value.isEmpty() && !endsWithBinaryOperator)
             {
+                String currentOperator = getActiveOperator();
                 setActiveOperator(buttonChoice);
                 performOperation();
                 appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()), true);
                 setNegativeNumber(CalculatorUtility.isNegativeNumber(values[3]));
                 buttonDecimal.setEnabled(!isFractionalNumber(values[3]));
                 writeHistory(buttonChoice, false);
-                setActiveOperator(buttonChoice);
+                if (getBasicPanelUnaryOperators().contains(buttonChoice))
+                {
+                    setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    setActiveOperator(currentOperator);
+                }
                 confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
             }
             // Needs to be here!
@@ -1796,6 +1806,8 @@ public class Calculator extends JFrame
             String value = textPaneTextValue;
             logValuesAtPosition(this, LOGGER);
             logValueInTextPane(this, LOGGER);
+            String currentOperator = getActiveOperator();
+            setActiveOperator(buttonChoice);
             if (!endsWithOperator(value))
             {
                 appendTextToPane(addThousandsDelimiter(value.substring(0, value.length()-1), getThousandsDelimiter()), true);
@@ -1811,9 +1823,16 @@ public class Calculator extends JFrame
             buttonDecimal.setEnabled(!isFractionalNumber(values[valuesPosition]));
             negativeNumber = values[valuesPosition].startsWith(SUBTRACTION);
             writeHistory(buttonChoice, false);
-            // no operator set for delete. it's also not immediately set to empty!
+            if (getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+            {
+                setActiveOperator(EMPTY);
+            }
+            else
+            {
+                setActiveOperator(currentOperator);
+            }
             updateMemoryButtonsState(); // memory buttons states affected!
-            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+            confirm(this, LOGGER, pressedButton(buttonChoice));
         }
     }
 
@@ -1873,9 +1892,9 @@ public class Calculator extends JFrame
             {
                 logEmptyValue(buttonChoice, this, LOGGER);
                 LOGGER.info("Setting values[0] to textPane value");
+                setActiveOperator(buttonChoice);
                 appendTextToPane(textPaneValue + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
-                values[2] = buttonChoice;
                 obtainingFirstNumber = false;
                 valuesPosition = 1;
                 confirm(this, LOGGER, pressedButton(buttonChoice));
@@ -1911,6 +1930,7 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(SUBTRACTION)); }
         else if (isMinimumValue(values[valuesPosition]))
@@ -1928,10 +1948,10 @@ public class Calculator extends JFrame
                 negativeNumber = false;
                 valuesPosition += 1;
             }
-            // No operator pushed, textPane is empty
+            // No operator pushed, textPane is empty, beginning a negative number
             else if (isNoOperatorActive() && getTextPaneValue().isEmpty())
             {
-                values[valuesPosition] = EMPTY;
+                values[valuesPosition] = EMPTY; // TODO: Do place in negative sign for negative number
                 appendTextToPane(buttonChoice);
                 writeHistory(buttonChoice, true);
                 negativeNumber = true;
@@ -1969,12 +1989,12 @@ public class Calculator extends JFrame
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
                 setNegativeNumber(CalculatorUtility.isNegativeNumber(values[valuesPosition]));
+                setActiveOperator(buttonChoice);
                 appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice);
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
-                values[2] = buttonChoice;
                 obtainingFirstNumber = false;
-                valuesPosition += 1;
+                setValuesPosition(1);
             }
             buttonDecimal.setEnabled(true);
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
@@ -2004,6 +2024,7 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION)); }
         else if (getTextPaneValue().isEmpty())
@@ -2049,12 +2070,12 @@ public class Calculator extends JFrame
                 LOGGER.error("The user pushed multiple but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+                setActiveOperator(buttonChoice);
                 appendTextToPane(addThousandsDelimiter(values[0], getThousandsDelimiter()) + SPACE + buttonChoice);
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
-                values[2] = buttonChoice;
                 obtainingFirstNumber = false;
-                valuesPosition += 1;
+                setValuesPosition(1);
             }
             else if (isOperatorActive())
             { confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION)); }
@@ -2086,9 +2107,10 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (textPaneContainsBadText())
         { confirm(this, LOGGER, cannotPerformOperation(DIVISION)); }
-        else if (getTextPaneValue().isEmpty())
+        else if (textPaneValue.isEmpty())
         {
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(DIVISION));
@@ -2100,7 +2122,7 @@ public class Calculator extends JFrame
         else
         {
             // No basic operator pushed, textPane has a value, and values is set
-            if (isNoOperatorActive() && !getTextPaneValue().isEmpty() && !values[valuesPosition].isBlank())
+            if (isNoOperatorActive() && !values[0].isBlank())
             {
                 setActiveOperator(buttonChoice);
                 appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
@@ -2128,15 +2150,15 @@ public class Calculator extends JFrame
 
                 confirm(this, LOGGER, pressedButton(buttonChoice));
             }
-            else if (!getTextPaneValue().isBlank() && values[0].isBlank())
+            else if (!textPaneValue.isBlank() && values[0].isBlank())
             {
                 LOGGER.error("The user pushed divide but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = getTextPaneValue().replace(",", "");
+                setActiveOperator(buttonChoice);
                 appendTextToPane(values[0] + SPACE + buttonChoice);
                 LOGGER.debug("values[0]: {}", values[0]);
                 writeHistory(buttonChoice, true);
-                values[2] = buttonChoice;
                 obtainingFirstNumber = false;
                 valuesPosition += 1;
             }
@@ -2182,7 +2204,15 @@ public class Calculator extends JFrame
         if (!obtainingFirstNumber && !isPemdasActive) // second number
         {
             LOGGER.debug("obtaining second number...");
-            clearTextInTextPane();
+            if (getTextPaneValue().startsWith(SUBTRACTION) && getTextPaneValue().length() == 1)
+            {
+                clearTextInTextPane();
+                appendTextToPane(SUBTRACTION);
+            }
+            else
+            {
+                clearTextInTextPane();
+            }
             obtainingFirstNumber = true;
         }
         if (performInitialChecks())
@@ -2194,11 +2224,10 @@ public class Calculator extends JFrame
             buttonDecimal.setEnabled(true);
         }
         values[valuesPosition] += buttonChoice;
-        // TODO: Fix
-        if (negativeNumber && !CalculatorUtility.isNegativeNumber(values[valuesPosition])) {
-            values[valuesPosition] = convertToNegative(values[valuesPosition]);
-            setNegativeNumber(true);
-        }
+        if (getTextPaneValue().startsWith(SUBTRACTION) && getTextPaneValue().length() == 1 ||
+            getTextPaneValue().length() > 1 && getTextPaneValue().endsWith(SUBTRACTION))
+            values[valuesPosition] = SUBTRACTION + values[valuesPosition];
+        setNegativeNumber(CalculatorUtility.isNegativeNumber(values[valuesPosition]));
         if (BASE_BINARY == getCalculatorBase())
         {
             var allowedLengthMinusNewLines = programmerPanel.getAllowedLengthsOfTextPane();
@@ -2262,7 +2291,14 @@ public class Calculator extends JFrame
                 setNegativeNumber(CalculatorUtility.isNegativeNumber(values[3]));
                 getButtonDecimal().setEnabled(!isFractionalNumber(values[3]));
                 writeHistory(buttonChoice, false);
-                setActiveOperator(currentOperator);
+                if (getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+                {
+                    setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    setActiveOperator(currentOperator);
+                }
                 confirm(this, LOGGER, pressedButton(buttonChoice));
             }
             else if (isOperatorActive())
@@ -2410,8 +2446,6 @@ public class Calculator extends JFrame
             case OR ->
             {
                 result = programmerPanel.performOr();
-                // TODO: Move to performAndButtonActionMethod
-
             }
             case PERCENT ->
             {
@@ -2462,7 +2496,8 @@ public class Calculator extends JFrame
     public String getAppropriateValue()
     {
         String currentNum = getValueAt();
-        if (currentNum.isEmpty() && valuesPosition == 1) currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        if (!currentNum.isEmpty()) return currentNum;
+        if (valuesPosition == 1) currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (currentNum.isEmpty() && isNoOperatorActive())
             currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         else if (!currentNum.isEmpty() && isOperatorActive())
@@ -2758,7 +2793,13 @@ public class Calculator extends JFrame
                 .forEach(button::removeActionListener));
     }
 
+    public List<String> getBasicPanelUnaryOperators()
+    { return List.of(PERCENT, SQUARE_ROOT, SQUARED, FRACTION, NEGATE, DELETE); }
 
+    public List<String> getBasicPanelBinaryOperators()
+    {
+        return List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS);
+    }
 
     /**
      * When we hit a number button this method is called
@@ -3287,13 +3328,27 @@ public class Calculator extends JFrame
         appendTextToPane(text);
         LOGGER.debug("Text appended to pane. Updating values? {}", updateValues);
         boolean negativeControl = CalculatorUtility.isNegativeNumber(text);
-        if (updateValues) {
-            values[valuesPosition] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
+        // If the result is not badText, store value in appropriate location
+        int currentValuesPosition = valuesPosition;
+        if (updateValues && (!getBadText(text).equals(text) || text.isEmpty()))
+        {
+            if (getBasicPanelUnaryOperators().contains(getActiveOperator()) ||
+               (getValueAt().isEmpty() && getBasicPanelBinaryOperators().contains(getActiveOperator())))
+            {
+                values[valuesPosition] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
+                values[3] = EMPTY;
+            }
+            else
+            {
+                values[3] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
+                valuesPosition = 3;
+            }
         }
         if (negativeControl) {
             values[valuesPosition] = convertToNegative(values[valuesPosition]);
         }
-        LOGGER.debug("values[{}]: {}", getValuesPosition(), values[valuesPosition]);
+        logValuesAtPosition(this, LOGGER);
+        setValuesPosition(currentValuesPosition);
     }
 
     /**

@@ -326,7 +326,8 @@ public class BasicPanel extends JPanel
         else
         {
             String value = calculator.getAppropriateValue();
-            if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
+            boolean endsWithBinaryOperator = calculator.getBasicPanelBinaryOperators().contains(calculator.getActiveOperator()) && calculator.getTextPaneValue().endsWith(calculator.getActiveOperator());
+            if (!value.isEmpty() && !endsWithBinaryOperator)
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 String currentOperator = calculator.getActiveOperator();
@@ -336,7 +337,14 @@ public class BasicPanel extends JPanel
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
-                calculator.setActiveOperator(currentOperator);
+                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+                {
+                    calculator.setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    calculator.setActiveOperator(currentOperator);
+                }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
@@ -382,7 +390,8 @@ public class BasicPanel extends JPanel
         else
         {
             String value = calculator.getAppropriateValue();
-            if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
+            boolean endsWithBinaryOperator = calculator.getBasicPanelBinaryOperators().contains(calculator.getActiveOperator()) && calculator.getTextPaneValue().endsWith(calculator.getActiveOperator());
+            if (!value.isEmpty() && !endsWithBinaryOperator)
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 String currentOperator = calculator.getActiveOperator();
@@ -392,7 +401,14 @@ public class BasicPanel extends JPanel
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
-                calculator.setActiveOperator(currentOperator);
+                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+                {
+                    calculator.setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    calculator.setActiveOperator(currentOperator);
+                }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
@@ -436,7 +452,8 @@ public class BasicPanel extends JPanel
         else
         {
             String value = calculator.getAppropriateValue();
-            if (!value.isEmpty() && !calculator.endsWithOperator(calculator.getTextPaneValue()))
+            boolean endsWithBinaryOperator = calculator.getBasicPanelBinaryOperators().contains(calculator.getActiveOperator()) && calculator.getTextPaneValue().endsWith(calculator.getActiveOperator());
+            if (!value.isEmpty() && !endsWithBinaryOperator)
             {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 calculator.getValues()[calculator.getValuesPosition()] = value;
@@ -448,7 +465,14 @@ public class BasicPanel extends JPanel
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
-                calculator.setActiveOperator(currentOperator);
+                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+                {
+                    calculator.setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    calculator.setActiveOperator(currentOperator);
+                }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
