@@ -497,7 +497,7 @@ public class DatePanel extends JPanel
     public void performDatePickerFunctionality(ActionEvent actionEvent)
     {
         LOGGER.info("Performing From Date picker");
-        if (Objects.requireNonNull(dateOperationsDropdown.getSelectedItem()) == DIFFERENCE_BETWEEN_DATES )
+        if (dateOperationsDropdown.getSelectedItem() == DIFFERENCE_BETWEEN_DATES )
         { updateResultsTextBox(); }
         else if (dateOperationsDropdown.getSelectedItem() == ADD_SUBTRACT_DAYS)
         {
@@ -766,7 +766,9 @@ public class DatePanel extends JPanel
         LocalDate toDate = LocalDate.of(year, month, day);
         Instant toInstance = toDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
+        // TODO: Add in time.
         int[] numberOfYearsMonthsWeeksAndDays = {0,0,0,0}; // year, month, weeks, days
+        // TOD: Remove
         LocalDate localFromDate = fromInstance
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -792,7 +794,8 @@ public class DatePanel extends JPanel
             }
         }
         else if (fromDate.isAfter(toDate))
-        { // TODO: TEST the negatives
+        {
+            // TODO: TEST the negatives
             LOGGER.info("{} is after {}", fromDate, toDate);
             years = period.getYears() * -1;
             months = period.getMonths() * -1;
