@@ -18,7 +18,21 @@
         <outputDirectory>${basedir}/dist/version4</outputDirectory>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <main.class>Runnables.CalculatorMain</main.class>
-    </properties>
+        
+        <apple.version>1.4</apple.version>
+		    <commons.lang.version>3.18.0</commons.lang.version>
+		    <date.picker.version>1.3.2</date.picker.version>
+		    <junit.version>4.13.1</junit.version>
+		    <log4j.version>2.25.3</log4j.version>
+		    <maven.antrun.version>3.0.0</maven.antrun.version>
+		    <maven.assembly.version>3.7.1</maven.assembly.version>
+		    <maven.compiler.version>3.8.0</maven.compiler.version>
+		    <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+		    <maven.dependency.version>3.1.2</maven.dependency.version>
+		    <maven.jar.version>3.2.0</maven.jar.version>
+		    <mockito.version>3.0.0</mockito.version>
+		    <properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
+	  </properties>
 
     <dependencies>
         <!-- apple --><!--
