@@ -1,4 +1,7 @@
-# Calculator v4.5
+# Calculator v4.6.2
+
+v4.6: Merged in programmer redesign changes to ready this repo for assistance with
+Copilot.
 
 v4.5: Introduced the Parent Pom used to manage the versions of the dependencies.
 
