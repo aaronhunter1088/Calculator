@@ -1,7 +1,16 @@
 package Calculators;
 
+import java.io.Serial;
+
+/**
+ * A custom Exception class for Calculator errors
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class CalculatorError extends Exception
 {
+    @Serial
     final static private long serialVersionUID = 4L;
     private String message;
     private Exception exception;
@@ -29,6 +38,7 @@ public class CalculatorError extends Exception
     public CalculatorError(Exception exception)
     {
         super(exception);
+        if (exception != null) setMessage(exception.getMessage());
         setException(exception);
     }
     /**

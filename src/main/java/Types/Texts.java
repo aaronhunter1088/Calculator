@@ -1,102 +1,171 @@
 package Types;
 
 /**
- * This class defines all texts used within
- * the Calculator application
- * Texts.name() returns ENUM value
- * Texts.getValue() returns ENUM("thisValue")
+ * Texts
+ * <p>
+ * This class defines all texts used within the Calculator application.
+ * <p>
+ * Unicode values from <a href="https://www.compart.com/en/unicode/html">Unicodes</a>
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
-public enum Texts {
+public class Texts {
     // Calculator
-    SEGOE_UI("Segoe UI"),
-    VERDANA("Verdana"),
-    ZERO("0"),
-    ONE("1"),
-    TWO("2"),
-    THREE("3"),
-    FOUR("4"),
-    FIVE("5"),
-    SIX("6"),
-    SEVEN("7"),
-    EIGHT("8"),
-    NINE("9"),
-    CLEAR("C"),
-    CLEAR_ENTRY("CE"),
-    DELETE("⌫"),
-    DECIMAL("."),
-    FRACTION("⅟x"),
-    PERCENT("%"),
-    SQUARE_ROOT("√"),
-    MEMORY_CLEAR("MC"),
-    MEMORY_RECALL("MR"),
-    MEMORY_STORE("MS"),
-    MEMORY_ADDITION("M+"),
-    MEMORY_SUBTRACTION("M-"),
-    HISTORY_CLOSED("H▼"),
-    HISTORY_OPEN("H▲"),
-    HISTORY("History"),
-    ADDITION("+"),
-    SUBTRACTION("-"),
-    MULTIPLICATION("✕"),
-    DIVISION("÷"),
-    EQUALS("="),
-    NEGATE("±"),
-    BLANK(""),
-    SQUARED("x²"),
+    public static final String SEGOE_UI = "Segoe UI";
+    public static final String VERDANA = "Verdana";
+    public static final String ZERO = "0";
+    public static final String ONE = "1";
+    public static final String TWO = "2";
+    public static final String THREE = "3";
+    public static final String FOUR = "4";
+    public static final String FIVE = "5";
+    public static final String SIX = "6";
+    public static final String SEVEN = "7";
+    public static final String EIGHT = "8";
+    public static final String NINE = "9";
+    public static final String CLEAR = "C";
+    public static final String CLEAR_ENTRY = "CE";
+    public static final String DELETE = "⌫";
+    public static final String DECIMAL = ".";
+    public static final String FRACTION = "⅟x";
+    public static final String PERCENT = "%";
+    public static final String SQUARE_ROOT = "√";
+    public static final String MEMORY_CLEAR = "MC";
+    public static final String MEMORY_RECALL = "MR";
+    public static final String MEMORY_STORE = "MS";
+    public static final String MEMORY_ADD = "M+";
+    public static final String MEMORY_SUBTRACT = "M-";
+    public static final String HISTORY_CLOSED = "H▼";
+    public static final String HISTORY_OPEN = "H▲";
+    public static final String HISTORY = "History";
+    public static final String ADDITION = "+";
+    public static final String SUBTRACTION = "-";
+    public static final String MULTIPLICATION = "✕";
+    public static final String DIVISION = "÷";
+    public static final String EQUALS = "=";
+    public static final String NEGATE = "±";
+    public static final String EMPTY = "";
+    public static final String SPACE = " ";
+    public static final String SQUARED = "x²";
+    public static final String CUBED = "x³";
+    public static final String TO_THE_POWER_OF = "xʸ";
+    public static final String EXPONENT_TWO = "²";
+    public static final String YES = "YES";
+    public static final String NO = "NO";
+    public static final String ARGUMENT_SEPARATOR = "|";
+    public static final String ARGUMENT_REGEX = "\\|";
     // Menu Choices
-    LOOK("Look"),
-    VIEW("View"),
-    EDIT("Edit"),
-    HELP("Help"),
+    public static final String STYLE = "Style";
+    public static final String VIEW = "View";
+    public static final String EDIT = "Edit";
+    public static final String HELP = "Help";
+    public static final String MENU = "Menu";
     // Look Menu Options
-    METAL("Metal"),
-    SYSTEM("System"),
-    WINDOWS("Windows"),
-    MOTIF("Motif"),
-    GTK("Gtk"),
-    APPLE("Apple"),
+    public static final String METAL = "Metal";
+    public static final String SYSTEM = "System";
+    public static final String WINDOWS = "Windows";
+    public static final String MOTIF = "Motif";
+    public static final String GTK = "Gtk";
+    public static final String APPLE = "Apple";
     // Edit Menu Options
-    COPY("Copy"),
-    PASTE("Paste"),
-    CLEAR_HISTORY("Clear History"),
-    SHOW_MEMORIES("Show Memories"),
+    public static final String COPY = "Copy";
+    public static final String PASTE = "Paste";
+    public static final String CLEAR_HISTORY = "Clear History";
+    public static final String SHOW_MEMORIES = "Show Memories";
+    public static final String NO_MEMORIES_STORED = "No Memories Stored";
+    public static final String MEMORIES = "Memories:";
+    public static final String RESULT = "Result: ";
+    public static final String SAVED_MEMORY = "Saved: %s to memory position %s";
+    public static String savedMemory(String memory, int position) {
+        return String.format(SAVED_MEMORY, memory, position);
+    }
+    public static final String ADDED_TO_MEMORY = "Added: %s to memories[%s] = %s";
+    public static String addedToMemory(String oldValue, int position, String newValue) {
+        return String.format("Added: %s to memories[%s] = %s", oldValue, position, newValue);
+    }
+    public static final String SUBTRACTED_FROM_MEMORY = "Subtracted: %s from memories[%s] = %s";
+    public static String subtractedFromMemory(String oldValue, int position, String newValue) {
+        return String.format(SUBTRACTED_FROM_MEMORY, oldValue, position, newValue);
+    }
+
     // Help Menu Options
-    VIEW_HELP("View Help"),
-    ABOUT_CALCULATOR("About Calculator"),
+    public static final String VIEW_HELP = "View Help";
+    public static final String ABOUT_CALCULATOR = "About Calculator";
     // Error Messages
-    CANNOT_DIVIDE_BY_ZERO("Cannot divide by " + ZERO.getValue()),
-    NOT_A_NUMBER("Not a Number"),
-    NUMBER_TOO_BIG("Number too big"),
-    ENTER_A_NUMBER("Enter a Number"),
-    ONLY_POSITIVES("Only positive numbers"),
-    E("E"),
-    INFINITY("Infinity"),
-    COMMA(","),
+    public static final String CANNOT_DIVIDE_BY_ZERO = "Cannot divide by 0";
+    public static final String NOT_A_NUMBER = "Not a Number";
+    public static final String NUMBER_TOO_BIG = "Number too big";
+    public static final String ENTER_A_NUMBER = "Enter a Number";
+    public static final String ONLY_POSITIVES = "Only positive numbers";
+    public static final String ERROR = "Error";
+    public static final String INFINITY = "Infinity";
+    public static final String CANNOT_PERFORM_OPERATION = "Cannot perform %s operation";
+    public static String cannotPerformOperation(String operation) {
+        return String.format(CANNOT_PERFORM_OPERATION, operation);
+    }
+    public static final String PERFORMED_OPERATION = "Performed %s operation";
+    public static String performedOperation(String operation) {
+        return String.format(PERFORMED_OPERATION, operation);
+    }
+    // Test Error Messages
+    public static final String TEXT_PANE_WRONG_VALUE = "Text Pane has the wrong value";
 
     // Basic
+    public static String pressedButton(String buttonChoice) {
+        return String.format("%s %s", PRESSED, buttonChoice);
+    }
+    public static final String PRESSED = "Pressed";
+    public static final String COMMA = ",";
 
     // Programmer
-    MODULUS("MOD"),
-    LEFT_PARENTHESIS("("),
-    RIGHT_PARENTHESIS(")"),
-    RoL("RoL"),
-    RoR("RoR"),
-    OR("OR"),
-    XOR("XOR"),
-    AND("AND");
+    public static final String MODULUS = "MOD";
+    public static final String LEFT_PARENTHESIS = "(";
+    public static final String RIGHT_PARENTHESIS = ")";
+    public static final String LEFT_BRACKET = "[";
+    public static final String RIGHT_BRACKET = "]";
+    public static final String ROL = "ROL";
+    public static final String ROR = "ROR";
+    public static final String OR = "OR";
+    public static final String XOR = "XOR";
+    public static final String AND = "AND";
+    public static final String LSH = "LSH";
+    public static final String RSH = "RSH";
+    public static final String NOT = "NOT";
+    public static final String A = "A";
+    public static final String B = "B";
+    public static final String C = "C";
+    public static final String D = "D";
+    public static final String E = "E";
+    public static final String F = "F";
+    public static final String BYTE = "Byte";
+    public static final String WORD = "Word";
+    public static final String DWORD = "DWord";
+    public static final String QWORD = "QWord";
+    public static final String BASE = "Base";
+    public static final String BIN = "Bin";
+    public static final String DEC = "Dec";
+    public static final String OCT = "Oct";
+    public static final String HEX = "Hex";
+    public static final String SHIFT = "↑";
 
     // Scientific
 
     // Date
+    public static final String SAME = "Same";
+    public static final String YEAR = "Year";
+    public static final String MONTH = "Month";
+    public static final String WEEK = "Week";
+    public static final String DAY = "Day";
+    public static final String ADD_OR_SUB_RESULT = "Result";
+    public static final String LOWER_CASE_S = "s";
+    public static final String PUSHED_CLEAR = "Pushed clear";
+    public static final String NEWLINE = "\n";
+    public static final String UNDERSCORE = "_";
+    // TODO: Update values according to ??
+    public static final String MAX_VALUE = "9999999";
+    public static final String MIN_VALUE = "-9999999";
 
     // Converter
 
-    final String value;
-    Texts(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

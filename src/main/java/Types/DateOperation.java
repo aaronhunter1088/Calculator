@@ -1,20 +1,25 @@
 package Types;
 
+import Interfaces.CalculatorType;
+
 /**
- * The different types of DatePanels
- * DateOperation.name() returns ENUM value
- * DateOperation.getValue() returns ENUM("thisValue")
+ * DateOperation
+ * <p>
+ * This enum contains the different
+ * date operations for the calculator
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
-public enum DateOperation
+public enum DateOperation implements CalculatorType
 {
     DIFFERENCE_BETWEEN_DATES("Difference between dates"),
     ADD_SUBTRACT_DAYS("Add or subtract days");
 
-    private final String name;
-    DateOperation(String name) {
-        this.name = name;
-    }
+    private final String value;
+    DateOperation(String value) { this.value = value; }
     public String getValue() {
-        return this.name;
+        return value;
     }
+    public String getName() { return this.name(); }
 }

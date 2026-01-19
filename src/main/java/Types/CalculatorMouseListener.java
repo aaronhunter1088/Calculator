@@ -5,6 +5,16 @@ import Calculators.Calculator;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * CalculatorMouseListener
+ * <p>
+ * This class listens for mouse events
+ * on the calculator to set focus.
+ * TODO: Implement.
+ *
+ * @author Michael Ball
+ * @version 4.0
+ */
 public class CalculatorMouseListener implements MouseListener {
 
     private final Calculator calculator;

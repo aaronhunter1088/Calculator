@@ -1,22 +1,27 @@
 package Types;
 
+import Interfaces.CalculatorType;
+
 /**
- * The CalculatorBases to use primarily in ProgrammerPanel
- * CalculatorBase.name() returns ENUM value
- * CalculatorBase.getValue() returns ENUM("thisValue")
+ * CalculatorBase
+ * <p>
+ * This enum contains the different
+ * calculator bases
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
-public enum CalculatorBase
+public enum CalculatorBase implements CalculatorType
 {
-    BASE_BINARY("Binary"),
-    BASE_OCTAL("Octal"),
-    BASE_DECIMAL("Decimal"),
-    BASE_HEXADECIMAL("Hexadecimal");
+    BASE_BINARY("Binary", 2),
+    BASE_OCTAL("Octal", 8),
+    BASE_DECIMAL("Decimal", 10),
+    BASE_HEXADECIMAL("Hexadecimal", 16);
 
     private final String name;
-    CalculatorBase(String name) {
-        this.name = name;
-    }
-    public String getValue() {
-        return this.name;
-    }
+    private final int radix;
+    CalculatorBase(String name, int radix) { this.name = name; this.radix = radix; }
+    public String getValue() { return name; }
+    public String getName() { return this.name(); }
+    public int getRadix() { return this.radix; }
 }

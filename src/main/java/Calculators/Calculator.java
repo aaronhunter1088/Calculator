@@ -1,127 +1,173 @@
 package Calculators;
 
+import Interfaces.CalculatorType;
+import Interfaces.OSDetector;
 import Panels.*;
 import Runnables.CalculatorMain;
 import Types.*;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
+import java.util.prefs.Preferences;
 
+import static Types.CalculatorByte.*;
+import static Types.CalculatorUtility.*;
 import static Types.Texts.*;
-import static Types.CalculatorType.*;
+import static Types.CalculatorView.*;
 import static Types.CalculatorBase.*;
-import static Types.ConverterType.*;
+import static Types.CalculatorConverterType.*;
 import static Types.DateOperation.*;
 
+import static Utilities.LoggingUtil.*;
+
+/**
+ * Calculator
+ * <p>
+ * The calculator class extends JFrame and creates
+ * a GUI container to display a calculator application.
+ * This class contains the main components that are used
+ * throughout the calculator, such as the menu bar and
+ * the options, the main buttons such as the numbers,
+ * and common methods used by multiple panels.
+ * The Calculator stores the users input in a String[]
+ * called values. It stores 4 values and is used directly
+ * with valuesPosition to determine which value is current.
+ * The Calculator also stores memory values in a String[]
+ * called memoryValues. It stores 10 values and is used
+ * directly with memoryPosition to determine which memory
+ * value to store the next memory value in.
+ * The CalculatorView is used primarily to determine which
+ * panel is currently being displayed but the currentPanel
+ * JPanel is also used for this purpose.
+ * Any specific function that is unique is handled within
+ * that panel.
+ *
+ * @author Michael Ball
+ * @version since 4.0
+ */
 public class Calculator extends JFrame
 {
-    private static final Logger LOGGER = LogManager.getLogger(Calculator.class.getSimpleName());
     @Serial
     private static final long serialVersionUID = 4L;
+    private static final Logger LOGGER = LogManager.getLogger(Calculator.class.getSimpleName());
     public static final Font
-            mainFont = new Font(SEGOE_UI.getValue(), Font.PLAIN, 12), // all panels
-            mainFontBold = new Font(SEGOE_UI.getValue(), Font.BOLD, 12), // Date panel
-            verdanaFontBold = new Font(VERDANA.getValue(), Font.BOLD, 20); // Converter, Date panels
-    // Buttons used by multiple Panels
-    private final JButton
-            button0 = new JButton(ZERO.getValue()), button1 = new JButton(ONE.getValue()),
-            button2 = new JButton(TWO.getValue()), button3 = new JButton(THREE.getValue()),
-            button4 = new JButton(FOUR.getValue()), button5 = new JButton(FIVE.getValue()),
-            button6 = new JButton(SIX.getValue()), button7 = new JButton(SEVEN.getValue()),
-            button8 = new JButton(EIGHT.getValue()), button9 = new JButton(NINE.getValue()),
-            buttonClear = new JButton(CLEAR.getValue()), buttonClearEntry = new JButton(CLEAR_ENTRY.getValue()),
-            buttonDelete = new JButton(DELETE.getValue()), buttonDecimal = new JButton(DECIMAL.getValue()),
-            buttonFraction = new JButton(FRACTION.getValue()), buttonPercent = new JButton(PERCENT.getValue()),
-            buttonSquareRoot = new JButton(SQUARE_ROOT.getValue()), buttonMemoryClear = new JButton(MEMORY_CLEAR.getValue()),
-            buttonMemoryRecall = new JButton(MEMORY_RECALL.getValue()), buttonMemoryStore = new JButton(MEMORY_STORE.getValue()),
-            buttonMemoryAddition = new JButton(MEMORY_ADDITION.getValue()), buttonMemorySubtraction = new JButton(MEMORY_SUBTRACTION.getValue()),
-            buttonHistory = new JButton(HISTORY_CLOSED.getValue()), buttonSquared = new JButton(SQUARED.getValue()),
-            buttonAdd = new JButton(ADDITION.getValue()), buttonSubtract = new JButton(SUBTRACTION.getValue()),
-            buttonMultiply = new JButton(MULTIPLICATION.getValue()), buttonDivide = new JButton(DIVISION.getValue()),
-            buttonEquals = new JButton(EQUALS.getValue()), buttonNegate = new JButton(NEGATE.getValue()),
-            // Used in programmer and converter... until an official button is determined
-            buttonBlank1 = new JButton(BLANK.getValue()), buttonBlank2 = new JButton(BLANK.getValue());
-    protected CalculatorKeyListener keyListener;
-    protected CalculatorMouseListener mouseListener;
-    // Values used to store input
-    protected String[]
-            values = new String[]{BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue()}; // firstNum or total, secondNum, copy, temporary storage
-    protected String[] memoryValues = new String[]{BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue(),BLANK.getValue()}; // stores memory values; rolls over after 10 entries
-    private int valuesPosition = 0, memoryPosition = 0, memoryRecallPosition = 0;
-    private JTextPane textPane, basicHistoryTextPane;
-
-    private CalculatorType calculatorType;
-    private CalculatorBase calculatorBase;
-    private DateOperation dateOperation;
-    private ConverterType converterType;
-    private JPanel currentPanel;
-    // Images used
-    private ImageIcon calculatorIcon, macIcon, windowsIcon, blankIcon;
-    private JLabel iconLabel, textLabel;
+            mainFont = new Font(SEGOE_UI, Font.PLAIN, 12), // all panels
+            mainFontBold = new Font(SEGOE_UI, Font.BOLD, 12), // Date panel
+            verdanaFontBold = new Font(VERDANA, Font.BOLD, 20); // Converter, Date panels
+    public static final Color
+            MOTIF_GRAY = new Color(174,178,195); // Motif look
     // Menubar
     private JMenuBar menuBar;
     // Menubar Items
-    private JMenu lookMenu, viewMenu, editMenu, helpMenu;
+    private JMenu styleMenu, viewMenu, editMenu, helpMenu;
+    // Text Pane
+    private JTextPane textPane, historyTextPane;
+    // Buttons used by multiple Panels
+    private final JButton
+            button0 = new JButton(ZERO), button1 = new JButton(ONE),
+            button2 = new JButton(TWO), button3 = new JButton(THREE),
+            button4 = new JButton(FOUR), button5 = new JButton(FIVE),
+            button6 = new JButton(SIX), button7 = new JButton(SEVEN),
+            button8 = new JButton(EIGHT), button9 = new JButton(NINE),
+            buttonClear = new JButton(CLEAR), buttonClearEntry = new JButton(CLEAR_ENTRY),
+            buttonDelete = new JButton(DELETE), buttonDecimal = new JButton(DECIMAL),
+            buttonFraction = new JButton(FRACTION), buttonPercent = new JButton(PERCENT),
+            buttonSquareRoot = new JButton(SQUARE_ROOT), buttonMemoryClear = new JButton(MEMORY_CLEAR),
+            buttonMemoryRecall = new JButton(MEMORY_RECALL), buttonMemoryStore = new JButton(MEMORY_STORE),
+            buttonMemoryAddition = new JButton(MEMORY_ADD), buttonMemorySubtraction = new JButton(MEMORY_SUBTRACT),
+            buttonHistory = new JButton(HISTORY_CLOSED), buttonSquared = new JButton(SQUARED),
+            buttonAdd = new JButton(ADDITION), buttonSubtract = new JButton(SUBTRACTION),
+            buttonMultiply = new JButton(MULTIPLICATION), buttonDivide = new JButton(DIVISION),
+            buttonEquals = new JButton(EQUALS), buttonNegate = new JButton(NEGATE),
+            // Used in programmer and converter... until an official button is determined
+            buttonBlank1 = new JButton(EMPTY), buttonBlank2 = new JButton(EMPTY);
+    // Preferences
+    private Preferences preferences;
+    // Values used to store inputs. MemoryValues used for storing memory values.
+    protected String[]
+            values = new String[]{EMPTY, EMPTY, EMPTY, EMPTY}, // num1, num2, operation, result
+            memoryValues = new String[]{EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY}; // stores memory values; rolls over after 10 entries
+    // Position of values, memoryValues, and memoryRecall
+    protected int valuesPosition = 0, memoryPosition = 0, memoryRecallPosition = 0;
+    // Current view, base, byte, date operation, converter type, and panel (view)
+    private CalculatorView calculatorView;
+    private CalculatorBase calculatorBase, previousBase;
+    private CalculatorByte calculatorByte;
+    private DateOperation dateOperation;
+    private CalculatorConverterType converterType;
+    private final BasicPanel basicPanel;
+    private final ProgrammerPanel programmerPanel;
+    private final ScientificPanel scientificPanel;
+    private final DatePanel datePanel;
+    private final ConverterPanel converterPanel;
+    private JPanel currentPanel, // Holds reference to
+                   memoryPanel,
+                   buttonsPanel,
+                   historyPanel;
+    // Images used
+    private ImageIcon calculatorIcon, macIcon, windowsIcon, blankIcon;
     // Flags
     private boolean
-            isFirstNumber = true, isNumberNegative = false,
-            isAdding = false, isSubtracting = false,
-            isMultiplying = false, isDividing = false,
-            isNegating = false,
-            isMetal = false, isSystem = false,
-            isWindows = false, isMotif = false,
-            isGtk = false, isApple = false;
+            obtainingFirstNumber = true,
+            negativeNumber, // used to determine is current value is negative or not
+            // main operators
+            isPemdasActive;
+    private String helpString = EMPTY,
+                   calculatorStyle = EMPTY;
+    private OSDetector systemDetector;
 
-    /* Constructors */
-
+    /**************** CONSTRUCTORS ****************/
     /**
-     * Starts the calculator with the BASIC CalculatorType
+     * Starts the calculator with the BASIC CalculatorView
      *
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    { this(BASIC, null, null, null); }
+    {
+        this(VIEW_BASIC, BASE_DECIMAL, null, null, null, null); }
 
     /**
-     * Starts the Calculator with a specific CalculatorType
+     * Starts the Calculator with a specific CalculatorView
+     * but defaults to BASE_DECIMAL
      *
-     * @param calculatorType the type of Calculator to create
+     * @param calculatorView the type of Calculator to create
      * @throws CalculatorError when Calculator fails to build
      */
-    public Calculator(CalculatorType calculatorType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    { this(calculatorType, null, null, null); }
+    public Calculator(CalculatorView calculatorView) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    { this(calculatorView, null, null, null, null, null); }
 
     /**
-     * Starts the calculator with the PROGRAMMER CalculatorType with a specified CalculatorBase
+     * Starts the calculator with the Programmer or Scientific view
+     * with a specified CalculatorBase and CalculatorByte
      *
+     * @param calculatorView the type of Calculator to create
      * @param calculatorBase the base to set that Calculator in
+     * @param calculatorByte the byte size to set that Calculator in
      * @throws CalculatorError when Calculator fails to build
      */
-    public Calculator(CalculatorBase calculatorBase) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    { this(PROGRAMMER, calculatorBase, null, null); }
+    public Calculator(CalculatorView calculatorView, CalculatorBase calculatorBase, CalculatorByte calculatorByte) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    { this(calculatorView, calculatorBase, calculatorByte, null, null, null); }
 
     /**
      * This constructor is used to create a DATE Calculator with a specific DateOperation
@@ -130,362 +176,120 @@ public class Calculator extends JFrame
      * @throws CalculatorError when Calculator fails to build
      */
     public Calculator(DateOperation dateOperation) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    { this(DATE, null, null, dateOperation); }
+    { this(VIEW_DATE, null, null, null, dateOperation, null); }
 
     /**
-     * This constructor is used to create a Converter Calculator starting with a specific ConverterType
+     * This constructor is used to create a Converter Calculator starting with a specific CalculatorConverterType
      *
      * @param converterType  the type of unit to start the Converter Calculator in
      * @throws CalculatorError when Calculator fails to build
      */
-    public Calculator(ConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    { this(CONVERTER, null, converterType, null); }
+    public Calculator(CalculatorConverterType converterType) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    { this(VIEW_CONVERTER, null, null, converterType, null, null); }
 
     /**
      * MAIN CONSTRUCTOR USED
      *
-     * @param calculatorType the type of Calculator to create
+     * @param calculatorView the type of Calculator to create
      * @param converterType  the type of Converter to use
+     * @param calculatorBase the base to set that Calculator in
+     * @param calculatorByte the byte size to set that Calculator in
      * @param dateOperation  the type of DateOperation to start with
      * @throws CalculatorError when Calculator fails to build
      */
-    public Calculator(CalculatorType calculatorType, CalculatorBase calculatorBase, ConverterType converterType, DateOperation dateOperation) throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
+    public Calculator(CalculatorView calculatorView, CalculatorBase calculatorBase,
+                      CalculatorByte calculatorByte, CalculatorConverterType converterType,
+                      DateOperation dateOperation, OSDetector systemDetector)
+            throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
     {
-        super(calculatorType.getValue());
-        setCalculatorType(calculatorType);
-        setCalculatorBase(calculatorBase);
-        setConverterType(converterType);
-        setDateOperation(dateOperation);
-        setupMenuBar();
-        setupCalculatorImages();
-        if (converterType == null && dateOperation == null) setCurrentPanel(determinePanel(calculatorType, calculatorBase));
-        else if (converterType != null) setCurrentPanel(determinePanel(calculatorType, null, converterType, null));
-        else setCurrentPanel(determinePanel(calculatorType, null, null, dateOperation));
-        setupPanel();
+        super(calculatorView.getValue());
+        setCalculatorView(calculatorView);
+        setCalculatorBase(calculatorBase == null ? BASE_DECIMAL : calculatorBase);
+        setCalculatorByte(calculatorByte == null ? BYTE_BYTE : calculatorByte);
+        setConverterType(converterType == null ? AREA : converterType);
+        setDateOperation(dateOperation == null ? DIFFERENCE_BETWEEN_DATES : dateOperation);
+        this.systemDetector = systemDetector == null ? new SystemDetector() : systemDetector;
+        basicPanel = new BasicPanel();
+        programmerPanel = new ProgrammerPanel();
+        scientificPanel = new ScientificPanel();
+        datePanel = new DatePanel();
+        converterPanel = new ConverterPanel();
+        setCurrentPanel(switch (calculatorView)
+        {
+            case VIEW_BASIC -> basicPanel;
+            case VIEW_PROGRAMMER -> programmerPanel;
+            case VIEW_SCIENTIFIC -> scientificPanel;
+            case VIEW_DATE -> datePanel;
+            case VIEW_CONVERTER -> converterPanel;
+        });
         add(currentPanel);
-        LOGGER.debug("Panel added to calculator");
-        setCalculatorBase(determineCalculatorBase(calculatorBase)); // update
+        setMemoryPanel(new JPanel(new GridBagLayout()));
+        memoryPanel.setName("MemoryPanel");
+        setButtonsPanel(new JPanel(new GridBagLayout()));
+        buttonsPanel.setName("ButtonsPanel");
+        setupHistoryTextPane();
+        setupPreferences(); // must happen before menubar
+        configureMenuBar();
+        setupCalculatorImages();
+        setupHistoryPanel();
+        setupPanel(null);
         setMinimumSize(currentPanel.getSize());
-        setVisible(true);
         setResizable(false);
         setLocation(750, 250);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        keyListener = new CalculatorKeyListener(this);
-        mouseListener = new CalculatorMouseListener(this);
-        this.addKeyListener(keyListener);
-        this.addMouseListener(mouseListener);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addKeyListener(new CalculatorKeyListener(this)); // controls keyboard input
+        addMouseListener(new CalculatorMouseListener(this)); // controls mouse input
         LOGGER.debug("Finished constructing the calculator");
     }
 
-    /* Start of methods here */
-
+    /**************** CONFIGURATION ****************/
     /**
-     * Sets the menu bar used across the entire Calculator
+     * Configures the menu options on the bar
      */
-    public void setupMenuBar()
+    private void configureMenuBar()
     {
-        LOGGER.debug("Configuring MenuBar...");
         setCalculatorMenuBar(new JMenuBar());
-        setJMenuBar(menuBar);
-        setupLookMenu(new JMenu(LOOK.getValue()));
-        setupViewMenu(new JMenu(VIEW.getValue()));
-        setupEditMenu(new JMenu(EDIT.getValue()));
-        setupHelpMenu(new JMenu(HELP.getValue()));
-        LOGGER.debug("MenuBar configured");
+        setupStyleMenu();
+        setupViewMenu();
+        setupEditMenu();
+        setupHelpMenu();
+        LOGGER.debug("Menu Bar options configured");
     }
 
     /**
-     * The main operations to perform to set up
-     * the Look Menu item
-     * @param lookMenu the look menu to configure
+     * Experimental preferences.
      */
-    private void setupLookMenu(JMenu lookMenu)
+    private void setupPreferences()
     {
-        LOGGER.debug("Configuring Look menu...");
-        JMenuItem metal = new JMenuItem(METAL.getValue());
-        metal.setFont(mainFont);
-        metal.setName(METAL.getValue());
-        metal.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (null != basicHistoryTextPane)
-                {
-                    basicHistoryTextPane.setBackground(Color.WHITE);
-                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                // TODO: add more history panes here
-                SwingUtilities.updateComponentTreeUI(this);
-                resetLook();
-                setMetal(true);
-                super.pack();
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem system = new JMenuItem(SYSTEM.getValue());
-        system.setFont(mainFont);
-        system.setName(SYSTEM.getValue());
-        system.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (null != basicHistoryTextPane)
-                {
-                    basicHistoryTextPane.setBackground(Color.WHITE);
-                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                // TODO: add more history panes here
-                SwingUtilities.updateComponentTreeUI(this);
-                resetLook();
-                setSystem(true);
-                pack();
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem windows = new JMenuItem(WINDOWS.getValue());
-        windows.setFont(mainFont);
-        windows.setName(WINDOWS.getValue());
-        windows.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (null != basicHistoryTextPane)
-                {
-                    basicHistoryTextPane.setBackground(Color.WHITE);
-                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                // TODO: add more history panes here
-                SwingUtilities.updateComponentTreeUI(this);
-                resetLook();
-                setWindows(true);
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem motif = new JMenuItem(MOTIF.getValue());
-        motif.setFont(mainFont);
-        motif.setName(MOTIF.getValue());
-        motif.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(new Color(174,178,195));
-                    textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
-                }
-                if (null != basicHistoryTextPane)
-                {
-                    basicHistoryTextPane.setBackground(new Color(174,178,195));
-                    basicHistoryTextPane.setBorder(new LineBorder(Color.GRAY, 1, true));
-                }
-                // TODO: add more history panes here
-                resetLook();
-                setMotif(true);
-                SwingUtilities.updateComponentTreeUI(this);
-                pack();
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem gtk = new JMenuItem(GTK.getValue());
-        gtk.setFont(mainFont);
-        gtk.setName(GTK.getValue());
-        gtk.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (null != basicHistoryTextPane)
-                {
-                    basicHistoryTextPane.setBackground(Color.WHITE);
-                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                // TODO: add more history panes here
-                SwingUtilities.updateComponentTreeUI(this);
-                resetLook();
-                setGtk(true);
-                super.pack();
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                     IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        JMenuItem apple = new JMenuItem(APPLE.getValue());
-        apple.setFont(mainFont);
-        apple.setName(APPLE.getValue());
-        apple.addActionListener(action -> {
-            try
-            {
-                UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
-                if (null != textPane) // not used in all Calculators
-                {
-                    textPane.setBackground(Color.WHITE);
-                    textPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                if (null != basicHistoryTextPane)
-                {
-                    basicHistoryTextPane.setBackground(Color.WHITE);
-                    basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
-                }
-                // TODO: add more history panes here
-                SwingUtilities.updateComponentTreeUI(this);
-                resetLook();
-                setApple(true);
-                super.pack();
-            }
-            catch (ClassNotFoundException | InstantiationException |
-                   IllegalAccessException | UnsupportedLookAndFeelException e)
-            { logException(e); }
-        });
-        lookMenu.add(metal);
-        lookMenu.add(motif);
-        lookMenu.add(apple);
-        if (!isMacOperatingSystem()) // add more options if using Windows
-        {
-            lookMenu.add(windows);
-            lookMenu.add(system);
-            lookMenu.add(gtk);
-            lookMenu.remove(apple);
-        }
-        lookMenu.setFont(mainFont);
-        lookMenu.setName(LOOK.getValue());
-        setLookMenu(lookMenu);
-        menuBar.add(lookMenu);
-        LOGGER.debug("Look menu configured");
+        // Sets the preferences node for this package
+        preferences = Preferences.userNodeForPackage(Calculator.class);
     }
 
     /**
-     * The main operations to perform to set up
-     * the View Menu item
-     * @param viewMenu the view menu to configure
+     * Loads the preferences from storage
+     * Use get, getInt, getBoolean
      */
-    private void setupViewMenu(JMenu viewMenu)
+    private void loadPreferences()
     {
-        LOGGER.debug("Configuring View menu...");
-        JMenuItem basic = new JMenuItem(CalculatorType.BASIC.getValue());
-        JMenuItem programmer = new JMenuItem(CalculatorType.PROGRAMMER.getValue());
-        JMenuItem date = new JMenuItem(CalculatorType.DATE.getValue());
-        JMenu converterMenu = new JMenu(CONVERTER.getValue());
-        basic.setFont(mainFont);
-        basic.setName(BASIC.getValue());
-        basic.addActionListener(this::switchPanels);
-        programmer.setFont(mainFont);
-        programmer.setName(PROGRAMMER.getValue());
-        programmer.addActionListener(this::switchPanels);
-        date.setFont(mainFont);
-        date.setName(DATE.getValue());
-        date.addActionListener(this::switchPanels);
-        JMenuItem angleConverter = new JMenuItem(ANGLE.getValue());
-        angleConverter.setFont(mainFont);
-        angleConverter.setName(ANGLE.getValue());
-        angleConverter.addActionListener(this::switchPanels);
-        JMenuItem areaConverter = new JMenuItem(AREA.getValue()); // The converterMenu is an "item" which is a menu of more choices
-        areaConverter.setFont(mainFont);
-        areaConverter.setName(AREA.getValue());
-        areaConverter.addActionListener(this::switchPanels);
-        converterMenu.setFont(mainFont);
-        converterMenu.setName(CONVERTER.getValue());
-        converterMenu.add(angleConverter);
-        converterMenu.add(areaConverter);
-        viewMenu.add(basic);
-        viewMenu.add(programmer);
-        viewMenu.add(date);
-        viewMenu.addSeparator();
-        viewMenu.add(converterMenu);
-        viewMenu.setFont(mainFont);
-        viewMenu.setName(VIEW.getValue());
-        setViewMenu(viewMenu);
-        menuBar.add(viewMenu); // add viewMenu to menu bar
-        LOGGER.debug("View menu configured");
+        // Load preferences from storage
+        // used as a place holder. when you want to load a preference,
+        // copy and place this method here where you want to load that preference
+        String style = preferences.get(STYLE, "");
+
+        // Use the loaded preferences to initialize your Swing components
+        // ...
     }
 
     /**
-     * The main operations to perform to set up
-     * the Edit Menu item
-     * @param editMenu the edit menu to configure
+     * Saves the preferences to storage
+     * Use put, putInt, putBoolean
      */
-    private void setupEditMenu(JMenu editMenu)
+    private void savePreferences()
     {
-        LOGGER.debug("Configuring Edit menu...");
-        JMenuItem copyItem = new JMenuItem(COPY.getValue());
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-        copyItem.setFont(mainFont);
-        copyItem.setName(COPY.getValue());
-        copyItem.addActionListener(this::performCopyAction);
-
-        JMenuItem pasteItem = new JMenuItem(PASTE.getValue());
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-        pasteItem.setFont(mainFont);
-        pasteItem.setName(PASTE.getValue());
-        pasteItem.addActionListener(this::performPasteAction);
-
-        JMenuItem clearHistoryItem = new JMenuItem(CLEAR_HISTORY.getValue());
-        clearHistoryItem.setFont(mainFont);
-        clearHistoryItem.setName(CLEAR_HISTORY.getValue());
-        clearHistoryItem.addActionListener(this::performClearBasicHistoryTextPaneAction);
-
-        JMenuItem showMemoriesItem = new JMenuItem(SHOW_MEMORIES.getValue());
-        showMemoriesItem.setFont(mainFont);
-        showMemoriesItem.setName(SHOW_MEMORIES.getValue());
-        showMemoriesItem.addActionListener(this::performShowMemoriesAction);
-
-        editMenu.add(copyItem);
-        editMenu.add(pasteItem);
-        editMenu.add(clearHistoryItem);
-        editMenu.add(showMemoriesItem);
-
-        editMenu.setFont(mainFont);
-        editMenu.setName(EDIT.getValue());
-
-        setEditMenu(editMenu);
-        menuBar.add(editMenu);
-        LOGGER.debug("Edit menu configured");
-    }
-
-    /**
-     * The main operations to perform to set up
-     * the Help Menu item
-     * @param helpMenu the help menu to configure
-     */
-    private void setupHelpMenu(JMenu helpMenu)
-    {
-        LOGGER.debug("Configuring Help menu...");
-        JMenuItem viewHelpItem = createViewHelpJMenuItem();
-        JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
-        helpMenu.add(viewHelpItem, 0);
-        helpMenu.addSeparator();
-        helpMenu.add(aboutCalculatorItem, 2);
-        helpMenu.setFont(mainFont);
-        helpMenu.setName(HELP.getValue());
-        setHelpMenu(helpMenu);
-        menuBar.add(helpMenu);
-        LOGGER.debug("Help menu configured");
+        // Save preferences to storage
+        // used as a place holder. when you want to save a preference,
+        // copy and place this method here where you want to save that preference
+        preferences.put(STYLE, calculatorStyle);
     }
 
     /**
@@ -510,32 +314,18 @@ public class Calculator extends JFrame
     {
         LOGGER.debug("Configuring imageIcons...");
         setBlankIcon(null);
-        try {
-            ImageIcon calculatorIcon = createImageIcon("src/main/resources/images/windowsCalculator.jpg");
-            if (null == calculatorIcon)
-                throw new FileNotFoundException("The icon you are attempting to use cannot be found: calculatorIcon");
-            setCalculatorIcon(calculatorIcon);
-        } catch (FileNotFoundException e) {
-            LOGGER.error(new CalculatorError("Could not find the path of the windows calculator", e));
-        }
-
-        try {
-            ImageIcon macIcon = createImageIcon("src/main/resources/images/solidBlackAppleLogo.jpg");
-            if (null == macIcon)
-                throw new FileNotFoundException("The icon you are attempting to use cannot be found: macIcon");
-            setMacIcon(macIcon);
-        } catch (FileNotFoundException e) {
-            LOGGER.error(new CalculatorError("Could not find the path of the solid black apple logo", e));
-        }
-
-        try {
-            ImageIcon windowsIcon = createImageIcon("src/main/resources/images/windows11.jpg");
-            if (null == windowsIcon)
-                throw new FileNotFoundException("The icon you are attempting to use cannot be found: windowsIcon");
-            setWindowsIcon(windowsIcon);
-        } catch (FileNotFoundException e) {
-            LOGGER.error(new CalculatorError("Could not find the path of the windows 11 logo", e));
-        }
+        ImageIcon calculatorIcon = createImageIcon("src/main/resources/images/windowsCalculator.jpg");
+        if (null == calculatorIcon)
+            logException(new CalculatorError("The icon you are attempting to use cannot be found: calculatorIcon"), LOGGER);
+        setCalculatorIcon(calculatorIcon);
+        ImageIcon macIcon = createImageIcon("src/main/resources/images/appleLogo.jpg");
+        if (null == macIcon)
+            logException(new CalculatorError("The icon you are attempting to use cannot be found: macIcon"), LOGGER);
+        setMacIcon(macIcon);
+        ImageIcon windowsIcon = createImageIcon("src/main/resources/images/windowsLogo.jpg");
+        if (null == windowsIcon)
+            logException(new CalculatorError("The icon you are attempting to use cannot be found: windowsIcon"), LOGGER);
+        setWindowsIcon(windowsIcon);
         LOGGER.debug("ImageIcons configured");
     }
 
@@ -553,85 +343,12 @@ public class Calculator extends JFrame
         if (resource != null) {
             imageIcon = new ImageIcon(resource);
             LOGGER.debug("ImageIcon created");
-        } else {
-            LOGGER.error("Could not find an image using path: " + path + '!');
+        }
+        else {
+            LOGGER.error("Could not find an image using path: '{}'!", path);
             LOGGER.error("ImageIcon not created. Returning null");
         }
         return imageIcon;
-    }
-
-    /**
-     * @param calculatorType the CalculatorType to use
-     * @return JPanel, the Panel to use
-     */
-    private JPanel determinePanel(CalculatorType calculatorType, CalculatorBase calculatorBase)
-    { return determinePanel(calculatorType, calculatorBase, null, null); }
-
-    /**
-     * @param calculatorType the CalculatorType to use
-     * @param calculatorBase the CalculatorBase to use
-     * @param converterType  the ConverterType to use
-     * @param dateOperation  the DateOperation to use
-     * @return JPanel, the Panel to use
-     */
-    private JPanel determinePanel(CalculatorType calculatorType, CalculatorBase calculatorBase, ConverterType converterType, DateOperation dateOperation)
-    {
-        LOGGER.debug("DeterminePanel, type:{}", calculatorType);
-        return switch (calculatorType)
-        {
-            case BASIC -> new BasicPanel();
-            case PROGRAMMER -> new ProgrammerPanel();
-            case SCIENTIFIC -> new ScientificPanel();
-            case DATE -> new DatePanel();
-            case CONVERTER -> new ConverterPanel(converterType);
-        };
-    }
-
-    /**
-     * The main method that calls the setup method for a specific panel
-     */
-    private void setupPanel()
-    {
-        LOGGER.debug("Setting up panel, {}", currentPanel.getClass().getSimpleName());
-        if (currentPanel instanceof BasicPanel panel)
-        { panel.setupBasicPanel(this); }
-        else if (currentPanel instanceof ProgrammerPanel panel)
-        { panel.setupProgrammerPanel(this, calculatorBase); }
-        else if (currentPanel instanceof ScientificPanel panel)
-        { LOGGER.info("IMPLEMENT SCIENTIFIC PANEL"); /*panel.setupScientificPanel(this, calculatorBase);*/ }
-        else if (currentPanel instanceof DatePanel panel)
-        { panel.setupDatePanel(this, dateOperation); }
-        else if (currentPanel instanceof ConverterPanel panel)
-        { panel.setupConverterPanel(this, converterType); }
-        LOGGER.debug("Panel set up");
-    }
-
-    /**
-     * This method creates the View Help menu option under Help
-     * The help text is added by the currentPanel.
-     */
-    public JMenuItem createViewHelpJMenuItem()
-    {
-        LOGGER.debug("Configuring View Help...");
-        JMenuItem viewHelpItem = new JMenuItem(VIEW_HELP.getValue());
-        viewHelpItem.setName(VIEW_HELP.getValue());
-        viewHelpItem.setFont(mainFont);
-        LOGGER.debug("View Help configured");
-        return viewHelpItem;
-    }
-
-    /**
-     * This method creates the About Calculator menu option under Help
-     */
-    public JMenuItem createAboutCalculatorJMenuItem()
-    {
-        LOGGER.debug("Configuring About Calculator...");
-        JMenuItem aboutCalculatorItem = new JMenuItem(ABOUT_CALCULATOR.getValue());
-        aboutCalculatorItem.setName(ABOUT_CALCULATOR.getValue());
-        aboutCalculatorItem.setFont(mainFont);
-        aboutCalculatorItem.addActionListener(this::performAboutCalculatorAction);
-        LOGGER.debug("About Calculator configured");
-        return aboutCalculatorItem;
     }
 
     /**
@@ -640,57 +357,390 @@ public class Calculator extends JFrame
     public void setupTextPane()
     {
         LOGGER.debug("Configuring textPane...");
-        SimpleAttributeSet attribs = new SimpleAttributeSet();
-        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-        setTextPane(new JTextPane());
-        getTextPane().setParagraphAttributes(attribs, true);
-        getTextPane().setFont(mainFont);
-        if (isMotif())
+        if (textPane == null)
         {
-            getTextPane().setBackground(new Color(174,178,195));
-            getTextPane().setBorder(new LineBorder(Color.GRAY, 1, true));
+            setTextPane(new JTextPane());
+            textPane.setName("TextPane");
         }
         else
         {
-            getTextPane().setBackground(Color.WHITE);
-            getTextPane().setBorder(new LineBorder(Color.BLACK));
+            textPane.setText(EMPTY);
         }
-        getTextPane().setEditable(false);
-        getTextPane().setPreferredSize(new Dimension(70, 30));
+        if (calculatorView == VIEW_BASIC)
+        {
+            SimpleAttributeSet attribs = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
+            textPane.setPreferredSize(new Dimension(70, 30));
+            textPane.setText(EMPTY);
+            textPane.setParagraphAttributes(attribs, true);
+        }
+        else if (calculatorView == VIEW_PROGRAMMER)
+        {
+            String[] initString = {
+                    programmerPanel.displayByteAndBase() + NEWLINE,
+                    values[valuesPosition] + NEWLINE
+            };
+            String[] alignmentStyles = {"alignLeft", "alignRight"};
+            StyledDocument doc = textPane.getStyledDocument();
+            // Styles
+            Style regular = doc.addStyle("regular", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+            StyleConstants.setFontFamily(regular, mainFont.getFamily());
+            StyleConstants.setFontSize(regular, mainFont.getSize()); // ensure same size as mainFont
+            // Add alignment styles (apply font explicitly so inheritance isn't required)
+            Style alignLeft = doc.addStyle("alignLeft", regular);
+            StyleConstants.setAlignment(alignLeft, StyleConstants.ALIGN_LEFT);
+            StyleConstants.setFontFamily(alignLeft, mainFont.getFamily());
+            StyleConstants.setFontSize(alignLeft, mainFont.getSize());
+
+            Style alignRight = doc.addStyle("alignRight", regular);
+            StyleConstants.setAlignment(alignRight, StyleConstants.ALIGN_RIGHT);
+            StyleConstants.setFontFamily(alignRight, mainFont.getFamily());
+            StyleConstants.setFontSize(alignRight, mainFont.getSize());
+
+            try {
+                for (int i = 0; i < initString.length; i++) {
+                    String styleName = alignmentStyles[i % alignmentStyles.length];
+                    Style styleToUse = doc.getStyle(styleName);
+                    LOGGER.debug("Style @ {}: {} for string: {}", i, styleName, initString[i]);
+                    // Insert using the same AttributeSet and then set paragraph attributes using that same AttributeSet
+                    doc.insertString(doc.getLength(), initString[i], styleToUse);
+                    doc.setParagraphAttributes(doc.getLength() - initString[i].length(),
+                            initString[i].length(),
+                            styleToUse,
+                            false);
+                }
+            } catch (Exception e) {
+                logException(e, LOGGER);
+            }
+            textPane.setPreferredSize(new Dimension(100, 120));
+        }
+        if (calculatorStyle.equals(MOTIF))
+        {
+            textPane.setBackground(MOTIF_GRAY);
+            textPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+        }
+        else
+        {
+            textPane.setBackground(Color.WHITE);
+            textPane.setBorder(new LineBorder(Color.BLACK));
+        }
+        textPane.setEditable(false);
+        textPane.setFont(mainFont);
         LOGGER.debug("TextPane configured");
     }
 
     /**
-     * The main method to set up the Basic History Pane
+     * The main method to set up the History Panel
      */
-    public void setupBasicHistoryTextPane()
+    public void setupHistoryTextPane()
     {
-        LOGGER.debug("Configuring BasicHistoryTextPane...");
+        historyTextPane = new JTextPane();
+        historyTextPane.setName("HistoryTextPane");
+        LOGGER.debug("Configuring History TextPane...");
         SimpleAttributeSet attribs = new SimpleAttributeSet();
         StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-        basicHistoryTextPane = new JTextPane();
-        basicHistoryTextPane.setParagraphAttributes(attribs, true);
-        basicHistoryTextPane.setFont(mainFont);
-        if (isMotif())
+        historyTextPane.setParagraphAttributes(attribs, true);
+        historyTextPane.setFont(mainFont);
+        historyTextPane.setEditable(false);
+        // set size based on panel
+        switch (calculatorView)
         {
-            basicHistoryTextPane.setBackground(new Color(174,178,195));
-            basicHistoryTextPane.setBorder(new LineBorder(Color.GRAY, 1, true));
+            case VIEW_BASIC -> historyTextPane.setSize(new Dimension(70, 200)); // sets size at start
+            case VIEW_PROGRAMMER -> historyTextPane.setSize(new Dimension(70, 205)); // sets size at start
+        }
+        // set background and border based on look
+        if (calculatorStyle.equals(MOTIF))
+        {
+            historyTextPane.setBackground(MOTIF_GRAY);
+            historyTextPane.setBorder(new LineBorder(Color.GRAY, 1, true));
         }
         else
         {
-            basicHistoryTextPane.setBackground(Color.WHITE);
-            basicHistoryTextPane.setBorder(new LineBorder(Color.BLACK));
+            historyTextPane.setBackground(Color.WHITE);
+            historyTextPane.setBorder(new LineBorder(Color.BLACK));
         }
-        basicHistoryTextPane.setEditable(false);
-        basicHistoryTextPane.setSize(new Dimension(70, 200)); // sets size at start
-        basicHistoryTextPane.setMinimumSize(basicHistoryTextPane.getSize()); // keeps size throughout
-        LOGGER.debug("BasicHistoryTextPane configured");
+        if (List.of(VIEW_BASIC, VIEW_PROGRAMMER).contains(calculatorView))
+        { LOGGER.debug("History TextPane configured"); }
+        else
+        { LOGGER.warn("No history panel has been set up for the panel:{}", calculatorView.getName()); }
     }
 
     /**
-     * The main method to set up the Memory buttons
+     * Configures the history panel for the Basic Panel
      */
-    public void setupMemoryButtons()
+    private void setupHistoryPanel()
+    {
+        historyPanel = new JPanel(new GridBagLayout());
+        historyPanel.setName("HistoryPanel");
+        GridBagConstraints constraints = switch (calculatorView)
+        {
+            case VIEW_BASIC -> basicPanel.getConstraints();
+            case VIEW_PROGRAMMER -> programmerPanel.getConstraints();
+            case VIEW_SCIENTIFIC -> scientificPanel.getConstraints();
+            default -> null;
+        };
+        if (constraints == null)
+        {
+            logException(new CalculatorError("No constraints have been set up for the panel: " + calculatorView.getName()), LOGGER);
+            return;
+        }
+        constraints.anchor = GridBagConstraints.WEST;
+        JLabel historyLabel = new JLabel(HISTORY);
+        historyLabel.setName("HistoryLabel");
+        addComponent(currentPanel, constraints, historyPanel, historyLabel, 0, 0); // space before with jtextarea
+
+        JScrollPane scrollPane = new JScrollPane(historyTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        LOGGER.debug("HistoryTextPane added to JScrollPane");
+        scrollPane.setName("HistoryScrollPane");
+        scrollPane.setPreferredSize(historyTextPane.getSize());
+
+        addComponent(currentPanel, constraints, historyPanel, scrollPane, 1, 0, new Insets(0,0,0,0),
+                1, 6, 0, 0, GridBagConstraints.BOTH, 0);
+        LOGGER.debug("Basic History Panel configured");
+    }
+
+    /**************** MENU OPTIONS ****************/
+    /**
+     * The main operations to perform to set up
+     * the Style Menu item
+     */
+    private void setupStyleMenu()
+    {
+        LOGGER.debug("Configuring Style menu...");
+        JMenuItem metal = new JMenuItem(METAL);
+        metal.setFont(mainFont);
+        metal.setName(METAL);
+        metal.addActionListener(this::performStyleMenuAction);
+
+        JMenuItem system = new JMenuItem(SYSTEM);
+        system.setFont(mainFont);
+        system.setName(SYSTEM);
+        system.addActionListener(this::performStyleMenuAction);
+
+        JMenuItem windows = new JMenuItem(WINDOWS);
+        windows.setFont(mainFont);
+        windows.setName(WINDOWS);
+        windows.addActionListener(this::performStyleMenuAction);
+
+        JMenuItem motif = new JMenuItem(MOTIF);
+        motif.setFont(mainFont);
+        motif.setName(MOTIF);
+        motif.addActionListener(this::performStyleMenuAction);
+
+        JMenuItem gtk = new JMenuItem(GTK);
+        gtk.setFont(mainFont);
+        gtk.setName(GTK);
+        gtk.addActionListener(this::performStyleMenuAction);
+
+        JMenuItem apple = new JMenuItem(APPLE);
+        apple.setFont(mainFont);
+        apple.setName(APPLE);
+        apple.addActionListener(this::performStyleMenuAction);
+
+        setStyleMenu(new JMenu(STYLE));
+        styleMenu.setFont(mainFont);
+        styleMenu.setName(STYLE+MENU);
+        styleMenu.add(metal);
+        styleMenu.add(motif);
+        styleMenu.add(apple);
+        if (systemDetector.isWindows()) // add more options if using Windows
+        {
+            styleMenu.add(windows);
+            styleMenu.add(system);
+            styleMenu.add(gtk);
+            styleMenu.remove(apple);
+        }
+        calculatorStyle = preferences.get(STYLE, "");
+        switch (calculatorStyle) {
+            case METAL -> metal.doClick();
+            case SYSTEM -> system.doClick();
+            case WINDOWS -> windows.doClick();
+            case MOTIF -> motif.doClick();
+            case GTK -> gtk.doClick();
+            case APPLE -> apple.doClick();
+            default -> {
+                setCalculatorStyle(METAL);
+                LOGGER.warn("Defaulting to {}", calculatorStyle);
+                metal.doClick();
+            }
+        }
+        menuBar.add(styleMenu);
+        LOGGER.debug("Style menu configured");
+    }
+
+    /**
+     * The main operations to perform to set up
+     * the View Menu item
+     */
+    private void setupViewMenu()
+    {
+        LOGGER.debug("Configuring View menu...");
+        JMenuItem basic = new JMenuItem(VIEW_BASIC.getValue());
+        JMenuItem programmer = new JMenuItem(VIEW_PROGRAMMER.getValue());
+        JMenuItem date = new JMenuItem(VIEW_DATE.getValue());
+        JMenu converterMenu = new JMenu(VIEW_CONVERTER.getValue());
+        basic.setFont(mainFont);
+        basic.setName(VIEW_BASIC.getValue());
+        basic.addActionListener(action -> performViewMenuAction(action, VIEW_BASIC));
+        programmer.setFont(mainFont);
+        programmer.setName(VIEW_PROGRAMMER.getValue());
+        programmer.addActionListener(action -> performViewMenuAction(action, VIEW_PROGRAMMER));
+        date.setFont(mainFont);
+        date.setName(VIEW_DATE.getValue());
+        date.addActionListener(action -> performViewMenuAction(action, VIEW_DATE));
+        JMenuItem angleConverter = new JMenuItem(ANGLE.getValue());
+        angleConverter.setFont(mainFont);
+        angleConverter.setName(ANGLE.getValue());
+        angleConverter.addActionListener(action -> performViewMenuAction(action, ANGLE));
+        JMenuItem areaConverter = new JMenuItem(AREA.getValue()); // The converterMenu is a menu of more choices
+        areaConverter.setFont(mainFont);
+        areaConverter.setName(AREA.getValue());
+        areaConverter.addActionListener(action -> performViewMenuAction(action, AREA));
+        converterMenu.setFont(mainFont);
+        converterMenu.setName(VIEW_CONVERTER.getValue());
+        converterMenu.add(angleConverter);
+        converterMenu.add(areaConverter);
+
+        setViewMenu(new JMenu(VIEW));
+        viewMenu.setName(VIEW+MENU);
+        viewMenu.setFont(mainFont);
+        viewMenu.add(basic);
+        viewMenu.add(programmer);
+        viewMenu.add(date);
+        viewMenu.addSeparator();
+        viewMenu.add(converterMenu);
+        menuBar.add(viewMenu); // add viewMenu to menu bar
+        LOGGER.debug("View menu configured");
+    }
+
+    /**
+     * The main operations to perform to set up
+     * the Edit Menu item
+     */
+    private void setupEditMenu()
+    {
+        LOGGER.debug("Configuring Edit menu...");
+        JMenuItem copyItem = new JMenuItem(COPY);
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+        copyItem.setFont(mainFont);
+        copyItem.setName(COPY);
+        copyItem.addActionListener(this::performCopyAction);
+
+        JMenuItem pasteItem = new JMenuItem(PASTE);
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        pasteItem.setFont(mainFont);
+        pasteItem.setName(PASTE);
+        pasteItem.addActionListener(this::performPasteAction);
+
+        JMenuItem clearHistoryItem = new JMenuItem(CLEAR_HISTORY);
+        clearHistoryItem.setFont(mainFont);
+        clearHistoryItem.setName(CLEAR_HISTORY);
+        clearHistoryItem.addActionListener(this::performClearHistoryAction);
+
+        JMenuItem showMemoriesItem = new JMenuItem(SHOW_MEMORIES);
+        showMemoriesItem.setFont(mainFont);
+        showMemoriesItem.setName(SHOW_MEMORIES);
+        showMemoriesItem.addActionListener(this::performShowMemoriesAction);
+
+        setEditMenu(new JMenu(EDIT));
+        editMenu.setName(EDIT+MENU);
+        editMenu.setFont(mainFont);
+        editMenu.add(copyItem);
+        editMenu.add(pasteItem);
+        editMenu.add(clearHistoryItem);
+        editMenu.add(showMemoriesItem);
+        menuBar.add(editMenu);
+        LOGGER.debug("Edit menu configured");
+    }
+
+    /**
+     * The main operations to perform to set up
+     * the Help Menu item
+     */
+    private void setupHelpMenu()
+    {
+        LOGGER.debug("Configuring Help menu...");
+        setHelpMenu(new JMenu(HELP));
+        helpMenu.setName(HELP+MENU);
+        helpMenu.setFont(mainFont);
+        JMenuItem showHelpItem = createViewHelpJMenuItem();
+        JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
+        helpMenu.add(showHelpItem, 0);
+        helpMenu.addSeparator();
+        helpMenu.add(aboutCalculatorItem, 2);
+        menuBar.add(helpMenu);
+        LOGGER.debug("Help menu configured");
+    }
+    /**************** END MENU OPTIONS ****************/
+
+    /**
+     * Configures the buttons used on the Basic Panel
+     */
+    public void setupBasicPanelButtons()
+    {
+        setupNumberButtons();
+        setupMemoryButtons();
+        setupCommonButtons();
+        LOGGER.debug("Buttons configured for Basic Panel");
+    }
+
+    /**
+     * Configures the buttons used on the Programmer Panel
+     */
+    public void setupProgrammerPanelButtons()
+    {
+        setupNumberButtons();
+        setupButtonBlank1();
+        setupMemoryButtons();
+        setupCommonButtons();
+        LOGGER.debug("Number buttons configured for Programmer Panel");
+    }
+
+    /**
+     * Configures the buttons used on the Converter Panel
+     */
+    public void setupConverterPanelButtons()
+    {
+        LOGGER.debug("Configuring Converter Panel buttons...");
+        setupNumberButtons();
+        LOGGER.debug("Number buttons configured for Converter Panel");
+
+        Arrays.asList(buttonBlank1, buttonBlank2, buttonClearEntry, buttonDelete, buttonDecimal).forEach(button -> {
+            button.setFont(mainFont);
+            button.setPreferredSize(new Dimension(35, 35));
+            button.setBorder(new LineBorder(Color.BLACK));
+            button.setEnabled(true);
+        });
+        buttonBlank1.setName(EMPTY);
+        LOGGER.debug("Blank button 1 configured");
+
+        buttonBlank2.setName(EMPTY);
+        LOGGER.debug("Blank button 2 configured");
+
+        buttonClearEntry.setName(CLEAR_ENTRY);
+        if (calculatorView == VIEW_CONVERTER)
+        { buttonClearEntry.addActionListener(converterPanel::performClearEntryButtonActions); }
+        LOGGER.debug("ClearEntry button configured");
+
+        buttonDelete.setName(DELETE);
+        if (calculatorView == VIEW_CONVERTER)
+        { buttonDelete.addActionListener(converterPanel::performDeleteButtonActions); }
+        LOGGER.debug("Delete button configured");
+
+        buttonDecimal.setName(DECIMAL);
+        if (calculatorView == VIEW_CONVERTER)
+        { buttonDecimal.addActionListener(converterPanel::performDecimalButtonActions); }
+        LOGGER.debug("Decimal button configured");
+
+        LOGGER.debug("Converter Panel buttons configured");
+    }
+
+    /**
+     * The main method to set up the Memory buttons. This
+     * also includes the History button since it is included
+     * in the panel that renders it
+     */
+    private void setupMemoryButtons()
     {
         LOGGER.debug("Configuring Memory buttons...");
         getAllMemoryPanelButtons().forEach(memoryPanelButton -> {
@@ -699,990 +749,661 @@ public class Calculator extends JFrame
             memoryPanelButton.setBorder(new LineBorder(Color.BLACK));
             memoryPanelButton.setEnabled(false);
         });
-        getButtonMemoryClear().setName(MEMORY_CLEAR.getValue());
-        getButtonMemoryRecall().setName(MEMORY_RECALL.getValue());
-        getButtonMemoryAddition().setName(MEMORY_ADDITION.getValue());
-        getButtonMemorySubtraction().setName(MEMORY_SUBTRACTION.getValue());
-        getButtonMemoryStore().setEnabled(true); // Enable memoryStore
-        getButtonMemoryStore().setName(MEMORY_STORE.getValue());
-        getButtonHistory().setEnabled(true);
-        getButtonHistory().setName(HISTORY_CLOSED.getValue());
+        buttonMemoryClear.setName(MEMORY_CLEAR);
+        buttonMemoryClear.addActionListener(this::performMemoryClearAction);
+        buttonMemoryRecall.setName(MEMORY_RECALL);
+        buttonMemoryRecall.addActionListener(this::performMemoryRecallAction);
+        buttonMemoryAddition.setName(MEMORY_ADD);
+        buttonMemoryAddition.addActionListener(this::performMemoryAdditionAction);
+        buttonMemorySubtraction.setName(MEMORY_SUBTRACT);
+        buttonMemorySubtraction.addActionListener(this::performMemorySubtractionAction);
+        buttonMemoryStore.setEnabled(true); // Enable memoryStore
+        buttonMemoryStore.setName(MEMORY_STORE);
+        buttonMemoryStore.addActionListener(this::performMemoryStoreAction);
+        buttonHistory.setEnabled(true);
         //reset buttons to enabled if memories are saved
-        if (!getMemoryValues()[0].isEmpty())
+        if (!memoryValues[0].isEmpty())
         {
-            getButtonMemoryClear().setEnabled(true);
-            getButtonMemoryRecall().setEnabled(true);
-            getButtonMemoryAddition().setEnabled(true);
-            getButtonMemorySubtraction().setEnabled(true);
-        }
-        LOGGER.warn("Memory buttons only configured for BASIC Panel");
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        {
-            getButtonMemoryStore().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryStoreAction(actionEvent));
-            getButtonMemoryRecall().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryRecallAction(actionEvent));
-            getButtonMemoryClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryClearAction(actionEvent));
-            getButtonMemoryAddition().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemoryAdditionAction(actionEvent));
-            getButtonMemorySubtraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMemorySubtractionAction(actionEvent));
-            getButtonHistory().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performHistoryAction(actionEvent));
+            buttonMemoryClear.setEnabled(true);
+            buttonMemoryRecall.setEnabled(true);
+            buttonMemoryAddition.setEnabled(true);
+            buttonMemorySubtraction.setEnabled(true);
         }
         LOGGER.debug("Memory buttons configured");
+        buttonHistory.setName(HISTORY);
+        buttonHistory.addActionListener(this::performHistoryAction);
+        LOGGER.debug("History button configured");
     }
 
     /**
-     * The main method to set up the remaining
-     * Basic button panels not in the memory panel
+     * Sets up the common buttons used in
+     * any panel that uses them
      */
-    public void setupBasicPanelButtons()
+    private void setupCommonButtons()
     {
-        LOGGER.debug("Configuring Basic Panel buttons...");
-        List<JButton> allButtons =
-                Stream.of(getAllBasicOperatorButtons(), getAllNumberButtons())
-                .flatMap(Collection::stream) // Flatten into a stream of JButton objects
-                .toList();
-        allButtons.forEach(button -> {
+        LOGGER.debug("Configuring common buttons...");
+        getCommonButtons().forEach(button -> {
             button.setFont(mainFont);
-            button.setPreferredSize(new Dimension(35, 35) );
+            if (calculatorView == VIEW_BASIC)
+                // larger buttons
+                //button.setPreferredSize(new Dimension(45, 45));
+                button.setPreferredSize(new Dimension(35, 35));
+            else if (calculatorView == VIEW_PROGRAMMER)
+                button.setPreferredSize(new Dimension(35, 35));
             button.setBorder(new LineBorder(Color.BLACK));
             button.setEnabled(true);
         });
-        getButtonPercent().setName(PERCENT.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonPercent().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performPercentButtonAction(actionEvent)); }
+
+        buttonPercent.setName(PERCENT);
+        if (calculatorView == VIEW_BASIC)
+        { buttonPercent.addActionListener(basicPanel::performPercentButtonAction); }
         LOGGER.debug("Percent button configured");
-        getButtonSquareRoot().setName(SQUARE_ROOT.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonSquareRoot().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquareRootButtonAction(actionEvent)); }
-        LOGGER.debug("SquareRoot button configured");
-        getButtonSquared().setName(SQUARED.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonSquared().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSquaredButtonAction(actionEvent)); }
-        LOGGER.debug("Delete button configured");
-        getButtonFraction().setName(FRACTION.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonFraction().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performFractionButtonAction(actionEvent)); }
-        LOGGER.debug("Fraction button configured");
-        getButtonClearEntry().setName(CLEAR_ENTRY.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonClearEntry().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearEntryButtonAction(actionEvent)); }
-        LOGGER.debug("ClearEntry button configured");
-        getButtonClear().setName(CLEAR.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonClear().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performClearButtonAction(actionEvent)); }
-        LOGGER.debug("Clear button configured");
-        getButtonDelete().setName(DELETE.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonDelete().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDeleteButtonAction(actionEvent)); }
-        LOGGER.debug("Delete button configured");
-        getButtonDivide().setName(DIVISION.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonDivide().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDivideButtonAction(actionEvent)); }
-        LOGGER.debug("Divide button configured");
-        getButtonMultiply().setName(MULTIPLICATION.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonMultiply().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performMultiplicationAction(actionEvent)); }
-        LOGGER.debug("Multiply button configured");
-        getButtonSubtract().setName(SUBTRACTION.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonSubtract().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performSubtractionButtonAction(actionEvent)); }
-        LOGGER.debug("Subtract button configured");
-        getButtonAdd().setName(ADDITION.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonAdd().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performAdditionButtonAction(actionEvent)); }
-        LOGGER.debug("Addition button configured");
-        getButtonNegate().setName(NEGATE.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonNegate().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNegateButtonAction(actionEvent)); }
-        LOGGER.debug("Add button configured");
-        getButtonDecimal().setName(DECIMAL.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonDecimal().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performDecimalButtonAction(actionEvent)); }
-        LOGGER.debug("Decimal button configured");
-        getButtonEquals().setName(EQUALS.name());
-        if (BASIC.getValue().equals(currentPanel.getName()))
-        { getButtonEquals().addActionListener(actionEvent -> ((BasicPanel)currentPanel).performEqualsButtonAction(actionEvent)); }
-        LOGGER.debug("Equals button configured");
-        LOGGER.debug("Basic Panel buttons configured");
-    }
 
-    /**
-     * The main method to set up the buttons
-     * used on the Converter panel
-     */
-    public void setupConverterButtons()
-    {
-        LOGGER.debug("Configuring Converter Panel buttons...");
-        Arrays.asList(buttonBlank1, buttonBlank2, buttonClearEntry, buttonDelete, buttonDecimal).forEach(button -> {
-            button.setFont(mainFont);
-            button.setPreferredSize(new Dimension(35, 35));
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setEnabled(true);
-        });
-        buttonBlank1.setName(BLANK.name());
-        LOGGER.debug("Blank button 1 configured");
-        buttonBlank2.setName(BLANK.name());
-        LOGGER.debug("Blank button 2 configured");
-        getButtonClearEntry().setName(CLEAR_ENTRY.name());
-        if (CONVERTER.getValue().equals(currentPanel.getName()))
-        { getButtonClearEntry().addActionListener(ConverterPanel::performClearEntryButtonActions); }
+        buttonSquareRoot.setName(SQUARE_ROOT);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonSquareRoot.addActionListener(this::performSquareRootButtonAction); }
+        LOGGER.debug("SquareRoot button configured");
+
+        buttonSquared.setName(SQUARED);
+        if (calculatorView == VIEW_BASIC)
+        { buttonSquared.addActionListener(basicPanel::performSquaredButtonAction); }
+        LOGGER.debug("Squared button configured");
+
+        buttonFraction.setName(FRACTION);
+        if (calculatorView == VIEW_BASIC)
+        { buttonFraction.addActionListener(basicPanel::performFractionButtonAction); }
+        LOGGER.debug("Fraction button configured");
+
+        buttonClearEntry.setName(CLEAR_ENTRY);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonClearEntry.addActionListener(this::performClearEntryButtonAction); }
         LOGGER.debug("ClearEntry button configured");
-        getButtonDelete().setName(DELETE.name());
-        if (CONVERTER.getValue().equals(currentPanel.getName()))
-        { getButtonDelete().addActionListener(ConverterPanel::performDeleteButtonActions); }
+
+        buttonClear.setName(CLEAR);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonClear.addActionListener(this::performClearButtonAction); }
+        LOGGER.debug("Clear button configured");
+
+        buttonDelete.setName(DELETE);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonDelete.addActionListener(this::performDeleteButtonAction); }
+//        else if (calculatorView == VIEW_PROGRAMMER)
+//        { buttonDelete.addActionListener(programmerPanel::performDeleteButtonAction); }
         LOGGER.debug("Delete button configured");
-        getButtonDecimal().setName(DECIMAL.name());
-        if (CONVERTER.getValue().equals(currentPanel.getName()))
-        { getButtonDecimal().addActionListener(ConverterPanel::performDecimalButtonActions); }
+
+        buttonDivide.setName(DIVISION);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonDivide.addActionListener(this::performDivideButtonAction); }
+        LOGGER.debug("Divide button configured");
+
+        buttonMultiply.setName(MULTIPLICATION);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonMultiply.addActionListener(this::performMultiplyButtonAction); }
+        LOGGER.debug("Multiply button configured");
+
+        buttonSubtract.setName(SUBTRACTION);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonSubtract.addActionListener(this::performSubtractButtonAction); }
+        LOGGER.debug("Subtract button configured");
+
+        buttonAdd.setName(ADDITION);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonAdd.addActionListener(this::performAddButtonAction); }
+        LOGGER.debug("Addition button configured");
+
+        buttonNegate.setName(NEGATE);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonNegate.addActionListener(this::performNegateButtonAction); }
+        LOGGER.debug("Negate button configured");
+
+        buttonDecimal.setName(DECIMAL);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonDecimal.addActionListener(this::performDecimalButtonAction); }
         LOGGER.debug("Decimal button configured");
-        LOGGER.debug("Converter Panel buttons configured");
+
+        buttonEquals.setName(EQUALS);
+        if (calculatorView == VIEW_BASIC || calculatorView == VIEW_PROGRAMMER)
+        { buttonEquals.addActionListener(this::performEqualsButtonAction); }
+        LOGGER.debug("Equals button configured");
+
+        LOGGER.debug("Common buttons configured");
     }
 
     /**
      * The main method to set up all number buttons, 0-9
      */
-    public void setupNumberButtons()
+    private void setupNumberButtons()
     {
         LOGGER.debug("Configuring Number buttons...");
         AtomicInteger i = new AtomicInteger(0);
-        getAllNumberButtons().forEach(button -> {
+        getNumberButtons().forEach(button -> {
             button.setFont(mainFont);
             button.setEnabled(true);
-            button.setPreferredSize(new Dimension(35, 35));
+            if (calculatorView == VIEW_BASIC)
+                // larger buttons
+                //button.setPreferredSize(new Dimension(45, 45));
+                button.setPreferredSize(new Dimension(35, 35));
+            else if (calculatorView == VIEW_PROGRAMMER)
+                button.setPreferredSize(new Dimension(35, 35));
             button.setBorder(new LineBorder(Color.BLACK));
             button.setName(String.valueOf(i.getAndAdd(1)));
-            if (BASIC.getValue().equals(currentPanel.getName()))
-            { button.addActionListener(actionEvent -> ((BasicPanel)currentPanel).performNumberButtonAction(actionEvent)); }
-            else if (PROGRAMMER.getValue().equals(currentPanel.getName()))
-            { button.addActionListener(ProgrammerPanel::performProgrammerCalculatorNumberButtonActions); }
-            else if (CONVERTER.getValue().equals(currentPanel.getName()))
-            { button.addActionListener(ConverterPanel::performNumberButtonActions); }
+            if (calculatorView.equals(VIEW_BASIC))
+            { button.addActionListener(this::performNumberButtonAction); }
+            else if (calculatorView.equals(VIEW_PROGRAMMER))
+            { button.addActionListener(this::performNumberButtonAction); }
+            else if (calculatorView.equals(VIEW_CONVERTER))
+            { button.addActionListener(converterPanel::performNumberButtonActions); }
             else
             { LOGGER.warn("Add other Panels to work with Number buttons"); }
         });
+        if (calculatorView == VIEW_PROGRAMMER)
+        {
+            programmerPanel.getButtonA().setName(A);
+            programmerPanel.getButtonA().setName(B);
+            programmerPanel.getButtonA().setName(C);
+            programmerPanel.getButtonA().setName(D);
+            programmerPanel.getButtonA().setName(E);
+            programmerPanel.getButtonA().setName(F);
+            programmerPanel.getAllHexadecimalButtons().forEach(hexadecimalNumberButton ->
+                    hexadecimalNumberButton.addActionListener(this::performNumberButtonAction)
+            );
+            LOGGER.debug("Hexadecimal buttons configured");
+        }
         LOGGER.debug("Number buttons configured");
     }
 
     /**
      * The main method to set up the Blank1 button
      */
-    public void setupButtonBlank1()
+    private void setupButtonBlank1()
     {
-        LOGGER.debug("Configuring Blank Button1...");
+        LOGGER.debug("Configuring Button Blank1...");
         buttonBlank1.setFont(mainFont);
         buttonBlank1.setPreferredSize(new Dimension(35, 35));
         buttonBlank1.setBorder(new LineBorder(Color.BLACK));
         buttonBlank1.setEnabled(true);
-        buttonBlank1.setName(BLANK.name());
-        LOGGER.debug("Blank Button1 configured");
+        buttonBlank1.setName(EMPTY);
+        LOGGER.debug("Button Blank1 configured");
     }
 
     /**
      * The main method to set up the Blank2 button
      */
-    public void setupButtonBlank2()
+    private void setupButtonBlank2()
     {
-        LOGGER.debug("Configuring Blank Button2...");
+        LOGGER.debug("Configuring Button Blank2...");
         buttonBlank2.setFont(mainFont);
         buttonBlank2.setPreferredSize(new Dimension(35, 35));
         buttonBlank2.setBorder(new LineBorder(Color.BLACK));
         buttonBlank2.setEnabled(true);
-        buttonBlank2.setName(BLANK.name());
-        LOGGER.debug("Blank Button2 configured");
-    }
-
-    /* Calculator helper methods */
-
-    /**
-     * This method resets default values
-     * Primarily used for testing purposes
-     */
-    public void resetValues()
-    {
-        getValues()[0] = BLANK.getValue();
-        getValues()[1] = BLANK.getValue();
-        getValues()[2] = BLANK.getValue();
-        getValues()[3] = BLANK.getValue();
-        LOGGER.debug("All values reset");
-        setNumberNegative(false);
-        LOGGER.debug("isNumberNegative set to false");
-        resetBasicOperators(false);
-        LOGGER.debug("All main basic operators set to false");
+        buttonBlank2.setName(EMPTY);
+        LOGGER.debug("Button Blank2 configured");
     }
 
     /**
-     * Clears all actions from the number buttons
+     * This method creates the View Help menu option under Help
+     * The help text is added by the currentPanel.
      */
-    public void clearNumberButtonActions()
+    private JMenuItem createViewHelpJMenuItem()
     {
-        getAllNumberButtons().forEach(button -> Arrays.stream(button.getActionListeners()).toList().forEach(al -> {
-            LOGGER.debug("Removing action listener from button: " + button.getName());
-            button.removeActionListener(al);
-        }));
-        LOGGER.debug("Number buttons cleared of action listeners");
+        JMenuItem viewHelpItem = new JMenuItem(VIEW_HELP);
+        viewHelpItem.setName(VIEW_HELP);
+        viewHelpItem.setFont(mainFont);
+        LOGGER.debug("View Help configured. Panel adds text");
+        return viewHelpItem;
     }
 
     /**
-     * This method returns true or false depending on if an operator was pushed or not
-     *
-     * @return the result
+     * Updates the Help menu item to display the
+     * proper help text based on the current panel
+     * @return JMenuItem the updated help menu item
      */
-    public boolean determineIfAnyBasicOperatorWasPushed()
-    { return isAdding || isSubtracting || isMultiplying || isDividing; }
-
-    //TODO: Rethink name. It does too much
-    /**
-     * Sets values[1] to be blank, updates valuesPosition accordingly,
-     * updates the Dot button and boolean, resets firstNumber and returns
-     * true if no operator was pushed or false otherwise
-     *
-     * @param operatorBool the operator to pressed
-     * @return boolean the operatorBool opposite value
-     */
-    public boolean resetCalculatorOperations(boolean operatorBool)
+    public JMenuItem updateShowHelp()
     {
-        LOGGER.debug("Resetting calculator operations, operatorBool:{}", operatorBool);
-        if (operatorBool)
+        JMenuItem viewHelp = helpMenu.getItem(0);
+        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        viewHelp.addActionListener(this::performShowHelpAction);
+        helpMenu.add(viewHelp, 0);
+        LOGGER.debug("Show Help updated");
+        return viewHelp;
+    }
+
+    /**
+     * This method creates the About Calculator menu option under Help
+     */
+    private JMenuItem createAboutCalculatorJMenuItem()
+    {
+        JMenuItem aboutCalculatorItem = new JMenuItem(ABOUT_CALCULATOR);
+        aboutCalculatorItem.setName(ABOUT_CALCULATOR);
+        aboutCalculatorItem.setFont(mainFont);
+        aboutCalculatorItem.addActionListener(this::performAboutCalculatorAction);
+        LOGGER.debug("About Calculator configured");
+        return aboutCalculatorItem;
+    }
+
+    /****** ADD COMPONENTS TO PANEL OR PANEL TO FRAME ******/
+    /**
+     * Used to add a component to a panel
+     * @param calculatorPanel the current view panel
+     * @param constraints the grid bag constraints
+     * @param panel the panel to add the component to
+     * @param c the component to add
+     * @param row the row to add the component to
+     * @param column the column to add the component to
+     */
+    public void addComponent(JPanel calculatorPanel, GridBagConstraints constraints, JPanel panel,
+                             JComponent c, int row, int column)
+    { addComponent(calculatorPanel, constraints, panel, c, row, column, null,
+            1, 1, 1.0, 1.0, 0, 0); }
+
+    /**
+     * Used to add a component to a panel
+     * @param panel the panel to add to
+     * @param c the component to add
+     * @param column the column to add the component to
+     * @param insets the space between the component
+     */
+    public void addComponent(JPanel calculatorPanel, GridBagConstraints constraints, JPanel panel,
+                             JComponent c, int column, Insets insets)
+    { addComponent(calculatorPanel, constraints, panel, c, 1, column, insets, 1, 1, 1.0, 1.0, 0, 0); }
+
+    /**
+     * Used to add the panel to the frame
+     * @param panel the panel to add to the frame, not null
+     */
+    public void addComponent(JPanel calculatorPanel, GridBagConstraints constraints, JPanel panel)
+    {
+        if (calculatorView == VIEW_CONVERTER)
         {
-            values[1] = BLANK.getValue();
-            valuesPosition = 1;
-            buttonDecimal.setEnabled(!isDecimal(values[0]));
-            isFirstNumber = false;
-            return false;
+            addComponent(calculatorPanel, constraints, panel, null, 0, 0, null, 0, 0, 1.0, 1.0, 0, GridBagConstraints.CENTER);
         }
         else
         {
-            values[1] = BLANK.getValue();
-            valuesPosition = 0;
-            buttonDecimal.setEnabled(!isDecimal(values[0]));
-            isFirstNumber = true;
-            return true;
+            addComponent(calculatorPanel, constraints, panel, null, 0, 0, new Insets(0,0,0,0),
+                    0, 0, 1.0, 1.0, 0, GridBagConstraints.NORTH);
+
         }
     }
 
-    /**
-     * Determines if any value is saved in memory
-     * @return boolean if any memory value has a value
-     */
-    public boolean isMemoryValuesEmpty()
-    {
-        boolean result = true;
-        for (int i = 0; i < 10; i++) {
-            if (!StringUtils.isBlank(memoryValues[i])) {
-                result = false;
-                break;
-            }
-        }
-        LOGGER.debug("isMemoryValuesEmpty:{}", result);
-        return result;
-    }
+    public void addComponent(JPanel calculatorPanel, GridBagConstraints constraints, JPanel panel,
+                             JComponent c, int row, double weightx, double weighty)
+    { addComponent(calculatorPanel, constraints, panel, c, row, 0, null, 1, 1, weightx, weighty, 0, 0); }
 
     /**
-     * Returns the lowest position in memory that contains a value
-     */
-    public int getLowestMemoryPosition()
-    {
-        var lowestMemory = 0;
-        for (int i = 0; i < 10; i++) {
-            if (!memoryValues[i].isBlank()) {
-                lowestMemory = i;
-                break;
-            }
-        }
-        LOGGER.debug("Lowest position in memory is {}", lowestMemory);
-        return lowestMemory;
-    }
-
-    /**
-     * Returns all the basicPanel main operator buttons
-     * @return Collection of all basicPanel main operators
-     */
-    public List<JButton> getAllBasicPanelOperatorButtons()
-    { return Arrays.asList(buttonAdd, buttonSubtract, buttonMultiply, buttonDivide); }
-
-    /**
-     * Returns all the number buttons
-     * @return Collection of all number buttons
-     */
-    public List<JButton> getAllNumberButtons()
-    { return Arrays.asList(button0, button1, button2, button3, button4, button5, button6, button7, button8, button9); }
-
-    /**
-     * Returns all the memory buttons
-     * @return List of buttons in the memory panel
-     */
-    public List<JButton> getAllMemoryPanelButtons()
-    { return Arrays.asList(buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall, buttonMemoryAddition, buttonMemorySubtraction, buttonHistory); }
-
-    /**
-     * Returns the "other" basic calculator buttons. This includes
-     * Percent, SquareRoot, Squared, Fraction, ClearEntry, Clear,
-     * Delete, Divide, Multiply, Subtract, Addition, Negate, Dot,
-     * and Equals.
-     * It does not include the number buttons.
+     * Sets the constraints for a component or panel
+     * and adds the component to the specified panel
+     * or the specified panel to the frame.
      *
-     * @return Collection of buttons
+     * @param panel the panel to add to, not null
+     * @param c the component to add to a panel, can be null
+     * @param row the row to place the component in
+     * @param column the column to place the component in
+     * @param insets the space between the component
+     * @param gridwidth the number of columns the component should use
+     * @param gridheight the number of rows the component should use
+     * @param weightXRow set to allow the button grow horizontally
+     * @param weightYColumn set to allow the button grow horizontally
+     * @param fill set to make the component resize if any unused space
+     * @param anchor set to place the component in a specific location on the frame
      */
-    public List<JButton> getAllBasicOperatorButtons()
+    public void addComponent(JPanel calculatorPanel, GridBagConstraints constraints, JPanel panel, JComponent c,
+                             int row, int column, Insets insets, int gridwidth, int gridheight,
+                             double weightXRow, double weightYColumn, int fill, int anchor)
     {
-        return Arrays.asList(buttonPercent, buttonSquareRoot, buttonSquared, buttonFraction,
-                buttonClearEntry, buttonClear, buttonDelete, buttonDivide, buttonMultiply,
-                buttonSubtract, buttonAdd, buttonNegate, buttonDecimal, buttonEquals);
-    }
-
-    /**
-     * Clears all actions from the buttons
-     * other than the numbers buttons
-     */
-    public void clearAllOtherBasicCalculatorButtons()
-    {
-        getAllBasicOperatorButtons().forEach(button ->
-                Arrays.stream(button.getActionListeners()).forEach(button::removeActionListener));
-        LOGGER.debug("AllOtherBasicButtons cleared of action listeners");
-    }
-
-    /**
-     * Tests whether a number has the "." symbol in it or not
-     *
-     * @param number the number to test
-     * @return boolean if the given number contains a decimal
-     */
-    public boolean isDecimal(String number)
-    {
-        LOGGER.debug("isDecimal({}) == {}", number.replaceAll("\n", ""), number.contains(DECIMAL.getValue()));
-        return number.contains(DECIMAL.getValue());
-    }
-
-    /**
-     * When we hit a number button this method is called
-     * to ensure valid entries are allowed and any previous
-     * errors or unexpected conditions are cleared
-     */
-    public boolean performInitialChecks()
-    {
-        LOGGER.debug("Performing initial checks...");
-        boolean checkFound = false;
-        if (textPaneContainsBadText())
-        {
-            LOGGER.debug("TextPane contains bad text");
-            checkFound = true;
+        constraints.gridy = row;
+        constraints.gridx = column;
+        constraints.gridwidth = gridwidth;
+        constraints.gridheight = gridheight;
+        constraints.weightx = weightXRow;
+        constraints.weighty = weightYColumn;
+        constraints.insets = insets == null ? new Insets(1, 1, 1, 1) : insets;
+        if (fill != 0)   constraints.fill = fill;
+        if (anchor != 0) constraints.anchor = anchor;
+        if (c != null) {
+            panel.add(c, constraints);
+            LOGGER.debug("Added {} to {}", c.getName(), panel.getName()); // Ex: Added % to ButtonsPanel
         }
-        else if (getTextPaneWithoutAnyOperator().equals(ZERO.getValue()) &&
-                (calculatorType.equals(BASIC) ||
-                        (calculatorType == PROGRAMMER && calculatorBase == BASE_DECIMAL)))
-        {
-            LOGGER.debug("textPane equals 0. Setting to blank.");
-            textPane.setText(BLANK.getValue());
-            values[valuesPosition] = BLANK.getValue();
-            isFirstNumber = true;
-            buttonDecimal.setEnabled(true);
+        else {
+            calculatorPanel.add(panel, constraints);
+            LOGGER.debug("Added {} to calculator frame", panel.getName()); // Ex: Added BasicPanel to calculator frame
         }
-        else if (values[0].isBlank() && !values[1].isBlank())
+    }
+    /****** END ADD COMPONENTS TO PANEL OR PANEL TO FRAME ******/
+    /**************** END CONFIGURATION ****************/
+
+    /**************** BUTTON ACTIONS ****************/
+    /**
+     * Performs the action for the Style Menu item
+     * @param actionEvent the action event
+     */
+    public void performStyleMenuAction(ActionEvent actionEvent)
+    {
+        String styleSelected = ((JMenuItem) actionEvent.getSource()).getName();
+        logActionButton(styleSelected, LOGGER);
+        setCalculatorStyle(styleSelected);
+        try
         {
-            LOGGER.debug("values[0] is blank, values[1] is not");
-            values[0] = values[1];
-            values[1] = BLANK.getValue();
-            valuesPosition = 0;
-            checkFound = true;
-        }
-        LOGGER.debug("Initial checks result: " + checkFound);
-        return checkFound;
-    }
-
-    /**
-     * Checks to see if the max length of a value[position] has been met.
-     * The highest number is 9,999,999, with a length of 7 and the
-     * lowest number is 0.0000001. So if the current value has a
-     * length of 7, the max length has been met, and no more
-     * digits will be allowed. Remember that the values[position] will not
-     * contain any commas, so the official length will be 7.
-     * @return boolean if the max length has been met
-     */
-    public boolean checkValueLength()
-    {
-        LOGGER.debug("Checking if max size (7) is met...");
-        LOGGER.debug("Length: {}", values[valuesPosition].length());
-        return getNumberOnLeftSideOfDecimal(values[valuesPosition]).length() >= 7 ||
-               getNumberOnRightSideOfDecimal(values[valuesPosition]).length() >= 7 ;
-    }
-
-    /**
-     * Tests whether the TextArea contains a String which shows a previous error
-     *
-     * @return boolean if textArea contains more than just a number
-     */
-    public boolean textPaneContainsBadText()
-    {
-        LOGGER.debug("TextPane is {}", getTextPaneWithoutNewLineCharacters());
-        return getTextPaneWithoutAnyOperator().equals(CANNOT_DIVIDE_BY_ZERO.getValue()) ||
-               getTextPaneWithoutAnyOperator().equals(NOT_A_NUMBER.getValue()) ||
-               getTextPaneWithoutAnyOperator().equals(NUMBER_TOO_BIG.getValue()) ||
-               getTextPaneWithoutAnyOperator().equals(ENTER_A_NUMBER.getValue()) ||
-               getTextPaneWithoutAnyOperator().equals(ONLY_POSITIVES.getValue()) ||
-               getTextPaneWithoutAnyOperator().contains(E.getValue()) ||
-               getTextPaneWithoutAnyOperator().equals(INFINITY.getValue());
-    }
-
-    /**
-     * Adds commas to the number if appropriate
-     * @param valueToAdjust the textPane value
-     * @return String the textPane value with commas
-     */
-    public String addCommas(String valueToAdjust)
-    {
-        LOGGER.debug("Adding commas to {}", valueToAdjust);
-        var temp = valueToAdjust;
-        String adjusted = "";
-        String toTheLeft = "";
-        String toTheRight = "";
-        if (isDecimal(valueToAdjust))
-        {
-            LOGGER.debug("temp: " + temp);
-            toTheLeft = getNumberOnLeftSideOfDecimal(valueToAdjust);
-            toTheRight = getNumberOnRightSideOfDecimal(valueToAdjust);
-            if (toTheLeft.length() <= 3)
+            switch (styleSelected)
             {
-                valueToAdjust = temp;
-                LOGGER.debug("valueFromTemp: " + valueToAdjust);
-                getButtonDecimal().setEnabled(!isDecimal(temp));
-                return valueToAdjust;
-            }
-            else
-            {
-                valueToAdjust = toTheLeft;
-                getButtonDecimal().setEnabled(!isDecimal(temp));
+                case METAL -> UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                case SYSTEM -> UIManager.setLookAndFeel("javax.swing.plaf.system.SystemLookAndFeel");
+                case WINDOWS -> UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                case MOTIF -> UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                case GTK -> UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                case APPLE -> UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+                default -> UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
             }
         }
-        valueToAdjust = valueToAdjust.replace("_", "").replace(",","").replace(".","");
-        LOGGER.debug("valueToAdjust: {}", valueToAdjust);
-        if (valueToAdjust.length() >= 4)
+        catch (ClassNotFoundException | InstantiationException |
+               IllegalAccessException | UnsupportedLookAndFeelException e)
+        { logException(e, LOGGER); }
+        if (textPane != null) // not used in all Calculators
         {
-            LOGGER.debug("ValueToAdjust length: {}", valueToAdjust.length());
-            StringBuffer reversed = new StringBuffer().append(valueToAdjust).reverse();
-            LOGGER.debug("reversed: " + reversed);
-            if (reversed.length() <= 6)
-            {
-                LOGGER.debug("Length is : {}", reversed.length());
-                reversed = new StringBuffer().append(reversed.substring(0,3)).append(COMMA.getValue()).append(reversed.substring(3,reversed.length()));
-                adjusted = reversed.reverse().toString();
-            }
-            else
-            {
-                LOGGER.debug("Length is : {}", reversed.length());
-                reversed = new StringBuffer().append(reversed.substring(0,3)).append(COMMA.getValue()).append(reversed.substring(3,6)).append(COMMA.getValue()).append(reversed.substring(6));
-                adjusted = reversed.reverse().toString();
-            }
+            textPane.setBackground(Color.WHITE);
+            textPane.setBorder(new LineBorder(Color.BLACK));
         }
         else
+        { LOGGER.warn("Check that you're adjusting the proper textPane."); }
+        if (historyTextPane != null) // not used in all Calculators
         {
-            adjusted = valueToAdjust;
-            LOGGER.debug("adjusted1: {}", adjusted);
-            if (isDecimal(temp)) {
-                getButtonDecimal().setEnabled(!isDecimal(temp));
-                adjusted += toTheRight;
-                LOGGER.debug("adjusted2: {}", adjusted);
-            }
-
+            getHistoryTextPane().setBackground(Color.WHITE);
+            getHistoryTextPane().setBorder(new LineBorder(Color.BLACK));
         }
-        if (!getButtonDecimal().isEnabled() && isDecimal(temp))
-        {
-            adjusted += DECIMAL.getValue() + toTheRight;
-            getButtonDecimal().setEnabled(false);
-        }
-        LOGGER.debug("adjustedFinal: {}", adjusted);
-        return adjusted;
-    }
-
-    /**
-     * Takes an Exception and prints it to LOGGER.error
-     *
-     * @param e the Exception to log
-     */
-    public void logException(Exception e)
-    { LOGGER.error(e.getClass().getName() + ": " + e.getMessage()); }
-
-    /**
-     * Determines if the OS is Mac or not
-     *
-     * @return boolean if is running on Mac
-     */
-    public boolean isMacOperatingSystem()
-    {
-        LOGGER.debug("OS Name: {}", System.getProperty("os.name"));
-        return System.getProperty("os.name").toLowerCase().contains("mac");
+        else
+        { LOGGER.warn("Implement changing history panel for {}", calculatorView.getName()); }
+        updateLookAndFeel();
+        savePreferences();
     }
 
     /**
      * The main actions to perform when switch panels
      * @param actionEvent the click action
      */
-    public void switchPanels(ActionEvent actionEvent)
+    public void performViewMenuAction(ActionEvent actionEvent, CalculatorType updatedView)
     {
-        LOGGER.info("Changing view...");
-        String oldPanelName = currentPanel.getClass().getSimpleName().replace("Panel", "");
-        String selectedPanel = actionEvent.getActionCommand();
-        LOGGER.debug("oldPanel: {}", oldPanelName);
-        LOGGER.debug("newPanel: {}", selectedPanel);
-        if (oldPanelName.equals(selectedPanel))
-        { confirm("Not changing to " + selectedPanel + " when already showing " + oldPanelName); }
-        else if (converterType != null && converterType.getValue().equals(selectedPanel))
-        { confirm("Not changing panels when the conversion type is the same"); }
+        LOGGER.info("Switching views...");
+        String currentView = calculatorView.getName();
+        String newView = updatedView.getName(); // some converter type
+        if (updatedView instanceof CalculatorConverterType)
+            updatedView = VIEW_CONVERTER;
+        LOGGER.debug("from '{}' to '{}'", currentView, newView);
+        if (currentView.equals(newView))
+        { confirm(this, LOGGER, "Not changing to " + newView + " when already showing " + currentView); }
+        else if (newView.equals(converterType.getValue()))
+        { confirm(this, LOGGER, "Not changing panels when the converterType is the same"); }
         else
         {
-            switch (selectedPanel) {
-                case "Basic":
-                    BasicPanel basicPanel = new BasicPanel();
-                    switchPanelsInner(basicPanel);
-                    if (!values[0].isEmpty())
-                    {
-                        textPane.setText(addNewLineCharacters() + values[0]);
-                        if (isDecimal(values[0]))
-                        { buttonDecimal.setEnabled(false); }
+            String currentValueInTextPane = getTextPaneValue();
+            LOGGER.debug("Current value in textPane: '{}'", currentValueInTextPane);
+            switch (updatedView) {
+                case VIEW_BASIC -> {
+                    //currentValueInTextPane = getTextPaneValue();
+                    switchPanels(basicPanel, actionEvent);
+                    // TODO: Must only show number and appropriate operator
+                    if (!currentValueInTextPane.isEmpty()) {
+                        if (isFractionalNumber(getValueWithoutAnyOperator(currentValueInTextPane))) {
+                            buttonDecimal.setEnabled(false);
+                        }
+                        /* TODO: Handle what happens if the currentValue = v[0] + programmerOperator
+                         * and we switch to Basic. Right now it just drops the operator but vP = 1
+                         * because we hit a programmerOperator. So vP needs to go back to 0??
+                         */
+                        if (isOperatorActive() && getBasicPanelOperators().contains(getActiveOperator())) {
+                            appendTextToPane(addThousandsDelimiter(currentValueInTextPane, getThousandsDelimiter()) + SPACE + getActiveOperator());
+                        } else {
+                            appendTextToPane(addThousandsDelimiter(getValueWithoutAnyOperator(currentValueInTextPane), getThousandsDelimiter()));
+                        }
                     }
-                    break;
-                case "Programmer":
-                    ProgrammerPanel programmerPanel = new ProgrammerPanel();
-                    switchPanelsInner(programmerPanel);
-                    if (!values[0].isEmpty())
-                    {
-                        textPane.setText(addNewLineCharacters() + values[0]);
-                        programmerPanel.setCalculatorBase(BASE_DECIMAL);
-                        if (isDecimal(values[0]))
-                        { buttonDecimal.setEnabled(false); }
+                }
+                case VIEW_PROGRAMMER -> {
+                    switchPanels(programmerPanel, actionEvent);
+                    if (!currentValueInTextPane.isEmpty()) {
+                        if (isFractionalNumber(getValueWithoutAnyOperator(currentValueInTextPane))) {
+                            buttonDecimal.setEnabled(false);
+                        }
+                        // Adjust value from BASE_DECIMAL to current programmer base
+                        currentValueInTextPane = switch (calculatorBase)
+                        {
+                            case BASE_BINARY -> convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, currentValueInTextPane);
+                            case BASE_OCTAL -> convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, currentValueInTextPane);
+                            case BASE_HEXADECIMAL -> convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, currentValueInTextPane);
+                            default -> currentValueInTextPane;
+                        };
+                        if (isOperatorActive() && getProgrammerPanelOperators().contains(getActiveOperator())) {
+                            programmerPanel.appendTextForProgrammerPanel(currentValueInTextPane + SPACE + getActiveOperator());
+                        } else {
+                            programmerPanel.appendTextForProgrammerPanel(currentValueInTextPane);
+                        }
                     }
-                    break;
-                case "Scientific":
+                }
+                case VIEW_SCIENTIFIC -> {
                     LOGGER.warn("Setup");
-                    break;
-                case "Date":
-                    DatePanel datePanel = new DatePanel();
-                    switchPanelsInner(datePanel);
-                    break;
-                case "Angle": {
-                    ConverterPanel converterPanel = new ConverterPanel();
-                    setConverterType(ANGLE);
-                    switchPanelsInner(converterPanel);
-                    break;
+                    switchPanels(scientificPanel, actionEvent);
                 }
-                case "Area": {
-                    ConverterPanel converterPanel = new ConverterPanel();
-                    setConverterType(AREA);
-                    switchPanelsInner(converterPanel);
-                    break;
+                case VIEW_DATE -> {
+                    switchPanels(datePanel, actionEvent);
                 }
+                case VIEW_CONVERTER ->
+                {
+                    setConverterType(CalculatorConverterType.valueOf(newView));
+                    switchPanels(converterPanel, actionEvent);
+                }
+                default -> { LOGGER.warn("Add other views"); }
             }
-            confirm("Switched from " + oldPanelName + " to " + currentPanel.getClass().getSimpleName());
+            updateMemoryButtonsState();
+            updateLookAndFeel();
+            confirm(this, LOGGER, "Switched from " + currentView + " to " + newView);
         }
     }
-
     /**
      * The inner logic to perform when switching panels
      * @param newPanel the new panel to switch to
      */
-    private void switchPanelsInner(JPanel newPanel)
+    private void switchPanels(JPanel newPanel, ActionEvent actionEvent)
     {
-        LOGGER.debug("SwitchPanelsInner: {}", newPanel.getName());
+        LOGGER.debug("Switching to panel: {}", newPanel.getName());
         setTitle(newPanel.getName());
-        updateJPanel(newPanel);
-        setPreferredSize(currentPanel.getSize());
+        updatePanel(newPanel, actionEvent);
+        setSize(currentPanel.getSize());
         setMinimumSize(currentPanel.getSize());
-        if (DATE.equals(getCalculatorType()))
-        { setResizable(false); }
-        else
-        { setResizable(true); }
-        pack();
+    }
+    /**
+     * This method updates the panel by removing the old panel,
+     * setting up the new current panel, and adds it to the frame
+     * @param newPanel the panel to update on the Calculator
+     */
+    private void updatePanel(JPanel newPanel, ActionEvent actionEvent)
+    {
+        LOGGER.debug("Updating panel {}", newPanel.getClass().getSimpleName());
+        JPanel oldPanel = currentPanel;
+        remove(oldPanel);
+        currentPanel = newPanel;
+        calculatorView = switch (currentPanel.getClass().getSimpleName())
+        {
+            case "BasicPanel" -> VIEW_BASIC;
+            case "ProgrammerPanel" -> VIEW_PROGRAMMER;
+            case "ScientificPanel" -> VIEW_SCIENTIFIC;
+            case "DatePanel" -> VIEW_DATE;
+            case "ConverterPanel" -> VIEW_CONVERTER;
+            default -> {
+                logException(new IllegalStateException("Unexpected value: " + currentPanel.getClass().getSimpleName()), LOGGER);
+                yield VIEW_BASIC;
+            }
+        };
+        setupPanel(actionEvent);
+        add(currentPanel);
+        LOGGER.debug("Panel updated");
+    }
+    /**
+     * The main method that calls the setup method for a specific panel
+     */
+    private void setupPanel(ActionEvent actionEvent)
+    {
+        LOGGER.debug("Setting up panel: {}", calculatorView.getValue());
+        switch (calculatorView) {
+            case VIEW_BASIC -> {
+                basicPanel.setupBasicPanel(this);
+                closeHistoryIfOpen(actionEvent);
+            }
+            case VIEW_PROGRAMMER -> {
+                programmerPanel.setupProgrammerPanel(this);
+                closeHistoryIfOpen(actionEvent);
+            }
+            case VIEW_SCIENTIFIC -> {
+                scientificPanel.setupScientificPanel();
+                closeHistoryIfOpen(actionEvent);
+            }
+            case VIEW_DATE -> {
+                datePanel.setupDatePanel(this, dateOperation);
+            }
+            case VIEW_CONVERTER -> {
+                converterPanel.setupConverterPanel(this, converterType);
+            }
+        }
     }
 
-    // TODO: Rework
     /**
-     * Converts the current value from one CalculatorBase
-     * to another CalculatorBase
-     * @param fromType the current CalculatorBase
-     * @param toType the CalculatorBase to convert to
-     * @param currentValue the value to convert
-     * @return String the converted value
-     * @throws CalculatorError throws a conversion error
+     * Saves the current textPane value to the system clipboard
+     * @param actionEvent the click action
      */
-    public String convertFromTypeToTypeOnValues(CalculatorBase fromType, CalculatorBase toType, String currentValue) throws CalculatorError
+    public void performCopyAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("convert from {} to {}", fromType, toType);
-        LOGGER.debug("on value: {}", currentValue);
-        StringBuffer sb = new StringBuffer();
-        if (currentValue.contains(" ")) {
-            String[] strs = currentValue.split(" ");
-            for (String s : strs) {
-                sb.append(s);
-            }
-        } else {
-            sb.append(currentValue);
-        }
-        LOGGER.debug("sb: " + sb);
-        String convertedValue = "";
-        if (StringUtils.isEmpty(currentValue)) return "";
-        // All from HEXADECIMAL to any other option
-        if (fromType == BASE_HEXADECIMAL && toType == BASE_DECIMAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_HEXADECIMAL && toType == BASE_OCTAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_HEXADECIMAL && toType == BASE_BINARY) {
-            confirm("IMPLEMENT");
-        }
-        // All from BASE_DECIMAL to any other option
-        else if (fromType == BASE_DECIMAL && toType == BASE_HEXADECIMAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_DECIMAL && toType == BASE_OCTAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_DECIMAL && toType == BASE_BINARY)
+        logActionButton(actionEvent, LOGGER);
+        StringSelection selection = new StringSelection(getTextPaneValue());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, null);
+        confirm(this, LOGGER, pressedButton(COPY));
+    }
+
+    /**
+     * Pastes the current system clipboard value to the textPane
+     * and updates the current value at valuesPosition.
+     * @param actionEvent the click action
+     */
+    public void performPasteAction(ActionEvent actionEvent)
+    {
+        logActionButton(actionEvent, LOGGER);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        String text = EMPTY;
+        if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor))
         {
-            LOGGER.debug("Converting str(" + sb + ")");
-            sb = new StringBuffer();
-            int number;
             try {
-                number = Integer.parseInt(currentValue);
-                LOGGER.debug("number: " + number);
-                int i = 0;
-                if (number == 0) sb.append("00000000");
-                else {
-                    while (i < ((ProgrammerPanel)currentPanel).getBytes()) {
-                        if (number % 2 == 0) {
-                            sb.append("0");
-                        } else {
-                            sb.append("1");
-                        }
-                        if (sb.length() == 8) sb.append(" ");
-                        if (number % 2 == 0 && number / 2 == 0) {
-                            // 0r0
-                            for (int k = i; k < ((ProgrammerPanel)currentPanel).getBytes(); k++) {
-                                sb.append("0");
-                                if (k == 7) sb.append(" ");
-                            }
-                            break;
-                        }
-                        else if (number / 2 == 0 && number % 2 == 1) {
-                            // 0r1
-                            for (int k = i + 1; k < ((ProgrammerPanel)currentPanel).getBytes(); k++) {
-                                sb.append("0");
-                                if (k == 7) sb.append(" ");
-                            }
-                            break;
-                        }
-                        i++;
-                        number /= 2;
-                    }
-                }
-            } catch (NumberFormatException nfe) {
-                logException(nfe);
+                text = (String) contents.getTransferData(DataFlavor.stringFlavor);
+                text = removeThousandsDelimiter(text.trim(), getThousandsDelimiter());
+                String value = new BigDecimal(text).toPlainString();
+                appendTextToPane(addThousandsDelimiter(value, getThousandsDelimiter()), true);
+                confirm(this, LOGGER, pressedButton(PASTE));
+            } catch (Exception e) {
+                logException(new CalculatorError(e), LOGGER);
             }
-            // Determine bytes and add zeroes if needed
-            int sizeOfSecond8Bits;
-            try {
-                // start counting at 9. The 8th bit is a space
-                sizeOfSecond8Bits = sb.substring(10).length();
-                int zeroesToAdd = 8 - sizeOfSecond8Bits;
-                sb.append("0".repeat(Math.max(0, zeroesToAdd)));
-            } catch (StringIndexOutOfBoundsException e) {
-                LOGGER.warn("No second bits found");
-            }
-            LOGGER.debug("Before reverse: {}", sb);
-            // End adding zeroes here
+        }
+    }
 
-            sb.reverse();
-            LOGGER.debug("After reverse: {}", sb);
-            String strToReturn = sb.toString();
-            LOGGER.debug("convertFrom(" + fromType + ")To(" + toType + ") = " + sb);
-            LOGGER.warn("ADD CODE THAT MAKES SURE RETURNED VALUE UPDATES BYTES IF AFTER REVERSE IS LONGER THAN 8 BITS, WE NEED TO ADD A SPACE BETWEEN THE BYTES");
-            convertedValue = strToReturn;
-        }
-        // All from OCTAL to any other option
-        else if (fromType == BASE_OCTAL && toType == BASE_HEXADECIMAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_OCTAL && toType == BASE_DECIMAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_OCTAL && toType == BASE_BINARY) {
-            confirm("IMPLEMENT");
-        }
-        // All from BINARY to any other option
-        else if (fromType == BASE_BINARY && toType == BASE_HEXADECIMAL) {
-            confirm("IMPLEMENT");
-        }
-        else if (fromType == BASE_BINARY && toType == BASE_DECIMAL)
+    /**
+     * Clears the history panel text.
+     * @param actionEvent the click action
+     */
+    public void performClearHistoryAction(ActionEvent actionEvent)
+    {
+        logActionButton(actionEvent, LOGGER);
+        if (historyTextPane != null)
         {
-            LOGGER.debug("BINARY TO DECIMAL: {}", sb);
-            int appropriateLength = ((ProgrammerPanel)currentPanel).getBytes();
-            LOGGER.debug("sb: " + sb);
-            LOGGER.debug("appropriateLength: " + appropriateLength);
-            if (sb.length() != appropriateLength) {
-                LOGGER.warn("sb, '" + sb + "', is too short. adding missing zeroes");
-                // user had entered 101, which really is 00000101, but they aren't showing the first 5 zeroes
-                int difference = appropriateLength - sb.length();
-                StringBuilder missingZeroes = new StringBuilder();
-                missingZeroes.append("0".repeat(Math.max(0, difference)));
-                missingZeroes.append(sb);
-                sb = new StringBuffer(missingZeroes);
-                LOGGER.debug("sb: " + sb);
-            }
-            double result = 0.0;
-            double num1;
-            double num2;
-            for (int i = 0, k = appropriateLength - 1; i < appropriateLength; i++, k--) {
-                num1 = Double.parseDouble(String.valueOf(sb.charAt(i)));
-                num2 = Math.pow(2, k);
-                result = (num1 * num2) + result;
-            }
-            convertedValue = String.valueOf(Double.valueOf(result));
-            if (isPositiveNumber(convertedValue))
-            { convertedValue = String.valueOf(clearZeroesAndDecimalAtEnd(convertedValue)); }
-        }
-        else if (fromType == BASE_BINARY && toType == BASE_OCTAL) {
-            confirm("IMPLEMENT");
-        }
-
-        LOGGER.debug("Converted value: {}", convertedValue);
-        LOGGER.info("Base set to: {}", calculatorBase);
-        return convertedValue;
-    }
-
-    /**
-     * Clears any decimal found.
-     * Clears all zeroes after decimal (if any).
-     *
-     * @param currentNumber the value to clear
-     * @return updated currentNumber
-     */
-    public String clearZeroesAndDecimalAtEnd(String currentNumber)
-    {
-        LOGGER.debug("ClearZeroesAndDot: {}", currentNumber);
-        if (currentNumber.contains(E.getValue())) return currentNumber;
-        int index;
-        index = currentNumber.indexOf(DECIMAL.getValue());
-        LOGGER.debug("decimalIndex: {}", index);
-        if (index == -1) return currentNumber;
-        else
-        {
-            String toTheRight = getNumberOnRightSideOfDecimal(currentNumber);
-            String expected = ZERO.getValue().repeat(toTheRight.length());
-            boolean allZeroes = expected.equals(toTheRight);
-            if (allZeroes) currentNumber = currentNumber.substring(0,index);
-        }
-        LOGGER.debug("ClearZeroesAndDot Result: {}", addCommas(currentNumber));
-        return currentNumber;
-    }
-
-    /**
-     * Returns the text in the textPane without
-     * any new line characters or operator text
-     * @return the plain textPane text
-     */
-    public String getTextPaneWithoutAnyOperator()
-    {
-        return getTextPaneWithoutNewLineCharacters()
-               .replace(ADDITION.getValue(), BLANK.getValue()) // target, replacement
-               .replace(SUBTRACTION.getValue(), BLANK.getValue())
-               .replace(MULTIPLICATION.getValue(), BLANK.getValue())
-               .replace(DIVISION.getValue(), BLANK.getValue())
-               .replace(MODULUS.getValue(), BLANK.getValue())
-               .replace(LEFT_PARENTHESIS.getValue(), BLANK.getValue())
-               .replace(RIGHT_PARENTHESIS.getValue(), BLANK.getValue())
-               .replace(RoL.getValue(), BLANK.getValue())
-               .replace(RoR.getValue(), BLANK.getValue())
-               .replace(OR.getValue(), BLANK.getValue())
-               .replace(XOR.getValue(), BLANK.getValue())
-               .replace(AND.getValue(), BLANK.getValue())
-               .strip();
-    }
-
-    /**
-     * Returns the text in the textPane without
-     * any new line characters
-     * @return the textPane text without new lines or whitespace
-     */
-    public String getTextPaneWithoutNewLineCharacters()
-    { return textPane.getText().replaceAll("\n", "").strip(); }
-
-    public String getBasicHistoryPaneWithoutNewLineCharacters()
-    { return basicHistoryTextPane.getText().replaceAll("\n", "").strip(); }
-
-    /**
-     * This method is used after any result to verify
-     * the result of the previous method and see the
-     * values of the entire Calculator object
-     *
-     * @param message the message to pass into confirm
-     */
-    public void confirm(String message)
-    {
-        LOGGER.info("Confirm Results: {}", message);
-        LOGGER.info("---------------- ");
-        switch (calculatorType) {
-            case BASIC: {
-                LOGGER.info("textPane: {}", getTextPaneWithoutNewLineCharacters());
-                if (isMemoryValuesEmpty()) {
-                    LOGGER.info("no memories stored!");
-                } else {
-                    LOGGER.info("memoryPosition: {}", memoryPosition);
-                    LOGGER.info("memoryRecallPosition: {}", memoryRecallPosition);
-                    for (int i = 0; i < 10; i++) {
-                        if (!memoryValues[i].isBlank()) {
-                            LOGGER.info("memoryValues[{}]: {}", i, memoryValues[i]);
-                        }
-                    }
-                }
-                LOGGER.info("addBool: {}", isAdding ? "yes" : "no");
-                LOGGER.info("subBool: {}", isSubtracting ? "yes" : "no");
-                LOGGER.info("mulBool: {}", isMultiplying ? "yes" : "no");
-                LOGGER.info("divBool: {}", isDividing ? "yes" : "no");
-                LOGGER.info("values[{}]: {}", 0, values[0]);
-                LOGGER.info("values[{}]: {}", 1, values[1]);
-                LOGGER.info("values[{}]: {}", 2, values[2]);
-                LOGGER.info("values[{}]: {}", 3, values[3]);
-                LOGGER.info("valuesPosition: {}", valuesPosition);
-                LOGGER.info("firstNumBool: {}", isFirstNumber ? "yes" : "no");
-                LOGGER.info("isDotEnabled: {}", isDotPressed() ? "yes" : "no");
-                LOGGER.info("isNegative: {}", isNumberNegative ? "yes" : "no");
-                LOGGER.info("isNegating: {}", isNegating ? "yes" : "no");
-                LOGGER.info("calculatorType: {}", calculatorType);
-                LOGGER.info("calculatorBase: {}", calculatorBase);
-                break;
-            }
-            case PROGRAMMER: {
-                LOGGER.info("textPane: {}", getTextPaneWithoutNewLineCharacters());
-                if (StringUtils.isBlank(memoryValues[0]) && StringUtils.isBlank(memoryValues[memoryPosition])) {
-                    LOGGER.info("no memories stored!");
-                } else {
-                    LOGGER.info("memoryPosition: {}", memoryPosition);
-                    LOGGER.info("memoryRecallPosition: {}", memoryRecallPosition);
-                    for (int i = 0; i < 10; i++) {
-                        if (!memoryValues[i].isBlank()) {
-                            LOGGER.info("memoryValues[{}]: {}", i, memoryValues[i]);
-                        }
-                    }
-                }
-                LOGGER.info("addBool: {}", isAdding ? "yes" : "no");
-                LOGGER.info("subBool: {}", isSubtracting ? "yes" : "no");
-                LOGGER.info("mulBool: {}", isMultiplying ? "yes" : "no");
-                LOGGER.info("divBool: {}", isDividing ? "yes" : "no");
-                LOGGER.info("orButtonBool: {}", ((ProgrammerPanel)currentPanel).isOrPressed() ? "yes" : "no");
-                LOGGER.info("modButtonBool: {}", ((ProgrammerPanel)currentPanel).isModulusPressed() ? "yes" : "no");
-                LOGGER.info("xorButtonBool: {}", ((ProgrammerPanel)currentPanel).isXorPressed() ? "yes" : "no");
-                LOGGER.info("notButtonBool: {}", ((ProgrammerPanel)currentPanel).isNotPressed() ? "yes" : "no");
-                LOGGER.info("andButtonBool: {}", ((ProgrammerPanel)currentPanel).isAndPressed() ? "yes" : "no");
-                LOGGER.info("values[{}]: {}", 0, values[0]);
-                LOGGER.info("values[{}]: {}", 1, values[1]);
-                LOGGER.info("values[{}]: {}", 2, values[2]);
-                LOGGER.info("values[{}]: {}", 3, values[3]);
-                LOGGER.info("valuesPosition: {}", valuesPosition);
-                LOGGER.info("firstNumBool: {}", isFirstNumber ? "yes" : "no");
-                LOGGER.info("isDotEnabled: {}", isDotPressed() ? "yes" : "no");
-                LOGGER.info("isNegative: {}", isNumberNegative ? "yes" : "no");
-                LOGGER.info("calculatorType: {}", calculatorType);
-                LOGGER.info("calculatorBase: {}", calculatorBase);
-                LOGGER.info("calculatorByteWord: {}", ((ProgrammerPanel)currentPanel).getByteWord());
-                break;
-            }
-            case SCIENTIFIC: {
-                LOGGER.warn("Confirm message not setup for " + calculatorType);
-                break;
-            }
-            case DATE: {
-                if (((DatePanel) currentPanel).dateOperation == DIFFERENCE_BETWEEN_DATES)
-                {
-                    LOGGER.info("{} Selected", DIFFERENCE_BETWEEN_DATES);
-                    int year = ((DatePanel) currentPanel).getTheYearFromTheFromDatePicker();
-                    int month = ((DatePanel) currentPanel).getTheMonthFromTheFromDatePicker();
-                    int day = ((DatePanel) currentPanel).getTheDayOfTheMonthFromTheFromDatePicker();
-                    LocalDate date = LocalDate.of(year, month, day);
-                    LOGGER.info("FromDate(yyyy-mm-dd): " + date);
-                    year = ((DatePanel) currentPanel).getTheYearFromTheToDatePicker();
-                    month = ((DatePanel) currentPanel).getTheMonthFromTheToDatePicker();
-                    day = ((DatePanel) currentPanel).getTheDayOfTheMonthFromTheToDatePicker();
-                    date = LocalDate.of(year, month, day);
-                    LOGGER.info("ToDate(yyyy-mm-dd): " + date);
-                    LOGGER.info("Difference");
-                    LOGGER.info("Year: " + ((DatePanel) currentPanel).getYearsDifferenceLabel().getText());
-                    LOGGER.info("Month: " + ((DatePanel) currentPanel).getMonthsDifferenceLabel().getText());
-                    LOGGER.info("Weeks: " + ((DatePanel) currentPanel).getWeeksDifferenceLabel().getText());
-                    LOGGER.info("Days: " + ((DatePanel) currentPanel).getDaysDifferenceLabel().getText());
-                }
-                else
-                {
-                    LOGGER.info("{} Selected", ADD_SUBTRACT_DAYS);
-                    int year = ((DatePanel) currentPanel).getTheYearFromTheFromDatePicker();
-                    int month = ((DatePanel) currentPanel).getTheMonthFromTheFromDatePicker();
-                    int day = ((DatePanel) currentPanel).getTheDayOfTheMonthFromTheFromDatePicker();
-                    LocalDate date = LocalDate.of(year, month, day);
-                    LOGGER.info("FromDate(yyyy-mm-dd): " + date);
-                    boolean isAddSelected = ((DatePanel) currentPanel).getAddRadioButton().isSelected();
-                    if (isAddSelected) LOGGER.info("Add Selected");
-                    else               LOGGER.info("Subtract Selected");
-                    LOGGER.info("New Date: " + ((DatePanel) currentPanel).getResultsLabel().getText());
-                }
-                break;
-            }
-            case CONVERTER: {
-                LOGGER.info("Converter: {}", ((ConverterPanel) currentPanel).getConverterType());
-                LOGGER.info("text field 1: {}", ((ConverterPanel) currentPanel).getTextField1().getText() + " "
-                        + ((ConverterPanel) currentPanel).getUnitOptions1().getSelectedItem());
-                LOGGER.info("text field 2: {}", ((ConverterPanel) currentPanel).getTextField2().getText() + " "
-                        + ((ConverterPanel) currentPanel).getUnitOptions2().getSelectedItem());
-                break;
-            }
-        }
-        LOGGER.info("-------- End Confirm Results --------\n");
-    }
-
-    /**
-     * Adds a specific newLinesNumber of newLine characters
-     * @param newLinesNumber int the newLinesNumber of newLine characters to add
-     * @return String representing newLine characters
-     */
-    public String addNewLineCharacters(int newLinesNumber)
-    {
-        String newLines = null;
-        if (newLinesNumber == 0)
-        {
-            LOGGER.debug("Adding {} newLine characters", newLinesNumber);
-            if (currentPanel instanceof BasicPanel) newLines = "\n".repeat(1);
-            else if (currentPanel instanceof ProgrammerPanel) newLines = "\n".repeat(3);
-            else if (currentPanel instanceof ScientificPanel) newLines = "\n".repeat(3);
+            historyTextPane.setText(EMPTY);
+            LOGGER.debug("History TextPane cleared");
         }
         else
         {
-            LOGGER.debug("Adding {} newLine character", newLinesNumber);
-            newLines = "\n".repeat(newLinesNumber);
+            LOGGER.warn("No history panel has been set up for the panel: {}", calculatorView.getName());
         }
-        return newLines;
     }
 
     /**
-     * Adds the appropriate amount of newline characters
-     * based on the currentPanel
-     *
-     * @return the newline character repeated 1 to n times
+     * Displays all the memory values in the history panel
+     * @param actionEvent the click action
      */
-    public String addNewLineCharacters()
-    { return addNewLineCharacters(0); }
+    public void performShowMemoriesAction(ActionEvent actionEvent)
+    {
+        logActionButton(actionEvent, LOGGER);
+        String currentHistory = historyTextPane.getText();
+        if (isMemoryValuesEmpty())
+        {
+            historyTextPane.setText(currentHistory + NEWLINE + NO_MEMORIES_STORED);
+        }
+        else
+        {
+            StringBuilder memoriesString = new StringBuilder();
+            memoriesString.append(MEMORIES+SPACE);
+            for(int i=0; i<memoryPosition; i++)
+            {
+                memoriesString.append(LEFT_BRACKET).append(memoryValues[i]).append(RIGHT_BRACKET);
+                if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(EMPTY))
+                { memoriesString.append(COMMA).append(SPACE); }
+            }
+            historyTextPane.setText(currentHistory + NEWLINE + memoriesString);
+        }
+        LOGGER.debug("Show Memories complete");
+    }
 
+    /**
+     * Displays the help text in a scrollable pane
+     *
+     * @param actionEvent the click action
+     */
+    public void performShowHelpAction(ActionEvent actionEvent)
+    {
+        JTextArea message = new JTextArea(helpString,20,40);
+        message.setWrapStyleWord(true);
+        message.setLineWrap(true);
+        message.setEditable(false);
+        message.setFocusable(false);
+        message.setOpaque(false);
+        JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setSize(new Dimension(400, 300));
+        SwingUtilities.updateComponentTreeUI(this);
+        JOptionPane.showMessageDialog(this, scrollPane, "Viewing " + calculatorView.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        confirm(this, LOGGER, "Viewing " + calculatorView.getValue() + " Calculator Help");
+    }
+
+    /**
+     * Display the text for About Calculator menu item
+     * @param actionEvent the click action
+     */
+    public void performAboutCalculatorAction(ActionEvent actionEvent)
+    {
+        logActionButton(actionEvent, LOGGER);
+        JPanel iconPanel = new JPanel(new GridBagLayout());
+        JLabel iconLabel = new JLabel();
+        iconPanel.add(iconLabel);
+        ImageIcon specificLogo = systemDetector.isMac() ? macIcon : windowsIcon;
+        JLabel textLabel = new JLabel(getAboutCalculatorString(), specificLogo, SwingConstants.LEFT);
+        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+        JPanel mainPanel = new JPanel();
+        mainPanel.add(iconLabel);
+        mainPanel.add(textLabel);
+        JOptionPane.showMessageDialog(this, mainPanel, ABOUT_CALCULATOR, JOptionPane.PLAIN_MESSAGE);
+        confirm(this, LOGGER, pressedButton(ABOUT_CALCULATOR));
+    }
     /**
      * Returns the text to display in About Calculator
      * @return String the About Calculator text
      */
-    public String getAboutCalculatorString()
+    protected String getAboutCalculatorString()
     {
-        LOGGER.debug("Configuring " + ABOUT_CALCULATOR.getValue() + " text...");
+        LOGGER.debug("Configuring " + ABOUT_CALCULATOR + " text...");
         String computerText = "", version = "";
-        if (isMacOperatingSystem()) { computerText = APPLE.getValue(); }
-        else                        { computerText = WINDOWS.getValue(); }
+        boolean isMac = systemDetector.isMac();
+        if (isMac) { computerText = APPLE; }
+        else       { computerText = WINDOWS; }
         try(InputStream is = CalculatorMain.class.getResourceAsStream("/pom.properties"))
         {
             Properties p = new Properties();
             p.load(is);
             version = p.getProperty("project.version");
         }
-        catch (IOException | NullPointerException e) { logException(e); }
+        // String osName = System.getProperty("os.name"); TODO: Check out. There are lots of specific options
+        catch (IOException | NullPointerException e) { logException(e, LOGGER); }
         return """
                 <html> %s <br>
                 Calculator Version %s<br>
@@ -1695,363 +1416,2044 @@ public class Calculator extends JFrame
                 Michael Ball<br>
                 Github: https://github.com/aaronhunter1088/Calculator</html>
                 """
-                .formatted(computerText, version,
-                        LocalDate.now().getYear(), System.getProperty("os.name"));
+                .formatted(computerText,
+                        version,
+                        LocalDate.now().getYear(),
+                        "Your OS");
     }
 
     /**
-     * This method updates the panel by removing the old panel,
-     * setting up the new panel, and adds it to the frame
-     * @param newPanel the panel to update on the Calculator
-     */
-    public void updateJPanel(JPanel newPanel)
-    {
-        LOGGER.debug("Updating to panel {}...", currentPanel.getClass().getSimpleName());
-        JPanel oldPanel = currentPanel;
-        remove(oldPanel);
-        setCurrentPanel(newPanel);
-        setupPanel();
-        add(currentPanel);
-        LOGGER.debug("Panel updated");
-    }
-
-    /**
-     * Tests whether a number is positive
-     *
-     * @param number the value to test
-     * @return either true or false based on result
-     * <p>
-     * Fully tested
-     */
-    public boolean isPositiveNumber(String number)
-    {
-        LOGGER.debug("isPositiveNumber({}) == {}", number, !number.contains("-"));
-        return !number.contains("-");
-    }
-
-    /**
-     * Tests whether a number is negative
-     *
-     * @param number the value to test
-     * @return Fully tested
-     */
-    public boolean isNegativeNumber(String number)
-    {
-        LOGGER.debug("isNegativeNumber({}) == {}", number, number.contains("-"));
-        return number.contains("-");
-    }
-
-    /**
-     * Converts a number to its negative equivalent
-     *
-     * @param number the value to convert
-     * @return Fully tested
-     */
-    public String convertToNegative(String number)
-    {
-        LOGGER.debug("Converting {} to negative number", number.replaceAll("\n", ""));
-        number = "-" + number.replaceAll("\n", "");
-        isNumberNegative = true;
-        LOGGER.debug("Updated: {}", number);
-        return number;
-    }
-
-    /**
-     * Converts a number to its positive equivalent
-     *
-     * @param number the value to convert
-     * @return Fully tested
-     */
-    public String convertToPositive(String number)
-    {
-        LOGGER.debug("Converting {} to positive number", number.replaceAll("\n", ""));
-        number = number.replaceAll("-", "").trim();
-        isNumberNegative = false;
-        LOGGER.debug("Updated: {}", number);
-        return number;
-    }
-
-    /**
-     * Resets the 4 main operators to the boolean passed in
-     *
-     * @param bool a boolean to reset the operators to
-     */
-    public void resetBasicOperators(boolean bool)
-    {
-        isAdding = bool;
-        isSubtracting = bool;
-        isMultiplying = bool;
-        isDividing = bool;
-        LOGGER.debug("Main basic operators reset to {}", bool);
-    }
-
-    /**
-     * Returns the number representation to the left of the decimal
-     *
-     * @param currentNumber the value to split on
-     * @return the value to the left of the decimal
-     */
-    public String getNumberOnLeftSideOfDecimal(String currentNumber)
-    {
-        String leftSide;
-        if (!isDecimal(currentNumber)) return currentNumber;
-        int index = currentNumber.indexOf(DECIMAL.getValue());
-        if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = BLANK.getValue();
-        else
-        {
-            leftSide = currentNumber.substring(0, index);
-            if (StringUtils.isEmpty(leftSide)) leftSide = ZERO.getValue();
-        }
-        LOGGER.debug("Number to the left of the decimal: {}", leftSide);
-        return leftSide;
-    }
-
-    /**
-     * Returns the number representation to the right of the decimal
-     *
-     * @param currentNumber the value to split on
-     * @return the value to the right of the decimal
-     */
-    protected String getNumberOnRightSideOfDecimal(String currentNumber)
-    {
-        String rightSide;
-        int index = currentNumber.indexOf(DECIMAL.getValue());
-        if (index == -1 || (index + 1) >= currentNumber.length()) rightSide = BLANK.getValue();
-        else
-        {
-            rightSide = currentNumber.substring(index + 1);
-            if (StringUtils.isEmpty(rightSide)) rightSide = ZERO.getValue();
-        }
-        LOGGER.debug("Number to the right of the decimal: {}", rightSide);
-        return rightSide;
-    }
-
-    /**
-     * Formats the number based on the length
-     * @param numberToFormat the number to format
-     * @return String the number formatted
-     */
-    public String formatNumber(String numberToFormat)
-    {
-        DecimalFormat df = null;
-        LOGGER.debug("Number to format: {}", numberToFormat);
-        if (!isNumberNegative)
-        {
-            if (numberToFormat.length() <= 2) df = new DecimalFormat("0.00");
-            if (numberToFormat.length() >= 3) df = new DecimalFormat("0.00");
-        }
-        else
-        {
-            if (numberToFormat.length() <= 3) df = new DecimalFormat("0.0");
-            if (numberToFormat.length() == 4) df = new DecimalFormat("0.00");
-            if (numberToFormat.length() >= 5) df = new DecimalFormat("0.000");
-        }
-        double number = Double.parseDouble(numberToFormat);
-        number = Double.parseDouble(df.format(number));
-        String numberAsStr = Double.toString(number);
-        numberToFormat = df.format(number);
-        if ('.' == numberAsStr.charAt(numberAsStr.length() - 3) && numberAsStr.endsWith(".00"))
-        {
-            numberAsStr = numberAsStr.substring(0, numberAsStr.length() - 3);
-            LOGGER.warn("Formatted again: " + numberToFormat);
-        }
-        LOGGER.debug("Formatted: " + numberToFormat);
-        return numberAsStr;
-    }
-
-    /**
-     * This method will return a specific CalculatorBase determined by
-     * the panel set on the  If we pass in a specific base,
-     * we will simply return that CalculatorBase
-     *
-     * @param calculatorBase the CalculatorBase to set
-     * @return CalculatorBase, the base to use
-     */
-    public CalculatorBase determineCalculatorBase(CalculatorBase calculatorBase)
-    {
-        LOGGER.debug("Determining calculatorBase: {}", calculatorBase);
-        if (calculatorBase != null)
-        { return calculatorBase; }
-        else
-        {
-            if (currentPanel instanceof BasicPanel) return BASE_DECIMAL;
-            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isBinaryBase()) return BASE_BINARY;
-            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isDecimalBase()) return BASE_DECIMAL;
-            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isOctalBase()) return BASE_OCTAL;
-            else if (currentPanel instanceof ProgrammerPanel programmerPanel && programmerPanel.isHexadecimalBase()) return BASE_HEXADECIMAL;
-            else if (currentPanel instanceof ScientificPanel) return BASE_BINARY;
-            else if (currentPanel instanceof DatePanel) return null;
-            else return BASE_DECIMAL;
-        }
-    }
-
-    /**
-     * Takes the value in the textArea and saves it in values[2]
-     *
+     * The actions to perform when MemoryStore is clicked
      * @param actionEvent the click action
      */
-    public void performCopyAction(ActionEvent actionEvent)
+    public void performMemoryStoreAction(ActionEvent actionEvent)
     {
-        LOGGER.info("Action for {} started", actionEvent.getActionCommand());
-        values[2] = getTextPaneWithoutNewLineCharacters();
-        StringSelection selection = new StringSelection(values[2]);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(selection, selection);
-        confirm("Pressed " + COPY.getValue());
-    }
-
-    /**
-     * Pastes the current value in values[2] in the textArea if
-     * values[2] has a value
-     *
-     * @param actionEvent the click action
-     */
-    public void performPasteAction(ActionEvent actionEvent)
-    {
-        LOGGER.info("Action for {} started", actionEvent.getActionCommand());
-        if (values[2].isEmpty()) confirm("Values[2] is empty. Nothing to paste");
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_STORE)); }
+        else if (getTextPaneValue().isEmpty())
+        {
+            logEmptyValue(MEMORY_STORE, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(MEMORY_STORE));
+        }
         else
         {
-            LOGGER.debug("Values[2]: " + values[2]);
-            textPane.setText(addNewLineCharacters() + values[2]);
-            values[valuesPosition] = getTextPaneWithoutNewLineCharacters();
-            confirm("Pressed " + PASTE.getValue());
-        }
-    }
-
-    /**
-     * Clears the history for current panel
-     */
-    public void performClearBasicHistoryTextPaneAction(ActionEvent actionEvent)
-    {
-        LOGGER.info("Action for {} started", actionEvent.getActionCommand());
-        if (currentPanel instanceof BasicPanel)
-        { basicHistoryTextPane.setText(BLANK.getValue()); }
-        else LOGGER.warn("Add other history panels");
-    }
-
-    /**
-     * Displays all the memory values in the history panel
-     */
-    public void performShowMemoriesAction(ActionEvent actionEvent)
-    {
-        LOGGER.debug("Action for {} started", actionEvent.getActionCommand());
-        if (currentPanel instanceof BasicPanel)
-        {
-            if (!isMemoryValuesEmpty())
+            String valueToStore = getAppropriateValue();
+            if (!valueToStore.isEmpty() && isNoOperatorActive())
             {
-                StringBuilder memoriesString = new StringBuilder();
-                memoriesString.append("Memories: ");
-                for(int i=0; i<memoryPosition; i++)
-                {
-                    memoriesString.append("[").append(memoryValues[i]).append("]");
-                    if ((i+1) < memoryValues.length && !memoryValues[i+1].equals(BLANK.getValue()))
-                    { memoriesString.append(", "); }
-                }
-                basicHistoryTextPane.setText(
-                basicHistoryTextPane.getText() +
-                addNewLineCharacters() + memoriesString
-                );
+                setActiveOperator(buttonChoice);
+                storeValueInMemory(valueToStore);
+                writeHistoryWithMessage(buttonChoice, false, savedMemory(memoryValues[memoryPosition-1], (memoryPosition - 1)));
+                updateMemoryButtonsState();
+                setActiveOperator(EMPTY); // memory store does not keep operator active
+                confirm(this, LOGGER, savedMemory(memoryValues[memoryPosition-1], (memoryPosition - 1)));
+            }
+            // Needs to be here!
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_STORE)); }
+        }
+    }
+    /**
+     * The inner logic to store the current textPane value
+     * into memoryValues at memoryPosition. It also
+     * increases the memoryPosition by 1. Finally, the other
+     * memory buttons are enabled.
+     */
+    public void storeValueInMemory(String valueToStore)
+    {
+        if (memoryPosition == 10) // reset to 0
+        { setMemoryPosition(0); }
+        memoryValues[memoryPosition] = valueToStore; //getTextPaneValue();
+        setMemoryPosition(memoryPosition + 1);
+        updateMemoryButtonsState();
+    }
+
+    /**
+     * The actions to perform when MemoryRecall is clicked
+     * @param actionEvent the click action
+     */
+    public void performMemoryRecallAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (memoryRecallPosition == 10 || memoryValues[memoryRecallPosition].isBlank())
+        { setMemoryRecallPosition(getLowestMemoryPosition()); }
+        appendTextToPane(memoryValues[memoryRecallPosition]);
+        values[valuesPosition] = getTextPaneValue();
+        writeHistoryWithMessage(buttonChoice, false, " Recalled: " + memoryValues[memoryRecallPosition] + " at memory location " + (memoryRecallPosition+1));
+        memoryRecallPosition += 1;
+        confirm(this, LOGGER, "Recalling number in memory: " + memoryValues[(memoryRecallPosition-1)] + " at position: " + (memoryRecallPosition-1));
+    }
+
+    /**
+     * The actions to perform when MemoryClear is clicked
+     * @param actionEvent the click action
+     */
+    public void performMemoryClearAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (memoryPosition == 10)
+        {
+            LOGGER.debug("Resetting memoryPosition to 0");
+            memoryPosition = 0;
+        }
+        if (!isMemoryValuesEmpty())
+        {
+            setMemoryPosition(getLowestMemoryPosition());
+            LOGGER.info("Clearing memoryValue[{}] = {}", memoryPosition, memoryValues[memoryPosition]);
+            writeHistoryWithMessage(buttonChoice, false, " Cleared " + memoryValues[memoryPosition] + " from memory location " + (memoryPosition+1));
+            memoryValues[memoryPosition] = EMPTY;
+            memoryRecallPosition += 1;
+            LOGGER.debug("Cleared memory at memories[{}]", memoryPosition);
+            // MemorySuite could now be empty
+            if (isMemoryValuesEmpty())
+            {
+                memoryPosition = 0;
+                memoryRecallPosition = 0;
+                buttonMemoryClear.setEnabled(false);
+                buttonMemoryRecall.setEnabled(false);
+                buttonMemoryAddition.setEnabled(false);
+                buttonMemorySubtraction.setEnabled(false);
+                appendTextToPane(ZERO);
+                confirm(this, LOGGER, "MemorySuite is empty");
+            }
+        }
+    }
+
+    /**
+     * The actions to perform when M+ is clicked
+     * Will add the current number in the textPane to the previously
+     * save value in Memory. It then displays that result in the
+     * textPane as a confirmation.
+     * @param actionEvent the click action
+     */
+    public void performMemoryAdditionAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_ADD)); }
+        else
+        {
+            String value = getAppropriateValue();
+            if (!getAppropriateValue().isEmpty() && isNoOperatorActive())
+            {
+                setActiveOperator(buttonChoice);
+                performOperation();
+                //buttonDecimal.setEnabled(!isFractionalNumber(values[3]));
+                writeHistoryWithMessage(buttonChoice, false, addedToMemory(value, (memoryPosition-1), values[3]));
+                memoryValues[(memoryPosition - 1)] = values[3];
+                setActiveOperator(EMPTY);
+                confirm(this, LOGGER, "The new value in memory at position " + (memoryPosition-1) + " is " + memoryValues[(memoryPosition-1)]);
+            }
+            // Needs to be here!
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_ADD)); }
+        }
+    }
+    /**
+     * The inner logic for memory addition.
+     * This method performs the addition between v[vP] and
+     * the memV[memP-1]. It returns the result as a String.
+     * @return the result of the memory addition
+     */
+    public String performMemoryAdd()
+    {
+        BigDecimal currentNumber = new BigDecimal(getAppropriateValue());
+        BigDecimal memoryNumber = new BigDecimal(memoryValues[memoryPosition-1]);
+        String result = memoryNumber.add(currentNumber).toPlainString();
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        return result;
+    }
+
+    /**
+     * The actions to perform when MemorySubtraction is clicked
+     * @param actionEvent the click action
+     */
+    public void performMemorySubtractionAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(MEMORY_SUBTRACT)); }
+        else
+        {
+            String value = getAppropriateValue();
+            if (!value.isEmpty() && isNoOperatorActive())
+            {
+                setActiveOperator(buttonChoice);
+                performOperation();
+                writeHistoryWithMessage(buttonChoice, false, subtractedFromMemory(value, (memoryPosition-1), values[3]));
+                memoryValues[(memoryPosition-1)] = values[3];
+                setActiveOperator(EMPTY);
+                confirm(this, LOGGER, subtractedFromMemory(value, (memoryPosition-1), values[3]));
+            }
+            // Needs to be here!
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(MEMORY_SUBTRACT)); }
+        }
+    }
+    /**
+     * The inner logic for memory subtraction.
+     * This method performs the subtraction between v[vP] and
+     * the memV[memP-1]. It returns the result as a String.
+     * @return the result of the memory subtraction
+     */
+    public String performMemorySubtract()
+    {
+        BigDecimal currentNumber = new BigDecimal(getAppropriateValue());
+        BigDecimal memoryNumber = new BigDecimal(memoryValues[memoryPosition-1]);
+        String result = memoryNumber.subtract(currentNumber).toPlainString();
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        return result;
+    }
+
+    /**
+     * The actions to perform when History is clicked
+     * @param actionEvent the click action
+     */
+    public void performHistoryAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        GridBagConstraints currentConstraints = switch (calculatorView)
+        {
+            case VIEW_BASIC -> basicPanel.getConstraints();
+            case VIEW_PROGRAMMER -> programmerPanel.getConstraints();
+            case VIEW_SCIENTIFIC -> scientificPanel.getConstraints();
+            default -> null;
+        };
+        JPanel panelContainer = switch (calculatorView)
+        {
+            case VIEW_BASIC -> basicPanel.getBasicPanel();
+            case VIEW_PROGRAMMER -> programmerPanel.getProgrammerPanel();
+            case VIEW_SCIENTIFIC -> scientificPanel.getScientificPanel();
+            default -> null;
+        };
+        if (currentPanel != null && panelContainer != null)
+        {
+            if (HISTORY_OPEN.equals(buttonHistory.getText()))
+            {
+                LOGGER.debug("Closing History");
+                buttonHistory.setText(HISTORY_CLOSED);
+                panelContainer.remove(historyPanel);
+                addComponent(currentPanel, currentConstraints, panelContainer, buttonsPanel, 2, 0);
             }
             else
             {
-                basicHistoryTextPane.setText(
-                basicHistoryTextPane.getText() +
-                addNewLineCharacters() + "No Memories Stored"
-                );
+                LOGGER.debug("Opening history");
+                buttonHistory.setText(HISTORY_OPEN);
+                panelContainer.remove(buttonsPanel);
+                addComponent(currentPanel, currentConstraints, panelContainer, historyPanel, 2, 0);
             }
+            updateLookAndFeel();
         }
-        LOGGER.debug("Show Memories complete");
+        else
+        {
+            confirm(this, LOGGER, "No history panel setup for " + calculatorView.getName());
+        }
     }
 
     /**
-     * Display the text for About Calculator menu item
-     *
+     * The actions to perform when the SquareRoot button is clicked
      * @param actionEvent the click action
      */
-    public void performAboutCalculatorAction(ActionEvent actionEvent)
+    public void performSquareRootButtonAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("Action for {} started", actionEvent.getActionCommand());
-        JPanel iconPanel = new JPanel(new GridBagLayout());
-        iconLabel = new JLabel();
-        iconPanel.add(iconLabel);
-        ImageIcon specificLogo = isMacOperatingSystem() ? macIcon : windowsIcon;
-        textLabel = new JLabel(getAboutCalculatorString(), specificLogo, SwingConstants.LEFT);
-        textLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        textLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-        JPanel mainPanel = new JPanel();
-        mainPanel.add(iconLabel);
-        mainPanel.add(textLabel);
-        JOptionPane.showMessageDialog(this, mainPanel, ABOUT_CALCULATOR.getValue(), JOptionPane.PLAIN_MESSAGE);
-        confirm("Pressed " + ABOUT_CALCULATOR.getValue());
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(SQUARE_ROOT)); }
+        else if (getTextPaneValue().isEmpty())
+        {
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(SQUARE_ROOT));
+        }
+        else if (CalculatorUtility.isNegativeNumber(getAppropriateValue()))
+        {
+            appendTextToPane(ONLY_POSITIVES);
+            confirm(this, LOGGER, cannotPerformOperation(SQUARE_ROOT));
+        }
+        else
+        {
+            String value = getAppropriateValue();
+            boolean endsWithBinaryOperator = getBasicPanelBinaryOperators().contains(getActiveOperator()) && getTextPaneValue().endsWith(getActiveOperator());
+            if (!value.isEmpty() && !endsWithBinaryOperator)
+            {
+                String currentOperator = getActiveOperator();
+                setActiveOperator(buttonChoice);
+                performOperation();
+                appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()), true);
+                setNegativeNumber(CalculatorUtility.isNegativeNumber(values[3]));
+                buttonDecimal.setEnabled(!isFractionalNumber(values[3]));
+                writeHistory(buttonChoice, false);
+                if (getBasicPanelUnaryOperators().contains(buttonChoice))
+                {
+                    setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    setActiveOperator(currentOperator);
+                }
+                confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+            }
+            // Needs to be here!
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(SQUARE_ROOT)); }
+        }
+    }
+    /**
+     * The inner logic for performing the SquareRoot operation
+     * @return the result of the SquareRoot operation
+     */
+    public String performSquareRoot()
+    {
+        double value = new BigDecimal(getAppropriateValue()).doubleValue();
+        //return String.valueOf(Math.sqrt(value));
+        String result = String.valueOf(Math.sqrt(value));
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        return result;
     }
 
     /**
-     * Resets the look and feel booleans to false
+     * The action to perform when the ClearEntry button is clicked
+     * @param actionEvent the click action
      */
-    public void resetLook()
+    public void performClearEntryButtonAction(ActionEvent actionEvent)
     {
-        isMetal = false;
-        isSystem = false;
-        isWindows = false;
-        isMotif = false;
-        isGtk = false;
-        isApple = false;
-        LOGGER.debug("Reset all Look booleans");
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (getTextPaneValue().isEmpty())
+        { confirm(this, LOGGER, cannotPerformOperation(buttonChoice)); }
+        else
+        {
+            if (valuesPosition == 0 || values[1].isEmpty())
+            { resetValues(false); }
+            else
+            {
+                setNegativeNumber(false);
+                setObtainingFirstNumber(false);
+                values[1] = EMPTY;
+                values[2] = EMPTY;
+                values[3] = EMPTY;
+                setValuesPosition(1);
+            }
+            clearTextInTextPane();
+            writeHistoryWithMessage(buttonChoice, false, performedOperation(buttonChoice));
+            updateMemoryButtonsState();
+            confirm(this, LOGGER, performedOperation(buttonChoice));
+        }
     }
 
     /**
-     * Returns true if the minimum value has
-     * been met or false otherwise
-     * @return boolean is minimum value has been met
+     * The actions to perform when the Clear button is clicked
+     * @param actionEvent the action performed
      */
-    public boolean isMinimumValue()
+    public void performClearButtonAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("is {} minimumValue: {}", values[0], values[0].equals("0.0000001"));
-        LOGGER.debug("is {} minimumValue: {}", values[1], values[1].equals("0.0000001"));
-        return values[0].equals("0.0000001") ||
-               values[1].equals("0.0000001"); // 10^-7
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        for (int i=0; i<4; i++)
+        {
+            values[i] = EMPTY;
+        }
+        //values[0] = EMPTY;
+        for(int i=0; i < 10; i++)
+        { memoryValues[i] = EMPTY; }
+        appendTextToPane(ZERO);
+        valuesPosition = 0;
+        memoryPosition = 0;
+        obtainingFirstNumber = true;
+        negativeNumber = false;
+        updateMemoryButtonsState();
+        buttonDecimal.setEnabled(true);
+        writeHistoryWithMessage(buttonChoice, false, " Cleared all values");
+        confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
     }
 
     /**
-     * Checks if the resulting answer has met the minimum value
-     * @param valueToCheck String the value to check
-     * @return boolean true if the minimum value has been met
+     * The actions to perform when the Delete button is clicked
+     * @param actionEvent the click action
      */
-    public boolean isMinimumValue(String valueToCheck)
+    public void performDeleteButtonAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("is {} minimumValue: {}", valueToCheck, valueToCheck.equals("0.0000001"));
-        return valueToCheck.equals("0.0000001");
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneTextValue = getTextPaneValue();
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(DELETE)); }
+        else if (textPaneTextValue.isEmpty())
+        {
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(DELETE));
+        }
+        else
+        {
+            String value = textPaneTextValue;
+            logValuesAtPosition(this, LOGGER);
+            logValueInTextPane(this, LOGGER);
+            String currentOperator = getActiveOperator();
+            setActiveOperator(buttonChoice);
+            if (!endsWithOperator(value))
+            {
+                appendTextToPane(addThousandsDelimiter(value.substring(0, value.length()-1), getThousandsDelimiter()), true);
+            }
+            else if (endsWithOperator(value))
+            {
+                LOGGER.debug("Removing active operator from textPane");
+                value = getValueWithoutAnyOperator(value);
+                setValuesPosition(0);
+                appendTextToPane(addThousandsDelimiter(value, getThousandsDelimiter()), true);
+                setActiveOperator(EMPTY);
+            }
+            buttonDecimal.setEnabled(!isFractionalNumber(values[valuesPosition]));
+            negativeNumber = values[valuesPosition].startsWith(SUBTRACTION);
+            writeHistory(buttonChoice, false);
+            if (getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+            {
+                setActiveOperator(EMPTY);
+            }
+            else
+            {
+                setActiveOperator(currentOperator);
+            }
+            updateMemoryButtonsState(); // memory buttons states affected!
+            confirm(this, LOGGER, pressedButton(buttonChoice));
+        }
     }
 
     /**
-     * Returns true if the maximum value has
-     * been met or false otherwise
-     * @return boolean if maximum value has been met
+     * The actions to perform when the Addition button is clicked
+     * @param actionEvent the click action
      */
-    public boolean isMaximumValue()
+    public void performAddButtonAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("is {} minimumValue: {}", values[0], values[0].equals("9999999"));
-        LOGGER.debug("does {} minimumValue contain E: {}", values[0], values[0].contains(E.getValue()));
-        LOGGER.debug("is {} minimumValue: {}", values[1], values[1].equals("9999999"));
-        LOGGER.debug("does {} minimumValue contain E: {}", values[1], values[1].contains(E.getValue()));
-        return values[0].equals("9999999") || values[0].contains(E.getValue()) ||
-               values[1].equals("9999999") || values[1].contains(E.getValue());  // 9,999,999 or (10^8) -1
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(ADDITION)); }
+        else if (textPaneValue.isEmpty())
+        {
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(ADDITION));
+        }
+        else if (isMaximumValue(values[valuesPosition]))
+        { confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met"); }
+        //else if (isMinimumValue())
+        //{ confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met"); }
+        else
+        {
+            if (isNoOperatorActive() && !values[0].isEmpty())
+            {
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                writeHistory(buttonChoice, true);
+                setObtainingFirstNumber(false);
+                setNegativeNumber(false);
+                setValuesPosition(1);
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (isOperatorActive() && !values[1].isEmpty())
+            {
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 + ...
+                performOperation();
+                writeContinuedHistory(ADDITION, getActiveOperator(), values[3], true);
+                setActiveOperator(buttonChoice);
+                if (isMaximumValue(values[3]) || isMinimumValue(values[3])) // we can add to the minimum number, not to the maximum
+                {
+                    values[2] = EMPTY;
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()));
+                    finishedObtainingFirstNumber(false);
+                }
+                else
+                {
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                    finishedObtainingFirstNumber(true);
+                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (!textPaneValue.isBlank() && values[0].isBlank())
+            {
+                logEmptyValue(buttonChoice, this, LOGGER);
+                LOGGER.info("Setting values[0] to textPane value");
+                setActiveOperator(buttonChoice);
+                appendTextToPane(textPaneValue + SPACE + buttonChoice, true);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                valuesPosition = 1;
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(ADDITION)); }
+        }
+    }
+    /**
+     * The inner logic for addition.
+     * This method performs the addition between values[0] and values[1],
+     * clears any trailing zeroes if the result is a whole number (15.0000)
+     * resets dotPRESSED + SPACE to false, enables buttonDot and stores the result
+     * back in values[0]
+     */
+    private String performAdd()
+    {
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        String result = firstNumber.add(secondNumber).toPlainString();
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        return result;
     }
 
     /**
-     * Checks if the resulting answer has met the maximum value
-     * @param valueToCheck String the value to check
-     * @return boolean true if the maximum value has been met
+     * The actions to perform when the Subtraction button is clicked
+     * @param actionEvent the click action
      */
-    public boolean isMaximumValue(String valueToCheck)
+    public void performSubtractButtonAction(ActionEvent actionEvent)
     {
-        LOGGER.debug("is {} maximumValue: {}", valueToCheck, valueToCheck.equals("9999999"));
-        LOGGER.debug("does {} minimumValue contain E: {}", valueToCheck, valueToCheck.contains(E.getValue()));
-        return valueToCheck.equals("9999999") || valueToCheck.contains(E.getValue());
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(SUBTRACTION)); }
+        else if (isMinimumValue(values[valuesPosition]))
+        { confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met"); }
+        //else if (isMaximumValue())
+        //{ confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met"); }
+        else
+        {
+            if (isNoOperatorActive() && !values[0].isEmpty())
+            {
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                negativeNumber = false;
+                valuesPosition += 1;
+            }
+            // No operator pushed, textPane is empty, beginning a negative number
+            else if (isNoOperatorActive() && getTextPaneValue().isEmpty())
+            {
+                values[valuesPosition] = EMPTY; // TODO: Do place in negative sign for negative number
+                appendTextToPane(buttonChoice);
+                writeHistory(buttonChoice, true);
+                negativeNumber = true;
+                values[2] = EMPTY;
+            }
+            else if (isOperatorActive() && !values[1].isEmpty())
+            {
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 - ...
+                performOperation();
+                writeContinuedHistory(SUBTRACTION, getActiveOperator(), values[3], true);
+                setActiveOperator(buttonChoice);
+                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
+                {
+                    values[2] = EMPTY;
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()));
+                    finishedObtainingFirstNumber(false);
+                }
+                else
+                {
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                    finishedObtainingFirstNumber(true);
+                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (isOperatorActive() && !negativeNumber)
+            {
+                LOGGER.info("operator already selected. then clicked subtract button. second number will be negated");
+                writeHistory(buttonChoice, true);
+                appendTextToPane(buttonChoice);
+                negativeNumber = true;
+            }
+            else if (!getTextPaneValue().isBlank() && values[0].isBlank() )//&& !isNegativeNumber(getTextPaneValue()))
+            {
+                LOGGER.warn("The user pushed subtract but there is no number");
+                LOGGER.info("Setting values[0] to textPane value");
+                values[0] = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+                setNegativeNumber(CalculatorUtility.isNegativeNumber(values[valuesPosition]));
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice);
+                LOGGER.debug("values[0]: {}", values[0]);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                setValuesPosition(1);
+            }
+            buttonDecimal.setEnabled(true);
+            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+        }
+    }
+    /**
+     * The inner logic for subtracting
+     */
+    private String performSubtract()
+    {
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        String result = firstNumber.subtract(secondNumber).toPlainString();
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        logOperation(LOGGER, this);
+        return result;
     }
 
-    /* Getters */
+    /**
+     * The actions to perform when the Multiplication button is clicked
+     * @param actionEvent the click action
+     */
+    public void performMultiplyButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION)); }
+        else if (getTextPaneValue().isEmpty())
+        {
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION));
+        }
+        else if (isMaximumValue(values[valuesPosition]))
+        { confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met"); }
+        else if (isMinimumValue(values[valuesPosition]))
+        { confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met"); }
+        else
+        {
+            if (isNoOperatorActive() && !values[0].isBlank())
+            {
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                valuesPosition = 1;
+            }
+            else if (isOperatorActive() && !values[1].isEmpty())
+            {
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 ✕ ...
+                performOperation();
+                writeContinuedHistory(MULTIPLICATION, getActiveOperator(), values[3], true);
+                setActiveOperator(buttonChoice);
+                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
+                {
+                    values[2] = EMPTY;
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()));
+                    finishedObtainingFirstNumber(false);
+                }
+                else
+                {
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                    finishedObtainingFirstNumber(true);
+                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (!getTextPaneValue().isBlank() && values[0].isBlank())
+            {
+                LOGGER.error("The user pushed multiple but there is no number");
+                LOGGER.info("Setting values[0] to textPane value");
+                values[0] = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[0], getThousandsDelimiter()) + SPACE + buttonChoice);
+                LOGGER.debug("values[0]: {}", values[0]);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                setValuesPosition(1);
+            }
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION)); }
+            buttonDecimal.setEnabled(true);
+            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+        }
+    }
+    /**
+     * The inner logic for multiplying
+     */
+    private String performMultiply()
+    {
+        BigDecimal firstNumber = new BigDecimal(values[0]);
+        BigDecimal secondNumber = new BigDecimal(values[1]);
+        String result = firstNumber.multiply(secondNumber).toPlainString();
+        if (isFractionalNumber(result))
+        {
+            result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+        }
+        logOperation(LOGGER, this);
+        return result;
+    }
+
+    /**
+     * The actions to perform when the Divide button is clicked
+     * @param actionEvent the click action
+     */
+    public void performDivideButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(DIVISION)); }
+        else if (textPaneValue.isEmpty())
+        {
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(DIVISION));
+        }
+        else if (isMinimumValue(values[valuesPosition]))
+        { confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met"); }
+        else if (isMaximumValue(values[valuesPosition]))
+        { confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met"); }
+        else
+        {
+            // No basic operator pushed, textPane has a value, and values is set
+            if (isNoOperatorActive() && !values[0].isBlank())
+            {
+                setActiveOperator(buttonChoice);
+                appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                valuesPosition += 1;
+            }
+            else if (isOperatorActive() && !values[1].isEmpty())
+            {
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 / ...
+                performOperation();
+                if (isMinimumValue(values[3]) || isMaximumValue(values[3]))
+                {
+                    values[2] = EMPTY;
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()));
+                    finishedObtainingFirstNumber(false);
+                }
+                else
+                {
+                    appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                    finishedObtainingFirstNumber(true);
+                }
+                writeContinuedHistory(DIVISION, getActiveOperator(), values[3], true);
+                setActiveOperator(buttonChoice);
+
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (!textPaneValue.isBlank() && values[0].isBlank())
+            {
+                LOGGER.error("The user pushed divide but there is no number");
+                LOGGER.info("Setting values[0] to textPane value");
+                values[0] = getTextPaneValue().replace(",", "");
+                setActiveOperator(buttonChoice);
+                appendTextToPane(values[0] + SPACE + buttonChoice);
+                LOGGER.debug("values[0]: {}", values[0]);
+                writeHistory(buttonChoice, true);
+                obtainingFirstNumber = false;
+                valuesPosition += 1;
+            }
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(DIVISION)); }
+            buttonDecimal.setEnabled(true);
+            confirm(this, LOGGER, pressedButton(buttonChoice));
+        }
+    }
+    /**
+     * The inner logic for dividing
+     */
+    private String performDivide()
+    {
+        String result = EMPTY;
+        if (ZERO.equals(values[1]))
+        {
+            appendTextToPane(INFINITY, true);
+            setObtainingFirstNumber(true);
+            result = INFINITY;
+        }
+        else
+        {
+            BigDecimal firstNumber = new BigDecimal(values[0]);
+            BigDecimal secondNumber = new BigDecimal(values[1]);
+            result = firstNumber.divide(secondNumber, MathContext.DECIMAL128).toPlainString();
+            if (isFractionalNumber(result))
+            {
+                result = new BigDecimal(result).stripTrailingZeros().toPlainString();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * The beginning actions to perform when clicking any number button
+     * @param actionEvent the click action
+     */
+    public void performNumberButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (!obtainingFirstNumber && !isPemdasActive) // second number
+        {
+            LOGGER.debug("obtaining second number...");
+            if (getTextPaneValue().startsWith(SUBTRACTION) && getTextPaneValue().length() == 1)
+            {
+                clearTextInTextPane();
+                appendTextToPane(SUBTRACTION);
+            }
+            else
+            {
+                clearTextInTextPane();
+            }
+            obtainingFirstNumber = true;
+        }
+        if (performInitialChecks())
+        {
+            LOGGER.warn("Invalid entry in textPane. Clearing...");
+            appendTextToPane(EMPTY);
+            values[valuesPosition] = EMPTY;
+            obtainingFirstNumber = true;
+            buttonDecimal.setEnabled(true);
+        }
+        values[valuesPosition] += buttonChoice;
+        if (getTextPaneValue().startsWith(SUBTRACTION) && getTextPaneValue().length() == 1 ||
+            getTextPaneValue().length() > 1 && getTextPaneValue().endsWith(SUBTRACTION))
+            values[valuesPosition] = SUBTRACTION + values[valuesPosition];
+        setNegativeNumber(CalculatorUtility.isNegativeNumber(values[valuesPosition]));
+        if (BASE_BINARY == getCalculatorBase())
+        {
+            var allowedLengthMinusNewLines = programmerPanel.getAllowedLengthsOfTextPane();
+            // TEST: removed 0 from allowed lengths
+            allowedLengthMinusNewLines.remove((Object)0);
+            String textPaneText = getTextPaneValue();
+            LOGGER.debug("textPaneText: {}", textPaneText);
+            if (allowedLengthMinusNewLines.contains(textPaneText.length()))
+            { confirm(this, LOGGER, "Byte length "+allowedLengthMinusNewLines+" already reached"); }
+            else
+            {
+                programmerPanel.appendTextForProgrammerPanel(programmerPanel.separateBits(textPaneText + buttonChoice));
+                writeHistory(buttonChoice, false);
+                textPaneText = getTextPaneValue();
+                if (allowedLengthMinusNewLines.contains(textPaneText.length()))
+                {
+                    setPreviousBase(BASE_BINARY); // set previousBase since number is fully formed
+                    getValues()[getValuesPosition()] = textPaneText;
+                    getValues()[getValuesPosition()] = convertValueToDecimal();
+                    LOGGER.debug("Byte length {} reached with this input", allowedLengthMinusNewLines);
+                }
+                confirm(this, LOGGER, "Pressed " + buttonChoice);
+            }
+        }
+        else if (BASE_OCTAL == getCalculatorBase())
+        { LOGGER.warn("IMPLEMENT Octal number button actions"); }
+        else if (BASE_DECIMAL == getCalculatorBase())
+        { appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter())); }
+        else /* (HEXADECIMAL == calculator.getCalculatorBase()) */
+        { LOGGER.warn("IMPLEMENT Hexadecimal number button actions"); }
+
+        writeHistory(buttonChoice, false);
+        updateMemoryButtonsState();
+        confirm(this, LOGGER, pressedButton(buttonChoice));
+    }
+
+    /**
+     * The actions to perform when you click Negate
+     * @param actionEvent the click action
+     */
+    public void performNegateButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(NEGATE)); }
+        else if (getTextPaneValue().isEmpty())
+        {
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(NEGATE));
+        }
+        else
+        {
+            if (!getAppropriateValue().isEmpty())
+            {
+                String currentOperator = getActiveOperator();
+                setActiveOperator(buttonChoice);
+                performOperation();
+                appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()), true);
+                setNegativeNumber(CalculatorUtility.isNegativeNumber(values[3]));
+                getButtonDecimal().setEnabled(!isFractionalNumber(values[3]));
+                writeHistory(buttonChoice, false);
+                if (getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
+                {
+                    setActiveOperator(EMPTY);
+                }
+                else
+                {
+                    setActiveOperator(currentOperator);
+                }
+                confirm(this, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (isOperatorActive())
+            { confirm(this, LOGGER, cannotPerformOperation(NEGATE)); }
+
+        }
+    }
+    /**
+     * The inner logic for negating a number
+     * @return the negated value
+     */
+    public String performNegate()
+    {
+        String valueToNegate = getAppropriateValue();
+        if (valueToNegate.isEmpty()) return valueToNegate;
+        if (calculatorBase != BASE_DECIMAL)
+            valueToNegate = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, valueToNegate);
+
+        if (CalculatorUtility.isNegativeNumber(valueToNegate)) {
+            setNegativeNumber(false);
+            return convertToPositive(valueToNegate);
+        }
+        else {
+            setNegativeNumber(true);
+            return convertToNegative(valueToNegate);
+        }
+    }
+
+    /**
+     * The actions to perform when the Dot button is click
+     * @param actionEvent the click action
+     */
+    public void performDecimalButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        {
+            clearTextInTextPane();
+            obtainingFirstNumber = true;
+        }
+        performDecimal(buttonChoice);
+        writeHistory(buttonChoice, false);
+        confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+    }
+    /**
+     * The inner logic of performing Dot actions
+     * @param buttonChoice the button choice
+     */
+    public void performDecimal(String buttonChoice)
+    {
+        final var appropriateValue = values[valuesPosition];
+        if (appropriateValue.isBlank() && !negativeNumber) // !isNegating
+        {
+            values[valuesPosition] = ZERO + DECIMAL;
+            appendTextToPane(values[valuesPosition]);
+        }
+        else if (appropriateValue.isBlank() && negativeNumber) // isNegating
+        {
+            values[valuesPosition] = SUBTRACTION + ZERO + DECIMAL;
+            appendTextToPane(values[valuesPosition]);
+        }
+        else
+        {
+            values[valuesPosition] = appropriateValue + buttonChoice;
+            appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()));
+        }
+        buttonDecimal.setEnabled(false); // deactivate button now that its active for this number
+    }
+
+    /**
+     * The actions to perform when the Equals button is clicked
+     * @param actionEvent the click action
+     */
+    public void performEqualsButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (textPaneContainsBadText())
+        { confirm(this, LOGGER, cannotPerformOperation(EQUALS)); }
+        else if (values[0].isEmpty() || values[1].isEmpty())
+        {
+            logEmptyValue(buttonChoice, this, LOGGER);
+            appendTextToPane(ENTER_A_NUMBER);
+            confirm(this, LOGGER, cannotPerformOperation(buttonChoice));
+        }
+        else
+        {
+            performOperation();
+            if (!textPaneContainsBadText())
+                appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()));
+            writeContinuedHistory(EQUALS, getActiveOperator(), values[3], false);
+            resetValues(true);
+            updateMemoryButtonsState();
+            confirm(this, LOGGER, pressedButton(buttonChoice));
+        }
+    }
+    /**
+     * This method determines which operation to perform,
+     * performs that operation, stores the result in v[3]
+     * and resets any necessary flags. Operations are
+     * alphabetized.
+     */
+    public String performOperation()
+    {
+        String result = EMPTY;
+        switch (getActiveOperator())
+        {
+            case ADDITION ->
+            {
+                result = performAdd();
+            }
+            case AND ->
+            {
+                result = programmerPanel.performAnd();
+            }
+            case DIVISION ->
+            {
+                result = performDivide();
+            }
+            case FRACTION ->
+            {
+                result = basicPanel.performFraction();
+            }
+            case MEMORY_ADD ->
+            {
+                result = performMemoryAdd();
+            }
+            case MEMORY_SUBTRACT ->
+            {
+                result = performMemorySubtract();
+            }
+            case MODULUS ->
+            {
+                result = programmerPanel.performModulus();
+            }
+            case MULTIPLICATION ->
+            {
+                result = performMultiply();
+            }
+            case NEGATE ->
+            {
+                result = performNegate();
+            }
+            case OR ->
+            {
+                result = programmerPanel.performOr();
+            }
+            case PERCENT ->
+            {
+                result = basicPanel.performPercent();
+            }
+            case SQUARED ->
+            {
+                result = basicPanel.performSquared();
+            }
+            case SQUARE_ROOT ->
+            {
+                result = performSquareRoot();
+            }
+            case SUBTRACTION ->
+            {
+                result = performSubtract();
+            }
+            case XOR ->
+            {
+                result = programmerPanel.performXor();
+            }
+            default -> LOGGER.warn("Unknown operation: {}", getActiveOperator());
+        }
+        values[3] = result;
+        logOperation(LOGGER, this);
+        return result;
+    }
+    /**************** END BUTTON ACTIONS ****************/
+
+    /**************** HELPER METHODS ****************/
+    /**
+     * Updates the look and feel of the Calculator
+     */
+    public void updateLookAndFeel()
+    {
+        SwingUtilities.updateComponentTreeUI(this);
+        pack();
+    }
+
+    // TODO: Verify.
+    /**
+     * This method returns the value at the current
+     * position. If the value is empty and no operator
+     * has been selected, it returns the text pane value.
+     * @return the value at the current position or
+     * the text pane value
+     */
+    public String getAppropriateValue()
+    {
+        String currentNum = getValueAt();
+        if (!currentNum.isEmpty()) return currentNum;
+        if (valuesPosition == 1) currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        if (currentNum.isEmpty() && isNoOperatorActive())
+            currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        else if (!currentNum.isEmpty() && isOperatorActive())
+            currentNum = removeThousandsDelimiter(getValueWithoutAnyOperator(getTextPaneValue()), getThousandsDelimiter());
+        // rare cases when v[0] & v[1] are empty but textPane has a value and operator is active
+        else if (currentNum.isEmpty() && isOperatorActive())
+            currentNum = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+        return currentNum;
+    }
+
+    /**
+     * This method returns true or false depending
+     * on if an operator was pushed or not. The
+     * operators checked are addition, subtraction,
+     * multiplication, and division.
+     *
+     * @return true if any operator was pushed, false otherwise
+     */
+    public boolean isOperatorActive()
+    { return !values[2].isEmpty(); }
+
+    /**
+     * This method returns true if no operator is active
+     * independent of the current view.
+     * @return true if no operator is active, false otherwise
+     */
+    public boolean isNoOperatorActive()
+    { return values[2].isEmpty(); }
+
+    /**
+     * This method returns the operator
+     * that was pushed.
+     * @return the operator that was pushed
+     */
+    public String getActiveOperator()
+    { return values[2]; }
+
+    /**
+     * Returns a list of operators found
+     * only on the basic panel
+     * @return list of basic panel operators
+     */
+    public List<String> getBasicPanelOperators()
+    { return List.of(PERCENT, SQUARE_ROOT, SQUARED, FRACTION,
+            ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION); }
+
+    /**
+     * Returns a list of operators found
+     * only on the programmer panel
+     * @return list of programmer panel operators
+     */
+    public List<String> getProgrammerPanelOperators()
+    {return List.of(LSH, RSH, OR, XOR, NOT, AND, MODULUS, ROL, ROR); }
+
+    /**
+     * Returns a list of operators found
+     * only on the scientific panel
+     * @return list of scientific panel operators
+     */
+    public List<String> getScientificPanelOperators()
+    { LOGGER.warn("Implement"); return Collections.emptyList(); }
+
+    /**
+     * Returns values[valuesPosition]
+     * @return the value at valuesPosition
+     */
+    public String getValueAt()
+    { return values[valuesPosition]; }
+
+    /**
+     * Returns values[vP] for the given position
+     * @param vP the position to get
+     * @return the value at vP
+     */
+    public String getValueAt(int vP)
+    { return values[vP]; }
+
+    /**
+     * Sets the active operator
+     * @param operator the operator to set
+     */
+    public void setActiveOperator(String operator)
+    { values[2] = operator; }
+
+    /**
+     * This method resets default values
+     * @param softReset used to determine if the
+     * decimal button and negative number flag
+     * should be reset or not.
+     */
+    public void resetValues(boolean softReset)
+    {
+        if (softReset)
+        {
+            buttonDecimal.setEnabled(!isFractionalNumber(values[3]));
+            setNegativeNumber(CalculatorUtility.isNegativeNumber(values[3]));
+        }
+        else
+        {
+            buttonDecimal.setEnabled(true);
+            setNegativeNumber(false);
+        }
+        setObtainingFirstNumber(false);
+        values[0] = EMPTY;
+        values[1] = EMPTY;
+        values[2] = EMPTY;
+        values[3] = EMPTY;
+        valuesPosition = 0;
+        LOGGER.debug("Reset values");
+    }
+
+    /**
+     * Records the buttonChoice to the appropriate history panel.<br>
+     * Example Scenario:<br>
+     * Press 5, History shows: (5) Result: 5<br>
+     * Press +, History shows: (+) Result: 5 +
+     * @param buttonChoice String the button choice.
+     */
+    public void writeHistory(String buttonChoice, boolean addButtonChoiceToEnd)
+    { writeHistoryWithMessage(buttonChoice, addButtonChoiceToEnd, null); }
+
+    /**
+     * Records the buttonChoice to the appropriate history panel
+     * with a specific message instead of the default text
+     * @param buttonChoice String the buttonChoice
+     * @param addButtonChoiceToEnd boolean to add the buttonChoice to the end
+     * @param message String the message to display
+     */
+    public void writeHistoryWithMessage(String buttonChoice, boolean addButtonChoiceToEnd, String message)
+    {
+        LOGGER.info("Writing history");
+        String paneValue;
+        if (message == null)
+        {
+            LOGGER.debug("no message");
+            paneValue = addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter());
+        }
+        else
+        {
+            LOGGER.debug("with a specific message: {}", message);
+            paneValue = SPACE + message;
+        }
+        if (addButtonChoiceToEnd)
+        {
+            paneValue += SPACE + buttonChoice;
+        }
+        var currentHistoryText = getHistoryTextPane().getText();
+        if (message == null)
+        {
+            paneValue = SPACE + RESULT + paneValue;
+        }
+        getHistoryTextPane().setText(
+            currentHistoryText + NEWLINE +
+            LEFT_PARENTHESIS + buttonChoice + RIGHT_PARENTHESIS + paneValue
+        );
+    }
+
+    /**
+     * Records the buttonChoice specifically if it was a continued operation
+     * Ex: Already entered 5 + 6, then press +, History shows: (+) Result: 5 + 6 = 11 +
+     * @param prevOperation String whether to display the operation or equals
+     * @param operation String the operation performed (add, subtract, etc)
+     * @param result double the result from the operation
+     * @param addContinuedOperationToEnd boolean whether to append the operation to the end
+     */
+    public void writeContinuedHistory(String prevOperation, String operation, Object result, boolean addContinuedOperationToEnd)
+    {
+        LOGGER.info("Writing continued history");
+        var paneValue = addThousandsDelimiter(values[0], getThousandsDelimiter()) + SPACE + operation + SPACE + addThousandsDelimiter(values[1], getThousandsDelimiter()) + SPACE + EQUALS + SPACE + addThousandsDelimiter(String.valueOf(result), getThousandsDelimiter());
+        if (addContinuedOperationToEnd)
+        {
+            paneValue += SPACE + prevOperation;
+        }
+        var currentHistory = getHistoryTextPane().getText();
+        getHistoryTextPane().setText(
+            currentHistory + NEWLINE +
+            LEFT_PARENTHESIS + prevOperation + RIGHT_PARENTHESIS + " Result: " + paneValue
+        );
+    }
+
+    /**
+     * @param firstNumberObtained boolean whether
+     * the first number has been obtained or not
+     */
+    public void finishedObtainingFirstNumber(boolean firstNumberObtained)
+    {
+        LOGGER.debug("Finished obtaining first number:{}", firstNumberObtained);
+        if (firstNumberObtained)
+        {
+            valuesPosition = 1;
+            setObtainingFirstNumber(false);
+            //buttonDecimal.setEnabled(true);
+        }
+        else
+        {
+            valuesPosition = 0;
+            setObtainingFirstNumber(true);
+            //buttonDecimal.setEnabled(!isFractionalNumber(values[valuesPosition]));
+        }
+    }
+
+    /**
+     * Determines if any value is saved in memory
+     * @return boolean if any memory value has a value
+     */
+    public boolean isMemoryValuesEmpty()
+    {
+        var result = true;
+        for (int i = 0; i < 10; i++)
+        {
+            if (!memoryValues[i].isEmpty())
+            {
+                result = false;
+                break;
+            }
+        }
+        if (result) LOGGER.debug("memoryValues is empty");
+        return result;
+    }
+
+    /**
+     * Returns the lowest position in memory that contains a value
+     */
+    public int getLowestMemoryPosition()
+    {
+        var lowestMemory = 0;
+        for (int i = 0; i < 10; i++) {
+            if (!memoryValues[i].isEmpty()) {
+                lowestMemory = i;
+                break;
+            }
+        }
+        LOGGER.debug("Lowest position in memory is {}", lowestMemory);
+        return lowestMemory;
+    }
+
+    /**
+     * Returns all the number buttons
+     * @return Collection of all number buttons
+     */
+    public List<JButton> getNumberButtons()
+    { return Arrays.asList(button0, button1, button2, button3, button4, button5, button6, button7, button8, button9); }
+
+    /**
+     * Returns all the memory buttons and the history button
+     * @return List of buttons in the memory panel
+     */
+    public List<JButton> getAllMemoryPanelButtons()
+    { return Arrays.asList(buttonMemoryStore, buttonMemoryClear, buttonMemoryRecall, buttonMemoryAddition, buttonMemorySubtraction, buttonHistory); }
+
+    /**
+     * Returns the commonly used buttons. This includes:
+     * Percent, SquareRoot, Squared, Fraction, ClearEntry, Clear,
+     * Delete, Divide, Multiply, Subtract, Addition, Negate, Dot,
+     * and Equals.
+     * It does not include the number buttons.
+     *
+     * @return Collection of commonly used buttons
+     */
+    public List<JButton> getCommonButtons()
+    {
+        return Arrays.asList(buttonPercent, buttonSquareRoot, buttonSquared, buttonFraction,
+                buttonClearEntry, buttonClear, buttonDelete, buttonDivide, buttonMultiply,
+                buttonSubtract, buttonAdd, buttonNegate, buttonDecimal, buttonEquals);
+    }
+
+    /**
+     * Clears all actions from all buttons
+     */
+    public void clearButtonActions()
+    {
+        clearButtonActions(getCommonButtons());
+        LOGGER.debug("Common Buttons cleared of action listeners");
+        clearButtonActions(getNumberButtons());
+        LOGGER.debug("Number Buttons cleared of action listeners");
+        clearButtonActions(getAllMemoryPanelButtons());
+        LOGGER.debug("Memory Panel Buttons cleared of action listeners");
+        if (calculatorView == VIEW_PROGRAMMER)
+        {
+            clearButtonActions(programmerPanel.getAllProgrammerOperatorButtons());
+            clearButtonActions(programmerPanel.getAllHexadecimalButtons());
+            LOGGER.debug("Programmer Panel Buttons cleared of action listeners");
+        }
+    }
+
+    /**
+     * Clears all actions from the given buttons
+     * @param buttons the buttons to clear
+     */
+    protected void clearButtonActions(List<JButton> buttons)
+    {
+        buttons.forEach(button -> Arrays.stream(button.getActionListeners())
+                .forEach(button::removeActionListener));
+    }
+
+    public List<String> getBasicPanelUnaryOperators()
+    { return List.of(PERCENT, SQUARE_ROOT, SQUARED, FRACTION, NEGATE, DELETE); }
+
+    public List<String> getBasicPanelBinaryOperators()
+    {
+        return List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS);
+    }
+
+    /**
+     * When we hit a number button this method is called
+     * to ensure valid entries are allowed and any previous
+     * errors or unexpected conditions are cleared
+     */
+    public boolean performInitialChecks()
+    {
+        LOGGER.debug("Performing initial checks...");
+        if (ZERO.equals(getTextPaneValue()))
+        {
+            LOGGER.debug("textPane equals 0. Setting to blank.");
+            appendTextToPane(EMPTY);
+            //obtainingFirstNumber = true;
+            //buttonDecimal.setEnabled(true);
+        }
+        boolean issueFound = false;
+        if (textPaneContainsBadText())
+        {
+            LOGGER.debug("TextPane contains bad text");
+            issueFound = true;
+        }
+//        else if (values[0].isEmpty() && valuesPosition == 1)
+//        {
+//            LOGGER.debug("v[0] is empty. placing v[1] in v[0]. clearing v[1].");
+//            values[0] = values[1];
+//            values[1] = EMPTY;
+//            issueFound = true;
+//        }
+//        else if (checkValueLength())
+//        {
+//            LOGGER.info("Highest size of value has been met");
+//            issueFound = true;
+//        }
+        LOGGER.debug("Initial checks result: {}", issueFound);
+        return issueFound;
+    }
+
+    // TODO: Check this method. What should it truly be checking for/against?
+    /**
+     * Checks to see if the max length of a value[position] has been met.
+     * The highest number is 9,999,999, with a length of 7 and the
+     * lowest number is 0.0000001. So if the current value has a
+     * length of 7, the max length has been met, and no more
+     * digits will be allowed. Remember that the values[position] will not
+     * contain any commas, so the official length will be 7.
+     * @return boolean if the max length has been met
+     */
+    private boolean checkValueLength()
+    {
+        LOGGER.debug("Checking if max size (7) is met...");
+        LOGGER.debug("values[{}] left of decimal length: {}", valuesPosition, getNumberOnLeftSideOfDecimal(values[valuesPosition]).length());
+        LOGGER.debug("values[{}] right of decimal length: {}", valuesPosition, getNumberOnRightSideOfDecimal(values[valuesPosition]).length());
+        return getNumberOnLeftSideOfDecimal(values[valuesPosition]).length() > 7 ||
+               getNumberOnRightSideOfDecimal(values[valuesPosition]).length() > 7 ;
+    }
+
+    /**
+     * Tests whether the textPane contains a String which shows a previous error.
+     * Takes into account the current panel
+     * @return boolean if textPane contains more than just a number
+     */
+    public boolean textPaneContainsBadText()
+    {
+        String val = getTextPaneValue();
+        boolean result = false;
+        if (EMPTY.equals(val)) return result;
+        else {
+            result = CANNOT_DIVIDE_BY_ZERO.equals(val) ||
+                     NOT_A_NUMBER.equals(val) ||
+                     NUMBER_TOO_BIG.equals(val) ||
+                     ENTER_A_NUMBER.equals(val) ||
+                     ONLY_POSITIVES.equals(val) ||
+                     Texts.ERROR.equals(val) ||
+                     INFINITY.equals(val);
+        }
+        if (result) LOGGER.debug("textPane contains bad text: {}", val);
+        else LOGGER.debug("textPane is clean. text is '{}'", val);
+        return result;
+    }
+
+    /**
+     * Returns the bad text if the value
+     * is equal to one of the known bad texts.
+     * If no value is sent in, the textPane
+     * value will be tested.
+     * @param valueToTest the value to test
+     * @return the bad text or the value
+     */
+    public String getBadText(String valueToTest)
+    {
+        String badText = valueToTest.isEmpty() ? getTextPaneValue() : valueToTest;
+        if (CANNOT_DIVIDE_BY_ZERO.equals(badText)) badText = CANNOT_DIVIDE_BY_ZERO;
+        else if (NOT_A_NUMBER.equals(badText)) badText = NOT_A_NUMBER;
+        else if (NUMBER_TOO_BIG.equals(badText)) badText = NUMBER_TOO_BIG;
+        else if (ENTER_A_NUMBER.equals(badText)) badText = ENTER_A_NUMBER;
+        else if (ONLY_POSITIVES.equals(badText)) badText = ONLY_POSITIVES;
+        else if (Texts.ERROR.equals(badText)) badText = Texts.ERROR;
+        else if (INFINITY.equals(badText)) badText = INFINITY;
+        else badText = EMPTY;
+        return badText;
+    }
+
+    /**
+     * Returns a list of all bad texts
+     * @return list of bad texts
+     */
+    public List<String> badTexts()
+    {
+        return List.of(CANNOT_DIVIDE_BY_ZERO, NOT_A_NUMBER, NUMBER_TOO_BIG,
+                ENTER_A_NUMBER, ONLY_POSITIVES, Texts.ERROR, INFINITY);
+    }
+
+
+
+    /**
+     * Returns the delimiter used to separate thousands
+     * @return the delimiter to use for thousands
+     */
+    public String getThousandsDelimiter()
+    {
+        // TODO: Setup menu option to allow user to choose this value
+        return COMMA;
+    }
+
+    /**
+     * Returns the delimiter used to separate fractional values
+     * @return the delimiter to use for fractional values
+     */
+    public String getFractionalDelimiter()
+    {
+        // TODO: Setup menu option to allow user to choose this value
+        return DECIMAL;
+    }
+
+    /**
+     * Determines if the OS is Mac or not
+     *
+     * @return boolean if is running on Mac
+     */
+    @Deprecated(since = "Use OSDetector", forRemoval = true)
+    public boolean isOSMac()
+    {
+        LOGGER.debug("OS Name: {}", System.getProperty("os.name"));
+        return System.getProperty("os.name").toLowerCase().contains("mac");
+    }
+
+    /**
+     * Adds the appropriate number of zeroes to the
+     * beginning portion of a binary number
+     */
+    public String adjustBinaryNumber(String base2Number)
+    {
+        int base2Length = base2Number.length();
+        int bits = determineBits(base2Length);
+        int addZeroes = bits - base2Length;
+        base2Number = ZERO.repeat(addZeroes) + base2Number;
+        return base2Number;
+    }
+
+    // TODO: When Byte, if base2Length is 10, it is because
+    // the value is 0011 1100 +. Figure out how to add that
+    // here because if it's just the binary and an operator,
+    // then that length of 10 is also ok
+    /**
+     * Determines the appropriate length when
+     * converting a number to binary
+     */
+    public int determineBits(int base2Length)
+    {
+        var bits = 0;
+        if ( calculatorByte == BYTE_BYTE ) bits = 8;
+        else if ( calculatorByte == BYTE_WORD ) bits = 16;
+        else if ( calculatorByte == BYTE_DWORD ) bits = 32;
+        else if ( calculatorByte == BYTE_QWORD ) bits = 64;
+        if (bits < base2Length) {
+            LOGGER.debug("base2Length: {}", base2Length);
+            if (base2Length <= 8) {
+                bits = 8;
+                setCalculatorByte(BYTE_BYTE);
+            }
+            else if (base2Length <= 16) {
+                bits = 16;
+                setCalculatorByte(BYTE_WORD);
+            }
+            else if (base2Length <= 32) {
+                bits = 32;
+                setCalculatorByte(BYTE_DWORD);
+            }
+            else { //if (base2Length <= 64) {
+                bits = 64;
+                setCalculatorByte(BYTE_QWORD);
+            }
+        }
+        return bits;
+    }
+
+    /**
+     * Converts the current value to its binary representation
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToBinary()
+    {
+        String valueToConvert = values[valuesPosition];
+        if (valueToConvert.isEmpty()) return EMPTY;
+        String base2Number = Integer.toBinaryString(Integer.parseInt(valueToConvert));
+        base2Number = adjustBinaryNumber(base2Number);
+        LOGGER.info("Converting {}({}) to {}({})", BASE_DECIMAL.getValue(), valueToConvert,
+                BASE_BINARY.getValue(), base2Number);
+        return base2Number;
+    }
+
+    /**
+     * Converts the current value to its octal representation
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToOctal()
+    {
+        String valueToConvert = values[valuesPosition];
+        if (valueToConvert.isEmpty()) return EMPTY;
+        LOGGER.debug("Converting {} to {}", valueToConvert, BASE_OCTAL.getValue());
+        String base8Number = Integer.toOctalString(Integer.parseInt(valueToConvert));
+        LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_OCTAL.getValue(), base8Number);
+        LOGGER.info("The number {} in base 10 is {} in base 8.", valueToConvert, base8Number);
+        return base8Number;
+    }
+
+    /**
+     * Converts the current value to its decimal representation
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToDecimal()
+    {
+        String valueToConvert = values[valuesPosition];
+        if (valueToConvert.isEmpty()) return EMPTY;
+        LOGGER.debug("Converting {} to {}", valueToConvert, BASE_DECIMAL.getValue());
+        String base10Number = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix()), 10);
+        LOGGER.debug("convert from({}) to({}) = {}", previousBase.getValue(), BASE_DECIMAL.getValue(), base10Number);
+        LOGGER.info("The number {} in base {} is {} in base 10", valueToConvert, previousBase.getRadix(), base10Number);
+        return base10Number;
+    }
+
+    /**
+     * Converts the current value to its hexadecimal representation
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToHexadecimal()
+    {
+        String valueToConvert = values[valuesPosition];
+        if (valueToConvert.isEmpty()) return EMPTY;
+        LOGGER.debug("Converting {} to {}", valueToConvert, BASE_HEXADECIMAL.getValue());
+        String base16Number = Integer.toHexString(Integer.parseInt(valueToConvert));
+        LOGGER.debug("convert from({}) to({}) = {}", BASE_DECIMAL.getValue(), BASE_HEXADECIMAL.getValue(), base16Number);
+        LOGGER.info("The number {} in base 10 is {} in base 16.", valueToConvert, base16Number);
+        return base16Number;
+    }
+
+    /**
+     * Converts the given value from the fromBase to
+     * the given toBase.
+     * @param fromBase the base to convert from
+     * @param toBase the base to convert to
+     * @param valueToConvert the value to convert
+     * @return the converted value or an empty string
+     */
+    public String convertFromBaseToBase(CalculatorBase fromBase, CalculatorBase toBase, String valueToConvert)
+    {
+        valueToConvert = removeThousandsDelimiter(valueToConvert, getThousandsDelimiter()).replace(SPACE, EMPTY);
+        if (valueToConvert.isEmpty()) return EMPTY;
+        LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
+        String convertedNumber;
+//        if (!isDecimalNumber(valueToConvert))
+//            convertedNumber = Integer.toString(BigInteger.parseInt(valueToConvert, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
+//        else {
+//            var value = clearZeroesAndDecimalAtEnd(valueToConvert);
+//            convertedNumber = Integer.toString(Integer.parseInt(value, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
+//        }
+        if (!isFractionalNumber(valueToConvert)) {
+            // use BigInteger for arbitrarily large integers
+            convertedNumber = new BigInteger(valueToConvert, getPreviousRadix(fromBase))
+                    .toString(getPreviousRadix(toBase));
+        }
+        else {
+            // handle fractional values: split into integer and fractional parts
+            String[] parts = valueToConvert.split(DECIMAL);
+            String intPartStr = parts.length > 0 && !parts[0].isEmpty() ? parts[0] : ZERO;
+            BigInteger intPart = new BigInteger(intPartStr, getPreviousRadix(fromBase));
+            String intConverted = intPart.toString(getPreviousRadix(toBase));
+
+            String fracConverted = EMPTY;
+            if (parts.length > 1 && !parts[1].isEmpty()) {
+                // Convert fractional part from 'fromBase' to a BigDecimal value
+                BigDecimal frac = BigDecimal.ZERO;
+                BigDecimal baseFrom = BigDecimal.valueOf(getPreviousRadix(fromBase));
+                for (int i = 0; i < parts[1].length(); i++) {
+                    int digit = Character.digit(parts[1].charAt(i), getPreviousRadix(fromBase));
+                    if (digit < 0) { digit = 0; }
+                    frac = frac.add(BigDecimal.valueOf(digit)
+                            .divide(baseFrom.pow(i + 1), 64, RoundingMode.DOWN));
+                }
+                // Convert fractional BigDecimal into target base digits (fixed precision)
+                int precision = 20;
+                StringBuilder sb = new StringBuilder();
+                BigDecimal baseTo = BigDecimal.valueOf(getPreviousRadix(toBase));
+                BigDecimal current = frac;
+                for (int i = 0; i < precision && current.compareTo(BigDecimal.ZERO) > 0; i++) {
+                    current = current.multiply(baseTo);
+                    int digit = current.intValue();
+                    sb.append(Character.forDigit(digit, getPreviousRadix(toBase)));
+                    current = current.subtract(new BigDecimal(digit));
+                }
+                fracConverted = sb.toString();
+            }
+            convertedNumber = intConverted + (fracConverted.isEmpty() ? EMPTY : (DECIMAL + fracConverted));
+        }
+        if (BASE_BINARY == toBase) {
+            convertedNumber = adjustBinaryNumber(convertedNumber);
+        }
+        LOGGER.debug("converted: {}", convertedNumber);
+        return convertedNumber;
+    }
+
+    /**
+     * Returns the previous radix based on the previousBase
+     * @return the previous radix
+     */
+    public int getPreviousRadix()
+    { return getPreviousRadix(previousBase); }
+
+    /**
+     * Returns the previous radix based on the provided base
+     * @return the previous radix
+     */
+    public int getPreviousRadix(CalculatorBase base)
+    {
+        return switch (base)
+        {
+            case BASE_BINARY -> BASE_BINARY.getRadix();
+            case BASE_OCTAL -> BASE_OCTAL.getRadix();
+            case BASE_DECIMAL -> BASE_DECIMAL.getRadix();
+            case BASE_HEXADECIMAL -> BASE_HEXADECIMAL.getRadix();
+        };
+    }
+
+    /**
+     * Returns the current history text pane text.
+     * @return the history text pane text
+     */
+    public String getHistoryTextPaneValue() { return historyTextPane.getText(); }
+
+    /**
+     * Used when you want the text pane value without
+     * having to think about which panel is current or
+     * anything else for that matter. Just the value.
+     * @return the value without new lines or whitespace
+     */
+    public String getTextPaneValue()
+    {
+        if (calculatorView == VIEW_BASIC)
+        { return textPane.getText()
+                .replaceAll(NEWLINE, EMPTY)
+                .strip(); }
+        else if (calculatorView == VIEW_PROGRAMMER)
+        { return getTextPaneValueForProgrammerPanel()
+                .replaceAll(NEWLINE, EMPTY)
+                .strip();
+        }
+        else
+        {
+            LOGGER.warn("Implement");
+            return EMPTY;
+        }
+    }
+
+    /**
+     * Returns the value in the text pane when panel is programmer panel.
+     * Value in text pane for programmer panel is as follows:
+     * Byte Space Space Base NEWLINE NEWLINE value[valuePosition] NEWLINE
+     * @return the value in the programmer text pane
+     */
+    private String getTextPaneValueForProgrammerPanel()
+    {
+        String currentValue = EMPTY;
+        try
+        {
+            LOGGER.debug("calculatorBase: {}", calculatorBase);
+            String[] textPaneValue = textPane.getText().split(NEWLINE);
+            switch (calculatorBase)
+            {
+                case BASE_BINARY ->
+                {
+                    LOGGER.debug("calculatorByte: {}", calculatorByte);
+                    switch (calculatorByte)
+                    {
+                        case BYTE_BYTE,
+                             BYTE_WORD -> {
+                            currentValue = textPaneValue[2];
+                        }
+                        case BYTE_DWORD -> {
+                            currentValue = textPaneValue[2] + textPaneValue[3];
+                        }
+                        case BYTE_QWORD -> {
+                            currentValue = textPaneValue[2] + textPaneValue[3]
+                                         + textPaneValue[4] + textPaneValue[5];
+                        }
+                    }
+                    currentValue = currentValue.replace(SPACE, EMPTY);
+                }
+                case BASE_OCTAL,
+                     BASE_DECIMAL,
+                     BASE_HEXADECIMAL -> {
+                    currentValue = removeThousandsDelimiter(textPaneValue[2], getThousandsDelimiter());
+                }
+            }
+            if (currentValue.isEmpty()) {
+                LOGGER.warn("Attempted to retrieve value from text pane but it was empty. Returning blank.");
+                return EMPTY;
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException ae1)
+        {
+            try
+            {
+                var splitTextValue = textPane.getText().split(NEWLINE);
+                // TODO: Rework to not use Strings
+                var twoSpaces = SPACE.repeat(2);
+                var textPaneTopRowExpectedValues = List.of(
+                BYTE_BYTE.getValue()+twoSpaces+BASE_BINARY.getValue(), "Byte  Octal", "Byte  Decimal", "Byte  Hexadecimal"
+                        , "Word  Binary", "Word  Octal", "Word  Decimal", "Word  Hexadecimal"
+                        , "DWord  Binary", "DWord  Octal", "DWord  Decimal", "DWord  Hexadecimal"
+                        , "QWord  Binary", "QWord  Octal", "QWord  Decimal", "QWord  Hexadecimal");
+                return splitTextValue.length == 1 && textPaneTopRowExpectedValues.contains(splitTextValue[0])
+                        ? EMPTY
+                        : removeThousandsDelimiter(splitTextValue[2], getThousandsDelimiter());
+            } catch (ArrayIndexOutOfBoundsException ae2)
+            {
+                logException(new CalculatorError("Attempted to retrieve value from text pane but got ArrayIndexOutOfBoundsException. Returning blank."), LOGGER);
+                return EMPTY;
+            }
+        }
+        catch (Exception e)
+        {
+            logException(e, LOGGER);
+            return EMPTY;
+        }
+        return currentValue;
+    }
+
+    /**
+     * Returns the text in the current panel's history pane
+     * @return the history text for the current panel
+     */
+    public String getHistoryPaneTextWithoutNewLineCharacters()
+    {
+        if (List.of(VIEW_BASIC, VIEW_PROGRAMMER, VIEW_SCIENTIFIC).contains(calculatorView))
+        { return historyTextPane.getText().replace(NEWLINE, EMPTY).strip(); }
+        else
+        {
+            LOGGER.warn("Add other panels history pane if intended to have one");
+            return EMPTY;
+        }
+    }
+
+
+
+    /**
+     * Resets the operators to the boolean passed in
+     * @param reset a boolean to reset the operators to
+     */
+    @Deprecated(since = "Use resetValues()")
+    public void resetOperators(boolean reset)
+    {
+
+        values[2] = EMPTY; // operator
+        LOGGER.debug("All operators reset to {}", reset);
+    }
+
+
+    /**
+     * This method checks if the given value
+     * ends with any operator from the current
+     * panel. This will only possibly effect
+     * the basic, programmer, and scientific
+     * panels.
+     * @param value the value to check
+     * @return true if the value ends with an operator,
+     * false otherwise
+     */
+    public boolean endsWithOperator(String value)
+    {
+        if (value == null || value.isEmpty()) return false;
+        List<String> allOperators = new ArrayList<>();
+        return switch (calculatorView)
+        {
+            case VIEW_BASIC -> getBasicPanelOperators().stream().anyMatch(value::endsWith);
+            case VIEW_PROGRAMMER -> {
+                allOperators.addAll(getBasicPanelOperators());
+                allOperators.addAll(getProgrammerPanelOperators());
+                yield allOperators.stream().anyMatch(value::endsWith);
+            }
+            case VIEW_SCIENTIFIC -> {
+                allOperators.addAll(getBasicPanelOperators());
+                allOperators.addAll(getScientificPanelOperators());
+                yield allOperators.stream().anyMatch(value::endsWith);
+            }
+            default -> {
+                LOGGER.debug("Testing all operators");
+                allOperators.addAll(getBasicPanelOperators());
+                allOperators.addAll(getProgrammerPanelOperators());
+                allOperators.addAll(getScientificPanelOperators());
+                yield allOperators.stream().anyMatch(value::endsWith);
+            }
+        };
+    }
+
+
+    /**
+     * This is the default method to add text to the textPane
+     * Adds the text appropriately and if true, updates the
+     * values[valuesPosition] with the text provided, without
+     * any commas.
+     * @param text the text to add
+     */
+    public void appendTextToPane(String text, boolean updateValues)
+    {
+        appendTextToPane(text);
+        LOGGER.debug("Text appended to pane. Updating values? {}", updateValues);
+        boolean negativeControl = CalculatorUtility.isNegativeNumber(text);
+        // If the result is not badText, store value in appropriate location
+        int currentValuesPosition = valuesPosition;
+        if (updateValues && (!getBadText(text).equals(text) || text.isEmpty()))
+        {
+            if (getBasicPanelUnaryOperators().contains(getActiveOperator()) ||
+               (getValueAt().isEmpty() && getBasicPanelBinaryOperators().contains(getActiveOperator())))
+            {
+                values[valuesPosition] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
+                values[3] = EMPTY;
+            }
+            else
+            {
+                values[3] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
+                valuesPosition = 3;
+            }
+        }
+        if (negativeControl) {
+            values[valuesPosition] = convertToNegative(values[valuesPosition]);
+        }
+        logValuesAtPosition(this, LOGGER);
+        setValuesPosition(currentValuesPosition);
+    }
+
+    /**
+     * This is the default method to add text to the textPane
+     * Adds the text appropriately and only what you provide.
+     * Commas are not added here. Decimals are not added here.
+     * What it does do is keep the value displaying in the
+     * same base and/or byte that is currently selected.
+     * @param text the text to add
+     */
+    public void appendTextToPane(String text)
+    {
+        LOGGER.debug("adding text: '{}'", text);
+        if (calculatorView == VIEW_BASIC)
+        {
+            textPane.setText(NEWLINE + text);
+        }
+        else if (calculatorView == VIEW_PROGRAMMER)
+        {
+            switch (calculatorBase) {
+                case BASE_BINARY -> {
+                    programmerPanel.appendTextForProgrammerPanel(programmerPanel.separateBits(convertValueToBinary()));
+                }
+                case BASE_OCTAL -> {
+                    programmerPanel.appendTextForProgrammerPanel(convertValueToOctal());
+                }
+                case BASE_DECIMAL -> {
+                    programmerPanel.appendTextForProgrammerPanel(text);
+                }
+                case BASE_HEXADECIMAL -> {
+                    programmerPanel.appendTextForProgrammerPanel(convertValueToHexadecimal());
+                }
+            }
+        }
+        else
+        {
+            LOGGER.warn("Implement adding text for <view> here");
+        }
+    }
+
+    /**
+     * Simple method to clear the text pane
+     * independent of knowing which panel is
+     * the current one.
+     */
+    public void clearTextInTextPane()
+    {
+        if (calculatorView == VIEW_BASIC)
+        {
+            appendTextToPane(EMPTY);
+        }
+        else if (calculatorView == VIEW_PROGRAMMER)
+        {
+            programmerPanel.appendTextForProgrammerPanel(EMPTY);
+        }
+        buttonDecimal.setEnabled(true); // natural side effect of clearing textPane
+    }
+
+    /**
+     * Closes the history pane if it is open
+     * @param actionEvent the action event
+     */
+    private void closeHistoryIfOpen(ActionEvent actionEvent)
+    {
+        if (actionEvent != null)
+        {
+            buttonHistory.setText(HISTORY_OPEN);
+            if (calculatorView == VIEW_BASIC)
+                performHistoryAction(actionEvent);
+            else if (calculatorView == VIEW_PROGRAMMER)
+                performHistoryAction(actionEvent);
+        }
+    }
+
+    /**
+     * Sets the state when divided by zero occurs
+     */
+    public void dividedByZero()
+    {
+//        appendTextToPane(INFINITY);
+//        values[0] = EMPTY;
+//        values[1] = EMPTY;
+//        values[2] = EMPTY;
+//        values[3] = EMPTY;
+        setObtainingFirstNumber(true);
+    }
+
+    /**
+     * Updates the state of the memory buttons based
+     * on whether there is a value stored in memory
+     * and whether there is a value present or not.
+     */
+    public void updateMemoryButtonsState()
+    {
+        boolean valueIsNotEmpty = !getAppropriateValue().isEmpty();
+        boolean memoryIsStored = !isMemoryValuesEmpty();
+        buttonMemoryRecall.setEnabled(memoryIsStored);
+        buttonMemoryClear.setEnabled(memoryIsStored);
+        buttonMemoryAddition.setEnabled(valueIsNotEmpty && memoryIsStored);
+        buttonMemorySubtraction.setEnabled(valueIsNotEmpty && memoryIsStored);
+    }
+    /**************** END HELPER METHODS ****************/
+
+    /**************** GETTERS ****************/
+    public String getHelpString() { return helpString; }
     public JButton getButton0() { return button0; }
     public JButton getButton1() { return button1; }
     public JButton getButton2() { return button2; }
@@ -2090,71 +3492,73 @@ public class Calculator extends JFrame
     public int getMemoryPosition() { return memoryPosition; }
     public int getMemoryRecallPosition() { return memoryRecallPosition; }
     public JTextPane getTextPane() { return textPane; }
-    public JTextPane getBasicHistoryTextPane() { return basicHistoryTextPane; }
-    public CalculatorType getCalculatorType() { return calculatorType; }
+    public CalculatorView getCalculatorView() { return calculatorView; }
     public CalculatorBase getCalculatorBase() { return calculatorBase; }
+    public CalculatorBase getPreviousBase() { return previousBase; }
+    public CalculatorByte getCalculatorByte() { return calculatorByte; }
     public DateOperation getDateOperation() { return dateOperation; }
-    public ConverterType getConverterType() { return converterType; }
-    public JPanel getCurrentPanel() { return currentPanel; }
+    public CalculatorConverterType getConverterType() { return converterType; }
     public ImageIcon getCalculatorIcon() { return calculatorIcon; }
     public ImageIcon getMacIcon() { return macIcon; }
     public ImageIcon getWindowsIcon() { return windowsIcon; }
     public ImageIcon getBlankIcon() { return blankIcon; }
-    public JLabel getIconLabel() { return iconLabel; }
-    public JLabel getTextLabel() { return textLabel; }
     public JMenuBar getCalculatorMenuBar() { return menuBar; }
-    public boolean isFirstNumber() { return isFirstNumber; }
-    public boolean isNumberNegative() { return isNumberNegative; }
-    public boolean isAdding() { return isAdding; }
-    public boolean isSubtracting() { return isSubtracting; }
-    public boolean isMultiplying() { return isMultiplying; }
-    public boolean isDividing() { return isDividing; }
-    public boolean isNegating() { return isNegating; }
-    public boolean isDotPressed() { return getButtonDecimal().isEnabled(); }
-    public JMenu getLookMenu() { return lookMenu; }
+    public boolean isObtainingFirstNumber() { return obtainingFirstNumber; }
+    public boolean isNegativeNumber() { return negativeNumber; }
+    public boolean isPemdasActive() { return isPemdasActive; }
+    public boolean isDecimalPressed() { return !buttonDecimal.isEnabled(); }
+    public JMenu getStyleMenu() { return styleMenu; }
     public JMenu getViewMenu() { return viewMenu; }
     public JMenu getEditMenu() { return editMenu; }
     public JMenu getHelpMenu() { return helpMenu; }
-    public boolean isMetal() { return isMetal; }
-    public boolean isSystem() { return isSystem; }
-    public boolean isWindows() { return isWindows; }
-    public boolean isMotif() { return isMotif; }
-    public boolean isGtk() { return isGtk; }
-    public boolean isApple() { return isApple; }
+    public BasicPanel getBasicPanel() { return basicPanel; }
+    public JPanel getMemoryPanel() { return memoryPanel; }
+    public JPanel getButtonsPanel() { return buttonsPanel; }
+    public ProgrammerPanel getProgrammerPanel() { return programmerPanel; }
+    public ScientificPanel getScientificPanel() { return scientificPanel; }
+    public DatePanel getDatePanel() { return datePanel; }
+    public ConverterPanel getConverterPanel() { return converterPanel; }
+    public JPanel getCurrentPanel() { return currentPanel; }
+    public JPanel getHistoryPanel() { return historyPanel; }
+    public String getCalculatorStyle() { return calculatorStyle; }
+    public JTextPane getHistoryTextPane() { return historyTextPane; }
 
-    /* Setters */
+
+    /**************** SETTERS ****************/
+    public void setHelpString(String helpString) { this.helpString = helpString; LOGGER.debug("Help string set"); }
     private void setValues(String[] values) { this.values = values; }
-    public void setValuesPosition(int valuesPosition) { this.valuesPosition = valuesPosition; }
+    public void setValuesPosition(int valuesPosition) { this.valuesPosition = valuesPosition; LOGGER.debug("ValuesPosition set to {}", valuesPosition); }
     private void setMemoryValues(String[] memoryValues) { this.memoryValues = memoryValues; }
-    public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; }
-    public void setMemoryRecallPosition(int memoryRecallPosition) { this.memoryRecallPosition = memoryRecallPosition; }
-    public void setTextPane(JTextPane textPane) { this.textPane = textPane; }
-    public void setBasicHistoryTextPane(JTextPane basicHistoryTextPane) { this.basicHistoryTextPane = basicHistoryTextPane; }
-    public void setCalculatorType(CalculatorType calculatorType) { this.calculatorType = calculatorType; }
-    public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; }
-    public void setConverterType(ConverterType converterType) { this.converterType = converterType; }
-    public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; }
+    public void setMemoryPosition(int memoryPosition) { this.memoryPosition = memoryPosition; LOGGER.debug("MemoryPosition set to {}", memoryPosition); }
+    public void setMemoryRecallPosition(int memoryRecallPosition) { this.memoryRecallPosition = memoryRecallPosition; LOGGER.debug("MemoryRecallPosition set to {}", memoryRecallPosition); }
+    public void setTextPane(JTextPane textPane) { this.textPane = textPane; LOGGER.debug("TextPane set"); }
+    public void setCalculatorView(CalculatorView calculatorView) { this.calculatorView = calculatorView; LOGGER.debug("CalculatorView set to {}", calculatorView); }
+    public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; LOGGER.debug("CalculatorBase set to {}", calculatorBase); }
+    public void setCalculatorBase(CalculatorBase calculatorBase, boolean updatePreviousBase) {
+        if (updatePreviousBase) setPreviousBase(getCalculatorBase());
+        setCalculatorBase(calculatorBase);
+    }
+    public void setPreviousBase(CalculatorBase previousBase) { this.previousBase = previousBase; LOGGER.debug("PreviousBase set to {}", previousBase); }
+    public void setCalculatorByte(CalculatorByte calculatorByte) { this.calculatorByte = calculatorByte; LOGGER.debug("CalculatorByte set to {}", calculatorByte); }
+    public void setDateOperation(DateOperation dateOperation) { this.dateOperation = dateOperation; LOGGER.debug("DateOperation set to {}", dateOperation); }
+    public void setConverterType(CalculatorConverterType converterType) { this.converterType = converterType; LOGGER.debug("ConverterType set to {}", converterType); }
+    public void setSystemDetector(OSDetector systemDetector) { this.systemDetector = systemDetector; LOGGER.debug("System Detector set"); }
+    public void setCurrentPanel(JPanel currentPanel) { this.currentPanel = currentPanel; LOGGER.debug("CurrentPanel set to {}", currentPanel.getName()); }
+    public void setHistoryPanel(JPanel historyPanel) { this.historyPanel = historyPanel; LOGGER.debug("History Panel set"); }
+    public void setMemoryPanel(JPanel memoryPanel) { this.memoryPanel = memoryPanel; LOGGER.debug("Memory Panel set"); }
+    public void setButtonsPanel(JPanel buttonsPanel) { this.buttonsPanel = buttonsPanel; LOGGER.debug("Buttons Panel set"); }
     public void setCalculatorIcon(ImageIcon calculatorIcon) { this.calculatorIcon = calculatorIcon; }
     public void setMacIcon(ImageIcon macIcon) { this.macIcon = macIcon; }
     public void setWindowsIcon(ImageIcon windowsIcon) { this.windowsIcon = windowsIcon; }
     public void setBlankIcon(ImageIcon blankIcon) { this.blankIcon = blankIcon; }
-    public void setFirstNumber(boolean firstNumber) { this.isFirstNumber = firstNumber; }
-    public void setNumberNegative(boolean numberNegative) { this.isNumberNegative = numberNegative; }
-    public void setAdding(boolean adding) { this.isAdding = adding; }
-    public void setSubtracting(boolean subtracting) { this.isSubtracting = subtracting; }
-    public void setMultiplying(boolean multiplying) { this.isMultiplying = multiplying; }
-    public void setDividing(boolean dividing) { this.isDividing = dividing; }
-    public void setNegating(boolean negating) { this.isNegating = negating; }
-    public void setCalculatorBase(CalculatorBase calculatorBase) { this.calculatorBase = calculatorBase; }
-    public void setCalculatorMenuBar(JMenuBar menuBar) { this.menuBar = menuBar; }
-    public void setLookMenu(JMenu jMenu) { this.lookMenu = jMenu; }
-    public void setViewMenu(JMenu jMenu) { this.viewMenu = jMenu; }
-    public void setEditMenu(JMenu jMenu) { this.editMenu = jMenu; }
-    public void setHelpMenu(JMenu jMenu) { this.helpMenu = jMenu; }
-    public void setMetal(boolean isMetal) { this.isMetal = isMetal; }
-    public void setSystem(boolean isSystem) { this.isSystem = isSystem; }
-    public void setWindows(boolean isWindows) { this.isWindows = isWindows; }
-    public void setMotif(boolean isMotif) { this.isMotif = isMotif; }
-    public void setGtk(boolean isGtk) { this.isGtk = isGtk; }
-    public void setApple(boolean isApple) { this.isApple = isApple; }
+    public void setObtainingFirstNumber(boolean firstNumber) { this.obtainingFirstNumber = firstNumber; LOGGER.debug("isFirstNumber set to {}", firstNumber); }
+    public void setNegativeNumber(boolean numberNegative) { this.negativeNumber = numberNegative; LOGGER.debug("isNumberNegative set to {}", numberNegative); }
+    public void setIsPemdasActive(boolean isPemdasActive) { this.isPemdasActive = isPemdasActive; }
+    public void setCalculatorMenuBar(JMenuBar menuBar) { this.menuBar = menuBar; setJMenuBar(menuBar); LOGGER.debug("Menubar set"); }
+    public void setStyleMenu(JMenu styleMenu) { this.styleMenu = styleMenu; LOGGER.debug("Style Menu set"); }
+    public void setViewMenu(JMenu viewMenu) { this.viewMenu = viewMenu; LOGGER.debug("View Menu set"); }
+    public void setEditMenu(JMenu editMenu) { this.editMenu = editMenu; LOGGER.debug("Edit Menu set"); }
+    public void setHelpMenu(JMenu helpMenu) { this.helpMenu = helpMenu; LOGGER.debug("Help Menu set"); }
+    public void setCalculatorStyle(String calculatorStyle) { this.calculatorStyle = calculatorStyle; LOGGER.debug("Calculator Style set to {}", calculatorStyle); }
+    public void setHistoryTextPane(JTextPane historyTextPane) { this.historyTextPane = historyTextPane; LOGGER.debug("History Text Pane set"); }
 }

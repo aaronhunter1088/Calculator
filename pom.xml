@@ -1,227 +1,144 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.example</groupId>
+
+    <parent>
+        <groupId>com.skvllprodvctions</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
     <artifactId>Calculator</artifactId>
-    <version>4.4</version>
-    <packaging>jar</packaging>
+    <version>4.6.1</version>
     <name>Calculator</name>
+    <description>This is a Calculator Swing App</description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<outputDirectory>${basedir}/dist/version4</outputDirectory>
-		<finalName>${project.artifactId}-${project.version}</finalName>
-		<project.version>${project.version}</project.version>
-		<maven.compiler.source>18</maven.compiler.source>
-		<maven.compiler.target>18</maven.compiler.target>
+    <properties>
+        <outputDirectory>${basedir}/dist/version4</outputDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <main.class>Runnables.CalculatorMain</main.class>
+        
+        <apple.version>1.4</apple.version>
+		    <commons.lang.version>3.18.0</commons.lang.version>
+		    <date.picker.version>1.3.2</date.picker.version>
+		    <junit.version>4.13.1</junit.version>
+		    <log4j.version>2.25.3</log4j.version>
+		    <maven.antrun.version>3.0.0</maven.antrun.version>
+		    <maven.assembly.version>3.7.1</maven.assembly.version>
+		    <maven.compiler.version>3.8.0</maven.compiler.version>
+		    <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+		    <maven.dependency.version>3.1.2</maven.dependency.version>
+		    <maven.jar.version>3.2.0</maven.jar.version>
+		    <mockito.version>3.0.0</mockito.version>
+		    <properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
+	  </properties>
 
-		<apple.version>1.4</apple.version>
-		<commons.lang.version>3.18.0</commons.lang.version>
-		<date.picker.version>1.3.2</date.picker.version>
-		<junit.version>4.13.1</junit.version>
-		<log4j.version>2.25.3</log4j.version>
-		<maven.antrun.version>3.0.0</maven.antrun.version>
-		<maven.assembly.version>3.7.1</maven.assembly.version>
-		<maven.compiler.version>3.8.0</maven.compiler.version>
-		<maven.surefire.version>3.0.0-M5</maven.surefire.version>
-		<maven.dependency.version>3.1.2</maven.dependency.version>
-		<maven.jar.version>3.2.0</maven.jar.version>
-		<mockito.version>3.0.0</mockito.version>
-		<properties.maven.plugin.version>1.0-alpha-2</properties.maven.plugin.version>
-	</properties>
-	<dependencies>
-		<!-- https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
-		<dependency>
-			<groupId>com.apple</groupId>
-			<artifactId>applejavaextensions</artifactId>
-			<version>${apple.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${commons.lang.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/junit/junit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-antrun-plugin</artifactId>
-			<version>${maven.antrun.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-assembly-plugin</artifactId>
-			<version>${maven.assembly.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-dependency-plugin</artifactId>
-			<version>${maven.dependency.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/properties-maven-plugin -->
-		<dependency>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>properties-maven-plugin</artifactId>
-			<version>1.0-alpha-2</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
-		<dependency>
-			<groupId>net.sourceforge.jdatepicker</groupId>
-			<artifactId>jdatepicker</artifactId>
-			<version>${date.picker.version}</version>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <!-- apple --><!--
+             https://mvnrepository.com/artifact/com.apple/AppleJavaExtensions -->
+        <dependency>
+            <groupId>com.apple</groupId>
+            <artifactId>AppleJavaExtensions</artifactId>
+        </dependency>
+        <!-- apache-commons-lang3 --><!--
+             https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- jdatepicker --><!--
+             https://mvnrepository.com/artifact/net.sourceforge.jdatepicker/jdatepicker -->
+        <dependency>
+            <groupId>net.sourceforge.jdatepicker</groupId>
+            <artifactId>jdatepicker</artifactId>
+        </dependency>
+        <!-- log4j2-core --><!--
+             Managed in Parent Dependency Management section -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <!-- log4j2-api --><!--
+             Managed in Parent Dependency Management section -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+
+        <!-- Test dependencies -->
+
+        <!-- jupiter junit-api --><!--
+             Managed in Parent Test Dependency Management section -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- jupiter junit-engine --><!--
+             Managed in Parent Test Dependency Management section -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- jupiter junit-params --><!--
+             Optionally: parameterized tests support -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- mockito-core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- mockito-junit-jupiter -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/**</include>
-				</includes>
-			</resource>
-		</resources>
-		<plugins>
-			<!-- Compile -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-					<release>18</release>
-					<compilerArgs>
-						<!--<arg>#doubledash#enable-preview</arg>-->
-						<arg>-verbose</arg>
-						<arg>-Xlint:all,-options,-path</arg>
-					</compilerArgs>
-					<!-- for surefire plugin -->
-				</configuration>
-				<executions>
-					<execution>
-						<id>default-testCompile</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Test-compile -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven.surefire.version}</version>
-			</plugin>
-			<!-- Generate resources -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>1.0-alpha-2</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>write-project-properties</goal>
-						</goals>
-						<configuration>
-							<outputFile>${basedir}/src/main/resources/pom.properties</outputFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Binds to Package phase, but will not run... -->
-			<!-- When creating a jar, create build.properties file -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>initialize</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<mkdir dir="${project.build.directory}"/>
-								<tstamp>
-									<format property="last.updated" pattern="yyyy-MM-dd HH:mm:ss"/>
-								</tstamp>
-								<!--suppress UnresolvedMavenProperty -->
-								<echo file="${outputDirectory}/build.properties" message="build.time=${last.updated}"/>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Assembly:Single creates runnable jar with dependencies
-			     Run Command: mvn clean package (-Dmaven.test.skip=true) -->
-			<plugin>
-				<!-- don't need group id since org.apache.maven.plugins is assumed -->
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven.assembly.version}</version>
-				<executions>
-					<execution>
-						<id>build-calculator</id>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<appendAssemblyId>true</appendAssemblyId> <!-- If false, jar-with-dependencies is not appended to jar name -->
-							<!-- archive required to create executable jar -->
-							<archive>
-								<index>true</index>
-								<manifest>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-									<addClasspath>true</addClasspath>
-									<mainClass>Runnables.CalculatorMain</mainClass>
-								</manifest>
-								<manifestEntries>
-									<Creation-Time>${maven.build.timestamp}</Creation-Time>
-									<Creation-Time-Format>yyyy-MM-dd HH:mm:ss</Creation-Time-Format>
-								</manifestEntries>
-							</archive>
-							<finalName>${finalName}</finalName>
-							<outputDirectory>${outputDirectory}</outputDirectory>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+        <!-- source and test directories defined in parent -->
+        <!-- resources defined in parent -->
+
+        <!-- NOTES -->
+        <!-- Assembly:single creates Calculator-#.jar -->
+        <!-- Mvn:package creates Calculator-#-jar-with-dependencies.jar -->
+        <!-- Mvn:install adds Calculator-#-jar-with-dependencies.jar to local repo -->
+        <plugins>
+            <!-- Compile found in parent -->
+            <!-- Test-compile found in parent -->
+            <!-- Generate resources found in parent -->
+            <!-- Defined in parent
+                 Binds to Package phase, but will not run...
+                 When creating a jar, update MANIFEST.MF file
+                 and place JAR in specified outputDirectory
+                 Run command: mvn install -DskipTests -DskipITs -->
+            <!-- Assembly:Single Creates Calculator-version.jar
+                 and Calculator-version-jar-with-dependencies.jar
+                 Run Command: mvn clean package (-Dmaven.test.skip=true)
+                 Found in parent -->
+            <!-- Attach sources
+                 Found in parent -->
+            <!-- JaCoCo configuration for code analysis
+                 Found in parent -->
+
+            <!-- springdoc-openapi --><!--
+                 This plugin is disabled for this project -->
+            <plugin>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                <version>${springdoc.openapi.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

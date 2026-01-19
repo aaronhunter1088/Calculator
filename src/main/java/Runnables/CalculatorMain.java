@@ -7,24 +7,30 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import static Types.CalculatorType.*;
-import static Types.ConverterType.*;
-import static Types.DateOperation.*;
-import static Types.Texts.*;
+import static Types.CalculatorView.*;
+import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
+import static Utilities.LoggingUtil.confirm;
 
 /**
- * Main Class. Start here!
+ * CalculatorMain
+ * <p>
+ * The main class used to start the Calculator application.
+ * There are several modes ready to be started by uncommenting
+ * the appropriate line in the main method.
+ * History of the application is located at the end of this file.
+ *
+ * @author Michael Ball
+ * @version 4.0
  */
 public class CalculatorMain
 {
-    static { System.setProperty("appName", "Calculator"); }
     private final static Logger LOGGER = LogManager.getLogger(CalculatorMain.class.getSimpleName());
 
-	public static void main(String[] args) throws Exception
+    public static void main(String[] args) throws Exception
     {
         LOGGER.info("Starting calculator...");
         String logLevel = System.getenv("logLevel");
-        if (null == logLevel) {
+        if (logLevel == null) {
             LOGGER.warn("Set env.logLevel. Using default:all");
         } else {
             LOGGER.info(System.getenv("logLevel"));
@@ -33,9 +39,9 @@ public class CalculatorMain
         SwingUtilities.invokeLater(() -> {
             try {
                 //Start a basic calculator
-                Calculator calculator = new Calculator(/*BASIC*/);
+                //Calculator calculator = new Calculator(/*VIEW_BASIC*/);
                 //Start a programmer calculator in BINARY mode
-                //Calculator calculator = new Calculator(PROGRAMMER /*, BINARY*/ );
+                Calculator calculator = new Calculator(VIEW_PROGRAMMER /*, BINARY*/ );
                 //Start a programmer calculator in DECIMAL mode
                 //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
                 //Start a date calculator with options1 selected
@@ -49,11 +55,10 @@ public class CalculatorMain
                 //Display the window.
                 calculator.pack();
                 calculator.setVisible(true);
-                calculator.confirm(calculator.getCalculatorType().getValue() + " Calculator started");
+                confirm(calculator, LOGGER, calculator.getCalculatorView().getValue() + " Calculator started");
             }
-            catch (Exception e) {
-                System.err.printf("Could not create Calculator bc " + e.getMessage());
-            }
+            catch (Exception e)
+            { LOGGER.error("Could not create Calculator bc: {}", e.getMessage(), e); }
         });
         Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.info("Closing Calculator")));
     }
@@ -66,9 +71,8 @@ d. FILES INCLUDED: The Java class files, 5 images, log4j2.properties, and pom.pr
 e. PURPOSE: To recreate the Calculator app (from Windows) and provide more functionality
 f. INPUT:  To calculate numbers, dates, units, and more
 g. PRECONDITIONS: Basic view is the default view
-h. OUTPUT: Displays calculated result from input number buttons
-i. POST CONDITIONS: Most Booleans returned to initial state. Some stay switched on, like the decimal boolean,
-                    until explicitly turned off.
+h. OUTPUT: Displays calculated result from input number buttons and operators
+i. POST CONDITIONS: Each equation displays the result in the text area.
 j. ALGORITHM:
 k. ERRORS: Errors are organized by Date and then by what the error was effecting.
 
