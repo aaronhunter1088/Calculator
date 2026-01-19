@@ -43,6 +43,7 @@ public class ScientificPanel extends JPanel
 
     /**
      * The main constructor for creating a ScientificPanel
+     *
      * @param calculator the calculator to associate with the panel
      */
     public ScientificPanel(Calculator calculator)
@@ -67,13 +68,37 @@ public class ScientificPanel extends JPanel
     /* TODO: Add actions here */
 
     /**************** GETTERS ****************/
-    public Calculator getCalculator() { return calculator; }
-    public GridBagConstraints getConstraints() { return constraints; }
-    public JPanel getScientificPanel() { return scientificPanel; }
-    public boolean isInitialized() { return isInitialized; }
+    public Calculator getCalculator()
+    {
+        return calculator;
+    }
 
     /**************** SETTERS ****************/
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
-    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
+    public void setCalculator(Calculator calculator)
+    {
+        this.calculator = calculator;
+        LOGGER.debug("Calculator set");
+    }
+
+    public GridBagConstraints getConstraints()
+    {
+        return constraints;
+    }
+
+    public void setConstraints(GridBagConstraints constraints)
+    {
+        this.constraints = constraints;
+        LOGGER.debug("Constraints set");
+    }
+
+    public JPanel getScientificPanel()
+    {
+        return scientificPanel;
+    }
+
+    public boolean isInitialized()
+    {
+        return isInitialized;
+    }
 
 }

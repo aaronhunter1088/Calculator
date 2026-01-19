@@ -19,24 +19,34 @@ import static Types.Texts.*;
  * @author Michael Ball
  * @version 4.0
  */
-public class CalculatorKeyListener implements KeyListener {
+public class CalculatorKeyListener implements KeyListener
+{
 
     private final Calculator calculator;
 
-    public CalculatorKeyListener(Calculator calculator) {
+    public CalculatorKeyListener(Calculator calculator)
+    {
         this.calculator = calculator;
         setupKeyInputMap();
     }
-    @Override
-    public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyTyped(KeyEvent e)
+    {
+    }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyPressed(KeyEvent e)
+    {
+    }
 
-    private void setupKeyInputMap() {
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+    }
+
+    private void setupKeyInputMap()
+    {
         KeyStroke key0 = KeyStroke.getKeyStroke(KeyEvent.VK_0, 0, false);
         KeyStroke key1 = KeyStroke.getKeyStroke(KeyEvent.VK_1, 0, false);
         KeyStroke key2 = KeyStroke.getKeyStroke(KeyEvent.VK_2, 0, false);
@@ -80,135 +90,173 @@ public class CalculatorKeyListener implements KeyListener {
         calculator.getCurrentPanel().getInputMap().put(keyDivision, DIVISION);
         calculator.getCurrentPanel().getInputMap().put(keyDecimal, DECIMAL);
 
-        calculator.getCurrentPanel().getActionMap().put(ZERO, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(ZERO, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton0().doClick();
                 calculator.getButton0().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(ONE, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(ONE, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton1().doClick();
                 calculator.getButton1().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(TWO, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(TWO, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton2().doClick();
                 calculator.getButton2().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(THREE, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(THREE, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton3().doClick();
                 calculator.getButton3().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(FOUR, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(FOUR, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton4().doClick();
                 calculator.getButton4().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(FIVE, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(FIVE, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton5().doClick();
                 calculator.getButton5().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(SIX, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(SIX, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton6().doClick();
                 calculator.getButton6().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(SEVEN, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(SEVEN, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton7().doClick();
                 calculator.getButton7().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(EIGHT, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(EIGHT, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton8().doClick();
                 calculator.getButton8().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(NINE, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(NINE, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButton9().doClick();
                 calculator.getButton9().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(DELETE, new AbstractAction(){
+        calculator.getCurrentPanel().getActionMap().put(DELETE, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt)
+            {
                 calculator.getButtonDelete().doClick();
                 calculator.getButtonDelete().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(CLEAR, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(CLEAR, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonClear().doClick();
                 calculator.getButtonClear().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(CLEAR_ENTRY, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(CLEAR_ENTRY, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonClearEntry().doClick();
                 calculator.getButtonClearEntry().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(EQUALS, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(EQUALS, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonEquals().doClick();
                 calculator.getButtonEquals().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(ADDITION, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(ADDITION, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonAdd().doClick();
                 calculator.getButtonAdd().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(SUBTRACTION, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(SUBTRACTION, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonSubtract().doClick();
                 calculator.getButtonSubtract().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(MULTIPLICATION, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(MULTIPLICATION, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonMultiply().doClick();
                 calculator.getButtonMultiply().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(DIVISION, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(DIVISION, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonDivide().doClick();
                 calculator.getButtonDivide().setFocusable(false);
             }
         });
-        calculator.getCurrentPanel().getActionMap().put(DECIMAL, new AbstractAction() {
+        calculator.getCurrentPanel().getActionMap().put(DECIMAL, new AbstractAction()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 calculator.getButtonDecimal().doClick();
                 calculator.getButtonDecimal().setFocusable(false);
             }

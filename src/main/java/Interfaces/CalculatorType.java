@@ -5,8 +5,10 @@ package Interfaces;
  * CalculatorType.getValue() returns ENUM("thisValue")
  * CalculatorType.getName() returns the literal ENUM value
  */
-public interface CalculatorType {
+public interface CalculatorType
+{
 
     String getValue();
+
     String getName();
 }

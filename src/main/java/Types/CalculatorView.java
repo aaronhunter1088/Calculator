@@ -13,16 +13,26 @@ import Interfaces.CalculatorType;
  */
 public enum CalculatorView implements CalculatorType
 {
-	VIEW_BASIC("Basic"),
-	VIEW_PROGRAMMER("Programmer"),
-	VIEW_SCIENTIFIC("Scientific"),
-	VIEW_DATE("Date"),
-	VIEW_CONVERTER("Converter");
+    VIEW_BASIC("Basic"),
+    VIEW_PROGRAMMER("Programmer"),
+    VIEW_SCIENTIFIC("Scientific"),
+    VIEW_DATE("Date"),
+    VIEW_CONVERTER("Converter");
 
-	private final String value;
-	CalculatorView(String value) {
-		this.value = value;
-	}
-	public String getValue() { return value; }
-	public String getName() { return this.name(); }
+    private final String value;
+
+    CalculatorView(String value)
+    {
+        this.value = value;
+    }
+
+    public String getValue()
+    {
+        return value;
+    }
+
+    public String getName()
+    {
+        return this.name();
+    }
 }

@@ -22,21 +22,20 @@ public class AreaMethods
     /**
      * The main method used to determine from
      * what unit to convert to
+     *
      * @param calculator the Calculator object
      */
     public static void convertValues(Calculator calculator)
     {
         LOGGER.debug("starting conversion");
-        CalculatorConverterUnits unit1 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
-        CalculatorConverterUnits unit2 = (CalculatorConverterUnits) ((ConverterPanel)calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
+        CalculatorConverterUnits unit1 = (CalculatorConverterUnits) ((ConverterPanel) calculator.getCurrentPanel()).getUnitOptions1().getSelectedItem();
+        CalculatorConverterUnits unit2 = (CalculatorConverterUnits) ((ConverterPanel) calculator.getCurrentPanel()).getUnitOptions2().getSelectedItem();
         LOGGER.info("unit1: " + unit1);
         LOGGER.info("unit2: " + unit2);
         double number;
-        if (calculator.getConverterPanel().isTextField1Selected())
-        {
+        if (calculator.getConverterPanel().isTextField1Selected()) {
             LOGGER.warn("Implement AREA methods from textArea1 to textArea2");
-        }
-        else // going from unit2 to unit1
+        } else // going from unit2 to unit1
         {
             LOGGER.warn("Implement AREA methods from textAres2 to textArea1");
         }

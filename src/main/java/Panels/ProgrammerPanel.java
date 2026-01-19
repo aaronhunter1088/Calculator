@@ -14,7 +14,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,23 +42,22 @@ public class ProgrammerPanel extends JPanel
     @Serial
     private static final long serialVersionUID = 4L;
     private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanel.class.getSimpleName());
-
-    private Calculator calculator;
-    private GridBagConstraints constraints;
-    private JPanel programmerPanel;
     // Programmer specific buttons
     final private JButton
             buttonModulus = new JButton(MODULUS),
             buttonLeftParenthesis = new JButton(LEFT_PARENTHESIS), buttonRightParenthesis = new JButton(RIGHT_PARENTHESIS),
-            buttonRotateLeft = new JButton (ROL), buttonRotateRight = new JButton (ROR),
-            buttonOr = new JButton (OR), buttonXor = new JButton (XOR),
-            buttonShiftLeft = new JButton (LSH), buttonShiftRight = new JButton (RSH),
-            buttonNot = new JButton (NOT), buttonAnd = new JButton (AND),
+            buttonRotateLeft = new JButton(ROL), buttonRotateRight = new JButton(ROR),
+            buttonOr = new JButton(OR), buttonXor = new JButton(XOR),
+            buttonShiftLeft = new JButton(LSH), buttonShiftRight = new JButton(RSH),
+            buttonNot = new JButton(NOT), buttonAnd = new JButton(AND),
             buttonA = new JButton(A), buttonB = new JButton(B),
             buttonC = new JButton(C), buttonD = new JButton(D),
             buttonE = new JButton(E), buttonF = new JButton(F),
             buttonBytes = new JButton(BYTE.toUpperCase()), buttonBases = new JButton(BASE.toUpperCase()),
             buttonShift = new JButton(SHIFT);
+    private Calculator calculator;
+    private GridBagConstraints constraints;
+    private JPanel programmerPanel;
     private boolean isShiftPressed, isInitialized;
 
     /**************** CONSTRUCTORS ****************/
@@ -72,6 +73,7 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The main constructor used to create a ProgrammerPanel
+     *
      * @param calculator the calculator to use
      */
     public ProgrammerPanel(Calculator calculator)
@@ -84,18 +86,18 @@ public class ProgrammerPanel extends JPanel
     /**
      * The main method used to define the ProgrammerPanel
      * and all of its components and their actions
+     *
      * @param calculator the calculator
      */
     public void setupProgrammerPanel(Calculator calculator)
     {
-        if (!isInitialized)
-        {
+        if (!isInitialized) {
             setCalculator(calculator);
             setProgrammerPanel(new JPanel(new GridBagLayout()));
             programmerPanel.setName("ProgrammerPanel");
             setLayout(new GridBagLayout());
             setConstraints(new GridBagConstraints());
-            setSize(new Dimension(227,383)); // sets main size
+            setSize(new Dimension(227, 383)); // sets main size
             setMinimumSize(new Dimension(227, 383)); // sets minimum size
         }
         setupProgrammerPanelComponents();
@@ -146,16 +148,16 @@ public class ProgrammerPanel extends JPanel
      */
     public void addComponentsToPanel()
     {
-        calculator.addComponent(this, constraints, programmerPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, programmerPanel, calculator.getTextPane(), 0, 0, new Insets(1, 1, 1, 1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
 
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryStore(), 0, new Insets(0,1,0,0));
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryRecall(), 1, new Insets(0,0,0,0));
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryClear(), 2, new Insets(0,0,0,0));
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryAddition(), 3, new Insets(0,0,0,0));
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemorySubtraction(), 4, new Insets(0,0,0,0)); // right:1
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonHistory(), 5, new Insets(0,0,0,1));
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryStore(), 0, new Insets(0, 1, 0, 0));
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryRecall(), 1, new Insets(0, 0, 0, 0));
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryClear(), 2, new Insets(0, 0, 0, 0));
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryAddition(), 3, new Insets(0, 0, 0, 0));
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemorySubtraction(), 4, new Insets(0, 0, 0, 0)); // right:1
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonHistory(), 5, new Insets(0, 0, 0, 1));
 
-        calculator.addComponent(this, constraints, programmerPanel, calculator.getMemoryPanel(), 1, 0, new Insets(0,0,0,0), 1, 1, 1.0, 1.0, 0, 0);
+        calculator.addComponent(this, constraints, programmerPanel, calculator.getMemoryPanel(), 1, 0, new Insets(0, 0, 0, 0), 1, 1, 1.0, 1.0, 0, 0);
 
         calculator.getButtonsPanel().removeAll();
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonShiftLeft, 0, 0);
@@ -175,21 +177,21 @@ public class ProgrammerPanel extends JPanel
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton7(), 2, 2);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton8(), 2, 3);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton9(), 2, 4);
-        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonMultiply(),2, 5);
+        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonMultiply(), 2, 5);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonC, 3, 0);
-        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonD,3, 1);
+        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonD, 3, 1);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton4(), 3, 2);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton5(), 3, 3);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton6(), 3, 4);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonSubtract(), 3, 5);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonE, 4, 0);
-        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonF,4, 1);
+        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonF, 4, 1);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton1(), 4, 2);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton2(), 4, 3);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton3(), 4, 4);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonAdd(), 4, 5);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonLeftParenthesis, 5, 0);
-        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRightParenthesis,5, 1);
+        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRightParenthesis, 5, 1);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonNegate(), 5, 2);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton0(), 5, 3);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonDecimal(), 5, 4);
@@ -211,11 +213,11 @@ public class ProgrammerPanel extends JPanel
         Stream.of(getAllProgrammerOperatorButtons(), getAllHexadecimalButtons())
                 .flatMap(Collection::stream)
                 .toList().forEach(button -> {
-            button.setFont(mainFont);
-            button.setPreferredSize(new Dimension(35, 35));
-            button.setBorder(new LineBorder(Color.BLACK));
-            button.setEnabled(true);
-        });
+                    button.setFont(mainFont);
+                    button.setPreferredSize(new Dimension(35, 35));
+                    button.setBorder(new LineBorder(Color.BLACK));
+                    button.setEnabled(true);
+                });
         buttonModulus.setName(MODULUS);
         buttonModulus.addActionListener(this::performModulusButtonAction);
         LOGGER.debug("Modulus button configured");
@@ -266,12 +268,12 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Shift button configured");
 
         buttonBytes.setName(BYTE + LOWER_CASE_S);
-        buttonBytes.setPreferredSize(new Dimension(70, 35) );
+        buttonBytes.setPreferredSize(new Dimension(70, 35));
         buttonBytes.addActionListener(this::performByteButtonAction);
         LOGGER.debug("Bytes button configured");
 
         buttonBases.setName(BASE + LOWER_CASE_S);
-        buttonBases.setPreferredSize(new Dimension(70, 35) );
+        buttonBases.setPreferredSize(new Dimension(70, 35));
         buttonBases.addActionListener(this::performBaseButtonAction);
         LOGGER.debug("Base Button configured");
     }
@@ -316,6 +318,7 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * Method used to enable/disable the number buttons 2-9
+     *
      * @param isEnabled boolean to set the number buttons to
      */
     public void setButtons2To9(boolean isEnabled)
@@ -326,17 +329,20 @@ public class ProgrammerPanel extends JPanel
 
         calculator.getNumberButtons()
                 .forEach(button -> {
-                    if (!"0".equals(button.getName()) ||!"0".equals(button.getName()))
+                    if (!"0".equals(button.getName()) || !"0".equals(button.getName()))
                         button.setEnabled(isEnabled);
                 });
     }
 
     /**
      * Method used to enable/disable the hexadecimal number buttons A-F
+     *
      * @param isEnabled boolean to set the hexadecimal numbers to
      */
     public void setButtonsAToF(boolean isEnabled)
-    { getAllHexadecimalButtons().forEach(button -> button.setEnabled(isEnabled)); }
+    {
+        getAllHexadecimalButtons().forEach(button -> button.setEnabled(isEnabled));
+    }
 
     /**
      * Returns the programmer specific calculator buttons. This
@@ -360,26 +366,33 @@ public class ProgrammerPanel extends JPanel
      * @return Collection of buttons
      */
     public List<JButton> getAllHexadecimalButtons()
-    { return Arrays.asList(buttonA, buttonB, buttonC, buttonD, buttonE, buttonF); }
+    {
+        return Arrays.asList(buttonA, buttonB, buttonC, buttonD, buttonE, buttonF);
+    }
 
     /**
      * Returns the value in its alternative base form
+     *
      * @return String the base representation of the current value
      */
     public String addBaseRepresentation()
     {
         return switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> separateBits(calculator.convertValueToBinary());
-            case BASE_OCTAL -> calculator.convertValueToOctal(); // TODO: add similar separateBits method for octal, grouping by 3s
-            case BASE_DECIMAL -> addThousandsDelimiter(calculator.getValues()[calculator.getValuesPosition()], calculator.getThousandsDelimiter());
-            case BASE_HEXADECIMAL -> calculator.getValues()[calculator.getValuesPosition()]; // TODO: may need to add separateBits for hexa numbers
+            case BASE_OCTAL ->
+                    calculator.convertValueToOctal(); // TODO: add similar separateBits method for octal, grouping by 3s
+            case BASE_DECIMAL ->
+                    addThousandsDelimiter(calculator.getValues()[calculator.getValuesPosition()], calculator.getThousandsDelimiter());
+            case BASE_HEXADECIMAL ->
+                    calculator.getValues()[calculator.getValuesPosition()]; // TODO: may need to add separateBits for hexa numbers
         };
     }
 
     /**
      * Returns the byte and base value
-     * @return String the byte and base
      *
+     * @return String the byte and base
+     * <p>
      * Format: <String><Space><Space><String>
      */
     public String displayByteAndBase()
@@ -388,8 +401,8 @@ public class ProgrammerPanel extends JPanel
                 %s  %s
                 """
                 .formatted(
-                      calculator.getCalculatorByte().getValue(),
-                      calculator.getCalculatorBase().getValue()
+                        calculator.getCalculatorByte().getValue(),
+                        calculator.getCalculatorBase().getValue()
                 );
     }
 
@@ -400,6 +413,7 @@ public class ProgrammerPanel extends JPanel
      * If the representation is empty, or less than 4 bits, it
      * will return the representation as is, otherwise it will
      * first remove any spaces and then add spaces between.
+     *
      * @param representation the String to alter
      * @return String the altered representation with spaces
      */
@@ -488,6 +502,7 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * Add text to the text pane when using the programmer panel
+     *
      * @param text the text to add
      */
     public void appendTextForProgrammerPanel(String text)
@@ -504,24 +519,26 @@ public class ProgrammerPanel extends JPanel
             //
             attribs = new SimpleAttributeSet();
             StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT);
-            doc.insertString(doc.getLength(), NEWLINE+text+NEWLINE, doc.getStyle("alignRight"));
+            doc.insertString(doc.getLength(), NEWLINE + text + NEWLINE, doc.getStyle("alignRight"));
             doc.setParagraphAttributes(doc.getLength() - text.length(), text.length(), attribs, false);
         }
-        catch (BadLocationException e) { logException(e, LOGGER); }
+        catch (BadLocationException e) {
+            logException(e, LOGGER);
+        }
     }
 
     /**
      * Returns the correct lengths allowed when using base binary
      * and different byte values. This uses only the value in the
      * text pane.
+     *
      * @return List the lengths allowed for different bytes
      */
     public List<Integer> getAllowedLengthsOfTextPane()
     {
         List<Integer> lengthsAllowed = new ArrayList<>();
         lengthsAllowed.add(0);  // what if no input??
-        switch (calculator.getCalculatorByte())
-        {
+        switch (calculator.getCalculatorByte()) {
             // TODO: check shorthand
             case BYTE_BYTE -> {
                 //IntStream.rangeClosed(1,8).forEach(lengthsAllowed::add); // for shorthand
@@ -550,6 +567,7 @@ public class ProgrammerPanel extends JPanel
     /**************** ACTIONS ****************/
     /**
      * The programmer actions to perform when the Delete button is clicked
+     *
      * @param actionEvent the click action
      */
     @Deprecated(since = "Use Calculator.performDeleteButtonAction instead", forRemoval = true)
@@ -558,47 +576,38 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         String textPaneTextValue = calculator.getTextPaneValue();
-        switch (calculator.getCalculatorBase())
-        {
+        switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                if (calculator.textPaneContainsBadText())
-                {
+                if (calculator.textPaneContainsBadText()) {
                     confirm(calculator, LOGGER, "Contains bad text. Pressed " + buttonChoice);
-                }
-                else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
-                {
+                } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
                     calculator.appendTextToPane(ENTER_A_NUMBER);
                     confirm(calculator, LOGGER, "No need to perform " + DELETE + " operation");
-                }
-                else
-                {
-                    if (calculator.getValuesPosition() == 1 && calculator.getValues()[1].isEmpty())
-                    { calculator.setValuesPosition(0); } // assume they could have pressed an operator then wish to delete
-                    if (calculator.getValues()[0].isEmpty())
-                    { calculator.getValues()[0] = calculator.getTextPaneValue(); }
+                } else {
+                    if (calculator.getValuesPosition() == 1 && calculator.getValues()[1].isEmpty()) {
+                        calculator.setValuesPosition(0);
+                    } // assume they could have pressed an operator then wish to delete
+                    if (calculator.getValues()[0].isEmpty()) {
+                        calculator.getValues()[0] = calculator.getTextPaneValue();
+                    }
                     logValuesAtPosition(calculator, LOGGER);
                     LOGGER.debug("textPane: {}", calculator.getTextPaneValue());
                     // if no operator has been pushed but text pane has value
-                    if (calculator.isNoOperatorActive() && !calculator.getTextPaneValue().isEmpty())
-                    {
-                        String substring = calculator.getTextPaneValue().substring(0, calculator.getTextPaneValue().length()-1);
-                        if (substring.endsWith(SPACE)) substring = substring.substring(0,substring.length()-1);
+                    if (calculator.isNoOperatorActive() && !calculator.getTextPaneValue().isEmpty()) {
+                        String substring = calculator.getTextPaneValue().substring(0, calculator.getTextPaneValue().length() - 1);
+                        if (substring.endsWith(SPACE)) substring = substring.substring(0, substring.length() - 1);
                         boolean updateValue = substring.isEmpty();
                         calculator.appendTextToPane(substring, updateValue);
                     }
                     // if an operator was pushed, remove operator from text and reset operator
-                    else if (calculator.isOperatorActive())
-                    {
+                    else if (calculator.isOperatorActive()) {
                         LOGGER.debug("An operator has been pushed");
-                        if (calculator.getValuesPosition() == 0)
-                        {
+                        if (calculator.getValuesPosition() == 0) {
                             calculator.getValues()[2] = EMPTY; // reset operator
                             String textWithoutOperator = getValueWithoutAnyOperator(calculator.getTextPaneValue());
                             calculator.appendTextToPane(textWithoutOperator);
-                        }
-                        else
-                        {
-                            String substring = calculator.getTextPaneValue().substring(0,calculator.getTextPaneValue().length()-1);
+                        } else {
+                            String substring = calculator.getTextPaneValue().substring(0, calculator.getTextPaneValue().length() - 1);
                             calculator.appendTextToPane(substring);
                         }
                     }
@@ -608,17 +617,20 @@ public class ProgrammerPanel extends JPanel
                     confirm(calculator, LOGGER, "Pressed " + buttonChoice);
                 }
             }
-            case BASE_OCTAL -> {}
+            case BASE_OCTAL -> {
+            }
             case BASE_DECIMAL -> {
                 calculator.performDeleteButtonAction(actionEvent);
             }
-            case BASE_HEXADECIMAL -> {}
+            case BASE_HEXADECIMAL -> {
+            }
         }
     }
 
     /**
      * The actions to perform when you click Modulus.
      * Modulus returns the remainder of a division operation.
+     *
      * @param actionEvent the click action
      */
     public void performModulusButtonAction(ActionEvent actionEvent)
@@ -627,46 +639,35 @@ public class ProgrammerPanel extends JPanel
         buttonChoice = buttonChoice.equals("MOD") ? MODULUS : buttonChoice;
         logActionButton(buttonChoice, LOGGER);
         String textPaneValue = calculator.getTextPaneValue();
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, cannotPerformOperation(buttonChoice)); }
-        else if (textPaneValue.isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(buttonChoice));
+        } else if (textPaneValue.isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(ADDITION));
-        }
-        else
-        {
-            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty())
-            {
+        } else {
+            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty()) {
                 calculator.getValues()[2] = buttonChoice;
                 appendTextForProgrammerPanel(calculator.getTextPaneValue() + SPACE + buttonChoice);
                 calculator.setNegativeNumber(false);
                 calculator.getButtonDecimal().setEnabled(true);
                 calculator.finishedObtainingFirstNumber(true);
                 confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-            }
-            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty())
-            {
+            } else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
                 // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
                 calculator.performOperation();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
                 calculator.writeContinuedHistory(MODULUS, calculator.getActiveOperator(), calculator.getValueAt(3), true);
-                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3)))
-                {
+                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3))) {
                     calculator.getValues()[2] = EMPTY;
                     calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
                     //calculator.resetCalculatorOperations(false);
-                }
-                else
-                {
+                } else {
                     calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
                     //calculator.resetCalculatorOperations(true);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            }
-            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank())
-            {
+            } else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
                 logEmptyValue(buttonChoice, calculator, LOGGER);
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
@@ -675,35 +676,34 @@ public class ProgrammerPanel extends JPanel
                 calculator.setObtainingFirstNumber(false);
                 calculator.setValuesPosition(1);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            } else if (calculator.isOperatorActive()) {
+                confirm(calculator, LOGGER, cannotPerformOperation(AND));
             }
-            else if (calculator.isOperatorActive())
-            { confirm(calculator, LOGGER, cannotPerformOperation(AND)); }
         }
     }
+
     /**
      * The inner logic for modulus
      */
     public String performModulus()
     {
         String result;
-        if (ZERO.equals(calculator.getValueAt(1)))
-        {
+        if (ZERO.equals(calculator.getValueAt(1))) {
             //calculator.dividedByZero();
             calculator.setObtainingFirstNumber(true);
             result = INFINITY;
-        }
-        else
-        {
+        } else {
             result = new BigDecimal(calculator.getValueAt(0))
                     .remainder(new BigDecimal(calculator.getValueAt(1)))
                     .abs()
-            .toPlainString();
+                    .toPlainString();
         }
         return result;
     }
 
     /**
      * The actions to perform when you click (.
+     *
      * @param actionEvent the click action
      */
     public void performLeftParenthesisButtonAction(ActionEvent actionEvent)
@@ -716,8 +716,10 @@ public class ProgrammerPanel extends JPanel
         calculator.setIsPemdasActive(true);
         confirm(calculator, LOGGER, "Pressed " + buttonChoice);
     }
+
     /**
      * The inner logic for (
+     *
      * @return the result of the operation
      */
     public String performLeftParenthesis()
@@ -727,6 +729,7 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The actions to perform when you click ).
+     *
      * @param actionEvent the click action
      */
     public void performRightParenthesisButtonAction(ActionEvent actionEvent)
@@ -738,8 +741,10 @@ public class ProgrammerPanel extends JPanel
         calculator.writeHistory(buttonChoice, false);
         confirm(calculator, LOGGER, "Pressed " + buttonChoice);
     }
+
     /**
      * The inner logic for )
+     *
      * @return the result of the operation
      */
     public String performRightParenthesis()
@@ -749,21 +754,19 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The actions to perform when you click ROL.
+     *
      * @param actionEvent the click action
      */
     public void performRotateLeftButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + ROL); }
-        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + ROL);
+        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + ROL);
-        }
-        else
-        {
+        } else {
             String rotateLeftResult = performRotateLeft();
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rotateLeftResult) : rotateLeftResult;
             calculator.appendTextToPane(rotateLeftResult);
@@ -772,8 +775,10 @@ public class ProgrammerPanel extends JPanel
             confirm(calculator, LOGGER, LSH + " performed");
         }
     }
+
     /**
      * The inner logic for ROL
+     *
      * @return the result of the operation
      */
     public String performRotateLeft()
@@ -781,9 +786,9 @@ public class ProgrammerPanel extends JPanel
         String positionedValue = calculator.convertValueToBinary();
         LOGGER.debug("before rotate left: {}", positionedValue);
         String valueRotatedLeft = "";
-        for (int bit=0; bit<positionedValue.length(); bit++) {
-            if ((bit+1) < positionedValue.length()) {
-                valueRotatedLeft += positionedValue.charAt(bit+1);
+        for (int bit = 0; bit < positionedValue.length(); bit++) {
+            if ((bit + 1) < positionedValue.length()) {
+                valueRotatedLeft += positionedValue.charAt(bit + 1);
             } else {
                 valueRotatedLeft += positionedValue.charAt(0);
             }
@@ -825,21 +830,19 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The actions to perform when you click ROR.
+     *
      * @param actionEvent the click action
      */
     public void performRotateRightButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + ROR); }
-        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + ROR);
+        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + ROR);
-        }
-        else
-        {
+        } else {
             String rotateRightResult = performRotateRight();
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rotateRightResult) : rotateRightResult;
             calculator.appendTextToPane(rotateRightResult);
@@ -848,8 +851,10 @@ public class ProgrammerPanel extends JPanel
             confirm(calculator, LOGGER, ROR + " performed");
         }
     }
+
     /**
      * The inner logic for ROR
+     *
      * @return the result of the operation
      */
     public String performRotateRight()
@@ -858,14 +863,14 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("before rotate right: {}", positionedValue); // 10000000
         String valueRotatedRight = "";
         String lastToFirst = "";
-        for (int bit=0; bit<positionedValue.length(); bit++) {
-            if (bit == positionedValue.length()-1) {
+        for (int bit = 0; bit < positionedValue.length(); bit++) {
+            if (bit == positionedValue.length() - 1) {
                 lastToFirst += positionedValue.charAt(bit);
             } else {
                 valueRotatedRight += positionedValue.charAt(bit);
             }
         } // 0100 0000
-        LOGGER.debug("reversed: {}", lastToFirst +"," + valueRotatedRight);
+        LOGGER.debug("reversed: {}", lastToFirst + "," + valueRotatedRight);
         valueRotatedRight = lastToFirst + valueRotatedRight;
         String rotatedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueRotatedRight);
         LOGGER.debug("rotated right: {} or {} converted", valueRotatedRight, rotatedAndConverted);
@@ -910,23 +915,19 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         // Ex: 2
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, cannotPerformOperation(OR)); }
-        else if (calculator.getTextPaneValue().isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(OR));
+        } else if (calculator.getTextPaneValue().isEmpty()) {
             logEmptyValue(buttonChoice, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(OR));
-        }
-        else if (isMaximumValue(calculator.getValueAt()))
-        { confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met"); }
-        else if (isMinimumValue(calculator.getValueAt()))
-        { confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met"); }
-        else
-        {
+        } else if (isMaximumValue(calculator.getValueAt())) {
+            confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met");
+        } else if (isMinimumValue(calculator.getValueAt())) {
+            confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met");
+        } else {
             // v[0] is set, then pushes OR
-            if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank())
-            {
+            if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank()) {
                 calculator.getValues()[2] = OR;
                 LOGGER.debug("Appending {} to text pane", buttonChoice);
                 calculator.setObtainingFirstNumber(false);
@@ -936,8 +937,7 @@ public class ProgrammerPanel extends JPanel
                 confirm(calculator, LOGGER, "Pressed " + buttonChoice);
             }
             // v[0] & v[1] set, OR set, then pushes OR, continued operation
-            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty())
-            {
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
                 // TODO: Fix
                 String orResult = performOr();
                 var resultInBase = BASE_BINARY != calculator.getCalculatorBase() ?
@@ -948,18 +948,23 @@ public class ProgrammerPanel extends JPanel
                 //finishedObtainingFirstNumber(false);
 
                 calculator.getValues()[0] = resultInBase;
-                switch (calculator.getCalculatorBase())
-                {
-                    case BASE_BINARY -> { calculator.appendTextToPane(orResult); }
-                    case BASE_OCTAL -> { calculator.appendTextToPane(calculator.convertValueToOctal()); }
-                    case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
-                    case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
+                switch (calculator.getCalculatorBase()) {
+                    case BASE_BINARY -> {
+                        calculator.appendTextToPane(orResult);
+                    }
+                    case BASE_OCTAL -> {
+                        calculator.appendTextToPane(calculator.convertValueToOctal());
+                    }
+                    case BASE_DECIMAL -> {
+                        calculator.appendTextToPane(calculator.getValues()[0]);
+                    }
+                    case BASE_HEXADECIMAL -> {
+                        calculator.appendTextToPane(calculator.convertValueToHexadecimal());
+                    }
                 }
                 calculator.finishedObtainingFirstNumber(false);
                 confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-            }
-            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank())
-            {
+            } else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
                 logEmptyValue(buttonChoice, calculator, LOGGER);
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
@@ -968,13 +973,15 @@ public class ProgrammerPanel extends JPanel
                 calculator.setObtainingFirstNumber(false);
                 calculator.setValuesPosition(1);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            } else if (calculator.isOperatorActive()) {
+                confirm(calculator, LOGGER, cannotPerformOperation(ADDITION));
             }
-            else if (calculator.isOperatorActive())
-            { confirm(calculator, LOGGER, cannotPerformOperation(ADDITION)); }
         }
     }
+
     /**
      * The inner logic for Or
+     *
      * @return the result of the Or operation in binary
      */
     public String performOr()
@@ -1009,24 +1016,21 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + XOR); }
-        else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + XOR);
+        } else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + XOR + " operation");
         }
         // if v[0] is set, v[1] is not, and we have not pushed Xor yet
-        else if (!calculator.getValues()[2].equals(XOR) && !calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty())
-        {
+        else if (!calculator.getValues()[2].equals(XOR) && !calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty()) {
             calculator.getValues()[2] = XOR;
             LOGGER.debug("Appending {} to text pane", buttonChoice);
             calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
             calculator.writeHistory(buttonChoice, true);
             calculator.finishedObtainingFirstNumber(true);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-        }
-        else //if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
+        } else //if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
         {
             calculator.getValues()[2] = XOR;
             String xorResult = performXor();
@@ -1038,19 +1042,28 @@ public class ProgrammerPanel extends JPanel
             //finishedObtainingFirstNumber(false);
 
             calculator.getValues()[0] = resultInBase;
-            switch (calculator.getCalculatorBase())
-            {
-                case BASE_BINARY -> { calculator.appendTextToPane(xorResult); }
-                case BASE_OCTAL -> { calculator.appendTextToPane(calculator.convertValueToOctal()); }
-                case BASE_DECIMAL -> { calculator.appendTextToPane(calculator.getValues()[0]); }
-                case BASE_HEXADECIMAL -> { calculator.appendTextToPane(calculator.convertValueToHexadecimal());}
+            switch (calculator.getCalculatorBase()) {
+                case BASE_BINARY -> {
+                    calculator.appendTextToPane(xorResult);
+                }
+                case BASE_OCTAL -> {
+                    calculator.appendTextToPane(calculator.convertValueToOctal());
+                }
+                case BASE_DECIMAL -> {
+                    calculator.appendTextToPane(calculator.getValues()[0]);
+                }
+                case BASE_HEXADECIMAL -> {
+                    calculator.appendTextToPane(calculator.convertValueToHexadecimal());
+                }
             }
             calculator.finishedObtainingFirstNumber(false);
             confirm(calculator, LOGGER, "Pressed " + buttonChoice);
         }
     }
+
     /**
      * The inner logic for Xor
+     *
      * @return String the result of the operation
      */
     public String performXor()
@@ -1063,7 +1076,7 @@ public class ProgrammerPanel extends JPanel
             char b = v2InBinary.charAt(counter);
             if (a != b &&
                     (a == ONE.charAt(0) && b == ZERO.charAt(0) ||
-                     b == ONE.charAt(0) && a == ZERO.charAt(0))) {
+                            b == ONE.charAt(0) && a == ZERO.charAt(0))) {
                 v1AndV2.append(ONE);
             } else {
                 v1AndV2.append(ZERO);
@@ -1094,10 +1107,13 @@ public class ProgrammerPanel extends JPanel
         StringBuilder newBuffer = new StringBuilder();
         for (int i = 0; i < calculator.determineBits(textPaneValue.length()); i++) {
             String s = Character.toString(textPaneValue.charAt(i));
-            if (s.equals(ZERO))
-                { newBuffer.append(ONE); LOGGER.debug("appending a {}", ONE); }
-            else
-                { newBuffer.append(ZERO); LOGGER.debug("appending a {}", ZERO); }
+            if (s.equals(ZERO)) {
+                newBuffer.append(ONE);
+                LOGGER.debug("appending a {}", ONE);
+            } else {
+                newBuffer.append(ZERO);
+                LOGGER.debug("appending a {}", ZERO);
+            }
         }
         LOGGER.debug("after operation execution: {}", newBuffer);
         // TODO: Rework. It's a bit sloppy atm
@@ -1117,23 +1133,20 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The actions to perform when the And button is clicked
+     *
      * @param actionEvent the click action
      */
     public void performAndButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, cannotPerformOperation(AND)); }
-        else if (calculator.getValueAt().isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(AND));
+        } else if (calculator.getValueAt().isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(AND));
-        }
-        else
-        {
-            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty())
-            {
+        } else {
+            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty()) {
                 calculator.getValues()[2] = AND;
                 calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(), calculator.getThousandsDelimiter()) + SPACE + buttonChoice);
                 calculator.writeHistory(buttonChoice, true);
@@ -1141,29 +1154,22 @@ public class ProgrammerPanel extends JPanel
                 calculator.setNegativeNumber(false);
                 calculator.setValuesPosition(1);
                 confirm(calculator, LOGGER, performedOperation(AND));
-            }
-            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty())
-            {
+            } else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
                 // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
                 calculator.performOperation();
                 calculator.setActiveOperator(buttonChoice);
                 calculator.writeContinuedHistory(AND, calculator.getActiveOperator(), calculator.getValueAt(3), true);
 
-                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3)))
-                {
+                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3))) {
                     calculator.getValues()[2] = EMPTY;
                     calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
                     calculator.finishedObtainingFirstNumber(false);
-                }
-                else
-                {
+                } else {
                     calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
                     calculator.finishedObtainingFirstNumber(true);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            }
-            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank())
-            {
+            } else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
                 logEmptyValue(buttonChoice, calculator, LOGGER);
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
@@ -1172,18 +1178,19 @@ public class ProgrammerPanel extends JPanel
                 calculator.setObtainingFirstNumber(false);
                 calculator.setValuesPosition(1);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            } else if (calculator.isOperatorActive()) {
+                confirm(calculator, LOGGER, cannotPerformOperation(AND));
             }
-            else if (calculator.isOperatorActive())
-            { confirm(calculator, LOGGER, cannotPerformOperation(AND)); }
         }
     }
+
     /**
      * The inner logic for And
      * Takes v[0] and ensures it is in binary form
      * Takes v[1] and ensures it is in binary form
      * Ex: 0101 (5) and
-     *     0110 (6) =
-     *     0100 (4) because 0x0=0, 1x1=1, 0x1=0, 1x0=0
+     * 0110 (6) =
+     * 0100 (4) because 0x0=0, 1x1=1, 0x1=0, 1x0=0
      * return 1 when a=1 and b=1, otherwise 0
      */
     public String performAnd()
@@ -1209,21 +1216,19 @@ public class ProgrammerPanel extends JPanel
      * The actions to perform when the Left Shift button is clicked
      * Unary operation that shifts the bits of a number to the left.
      * Multiplying by 2 has the same effect.
+     *
      * @param actionEvent the click action
      */
     public void performLeftShiftButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + LSH); }
-        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + LSH);
+        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + LSH);
-        }
-        else
-        {
+        } else {
             String leftShiftResult = performLeftShift();
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), leftShiftResult) : leftShiftResult;
             calculator.appendTextToPane(leftShiftResult);
@@ -1232,10 +1237,12 @@ public class ProgrammerPanel extends JPanel
             confirm(calculator, LOGGER, LSH + " performed");
         }
     }
+
     /**
      * The inner logic for LeftShift
      * Will shift left the current value at the current position
      * by multiplying the number by 2.
+     *
      * @return String the result of the operation in the current base
      */
     public String performLeftShift()
@@ -1243,9 +1250,9 @@ public class ProgrammerPanel extends JPanel
         String positionedValue = calculator.convertValueToBinary();
         LOGGER.debug("before shift left: {}", positionedValue);
         String valueShiftedLeft = "";
-        for (int bit=0; bit<positionedValue.length(); bit++) {
-            if ((bit+1) < positionedValue.length()) {
-                valueShiftedLeft += positionedValue.charAt(bit+1);
+        for (int bit = 0; bit < positionedValue.length(); bit++) {
+            if ((bit + 1) < positionedValue.length()) {
+                valueShiftedLeft += positionedValue.charAt(bit + 1);
             } else {
                 valueShiftedLeft += ZERO;
             }
@@ -1281,21 +1288,19 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The actions to perform when the Right Shift button is clicked
+     *
      * @param actionEvent the click action
      */
     public void performRightShiftButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, "Cannot perform " + RSH); }
-        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + RSH);
+        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + RSH);
-        }
-        else
-        {
+        } else {
             String rightShiftResult = performRightShift();
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
             calculator.appendTextToPane(rightShiftResult);
@@ -1304,15 +1309,17 @@ public class ProgrammerPanel extends JPanel
             confirm(calculator, LOGGER, RSH + " performed");
         }
     }
+
     /**
      * The inner logic for RightShift
+     *
      * @return String the result of the operation
      */
     public String performRightShift()
     {
         String positionedValue = calculator.getValues()[calculator.getValuesPosition()]; //calculator.getAppropriateValue();
         if (BASE_DECIMAL != calculator.getCalculatorBase()) positionedValue = calculator.convertValueToDecimal();
-        String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue)/2);
+        String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue) / 2);
         valueShiftedRight = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
                 if (!isMaximumValue(valueShiftedRight)) {
@@ -1370,8 +1377,8 @@ public class ProgrammerPanel extends JPanel
             calculator.getButtonsPanel().remove(buttonAnd);
             calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRotateLeft, 0, 0);
             calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRotateRight, 0, 1);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBytes, 0, 2, null, 2, 1, 1, 1, 0,0);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBases, 0, 4, null, 2, 1, 1, 1, 0,0);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBytes, 0, 2, null, 2, 1, 1, 1, 0, 0);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBases, 0, 4, null, 2, 1, 1, 1, 0, 0);
         }
         calculator.updateLookAndFeel();
     }
@@ -1383,8 +1390,7 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        switch(calculator.getCalculatorByte())
-        {
+        switch (calculator.getCalculatorByte()) {
             case BYTE_BYTE -> {
                 //calculator.setPreviousByte();
                 calculator.setCalculatorByte(BYTE_WORD);
@@ -1392,7 +1398,7 @@ public class ProgrammerPanel extends JPanel
             case BYTE_WORD -> {
                 calculator.setCalculatorByte(BYTE_DWORD);
             }
-            case BYTE_DWORD  -> {
+            case BYTE_DWORD -> {
                 calculator.setCalculatorByte(BYTE_QWORD);
             }
             case BYTE_QWORD -> {
@@ -1413,8 +1419,7 @@ public class ProgrammerPanel extends JPanel
         logActionButton(buttonChoice, LOGGER);
         boolean updateValues = false;
         String converted = EMPTY;
-        switch(calculator.getCalculatorBase())
-        {
+        switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
                 // TODO: Not just is the correct length but also if the length is less than
                 converted = calculator.getTextPaneValue();
@@ -1438,7 +1443,7 @@ public class ProgrammerPanel extends JPanel
                     appendTextForProgrammerPanel(calculator.getValues()[calculator.getValuesPosition()]);
                 }
             }
-            case BASE_DECIMAL  -> {
+            case BASE_DECIMAL -> {
                 calculator.setCalculatorBase(BASE_HEXADECIMAL);
                 // TODO: Create similar logic as i did for setting this for binary.
                 updateValues = true;
@@ -1467,21 +1472,83 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**************** GETTERS ****************/
-    public Calculator getCalculator() { return calculator; }
-    public GridBagConstraints getConstraints() { return constraints; }
-    public JPanel getProgrammerPanel() { return programmerPanel; }
-    public boolean isShiftPressed() { return isShiftPressed; }
-    public boolean isInitialized() { return isInitialized; }
-    public JButton getButtonA() { return buttonA; }
-    public JButton getButtonB() { return buttonB; }
-    public JButton getButtonC() { return buttonC; }
-    public JButton getButtonD() { return buttonD; }
-    public JButton getButtonE() { return buttonE; }
-    public JButton getButtonF() { return buttonF; }
+    public Calculator getCalculator()
+    {
+        return calculator;
+    }
 
     /**************** SETTERS ****************/
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
-    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
-    public void setShiftPressed(boolean shiftPressed) { isShiftPressed = shiftPressed; LOGGER.debug("ShiftPressed set: {}", isShiftPressed ? YES.toLowerCase() : NO.toLowerCase()); }
-    public void setProgrammerPanel(JPanel programmerPanel) { this.programmerPanel = programmerPanel; LOGGER.debug("Programmer panel set"); }
+    public void setCalculator(Calculator calculator)
+    {
+        this.calculator = calculator;
+        LOGGER.debug("Calculator set");
+    }
+
+    public GridBagConstraints getConstraints()
+    {
+        return constraints;
+    }
+
+    public void setConstraints(GridBagConstraints constraints)
+    {
+        this.constraints = constraints;
+        LOGGER.debug("Constraints set");
+    }
+
+    public JPanel getProgrammerPanel()
+    {
+        return programmerPanel;
+    }
+
+    public void setProgrammerPanel(JPanel programmerPanel)
+    {
+        this.programmerPanel = programmerPanel;
+        LOGGER.debug("Programmer panel set");
+    }
+
+    public boolean isShiftPressed()
+    {
+        return isShiftPressed;
+    }
+
+    public void setShiftPressed(boolean shiftPressed)
+    {
+        isShiftPressed = shiftPressed;
+        LOGGER.debug("ShiftPressed set: {}", isShiftPressed ? YES.toLowerCase() : NO.toLowerCase());
+    }
+
+    public boolean isInitialized()
+    {
+        return isInitialized;
+    }
+
+    public JButton getButtonA()
+    {
+        return buttonA;
+    }
+
+    public JButton getButtonB()
+    {
+        return buttonB;
+    }
+
+    public JButton getButtonC()
+    {
+        return buttonC;
+    }
+
+    public JButton getButtonD()
+    {
+        return buttonD;
+    }
+
+    public JButton getButtonE()
+    {
+        return buttonE;
+    }
+
+    public JButton getButtonF()
+    {
+        return buttonF;
+    }
 }

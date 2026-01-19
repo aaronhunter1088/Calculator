@@ -40,18 +40,27 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DatePanelTest
 {
-    static { System.setProperty("appName", DatePanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(DatePanelTest.class.getSimpleName());
 
-    private Calculator calculator;
-    private DatePanel datePanel;
+    static {
+        System.setProperty("appName", DatePanelTest.class.getSimpleName());
+    }
 
     @Mock
     ActionEvent actionEvent;
+    private Calculator calculator;
+    private DatePanel datePanel;
 
     @BeforeAll
     static void beforeAll()
-    {}
+    {
+    }
+
+    @AfterAll
+    static void afterAll()
+    {
+        LOGGER.info("Finished running {}", DatePanelTest.class.getSimpleName());
+    }
 
     @BeforeEach
     void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
@@ -66,8 +75,7 @@ class DatePanelTest
     @AfterEach
     void afterEach() throws InterruptedException, InvocationTargetException
     {
-        for (Calculator calculator : java.util.List.of(calculator))
-        {
+        for (Calculator calculator : java.util.List.of(calculator)) {
             LOGGER.info("Test complete. Closing the calculator...");
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
@@ -76,10 +84,6 @@ class DatePanelTest
             assertFalse(calculator.isVisible());
         }
     }
-
-    @AfterAll
-    static void afterAll()
-    { LOGGER.info("Finished running {}", DatePanelTest.class.getSimpleName()); }
 
     @Test
     public void testSubtractRadioButtonWorks()
@@ -102,7 +106,7 @@ class DatePanelTest
     {
         LocalDate startDate = LocalDate.of(2021, Month.NOVEMBER, 19);
         datePanel.setFromCalendar(new UtilCalendarModel());
-        datePanel.getFromCalendar().setDate(startDate.getYear(), startDate.getMonth().getValue()-1, startDate.getDayOfMonth());
+        datePanel.getFromCalendar().setDate(startDate.getYear(), startDate.getMonth().getValue() - 1, startDate.getDayOfMonth());
         datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendar()));
         datePanel.setFromDatePicker(new JDatePickerImpl(datePanel.getFromDatePanel()));
 
@@ -131,7 +135,7 @@ class DatePanelTest
         LOGGER.info("myBirthday: {}", myBirthday);
         datePanel.setFromCalendar(new UtilCalendarModel());
         // REMEMBER, the date month uses 0 based counting
-        datePanel.getFromCalendar().setDate(myBirthday.getYear(), myBirthday.getMonth().getValue()-1, myBirthday.getDayOfMonth());
+        datePanel.getFromCalendar().setDate(myBirthday.getYear(), myBirthday.getMonth().getValue() - 1, myBirthday.getDayOfMonth());
         datePanel.setFromDatePanel(new JDatePanelImpl(datePanel.getFromCalendar()));
         datePanel.setFromDatePicker(new JDatePickerImpl(datePanel.getFromDatePanel()));
 
@@ -154,7 +158,7 @@ class DatePanelTest
     public void testMethodCalculateDifferenceBetweenDates()
     {
         int year = LocalDate.now().getYear();
-        int month = LocalDate.now().getMonthValue()-1;
+        int month = LocalDate.now().getMonthValue() - 1;
         int day = LocalDate.now().getDayOfMonth();
         datePanel.setFromCalendar(new UtilCalendarModel());
         datePanel.getFromCalendar().setDate(year, month, day);
@@ -193,7 +197,7 @@ class DatePanelTest
     public void testSwitchDatesAndGetSameDifferenceAsTestDirectlyAboveThisOne()
     {
         int year = LocalDate.now().getYear();
-        int month = LocalDate.now().getMonthValue()-1;
+        int month = LocalDate.now().getMonthValue() - 1;
         int day = LocalDate.now().getDayOfMonth();
         datePanel.setToCalendar(new UtilCalendarModel());
         datePanel.getToCalendar().setDate(year, month, day);

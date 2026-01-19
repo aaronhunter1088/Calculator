@@ -7,8 +7,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import static Types.CalculatorView.*;
-import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
+import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Utilities.LoggingUtil.confirm;
 
 /**
@@ -41,7 +40,7 @@ public class CalculatorMain
                 //Start a basic calculator
                 //Calculator calculator = new Calculator(/*VIEW_BASIC*/);
                 //Start a programmer calculator in BINARY mode
-                Calculator calculator = new Calculator(VIEW_PROGRAMMER /*, BINARY*/ );
+                Calculator calculator = new Calculator(VIEW_PROGRAMMER /*, BINARY*/);
                 //Start a programmer calculator in DECIMAL mode
                 //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
                 //Start a date calculator with options1 selected
@@ -57,8 +56,9 @@ public class CalculatorMain
                 calculator.setVisible(true);
                 confirm(calculator, LOGGER, calculator.getCalculatorView().getValue() + " Calculator started");
             }
-            catch (Exception e)
-            { LOGGER.error("Could not create Calculator bc: {}", e.getMessage(), e); }
+            catch (Exception e) {
+                LOGGER.error("Could not create Calculator bc: {}", e.getMessage(), e);
+            }
         });
         Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.info("Closing Calculator")));
     }

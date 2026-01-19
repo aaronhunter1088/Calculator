@@ -1,7 +1,6 @@
 package Calculators;
 
 import Interfaces.CalculatorType;
-import Interfaces.OSDetector;
 import Panels.*;
 import Parent.ArgumentsForTests;
 import Parent.TestParent;
@@ -14,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,7 +21,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -34,10 +31,12 @@ import java.util.stream.Stream;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
-import static Types.CalculatorConverterType.*;
+import static Types.CalculatorConverterType.ANGLE;
+import static Types.CalculatorConverterType.AREA;
 import static Types.CalculatorUtility.*;
 import static Types.CalculatorView.*;
-import static Types.DateOperation.*;
+import static Types.DateOperation.ADD_SUBTRACT_DAYS;
+import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;
@@ -54,88 +53,32 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CalculatorTests extends TestParent
 {
-    static { System.setProperty("appName", CalculatorTests.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(CalculatorTests.class.getSimpleName());
+
+    static {
+        System.setProperty("appName", CalculatorTests.class.getSimpleName());
+    }
 
     @BeforeAll
     static void beforeAll()
-    { mocks = MockitoAnnotations.openMocks(CalculatorTests.class); }
-
-    @BeforeEach
-    void beforeEach() throws InterruptedException, InvocationTargetException
     {
-        SwingUtilities.invokeAndWait(() -> {
-            try
-            {
-                LOGGER.info("Starting test");
-                calculator = spy(new Calculator());
-                Preferences.userNodeForPackage(Calculator.class).clear(); // remove keys
-                calculator.setSystemDetector(systemDetector);
-            }
-            catch (Exception ignored) {}
-        });
-    }
-
-    @AfterEach
-    void afterEach() throws InterruptedException, InvocationTargetException
-    {
-        SwingUtilities.invokeAndWait(() -> {
-            try
-            {
-                LOGGER.info("Test complete. Closing the calculator...");
-                calculator.setVisible(false);
-                calculator.dispose();
-            }
-            catch (Exception e)
-            {
-                LOGGER.error("Error closing calculator: {}", e.getMessage(), e);
-            }
-        });
+        mocks = MockitoAnnotations.openMocks(CalculatorTests.class);
     }
 
     @AfterAll
     static void afterAll()
     {
         LOGGER.info("Finished running {}", CalculatorTests.class.getSimpleName());
-        try
-        {
-            if (mocks != null)
-            { mocks.close(); }
+        try {
+            if (mocks != null) {
+                mocks.close();
+            }
         }
-        catch (Exception e)
-        { LOGGER.error("Error closing mocks: {}", e.getMessage()); }
+        catch (Exception e) {
+            LOGGER.error("Error closing mocks: {}", e.getMessage());
+        }
     }
 
-    /*############## Test Constructors ##################*/
-    @ParameterizedTest
-    @DisplayName("Create A Specific Calculator")
-    @MethodSource("createCalculatorCases")
-    void createACalculator(Class<?> panelInstance, CalculatorView calculatorView, CalculatorBase calculatorBase,
-                           CalculatorByte calculatorByte, CalculatorConverterType converterType, DateOperation dateOperation)
-            throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        switch (calculatorView)
-        {
-            case VIEW_BASIC -> calculator = new Calculator(calculatorView);
-            case VIEW_PROGRAMMER,
-                 VIEW_SCIENTIFIC -> calculator = new Calculator(calculatorView, calculatorBase, calculatorByte);
-            case VIEW_DATE -> calculator = new Calculator(dateOperation);
-            case VIEW_CONVERTER -> calculator = new Calculator(converterType);
-            default -> calculator = new Calculator();
-        }
-        postConstructCalculator();
-        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView);
-        assertInstanceOf(panelInstance, calculator.getCurrentPanel(), "Expected currentPanel to be instanceOf " + panelInstance.getSimpleName());
-        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView);
-        assertEquals(calculatorBase, calculator.getCalculatorBase(), "Expected CalculatorBase to be " + calculatorBase);
-        assertEquals(calculatorByte, calculator.getCalculatorByte(), "Expected CalculatorByte to be " + calculatorByte);
-        assertEquals(converterType, calculator.getConverterType(), "Expected ConverterType to be " + converterType);
-        assertEquals(dateOperation, calculator.getDateOperation(), "Expected DateOperation to be " + dateOperation);
-        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
-        assertNotNull( calculator.getMacIcon(), "Expected mac icon");
-        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
-        assertNull(calculator.getBlankIcon(), "Expected no icon");
-    }
     private static Stream<Arguments> createCalculatorCases()
     {
         return Stream.of(
@@ -171,25 +114,6 @@ class CalculatorTests extends TestParent
         );
     }
 
-    @ParameterizedTest
-    @DisplayName("Create A Calculator By View")
-    @MethodSource("provideCalculatorViews")
-    void createACalculatorByView(CalculatorView calculatorView) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        if (calculatorView != null)
-            calculator = new Calculator(calculatorView);
-        else {
-            calculator = new Calculator();
-            calculatorView = calculator.getCalculatorView();
-        }
-        postConstructCalculator();
-        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView.getValue());
-        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView.getValue());
-        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
-        assertNotNull( calculator.getMacIcon(), "Expected mac icon");
-        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
-        assertNull(calculator.getBlankIcon(), "Expected no icon");
-    }
     private static Stream<Arguments> provideCalculatorViews()
     {
         return Stream.of(
@@ -202,31 +126,6 @@ class CalculatorTests extends TestParent
         );
     }
 
-    /*############## Test Menu Actions ##################*/
-    @ParameterizedTest
-    @DisplayName("Test Changing Styles")
-    @MethodSource("changeStyleCases")
-    void changeCalculatorStyle(String style, boolean isOSWindows) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        when(systemDetector.isWindows()).thenReturn(isOSWindows);
-        Calculator calculator = new Calculator(VIEW_BASIC, BASE_DECIMAL, BYTE_BYTE,
-                AREA, DIFFERENCE_BETWEEN_DATES, systemDetector);
-        postConstructCalculator();
-        // find the matching menu item and ensure actionEvent returns it as the source
-        JMenuItem styleMenuItem = (JMenuItem) Arrays.stream(calculator.getStyleMenu()
-                        .getMenuComponents())
-                .filter(menuItem -> style.equals(menuItem.getName()))
-                .findFirst().orElse(null);
-        if (styleMenuItem != null)
-        {
-            when(actionEvent.getSource()).thenReturn(styleMenuItem);
-
-            calculator.performStyleMenuAction(actionEvent);
-            assertEquals(style, calculator.getCalculatorStyle(), "Expected style to be " + style);
-        } else {
-            assertEquals(METAL, calculator.getCalculatorStyle(), "Expected style to be " + METAL);
-        }
-    }
     private static Stream<Arguments> changeStyleCases()
     {
         return Stream.of(
@@ -245,22 +144,6 @@ class CalculatorTests extends TestParent
         );
     }
 
-    @ParameterizedTest
-    @DisplayName("Test Changing Views")
-    @MethodSource("changeViewsCases")
-    void changeCalculatorViews(Calculator calcInTest, CalculatorType selectedView)
-    {
-        calculator = calcInTest;
-        postConstructCalculator();
-        calcInTest.performViewMenuAction(actionEvent, selectedView);
-
-        String calculatorView = selectedView.getName();
-        if (selectedView.getClass().isInstance(CalculatorConverterType.class))
-        {
-            calculatorView = selectedView.getName();
-        }
-        assertEquals(selectedView.getName(), calculatorView, "Expected CalculatorView to be " + selectedView);
-    }
     private static Stream<Arguments> changeViewsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
     {
         return Stream.of(
@@ -302,6 +185,386 @@ class CalculatorTests extends TestParent
         );
     }
 
+    private static Stream<Arguments> copyCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("1,234.56")
+        );
+    }
+
+    private static Stream<Arguments> pasteCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("1,234.56")
+        );
+    }
+
+    private static Stream<Arguments> clearHistoryCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of("(1) Result: 1\n(2) Result: 2\n(3) Result: 3")
+        );
+    }
+
+    private static Stream<Arguments> showMemoriesCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY, EMPTY),
+                Arguments.of("1", "2"),
+                Arguments.of("1.2", "3")
+        );
+    }
+
+    private static Stream<Arguments> getShowHelpCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        return Stream.of(
+                Arguments.of(new Calculator(VIEW_BASIC)),
+                Arguments.of(new Calculator(VIEW_PROGRAMMER)),
+                Arguments.of(new Calculator(VIEW_SCIENTIFIC)),
+                Arguments.of(new Calculator(DIFFERENCE_BETWEEN_DATES)),
+                Arguments.of(new Calculator(ADD_SUBTRACT_DAYS)),
+                Arguments.of(new Calculator(AREA)),
+                Arguments.of(new Calculator(ANGLE))
+        );
+    }
+
+    private static Stream<Arguments> getAboutCalculatorCases()
+    {
+        return Stream.of(
+                Arguments.of(true),
+                Arguments.of(false)
+        );
+    }
+
+    private static Stream<Arguments> firstNumberCases()
+    {
+        return Stream.of(
+                Arguments.of(false),
+                Arguments.of(true)
+        );
+    }
+
+    private static Stream<Arguments> clearButtonActionsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        Calculator testCalc = new Calculator();
+        return Stream.of(
+                Arguments.of(testCalc.getNumberButtons()),
+                Arguments.of(testCalc.getCommonButtons()),
+                Arguments.of(testCalc.getAllMemoryPanelButtons()),
+                Arguments.of(testCalc.getProgrammerPanel().getAllHexadecimalButtons()),
+                Arguments.of(testCalc.getProgrammerPanel().getAllProgrammerOperatorButtons())
+        );
+    }
+
+    private static Stream<Arguments> memoryValuesCases()
+    {
+        return Stream.of(
+                Arguments.of(EMPTY),
+                Arguments.of(FIVE)
+        );
+    }
+
+    private static Stream<Arguments> initialChecksCases()
+    {
+        return Stream.of(
+                Arguments.of(NOT_A_NUMBER, true),
+                Arguments.of(FIVE, false)
+        );
+    }
+
+    private static Stream<Arguments> textPaneBadTextCases()
+    {
+        return Stream.of(
+                // Bad text
+                Arguments.of(NOT_A_NUMBER, true),
+                Arguments.of(NUMBER_TOO_BIG, true),
+                Arguments.of(ENTER_A_NUMBER, true),
+                Arguments.of(ONLY_POSITIVES, true),
+                Arguments.of(ERROR, true),
+                Arguments.of(INFINITY, true),
+                // No bad text
+                Arguments.of(FIVE, false)
+        );
+    }
+
+    private static Stream<Arguments> endsWithOperatorCases()
+    {
+        return Stream.of(
+                Arguments.of("123 " + ADDITION, true),
+                Arguments.of("456 " + SUBTRACTION, true),
+                Arguments.of("789 " + MULTIPLICATION, true),
+                Arguments.of("100 " + DIVISION, true),
+                Arguments.of("543 " + OR, true),
+                Arguments.of("382 " + XOR, true),
+                Arguments.of("321 " + AND, true),
+                Arguments.of("123.45 " + MODULUS, true),
+                Arguments.of("123", false),
+                Arguments.of("123.", false),
+                Arguments.of("456.78", false),
+                Arguments.of("-999", false)
+        );
+    }
+
+    private static Stream<Arguments> validMemoryStoreButtonActionProvider()
+    {
+        /*
+         * case 1: store normal number is successful
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("1,234").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("1,234").build())
+        );
+    }
+
+    private static Stream<Arguments> invalidMemoryStoreButtonActionProvider()
+    {
+        /*
+         * case 1: cannot store value when operator is active
+         * case 2: cannot store when textPane is empty
+         * case 3: cannot store INFINITY, or badText
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("10").firstBinaryOperator(ADDITION).firstBinaryResult("10|10 " + ADDITION).build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber(INFINITY).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY + ARGUMENT_SEPARATOR + INFINITY).build())
+        );
+    }
+
+    private static Stream<Arguments> validMemoryAddButtonCases()
+    {
+        /*
+         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
+         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
+         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
+         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
+         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("15|5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("0").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("0")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("10").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("5|10")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
+                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
+                        .secondNumber("99.5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("200|99.5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("1").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("-11.25|1")
+                        .build())
+        );
+    }
+
+    private static Stream<Arguments> invalidMemoryAddButtonCases()
+    {
+        /*
+         * case 1: cannot add to memory when textPane contains badText
+         * case 2: cannot add to memory if memory is present but textPane is empty
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER)
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
+                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
+                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 " + ADDITION)
+                        .secondBinaryOperator(MEMORY_ADD).secondBinaryResult("5|5 +")
+                        .build())
+        );
+    }
+
+    private static Stream<Arguments> validMemorySubtractButtonCases()
+    {
+        /*
+         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
+         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
+         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
+         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
+         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("0").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("0")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("10").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-15|10")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
+                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
+                        .secondNumber("99.5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("1|99.5")
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
+                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
+                        .secondNumber("1").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-13.25|1")
+                        .build())
+        );
+    }
+
+    private static Stream<Arguments> invalidMemorySubtractButtonCases()
+    {
+        /*
+         * case 1: cannot subtract from memory when textPane contains badText
+         * case 2: cannot subtract from memory if memory is present but textPane is empty
+         */
+        return Stream.of(
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER)
+                        .build()),
+                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
+                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
+                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 " + ADDITION)
+                        .secondBinaryOperator(MEMORY_SUBTRACT).secondBinaryResult("5|5 +")
+                        .build())
+        );
+    }
+
+    @BeforeEach
+    void beforeEach() throws InterruptedException, InvocationTargetException
+    {
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                LOGGER.info("Starting test");
+                calculator = spy(new Calculator());
+                Preferences.userNodeForPackage(Calculator.class).clear(); // remove keys
+                calculator.setSystemDetector(systemDetector);
+            }
+            catch (Exception ignored) {
+            }
+        });
+    }
+
+    @AfterEach
+    void afterEach() throws InterruptedException, InvocationTargetException
+    {
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                LOGGER.info("Test complete. Closing the calculator...");
+                calculator.setVisible(false);
+                calculator.dispose();
+            }
+            catch (Exception e) {
+                LOGGER.error("Error closing calculator: {}", e.getMessage(), e);
+            }
+        });
+    }
+
+    /*############## Test Constructors ##################*/
+    @ParameterizedTest
+    @DisplayName("Create A Specific Calculator")
+    @MethodSource("createCalculatorCases")
+    void createACalculator(Class<?> panelInstance, CalculatorView calculatorView, CalculatorBase calculatorBase,
+                           CalculatorByte calculatorByte, CalculatorConverterType converterType, DateOperation dateOperation)
+            throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        switch (calculatorView) {
+            case VIEW_BASIC -> calculator = new Calculator(calculatorView);
+            case VIEW_PROGRAMMER,
+                 VIEW_SCIENTIFIC -> calculator = new Calculator(calculatorView, calculatorBase, calculatorByte);
+            case VIEW_DATE -> calculator = new Calculator(dateOperation);
+            case VIEW_CONVERTER -> calculator = new Calculator(converterType);
+            default -> calculator = new Calculator();
+        }
+        postConstructCalculator();
+        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView);
+        assertInstanceOf(panelInstance, calculator.getCurrentPanel(), "Expected currentPanel to be instanceOf " + panelInstance.getSimpleName());
+        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView);
+        assertEquals(calculatorBase, calculator.getCalculatorBase(), "Expected CalculatorBase to be " + calculatorBase);
+        assertEquals(calculatorByte, calculator.getCalculatorByte(), "Expected CalculatorByte to be " + calculatorByte);
+        assertEquals(converterType, calculator.getConverterType(), "Expected ConverterType to be " + converterType);
+        assertEquals(dateOperation, calculator.getDateOperation(), "Expected DateOperation to be " + dateOperation);
+        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
+        assertNotNull(calculator.getMacIcon(), "Expected mac icon");
+        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
+        assertNull(calculator.getBlankIcon(), "Expected no icon");
+    }
+
+    @ParameterizedTest
+    @DisplayName("Create A Calculator By View")
+    @MethodSource("provideCalculatorViews")
+    void createACalculatorByView(CalculatorView calculatorView) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        if (calculatorView != null)
+            calculator = new Calculator(calculatorView);
+        else {
+            calculator = new Calculator();
+            calculatorView = calculator.getCalculatorView();
+        }
+        postConstructCalculator();
+        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView.getValue());
+        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView.getValue());
+        assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
+        assertNotNull(calculator.getMacIcon(), "Expected mac icon");
+        assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");
+        assertNull(calculator.getBlankIcon(), "Expected no icon");
+    }
+
+    /*############## Test Menu Actions ##################*/
+    @ParameterizedTest
+    @DisplayName("Test Changing Styles")
+    @MethodSource("changeStyleCases")
+    void changeCalculatorStyle(String style, boolean isOSWindows) throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        when(systemDetector.isWindows()).thenReturn(isOSWindows);
+        Calculator calculator = new Calculator(VIEW_BASIC, BASE_DECIMAL, BYTE_BYTE,
+                AREA, DIFFERENCE_BETWEEN_DATES, systemDetector);
+        postConstructCalculator();
+        // find the matching menu item and ensure actionEvent returns it as the source
+        JMenuItem styleMenuItem = (JMenuItem) Arrays.stream(calculator.getStyleMenu()
+                        .getMenuComponents())
+                .filter(menuItem -> style.equals(menuItem.getName()))
+                .findFirst().orElse(null);
+        if (styleMenuItem != null) {
+            when(actionEvent.getSource()).thenReturn(styleMenuItem);
+
+            calculator.performStyleMenuAction(actionEvent);
+            assertEquals(style, calculator.getCalculatorStyle(), "Expected style to be " + style);
+        } else {
+            assertEquals(METAL, calculator.getCalculatorStyle(), "Expected style to be " + METAL);
+        }
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test Changing Views")
+    @MethodSource("changeViewsCases")
+    void changeCalculatorViews(Calculator calcInTest, CalculatorType selectedView)
+    {
+        calculator = calcInTest;
+        postConstructCalculator();
+        calcInTest.performViewMenuAction(actionEvent, selectedView);
+
+        String calculatorView = selectedView.getName();
+        if (selectedView.getClass().isInstance(CalculatorConverterType.class)) {
+            calculatorView = selectedView.getName();
+        }
+        assertEquals(selectedView.getName(), calculatorView, "Expected CalculatorView to be " + selectedView);
+    }
+
     @Test
     public void switchingFromBasicToProgrammerConvertsTextArea()
     {
@@ -338,18 +601,12 @@ class CalculatorTests extends TestParent
                 } else {
                     throw new CalculatorError("Clipboard data is not a string");
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 fail(e.getMessage());
             }
         }
         assertEquals(currentTextPaneValue, clipboardText, "Clipboard value is incorrect");
-    }
-    private static Stream<Arguments> copyCases()
-    {
-        return Stream.of(
-                Arguments.of(EMPTY),
-                Arguments.of("1,234.56")
-        );
     }
 
     @ParameterizedTest
@@ -368,13 +625,6 @@ class CalculatorTests extends TestParent
 
         assertEquals(currentTextPaneValue, calculator.getTextPaneValue(), "TextPane value is incorrect");
     }
-    private static Stream<Arguments> pasteCases()
-    {
-        return Stream.of(
-                Arguments.of(EMPTY),
-                Arguments.of("1,234.56")
-        );
-    }
 
     @ParameterizedTest
     @DisplayName("Test Clear History Action")
@@ -389,13 +639,6 @@ class CalculatorTests extends TestParent
         calculator.performClearHistoryAction(actionEvent);
 
         assertTrue(calculator.getHistoryTextPane().getText().isEmpty(), "History text is incorrect");
-    }
-    private static Stream<Arguments> clearHistoryCases()
-    {
-        return Stream.of(
-                Arguments.of(EMPTY),
-                Arguments.of("(1) Result: 1\n(2) Result: 2\n(3) Result: 3")
-        );
     }
 
     @ParameterizedTest
@@ -413,24 +656,13 @@ class CalculatorTests extends TestParent
         calculator.performShowMemoriesAction(actionEvent);
 
         String actualHistory = calculator.getHistoryTextPane().getText();
-        if (calculator.isMemoryValuesEmpty())
-        {
-            assertEquals(previousHistory+NEWLINE+NO_MEMORIES_STORED, actualHistory,
+        if (calculator.isMemoryValuesEmpty()) {
+            assertEquals(previousHistory + NEWLINE + NO_MEMORIES_STORED, actualHistory,
                     "History text is incorrect when no memories stored");
-        }
-        else
-        {
-            assertEquals(previousHistory+NEWLINE+MEMORIES+" ["+memoryValue1+"], ["+memoryValue2+"]", actualHistory,
+        } else {
+            assertEquals(previousHistory + NEWLINE + MEMORIES + " [" + memoryValue1 + "], [" + memoryValue2 + "]", actualHistory,
                     "History text is incorrect when memories are stored");
         }
-    }
-    private static Stream<Arguments> showMemoriesCases()
-    {
-        return Stream.of(
-                Arguments.of(EMPTY, EMPTY),
-                Arguments.of("1", "2"),
-                Arguments.of("1.2", "3")
-        );
     }
 
     // Requires manual intervention to close help panel
@@ -444,18 +676,6 @@ class CalculatorTests extends TestParent
         calculator.setHelpString(calculator.getHelpString());
         assertDoesNotThrow(() -> calculator.performShowHelpAction(actionEvent));
     }
-    private static Stream<Arguments> getShowHelpCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        return Stream.of(
-                Arguments.of(new Calculator(VIEW_BASIC)),
-                Arguments.of(new Calculator(VIEW_PROGRAMMER)),
-                Arguments.of(new Calculator(VIEW_SCIENTIFIC)),
-                Arguments.of(new Calculator(DIFFERENCE_BETWEEN_DATES)),
-                Arguments.of(new Calculator(ADD_SUBTRACT_DAYS)),
-                Arguments.of(new Calculator(AREA)),
-                Arguments.of(new Calculator(ANGLE))
-        );
-    }
 
     // Requires manual intervention to close about calculator panel
     @ParameterizedTest
@@ -467,16 +687,9 @@ class CalculatorTests extends TestParent
         when(systemDetector.isMac()).thenReturn(isOSMac);
         calculator.performAboutCalculatorAction(actionEvent);
         if (isOSMac)
-            assertTrue(calculator.getAboutCalculatorString().startsWith("<html> "+APPLE), "Expected About Calculator Text to have Apple icon");
+            assertTrue(calculator.getAboutCalculatorString().startsWith("<html> " + APPLE), "Expected About Calculator Text to have Apple icon");
         else
-            assertTrue(calculator.getAboutCalculatorString().startsWith("<html> "+WINDOWS), "Expected About Calculator Text to have Window icon");
-    }
-    private static Stream<Arguments> getAboutCalculatorCases()
-    {
-        return Stream.of(
-                Arguments.of(true),
-                Arguments.of(false)
-        );
+            assertTrue(calculator.getAboutCalculatorString().startsWith("<html> " + WINDOWS), "Expected About Calculator Text to have Window icon");
     }
 
     /*############## Test Button Actions ##################*/
@@ -540,21 +753,11 @@ class CalculatorTests extends TestParent
         calculator.values[calculator.valuesPosition] = FIVE; // has a value currently
         calculator.finishedObtainingFirstNumber(finishedCase);
 
-        if (finishedCase)
-        {
+        if (finishedCase) {
             assertEquals(1, calculator.getValuesPosition(), "Expected valuesPosition to be 1");
-        }
-        else
-        {
+        } else {
             assertEquals(0, calculator.getValuesPosition(), "Expected valuesPosition to be 0");
         }
-    }
-    private static Stream<Arguments> firstNumberCases()
-    {
-        return Stream.of(
-                Arguments.of(false),
-                Arguments.of(true)
-        );
     }
 
     @ParameterizedTest
@@ -570,17 +773,6 @@ class CalculatorTests extends TestParent
 
         buttonsToTest.forEach(numberButton ->
                 assertSame(0, numberButton.getActionListeners().length, "Expecting no actions on " + numberButton.getName()));
-    }
-    private static Stream<Arguments> clearButtonActionsCases() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
-    {
-        Calculator testCalc = new Calculator();
-        return Stream.of(
-                Arguments.of(testCalc.getNumberButtons()),
-                Arguments.of(testCalc.getCommonButtons()),
-                Arguments.of(testCalc.getAllMemoryPanelButtons()),
-                Arguments.of(testCalc.getProgrammerPanel().getAllHexadecimalButtons()),
-                Arguments.of(testCalc.getProgrammerPanel().getAllProgrammerOperatorButtons())
-        );
     }
 
     @Test
@@ -615,8 +807,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         if (memoryValues.equals(EMPTY)) assertTrue(calculator.isMemoryValuesEmpty());
-        else
-        {
+        else {
             when(actionEvent.getActionCommand())
                     .thenReturn(FIVE)
                     .thenReturn(MEMORY_STORE);
@@ -624,13 +815,6 @@ class CalculatorTests extends TestParent
             calculator.performMemoryStoreAction(actionEvent);
             assertFalse(calculator.isMemoryValuesEmpty());
         }
-    }
-    private static Stream<Arguments> memoryValuesCases()
-    {
-        return Stream.of(
-                Arguments.of(EMPTY),
-                Arguments.of(FIVE)
-        );
     }
 
     @Test
@@ -657,13 +841,6 @@ class CalculatorTests extends TestParent
 
         assertEquals(expectedIssues, issuesFound, "Expected issues found to be true");
     }
-    private static Stream<Arguments> initialChecksCases()
-    {
-        return Stream.of(
-                Arguments.of(NOT_A_NUMBER, true),
-                Arguments.of(FIVE, false)
-        );
-    }
 
     @ParameterizedTest
     @DisplayName("Test TextPaneContainsBadText()")
@@ -672,21 +849,7 @@ class CalculatorTests extends TestParent
     {
         postConstructCalculator();
         calculator.appendTextToPane(textPaneValue);
-        assertEquals(expectedContainsBadText, calculator.textPaneContainsBadText(),"Expected textPane to contain error");
-    }
-    private static Stream<Arguments> textPaneBadTextCases()
-    {
-        return Stream.of(
-                // Bad text
-                Arguments.of(NOT_A_NUMBER, true),
-                Arguments.of(NUMBER_TOO_BIG, true),
-                Arguments.of(ENTER_A_NUMBER, true),
-                Arguments.of(ONLY_POSITIVES, true),
-                Arguments.of(ERROR, true),
-                Arguments.of(INFINITY, true),
-                // No bad text
-                Arguments.of(FIVE, false)
-        );
+        assertEquals(expectedContainsBadText, calculator.textPaneContainsBadText(), "Expected textPane to contain error");
     }
 
     @ParameterizedTest
@@ -718,28 +881,28 @@ class CalculatorTests extends TestParent
 
     @ParameterizedTest()
     @CsvSource({
-        // No Commas Added
-        "1.25, 1.25",
-        "123, 123",
-        "-123, -123",
-        // Commas Added
-        "1234,'1,234'",
-        "-1234, '-1,234'",
-        "1234.56, '1,234.56'",
-        "12345.67, '12,345.67'",
-        "123456.78, '123,456.78'",
-        "1234567.89, '1,234,567.89'",
-        "123456, '123,456'"
+            // No Commas Added
+            "1.25, 1.25",
+            "123, 123",
+            "-123, -123",
+            // Commas Added
+            "1234,'1,234'",
+            "-1234, '-1,234'",
+            "1234.56, '1,234.56'",
+            "12345.67, '12,345.67'",
+            "123456.78, '123,456.78'",
+            "1234567.89, '1,234,567.89'",
+            "123456, '123,456'"
     })
     @DisplayName("Test addThousandsDelimiter")
     void testAddThousandsDelimiter(String input, String expecting)
     {
         postConstructCalculator();
         when(actionEvent.getActionCommand())
-                .thenReturn(String.valueOf(input.charAt(input.length()-1)));
+                .thenReturn(String.valueOf(input.charAt(input.length() - 1)));
         calculator.valuesPosition = 0;
         calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(input));
-        calculator.values[calculator.valuesPosition] = input.substring(0, input.length()-1);
+        calculator.values[calculator.valuesPosition] = input.substring(0, input.length() - 1);
         calculator.appendTextToPane(calculator.values[calculator.valuesPosition]);
         calculator.performNumberButtonAction(actionEvent);
         assertEquals(expecting, calculator.getTextPaneValue(), "Expected textPane to be " + expecting);
@@ -778,23 +941,6 @@ class CalculatorTests extends TestParent
         boolean actualEndsWithOperator = calculator.endsWithOperator(valueToTest);
         assertEquals(expectedEndsWithOperator, actualEndsWithOperator,
                 "Expected " + valueToTest + " to be " + expectedEndsWithOperator);
-    }
-    private static Stream<Arguments> endsWithOperatorCases()
-    {
-        return Stream.of(
-                Arguments.of("123 "+ADDITION, true),
-                Arguments.of("456 "+SUBTRACTION, true),
-                Arguments.of("789 "+MULTIPLICATION, true),
-                Arguments.of("100 "+DIVISION, true),
-                Arguments.of("543 "+OR, true),
-                Arguments.of("382 "+XOR, true),
-                Arguments.of("321 "+AND, true),
-                Arguments.of("123.45 "+MODULUS, true),
-                Arguments.of("123", false),
-                Arguments.of("123.", false),
-                Arguments.of("456.78", false),
-                Arguments.of("-999", false)
-        );
     }
 
     // TODO: These min/max tests could be improved to test edge cases better
@@ -863,15 +1009,6 @@ class CalculatorTests extends TestParent
 
         assertHistory(arguments, calculatorHistory);
     }
-    private static Stream<Arguments> validMemoryStoreButtonActionProvider()
-    {
-        /*
-         * case 1: store normal number is successful
-         */
-        return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("1,234").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("1,234").build())
-        );
-    }
 
     @Test
     @DisplayName("Test MemoryStore overwrites memory when memory is full")
@@ -901,19 +1038,6 @@ class CalculatorTests extends TestParent
         calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
         assertHistory(arguments, calculatorHistory);
-    }
-    private static Stream<Arguments> invalidMemoryStoreButtonActionProvider()
-    {
-        /*
-         * case 1: cannot store value when operator is active
-         * case 2: cannot store when textPane is empty
-         * case 3: cannot store INFINITY, or badText
-         */
-        return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber("10").firstBinaryOperator(ADDITION).firstBinaryResult("10|10 "+ADDITION).build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER).build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_STORE).firstNumber(INFINITY).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+INFINITY).build())
-        );
     }
 
     /* Valid MEMORY RECALL */
@@ -985,43 +1109,6 @@ class CalculatorTests extends TestParent
 
         assertHistory(arguments, calculatorHistory);
     }
-    private static Stream<Arguments> validMemoryAddButtonCases()
-    {
-        /*
-         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
-         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
-         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
-         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
-         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
-         */
-        return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("15|5")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("0").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("0")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("10").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("5|10")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
-                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
-                        .secondNumber("99.5").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("200|99.5")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("1").secondUnaryOperator(MEMORY_ADD).secondUnaryResult("-11.25|1")
-                        .build())
-        );
-    }
 
     /* Invalid MEMORY ADD */
     @ParameterizedTest
@@ -1037,23 +1124,6 @@ class CalculatorTests extends TestParent
         calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
         assertHistory(arguments, calculatorHistory);
-    }
-    private static Stream<Arguments> invalidMemoryAddButtonCases()
-    {
-        /*
-         * case 1: cannot add to memory when textPane contains badText
-         * case 2: cannot add to memory if memory is present but textPane is empty
-         */
-        return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_ADD)
-                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
-                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 "+ADDITION)
-                        .secondBinaryOperator(MEMORY_ADD).secondBinaryResult("5|5 +")
-                        .build())
-        );
     }
 
     /* Valid MEMORY SUBTRACT */
@@ -1071,43 +1141,6 @@ class CalculatorTests extends TestParent
 
         assertHistory(arguments, calculatorHistory);
     }
-    private static Stream<Arguments> validMemorySubtractButtonCases()
-    {
-        /*
-         * case 1: Input 10. Store 10. Clear Entry. Input 5. Add to memory. Memory is 15. TextPane shows 5
-         * case 2: Input 0. Store 0. Clear Entry. Input 0. Add 0 to memory. Memory is 0. TextPane shows 0
-         * case 3: Input -5. Store -5. Clear Entry. Input 10. Add 10 to memory. Memory is 5. TextPane shows 10
-         * case 4: Input 100.5. Store 100.5. Clear Entry. Input 99.5. Add 99.5 to memory. Memory is 200. TextPane shows 99.5
-         * case 5: Input -12.25. Store -12.25. Clear Entry. Input 1. Add 1 to memory. Memory is -11.25. TextPane shows 1
-         */
-        return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber("10").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("10")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("5")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber("0").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("0")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("0").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("0")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber("-5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-5")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("10").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-15|10")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber("100.5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("100.5")
-                        .firstBinaryOperator(CLEAR_ENTRY).secondUnaryResult(EMPTY)
-                        .secondNumber("99.5").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("1|99.5")
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber("-12.25").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("-12.25")
-                        .firstBinaryOperator(CLEAR_ENTRY).firstBinaryResult(EMPTY)
-                        .secondNumber("1").secondUnaryOperator(MEMORY_SUBTRACT).secondUnaryResult("-13.25|1")
-                        .build())
-        );
-    }
 
     /* Invalid MEMORY SUBTRACT */
     @ParameterizedTest
@@ -1123,23 +1156,6 @@ class CalculatorTests extends TestParent
         calculatorHistory = performTest(arguments, calculatorHistory, LOGGER);
 
         assertHistory(arguments, calculatorHistory);
-    }
-    private static Stream<Arguments> invalidMemorySubtractButtonCases()
-    {
-        /*
-         * case 1: cannot subtract from memory when textPane contains badText
-         * case 2: cannot subtract from memory if memory is present but textPane is empty
-         */
-        return Stream.of(
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber(ENTER_A_NUMBER).firstUnaryOperator(MEMORY_STORE).firstUnaryResult(EMPTY+ARGUMENT_SEPARATOR+ENTER_A_NUMBER)
-                        .build()),
-                Arguments.of(ArgumentsForTests.builder(MEMORY_SUBTRACT)
-                        .firstNumber("5").firstUnaryOperator(MEMORY_STORE).firstUnaryResult("5")
-                        .secondNumber(EMPTY).secondUnaryOperator(ADDITION).secondUnaryResult("5|5 "+ADDITION)
-                        .secondBinaryOperator(MEMORY_SUBTRACT).secondBinaryResult("5|5 +")
-                        .build())
-        );
     }
 
     /* History Button */

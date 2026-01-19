@@ -17,9 +17,19 @@ public enum DateOperation implements CalculatorType
     ADD_SUBTRACT_DAYS("Add or subtract days");
 
     private final String value;
-    DateOperation(String value) { this.value = value; }
-    public String getValue() {
+
+    DateOperation(String value)
+    {
+        this.value = value;
+    }
+
+    public String getValue()
+    {
         return value;
     }
-    public String getName() { return this.name(); }
+
+    public String getName()
+    {
+        return this.name();
+    }
 }

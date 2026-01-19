@@ -19,9 +19,19 @@ public enum CalculatorByte implements CalculatorType
     BYTE_QWORD("QWord");
 
     private final String value;
-    CalculatorByte(String value) {
+
+    CalculatorByte(String value)
+    {
         this.value = value;
     }
-    public String getValue() { return value; }
-    public String getName() { return this.name(); }
+
+    public String getValue()
+    {
+        return value;
+    }
+
+    public String getName()
+    {
+        return this.name();
+    }
 }

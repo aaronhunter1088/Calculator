@@ -13,8 +13,9 @@ import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import static Types.CalculatorUtility.*;
-import static Types.CalculatorView.*;
+import static Types.CalculatorUtility.addThousandsDelimiter;
+import static Types.CalculatorUtility.isFractionalNumber;
+import static Types.CalculatorView.VIEW_BASIC;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;
 
@@ -62,6 +63,7 @@ public class BasicPanel extends JPanel
 
     /**
      * The main constructor used to create a BasicPanel
+     *
      * @param calculator the Calculator to use
      */
     public BasicPanel(Calculator calculator)
@@ -74,12 +76,12 @@ public class BasicPanel extends JPanel
     /**
      * The main method used to define the BasicPanel
      * and all of its components and their actions
+     *
      * @param calculator the Calculator object
      */
     public void setupBasicPanel(Calculator calculator)
     {
-        if (!isInitialized)
-        {
+        if (!isInitialized) {
             setCalculator(calculator);
             setBasicPanel(new JPanel(new GridBagLayout()));
             basicPanel.setName("BasicPanel");
@@ -229,7 +231,7 @@ public class BasicPanel extends JPanel
                 """
                 .formatted(VIEW_BASIC.getValue(),
                         ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS, // Basic Operators
-                        PERCENT, SQUARE_ROOT,SQUARED, FRACTION, NEGATE,          // Function Operators
+                        PERCENT, SQUARE_ROOT, SQUARED, FRACTION, NEGATE,          // Function Operators
                         ENTER_A_NUMBER,
                         MEMORY_STORE, calculator.getMemoryValues().length, // MemoryStore,
                         MEMORY_CLEAR,
@@ -261,16 +263,16 @@ public class BasicPanel extends JPanel
      */
     private void addComponentsToPanel()
     {
-        calculator.addComponent(this, constraints, basicPanel, calculator.getTextPane(), 0, 0, new Insets(1,1,1,1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, basicPanel, calculator.getTextPane(), 0, 0, new Insets(1, 1, 1, 1), 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, 0);
 
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryStore(),0, 0, new Insets(0,1,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryRecall(),0, 1, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryClear(),0, 2, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryAddition(),0, 3, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemorySubtraction(),0, 4, new Insets(0,0,0,0),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0); //right:1
-        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonHistory(),0, 5, new Insets(0, 0, 0, 1),1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryStore(), 0, 0, new Insets(0, 1, 0, 0), 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryRecall(), 0, 1, new Insets(0, 0, 0, 0), 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryClear(), 0, 2, new Insets(0, 0, 0, 0), 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemoryAddition(), 0, 3, new Insets(0, 0, 0, 0), 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonMemorySubtraction(), 0, 4, new Insets(0, 0, 0, 0), 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0); //right:1
+        calculator.addComponent(this, constraints, calculator.getMemoryPanel(), calculator.getButtonHistory(), 0, 5, new Insets(0, 0, 0, 1), 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, 0);
 
-        calculator.addComponent(this, constraints, basicPanel, calculator.getMemoryPanel(), 1, 0, new Insets(0,0,0,0),1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
+        calculator.addComponent(this, constraints, basicPanel, calculator.getMemoryPanel(), 1, 0, new Insets(0, 0, 0, 0), 1, 1, 0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
 
         //constraints.fill = GridBagConstraints.BOTH;
         calculator.getButtonsPanel().removeAll();
@@ -291,9 +293,9 @@ public class BasicPanel extends JPanel
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton6(), 3, 2);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonSubtract(), 3, 3);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton1(), 4, 0);
-        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton2(),4, 1);
+        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton2(), 4, 1);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton3(), 4, 2);
-        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonAdd(),4, 3);
+        calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonAdd(), 4, 3);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonNegate(), 5, 0);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButton0(), 5, 1);
         calculator.addComponent(this, constraints, calculator.getButtonsPanel(), calculator.getButtonDecimal(), 5, 2);
@@ -309,26 +311,23 @@ public class BasicPanel extends JPanel
     /**************** ACTIONS ****************/
     /**
      * The actions to perform when the Percent button is clicked
+     *
      * @param actionEvent the click action
      */
     public void performPercentButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, cannotPerformOperation(PERCENT)); }
-        else if (calculator.getTextPaneValue().isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(PERCENT));
+        } else if (calculator.getTextPaneValue().isEmpty()) {
             logEmptyValue(PERCENT, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(PERCENT));
-        }
-        else
-        {
+        } else {
             String value = calculator.getAppropriateValue();
             boolean endsWithBinaryOperator = calculator.getBasicPanelBinaryOperators().contains(calculator.getActiveOperator()) && calculator.getTextPaneValue().endsWith(calculator.getActiveOperator());
-            if (!value.isEmpty() && !endsWithBinaryOperator)
-            {
+            if (!value.isEmpty() && !endsWithBinaryOperator) {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
@@ -337,23 +336,23 @@ public class BasicPanel extends JPanel
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
-                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
-                {
+                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty()) {
                     calculator.setActiveOperator(EMPTY);
-                }
-                else
-                {
+                } else {
                     calculator.setActiveOperator(currentOperator);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
-            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue()))
-            { confirm(calculator, LOGGER, cannotPerformOperation(PERCENT)); }
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue())) {
+                confirm(calculator, LOGGER, cannotPerformOperation(PERCENT));
+            }
         }
     }
+
     /**
      * The inner logic for performing the Percent operation
+     *
      * @return the result of the Percent operation
      */
     public String performPercent()
@@ -362,10 +361,9 @@ public class BasicPanel extends JPanel
         //BigDecimal currentNumber = new BigDecimal(calculator.getValueAt());
         String currentNum = calculator.getAppropriateValue();
         BigDecimal currentNumber = new BigDecimal(currentNum);
-        BigDecimal oneHundred = new BigDecimal(ONE+ZERO+ZERO);
+        BigDecimal oneHundred = new BigDecimal(ONE + ZERO + ZERO);
         result = currentNumber.divide(oneHundred, MathContext.DECIMAL128).toPlainString();
-        if (isFractionalNumber(result))
-        {
+        if (isFractionalNumber(result)) {
             result = new BigDecimal(result).stripTrailingZeros().toPlainString();
         }
         return result;
@@ -373,26 +371,23 @@ public class BasicPanel extends JPanel
 
     /**
      * The actions to perform when the Squared button is clicked
+     *
      * @param actionEvent the click action
      */
     public void performSquaredButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, cannotPerformOperation(SQUARED)); }
-        else if (calculator.getTextPaneValue().isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(SQUARED));
+        } else if (calculator.getTextPaneValue().isEmpty()) {
             logEmptyValue(SQUARED, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(SQUARED));
-        }
-        else
-        {
+        } else {
             String value = calculator.getAppropriateValue();
             boolean endsWithBinaryOperator = calculator.getBasicPanelBinaryOperators().contains(calculator.getActiveOperator()) && calculator.getTextPaneValue().endsWith(calculator.getActiveOperator());
-            if (!value.isEmpty() && !endsWithBinaryOperator)
-            {
+            if (!value.isEmpty() && !endsWithBinaryOperator) {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 String currentOperator = calculator.getActiveOperator();
                 calculator.setActiveOperator(buttonChoice);
@@ -401,23 +396,23 @@ public class BasicPanel extends JPanel
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
-                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
-                {
+                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty()) {
                     calculator.setActiveOperator(EMPTY);
-                }
-                else
-                {
+                } else {
                     calculator.setActiveOperator(currentOperator);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
-            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue()))
-            { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue())) {
+                confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
+            }
         }
     }
+
     /**
      * The inner logic for performing the Squared operation
+     *
      * @return the result of the Squared operation
      */
     public String performSquared()
@@ -426,8 +421,7 @@ public class BasicPanel extends JPanel
         BigDecimal currentNumber = new BigDecimal(currentNum);
         double number = currentNumber.doubleValue();
         String result = BigDecimal.valueOf(Math.pow(number, 2)).toPlainString();
-        if (isFractionalNumber(result))
-        {
+        if (isFractionalNumber(result)) {
             result = new BigDecimal(result).stripTrailingZeros().toPlainString();
         }
         return result;
@@ -435,26 +429,23 @@ public class BasicPanel extends JPanel
 
     /**
      * The actions to perform when the Fraction button is clicked
+     *
      * @param actionEvent the click action
      */
     public void performFractionButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText())
-        { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
-        else if (calculator.getTextPaneValue().isEmpty())
-        {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
+        } else if (calculator.getTextPaneValue().isEmpty()) {
             logEmptyValue(FRACTION, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
-        }
-        else
-        {
+        } else {
             String value = calculator.getAppropriateValue();
             boolean endsWithBinaryOperator = calculator.getBasicPanelBinaryOperators().contains(calculator.getActiveOperator()) && calculator.getTextPaneValue().endsWith(calculator.getActiveOperator());
-            if (!value.isEmpty() && !endsWithBinaryOperator)
-            {
+            if (!value.isEmpty() && !endsWithBinaryOperator) {
                 if (calculator.getValueAt().isEmpty()) logUseTextPaneValueWarning(calculator, LOGGER, buttonChoice);
                 calculator.getValues()[calculator.getValuesPosition()] = value;
                 String currentOperator = calculator.getActiveOperator();
@@ -465,23 +456,23 @@ public class BasicPanel extends JPanel
                 calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(calculator.getValueAt(3)));
                 calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValueAt(3)));
                 calculator.writeHistory(buttonChoice, false);
-                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty())
-                {
+                if (calculator.getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty()) {
                     calculator.setActiveOperator(EMPTY);
-                }
-                else
-                {
+                } else {
                     calculator.setActiveOperator(currentOperator);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
             }
             // Needs to be here!
-            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue()))
-            { confirm(calculator, LOGGER, cannotPerformOperation(FRACTION)); }
+            else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue())) {
+                confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
+            }
         }
     }
+
     /**
      * The inner logic for performing the Fraction operation
+     *
      * @return the result of the Fraction operation
      */
     public String performFraction()
@@ -490,27 +481,53 @@ public class BasicPanel extends JPanel
         BigDecimal one = new BigDecimal(ONE);
         String currentNum = calculator.getAppropriateValue();
         BigDecimal currentNumber = new BigDecimal(currentNum);
-        if (BigDecimal.ZERO.equals(currentNumber))
-        {
+        if (BigDecimal.ZERO.equals(currentNumber)) {
             calculator.appendTextToPane(INFINITY);
             calculator.setObtainingFirstNumber(true);
             result = INFINITY;
-        }
-        else
-        {
+        } else {
             result = one.divide(currentNumber, MathContext.DECIMAL128).toPlainString();
         }
         return result;
     }
 
     /**************** GETTERS ****************/
-    public Calculator getCalculator() { return calculator; }
-    public GridBagConstraints getConstraints() { return constraints; }
-    public JPanel getBasicPanel() { return basicPanel; }
-    public boolean isInitialized() { return isInitialized; }
+    public Calculator getCalculator()
+    {
+        return calculator;
+    }
 
     /**************** SETTERS ****************/
-    public void setCalculator(Calculator calculator) { this.calculator = calculator; LOGGER.debug("Calculator set"); }
-    public void setConstraints(GridBagConstraints constraints) { this.constraints = constraints; LOGGER.debug("Constraints set"); }
-    private void setBasicPanel(JPanel basicPanel) { this.basicPanel = basicPanel; LOGGER.debug("Basic Panel set"); }
+    public void setCalculator(Calculator calculator)
+    {
+        this.calculator = calculator;
+        LOGGER.debug("Calculator set");
+    }
+
+    public GridBagConstraints getConstraints()
+    {
+        return constraints;
+    }
+
+    public void setConstraints(GridBagConstraints constraints)
+    {
+        this.constraints = constraints;
+        LOGGER.debug("Constraints set");
+    }
+
+    public JPanel getBasicPanel()
+    {
+        return basicPanel;
+    }
+
+    private void setBasicPanel(JPanel basicPanel)
+    {
+        this.basicPanel = basicPanel;
+        LOGGER.debug("Basic Panel set");
+    }
+
+    public boolean isInitialized()
+    {
+        return isInitialized;
+    }
 }

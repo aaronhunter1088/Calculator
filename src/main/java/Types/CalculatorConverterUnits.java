@@ -28,10 +28,14 @@ public enum CalculatorConverterUnits
     SQUARE_MILES("Square Miles");
 
     private final String name;
-    CalculatorConverterUnits(String name) {
+
+    CalculatorConverterUnits(String name)
+    {
         this.name = name;
     }
-    public String getValue() {
+
+    public String getValue()
+    {
         return this.name;
     }
 }

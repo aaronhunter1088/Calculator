@@ -20,8 +20,25 @@ public enum CalculatorBase implements CalculatorType
 
     private final String name;
     private final int radix;
-    CalculatorBase(String name, int radix) { this.name = name; this.radix = radix; }
-    public String getValue() { return name; }
-    public String getName() { return this.name(); }
-    public int getRadix() { return this.radix; }
+
+    CalculatorBase(String name, int radix)
+    {
+        this.name = name;
+        this.radix = radix;
+    }
+
+    public String getValue()
+    {
+        return name;
+    }
+
+    public String getName()
+    {
+        return this.name();
+    }
+
+    public int getRadix()
+    {
+        return this.radix;
+    }
 }

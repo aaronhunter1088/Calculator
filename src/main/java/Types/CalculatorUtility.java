@@ -5,14 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static Types.Texts.*;
-import static Types.Texts.COMMA;
-import static Types.Texts.DECIMAL;
-import static Types.Texts.EMPTY;
-import static Types.Texts.SUBTRACTION;
 
 /**
  * CalculatorUtility
@@ -28,11 +22,13 @@ import static Types.Texts.SUBTRACTION;
 public class CalculatorUtility
 {
     private static final Logger LOGGER = LogManager.getLogger(CalculatorUtility.class);
+
     /**
      * Adds the delimiter to the number if appropriate
      * Works by reversing the string value. Finding the
      * appropriate decimal index, it will then add a
      * delimiter every three characters.
+     *
      * @param valueToAdjust the passed in value
      * @return the value with the delimiter chosen
      */
@@ -40,18 +36,20 @@ public class CalculatorUtility
     {
         if (valueToAdjust.isEmpty()) return valueToAdjust;
         if (valueToAdjust.contains(delimiter)) valueToAdjust = removeThousandsDelimiter(valueToAdjust, delimiter);
-        try { new BigDecimal(valueToAdjust); }
-        catch (NumberFormatException nfe) { return valueToAdjust; }
+        try {
+            new BigDecimal(valueToAdjust);
+        }
+        catch (NumberFormatException nfe) {
+            return valueToAdjust;
+        }
         boolean negativeControl = isNegativeNumber(valueToAdjust);
         valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
         // Keep negative sign just for length checks
         if (!isFractionalNumber(valueToAdjust) && valueToAdjust.length() <= 3) {
             return valueToAdjust;
-        }
-        else if (!isFractionalNumber(valueToAdjust) && negativeControl && valueToAdjust.length() <= 4) {
+        } else if (!isFractionalNumber(valueToAdjust) && negativeControl && valueToAdjust.length() <= 4) {
             return valueToAdjust;
-        }
-        else {
+        } else {
             String numberOnLeft = getNumberOnLeftSideOfDecimal(valueToAdjust);
             if (numberOnLeft.length() <= 3) {
                 return valueToAdjust;
@@ -67,37 +65,28 @@ public class CalculatorUtility
         int indexOfDecimal = reversed.indexOf(DECIMAL);
         //if (indexOfDecimal == -1) indexOfDecimal = 0;
         LOGGER.debug("index of decimal: {}", indexOfDecimal);
-        if (indexOfDecimal > 0) adjusted.append(reversed.substring(0, indexOfDecimal+1));
+        if (indexOfDecimal > 0) adjusted.append(reversed.substring(0, indexOfDecimal + 1));
         if (indexOfDecimal == 0) adjusted.append(DECIMAL);
-        for (int i=indexOfDecimal+1; i<reversed.length(); i+=3)
-        {
-            if (i % 3 == 0 && i != 0)
-            {
+        for (int i = indexOfDecimal + 1; i < reversed.length(); i += 3) {
+            if (i % 3 == 0 && i != 0) {
                 if (!adjusted.toString().endsWith(DECIMAL)) adjusted.append(delimiter);
-                if (i+1 > reversed.length() || i+2 > reversed.length() || i+3 > reversed.length())
-                {
+                if (i + 1 > reversed.length() || i + 2 > reversed.length() || i + 3 > reversed.length()) {
                     adjusted.append(reversed.substring(i));
+                } else {
+                    adjusted.append(reversed.substring(i, i + 3));
                 }
-                else
-                {
-                    adjusted.append(reversed.substring(i, i+3));
-                }
-            }
-            else
-            {
+            } else {
                 if (!adjusted.toString().endsWith(DECIMAL)) adjusted.append(delimiter);
-                if (i+1 > reversed.length() || i+2 > reversed.length() || i+3 > reversed.length())
-                {
+                if (i + 1 > reversed.length() || i + 2 > reversed.length() || i + 3 > reversed.length()) {
                     adjusted.append(reversed.substring(i));
-                }
-                else
-                {
-                    adjusted.append(reversed.substring(i, i+3));
+                } else {
+                    adjusted.append(reversed.substring(i, i + 3));
                 }
             }
         }
         adjusted = new StringBuffer(adjusted).reverse();
-        if (adjusted.toString().endsWith(COMMA)) adjusted = new StringBuffer(adjusted.substring(0, adjusted.length() - 1));
+        if (adjusted.toString().endsWith(COMMA))
+            adjusted = new StringBuffer(adjusted.substring(0, adjusted.length() - 1));
         if (negativeControl) adjusted = new StringBuffer(SUBTRACTION).append(adjusted);
         LOGGER.debug("commas added: {}", adjusted);
         return adjusted.toString();
@@ -105,6 +94,7 @@ public class CalculatorUtility
 
     /**
      * Converts a number to its negative equivalent
+     *
      * @param number the value to convert
      * @return Fully tested
      */
@@ -118,6 +108,7 @@ public class CalculatorUtility
 
     /**
      * Converts a number to its positive equivalent
+     *
      * @param number the value to convert
      * @return Fully tested
      */
@@ -127,7 +118,6 @@ public class CalculatorUtility
         number = number.replaceAll(SUBTRACTION, EMPTY).trim();
         return number;
     }
-
 
 
     /**
@@ -142,8 +132,7 @@ public class CalculatorUtility
         if (!isFractionalNumber(currentNumber)) return currentNumber;
         int index = currentNumber.indexOf(DECIMAL);
         if (index <= 0 || (index + 1) > currentNumber.length()) leftSide = EMPTY;
-        else
-        {
+        else {
             leftSide = currentNumber.substring(0, index);
             if (StringUtils.isEmpty(leftSide)) {
                 LOGGER.debug("Number to the left of the decimal is empty. Setting to {}", ZERO);
@@ -164,8 +153,7 @@ public class CalculatorUtility
         String rightSide;
         int index = currentNumber.indexOf(DECIMAL);
         if (index < 0 || (index + 1) >= currentNumber.length()) rightSide = EMPTY;
-        else
-        {
+        else {
             rightSide = currentNumber.substring(index + 1);
             if (StringUtils.isEmpty(rightSide)) {
                 LOGGER.debug("Number to the right of the decimal is empty. Setting to {}", ZERO);
@@ -178,6 +166,7 @@ public class CalculatorUtility
     /**
      * Returns the text in the textPane without
      * any operator.
+     *
      * @return the plain textPane text
      */
     public static String getValueWithoutAnyOperator(String valueToAdjust)
@@ -205,12 +194,15 @@ public class CalculatorUtility
     /**
      * Tests whether a number is a fractional number. A
      * fractional number contains a decimal point.
+     *
      * @param number the number to test
      * @return true if the number contains a decimal point,
      * false otherwise
      */
     public static boolean isFractionalNumber(String number)
-    { return number.contains(DECIMAL); }
+    {
+        return number.contains(DECIMAL);
+    }
 
     /**
      * Determines whether a number is positive
@@ -219,7 +211,9 @@ public class CalculatorUtility
      * @return either true or false based on result
      */
     public static boolean isPositiveNumber(String number)
-    { return !number.startsWith(SUBTRACTION); }
+    {
+        return !number.startsWith(SUBTRACTION);
+    }
 
     /**
      * Determines whether a number is negative
@@ -228,7 +222,9 @@ public class CalculatorUtility
      * @return either true or false based on result
      */
     public static boolean isNegativeNumber(String number)
-    { return number.startsWith(SUBTRACTION); }
+    {
+        return number.startsWith(SUBTRACTION);
+    }
 
 //    /**
 //     * Returns true if the minimum value has
@@ -257,6 +253,7 @@ public class CalculatorUtility
 
     /**
      * Checks if the resulting answer has met the minimum value
+     *
      * @param valueToCheck String the value to check
      * @return boolean true if the minimum value has been met
      */
@@ -292,6 +289,7 @@ public class CalculatorUtility
 
     /**
      * Checks if the resulting answer has met the maximum value
+     *
      * @param valueToCheck String the value to check in its purest form
      * @return boolean true if the maximum value has been met
      */
@@ -304,6 +302,7 @@ public class CalculatorUtility
 
     /**
      * Removes commas from the number if appropriate
+     *
      * @param valueToAdjust the number to adjust
      * @return the value without commas
      */

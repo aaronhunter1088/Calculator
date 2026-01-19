@@ -18,7 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
 import static Types.CalculatorConverterType.ANGLE;
-import static Types.Texts.*;
+import static Types.Texts.CLEAR_ENTRY;
+import static Types.Texts.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
@@ -34,18 +35,27 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ConverterPanelTest
 {
-    static { System.setProperty("appName", ConverterPanelTest.class.getSimpleName()); }
     private static final Logger LOGGER = LogManager.getLogger(ConverterPanelTest.class.getSimpleName());
 
-    private Calculator calculator;
-    private ConverterPanel converterPanel;
+    static {
+        System.setProperty("appName", ConverterPanelTest.class.getSimpleName());
+    }
 
     @Mock
     ActionEvent ae;
+    private Calculator calculator;
+    private ConverterPanel converterPanel;
 
     @BeforeAll
     static void beforeAll()
-    {}
+    {
+    }
+
+    @AfterAll
+    static void afterAll()
+    {
+        LOGGER.info("Finished running {}", ConverterPanelTest.class.getSimpleName());
+    }
 
     @BeforeEach
     void beforeEach() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
@@ -60,8 +70,7 @@ class ConverterPanelTest
     @AfterEach
     void afterEach() throws InterruptedException, InvocationTargetException
     {
-        for (Calculator calculator : java.util.List.of(calculator))
-        {
+        for (Calculator calculator : java.util.List.of(calculator)) {
             LOGGER.info("Test complete. Closing the calculator...");
             EventQueue.invokeAndWait(() -> {
                 calculator.setVisible(false);
@@ -70,10 +79,6 @@ class ConverterPanelTest
             assertFalse(calculator.isVisible());
         }
     }
-
-    @AfterAll
-    static void afterAll()
-    { LOGGER.info("Finished running {}", ConverterPanelTest.class.getSimpleName()); }
 
     @Test
     void testConvertingFromDegreesToGradiansWorks()

@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static Parent.ArgumentsForTests.*;
-import static Parent.ArgumentsForTests.SECOND_BINARY_OPERATOR;
-import static Parent.ArgumentsForTests.SECOND_NUMBER;
-import static Parent.ArgumentsForTests.SECOND_UNARY_OPERATOR;
 import static Types.CalculatorUtility.addThousandsDelimiter;
 import static Types.CalculatorUtility.removeThousandsDelimiter;
 import static Types.Texts.*;
@@ -26,32 +23,33 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public abstract class TestParent
 {
+    public static AutoCloseable mocks;
     public Calculator calculator;
-
     @Mock
     public ActionEvent actionEvent;
     @Mock
     public OSDetector systemDetector;
 
-    public static AutoCloseable mocks;
-
-    /** Packs the Calculator and makes it visible */
+    /**
+     * Packs the Calculator and makes it visible
+     */
     public void postConstructCalculator()
     {
-        try
-        {
+        try {
             SwingUtilities.invokeAndWait(() -> {
                 calculator.pack();
                 calculator.setVisible(true);
             });
         }
-        catch (Exception ignored) {}
+        catch (Exception ignored) {
+        }
     }
 
     /**
      * Sets up the when-then for the provided arguments.
+     *
      * @param actionEvent the action event to mock
-     * @param arguments the arguments for the mock to use
+     * @param arguments   the arguments for the mock to use
      */
     public void setupWhenThen(ActionEvent actionEvent, ArgumentsForTests arguments)
     {
@@ -70,6 +68,7 @@ public abstract class TestParent
      * added individually. Unary and binary operators are
      * added as whole strings. Empty strings are added
      * for any missing arguments.
+     *
      * @param arguments for the test
      * @return the list of characters
      */
@@ -82,8 +81,7 @@ public abstract class TestParent
         if (firstNumberLength == 0) characters.add(EMPTY);
         else if (calculator.getBadText(firstNumber).equals(firstNumber)) {
             characters.add(EMPTY);
-        }
-        else characters.addAll(firstNumber.chars().mapToObj(c -> String.valueOf((char) c)).toList());
+        } else characters.addAll(firstNumber.chars().mapToObj(c -> String.valueOf((char) c)).toList());
 
         // First Unary Operator, can be empty
         String firstUnaryOperator = arguments.getFirstUnaryOperator();
@@ -101,8 +99,7 @@ public abstract class TestParent
         if (secondNumberLength == 0) characters.add(EMPTY);
         else if (calculator.getBadText(secondNumber).equals(secondNumber)) {
             characters.add(EMPTY);
-        }
-        else characters.addAll(secondNumber.chars().mapToObj(c -> String.valueOf((char) c)).toList());
+        } else characters.addAll(secondNumber.chars().mapToObj(c -> String.valueOf((char) c)).toList());
 
         // Second Unary Operator, can be empty
         String secondUnaryOperator = arguments.getSecondUnaryOperator();
@@ -136,20 +133,16 @@ public abstract class TestParent
      */
     public void setupInitialState(ArgumentsForTests arguments)
     {
-        if (arguments.getInitialState() != null)
-        {
+        if (arguments.getInitialState() != null) {
             ArgumentsForTests initialState = arguments.getInitialState();
-            if (!initialState.getFirstNumber().isEmpty())
-            {
+            if (!initialState.getFirstNumber().isEmpty()) {
                 String firstNumber = removeThousandsDelimiter(initialState.getFirstNumber(), calculator.getThousandsDelimiter());
                 calculator.getValues()[0] = firstNumber;
             }
-            if (!initialState.getFirstUnaryOperator().isEmpty())
-            {
+            if (!initialState.getFirstUnaryOperator().isEmpty()) {
                 calculator.setActiveOperator(initialState.getFirstUnaryOperator());
             }
-            if (!initialState.getFirstUnaryResult().isEmpty())
-            {
+            if (!initialState.getFirstUnaryResult().isEmpty()) {
                 String firstUnaryTextPaneResult = initialState.getFirstUnaryResult();
                 String firstUnaryValuesResult = removeThousandsDelimiter(firstUnaryTextPaneResult, calculator.getThousandsDelimiter());
                 if (firstUnaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) // "0|INFINITY or 35|35 +"
@@ -164,8 +157,7 @@ public abstract class TestParent
                 String secondNumber = removeThousandsDelimiter(initialState.getSecondNumber(), calculator.getThousandsDelimiter());
                 calculator.getValues()[1] = secondNumber;
             }
-            if (!initialState.getSecondUnaryResult().isEmpty())
-            {
+            if (!initialState.getSecondUnaryResult().isEmpty()) {
                 String secondUnaryTextPaneResult = initialState.getSecondUnaryResult();
                 String secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult, calculator.getThousandsDelimiter());
                 if (secondUnaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) // "0|INFINITY or 35|35 +"
@@ -186,20 +178,17 @@ public abstract class TestParent
      * or fractional numbers. It then asserts that
      * the textPane and values[valuesPosition] are
      * as expected after each character input.
+     *
      * @param actionEvent the actionEvent
-     * @param number the number
+     * @param number      the number
      */
     public void performNumberButtonActionForEachCharacter(ActionEvent actionEvent, String number)
     {
         int firstNumLength = number.length();
-        if (firstNumLength == 0)
-        {
+        if (firstNumLength == 0) {
             assertEquals(number, calculator.getTextPaneValue(), "textPane value is not as expected");
-        }
-        else
-        {
-            for (int i=0; i<number.length(); i++)
-            {
+        } else {
+            for (int i = 0; i < number.length(); i++) {
                 String currentDigit = String.valueOf(number.charAt(i));
                 if (currentDigit.equals(SUBTRACTION))
                     calculator.performSubtractButtonAction(actionEvent);
@@ -207,19 +196,15 @@ public abstract class TestParent
                     calculator.performDecimalButtonAction(actionEvent);
                 else
                     calculator.performNumberButtonAction(actionEvent);
-                if ((i+1) == firstNumLength) {
+                if ((i + 1) == firstNumLength) {
                     assertEquals(addThousandsDelimiter(number, calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
                     assertEquals(number, calculator.getValues()[calculator.getValuesPosition()], "value[valuesPosition] is not as expected");
-                }
-                else {
-                    assertEquals(addThousandsDelimiter(number.substring(0,(i+1)), calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "textPane value is not as expected");
-                    if (calculator.isNegativeNumber() && !calculator.getValueAt().contains(SUBTRACTION))
-                    {
-                        assertEquals(number.substring(0,(i+1)), calculator.getValueAt()+SUBTRACTION, "value[valuesPosition] is not as expected");
-                    }
-                    else
-                    {
-                        assertEquals(number.substring(0,(i+1)), calculator.getValueAt(), "value[valuesPosition] is not as expected");
+                } else {
+                    assertEquals(addThousandsDelimiter(number.substring(0, (i + 1)), calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "textPane value is not as expected");
+                    if (calculator.isNegativeNumber() && !calculator.getValueAt().contains(SUBTRACTION)) {
+                        assertEquals(number.substring(0, (i + 1)), calculator.getValueAt() + SUBTRACTION, "value[valuesPosition] is not as expected");
+                    } else {
+                        assertEquals(number.substring(0, (i + 1)), calculator.getValueAt(), "value[valuesPosition] is not as expected");
                     }
                 }
             }
@@ -228,14 +213,15 @@ public abstract class TestParent
 
     /**
      * Performs the next operator action based on the provided operator string.
+     *
      * @param nextOperator the operator to perform
      */
     public void performNextOperatorAction(Calculator calculator, ActionEvent actionEvent, Logger logger,
                                           String nextOperator)
     {
-        switch (nextOperator)
-        {
-            case ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE -> calculator.performNumberButtonAction(actionEvent);
+        switch (nextOperator) {
+            case ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE ->
+                    calculator.performNumberButtonAction(actionEvent);
             case ADDITION -> calculator.performAddButtonAction(actionEvent);
             case AND -> calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
             case CLEAR -> calculator.performClearButtonAction(actionEvent);
@@ -271,9 +257,10 @@ public abstract class TestParent
 
     /**
      * Exhausts the action event by logging the action command and value.
-     * @param value the value associated with the action event
+     *
+     * @param value       the value associated with the action event
      * @param actionEvent the action event to exhaust
-     * @param logger the logger to use
+     * @param logger      the logger to use
      */
     public void exhaustActionEvent(String value, ActionEvent actionEvent, Logger logger)
     {
@@ -303,7 +290,8 @@ public abstract class TestParent
      * If the secondBinaryOperator is not empty, it performs that operator
      * action, asserts the textPane and values[vP] and updates the
      * previousHistory. Otherwise the operator is exhausted.
-     * @param arguments for the test
+     *
+     * @param arguments       for the test
      * @param previousHistory the previous history before the button action
      */
     public String performTest(ArgumentsForTests arguments, String previousHistory, Logger logger)
@@ -321,8 +309,7 @@ public abstract class TestParent
         String firstBinaryOperator = arguments.getFirstBinaryOperator();
         String firstBinaryTextPaneResult = arguments.getFirstBinaryResult();
         String firstBinaryValuesResult = removeThousandsDelimiter(firstBinaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (firstBinaryTextPaneResult.split(ARGUMENT_REGEX).length > 1)
-        {
+        if (firstBinaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) {
             firstBinaryValuesResult = removeThousandsDelimiter(firstBinaryTextPaneResult.split(ARGUMENT_REGEX)[0], calculator.getThousandsDelimiter());
             firstBinaryTextPaneResult = firstBinaryTextPaneResult.split(ARGUMENT_REGEX)[1];
         }
@@ -330,101 +317,87 @@ public abstract class TestParent
         String secondUnaryOperator = arguments.getSecondUnaryOperator();
         String secondUnaryTextPaneResult = arguments.getSecondUnaryResult();
         String secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (secondUnaryTextPaneResult.split(ARGUMENT_REGEX).length > 1)
-        {
+        if (secondUnaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) {
             secondUnaryValuesResult = removeThousandsDelimiter(secondUnaryTextPaneResult.split(ARGUMENT_REGEX)[0], calculator.getThousandsDelimiter());
             secondUnaryTextPaneResult = secondUnaryTextPaneResult.split(ARGUMENT_REGEX)[1];
         }
         String secondBinaryOperator = arguments.getSecondBinaryOperator();
         String secondBinaryTextPaneResult = arguments.getSecondBinaryResult();
         String secondBinaryValuesResult = removeThousandsDelimiter(secondBinaryTextPaneResult, calculator.getThousandsDelimiter());
-        if (secondBinaryTextPaneResult.split(ARGUMENT_REGEX).length > 1)
-        {
+        if (secondBinaryTextPaneResult.split(ARGUMENT_REGEX).length > 1) {
             secondBinaryValuesResult = removeThousandsDelimiter(secondBinaryTextPaneResult.split(ARGUMENT_REGEX)[0], calculator.getThousandsDelimiter());
             secondBinaryTextPaneResult = secondBinaryTextPaneResult.split(ARGUMENT_REGEX)[1];
         }
 
         // Start test
-        if (!firstNumber.isEmpty() && !calculator.getBadText(firstNumber).equals(firstNumber))
-        {
+        if (!firstNumber.isEmpty() && !calculator.getBadText(firstNumber).equals(firstNumber)) {
             performNumberButtonActionForEachCharacter(actionEvent, firstNumber);
             previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else if (!firstNumber.isEmpty() && calculator.getBadText(firstNumber).equals(firstNumber))
-        {
+        } else if (!firstNumber.isEmpty() && calculator.getBadText(firstNumber).equals(firstNumber)) {
             calculator.appendTextToPane(firstNumber);
             exhaustActionEvent(FIRST_NUMBER, actionEvent, logger);
-        }
-        else exhaustActionEvent(FIRST_NUMBER, actionEvent, logger);
+        } else exhaustActionEvent(FIRST_NUMBER, actionEvent, logger);
 
-        if (!firstUnaryOperator.isEmpty())
-        {
+        if (!firstUnaryOperator.isEmpty()) {
             performNextOperatorAction(calculator, actionEvent, logger, firstUnaryOperator);
-            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstUnaryOperator) && !calculator.textPaneContainsBadText())
-            { assertEquals(firstUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
-            else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstUnaryOperator))
-            { assertEquals(firstUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
-            else
-            { assertEquals(firstUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected"); }
+            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstUnaryOperator) && !calculator.textPaneContainsBadText()) {
+                assertEquals(firstUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition() - 1], "memories[" + (calculator.getMemoryPosition() - 1) + "] is not as expected");
+            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstUnaryOperator)) {
+                assertEquals(firstUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
+            } else {
+                assertEquals(firstUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected");
+            }
             assertEquals(firstUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent(FIRST_UNARY_OPERATOR, actionEvent, logger);
+        } else exhaustActionEvent(FIRST_UNARY_OPERATOR, actionEvent, logger);
 
-        if (!firstBinaryOperator.isEmpty())
-        {
+        if (!firstBinaryOperator.isEmpty()) {
             performNextOperatorAction(calculator, actionEvent, logger, firstBinaryOperator);
-            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstBinaryOperator) && !calculator.textPaneContainsBadText())
-            { assertEquals(firstBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
-            else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstBinaryOperator))
-            { assertEquals(firstBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
-            else
-            { assertEquals(firstBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected"); }
+            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(firstBinaryOperator) && !calculator.textPaneContainsBadText()) {
+                assertEquals(firstBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition() - 1], "memories[" + (calculator.getMemoryPosition() - 1) + "] is not as expected");
+            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstBinaryOperator)) {
+                assertEquals(firstBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
+            } else {
+                assertEquals(firstBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected");
+            }
             assertEquals(firstBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent(FIRST_BINARY_OPERATOR, actionEvent, logger);
+        } else exhaustActionEvent(FIRST_BINARY_OPERATOR, actionEvent, logger);
 
-        if (!secondNumber.isEmpty() && !calculator.getBadText(secondNumber).equals(secondNumber))
-        {
+        if (!secondNumber.isEmpty() && !calculator.getBadText(secondNumber).equals(secondNumber)) {
             performNumberButtonActionForEachCharacter(actionEvent, secondNumber);
             previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else if (!secondNumber.isEmpty() && calculator.getBadText(secondNumber).equals(secondNumber))
-        {
+        } else if (!secondNumber.isEmpty() && calculator.getBadText(secondNumber).equals(secondNumber)) {
             calculator.appendTextToPane(secondNumber);
             exhaustActionEvent(SECOND_NUMBER, actionEvent, logger);
-        }
-        else exhaustActionEvent(SECOND_NUMBER, actionEvent, logger);
+        } else exhaustActionEvent(SECOND_NUMBER, actionEvent, logger);
 
-        if (!secondUnaryOperator.isEmpty())
-        {
+        if (!secondUnaryOperator.isEmpty()) {
             performNextOperatorAction(calculator, actionEvent, logger, secondUnaryOperator);
-            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondUnaryOperator) && !calculator.textPaneContainsBadText())
-            { assertEquals(secondUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
-            else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondUnaryOperator))
-            { assertEquals(secondUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
-            else
-            { assertEquals(secondUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected"); }
+            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondUnaryOperator) && !calculator.textPaneContainsBadText()) {
+                assertEquals(secondUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition() - 1], "memories[" + (calculator.getMemoryPosition() - 1) + "] is not as expected");
+            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondUnaryOperator)) {
+                assertEquals(secondUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
+            } else {
+                assertEquals(secondUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected");
+            }
             assertEquals(secondUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent(SECOND_UNARY_OPERATOR, actionEvent, logger);
+        } else exhaustActionEvent(SECOND_UNARY_OPERATOR, actionEvent, logger);
 
-        if (!secondBinaryOperator.isEmpty())
-        {
+        if (!secondBinaryOperator.isEmpty()) {
             performNextOperatorAction(calculator, actionEvent, logger, secondBinaryOperator);
-            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondBinaryOperator) && !calculator.textPaneContainsBadText())
-            { assertEquals(secondBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition()-1], "memories["+(calculator.getMemoryPosition()-1)+"] is not as expected"); }
-            else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondBinaryOperator))
-            { assertEquals(secondBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected"); }
-            else
-            { assertEquals(secondBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected"); }
+            if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondBinaryOperator) && !calculator.textPaneContainsBadText()) {
+                assertEquals(secondBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition() - 1], "memories[" + (calculator.getMemoryPosition() - 1) + "] is not as expected");
+            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondBinaryOperator)) {
+                assertEquals(secondBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
+            } else {
+                assertEquals(secondBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected");
+            }
 
             assertEquals(secondBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
-        }
-        else exhaustActionEvent(SECOND_BINARY_OPERATOR, actionEvent, logger);
+        } else exhaustActionEvent(SECOND_BINARY_OPERATOR, actionEvent, logger);
 
         return previousHistory;
     }
@@ -434,7 +407,7 @@ public abstract class TestParent
      * pushing a button.
      * Method writeHistory calls writeHistoryWithMessage.
      *
-     * @param arguments for the test
+     * @param arguments         for the test
      * @param calculatorHistory the previous history before the button was pushed
      */
     public void assertHistory(ArgumentsForTests arguments, String calculatorHistory)

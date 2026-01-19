@@ -17,11 +17,19 @@ public enum CalculatorConverterType implements CalculatorType
     AREA("Area");
 
     private final String name;
-    CalculatorConverterType(String name) {
+
+    CalculatorConverterType(String name)
+    {
         this.name = name;
     }
-    public String getValue() {
+
+    public String getValue()
+    {
         return name;
     }
-    public String getName() { return this.name(); }
+
+    public String getName()
+    {
+        return this.name();
+    }
 }

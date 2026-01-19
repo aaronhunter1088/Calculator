@@ -10,7 +10,8 @@ package Types;
  * @author Michael Ball
  * @version 4.0
  */
-public class Texts {
+public class Texts
+{
     // Calculator
     public static final String SEGOE_UI = "Segoe UI";
     public static final String VERDANA = "Verdana";
@@ -77,18 +78,8 @@ public class Texts {
     public static final String MEMORIES = "Memories:";
     public static final String RESULT = "Result: ";
     public static final String SAVED_MEMORY = "Saved: %s to memory position %s";
-    public static String savedMemory(String memory, int position) {
-        return String.format(SAVED_MEMORY, memory, position);
-    }
     public static final String ADDED_TO_MEMORY = "Added: %s to memories[%s] = %s";
-    public static String addedToMemory(String oldValue, int position, String newValue) {
-        return String.format("Added: %s to memories[%s] = %s", oldValue, position, newValue);
-    }
     public static final String SUBTRACTED_FROM_MEMORY = "Subtracted: %s from memories[%s] = %s";
-    public static String subtractedFromMemory(String oldValue, int position, String newValue) {
-        return String.format(SUBTRACTED_FROM_MEMORY, oldValue, position, newValue);
-    }
-
     // Help Menu Options
     public static final String VIEW_HELP = "View Help";
     public static final String ABOUT_CALCULATOR = "About Calculator";
@@ -101,23 +92,11 @@ public class Texts {
     public static final String ERROR = "Error";
     public static final String INFINITY = "Infinity";
     public static final String CANNOT_PERFORM_OPERATION = "Cannot perform %s operation";
-    public static String cannotPerformOperation(String operation) {
-        return String.format(CANNOT_PERFORM_OPERATION, operation);
-    }
     public static final String PERFORMED_OPERATION = "Performed %s operation";
-    public static String performedOperation(String operation) {
-        return String.format(PERFORMED_OPERATION, operation);
-    }
     // Test Error Messages
     public static final String TEXT_PANE_WRONG_VALUE = "Text Pane has the wrong value";
-
-    // Basic
-    public static String pressedButton(String buttonChoice) {
-        return String.format("%s %s", PRESSED, buttonChoice);
-    }
     public static final String PRESSED = "Pressed";
     public static final String COMMA = ",";
-
     // Programmer
     public static final String MODULUS = "MOD";
     public static final String LEFT_PARENTHESIS = "(";
@@ -148,9 +127,6 @@ public class Texts {
     public static final String OCT = "Oct";
     public static final String HEX = "Hex";
     public static final String SHIFT = "↑";
-
-    // Scientific
-
     // Date
     public static final String SAME = "Same";
     public static final String YEAR = "Year";
@@ -158,6 +134,8 @@ public class Texts {
     public static final String WEEK = "Week";
     public static final String DAY = "Day";
     public static final String ADD_OR_SUB_RESULT = "Result";
+
+    // Scientific
     public static final String LOWER_CASE_S = "s";
     public static final String PUSHED_CLEAR = "Pushed clear";
     public static final String NEWLINE = "\n";
@@ -165,6 +143,37 @@ public class Texts {
     // TODO: Update values according to ??
     public static final String MAX_VALUE = "9999999";
     public static final String MIN_VALUE = "-9999999";
+
+    public static String savedMemory(String memory, int position)
+    {
+        return String.format(SAVED_MEMORY, memory, position);
+    }
+
+    public static String addedToMemory(String oldValue, int position, String newValue)
+    {
+        return String.format("Added: %s to memories[%s] = %s", oldValue, position, newValue);
+    }
+
+    public static String subtractedFromMemory(String oldValue, int position, String newValue)
+    {
+        return String.format(SUBTRACTED_FROM_MEMORY, oldValue, position, newValue);
+    }
+
+    public static String cannotPerformOperation(String operation)
+    {
+        return String.format(CANNOT_PERFORM_OPERATION, operation);
+    }
+
+    public static String performedOperation(String operation)
+    {
+        return String.format(PERFORMED_OPERATION, operation);
+    }
+
+    // Basic
+    public static String pressedButton(String buttonChoice)
+    {
+        return String.format("%s %s", PRESSED, buttonChoice);
+    }
 
     // Converter
 
