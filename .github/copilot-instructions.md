@@ -11,7 +11,7 @@ This is a Java Swing-based Calculator application (v4.6.2) that provides multipl
 
 ## Technology Stack
 
-- **Language**: Java 17
+- **Language**: Java 17 (managed by parent POM)
 - **UI Framework**: Java Swing
 - **Build Tool**: Apache Maven 3.9+
 - **Testing**: JUnit Jupiter (JUnit 5) with Mockito
@@ -53,7 +53,8 @@ src/
   ```
 
 ### Code Style
-- Use Log4j2 for logging: `Logger logger = LogManager.getLogger(ClassName.class);`
+- Use Log4j2 for logging: `Logger LOGGER = LogManager.getLogger(ClassName.class.getSimpleName());`
+  - Note: Some classes use `ClassName.class` instead of `ClassName.class.getSimpleName()` - both patterns are acceptable
 - Follow JavaDoc conventions for class and method documentation
 - Use meaningful variable names
 - Keep methods focused and single-purpose
@@ -106,11 +107,11 @@ mvn clean package -Dmaven.test.skip=true
 - Use Java Swing components
 - Follow the existing panel structure and layout patterns
 - Maintain consistent UI styling across all calculator views
-- Consider platform-specific behavior using `SystemDetector` and `OSDetector`
+- Consider platform-specific behavior using `SystemDetector` (implements `OSDetector` interface)
 
 ### Constants and Enums
 - Use `CalculatorView` enum for view types
-- Use `CalculatorBase` enum for number bases (BIN, OCT, DEC, HEX)
+- Use `CalculatorBase` enum for number bases (BASE_BINARY, BASE_OCTAL, BASE_DECIMAL, BASE_HEXADECIMAL)
 - Use `CalculatorByte` enum for byte sizes
 - Use `CalculatorConverterType` enum for converter types
 - Use `DateOperation` enum for date operations
