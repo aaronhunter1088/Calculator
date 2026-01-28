@@ -11,7 +11,7 @@ This is a Java Swing-based Calculator application (v4.6.2) that provides multipl
 
 ## Technology Stack
 
-- **Language**: Java 17 (managed by parent POM)
+- **Language**: Java 25
 - **UI Framework**: Java Swing
 - **Build Tool**: Apache Maven 3.9+
 - **Testing**: JUnit Jupiter (JUnit 5) with Mockito
