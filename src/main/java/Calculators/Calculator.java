@@ -214,7 +214,7 @@ public class Calculator extends JFrame
                       DateOperation dateOperation, OSDetector systemDetector)
             throws CalculatorError, ParseException, IOException, UnsupportedLookAndFeelException
     {
-        super(calculatorView.getValue());
+        super(calculatorView.getView());
         setCalculatorView(calculatorView);
         setCalculatorBase(calculatorBase == null ? BASE_DECIMAL : calculatorBase);
         setCalculatorByte(calculatorByte == null ? BYTE_BYTE : calculatorByte);
@@ -478,7 +478,7 @@ public class Calculator extends JFrame
             default -> null;
         };
         if (constraints == null) {
-            logException(new CalculatorError("No constraints have been set up for the panel: " + calculatorView.getName()), LOGGER);
+            logWarning("No constraints have been set up for the panel: " + calculatorView.getName(), LOGGER);
             return;
         }
         constraints.anchor = GridBagConstraints.WEST;
@@ -572,18 +572,18 @@ public class Calculator extends JFrame
     private void setupViewMenu()
     {
         LOGGER.debug("Configuring View menu...");
-        JMenuItem basic = new JMenuItem(VIEW_BASIC.getValue());
-        JMenuItem programmer = new JMenuItem(VIEW_PROGRAMMER.getValue());
-        JMenuItem date = new JMenuItem(VIEW_DATE.getValue());
-        JMenu converterMenu = new JMenu(VIEW_CONVERTER.getValue());
+        JMenuItem basic = new JMenuItem(VIEW_BASIC.getView());
+        JMenuItem programmer = new JMenuItem(VIEW_PROGRAMMER.getView());
+        JMenuItem date = new JMenuItem(VIEW_DATE.getView());
+        JMenu converterMenu = new JMenu(VIEW_CONVERTER.getView());
         basic.setFont(mainFont);
-        basic.setName(VIEW_BASIC.getValue());
+        basic.setName(VIEW_BASIC.getView());
         basic.addActionListener(action -> performViewMenuAction(action, VIEW_BASIC));
         programmer.setFont(mainFont);
-        programmer.setName(VIEW_PROGRAMMER.getValue());
+        programmer.setName(VIEW_PROGRAMMER.getView());
         programmer.addActionListener(action -> performViewMenuAction(action, VIEW_PROGRAMMER));
         date.setFont(mainFont);
-        date.setName(VIEW_DATE.getValue());
+        date.setName(VIEW_DATE.getView());
         date.addActionListener(action -> performViewMenuAction(action, VIEW_DATE));
         JMenuItem angleConverter = new JMenuItem(ANGLE.getValue());
         angleConverter.setFont(mainFont);
@@ -594,7 +594,7 @@ public class Calculator extends JFrame
         areaConverter.setName(AREA.getValue());
         areaConverter.addActionListener(action -> performViewMenuAction(action, AREA));
         converterMenu.setFont(mainFont);
-        converterMenu.setName(VIEW_CONVERTER.getValue());
+        converterMenu.setName(VIEW_CONVERTER.getView());
         converterMenu.add(angleConverter);
         converterMenu.add(areaConverter);
 
@@ -1264,7 +1264,7 @@ public class Calculator extends JFrame
      */
     private void setupPanel(ActionEvent actionEvent)
     {
-        LOGGER.debug("Setting up panel: {}", calculatorView.getValue());
+        LOGGER.debug("Setting up panel: {}", calculatorView.getView());
         switch (calculatorView) {
             case VIEW_BASIC -> {
                 basicPanel.setupBasicPanel(this);
@@ -1384,8 +1384,8 @@ public class Calculator extends JFrame
         JScrollPane scrollPane = new JScrollPane(message, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setSize(new Dimension(400, 300));
         SwingUtilities.updateComponentTreeUI(this);
-        JOptionPane.showMessageDialog(this, scrollPane, "Viewing " + calculatorView.getValue() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
-        confirm(this, LOGGER, "Viewing " + calculatorView.getValue() + " Calculator Help");
+        JOptionPane.showMessageDialog(this, scrollPane, "Viewing " + calculatorView.getView() + " Calculator Help", JOptionPane.PLAIN_MESSAGE);
+        confirm(this, LOGGER, "Viewing " + calculatorView.getView() + " Calculator Help");
     }
 
     /**

@@ -56,7 +56,7 @@ public class BasicPanel extends JPanel
      */
     public BasicPanel()
     {
-        setName(VIEW_BASIC.getValue());
+        setName(VIEW_BASIC.getView());
         setConstraints(new GridBagConstraints());
         LOGGER.info("Empty Basic panel created");
     }
@@ -92,9 +92,9 @@ public class BasicPanel extends JPanel
         }
         setupBasicPanelComponents();
         addComponentsToPanel();
-        setName(VIEW_BASIC.getValue());
+        setName(VIEW_BASIC.getView());
         isInitialized = true;
-        LOGGER.info("Finished setting up {} panel", VIEW_BASIC.getValue());
+        LOGGER.info("Finished setting up {} panel", VIEW_BASIC.getView());
     }
 
     /**
@@ -229,7 +229,7 @@ public class BasicPanel extends JPanel
                 View Help: Describes how to use the currently selected view.
                 About Calculator: will describe the current version and licensing information about the Calculator.
                 """
-                .formatted(VIEW_BASIC.getValue(),
+                .formatted(VIEW_BASIC.getView(),
                         ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS, // Basic Operators
                         PERCENT, SQUARE_ROOT, SQUARED, FRACTION, NEGATE,          // Function Operators
                         ENTER_A_NUMBER,

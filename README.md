@@ -1,4 +1,27 @@
-# Calculator v4.6.2
+# Calculator v4.6.3
+
+## How to start the jar file
+```
+# Start a calculator:
+java -jar Calculator-version-jar-with-dependencies.jar <calculator view>
+Views: basic, programmer, scientific, date, converter
+
+# Start the jar file with a specific date view:
+# Date options are: 1 or 2
+java -jar Calculator-version-jar-with-dependencies.jar date 1 
+or
+java -jar Calculator-version-jar-with-dependencies.jar date 2
+
+# Start the jar file with a specific converter view:
+# Converter type options are: area, angle
+java -jar Calculator-version-jar-with-dependencies.jar converter <converter type>
+```
+
+## History of the project
+
+v4.6.3: Update the main class to utilize program arguments. With these in place, no longer will I need
+to comment in and uncomment out different sections of code. This will make it easier to quickly spin up different
+views and can stop touching the main class.
 
 v4.6: Merged in programmer redesign changes to ready this repo for assistance with
 Copilot.

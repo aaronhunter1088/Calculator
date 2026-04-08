@@ -66,7 +66,7 @@ public class ProgrammerPanel extends JPanel
      */
     public ProgrammerPanel()
     {
-        setName(VIEW_PROGRAMMER.getValue());
+        setName(VIEW_PROGRAMMER.getView());
         setConstraints(new GridBagConstraints());
         LOGGER.info("Empty Programmer panel created");
     }
@@ -102,9 +102,9 @@ public class ProgrammerPanel extends JPanel
         }
         setupProgrammerPanelComponents();
         addComponentsToPanel();
-        setName(VIEW_PROGRAMMER.getValue());
+        setName(VIEW_PROGRAMMER.getView());
         isInitialized = true;
-        LOGGER.info("Finished setting up {} panel", VIEW_PROGRAMMER.getValue());
+        LOGGER.info("Finished setting up {} panel", VIEW_PROGRAMMER.getView());
     }
 
     /**
@@ -139,7 +139,7 @@ public class ProgrammerPanel extends JPanel
                 
                 Described below are how each button works from the top left down in detail.
                 """
-                .formatted(VIEW_PROGRAMMER.getValue()));
+                .formatted(VIEW_PROGRAMMER.getView()));
         calculator.updateShowHelp();
     }
 

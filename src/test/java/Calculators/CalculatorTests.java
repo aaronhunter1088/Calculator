@@ -516,8 +516,8 @@ class CalculatorTests extends TestParent
             calculatorView = calculator.getCalculatorView();
         }
         postConstructCalculator();
-        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView.getValue());
-        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView.getValue());
+        assertTrue(calculator.isVisible(), "Cannot see calculator for " + calculatorView.getView());
+        assertEquals(calculatorView, calculator.getCalculatorView(), "Expected CalculatorView to be " + calculatorView.getView());
         assertNotNull(calculator.getCalculatorIcon(), "Expected calculator image");
         assertNotNull(calculator.getMacIcon(), "Expected mac icon");
         assertNotNull(calculator.getWindowsIcon(), "Expected windows icon");

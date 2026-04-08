@@ -62,7 +62,7 @@ public class DatePanel extends JPanel
      */
     public DatePanel()
     {
-        setName(VIEW_DATE.getValue());
+        setName(VIEW_DATE.getView());
         LOGGER.info("Empty Date panel created");
     }
 
@@ -109,8 +109,8 @@ public class DatePanel extends JPanel
             setSize(datePanel2.getSize());
         }
         setupHelpMenu();
-        setName(VIEW_DATE.getValue());
-        LOGGER.info("Finished setting up {} panel", VIEW_DATE.getValue());
+        setName(VIEW_DATE.getView());
+        LOGGER.info("Finished setting up {} panel", VIEW_DATE.getView());
     }
 
     /**

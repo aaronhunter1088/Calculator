@@ -1,21 +1,42 @@
 package Runnables;
 
 import Calculators.Calculator;
+import Calculators.CalculatorError;
+import Types.CalculatorConverterType;
+import Types.CalculatorView;
+import Types.DateOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import static Types.CalculatorView.VIEW_PROGRAMMER;
+import static Types.CalculatorConverterType.*;
+import static Types.CalculatorView.*;
+import static Types.DateOperation.*;
 import static Utilities.LoggingUtil.confirm;
 
 /**
  * CalculatorMain
  * <p>
  * The main class used to start the Calculator application.
- * There are several modes ready to be started by uncommenting
- * the appropriate line in the main method.
+ * You are expected to pass at least one argument and at most two.
+ * The first argument is the view to start the calculator in, for
+ * example, 'basic' or 'programmer' or 'date'.
+ * In the {@link CalculatorView} class, each enum value has a string
+ * view value. This is the value you would provide. The code will
+ * ensure it ends up looking like an expected value.
+ * The second argument is used to specify a specific mode to start
+ * the calculator in, if the view has multiple 'views'. For example,
+ * the date calculator has two different modes: add/subtract dates
+ * and difference between dates, so for simplicity, provide 1 for
+ * difference between dates, and 2 for add/subtract dates. Any other
+ * value will default to add/subtract dates.
+ * The converter calculator will take in the converter type you want
+ * to view, so 'area' or 'angle' for example. It will be transformed
+ * accordingly so as long as you provide an expected value, it will
+ * start the calculator in that converter type.
+ * Add a space between the provided arguments.
  * History of the application is located at the end of this file.
  *
  * @author Michael Ball
@@ -32,32 +53,46 @@ public class CalculatorMain
         if (logLevel == null) {
             LOGGER.warn("Set env.logLevel. Using default:all");
         } else {
-            LOGGER.info(System.getenv("logLevel"));
+            LOGGER.info("Log level: {}", System.getenv("logLevel"));
         }
         UIManager.setLookAndFeel(new MetalLookAndFeel());
         SwingUtilities.invokeLater(() -> {
+            final Calculator calculator;
             try {
-                //Start a basic calculator
-                //Calculator calculator = new Calculator(/*VIEW_BASIC*/);
-                //Start a programmer calculator in BINARY mode
-                Calculator calculator = new Calculator(VIEW_PROGRAMMER /*, BINARY*/);
-                //Start a programmer calculator in DECIMAL mode
-                //Calculator calculator = new Calculator(PROGRAMMER, DECIMAL);
-                //Start a date calculator with options1 selected
-                //Calculator calculator = new Calculator(DIFFERENCE_BETWEEN_DATES); //(DATE);
-                //Start a date calculator with options2 selected
-                //Calculator calculator = new Calculator(ADD_SUBTRACT_DAYS);
-                //Start an ANGLE converter calculator
-                //Calculator calculator = new Calculator(CONVERTER /*,ANGLE*/ );
-                //Start an AREA converter calculator
-                //Calculator calculator = new Calculator(AREA);
-                //Display the window.
+                if (args.length == 0) throw new CalculatorError("No view provided. Please provide a view to start the calculator in.");
+                CalculatorView view = CalculatorView.valueOf("VIEW_"+args[0].toUpperCase());
+                calculator = switch (view) {
+                    case VIEW_BASIC -> new Calculator(VIEW_BASIC);
+                    case VIEW_PROGRAMMER -> new Calculator(VIEW_PROGRAMMER);
+                    case VIEW_SCIENTIFIC -> new Calculator(VIEW_SCIENTIFIC);
+                    case VIEW_DATE -> {
+                        if (args.length == 1) throw new CalculatorError("No dateView provided. Please provide a dateView to start the calculator in.");
+                        final DateOperation dateView = args[1].equals("1")
+                                ? DIFFERENCE_BETWEEN_DATES
+                                : args[1].equals("2")
+                                    ? ADD_SUBTRACT_DAYS
+                                    : DIFFERENCE_BETWEEN_DATES;
+                        yield switch (dateView) {
+                            case DIFFERENCE_BETWEEN_DATES -> new Calculator(DIFFERENCE_BETWEEN_DATES);
+                            case ADD_SUBTRACT_DAYS -> new Calculator(ADD_SUBTRACT_DAYS);
+                        };
+                    }
+                    case VIEW_CONVERTER -> {
+                        if (args.length == 1) throw new CalculatorError("No converterView provided. Please provide a converterView to start the calculator in.");
+                        final CalculatorConverterType converterView = CalculatorConverterType.valueOf(args[1].toUpperCase());
+                        yield switch (converterView) {
+                            case AREA -> new Calculator(AREA);
+                            case ANGLE -> new Calculator(ANGLE);
+                        };
+                    }
+                };
                 calculator.pack();
+                //Display the window
                 calculator.setVisible(true);
-                confirm(calculator, LOGGER, calculator.getCalculatorView().getValue() + " Calculator started");
+                confirm(calculator, LOGGER, calculator.getCalculatorView().getView() + " Calculator started");
             }
             catch (Exception e) {
-                LOGGER.error("Could not create Calculator bc: {}", e.getMessage(), e);
+                throw new RuntimeException(e);
             }
         });
         Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.info("Closing Calculator")));

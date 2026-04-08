@@ -36,7 +36,7 @@ public class ScientificPanel extends JPanel
      */
     public ScientificPanel()
     {
-        setName(VIEW_SCIENTIFIC.getValue());
+        setName(VIEW_SCIENTIFIC.getView());
         setConstraints(new GridBagConstraints());
         LOGGER.info("Empty Scientific panel created");
     }
@@ -49,7 +49,7 @@ public class ScientificPanel extends JPanel
     public ScientificPanel(Calculator calculator)
     {
         this.calculator = calculator;
-        setName(VIEW_SCIENTIFIC.getValue());
+        setName(VIEW_SCIENTIFIC.getView());
         setupScientificPanel();
         LOGGER.info("Scientific panel created with calculator");
     }

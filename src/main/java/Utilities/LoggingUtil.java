@@ -178,6 +178,11 @@ public class LoggingUtil
         logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
     }
 
+    public static void logWarning(String message, Logger logger)
+    {
+        logger.warn("{}", message);
+    }
+
     /**
      * Logs the operation being performed.
      */

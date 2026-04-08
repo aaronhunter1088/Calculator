@@ -100,7 +100,11 @@ public class CalculatorError extends Exception
     @Override
     public String toString()
     {
-        return "CalculatorError: '" + message + "' '"
-                + exception.getClass().getSimpleName() + '\'';
+        if (exception == null) {
+            return "CalculatorError: '" + message + " '";
+        } else {
+            return "CalculatorError: '" + message + " "
+                    + exception.getClass().getSimpleName() + '\'';
+        }
     }
 }

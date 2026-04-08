@@ -19,16 +19,19 @@ public enum CalculatorView implements CalculatorType
     VIEW_DATE("Date"),
     VIEW_CONVERTER("Converter");
 
-    private final String value;
+    private final String view;
 
-    CalculatorView(String value)
+    CalculatorView(String view)
     {
-        this.value = value;
+        this.view = view;
     }
 
-    public String getValue()
+    @Override
+    public String getValue() { return getView(); }
+
+    public String getView()
     {
-        return value;
+        return view;
     }
 
     public String getName()

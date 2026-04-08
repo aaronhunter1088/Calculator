@@ -62,7 +62,7 @@ public class ConverterPanel extends JPanel
      */
     public ConverterPanel(CalculatorConverterType converterType)
     {
-        setName(VIEW_CONVERTER.getValue());
+        setName(VIEW_CONVERTER.getView());
         setConverterType(converterType == null ? ANGLE : converterType);
         LOGGER.info("Converter panel created");
     }
@@ -98,9 +98,9 @@ public class ConverterPanel extends JPanel
         setupConverterPanelComponents(getConverterType());
         setupHelpMenu(getConverterType());
         addComponentsToPanel();
-        setName(VIEW_CONVERTER.getValue());
+        setName(VIEW_CONVERTER.getView());
         isInitialized = true;
-        LOGGER.info("Finished setting up {} panel", VIEW_CONVERTER.getValue());
+        LOGGER.info("Finished setting up {} panel", VIEW_CONVERTER.getView());
     }
 
     /**
