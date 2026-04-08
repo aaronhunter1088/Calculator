@@ -116,14 +116,7 @@
                  Found in parent -->
 
             <!-- springdoc-openapi --><!--
-                 This plugin is disabled for this project -->
-<!--            <plugin>-->
-<!--                <groupId>org.springdoc</groupId>-->
-<!--                <artifactId>springdoc-openapi-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <skip>true</skip>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+                 This plugin is not used in this project. -->
         </plugins>
     </build>
 </project>
