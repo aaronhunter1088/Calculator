@@ -1024,7 +1024,7 @@ public class ProgrammerPanel extends JPanel
         }
         // if v[0] is set, v[1] is not, and we have not pushed Xor yet
         else if (!calculator.getValues()[2].equals(XOR) && !calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty()) {
-            calculator.getValues()[2] = XOR;
+            calculator.setActiveOperator(XOR);
             LOGGER.debug("Appending {} to text pane", buttonChoice);
             calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
             calculator.writeHistory(buttonChoice, true);
@@ -1099,36 +1099,39 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String result = performNot();
+        calculator.appendTextToPane(result, false);
+        calculator.getValues()[calculator.getValuesPosition()] = result;
+        calculator.writeHistory(buttonChoice, false);
+        LOGGER.info("action {} complete", buttonChoice);
+        confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+    }
+
+    /**
+     * Performs the actual logic of inverting a number's bits for the Not operation.
+     * @return the number inverted
+     */
+    public String performNot()
+    {
         String textPaneValue = calculator.getTextPaneValue();
         if (BASE_BINARY != calculator.getCalculatorBase()) {
             textPaneValue = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, textPaneValue);
         }
         LOGGER.debug("before operation execution: {}", textPaneValue);
-        StringBuilder newBuffer = new StringBuilder();
-        for (int i = 0; i < calculator.determineBits(textPaneValue.length()); i++) {
-            String s = Character.toString(textPaneValue.charAt(i));
-            if (s.equals(ZERO)) {
-                newBuffer.append(ONE);
-                LOGGER.debug("appending a {}", ONE);
-            } else {
-                newBuffer.append(ZERO);
-                LOGGER.debug("appending a {}", ZERO);
-            }
-        }
+        StringBuilder newBuffer = calculator.invertBits(textPaneValue);
         LOGGER.debug("after operation execution: {}", newBuffer);
-        // TODO: Rework. It's a bit sloppy atm
-        if (BASE_BINARY != calculator.getCalculatorBase()) {
-            newBuffer = new StringBuilder().append(calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), newBuffer.toString()));
-            calculator.getValues()[calculator.getValuesPosition()] = newBuffer.toString();
+        if (newBuffer.toString().startsWith(ONE)) {
+            // number is negative. invert and add subtraction sign
+            StringBuilder negativeInverted = calculator.invertBits(newBuffer.toString());
+            String invertedNumber = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), negativeInverted.toString());
+            BigDecimal invertedNumberInDecimal = new BigDecimal(invertedNumber);
+            invertedNumberInDecimal = invertedNumberInDecimal.add(BigDecimal.ONE);
+            newBuffer = new StringBuilder().append(SUBTRACTION).append(invertedNumberInDecimal);
         } else {
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, newBuffer.toString());
+            newBuffer = new StringBuilder().append(calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), newBuffer.toString()));
+            //calculator.getValues()[calculator.getValuesPosition()] = newBuffer.toString();
         }
-        calculator.appendTextToPane(newBuffer.toString());
-
-        //calculator.setCalculatorBaseAndUpdatePreviousBase(calculator.getPreviousBase());
-        //calculator.setCalculatorBaseAndUpdatePreviousBase(calculator.getPreviousBase());
-        LOGGER.info("action {} complete", buttonChoice);
-        confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+        return newBuffer.toString();
     }
 
     /**

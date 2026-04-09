@@ -2392,6 +2392,9 @@ public class Calculator extends JFrame
             case NEGATE -> {
                 result = performNegate();
             }
+            case NOT -> {
+                result = programmerPanel.performNot();
+            }
             case OR -> {
                 result = programmerPanel.performOr();
             }
@@ -3101,6 +3104,27 @@ public class Calculator extends JFrame
         }
         LOGGER.debug("converted: {}", convertedNumber);
         return convertedNumber;
+    }
+
+    /**
+     * Takes in a string of bits and inverts them
+     * @param bits the bits to invert
+     * @return the bits inverted as a StringBuilder
+     */
+    public StringBuilder invertBits(String bits)
+    {
+        StringBuilder returnValue = new StringBuilder();
+        for (int i = 0; i < bits.length(); i++) {
+            String s = Character.toString(bits.charAt(i));
+            if (s.equals(ZERO)) {
+                returnValue.append(ONE);
+                LOGGER.debug("appending a {}", ONE);
+            } else {
+                returnValue.append(ZERO);
+                LOGGER.debug("appending a {}", ZERO);
+            }
+        }
+        return returnValue;
     }
 
     /**
