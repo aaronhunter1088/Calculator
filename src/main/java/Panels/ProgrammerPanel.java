@@ -1,6 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
+import Types.CalculatorUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -1099,8 +1100,14 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String result = performNot();
-        calculator.appendTextToPane(result, false);
+        String result = performNot(); // returns decimal form
+        //calculator.getValues()[calculator.getValuesPosition()] = result;
+        if (calculator.getCalculatorBase() != BASE_DECIMAL) { // show result in proper base
+            String showInBase = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
+            calculator.appendTextToPane(showInBase, false);
+        } else {
+            calculator.appendTextToPane(result, true);
+        }
         calculator.getValues()[calculator.getValuesPosition()] = result;
         calculator.writeHistory(buttonChoice, false);
         LOGGER.info("action {} complete", buttonChoice);
@@ -1109,29 +1116,18 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * Performs the actual logic of inverting a number's bits for the Not operation.
+     * not x = -(x + 1)
      * @return the number inverted
      */
     public String performNot()
     {
-        String textPaneValue = calculator.getTextPaneValue();
-        if (BASE_BINARY != calculator.getCalculatorBase()) {
-            textPaneValue = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, textPaneValue);
-        }
-        LOGGER.debug("before operation execution: {}", textPaneValue);
-        StringBuilder newBuffer = calculator.invertBits(textPaneValue);
-        LOGGER.debug("after operation execution: {}", newBuffer);
-        if (newBuffer.toString().startsWith(ONE)) {
-            // number is negative. invert and add subtraction sign
-            StringBuilder negativeInverted = calculator.invertBits(newBuffer.toString());
-            String invertedNumber = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), negativeInverted.toString());
-            BigDecimal invertedNumberInDecimal = new BigDecimal(invertedNumber);
-            invertedNumberInDecimal = invertedNumberInDecimal.add(BigDecimal.ONE);
-            newBuffer = new StringBuilder().append(SUBTRACTION).append(invertedNumberInDecimal);
-        } else {
-            newBuffer = new StringBuilder().append(calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), newBuffer.toString()));
-            //calculator.getValues()[calculator.getValuesPosition()] = newBuffer.toString();
-        }
-        return newBuffer.toString();
+        BigDecimal valueAtPosition = new BigDecimal(calculator.getValueAt());
+        LOGGER.debug("before operation execution: {}", valueAtPosition);
+        valueAtPosition = valueAtPosition.add(BigDecimal.ONE);
+        valueAtPosition = valueAtPosition.multiply(new BigDecimal(SUBTRACTION+ONE));
+        LOGGER.debug("after operation execution: {}", valueAtPosition);
+        calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(valueAtPosition.toString()));
+        return valueAtPosition.toString();
     }
 
     /**
@@ -1413,6 +1409,12 @@ public class ProgrammerPanel extends JPanel
         confirm(calculator, LOGGER, "Bytes updated");
     }
 
+    /*
+     * TODO: Fix: This logic is not correct. What should happen is the following:
+     * Grab the current value at values[valuesPosition].
+     * Convert that value from decimal to the base we chose
+     * Display that value in the textpane but do not update the value in values[valuesPosition]
+     */
     /**
      * The actions to perform when the Bases button is clicked
      */
@@ -1420,57 +1422,50 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        boolean updateValues = false;
+        String currentValue = calculator.getAppropriateValue();
         String converted = EMPTY;
+
+//        // Get current value, default to textPane if values array is empty
+//        if (currentValue.isEmpty() && !calculator.getTextPaneValue().isEmpty()) {
+//            currentValue = calculator.getTextPaneValue();
+//        }
+
         switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                // TODO: Not just is the correct length but also if the length is less than
-                converted = calculator.getTextPaneValue();
-                updateValues = getAllowedLengthsOfTextPane().contains(converted.length());
-                if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_OCTAL, calculator.getTextPaneValue());
-                    calculator.getValues()[calculator.getValuesPosition()] = converted;
-                    calculator.setPreviousBase(BASE_BINARY);
-                    calculator.setCalculatorBase(BASE_OCTAL);
-                    appendTextForProgrammerPanel(calculator.getValues()[calculator.getValuesPosition()]);
+                calculator.setCalculatorBase(BASE_OCTAL);
+                if (!currentValue.isEmpty()) {
+                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, currentValue);
                 }
             }
             case BASE_OCTAL -> {
                 calculator.setCalculatorBase(BASE_DECIMAL);
-                // TODO: Create similar logic as i did for setting this for binary.
-                updateValues = true;
-                if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_OCTAL, BASE_DECIMAL, calculator.getTextPaneValue());
-                    calculator.getValues()[calculator.getValuesPosition()] = converted;
-                    calculator.setPreviousBase(BASE_OCTAL);
-                    appendTextForProgrammerPanel(calculator.getValues()[calculator.getValuesPosition()]);
+                if (!currentValue.isEmpty()) {
+                    converted = currentValue; // Already in decimal
                 }
             }
             case BASE_DECIMAL -> {
                 calculator.setCalculatorBase(BASE_HEXADECIMAL);
-                // TODO: Create similar logic as i did for setting this for binary.
-                updateValues = true;
-                if (updateValues) {
-                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, calculator.getTextPaneValue());
-                    calculator.setPreviousBase(BASE_DECIMAL);
-                    appendTextForProgrammerPanel(converted);
+                if (!currentValue.isEmpty()) {
+                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, currentValue);
+                    //converted = calculator.convertValueToHexadecimal();
                 }
             }
             case BASE_HEXADECIMAL -> {
-                converted = calculator.convertFromBaseToBase(BASE_HEXADECIMAL, BASE_BINARY, calculator.getTextPaneValue());
                 calculator.setCalculatorBase(BASE_BINARY);
-                // TODO: Create similar logic as i did for setting this for binary.
-                updateValues = true;
-                if (updateValues) {
-                    calculator.setPreviousBase(BASE_HEXADECIMAL);
-                    appendTextForProgrammerPanel(separateBits(converted));
+                if (!currentValue.isEmpty()) {
+                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, currentValue);
                 }
             }
         }
+
         enableDisableNumberButtonsBasedOnBase();
-        //appendToPane(addBaseRepresentation()); // must call to update textPane base value
-        calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Updated bases to " + this.calculator.getCalculatorBase().getValue());
-        calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
+        if (!converted.isEmpty()) {
+            appendTextForProgrammerPanel(converted);
+        }
+        calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Updated bases to " + calculator.getCalculatorBase().getValue());
+        if (!converted.isEmpty()) {
+            calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
+        }
         confirm(calculator, LOGGER, "Bases updated to " + calculator.getCalculatorBase());
     }
 

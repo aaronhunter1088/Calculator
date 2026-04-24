@@ -41,20 +41,16 @@ public class LoggingUtil
         logger.info("----------------");
         switch (currentView) {
             case VIEW_BASIC, VIEW_PROGRAMMER -> {
-                if (currentView == VIEW_BASIC) {
-                    logger.info("textPane: '{}'", textPaneValue);
-                }
                 if (currentView == VIEW_PROGRAMMER) {
                     CalculatorBase currentBase = calculator.getCalculatorBase();
                     logger.info("Base: {}", currentBase);
                     CalculatorByte currentByte = calculator.getCalculatorByte();
                     logger.info("Byte: {}", currentByte);
                     switch (currentBase) {
-                        case BASE_BINARY ->
-                                logger.info("textPane: '{}'", calculator.getProgrammerPanel().separateBits(textPaneValue));
-                        //case BASE_OCTAL -> logger.info("octets: {}", calculator.getProgrammerPanel().getOctetsString());
+                        case BASE_BINARY -> logger.info("textPane: '{}'", calculator.getProgrammerPanel().separateBits(textPaneValue));
+                        case BASE_OCTAL -> logger.info("textPane: '{}'", textPaneValue);
                         case BASE_DECIMAL -> logger.info("textPane: '{}'", textPaneValue);
-                        //case BASE_HEXADECIMAL -> logger.info("hexadects: {}", calculator.getProgrammerPanel().getHexadectsString());
+                        case BASE_HEXADECIMAL -> logger.info("textPane: '{}'", textPaneValue);
                     }
                 }
                 // print out all operators' status versus only the active ones

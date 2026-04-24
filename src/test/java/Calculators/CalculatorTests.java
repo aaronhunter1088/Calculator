@@ -912,6 +912,7 @@ class CalculatorTests extends TestParent
     @ParameterizedTest
     @DisplayName("Convert FromBaseToBase()")
     @CsvSource({
+            "-64, 11000000, BASE_DECIMAL, BASE_BINARY",
             "00000011, 3, BASE_BINARY, BYTE_BYTE, BASE_DECIMAL",
             "0000000000000011, 3, BASE_BINARY, BYTE_WORD, BASE_DECIMAL",
             "00000000000000000000000000000011, 3, BASE_BINARY, BYTE_DWORD, BASE_DECIMAL",
@@ -926,6 +927,18 @@ class CalculatorTests extends TestParent
         calculator.appendTextToPane(convertValue);
         String converted = calculator.convertFromBaseToBase(fromBase, toBase, calculator.getTextPaneValue());
         assertEquals(expect, converted, "Expected " + expect);
+    }
+
+    @Test
+    void testConvertFromBase()
+    {
+        calculator.setCalculatorBase(BASE_DECIMAL);
+        calculator.setCalculatorByte(BYTE_BYTE);
+
+        String valueToConvert = "-64";
+        calculator.appendTextToPane(valueToConvert);
+        String converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, valueToConvert);
+        assertEquals("11000000", converted, "Expected 11000000");
     }
 
     @ParameterizedTest

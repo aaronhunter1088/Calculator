@@ -2935,8 +2935,8 @@ public class Calculator extends JFrame
     {
         int base2Length = base2Number.length();
         int bits = determineBits(base2Length);
-        int addZeroes = bits - base2Length;
-        base2Number = ZERO.repeat(addZeroes) + base2Number;
+        int padAmount = bits - base2Length;
+        base2Number = negativeNumber ? ONE.repeat(padAmount) + base2Number : ZERO.repeat(padAmount) + base2Number;
         return base2Number;
     }
 
@@ -2951,27 +2951,28 @@ public class Calculator extends JFrame
      */
     public int determineBits(int base2Length)
     {
-        var bits = 0;
-        if (calculatorByte == BYTE_BYTE) bits = 8;
-        else if (calculatorByte == BYTE_WORD) bits = 16;
-        else if (calculatorByte == BYTE_DWORD) bits = 32;
-        else if (calculatorByte == BYTE_QWORD) bits = 64;
-        if (bits < base2Length) {
-            LOGGER.debug("base2Length: {}", base2Length);
-            if (base2Length <= 8) {
-                bits = 8;
-                setCalculatorByte(BYTE_BYTE);
-            } else if (base2Length <= 16) {
-                bits = 16;
-                setCalculatorByte(BYTE_WORD);
-            } else if (base2Length <= 32) {
-                bits = 32;
-                setCalculatorByte(BYTE_DWORD);
-            } else { //if (base2Length <= 64) {
-                bits = 64;
-                setCalculatorByte(BYTE_QWORD);
-            }
-        }
+        var bits = switch (calculatorByte) {
+            case BYTE_BYTE -> 8;
+            case BYTE_WORD -> 16;
+            case BYTE_DWORD -> 32;
+            case BYTE_QWORD -> 64;
+        };
+//        if (bits < base2Length) {
+//            LOGGER.debug("base2Length: {}", base2Length);
+//            if (base2Length <= 8) {
+//                bits = 8;
+//                setCalculatorByte(BYTE_BYTE);
+//            } else if (base2Length <= 16) {
+//                bits = 16;
+//                setCalculatorByte(BYTE_WORD);
+//            } else if (base2Length <= 32) {
+//                bits = 32;
+//                setCalculatorByte(BYTE_DWORD);
+//            } else { //if (base2Length <= 64) {
+//                bits = 64;
+//                setCalculatorByte(BYTE_QWORD);
+//            }
+//        }
         return bits;
     }
 
@@ -2984,7 +2985,10 @@ public class Calculator extends JFrame
     {
         String valueToConvert = values[valuesPosition];
         if (valueToConvert.isEmpty()) return EMPTY;
-        String base2Number = Integer.toBinaryString(Integer.parseInt(valueToConvert));
+        String base2Number = Integer.toUnsignedString(Integer.parseInt(valueToConvert), 2);
+        base2Number = adjustBinaryNumber(base2Number);
+        // fix for bug
+        base2Number = base2Number.substring(base2Number.length() - determineBits(1));
         base2Number = adjustBinaryNumber(base2Number);
         LOGGER.info("Converting {}({}) to {}({})", BASE_DECIMAL.getValue(), valueToConvert,
                 BASE_BINARY.getValue(), base2Number);
@@ -3030,7 +3034,8 @@ public class Calculator extends JFrame
      */
     public String convertValueToHexadecimal()
     {
-        String valueToConvert = values[valuesPosition];
+        // TODO: maybe could be getAppropriateValue()
+        String valueToConvert = getValueAt();
         if (valueToConvert.isEmpty()) return EMPTY;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_HEXADECIMAL.getValue());
         String base16Number = Integer.toHexString(Integer.parseInt(valueToConvert));
@@ -3054,17 +3059,44 @@ public class Calculator extends JFrame
         if (valueToConvert.isEmpty()) return EMPTY;
         LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
         String convertedNumber;
-//        if (!isDecimalNumber(valueToConvert))
-//            convertedNumber = Integer.toString(BigInteger.parseInt(valueToConvert, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
-//        else {
-//            var value = clearZeroesAndDecimalAtEnd(valueToConvert);
-//            convertedNumber = Integer.toString(Integer.parseInt(value, getPreviousRadix(fromBase)), getPreviousRadix(toBase));
-//        }
-        if (!isFractionalNumber(valueToConvert)) {
+        if (!isFractionalNumber(valueToConvert) && !CalculatorUtility.isNegativeNumber(valueToConvert)) {
             // use BigInteger for arbitrarily large integers
             convertedNumber = new BigInteger(valueToConvert, getPreviousRadix(fromBase))
                     .toString(getPreviousRadix(toBase));
-        } else {
+        }
+        else if (!isFractionalNumber(valueToConvert) && CalculatorUtility.isNegativeNumber(valueToConvert)) {
+            // For negative numbers converting to binary/octal/hex, use two's complement
+            if (toBase == BASE_BINARY || toBase == BASE_OCTAL || toBase == BASE_HEXADECIMAL) {
+                // First convert to decimal if coming from another base
+                BigInteger valueInDecimal;
+                if (fromBase == BASE_DECIMAL) {
+                    valueInDecimal = new BigInteger(valueToConvert);
+                } else {
+                    valueToConvert = valueToConvert.substring(1); // remove negative sign
+                    valueInDecimal = new BigInteger(valueToConvert, getPreviousRadix(fromBase)).negate();
+                }
+
+                // Determine bit width based on the current calculator byte setting
+                int bits = determineBits(1); // Gets current bit width (8, 16, 32, or 64)
+
+                // Convert to two's complement representation
+                // Create a mask for the bit width (e.g., 0xFF for 8-bit, 0xFFFF for 16-bit, etc.)
+                BigInteger mask = BigInteger.ONE.shiftLeft(bits).subtract(BigInteger.ONE);
+
+                // Apply two's complement: for negative numbers, AND with mask to get unsigned representation
+                BigInteger unsignedValue = valueInDecimal.and(mask);
+
+                // Convert to target base
+                convertedNumber = unsignedValue.toString(getPreviousRadix(toBase));
+            } else {
+                // For decimal conversions, keep the negative sign
+                valueToConvert = valueToConvert.substring(1);
+                convertedNumber = new BigInteger(valueToConvert, getPreviousRadix(fromBase))
+                        .toString(getPreviousRadix(toBase));
+                convertedNumber = new BigDecimal(convertedNumber).multiply(new BigDecimal(SUBTRACTION+ONE)).toString();
+            }
+        }
+        else {
             // handle fractional values: split into integer and fractional parts
             String[] parts = valueToConvert.split(DECIMAL);
             String intPartStr = parts.length > 0 && !parts[0].isEmpty() ? parts[0] : ZERO;
@@ -3100,7 +3132,7 @@ public class Calculator extends JFrame
             convertedNumber = intConverted + (fracConverted.isEmpty() ? EMPTY : (DECIMAL + fracConverted));
         }
         if (BASE_BINARY == toBase) {
-            convertedNumber = adjustBinaryNumber(convertedNumber);
+            convertedNumber = programmerPanel.separateBits(adjustBinaryNumber(convertedNumber));
         }
         LOGGER.debug("converted: {}", convertedNumber);
         return convertedNumber;
@@ -3370,7 +3402,8 @@ public class Calculator extends JFrame
         } else if (calculatorView == VIEW_PROGRAMMER) {
             switch (calculatorBase) {
                 case BASE_BINARY -> {
-                    programmerPanel.appendTextForProgrammerPanel(programmerPanel.separateBits(convertValueToBinary()));
+                    // should contain separated bits
+                    programmerPanel.appendTextForProgrammerPanel(text);
                 }
                 case BASE_OCTAL -> {
                     programmerPanel.appendTextForProgrammerPanel(convertValueToOctal());
