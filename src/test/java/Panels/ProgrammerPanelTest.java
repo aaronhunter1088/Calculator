@@ -18,8 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
-import static Types.CalculatorBase.BASE_BINARY;
-import static Types.CalculatorBase.BASE_DECIMAL;
+import static Types.CalculatorBase.*;
+import static Types.CalculatorByte.*;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
@@ -59,15 +59,16 @@ class ProgrammerPanelTest extends TestParent
                 ArgumentsForTests.builder(OR)
                         .firstNumber("5").secondUnaryResult(OR).firstUnaryResult("5 OR").build(),
                 ArgumentsForTests.builder(OR)
-                        .firstNumber("5").secondBinaryResult(OR).firstBinaryResult("5 OR").build()
-                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("3").build()
+                        .firstNumber("5").firstBinaryOperator(OR).firstBinaryResult("5 OR")
+                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("7").build()
         );
     }
 
     private static Stream<ArgumentsForTests> invalidOrButtonCases()
     {
         return Stream.of(
-                // TODO: Add cases
+                ArgumentsForTests.builder(OR).firstBinaryResult(OR).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
+                //, more
         );
     }
 
@@ -92,7 +93,9 @@ class ProgrammerPanelTest extends TestParent
         // TODO: Need a way to set the base and byte
         return Stream.of(
                 ArgumentsForTests.builder(NOT)
-                        .firstNumber("0000 1011").firstUnaryResult("1111 0100").build(),
+                        .firstNumber("0000 1011")
+                        .firstUnaryOperator(NOT)
+                        .firstUnaryResult("1111 0100").build(),
                 ArgumentsForTests.builder(NOT)
                         .firstNumber("5").firstUnaryResult("...11111010").build()
         );
@@ -126,7 +129,7 @@ class ProgrammerPanelTest extends TestParent
     private static Stream<Arguments> getModulusCases()
     {
         return Stream.of(
-                Arguments.of(BASE_BINARY, FIVE, THREE, EQUALS, "00000010"),
+                Arguments.of(BASE_BINARY, FIVE, THREE, EQUALS, "0000 0010"),
                 Arguments.of(BASE_DECIMAL, FIVE, THREE, EQUALS, TWO),
                 Arguments.of(BASE_DECIMAL, FOUR, THREE, EQUALS, ONE),
                 Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, INFINITY),
@@ -144,7 +147,7 @@ class ProgrammerPanelTest extends TestParent
                 Arguments.of(BASE_DECIMAL, SUBTRACTION + FIVE, SEVEN, EQUALS, TWO),
                 Arguments.of(BASE_DECIMAL, ONE + ZERO, SUBTRACTION + THREE, EQUALS, ONE),
                 Arguments.of(BASE_DECIMAL, SUBTRACTION + TWO + ZERO, SUBTRACTION + SIX, EQUALS, FOUR),
-                Arguments.of(BASE_DECIMAL, ONE + ZERO.repeat(5), SEVEN, EQUALS, FOUR),
+                Arguments.of(BASE_DECIMAL, ONE + ZERO.repeat(5), SEVEN, EQUALS, FIVE),
                 Arguments.of(BASE_DECIMAL, TWO + TWO, FIVE, EQUALS, TWO),
                 Arguments.of(BASE_DECIMAL, TWO + ZERO, SIX, EQUALS, TWO),
                 Arguments.of(BASE_DECIMAL, TWO, FOUR, EQUALS, TWO)
@@ -237,6 +240,22 @@ class ProgrammerPanelTest extends TestParent
 
         setupWhenThen(actionEvent, arguments);
 
+        calculator.setCalculatorBase(BASE_BINARY);
+        calculator.setPreviousBase(BASE_BINARY);
+        calculator.setCalculatorByte(BYTE_BYTE);
+        // copilot edit
+        if (!arguments.getFirstNumber().isEmpty()) {
+            String firstNumber = arguments.getFirstNumber().replace(BLANK, EMPTY);
+            // If the number contains digits > 1, it's already in decimal format
+            if (firstNumber.matches("[01 ]+")) {
+                calculator.getValues()[0] = calculator.convertValueToDecimal(firstNumber);
+            } else {
+                // Already in decimal format, use as-is
+                calculator.getValues()[0] = firstNumber;
+            }
+        }
+        if (!arguments.getSecondNumber().isEmpty())
+            calculator.getValues()[1] = calculator.convertValueToDecimal(arguments.getSecondNumber().replace(BLANK, EMPTY));
         String previousHistory = calculator.getHistoryTextPaneValue();
         previousHistory = performTest(arguments, previousHistory, LOGGER);
 
@@ -264,18 +283,18 @@ class ProgrammerPanelTest extends TestParent
     void testPerformAndContinuedOperation()
     {
         when(actionEvent.getActionCommand())
-                .thenReturn(FIVE).thenReturn(FIVE) // leave,
+                .thenReturn(FIVE)
                 .thenReturn(AND)
-                .thenReturn(SIX).thenReturn(SIX) // leave
+                .thenReturn(SIX)
                 .thenReturn(AND);
-        calculator.getProgrammerPanel().getCalculator().performNumberButtonAction(actionEvent);
+        calculator.performNumberButtonAction(actionEvent);
         assertEquals(FIVE, calculator.getTextPaneValue(), "Expected textPane to be 5");
 
         calculator.getProgrammerPanel().performAndButtonAction(actionEvent);
         assertEquals("5 AND", calculator.getTextPaneValue(), "Expected textPane to be 5 AND");
         assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
 
-        calculator.getProgrammerPanel().getCalculator().performNumberButtonAction(actionEvent);
+        calculator.performNumberButtonAction(actionEvent);
         assertEquals(SIX, calculator.getTextPaneValue(), "Expected textPane to contain 6");
         assertEquals(AND, calculator.getValueAt(2), "Expecting AND at values[2]");
 

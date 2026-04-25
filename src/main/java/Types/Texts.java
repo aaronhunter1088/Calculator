@@ -13,6 +13,7 @@ package Types;
 public class Texts
 {
     // Calculator
+    public static final String BLANK = " ";
     public static final String SEGOE_UI = "Segoe UI";
     public static final String VERDANA = "Verdana";
     public static final String ZERO = "0";

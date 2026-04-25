@@ -694,10 +694,19 @@ public class ProgrammerPanel extends JPanel
             calculator.setObtainingFirstNumber(true);
             result = INFINITY;
         } else {
-            result = new BigDecimal(calculator.getValueAt(0))
-                    .remainder(new BigDecimal(calculator.getValueAt(1)))
-                    .abs()
-                    .toPlainString();
+            BigDecimal a = new BigDecimal(calculator.getValueAt(0));
+            BigDecimal b = new BigDecimal(calculator.getValueAt(1));
+            // Euclidean modulo: always returns non-negative result
+            BigDecimal remainder = a.remainder(b);
+            if (remainder.compareTo(BigDecimal.ZERO) < 0) {
+                // If remainder is negative, adjust based on sign of b
+                if (b.compareTo(BigDecimal.ZERO) > 0) {
+                    remainder = remainder.add(b);
+                } else {
+                    remainder = remainder.subtract(b);
+                }
+            }
+            result = remainder.toPlainString();
         }
         return result;
     }
@@ -1001,13 +1010,17 @@ public class ProgrammerPanel extends JPanel
             }
             counter++;
         }
-        String orResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        calculator.setValuesPosition(3);
+        String orResult = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, v1AndV2.toString());
         calculator.appendTextToPane(addThousandsDelimiter(orResult, calculator.getThousandsDelimiter()), true);
+        if (calculator.getCalculatorBase() != BASE_DECIMAL) {
+            orResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
+            calculator.appendTextToPane(addThousandsDelimiter(orResult, calculator.getThousandsDelimiter()), true);
+        }
+        calculator.setValuesPosition(3);
         calculator.writeContinuedHistory(OR, OR, orResult, false);
         logOperation(LOGGER, calculator);
         calculator.finishedObtainingFirstNumber(false);
-        return v1AndV2.toString();
+        return orResult;
     }
 
     /**
@@ -1102,13 +1115,15 @@ public class ProgrammerPanel extends JPanel
         logActionButton(buttonChoice, LOGGER);
         String result = performNot(); // returns decimal form
         //calculator.getValues()[calculator.getValuesPosition()] = result;
+        String valueToStore = result;
         if (calculator.getCalculatorBase() != BASE_DECIMAL) { // show result in proper base
             String showInBase = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
             calculator.appendTextToPane(showInBase, false);
+            valueToStore = showInBase;
         } else {
             calculator.appendTextToPane(result, true);
         }
-        calculator.getValues()[calculator.getValuesPosition()] = result;
+        calculator.getValues()[calculator.getValuesPosition()] = valueToStore;
         calculator.writeHistory(buttonChoice, false);
         LOGGER.info("action {} complete", buttonChoice);
         confirm(calculator, LOGGER, "Pressed " + buttonChoice);

@@ -1727,6 +1727,7 @@ public class Calculator extends JFrame
             }
             // Needs to be here!
             else if (isOperatorActive()) {
+                values[3] = EMPTY;  // Clear result when operation is invalid
                 confirm(this, LOGGER, cannotPerformOperation(SQUARE_ROOT));
             }
         }
@@ -2346,8 +2347,17 @@ public class Calculator extends JFrame
             confirm(this, LOGGER, cannotPerformOperation(buttonChoice));
         } else {
             performOperation();
-            if (!textPaneContainsBadText())
-                appendTextToPane(addThousandsDelimiter(values[3], getThousandsDelimiter()));
+            if (!textPaneContainsBadText()){
+                String convertedToBase = convertFromBaseToBase(BASE_DECIMAL, calculatorBase, values[3]);
+                // TODO: Investigate logic. Checking bases suggests we are missing two cases
+                if (calculatorBase == BASE_BINARY)
+                    convertedToBase = getProgrammerPanel().separateBits(convertedToBase);
+                // TODO: Investigate logic. Separate from above but related to what is displayed
+                if (calculatorBase == BASE_DECIMAL)
+                    appendTextToPane(addThousandsDelimiter(convertedToBase, getThousandsDelimiter()));
+                else
+                    appendTextToPane(convertedToBase);
+            }
             writeContinuedHistory(EQUALS, getActiveOperator(), values[3], false);
             resetValues(true);
             updateMemoryButtonsState();
@@ -2951,29 +2961,12 @@ public class Calculator extends JFrame
      */
     public int determineBits(int base2Length)
     {
-        var bits = switch (calculatorByte) {
+        return switch (calculatorByte) {
             case BYTE_BYTE -> 8;
             case BYTE_WORD -> 16;
             case BYTE_DWORD -> 32;
             case BYTE_QWORD -> 64;
         };
-//        if (bits < base2Length) {
-//            LOGGER.debug("base2Length: {}", base2Length);
-//            if (base2Length <= 8) {
-//                bits = 8;
-//                setCalculatorByte(BYTE_BYTE);
-//            } else if (base2Length <= 16) {
-//                bits = 16;
-//                setCalculatorByte(BYTE_WORD);
-//            } else if (base2Length <= 32) {
-//                bits = 32;
-//                setCalculatorByte(BYTE_DWORD);
-//            } else { //if (base2Length <= 64) {
-//                bits = 64;
-//                setCalculatorByte(BYTE_QWORD);
-//            }
-//        }
-        return bits;
     }
 
     /**
@@ -2983,7 +2976,16 @@ public class Calculator extends JFrame
      */
     public String convertValueToBinary()
     {
-        String valueToConvert = values[valuesPosition];
+        return convertValueToBinary(values[valuesPosition]);
+    }
+
+    /**
+     * Converts the given value to its binary representation
+     *
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToBinary(String valueToConvert)
+    {
         if (valueToConvert.isEmpty()) return EMPTY;
         String base2Number = Integer.toUnsignedString(Integer.parseInt(valueToConvert), 2);
         base2Number = adjustBinaryNumber(base2Number);
@@ -3002,7 +3004,16 @@ public class Calculator extends JFrame
      */
     public String convertValueToOctal()
     {
-        String valueToConvert = values[valuesPosition];
+        return convertValueToOctal(values[valuesPosition]);
+    }
+
+    /**
+     * Converts the given value to its octal representation
+     *
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToOctal(String valueToConvert)
+    {
         if (valueToConvert.isEmpty()) return EMPTY;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_OCTAL.getValue());
         String base8Number = Integer.toOctalString(Integer.parseInt(valueToConvert));
@@ -3018,7 +3029,14 @@ public class Calculator extends JFrame
      */
     public String convertValueToDecimal()
     {
-        String valueToConvert = values[valuesPosition];
+        return convertValueToDecimal(values[valuesPosition]);
+    }
+
+    /**
+     * Converts the given value to its decimal representation
+     */
+    public String convertValueToDecimal(String valueToConvert)
+    {
         if (valueToConvert.isEmpty()) return EMPTY;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_DECIMAL.getValue());
         String base10Number = Integer.toString(Integer.parseInt(valueToConvert, getPreviousRadix()), 10);
@@ -3035,7 +3053,16 @@ public class Calculator extends JFrame
     public String convertValueToHexadecimal()
     {
         // TODO: maybe could be getAppropriateValue()
-        String valueToConvert = getValueAt();
+        return convertValueToHexadecimal(values[valuesPosition]);
+    }
+
+    /**
+     * Converts the given value to its hexadecimal representation
+     *
+     * @return the binary representation of value[valuePosition]
+     */
+    public String convertValueToHexadecimal(String valueToConvert)
+    {
         if (valueToConvert.isEmpty()) return EMPTY;
         LOGGER.debug("Converting {} to {}", valueToConvert, BASE_HEXADECIMAL.getValue());
         String base16Number = Integer.toHexString(Integer.parseInt(valueToConvert));
@@ -3057,6 +3084,10 @@ public class Calculator extends JFrame
     {
         valueToConvert = removeThousandsDelimiter(valueToConvert, getThousandsDelimiter()).replace(SPACE, EMPTY);
         if (valueToConvert.isEmpty()) return EMPTY;
+        // Short-circuit: if both are decimal, no conversion needed
+        if (fromBase == toBase) {
+            return valueToConvert;
+        }
         LOGGER.debug("converting {} from {} to {}", valueToConvert, fromBase.getValue(), toBase.getValue());
         String convertedNumber;
         if (!isFractionalNumber(valueToConvert) && !CalculatorUtility.isNegativeNumber(valueToConvert)) {
@@ -3205,11 +3236,11 @@ public class Calculator extends JFrame
     {
         if (calculatorView == VIEW_BASIC) {
             return textPane.getText()
-                    .replaceAll(NEWLINE, EMPTY)
+                    .replace(NEWLINE, EMPTY)
                     .strip();
         } else if (calculatorView == VIEW_PROGRAMMER) {
             return getTextPaneValueForProgrammerPanel()
-                    .replaceAll(NEWLINE, EMPTY)
+                    .replace(NEWLINE, EMPTY)
                     .strip();
         } else {
             LOGGER.warn("Implement");

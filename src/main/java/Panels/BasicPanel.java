@@ -345,6 +345,7 @@ public class BasicPanel extends JPanel
             }
             // Needs to be here!
             else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue())) {
+                calculator.getValues()[3] = EMPTY;  // Clear result when operation is invalid
                 confirm(calculator, LOGGER, cannotPerformOperation(PERCENT));
             }
         }
@@ -405,7 +406,8 @@ public class BasicPanel extends JPanel
             }
             // Needs to be here!
             else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue())) {
-                confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
+                calculator.getValues()[3] = EMPTY;  // Clear result when operation is invalid
+                confirm(calculator, LOGGER, cannotPerformOperation(SQUARED));
             }
         }
     }
@@ -465,6 +467,7 @@ public class BasicPanel extends JPanel
             }
             // Needs to be here!
             else if (calculator.isOperatorActive() && calculator.endsWithOperator(calculator.getTextPaneValue())) {
+                calculator.getValues()[3] = EMPTY;  // Clear result when operation is invalid
                 confirm(calculator, LOGGER, cannotPerformOperation(FRACTION));
             }
         }

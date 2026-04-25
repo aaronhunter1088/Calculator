@@ -453,6 +453,7 @@ class CalculatorTests extends TestParent
                 calculator = spy(new Calculator());
                 Preferences.userNodeForPackage(Calculator.class).clear(); // remove keys
                 calculator.setSystemDetector(systemDetector);
+                calculator.getProgrammerPanel().setCalculator(calculator); // links spyCalc to ProgrammerPanel
             }
             catch (Exception ignored) {
             }
@@ -572,9 +573,9 @@ class CalculatorTests extends TestParent
         calculator.getValues()[0] = FOUR;
         calculator.setCalculatorByte(BYTE_BYTE);
         String convertedValue = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, calculator.getValues()[calculator.getValuesPosition()]);
-        assertEquals("00000100", convertedValue, "Conversion went wrong!");
+        assertEquals("0000 0100", convertedValue, "Conversion went wrong!");
         calculator.appendTextToPane(convertedValue);
-        assertEquals("00000100", calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
+        assertEquals("0000 0100", calculator.getTextPaneValue(), TEXT_PANE_WRONG_VALUE);
     }
 
     @ParameterizedTest
@@ -666,6 +667,7 @@ class CalculatorTests extends TestParent
     }
 
     // Requires manual intervention to close help panel
+    @Disabled("Test opens Swing component that requires manual intervention to close help panel")
     @ParameterizedTest
     @DisplayName("Test Calculator's Help Action")
     @MethodSource("getShowHelpCases")
@@ -678,6 +680,7 @@ class CalculatorTests extends TestParent
     }
 
     // Requires manual intervention to close about calculator panel
+    @Disabled("Test opens Swing component that requires manual intervention to close about calculator panel")
     @ParameterizedTest
     @DisplayName("Test About Calculator Action")
     @MethodSource("getAboutCalculatorCases")
@@ -912,7 +915,7 @@ class CalculatorTests extends TestParent
     @ParameterizedTest
     @DisplayName("Convert FromBaseToBase()")
     @CsvSource({
-            "-64, 11000000, BASE_DECIMAL, BASE_BINARY",
+            "-64, 1100 0000, BASE_DECIMAL, BYTE_BYTE, BASE_BINARY",
             "00000011, 3, BASE_BINARY, BYTE_BYTE, BASE_DECIMAL",
             "0000000000000011, 3, BASE_BINARY, BYTE_WORD, BASE_DECIMAL",
             "00000000000000000000000000000011, 3, BASE_BINARY, BYTE_DWORD, BASE_DECIMAL",
@@ -938,7 +941,7 @@ class CalculatorTests extends TestParent
         String valueToConvert = "-64";
         calculator.appendTextToPane(valueToConvert);
         String converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, valueToConvert);
-        assertEquals("11000000", converted, "Expected 11000000");
+        assertEquals("1100 0000", converted, "Expected 1100 0000");
     }
 
     @ParameterizedTest

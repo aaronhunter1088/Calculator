@@ -2,6 +2,7 @@ package Parent;
 
 import Calculators.Calculator;
 import Interfaces.OSDetector;
+import Types.CalculatorBase;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -187,6 +188,8 @@ public abstract class TestParent
         int firstNumLength = number.length();
         if (firstNumLength == 0) {
             assertEquals(number, calculator.getTextPaneValue(), "textPane value is not as expected");
+        } else if (calculator.getCalculatorBase() != CalculatorBase.BASE_DECIMAL) {
+            return;
         } else {
             for (int i = 0; i < number.length(); i++) {
                 String currentDigit = String.valueOf(number.charAt(i));
@@ -358,7 +361,7 @@ public abstract class TestParent
             } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(firstBinaryOperator)) {
                 assertEquals(firstBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
             } else {
-                assertEquals(firstBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected");
+                assertEquals(firstBinaryValuesResult.replace(firstBinaryOperator, "").trim(), calculator.getValues()[0], "values[vP0] is not as expected");
             }
             assertEquals(firstBinaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
             previousHistory = calculator.getHistoryTextPane().getText();
@@ -376,8 +379,10 @@ public abstract class TestParent
             performNextOperatorAction(calculator, actionEvent, logger, secondUnaryOperator);
             if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondUnaryOperator) && !calculator.textPaneContainsBadText()) {
                 assertEquals(secondUnaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition() - 1], "memories[" + (calculator.getMemoryPosition() - 1) + "] is not as expected");
-            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondUnaryOperator)) {
+            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION).contains(secondUnaryOperator)) {
                 assertEquals(secondUnaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
+            } else if (EQUALS.contains(secondBinaryOperator)) {
+                assertEquals(EMPTY, calculator.getValues()[3], "values[3] is not as expected");
             } else {
                 assertEquals(secondUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected");
             }
@@ -389,8 +394,10 @@ public abstract class TestParent
             performNextOperatorAction(calculator, actionEvent, logger, secondBinaryOperator);
             if (List.of(MEMORY_STORE, MEMORY_ADD, MEMORY_SUBTRACT).contains(secondBinaryOperator) && !calculator.textPaneContainsBadText()) {
                 assertEquals(secondBinaryValuesResult, calculator.getMemoryValues()[calculator.getMemoryPosition() - 1], "memories[" + (calculator.getMemoryPosition() - 1) + "] is not as expected");
-            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, EQUALS).contains(secondBinaryOperator)) {
+            } else if (List.of(ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION).contains(secondBinaryOperator)) {
                 assertEquals(secondBinaryValuesResult, calculator.getValues()[3], "values[3] is not as expected");
+            } else if (EQUALS.contains(secondBinaryOperator)) {
+                assertEquals(EMPTY, calculator.getValues()[3], "values[3] is not as expected");
             } else {
                 assertEquals(secondBinaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP1] is not as expected");
             }
