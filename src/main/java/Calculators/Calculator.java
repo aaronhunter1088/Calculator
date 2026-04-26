@@ -2387,7 +2387,8 @@ public class Calculator extends JFrame
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(NEGATE));
         } else {
-            if (!getAppropriateValue().isEmpty()) {
+            if (!getAppropriateValue().isEmpty())
+            {
                 String currentOperator = getActiveOperator();
                 setActiveOperator(buttonChoice);
                 performOperation();
@@ -2401,7 +2402,8 @@ public class Calculator extends JFrame
                     setActiveOperator(currentOperator);
                 }
                 confirm(this, LOGGER, pressedButton(buttonChoice));
-            } else if (isOperatorActive()) {
+            }
+            else if (isOperatorActive()) {
                 confirm(this, LOGGER, cannotPerformOperation(NEGATE));
             }
 
@@ -2418,8 +2420,7 @@ public class Calculator extends JFrame
         String valueToNegate = getAppropriateValue();
         if (valueToNegate.isEmpty()) return valueToNegate;
         if (calculatorBase != BASE_DECIMAL)
-            valueToNegate = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, valueToNegate);
-
+            valueToNegate = getValueAt();
         if (CalculatorUtility.isNegativeNumber(valueToNegate)) {
             setNegativeNumber(false);
             return convertToPositive(valueToNegate);

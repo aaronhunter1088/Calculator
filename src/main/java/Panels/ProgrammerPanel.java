@@ -1200,40 +1200,30 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String currentValue = calculator.getTextPaneValue();
+        String currentValue = calculator.getAppropriateValue();
         String converted = EMPTY;
         buttonBytes.setEnabled(false);
         switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
                 calculator.setPreviousBase(BASE_BINARY);
                 calculator.setCalculatorBase(BASE_OCTAL);
+                converted = calculator.convertValueToOctal(currentValue).toUpperCase();
             }
             case BASE_OCTAL -> {
                 calculator.setPreviousBase(BASE_OCTAL);
                 calculator.setCalculatorBase(BASE_DECIMAL);
+                converted = calculator.convertValueToDecimal(currentValue).toUpperCase();
             }
             case BASE_DECIMAL -> {
                 calculator.setPreviousBase(BASE_DECIMAL);
                 calculator.setCalculatorBase(BASE_HEXADECIMAL);
+                converted = calculator.convertValueToHexadecimal(currentValue).toUpperCase();
             }
             case BASE_HEXADECIMAL -> {
                 calculator.setPreviousBase(BASE_HEXADECIMAL);
                 calculator.setCalculatorBase(BASE_BINARY);
                 buttonBytes.setEnabled(true);
-            }
-        }
-        // Update value if we have one in the text area
-        if (!currentValue.isEmpty()) {
-            try
-            {
-                converted = calculator.convertFromBaseToBase(calculator.getPreviousBase(),
-                        calculator.getCalculatorBase(), currentValue);
-                calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
-            }
-            catch (NumberFormatException nfe)
-            {
-                LOGGER.error("There was some issue while converting the value.");
-                converted = currentValue;
+                converted = calculator.convertValueToBinary(currentValue).toUpperCase();
             }
         }
         enableDisableNumberButtonsBasedOnBase();
