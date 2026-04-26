@@ -61,6 +61,7 @@ public class ProgrammerPanel extends JPanel
     private GridBagConstraints constraints;
     private JPanel programmerPanel;
     private boolean isShiftPressed, isInitialized;
+    private int rightParenthesisClickCount;
 
     /**************** CONSTRUCTORS ****************/
     /**
@@ -270,6 +271,7 @@ public class ProgrammerPanel extends JPanel
         LOGGER.debug("Shift button configured");
 
         buttonBytes.setName(BYTE + LOWER_CASE_S);
+        buttonBytes.setEnabled(false);
         buttonBytes.setPreferredSize(new Dimension(70, 35));
         buttonBytes.addActionListener(this::performByteButtonAction);
         LOGGER.debug("Bytes button configured");
@@ -566,6 +568,33 @@ public class ProgrammerPanel extends JPanel
         return lengthsAllowed;
     }
 
+//    /**
+//     * Returns the expression index that corresponds to the current text pane caret position.
+//     * The expression is rendered after the byte/base header and a blank line.
+//     *
+//     * @param expression the expression currently shown on the value line
+//     * @return caret index within the expression text
+//     */
+//    private int getCaretIndexWithinProgrammerExpression(String expression)
+//    {
+//        int expressionStartOffset = displayByteAndBase().length() + 1;
+//        int caretPosition = calculator.getTextPane().getCaretPosition();
+//        return Math.max(0, Math.min(expression.length(), caretPosition - expressionStartOffset));
+//    }
+
+//    /**
+//     * Places the caret at the requested index inside the expression line.
+//     *
+//     * @param expressionIndex index within the expression text
+//     */
+//    private void setProgrammerExpressionCaret(int expressionIndex)
+//    {
+//        int expressionStartOffset = displayByteAndBase().length() + 1;
+//        int maxPosition = calculator.getTextPane().getDocument().getLength();
+//        int targetPosition = Math.max(0, Math.min(maxPosition, expressionStartOffset + expressionIndex));
+//        calculator.getTextPane().setCaretPosition(targetPosition);
+//    }
+
     /**************** ACTIONS ****************/
     /**
      * The actions to perform when the Left Shift button is clicked
@@ -652,10 +681,12 @@ public class ProgrammerPanel extends JPanel
         logActionButton(buttonChoice, LOGGER);
         if (calculator.textPaneContainsBadText()) {
             confirm(calculator, LOGGER, "Cannot perform " + RSH);
-        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
+        }
+        else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + RSH);
-        } else {
+        }
+        else {
             String rightShiftResult = performRightShift();
             //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
             calculator.appendTextToPane(rightShiftResult);
@@ -1169,50 +1200,45 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String currentValue = calculator.getAppropriateValue();
+        String currentValue = calculator.getTextPaneValue();
         String converted = EMPTY;
-
-//        // Get current value, default to textPane if values array is empty
-//        if (currentValue.isEmpty() && !calculator.getTextPaneValue().isEmpty()) {
-//            currentValue = calculator.getTextPaneValue();
-//        }
-
+        buttonBytes.setEnabled(false);
         switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
+                calculator.setPreviousBase(BASE_BINARY);
                 calculator.setCalculatorBase(BASE_OCTAL);
-                if (!currentValue.isEmpty()) {
-                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, currentValue);
-                }
             }
             case BASE_OCTAL -> {
+                calculator.setPreviousBase(BASE_OCTAL);
                 calculator.setCalculatorBase(BASE_DECIMAL);
-                if (!currentValue.isEmpty()) {
-                    converted = currentValue; // Already in decimal
-                }
             }
             case BASE_DECIMAL -> {
+                calculator.setPreviousBase(BASE_DECIMAL);
                 calculator.setCalculatorBase(BASE_HEXADECIMAL);
-                if (!currentValue.isEmpty()) {
-                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, currentValue);
-                    //converted = calculator.convertValueToHexadecimal();
-                }
             }
             case BASE_HEXADECIMAL -> {
+                calculator.setPreviousBase(BASE_HEXADECIMAL);
                 calculator.setCalculatorBase(BASE_BINARY);
-                if (!currentValue.isEmpty()) {
-                    converted = calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, currentValue);
-                }
+                buttonBytes.setEnabled(true);
             }
         }
-
+        // Update value if we have one in the text area
+        if (!currentValue.isEmpty()) {
+            try
+            {
+                converted = calculator.convertFromBaseToBase(calculator.getPreviousBase(),
+                        calculator.getCalculatorBase(), currentValue);
+            }
+            catch (NumberFormatException nfe)
+            {
+                LOGGER.error("There was some issue while converting the value.");
+                converted = currentValue;
+            }
+        }
         enableDisableNumberButtonsBasedOnBase();
-        if (!converted.isEmpty()) {
-            appendTextForProgrammerPanel(converted);
-        }
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Updated bases to " + calculator.getCalculatorBase().getValue());
-        if (!converted.isEmpty()) {
-            calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
-        }
+        appendTextForProgrammerPanel(converted);
+        calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
         confirm(calculator, LOGGER, "Bases updated to " + calculator.getCalculatorBase());
     }
 
@@ -1349,8 +1375,9 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        LOGGER.warn("Left Parenthesis button method created. Logic needs to be configured");
-        appendTextForProgrammerPanel(calculator.getTextPaneValue() + buttonChoice);
+        String updatedExpression = performLeftParenthesis();
+        appendTextForProgrammerPanel(updatedExpression);
+        //setProgrammerExpressionCaret(pendingProgrammerExpressionCaretIndex);
         calculator.writeHistory(buttonChoice, false);
         calculator.setIsPemdasActive(true);
         confirm(calculator, LOGGER, pressedButton(buttonChoice));
@@ -1358,12 +1385,20 @@ public class ProgrammerPanel extends JPanel
 
     /**
      * The inner logic for (
+     * Inserts a matching right parenthesis and places caret between the pair.
      *
-     * @return the result of the operation
+     * @return the updated expression
      */
     public String performLeftParenthesis()
     {
-        return "";
+        String textPaneValue = calculator.getTextPaneValue();
+        //int caretIndex = getCaretIndexWithinProgrammerExpression(textPaneValue);
+        String updatedExpression = !calculator.isPemdasActive()
+                ? textPaneValue + LEFT_PARENTHESIS + RIGHT_PARENTHESIS
+                : textPaneValue.substring(0, textPaneValue.length()-1)
+                  + LEFT_PARENTHESIS + RIGHT_PARENTHESIS + RIGHT_PARENTHESIS;
+        // the extra right parenthesis is because we "took one away" with the length-1 logic
+        return updatedExpression;
     }
 
     /**
@@ -1375,21 +1410,48 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        LOGGER.warn("Right Parenthesis button method created. Logic needs to be configured");
-        appendTextForProgrammerPanel(calculator.getTextPaneValue() + buttonChoice);
+        String textPaneValue = calculator.getTextPaneValue();
+        if (!textPaneValue.contains(LEFT_PARENTHESIS)) {
+            confirm(calculator, LOGGER, cannotPerformOperation(buttonChoice) + ". No " + LEFT_PARENTHESIS + " exists yet");
+            return;
+        }
+        rightParenthesisClickCount++;
+        int rightParenthesisInValue = 0;
+        for(char c : textPaneValue.toCharArray())
+        {
+            if (c == RIGHT_PARENTHESIS.toCharArray()[0]) rightParenthesisInValue++;
+        }
+        //String updatedExpression = textPaneValue + buttonChoice;
+        //appendTextForProgrammerPanel(updatedExpression);
+        //appendTextForProgrammerPanel(textPaneValue);
+        //setProgrammerExpressionCaret(pendingProgrammerExpressionCaretIndex);
         calculator.writeHistory(buttonChoice, false);
+        calculator.setIsPemdasActive(rightParenthesisClickCount != rightParenthesisInValue);
         confirm(calculator, LOGGER, pressedButton(buttonChoice));
     }
 
     /**
      * The inner logic for )
+     * Advances over an existing right parenthesis, or inserts one at the caret.
      *
-     * @return the result of the operation
+     * @return the updated expression
      */
-    public String performRightParenthesis()
-    {
-        return "";
-    }
+//    public String performRightParenthesis()
+//    {
+        //String textPaneValue = calculator.getTextPaneValue();
+        //int caretIndex = getCaretIndexWithinProgrammerExpression(textPaneValue);
+
+//        if (caretIndex < textPaneValue.length() && RIGHT_PARENTHESIS.charAt(0) == textPaneValue.charAt(caretIndex)) {
+//            pendingProgrammerExpressionCaretIndex = caretIndex + 1;
+//            return textPaneValue;
+//        }
+
+//        String updatedExpression = textPaneValue
+//                + RIGHT_PARENTHESIS
+//                + textPaneValue.substring(caretIndex);
+//        pendingProgrammerExpressionCaretIndex = caretIndex + 1;
+//        return updatedExpression;
+//    }
 
     /**************** GETTERS ****************/
     public Calculator getCalculator()
@@ -1470,5 +1532,10 @@ public class ProgrammerPanel extends JPanel
     public JButton getButtonF()
     {
         return buttonF;
+    }
+
+    public int getRightParenthesisClickCount()
+    {
+        return rightParenthesisClickCount;
     }
 }

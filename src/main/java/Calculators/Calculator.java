@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.prefs.Preferences;
+import java.util.stream.Stream;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
@@ -43,6 +44,7 @@ import static Types.CalculatorView.*;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;
+import static java.util.Arrays.stream;
 
 /**
  * Calculator
@@ -973,7 +975,7 @@ public class Calculator extends JFrame
     public JMenuItem updateShowHelp()
     {
         JMenuItem viewHelp = helpMenu.getItem(0);
-        Arrays.stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
+        stream(viewHelp.getActionListeners()).forEach(viewHelp::removeActionListener);
         viewHelp.addActionListener(this::performShowHelpAction);
         helpMenu.add(viewHelp, 0);
         LOGGER.debug("Show Help updated");
@@ -1797,6 +1799,7 @@ public class Calculator extends JFrame
         memoryPosition = 0;
         obtainingFirstNumber = true;
         negativeNumber = false;
+        isPemdasActive = false;
         updateMemoryButtonsState();
         buttonDecimal.setEnabled(true);
         writeHistoryWithMessage(buttonChoice, false, " Cleared all values");
@@ -1842,6 +1845,7 @@ public class Calculator extends JFrame
         if (textPaneTextValue.isEmpty()) {
             if (calculatorView == VIEW_PROGRAMMER && !values[0].isEmpty()) {
                 // For programmer panel, continue if values[0] is not empty
+                if (!textPaneContainsLeftAndRightParentheses()) isPemdasActive = false;
             } else {
                 logEmptyValue(buttonChoice, this, LOGGER);
                 appendTextToPane(ENTER_A_NUMBER);
@@ -2105,21 +2109,31 @@ public class Calculator extends JFrame
         String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (textPaneContainsBadText()) {
             confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION));
-        } else if (getTextPaneValue().isEmpty()) {
+        }
+        else if (textPaneValue.isEmpty()) {
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION));
-        } else if (isMaximumValue(values[valuesPosition])) {
+        }
+        else if (textPaneContainsLeftAndRightParentheses())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (isMaximumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met");
-        } else if (isMinimumValue(values[valuesPosition])) {
+        }
+        else if (isMinimumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met");
-        } else {
+        }
+        else {
             if (isNoOperatorActive() && !values[0].isBlank()) {
                 setActiveOperator(buttonChoice);
                 appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()) + SPACE + buttonChoice, true);
                 writeHistory(buttonChoice, true);
                 obtainingFirstNumber = false;
                 valuesPosition = 1;
-            } else if (isOperatorActive() && !values[1].isEmpty()) {
+            }
+            else if (isOperatorActive() && !values[1].isEmpty()) {
                 // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 ✕ ...
                 performOperation();
                 writeContinuedHistory(MULTIPLICATION, getActiveOperator(), values[3], true);
@@ -2133,7 +2147,8 @@ public class Calculator extends JFrame
                     finishedObtainingFirstNumber(true);
                 }
                 confirm(this, LOGGER, pressedButton(buttonChoice));
-            } else if (!getTextPaneValue().isBlank() && values[0].isBlank()) {
+            }
+            else if (!getTextPaneValue().isBlank() && values[0].isBlank()) {
                 LOGGER.error("The user pushed multiple but there is no number");
                 LOGGER.info("Setting values[0] to textPane value");
                 values[0] = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
@@ -2143,11 +2158,12 @@ public class Calculator extends JFrame
                 writeHistory(buttonChoice, true);
                 obtainingFirstNumber = false;
                 setValuesPosition(1);
-            } else if (isOperatorActive()) {
+            }
+            else if (isOperatorActive()) {
                 confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION));
             }
-            buttonDecimal.setEnabled(true);
-            confirm(this, LOGGER, PRESSED + SPACE + buttonChoice);
+            //buttonDecimal.setEnabled(true);
+            confirm(this, LOGGER, pressedButton(buttonChoice));
         }
     }
 
@@ -2256,14 +2272,20 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = getTextPaneValue();
+//        boolean isProgrammerParenthesisExpression = calculatorView == VIEW_PROGRAMMER
+//                && (textPaneValue.contains(LEFT_PARENTHESIS) || textPaneValue.contains(RIGHT_PARENTHESIS));
+
         if (!obtainingFirstNumber && !isPemdasActive) // second number
         {
             LOGGER.debug("obtaining second number...");
-            if (getTextPaneValue().startsWith(SUBTRACTION) && getTextPaneValue().length() == 1) {
-                clearTextInTextPane();
-                appendTextToPane(SUBTRACTION);
-            } else {
-                clearTextInTextPane();
+            if (!isPemdasActive) {
+                if (textPaneValue.startsWith(SUBTRACTION) && textPaneValue.length() == 1) {
+                    clearTextInTextPane();
+                    appendTextToPane(SUBTRACTION);
+                } else {
+                    clearTextInTextPane();
+                }
             }
             obtainingFirstNumber = true;
         }
@@ -2274,26 +2296,51 @@ public class Calculator extends JFrame
             obtainingFirstNumber = true;
             buttonDecimal.setEnabled(true);
         }
+
+        // Keep parenthesized programmer expressions in values[0] and append new digits in place.
+        if (isPemdasActive) {
+            int removeRightPar = programmerPanel.getRightParenthesisClickCount();
+            // TODO: Not based on how many ) there are but how many times
+            // the user clicks the ) button
+            if (removeRightPar == 0)
+            {
+                for(char c : textPaneValue.toCharArray())
+                {
+                    if (c == RIGHT_PARENTHESIS.toCharArray()[0]) removeRightPar++;
+                }
+            }
+            String expressionWithNewNumber = textPaneValue.substring(0, textPaneValue.length()-removeRightPar)
+                    + buttonChoice + RIGHT_PARENTHESIS.repeat(removeRightPar);
+            values[0] = expressionWithNewNumber;
+            valuesPosition = 0;
+            //setNegativeNumber(CalculatorUtility.isNegativeNumber(values[0]));
+            programmerPanel.appendTextForProgrammerPanel(expressionWithNewNumber);
+            writeHistory(buttonChoice, false);
+            updateMemoryButtonsState();
+            confirm(this, LOGGER, pressedButton(buttonChoice));
+            return;
+        }
+
         values[valuesPosition] += buttonChoice;
-        if (getTextPaneValue().startsWith(SUBTRACTION) && getTextPaneValue().length() == 1 ||
-                getTextPaneValue().length() > 1 && getTextPaneValue().endsWith(SUBTRACTION))
+        if (textPaneValue.startsWith(SUBTRACTION) && textPaneValue.length() == 1 ||
+                textPaneValue.length() > 1 && textPaneValue.endsWith(SUBTRACTION))
             values[valuesPosition] = SUBTRACTION + values[valuesPosition];
         setNegativeNumber(CalculatorUtility.isNegativeNumber(values[valuesPosition]));
         if (BASE_BINARY == getCalculatorBase()) {
             var allowedLengthMinusNewLines = programmerPanel.getAllowedLengthsOfTextPane();
             // TEST: removed 0 from allowed lengths
             allowedLengthMinusNewLines.remove((Object) 0);
-            String textPaneText = getTextPaneValue();
-            LOGGER.debug("textPaneText: {}", textPaneText);
-            if (allowedLengthMinusNewLines.contains(textPaneText.length())) {
+            //String textPaneText = getTextPaneValue();
+            LOGGER.debug("textPaneText: {}", textPaneValue);
+            if (allowedLengthMinusNewLines.contains(textPaneValue.length())) {
                 confirm(this, LOGGER, "Byte length " + allowedLengthMinusNewLines + " already reached");
             } else {
-                programmerPanel.appendTextForProgrammerPanel(programmerPanel.separateBits(textPaneText + buttonChoice));
+                programmerPanel.appendTextForProgrammerPanel(programmerPanel.separateBits(textPaneValue + buttonChoice));
                 writeHistory(buttonChoice, false);
-                textPaneText = getTextPaneValue();
-                if (allowedLengthMinusNewLines.contains(textPaneText.length())) {
+                //textPaneText = getTextPaneValue();
+                if (allowedLengthMinusNewLines.contains(textPaneValue.length())) {
                     setPreviousBase(BASE_BINARY); // set previousBase since number is fully formed
-                    getValues()[getValuesPosition()] = textPaneText;
+                    getValues()[getValuesPosition()] = textPaneValue;
                     getValues()[getValuesPosition()] = convertValueToDecimal();
                     LOGGER.debug("Byte length {} reached with this input", allowedLengthMinusNewLines);
                 }
@@ -2420,13 +2467,38 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        if (textPaneContainsBadText()) {
+        if (textPaneContainsBadText())
+        {
             confirm(this, LOGGER, cannotPerformOperation(EQUALS));
-        } else if (values[0].isEmpty() || values[1].isEmpty()) {
+        }
+        else if (values[0].isEmpty() || values[1].isEmpty())
+        {
             logEmptyValue(buttonChoice, this, LOGGER);
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(buttonChoice));
-        } else {
+        }
+        // PEMDAS EQUATION
+        else if (textPaneContainsLeftAndRightParentheses())
+        {
+            String equation = getTextPaneValue();
+            LOGGER.info("Performing Order of Operations on {}", equation);
+            performOrderOfOperations();
+            String convertedToBase = convertFromBaseToBase(BASE_DECIMAL, calculatorBase, values[3]);
+            if (calculatorBase == BASE_BINARY)
+                convertedToBase = getProgrammerPanel().separateBits(convertedToBase);
+            // TODO: Investigate logic. Separate from above but related to what is displayed
+            if (calculatorBase == BASE_DECIMAL)
+                appendTextToPane(addThousandsDelimiter(convertedToBase, getThousandsDelimiter()));
+            else
+                appendTextToPane(convertedToBase);
+            writeContinuedHistory(EQUALS, equation, values[3], false);
+            resetValues(true);
+            updateMemoryButtonsState();
+            confirm(this, LOGGER, pressedButton(buttonChoice));
+        }
+        // REGULAR EQUATION
+        else
+        {
             performOperation();
             if (!textPaneContainsBadText()){
                 String convertedToBase = convertFromBaseToBase(BASE_DECIMAL, calculatorBase, values[3]);
@@ -2509,6 +2581,21 @@ public class Calculator extends JFrame
         values[3] = result;
         logOperation(LOGGER, this);
         return result;
+    }
+
+    /**
+     * Solves the equation using the order of
+     * operations. This will be parentheses,
+     * exponents, multiply/divide, followed by
+     * add/subtract.
+     * @return the result of the equation
+     */
+    public String performOrderOfOperations()
+    {
+        // TODO: Implement
+        values[3] = getTextPaneValue() + " Solved (TODO)"; // MUST HAVE
+        LOGGER.info("Result of Order of Operations: {}", values[3]);
+        return getTextPaneValue() + " Solved (TODO)";
     }
     /**************** END BUTTON ACTIONS ****************/
 
@@ -2665,6 +2752,7 @@ public class Calculator extends JFrame
             setNegativeNumber(false);
         }
         setObtainingFirstNumber(false);
+        setIsPemdasActive(false);
         values[0] = EMPTY;
         values[1] = EMPTY;
         values[2] = EMPTY;
@@ -2854,7 +2942,7 @@ public class Calculator extends JFrame
      */
     protected void clearButtonActions(List<JButton> buttons)
     {
-        buttons.forEach(button -> Arrays.stream(button.getActionListeners())
+        buttons.forEach(button -> stream(button.getActionListeners())
                 .forEach(button::removeActionListener));
     }
 
@@ -2947,6 +3035,31 @@ public class Calculator extends JFrame
         if (result) LOGGER.debug("textPane contains bad text: {}", val);
         else LOGGER.debug("textPane is clean. text is '{}'", val);
         return result;
+    }
+
+    /**
+     * Determines the total count of left and right
+     * parentheses in the text pane and returns true
+     * if the count is equal or false if not equal.
+     * Logic: Start not equal, so values without any
+     * parentheses will default to false. Otherwise,
+     * we will count the parentheses and subtract one
+     * from the offset to determine if the left and
+     * right parentheses count is the same.
+     * @return the result of the count of parentheses.
+     */
+    public boolean textPaneContainsLeftAndRightParentheses()
+    {
+        String textPaneValue = getTextPaneValue();
+        int leftParCount = 1;
+        int rightParCount = 0;
+        for(char c : textPaneValue.toCharArray())
+        {
+            if (c == LEFT_PARENTHESIS.toCharArray()[0]) leftParCount++;
+            else if (c == RIGHT_PARENTHESIS.toCharArray()[0]) rightParCount++;
+        }
+        if (rightParCount != 0) leftParCount--;
+        return leftParCount == rightParCount;
     }
 
     /**
