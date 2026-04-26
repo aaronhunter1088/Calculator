@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -567,199 +568,410 @@ public class ProgrammerPanel extends JPanel
 
     /**************** ACTIONS ****************/
     /**
-     * The programmer actions to perform when the Delete button is clicked
+     * The actions to perform when the Left Shift button is clicked
+     * Unary operation that shifts the bits of a number to the left.
+     * Multiplying by 2 has the same effect.
      *
      * @param actionEvent the click action
      */
-    @Deprecated(since = "Use Calculator.performDeleteButtonAction instead", forRemoval = true)
-    public void performDeleteButtonAction(ActionEvent actionEvent)
+    public void performLeftShiftButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String textPaneTextValue = calculator.getTextPaneValue();
-        switch (calculator.getCalculatorBase()) {
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + LSH);
+        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, "Cannot perform " + LSH);
+        } else {
+            String leftShiftResult = performLeftShift();
+            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), leftShiftResult) : leftShiftResult;
+            calculator.appendTextToPane(leftShiftResult);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, leftShiftResult);
+            calculator.writeHistory(buttonChoice, false);
+            confirm(calculator, LOGGER, LSH + " performed");
+        }
+    }
+
+    /**
+     * The inner logic for LeftShift
+     * Will shift left the current value at the current position
+     * by multiplying the number by 2.
+     *
+     * @return String the result of the operation in the current base
+     */
+    public String performLeftShift()
+    {
+        String positionedValue = calculator.convertValueToBinary();
+        LOGGER.debug("before shift left: {}", positionedValue);
+        String valueShiftedLeft = "";
+        for (int bit = 0; bit < positionedValue.length(); bit++) {
+            if ((bit + 1) < positionedValue.length()) {
+                valueShiftedLeft += positionedValue.charAt(bit + 1);
+            } else {
+                valueShiftedLeft += ZERO;
+            }
+        }
+        String shiftedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueShiftedLeft);
+        LOGGER.debug("shifted left: {} or {} converted", valueShiftedLeft, shiftedAndConverted);
+        valueShiftedLeft = switch (calculator.getCalculatorBase()) {
             case BASE_BINARY -> {
-                if (calculator.textPaneContainsBadText()) {
-                    confirm(calculator, LOGGER, "Contains bad text. Pressed " + buttonChoice);
-                } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
-                    calculator.appendTextToPane(ENTER_A_NUMBER);
-                    confirm(calculator, LOGGER, "No need to perform " + DELETE + " operation");
+                if (!isMaximumValue(shiftedAndConverted)) {
+                    yield valueShiftedLeft;
                 } else {
-                    if (calculator.getValuesPosition() == 1 && calculator.getValues()[1].isEmpty()) {
-                        calculator.setValuesPosition(0);
-                    } // assume they could have pressed an operator then wish to delete
-                    if (calculator.getValues()[0].isEmpty()) {
-                        calculator.getValues()[0] = calculator.getTextPaneValue();
-                    }
-                    logValuesAtPosition(calculator, LOGGER);
-                    LOGGER.debug("textPane: {}", calculator.getTextPaneValue());
-                    // if no operator has been pushed but text pane has value
-                    if (calculator.isNoOperatorActive() && !calculator.getTextPaneValue().isEmpty()) {
-                        String substring = calculator.getTextPaneValue().substring(0, calculator.getTextPaneValue().length() - 1);
-                        if (substring.endsWith(SPACE)) substring = substring.substring(0, substring.length() - 1);
-                        boolean updateValue = substring.isEmpty();
-                        calculator.appendTextToPane(substring, updateValue);
-                    }
-                    // if an operator was pushed, remove operator from text and reset operator
-                    else if (calculator.isOperatorActive()) {
-                        LOGGER.debug("An operator has been pushed");
-                        if (calculator.getValuesPosition() == 0) {
-                            calculator.getValues()[2] = EMPTY; // reset operator
-                            String textWithoutOperator = getValueWithoutAnyOperator(calculator.getTextPaneValue());
-                            calculator.appendTextToPane(textWithoutOperator);
-                        } else {
-                            String substring = calculator.getTextPaneValue().substring(0, calculator.getTextPaneValue().length() - 1);
-                            calculator.appendTextToPane(substring);
-                        }
-                    }
-                    calculator.getButtonDecimal().setEnabled(!isFractionalNumber(calculator.getValues()[calculator.getValuesPosition()]));
-                    calculator.setNegativeNumber(calculator.getValues()[calculator.getValuesPosition()].contains(SUBTRACTION));
-                    calculator.writeHistory(buttonChoice, false);
-                    confirm(calculator, LOGGER, "Pressed " + buttonChoice);
+                    yield positionedValue;
                 }
             }
             case BASE_OCTAL -> {
+                if (!isMaximumValue(shiftedAndConverted)) {
+                    yield shiftedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
             }
-            case BASE_DECIMAL -> {
-                calculator.performDeleteButtonAction(actionEvent);
-            }
+            case BASE_DECIMAL -> valueShiftedLeft;
             case BASE_HEXADECIMAL -> {
+                if (!isMaximumValue(shiftedAndConverted)) {
+                    yield shiftedAndConverted;
+                } else {
+                    yield positionedValue;
+                }
+            }
+        };
+        return valueShiftedLeft;
+    }
+
+    /**
+     * The actions to perform when the Right Shift button is clicked
+     *
+     * @param actionEvent the click action
+     */
+    public void performRightShiftButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + RSH);
+        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, "Cannot perform " + RSH);
+        } else {
+            String rightShiftResult = performRightShift();
+            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
+            calculator.appendTextToPane(rightShiftResult);
+            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, rightShiftResult);
+            calculator.writeHistory(buttonChoice, false);
+            confirm(calculator, LOGGER, RSH + " performed");
+        }
+    }
+
+    /**
+     * The inner logic for RightShift
+     *
+     * @return String the result of the operation
+     */
+    public String performRightShift()
+    {
+        String positionedValue = calculator.getValues()[calculator.getValuesPosition()]; //calculator.getAppropriateValue();
+        if (BASE_DECIMAL != calculator.getCalculatorBase()) positionedValue = calculator.convertValueToDecimal();
+        String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue) / 2);
+        valueShiftedRight = switch (calculator.getCalculatorBase()) {
+            case BASE_BINARY -> {
+                if (!isMaximumValue(valueShiftedRight)) {
+                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, valueShiftedRight);
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_OCTAL -> {
+                if (!isMaximumValue(valueShiftedRight)) {
+                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, valueShiftedRight);
+                } else {
+                    yield positionedValue;
+                }
+            }
+            case BASE_DECIMAL -> valueShiftedRight;
+            case BASE_HEXADECIMAL -> {
+                if (!isMaximumValue(valueShiftedRight)) {
+                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, valueShiftedRight);
+                } else {
+                    yield positionedValue;
+                }
+            }
+        };
+        return valueShiftedRight;
+    }
+
+    /**
+     * The actions to perform when Or is clicked
+     */
+    public void performOrButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(OR));
+        }
+        else if (calculator.getTextPaneValue().isEmpty()) {
+            logEmptyValue(buttonChoice, calculator, LOGGER);
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, cannotPerformOperation(OR));
+        }
+        else if (isMaximumValue(calculator.getValueAt())) {
+            confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met");
+        }
+        else if (isMinimumValue(calculator.getValueAt())) {
+            confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met");
+        }
+        else {
+            // v[0] is set, then pushes OR
+            if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank()) {
+                calculator.getValues()[2] = OR;
+                LOGGER.debug("Appending {} to text pane", buttonChoice);
+                calculator.setObtainingFirstNumber(false);
+                calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
+                calculator.writeHistory(buttonChoice, true);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            // v[0] & v[1] set, OR set, then pushes OR, continued operation
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
+                String orResultInDecimal = performOr();
+                String resultInBase = calculator.getCalculatorBase() == BASE_DECIMAL
+                        ? orResultInDecimal
+                        : calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), orResultInDecimal);
+                calculator.writeContinuedHistory(OR, OR, resultInBase, true);
+
+                calculator.getValues()[0] = resultInBase;
+                calculator.appendTextToPane(addThousandsDelimiter(resultInBase, calculator.getThousandsDelimiter()), true);
+                calculator.finishedObtainingFirstNumber(false);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
+                logEmptyValue(buttonChoice, calculator, LOGGER);
+                LOGGER.info("Setting values[0] to textPane value");
+                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.getValues()[2] = buttonChoice;
+                calculator.setObtainingFirstNumber(false);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (calculator.isOperatorActive()) {
+                confirm(calculator, LOGGER, cannotPerformOperation(ADDITION));
             }
         }
     }
 
     /**
-     * The actions to perform when you click Modulus.
-     * Modulus returns the remainder of a division operation.
+     * The inner logic for OR.
+     * Uses signed two's-complement semantics (e.g. -145 OR 8 = -145).
+     *
+     * @return the result of the OR operation in decimal form
+     */
+    public String performOr()
+    {
+        LOGGER.debug("Performing Or");
+        String firstValue = calculator.getValueAt(0);
+        String secondValue = calculator.getValueAt(1);
+        String v1InDecimal = calculator.getCalculatorBase() == BASE_DECIMAL
+                ? firstValue
+                : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, firstValue);
+        String v2InDecimal = calculator.getCalculatorBase() == BASE_DECIMAL
+                ? secondValue
+                : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, secondValue);
+
+        // Bitwise OR operates on integers. Fractional decimals are truncated toward zero.
+        BigInteger v1 = new BigDecimal(v1InDecimal).toBigInteger();
+        BigInteger v2 = new BigDecimal(v2InDecimal).toBigInteger();
+        String orResult = v1.or(v2).toString();
+
+        LOGGER.debug("OR result: {} ({}) OR {} ({}) = {}", firstValue, v1, secondValue, v2, orResult);
+        return orResult;
+    }
+
+    /**
+     * The actions to perform when Xor is clicked
+     */
+    public void performXorButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, "Cannot perform " + XOR);
+        } else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty()) {
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, "Cannot perform " + XOR + " operation");
+        }
+        // if v[0] is set, v[1] is not, and we have not pushed Xor yet
+        else if (!calculator.getValues()[2].equals(XOR) && !calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty()) {
+            calculator.setActiveOperator(XOR);
+            LOGGER.debug("Appending {} to text pane", buttonChoice);
+            calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
+            calculator.writeHistory(buttonChoice, true);
+            calculator.finishedObtainingFirstNumber(true);
+            confirm(calculator, LOGGER, pressedButton(buttonChoice));
+        } else //if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
+        {
+            calculator.getValues()[2] = XOR;
+            String xorResultInDecimal = performXor();
+            String resultInBase = calculator.getCalculatorBase() == BASE_DECIMAL
+                    ? xorResultInDecimal
+                    : calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), xorResultInDecimal);
+            calculator.writeContinuedHistory(XOR, XOR, resultInBase, true);
+
+            calculator.getValues()[0] = resultInBase;
+            calculator.appendTextToPane(addThousandsDelimiter(resultInBase, calculator.getThousandsDelimiter()), true);
+            calculator.finishedObtainingFirstNumber(false);
+            confirm(calculator, LOGGER, pressedButton(buttonChoice));
+        }
+    }
+
+    /**
+     * The inner logic for XOR.
+     * Uses signed two's-complement semantics via decimal canonical values.
+     *
+     * @return the result of the XOR operation in decimal form
+     */
+    public String performXor()
+    {
+        String firstValue = calculator.getValueAt(0);
+        String secondValue = calculator.getValueAt(1);
+        String v1InDecimal = calculator.getCalculatorBase() == BASE_DECIMAL
+                ? firstValue
+                : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, firstValue);
+        String v2InDecimal = calculator.getCalculatorBase() == BASE_DECIMAL
+                ? secondValue
+                : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, secondValue);
+
+        BigInteger v1 = new BigInteger(v1InDecimal);
+        BigInteger v2 = new BigInteger(v2InDecimal);
+        String xorResult = v1.xor(v2).toString();
+
+        LOGGER.debug("XOR result: {} ({}) XOR {} ({}) = {}", firstValue, v1InDecimal, secondValue, v2InDecimal, xorResult);
+        return xorResult;
+    }
+
+    /**
+     * The actions to perform when the Not button is clicked
+     */
+    public void performNotButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        String result = performNot(); // returns decimal form
+        //calculator.getValues()[calculator.getValuesPosition()] = result;
+        String valueToStore = result;
+        if (calculator.getCalculatorBase() != BASE_DECIMAL) { // show result in proper base
+            String showInBase = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
+            calculator.appendTextToPane(showInBase, false);
+            valueToStore = showInBase;
+        } else {
+            calculator.appendTextToPane(result, true);
+        }
+        calculator.getValues()[calculator.getValuesPosition()] = valueToStore;
+        calculator.writeHistory(buttonChoice, false);
+        confirm(calculator, LOGGER, pressedButton(buttonChoice));
+    }
+
+    /**
+     * Performs the actual logic of inverting a number's bits for the Not operation.
+     * not x = -(x + 1)
+     * @return the number inverted
+     */
+    public String performNot()
+    {
+        BigDecimal valueAtPosition = new BigDecimal(calculator.getAppropriateValue());
+        LOGGER.debug("before operation execution: {}", valueAtPosition);
+        valueAtPosition = valueAtPosition.add(BigDecimal.ONE);
+        valueAtPosition = valueAtPosition.multiply(new BigDecimal(SUBTRACTION+ONE));
+        LOGGER.debug("after operation execution: {}", valueAtPosition);
+        calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(valueAtPosition.toString()));
+        return valueAtPosition.toString();
+    }
+
+    /**
+     * The actions to perform when the And button is clicked
      *
      * @param actionEvent the click action
      */
-    public void performModulusButtonAction(ActionEvent actionEvent)
+    public void performAndButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        buttonChoice = buttonChoice.equals("MOD") ? MODULUS : buttonChoice;
         logActionButton(buttonChoice, LOGGER);
-        String textPaneValue = calculator.getTextPaneValue();
         if (calculator.textPaneContainsBadText()) {
-            confirm(calculator, LOGGER, cannotPerformOperation(buttonChoice));
-        } else if (textPaneValue.isEmpty()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(AND));
+        }
+        else if (calculator.getValueAt().isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, cannotPerformOperation(ADDITION));
-        } else {
+            confirm(calculator, LOGGER, cannotPerformOperation(AND));
+        }
+        else {
             if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty()) {
-                calculator.getValues()[2] = buttonChoice;
-                appendTextForProgrammerPanel(calculator.getTextPaneValue() + SPACE + buttonChoice);
+                calculator.getValues()[2] = AND;
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(), calculator.getThousandsDelimiter()) + SPACE + buttonChoice);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.setObtainingFirstNumber(false);
                 calculator.setNegativeNumber(false);
-                calculator.getButtonDecimal().setEnabled(true);
-                calculator.finishedObtainingFirstNumber(true);
-                confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-            } else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, performedOperation(AND));
+            }
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
                 // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
                 calculator.performOperation();
                 calculator.setActiveOperator(buttonChoice);
-                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
-                calculator.writeContinuedHistory(MODULUS, calculator.getActiveOperator(), calculator.getValueAt(3), true);
+                calculator.writeContinuedHistory(AND, calculator.getActiveOperator(), calculator.getValueAt(3), true);
+
                 if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3))) {
                     calculator.getValues()[2] = EMPTY;
                     calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
-                    //calculator.resetCalculatorOperations(false);
+                    calculator.finishedObtainingFirstNumber(false);
                 } else {
                     calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
-                    //calculator.resetCalculatorOperations(true);
+                    calculator.finishedObtainingFirstNumber(true);
                 }
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            } else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
+            }
+            else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
                 logEmptyValue(buttonChoice, calculator, LOGGER);
                 LOGGER.info("Setting values[0] to textPane value");
                 calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
                 calculator.writeHistory(buttonChoice, true);
-                calculator.setActiveOperator(buttonChoice);
+                calculator.getValues()[2] = buttonChoice;
                 calculator.setObtainingFirstNumber(false);
                 calculator.setValuesPosition(1);
                 confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            } else if (calculator.isOperatorActive()) {
+            }
+            else if (calculator.isOperatorActive()) {
                 confirm(calculator, LOGGER, cannotPerformOperation(AND));
             }
         }
     }
 
     /**
-     * The inner logic for modulus
-     */
-    public String performModulus()
-    {
-        String result;
-        if (ZERO.equals(calculator.getValueAt(1))) {
-            //calculator.dividedByZero();
-            calculator.setObtainingFirstNumber(true);
-            result = INFINITY;
-        } else {
-            BigDecimal a = new BigDecimal(calculator.getValueAt(0));
-            BigDecimal b = new BigDecimal(calculator.getValueAt(1));
-            // Euclidean modulo: always returns non-negative result
-            BigDecimal remainder = a.remainder(b);
-            if (remainder.compareTo(BigDecimal.ZERO) < 0) {
-                // If remainder is negative, adjust based on sign of b
-                if (b.compareTo(BigDecimal.ZERO) > 0) {
-                    remainder = remainder.add(b);
-                } else {
-                    remainder = remainder.subtract(b);
-                }
-            }
-            result = remainder.toPlainString();
-        }
-        return result;
-    }
-
-    /**
-     * The actions to perform when you click (.
+     * The inner logic for And.
+     * Uses signed two's-complement semantics via decimal canonical values.
      *
-     * @param actionEvent the click action
+     * @return the result of the AND operation in decimal form
      */
-    public void performLeftParenthesisButtonAction(ActionEvent actionEvent)
+    public String performAnd()
     {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        LOGGER.warn("Left Parenthesis button method created. Logic needs to be configured");
-        appendTextForProgrammerPanel(calculator.getTextPaneValue() + buttonChoice);
-        calculator.writeHistory(buttonChoice, false);
-        calculator.setIsPemdasActive(true);
-        confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-    }
+        logValues(calculator, LOGGER, 2);
+        String firstValue = calculator.getValueAt(0);
+        String secondValue = calculator.getValueAt(1);
+        String v1InDecimal = calculator.getCalculatorBase() == BASE_DECIMAL
+                ? firstValue
+                : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, firstValue);
+        String v2InDecimal = calculator.getCalculatorBase() == BASE_DECIMAL
+                ? secondValue
+                : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, secondValue);
 
-    /**
-     * The inner logic for (
-     *
-     * @return the result of the operation
-     */
-    public String performLeftParenthesis()
-    {
-        return "";
-    }
+        BigInteger v1 = new BigInteger(v1InDecimal);
+        BigInteger v2 = new BigInteger(v2InDecimal);
+        String andResult = v1.and(v2).toString();
 
-    /**
-     * The actions to perform when you click ).
-     *
-     * @param actionEvent the click action
-     */
-    public void performRightParenthesisButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        LOGGER.warn("Right Parenthesis button method created. Logic needs to be configured");
-        appendTextForProgrammerPanel(calculator.getTextPaneValue() + buttonChoice);
-        calculator.writeHistory(buttonChoice, false);
-        confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-    }
-
-    /**
-     * The inner logic for )
-     *
-     * @return the result of the operation
-     */
-    public String performRightParenthesis()
-    {
-        return "";
+        LOGGER.debug("AND result: {} ({}) AND {} ({}) = {}", firstValue, v1InDecimal, secondValue, v2InDecimal, andResult);
+        return andResult;
     }
 
     /**
@@ -918,486 +1130,6 @@ public class ProgrammerPanel extends JPanel
     }
 
     /**
-     * The actions to perform when Or is clicked
-     */
-    public void performOrButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        // Ex: 2
-        if (calculator.textPaneContainsBadText()) {
-            confirm(calculator, LOGGER, cannotPerformOperation(OR));
-        } else if (calculator.getTextPaneValue().isEmpty()) {
-            logEmptyValue(buttonChoice, calculator, LOGGER);
-            calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, cannotPerformOperation(OR));
-        } else if (isMaximumValue(calculator.getValueAt())) {
-            confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met");
-        } else if (isMinimumValue(calculator.getValueAt())) {
-            confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Minimum number met");
-        } else {
-            // v[0] is set, then pushes OR
-            if (!calculator.getTextPaneValue().isEmpty() && !calculator.getValues()[0].isBlank() && calculator.getValues()[1].isBlank()) {
-                calculator.getValues()[2] = OR;
-                LOGGER.debug("Appending {} to text pane", buttonChoice);
-                calculator.setObtainingFirstNumber(false);
-                calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
-                calculator.writeHistory(buttonChoice, true);
-                calculator.setValuesPosition(1);
-                confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-            }
-            // v[0] & v[1] set, OR set, then pushes OR, continued operation
-            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
-                // TODO: Fix
-                String orResult = performOr();
-                var resultInBase = BASE_BINARY != calculator.getCalculatorBase() ?
-                        calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), orResult) : orResult;
-                calculator.writeContinuedHistory(OR, OR, resultInBase, true);
-
-                //writeContinuedHistory(OR, OR, orResult, false);
-                //finishedObtainingFirstNumber(false);
-
-                calculator.getValues()[0] = resultInBase;
-                switch (calculator.getCalculatorBase()) {
-                    case BASE_BINARY -> {
-                        calculator.appendTextToPane(orResult);
-                    }
-                    case BASE_OCTAL -> {
-                        calculator.appendTextToPane(calculator.convertValueToOctal());
-                    }
-                    case BASE_DECIMAL -> {
-                        calculator.appendTextToPane(calculator.getValues()[0]);
-                    }
-                    case BASE_HEXADECIMAL -> {
-                        calculator.appendTextToPane(calculator.convertValueToHexadecimal());
-                    }
-                }
-                calculator.finishedObtainingFirstNumber(false);
-                confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-            } else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
-                logEmptyValue(buttonChoice, calculator, LOGGER);
-                LOGGER.info("Setting values[0] to textPane value");
-                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
-                calculator.writeHistory(buttonChoice, true);
-                calculator.getValues()[2] = buttonChoice;
-                calculator.setObtainingFirstNumber(false);
-                calculator.setValuesPosition(1);
-                confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            } else if (calculator.isOperatorActive()) {
-                confirm(calculator, LOGGER, cannotPerformOperation(ADDITION));
-            }
-        }
-    }
-
-    /**
-     * The inner logic for Or
-     *
-     * @return the result of the Or operation in binary
-     */
-    public String performOr()
-    {
-        LOGGER.debug("Performing Or");
-        String v1InBinary = BASE_BINARY == calculator.getCalculatorBase() ? calculator.getValues()[0] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
-        String v2InBinary = BASE_BINARY == calculator.getCalculatorBase() ? calculator.getValues()[1] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
-        StringBuilder v1AndV2 = new StringBuilder();
-        int counter = 0;
-        for (char a : v1InBinary.toCharArray()) {
-            char b = v2InBinary.charAt(counter);
-            if (a == ONE.charAt(0) || b == ONE.charAt(0)) {
-                v1AndV2.append(ONE);
-            } else {
-                v1AndV2.append(ZERO);
-            }
-            counter++;
-        }
-        String orResult = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, v1AndV2.toString());
-        calculator.appendTextToPane(addThousandsDelimiter(orResult, calculator.getThousandsDelimiter()), true);
-        if (calculator.getCalculatorBase() != BASE_DECIMAL) {
-            orResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-            calculator.appendTextToPane(addThousandsDelimiter(orResult, calculator.getThousandsDelimiter()), true);
-        }
-        calculator.setValuesPosition(3);
-        calculator.writeContinuedHistory(OR, OR, orResult, false);
-        logOperation(LOGGER, calculator);
-        calculator.finishedObtainingFirstNumber(false);
-        return orResult;
-    }
-
-    /**
-     * The actions to perform when Xor is clicked
-     */
-    public void performXorButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText()) {
-            confirm(calculator, LOGGER, "Cannot perform " + XOR);
-        } else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty()) {
-            calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Cannot perform " + XOR + " operation");
-        }
-        // if v[0] is set, v[1] is not, and we have not pushed Xor yet
-        else if (!calculator.getValues()[2].equals(XOR) && !calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty()) {
-            calculator.setActiveOperator(XOR);
-            LOGGER.debug("Appending {} to text pane", buttonChoice);
-            calculator.appendTextToPane(calculator.getValues()[0] + SPACE + buttonChoice); // Ex: 2 OR
-            calculator.writeHistory(buttonChoice, true);
-            calculator.finishedObtainingFirstNumber(true);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-        } else //if (!calculator.getValues()[0].isEmpty() && !calculator.getValues()[1].isEmpty())
-        {
-            calculator.getValues()[2] = XOR;
-            String xorResult = performXor();
-            var resultInBase = !BASE_BINARY.equals(calculator.getCalculatorBase()) ?
-                    calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), xorResult) : xorResult;
-            calculator.writeContinuedHistory(OR, OR, resultInBase, true);
-
-            //writeContinuedHistory(OR, OR, xorResult, false);
-            //finishedObtainingFirstNumber(false);
-
-            calculator.getValues()[0] = resultInBase;
-            switch (calculator.getCalculatorBase()) {
-                case BASE_BINARY -> {
-                    calculator.appendTextToPane(xorResult);
-                }
-                case BASE_OCTAL -> {
-                    calculator.appendTextToPane(calculator.convertValueToOctal());
-                }
-                case BASE_DECIMAL -> {
-                    calculator.appendTextToPane(calculator.getValues()[0]);
-                }
-                case BASE_HEXADECIMAL -> {
-                    calculator.appendTextToPane(calculator.convertValueToHexadecimal());
-                }
-            }
-            calculator.finishedObtainingFirstNumber(false);
-            confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-        }
-    }
-
-    /**
-     * The inner logic for Xor
-     *
-     * @return String the result of the operation
-     */
-    public String performXor()
-    {
-        String v1InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[0] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[0]);
-        String v2InBinary = calculator.getCalculatorBase() == BASE_BINARY ? calculator.getValues()[1] : calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValues()[1]);
-        StringBuilder v1AndV2 = new StringBuilder();
-        int counter = 0;
-        for (char a : v1InBinary.toCharArray()) {
-            char b = v2InBinary.charAt(counter);
-            if (a != b &&
-                    (a == ONE.charAt(0) && b == ZERO.charAt(0) ||
-                            b == ONE.charAt(0) && a == ZERO.charAt(0))) {
-                v1AndV2.append(ONE);
-            } else {
-                v1AndV2.append(ZERO);
-            }
-            counter++;
-        }
-        String xorResult = calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-        //calculator.setValuesPosition(3);
-        //calculator.appendTextToPane(calculator.addCommas(xorResult), true);
-        //calculator.writeContinuedHistory(OR, OR, xorResult, false);
-        //logOperation(LOGGER, calculator.getValues());
-        //calculator.finishedObtainingFirstNumber(false);
-        return xorResult;
-    }
-
-    /**
-     * The actions to perform when the Not button is clicked
-     */
-    public void performNotButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        String result = performNot(); // returns decimal form
-        //calculator.getValues()[calculator.getValuesPosition()] = result;
-        String valueToStore = result;
-        if (calculator.getCalculatorBase() != BASE_DECIMAL) { // show result in proper base
-            String showInBase = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
-            calculator.appendTextToPane(showInBase, false);
-            valueToStore = showInBase;
-        } else {
-            calculator.appendTextToPane(result, true);
-        }
-        calculator.getValues()[calculator.getValuesPosition()] = valueToStore;
-        calculator.writeHistory(buttonChoice, false);
-        LOGGER.info("action {} complete", buttonChoice);
-        confirm(calculator, LOGGER, "Pressed " + buttonChoice);
-    }
-
-    /**
-     * Performs the actual logic of inverting a number's bits for the Not operation.
-     * not x = -(x + 1)
-     * @return the number inverted
-     */
-    public String performNot()
-    {
-        BigDecimal valueAtPosition = new BigDecimal(calculator.getValueAt());
-        LOGGER.debug("before operation execution: {}", valueAtPosition);
-        valueAtPosition = valueAtPosition.add(BigDecimal.ONE);
-        valueAtPosition = valueAtPosition.multiply(new BigDecimal(SUBTRACTION+ONE));
-        LOGGER.debug("after operation execution: {}", valueAtPosition);
-        calculator.setNegativeNumber(CalculatorUtility.isNegativeNumber(valueAtPosition.toString()));
-        return valueAtPosition.toString();
-    }
-
-    /**
-     * The actions to perform when the And button is clicked
-     *
-     * @param actionEvent the click action
-     */
-    public void performAndButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText()) {
-            confirm(calculator, LOGGER, cannotPerformOperation(AND));
-        } else if (calculator.getValueAt().isEmpty()) {
-            calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, cannotPerformOperation(AND));
-        } else {
-            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty()) {
-                calculator.getValues()[2] = AND;
-                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(), calculator.getThousandsDelimiter()) + SPACE + buttonChoice);
-                calculator.writeHistory(buttonChoice, true);
-                calculator.setObtainingFirstNumber(false);
-                calculator.setNegativeNumber(false);
-                calculator.setValuesPosition(1);
-                confirm(calculator, LOGGER, performedOperation(AND));
-            } else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
-                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
-                calculator.performOperation();
-                calculator.setActiveOperator(buttonChoice);
-                calculator.writeContinuedHistory(AND, calculator.getActiveOperator(), calculator.getValueAt(3), true);
-
-                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3))) {
-                    calculator.getValues()[2] = EMPTY;
-                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
-                    calculator.finishedObtainingFirstNumber(false);
-                } else {
-                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
-                    calculator.finishedObtainingFirstNumber(true);
-                }
-                confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            } else if (!calculator.getTextPaneValue().isBlank() && calculator.getValueAt(0).isBlank()) {
-                logEmptyValue(buttonChoice, calculator, LOGGER);
-                LOGGER.info("Setting values[0] to textPane value");
-                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
-                calculator.writeHistory(buttonChoice, true);
-                calculator.getValues()[2] = buttonChoice;
-                calculator.setObtainingFirstNumber(false);
-                calculator.setValuesPosition(1);
-                confirm(calculator, LOGGER, pressedButton(buttonChoice));
-            } else if (calculator.isOperatorActive()) {
-                confirm(calculator, LOGGER, cannotPerformOperation(AND));
-            }
-        }
-    }
-
-    /**
-     * The inner logic for And
-     * Takes v[0] and ensures it is in binary form
-     * Takes v[1] and ensures it is in binary form
-     * Ex: 0101 (5) and
-     * 0110 (6) =
-     * 0100 (4) because 0x0=0, 1x1=1, 0x1=0, 1x0=0
-     * return 1 when a=1 and b=1, otherwise 0
-     */
-    public String performAnd()
-    {
-        logValues(calculator, LOGGER, 2);
-        String v1InBinary = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValueAt(0));
-        String v2InBinary = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_BINARY, calculator.getValueAt(1));
-        StringBuilder v1AndV2 = new StringBuilder(EMPTY);
-        int counter = 0;
-        for (char a : v1InBinary.toCharArray()) {
-            char b = v2InBinary.charAt(counter);
-            if (a == ONE.charAt(0) && b == ONE.charAt(0)) {
-                v1AndV2.append(ONE);
-            } else {
-                v1AndV2.append(ZERO);
-            }
-            counter++;
-        }
-        return calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), v1AndV2.toString());
-    }
-
-    /**
-     * The actions to perform when the Left Shift button is clicked
-     * Unary operation that shifts the bits of a number to the left.
-     * Multiplying by 2 has the same effect.
-     *
-     * @param actionEvent the click action
-     */
-    public void performLeftShiftButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText()) {
-            confirm(calculator, LOGGER, "Cannot perform " + LSH);
-        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
-            calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Cannot perform " + LSH);
-        } else {
-            String leftShiftResult = performLeftShift();
-            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), leftShiftResult) : leftShiftResult;
-            calculator.appendTextToPane(leftShiftResult);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, leftShiftResult);
-            calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, LSH + " performed");
-        }
-    }
-
-    /**
-     * The inner logic for LeftShift
-     * Will shift left the current value at the current position
-     * by multiplying the number by 2.
-     *
-     * @return String the result of the operation in the current base
-     */
-    public String performLeftShift()
-    {
-        String positionedValue = calculator.convertValueToBinary();
-        LOGGER.debug("before shift left: {}", positionedValue);
-        String valueShiftedLeft = "";
-        for (int bit = 0; bit < positionedValue.length(); bit++) {
-            if ((bit + 1) < positionedValue.length()) {
-                valueShiftedLeft += positionedValue.charAt(bit + 1);
-            } else {
-                valueShiftedLeft += ZERO;
-            }
-        }
-        String shiftedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueShiftedLeft);
-        LOGGER.debug("shifted left: {} or {} converted", valueShiftedLeft, shiftedAndConverted);
-        valueShiftedLeft = switch (calculator.getCalculatorBase()) {
-            case BASE_BINARY -> {
-                if (!isMaximumValue(shiftedAndConverted)) {
-                    yield valueShiftedLeft;
-                } else {
-                    yield positionedValue;
-                }
-            }
-            case BASE_OCTAL -> {
-                if (!isMaximumValue(shiftedAndConverted)) {
-                    yield shiftedAndConverted;
-                } else {
-                    yield positionedValue;
-                }
-            }
-            case BASE_DECIMAL -> valueShiftedLeft;
-            case BASE_HEXADECIMAL -> {
-                if (!isMaximumValue(shiftedAndConverted)) {
-                    yield shiftedAndConverted;
-                } else {
-                    yield positionedValue;
-                }
-            }
-        };
-        return valueShiftedLeft;
-    }
-
-    /**
-     * The actions to perform when the Right Shift button is clicked
-     *
-     * @param actionEvent the click action
-     */
-    public void performRightShiftButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        if (calculator.textPaneContainsBadText()) {
-            confirm(calculator, LOGGER, "Cannot perform " + RSH);
-        } else if (calculator.getTextPaneValue().isEmpty() && calculator.getValues()[0].isEmpty()) {
-            calculator.appendTextToPane(ENTER_A_NUMBER);
-            confirm(calculator, LOGGER, "Cannot perform " + RSH);
-        } else {
-            String rightShiftResult = performRightShift();
-            //String convertedResult = BASE_BINARY == calculator.getCalculatorBase() ? calculator.convertFromBaseToBase(BASE_BINARY, calculator.getCalculatorBase(), rightShiftResult) : rightShiftResult;
-            calculator.appendTextToPane(rightShiftResult);
-            calculator.getValues()[calculator.getValuesPosition()] = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, rightShiftResult);
-            calculator.writeHistory(buttonChoice, false);
-            confirm(calculator, LOGGER, RSH + " performed");
-        }
-    }
-
-    /**
-     * The inner logic for RightShift
-     *
-     * @return String the result of the operation
-     */
-    public String performRightShift()
-    {
-        String positionedValue = calculator.getValues()[calculator.getValuesPosition()]; //calculator.getAppropriateValue();
-        if (BASE_DECIMAL != calculator.getCalculatorBase()) positionedValue = calculator.convertValueToDecimal();
-        String valueShiftedRight = String.valueOf(Double.parseDouble(positionedValue) / 2);
-        valueShiftedRight = switch (calculator.getCalculatorBase()) {
-            case BASE_BINARY -> {
-                if (!isMaximumValue(valueShiftedRight)) {
-                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_BINARY, valueShiftedRight);
-                } else {
-                    yield positionedValue;
-                }
-            }
-            case BASE_OCTAL -> {
-                if (!isMaximumValue(valueShiftedRight)) {
-                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_OCTAL, valueShiftedRight);
-                } else {
-                    yield positionedValue;
-                }
-            }
-            case BASE_DECIMAL -> valueShiftedRight;
-            case BASE_HEXADECIMAL -> {
-                if (!isMaximumValue(valueShiftedRight)) {
-                    yield calculator.convertFromBaseToBase(BASE_DECIMAL, BASE_HEXADECIMAL, valueShiftedRight);
-                } else {
-                    yield positionedValue;
-                }
-            }
-        };
-        return valueShiftedRight;
-    }
-
-    /**
-     * The actions to perform when the Shift button is clicked
-     */
-    public void performShiftButtonAction(ActionEvent actionEvent)
-    {
-        String buttonChoice = actionEvent.getActionCommand();
-        logActionButton(buttonChoice, LOGGER);
-        LOGGER.info("isShiftPressed: {}", isShiftPressed);
-        if (isShiftPressed) {
-            isShiftPressed = false;
-            calculator.getButtonsPanel().remove(buttonRotateLeft);
-            calculator.getButtonsPanel().remove(buttonRotateRight);
-            calculator.getButtonsPanel().remove(buttonBytes);
-            calculator.getButtonsPanel().remove(buttonBases);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonShiftLeft, 0, 0);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonShiftRight, 0, 1);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonOr, 0, 2);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonXor, 0, 3);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonNot, 0, 4);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonAnd, 0, 5);
-        } else {
-            isShiftPressed = true;
-            calculator.getButtonsPanel().remove(buttonShiftLeft);
-            calculator.getButtonsPanel().remove(buttonShiftRight);
-            calculator.getButtonsPanel().remove(buttonOr);
-            calculator.getButtonsPanel().remove(buttonXor);
-            calculator.getButtonsPanel().remove(buttonNot);
-            calculator.getButtonsPanel().remove(buttonAnd);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRotateLeft, 0, 0);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRotateRight, 0, 1);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBytes, 0, 2, null, 2, 1, 1, 1, 0, 0);
-            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBases, 0, 4, null, 2, 1, 1, 1, 0, 0);
-        }
-        calculator.updateLookAndFeel();
-    }
-
-    /**
      * The actions to perform when the Bytes button is clicked
      */
     public void performByteButtonAction(ActionEvent actionEvent)
@@ -1482,6 +1214,181 @@ public class ProgrammerPanel extends JPanel
             calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
         }
         confirm(calculator, LOGGER, "Bases updated to " + calculator.getCalculatorBase());
+    }
+
+    /**
+     * The actions to perform when the Shift button is clicked
+     */
+    public void performShiftButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        LOGGER.info("isShiftPressed: {}", isShiftPressed);
+        if (isShiftPressed) {
+            isShiftPressed = false;
+            calculator.getButtonsPanel().remove(buttonRotateLeft);
+            calculator.getButtonsPanel().remove(buttonRotateRight);
+            calculator.getButtonsPanel().remove(buttonBytes);
+            calculator.getButtonsPanel().remove(buttonBases);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonShiftLeft, 0, 0);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonShiftRight, 0, 1);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonOr, 0, 2);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonXor, 0, 3);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonNot, 0, 4);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonAnd, 0, 5);
+        } else {
+            isShiftPressed = true;
+            calculator.getButtonsPanel().remove(buttonShiftLeft);
+            calculator.getButtonsPanel().remove(buttonShiftRight);
+            calculator.getButtonsPanel().remove(buttonOr);
+            calculator.getButtonsPanel().remove(buttonXor);
+            calculator.getButtonsPanel().remove(buttonNot);
+            calculator.getButtonsPanel().remove(buttonAnd);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRotateLeft, 0, 0);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonRotateRight, 0, 1);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBytes, 0, 2, null, 2, 1, 1, 1, 0, 0);
+            calculator.addComponent(this, constraints, calculator.getButtonsPanel(), buttonBases, 0, 4, null, 2, 1, 1, 1, 0, 0);
+        }
+        calculator.updateLookAndFeel();
+    }
+
+    /**
+     * The actions to perform when you click Modulus.
+     * Modulus returns the remainder of a division operation.
+     *
+     * @param actionEvent the click action
+     */
+    public void performModulusButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        buttonChoice = buttonChoice.equals("MOD") ? MODULUS : buttonChoice;
+        logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = calculator.getTextPaneValue();
+        if (calculator.textPaneContainsBadText()) {
+            confirm(calculator, LOGGER, cannotPerformOperation(buttonChoice));
+        }
+        else if (textPaneValue.isEmpty()) {
+            calculator.appendTextToPane(ENTER_A_NUMBER);
+            confirm(calculator, LOGGER, cannotPerformOperation(ADDITION));
+        }
+        else {
+            if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty()) {
+                calculator.getValues()[2] = buttonChoice;
+                appendTextForProgrammerPanel(calculator.getTextPaneValue() + SPACE + buttonChoice);
+                calculator.setNegativeNumber(false);
+                calculator.getButtonDecimal().setEnabled(true);
+                calculator.finishedObtainingFirstNumber(true);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (calculator.isOperatorActive() && !calculator.getValueAt(1).isEmpty()) {
+                // Chained operation: 5 <ANY_BINARY_OPERATOR> 3 AND ...
+                calculator.performOperation();
+                calculator.setActiveOperator(buttonChoice);
+                calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()), true);
+                calculator.writeContinuedHistory(MODULUS, calculator.getActiveOperator(), calculator.getValueAt(3), true);
+                if (isMaximumValue(calculator.getValueAt(3)) || isMinimumValue(calculator.getValueAt(3))) {
+                    calculator.getValues()[2] = EMPTY;
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()));
+                    //calculator.resetCalculatorOperations(false);
+                } else {
+                    calculator.appendTextToPane(addThousandsDelimiter(calculator.getValueAt(3), calculator.getThousandsDelimiter()) + SPACE + buttonChoice, true);
+                    //calculator.resetCalculatorOperations(true);
+                }
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (!textPaneValue.isBlank() && calculator.getValueAt(0).isBlank()) {
+                logEmptyValue(buttonChoice, calculator, LOGGER);
+                calculator.writeHistory(buttonChoice, true);
+                calculator.setActiveOperator(buttonChoice);
+                LOGGER.info("Setting values[0] to textPane value");
+                calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
+                calculator.setObtainingFirstNumber(false);
+                calculator.setValuesPosition(1);
+                confirm(calculator, LOGGER, pressedButton(buttonChoice));
+            }
+            else if (calculator.isOperatorActive()) {
+                confirm(calculator, LOGGER, cannotPerformOperation(AND));
+            }
+        }
+    }
+
+    /**
+     * The inner logic for modulus
+     */
+    public String performModulus()
+    {
+        String result;
+        if (ZERO.equals(calculator.getValueAt(1))) {
+            //calculator.dividedByZero();
+            calculator.setObtainingFirstNumber(true);
+            result = INFINITY;
+        } else {
+            BigDecimal a = new BigDecimal(calculator.getValueAt(0));
+            BigDecimal b = new BigDecimal(calculator.getValueAt(1));
+            // Euclidean modulo: always returns non-negative result
+            BigDecimal remainder = a.remainder(b);
+            if (remainder.compareTo(BigDecimal.ZERO) < 0) {
+                // If remainder is negative, adjust based on sign of b
+                if (b.compareTo(BigDecimal.ZERO) > 0) {
+                    remainder = remainder.add(b);
+                } else {
+                    remainder = remainder.subtract(b);
+                }
+            }
+            result = remainder.toPlainString();
+        }
+        return result;
+    }
+
+    /**
+     * The actions to perform when you click (.
+     *
+     * @param actionEvent the click action
+     */
+    public void performLeftParenthesisButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        LOGGER.warn("Left Parenthesis button method created. Logic needs to be configured");
+        appendTextForProgrammerPanel(calculator.getTextPaneValue() + buttonChoice);
+        calculator.writeHistory(buttonChoice, false);
+        calculator.setIsPemdasActive(true);
+        confirm(calculator, LOGGER, pressedButton(buttonChoice));
+    }
+
+    /**
+     * The inner logic for (
+     *
+     * @return the result of the operation
+     */
+    public String performLeftParenthesis()
+    {
+        return "";
+    }
+
+    /**
+     * The actions to perform when you click ).
+     *
+     * @param actionEvent the click action
+     */
+    public void performRightParenthesisButtonAction(ActionEvent actionEvent)
+    {
+        String buttonChoice = actionEvent.getActionCommand();
+        logActionButton(buttonChoice, LOGGER);
+        LOGGER.warn("Right Parenthesis button method created. Logic needs to be configured");
+        appendTextForProgrammerPanel(calculator.getTextPaneValue() + buttonChoice);
+        calculator.writeHistory(buttonChoice, false);
+        confirm(calculator, LOGGER, pressedButton(buttonChoice));
+    }
+
+    /**
+     * The inner logic for )
+     *
+     * @return the result of the operation
+     */
+    public String performRightParenthesis()
+    {
+        return "";
     }
 
     /**************** GETTERS ****************/

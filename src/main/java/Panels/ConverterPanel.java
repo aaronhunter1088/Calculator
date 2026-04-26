@@ -240,29 +240,6 @@ public class ConverterPanel extends JPanel
     }
 
     /**
-     * The actions to perform when the Delete button is clicked
-     *
-     * @param actionEvent the click action
-     */
-    public void performDeleteButtonActions(ActionEvent actionEvent)
-    {
-        String buttonValue = actionEvent.getActionCommand();
-        logActionButton(buttonValue, LOGGER);
-        if (isTextField1Selected && !textField1.getText().isEmpty()) {
-            //if (textField1.getText().length() == 1) textField1.setText("0");
-            //else
-            textField1.setText(textField1.getText().substring(0, textField1.getText().length() - 1));
-        } else if (!textField2.getText().isEmpty()) {
-            //if (textField2.getText().length() == 1) textField2.setText("0");
-            //else
-            textField2.setText(textField2.getText().substring(0, textField2.getText().length() - 1));
-        }
-        LOGGER.info("DeleteButtonHandler() finished for Converter");
-        //convertAndUpdatePanel();
-        confirm(calculator, LOGGER, "DeleteButton pushed");
-    }
-
-    /**
      * Switches the converter type and updates the ConverterPanel
      */
     private void performConversions()

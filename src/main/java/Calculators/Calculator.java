@@ -721,9 +721,7 @@ public class Calculator extends JFrame
         LOGGER.debug("ClearEntry button configured");
 
         buttonDelete.setName(DELETE);
-        if (calculatorView == VIEW_CONVERTER) {
-            buttonDelete.addActionListener(converterPanel::performDeleteButtonActions);
-        }
+        buttonDelete.addActionListener(this::performDeleteButtonAction);
         LOGGER.debug("Delete button configured");
 
         buttonDecimal.setName(DECIMAL);
@@ -1806,7 +1804,9 @@ public class Calculator extends JFrame
     }
 
     /**
-     * The actions to perform when the Delete button is clicked
+     * The actions to perform when the Delete button is clicked.
+     * This unified method handles delete operations across all calculator views:
+     * Basic, Programmer (all bases), and Converter.
      *
      * @param actionEvent the click action
      */
@@ -1814,39 +1814,120 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+
+        // Handle Converter Panel separately due to different UI components
+        if (calculatorView == VIEW_CONVERTER) {
+            if (converterPanel.isTextField1Selected() && !converterPanel.getTextField1().getText().isEmpty()) {
+                converterPanel.getTextField1().setText(
+                    converterPanel.getTextField1().getText().substring(0, converterPanel.getTextField1().getText().length() - 1));
+            } else if (!converterPanel.getTextField2().getText().isEmpty()) {
+                converterPanel.getTextField2().setText(
+                    converterPanel.getTextField2().getText().substring(0, converterPanel.getTextField2().getText().length() - 1));
+            }
+            LOGGER.info("DeleteButtonHandler() finished for Converter");
+            confirm(this, LOGGER, "DeleteButton pushed");
+            return;
+        }
+
+        // Handle Basic and Programmer Panels
         String textPaneTextValue = getTextPaneValue();
+
+        // Check for bad text
         if (textPaneContainsBadText()) {
             confirm(this, LOGGER, cannotPerformOperation(DELETE));
-        } else if (textPaneTextValue.isEmpty()) {
-            logEmptyValue(buttonChoice, this, LOGGER);
-            appendTextToPane(ENTER_A_NUMBER);
-            confirm(this, LOGGER, cannotPerformOperation(DELETE));
-        } else {
-            String value = textPaneTextValue;
-            logValuesAtPosition(this, LOGGER);
-            logValueInTextPane(this, LOGGER);
-            String currentOperator = getActiveOperator();
-            setActiveOperator(buttonChoice);
-            if (!endsWithOperator(value)) {
-                appendTextToPane(addThousandsDelimiter(value.substring(0, value.length() - 1), getThousandsDelimiter()), true);
-            } else if (endsWithOperator(value)) {
-                LOGGER.debug("Removing active operator from textPane");
-                value = getValueWithoutAnyOperator(value);
+            return;
+        }
+
+        // Check for empty text pane (and empty values for Programmer)
+        if (textPaneTextValue.isEmpty()) {
+            if (calculatorView == VIEW_PROGRAMMER && !values[0].isEmpty()) {
+                // For programmer panel, continue if values[0] is not empty
+            } else {
+                logEmptyValue(buttonChoice, this, LOGGER);
+                appendTextToPane(ENTER_A_NUMBER);
+                confirm(this, LOGGER, cannotPerformOperation(DELETE));
+                return;
+            }
+        }
+
+        // Programmer Panel - handle special binary base logic
+        if (calculatorView == VIEW_PROGRAMMER && calculatorBase == BASE_BINARY) {
+            if (getValuesPosition() == 1 && values[1].isEmpty()) {
                 setValuesPosition(0);
-                appendTextToPane(addThousandsDelimiter(value, getThousandsDelimiter()), true);
-                setActiveOperator(EMPTY);
+            }
+            // Assume they could have pressed an operator then wish to delete
+            if (values[0].isEmpty()) {
+                values[0] = getTextPaneValue();
+            }
+            logValuesAtPosition(this, LOGGER);
+            LOGGER.debug("textPane: {}", getTextPaneValue());
+
+            // If no operator has been pushed but text pane has value
+            if (isNoOperatorActive() && !getTextPaneValue().isEmpty()) {
+                String substring = getTextPaneValue().substring(0, getTextPaneValue().length() - 1);
+                if (substring.endsWith(SPACE)) {
+                    substring = substring.substring(0, substring.length() - 1);
+                }
+                boolean updateValue = substring.isEmpty();
+                appendTextToPane(substring, updateValue);
+            }
+            // If an operator was pushed, remove operator from text and reset operator
+            else if (isOperatorActive()) {
+                LOGGER.debug("An operator has been pushed");
+                if (getValuesPosition() == 0) {
+                    values[2] = EMPTY; // reset operator
+                    String textWithoutOperator = getValueWithoutAnyOperator(getTextPaneValue());
+                    appendTextToPane(textWithoutOperator);
+                } else {
+                    String substring = getTextPaneValue().substring(0, getTextPaneValue().length() - 1);
+                    appendTextToPane(substring);
+                }
             }
             buttonDecimal.setEnabled(!isFractionalNumber(values[valuesPosition]));
-            negativeNumber = values[valuesPosition].startsWith(SUBTRACTION);
+            setNegativeNumber(values[valuesPosition].contains(SUBTRACTION));
             writeHistory(buttonChoice, false);
-            if (getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty()) {
-                setActiveOperator(EMPTY);
-            } else {
-                setActiveOperator(currentOperator);
-            }
-            updateMemoryButtonsState(); // memory buttons states affected!
-            confirm(this, LOGGER, pressedButton(buttonChoice));
+            confirm(this, LOGGER, "Pressed " + buttonChoice);
+            return;
         }
+
+        // Standard delete logic for Basic Panel and Programmer Panel (DECIMAL, OCTAL, HEXADECIMAL)
+        String value = textPaneTextValue;
+        logValuesAtPosition(this, LOGGER);
+        logValueInTextPane(this, LOGGER);
+        String currentOperator = getActiveOperator();
+        setActiveOperator(buttonChoice);
+
+        if (!endsWithOperator(value)) {
+            String substringValue = value.substring(0, value.length() - 1);
+            if (calculatorView == VIEW_BASIC) {
+                appendTextToPane(addThousandsDelimiter(substringValue, getThousandsDelimiter()), true);
+            } else {
+                appendTextToPane(substringValue, true);
+            }
+        } else if (endsWithOperator(value)) {
+            LOGGER.debug("Removing active operator from textPane");
+            value = getValueWithoutAnyOperator(value);
+            setValuesPosition(0);
+            if (calculatorView == VIEW_BASIC) {
+                appendTextToPane(addThousandsDelimiter(value, getThousandsDelimiter()), true);
+            } else {
+                appendTextToPane(value, true);
+            }
+            setActiveOperator(EMPTY);
+        }
+
+        buttonDecimal.setEnabled(!isFractionalNumber(values[valuesPosition]));
+        negativeNumber = values[valuesPosition].startsWith(SUBTRACTION);
+        writeHistory(buttonChoice, false);
+
+        if (getBasicPanelUnaryOperators().contains(buttonChoice) && currentOperator.isEmpty()) {
+            setActiveOperator(EMPTY);
+        } else {
+            setActiveOperator(currentOperator);
+        }
+
+        updateMemoryButtonsState(); // memory buttons states affected!
+        confirm(this, LOGGER, pressedButton(buttonChoice));
     }
 
     /**
@@ -3242,6 +3323,17 @@ public class Calculator extends JFrame
             return getTextPaneValueForProgrammerPanel()
                     .replace(NEWLINE, EMPTY)
                     .strip();
+        } else if (calculatorView == VIEW_CONVERTER) {
+            LOGGER.info("Return value based on active textfield");
+            if (converterPanel.isTextField1Selected()) {
+                return converterPanel.getTextField1().getText()
+                        .replace(NEWLINE, EMPTY)
+                        .strip();
+            } else {
+                return converterPanel.getTextField2().getText()
+                        .replace(NEWLINE, EMPTY)
+                        .strip();
+            }
         } else {
             LOGGER.warn("Implement");
             return EMPTY;
@@ -3331,7 +3423,6 @@ public class Calculator extends JFrame
         }
     }
 
-
     /**
      * Resets the operators to the boolean passed in
      *
@@ -3344,7 +3435,6 @@ public class Calculator extends JFrame
         values[2] = EMPTY; // operator
         LOGGER.debug("All operators reset to {}", reset);
     }
-
 
     /**
      * This method checks if the given value
@@ -3383,7 +3473,6 @@ public class Calculator extends JFrame
         };
     }
 
-
     /**
      * This is the default method to add text to the textPane
      * Adds the text appropriately and if true, updates the
@@ -3402,6 +3491,10 @@ public class Calculator extends JFrame
         if (updateValues && (!getBadText(text).equals(text) || text.isEmpty())) {
             if (getBasicPanelUnaryOperators().contains(getActiveOperator()) ||
                     (getValueAt().isEmpty() && getBasicPanelBinaryOperators().contains(getActiveOperator()))) {
+                values[valuesPosition] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
+                values[3] = EMPTY;
+            } else if (getProgrammerPanelOperators().contains(getActiveOperator()) ||
+                    (getValueAt().isEmpty() && getProgrammerPanelOperators().contains(getActiveOperator()))) {
                 values[valuesPosition] = removeThousandsDelimiter(getValueWithoutAnyOperator(text), getThousandsDelimiter());
                 values[3] = EMPTY;
             } else {

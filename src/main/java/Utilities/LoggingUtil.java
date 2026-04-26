@@ -35,12 +35,12 @@ public class LoggingUtil
      */
     public static void confirm(Calculator calculator, Logger logger, String message)
     {
-        String textPaneValue = calculator.getTextPaneValue();
         CalculatorView currentView = calculator.getCalculatorView();
         logger.info("Confirm {} Results: {}", currentView, message);
         logger.info("----------------");
         switch (currentView) {
             case VIEW_BASIC, VIEW_PROGRAMMER -> {
+                String textPaneValue = calculator.getTextPaneValue();
                 if (currentView == VIEW_PROGRAMMER) {
                     CalculatorBase currentBase = calculator.getCalculatorBase();
                     logger.info("Base: {}", currentBase);
@@ -136,10 +136,10 @@ public class LoggingUtil
             }
             case VIEW_CONVERTER -> {
                 logger.info("Converter: {}", calculator.getConverterPanel().getConverterType());
-                logger.info("text field 1: {}", calculator.getConverterPanel().getTextField1().getText() + SPACE
-                        + calculator.getConverterPanel().getUnitOptions1().getSelectedItem());
-                logger.info("text field 2: {}", calculator.getConverterPanel().getTextField2().getText() + SPACE
-                        + calculator.getConverterPanel().getUnitOptions2().getSelectedItem());
+                logger.info("text field 1: '{}' {}", calculator.getConverterPanel().getTextField1().getText(),
+                        calculator.getConverterPanel().getUnitOptions1().getSelectedItem());
+                logger.info("text field 2: '{}' {}", calculator.getConverterPanel().getTextField2().getText(),
+                        calculator.getConverterPanel().getUnitOptions2().getSelectedItem());
             }
         }
         logger.info("--- End Confirm Results ---{}", NEWLINE);

@@ -60,7 +60,10 @@ class ProgrammerPanelTest extends TestParent
                         .firstNumber("5").secondUnaryResult(OR).firstUnaryResult("5 OR").build(),
                 ArgumentsForTests.builder(OR)
                         .firstNumber("5").firstBinaryOperator(OR).firstBinaryResult("5 OR")
-                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("7").build()
+                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("7").build(),
+                ArgumentsForTests.builder(OR).testName("Test 5.5 OR 7.4 =")
+                        .firstNumber("5.5").firstBinaryOperator(OR).firstBinaryResult("5.5 OR")
+                        .secondNumber("7.4").secondBinaryOperator(EQUALS).secondBinaryResult("7").build()
         );
     }
 
@@ -276,6 +279,45 @@ class ProgrammerPanelTest extends TestParent
         previousHistory = performTest(arguments, previousHistory, LOGGER);
 
         assertHistory(arguments, previousHistory);
+    }
+
+    @Test
+    @DisplayName("Test OR with negative decimal and positive decimal")
+    void testPerformOrWithNegativeDecimalValue()
+    {
+        calculator.setCalculatorBase(BASE_DECIMAL);
+        calculator.getValues()[0] = SUBTRACTION + ONE + FOUR + FIVE;
+        calculator.getValues()[1] = EIGHT;
+
+        String result = calculator.getProgrammerPanel().performOr();
+
+        assertEquals(SUBTRACTION + ONE + FOUR + FIVE, result, "Expected -145 OR 8 to be -145");
+    }
+
+    @Test
+    @DisplayName("Test AND with negative decimal and positive decimal")
+    void testPerformAndWithNegativeDecimalValue()
+    {
+        calculator.setCalculatorBase(BASE_DECIMAL);
+        calculator.getValues()[0] = SUBTRACTION + ONE + FOUR + FIVE;
+        calculator.getValues()[1] = EIGHT;
+
+        String result = calculator.getProgrammerPanel().performAnd();
+
+        assertEquals(EIGHT, result, "Expected -145 AND 8 to be 8");
+    }
+
+    @Test
+    @DisplayName("Test XOR with negative decimal and positive decimal")
+    void testPerformXorWithNegativeDecimalValue()
+    {
+        calculator.setCalculatorBase(BASE_DECIMAL);
+        calculator.getValues()[0] = SUBTRACTION + ONE + FOUR + FIVE;
+        calculator.getValues()[1] = EIGHT;
+
+        String result = calculator.getProgrammerPanel().performXor();
+
+        assertEquals(SUBTRACTION + ONE + FIVE + THREE, result, "Expected -145 XOR 8 to be -153");
     }
 
     @Test
