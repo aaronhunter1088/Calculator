@@ -2321,12 +2321,14 @@ public class Calculator extends JFrame
             return;
         }
 
-        values[valuesPosition] += buttonChoice;
-        if (textPaneValue.startsWith(SUBTRACTION) && textPaneValue.length() == 1 ||
-                textPaneValue.length() > 1 && textPaneValue.endsWith(SUBTRACTION))
-            values[valuesPosition] = SUBTRACTION + values[valuesPosition];
-        setNegativeNumber(CalculatorUtility.isNegativeNumber(values[valuesPosition]));
-        if (BASE_BINARY == getCalculatorBase()) {
+        textPaneValue += buttonChoice;
+        if (textPaneValue.startsWith(SUBTRACTION) && textPaneValue.length() == 1)
+            textPaneValue = SUBTRACTION + textPaneValue;
+        if (textPaneValue.endsWith(SUBTRACTION))
+            LOGGER.info("Ends with '{}' sign", SUBTRACTION);
+        setNegativeNumber(CalculatorUtility.isNegativeNumber(textPaneValue));
+        if (BASE_BINARY == getCalculatorBase())
+        {
             var allowedLengthMinusNewLines = programmerPanel.getAllowedLengthsOfTextPane();
             // TEST: removed 0 from allowed lengths
             allowedLengthMinusNewLines.remove((Object) 0);
@@ -2346,12 +2348,22 @@ public class Calculator extends JFrame
                 }
                 confirm(this, LOGGER, "Pressed " + buttonChoice);
             }
-        } else if (BASE_OCTAL == getCalculatorBase()) {
-            LOGGER.warn("IMPLEMENT Octal number button actions");
-        } else if (BASE_DECIMAL == getCalculatorBase()) {
-            appendTextToPane(addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter()));
-        } else /* (HEXADECIMAL == calculator.getCalculatorBase()) */ {
-            LOGGER.warn("IMPLEMENT Hexadecimal number button actions");
+        }
+        else if (BASE_OCTAL == getCalculatorBase())
+        {
+            String converted = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, textPaneValue);
+            values[valuesPosition] = converted;
+        }
+        else if (BASE_DECIMAL == getCalculatorBase())
+        {
+            appendTextToPane(addThousandsDelimiter(textPaneValue, getThousandsDelimiter()));
+            values[valuesPosition] = textPaneValue;
+        }
+        else /* (HEXADECIMAL == calculator.getCalculatorBase()) */
+        {
+            String converted = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, textPaneValue);
+            values[valuesPosition] = converted;
+            appendTextToPane(buttonChoice);
         }
 
         writeHistory(buttonChoice, false);
@@ -2788,7 +2800,10 @@ public class Calculator extends JFrame
         String paneValue;
         if (message == null) {
             LOGGER.debug("no message");
-            paneValue = addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter());
+            if (BASE_DECIMAL == calculatorBase)
+                paneValue = addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter());
+            else
+                paneValue = getTextPaneValue();
         } else {
             LOGGER.debug("with a specific message: {}", message);
             paneValue = SPACE + message;
@@ -3643,13 +3658,13 @@ public class Calculator extends JFrame
                     programmerPanel.appendTextForProgrammerPanel(text);
                 }
                 case BASE_OCTAL -> {
-                    programmerPanel.appendTextForProgrammerPanel(convertValueToOctal());
+                    programmerPanel.appendTextForProgrammerPanel(convertValueToOctal().toUpperCase());
                 }
                 case BASE_DECIMAL -> {
                     programmerPanel.appendTextForProgrammerPanel(text);
                 }
                 case BASE_HEXADECIMAL -> {
-                    programmerPanel.appendTextForProgrammerPanel(convertValueToHexadecimal());
+                    programmerPanel.appendTextForProgrammerPanel(convertValueToHexadecimal().toUpperCase());
                 }
             }
         } else {

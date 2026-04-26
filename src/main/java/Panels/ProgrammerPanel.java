@@ -1228,6 +1228,7 @@ public class ProgrammerPanel extends JPanel
             {
                 converted = calculator.convertFromBaseToBase(calculator.getPreviousBase(),
                         calculator.getCalculatorBase(), currentValue);
+                calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
             }
             catch (NumberFormatException nfe)
             {
@@ -1238,7 +1239,6 @@ public class ProgrammerPanel extends JPanel
         enableDisableNumberButtonsBasedOnBase();
         calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Updated bases to " + calculator.getCalculatorBase().getValue());
         appendTextForProgrammerPanel(converted);
-        calculator.writeHistoryWithMessage(buttonBases.getName(), false, " Result: " + converted);
         confirm(calculator, LOGGER, "Bases updated to " + calculator.getCalculatorBase());
     }
 
