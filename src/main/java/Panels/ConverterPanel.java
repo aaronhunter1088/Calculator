@@ -47,7 +47,7 @@ public class ConverterPanel extends JPanel
     private JPanel currentConverterPanel;
     private boolean isTextField1Selected, isInitialized;
 
-    /************* CONSTRUCTORS ******************/
+    /* CONSTRUCTORS */
     /**
      * A zero argument constructor for creating a ConverterPanel
      */
@@ -78,7 +78,7 @@ public class ConverterPanel extends JPanel
         setupConverterPanel(calculator, converterType);
     }
 
-    /**************** START OF METHODS ****************/
+    /* START OF METHODS */
     /**
      * The main method used to define the ConverterPanel
      * and all of its components and their actions
@@ -149,11 +149,8 @@ public class ConverterPanel extends JPanel
         calculator.addComponent(this, constraints, entryPanel, unitOptions2, 4, 0, null, 0, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
 
         calculator.addComponent(this, constraints, currentConverterPanel, entryPanel, 0, 0, null, 1, 1, 1.0, 1.0, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH);
-        //
-        //setNumbersPanel(new JPanel());
+
         JPanel numbersPanel = new JPanel(new GridBagLayout());
-        //numbersPanel.setBackground(Color.BLACK);
-        //numbersPanel.setBorder(new LineBorder(Color.BLACK));
         calculator.addComponent(this, constraints, numbersPanel, calculator.getButtonBlank1(), 0, 0, null, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         calculator.addComponent(this, constraints, numbersPanel, calculator.getButtonClearEntry(), 0, 1, null, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
         calculator.addComponent(this, constraints, numbersPanel, calculator.getButtonDelete(), 0, 2, null, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
@@ -202,7 +199,7 @@ public class ConverterPanel extends JPanel
     public void performDecimalButtonActions(ActionEvent actionEvent)
     {
         LOGGER.info("Decimal button pushed");
-        LOGGER.info("button: " + actionEvent.getActionCommand());
+        LOGGER.info("button: {}", actionEvent.getActionCommand());
         if (isTextField1Selected) {
             textField1.setText(textField1.getText() + ".");
         } else {
@@ -299,7 +296,7 @@ public class ConverterPanel extends JPanel
     {
         for (int i = 0; i < calculator.getCalculatorMenuBar().getMenuCount(); i++) {
             JMenu menuOption = calculator.getCalculatorMenuBar().getMenu(i);
-            JMenuItem valueForThisMenuOption = null;
+            JMenuItem valueForThisMenuOption;
             if (menuOption.getName() != null && menuOption.getName().equals("Edit")) {
                 LOGGER.info("Found the edit option");
                 for (int j = 0; j < menuOption.getItemCount(); j++) {
@@ -425,8 +422,6 @@ public class ConverterPanel extends JPanel
             addItem(SQUARE_YARD_ACRES);
             addItem(SQUARE_MILES);
         }});
-        //setBottomSpaceAboveNumbers(new JTextArea(1,10));
-        //bottomSpaceAboveNumbers.setEnabled(false);
         getUnitOptions1().addActionListener(this::performAreaUnitsSwitch);
         getUnitOptions2().addActionListener(this::performAreaUnitsSwitch);
         LOGGER.info("Ending Area specific setup");
@@ -435,7 +430,7 @@ public class ConverterPanel extends JPanel
     /**
      * Builds the converter based on the CalculatorConverterType
      *
-     * @param nameOfConverter
+     * @param nameOfConverter the converter name
      */
     private void setupConverter(String nameOfConverter)
     {
@@ -463,7 +458,7 @@ public class ConverterPanel extends JPanel
             }
         });
         setTextField2(new JTextField());
-        textField2.setText("0");
+        textField2.setText(ZERO);
         textField2.setFont(verdanaFontBold);
         textField2.addFocusListener(new FocusListener()
         {
@@ -479,28 +474,7 @@ public class ConverterPanel extends JPanel
             }
         });
         textField1.grabFocus();
-        //setNumbersPanel(new JPanel());
-        //numbersPanel.setLayout(new GridBagLayout());
-        //numbersPanel.setBackground(Color.BLACK);
-        //numbersPanel.setBorder(new LineBorder(Color.BLACK));
-//        addComponentToNumbersPanel(calculator.getButtonBlank1(), 0, 0, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButtonClearEntry(), 0, 1, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButtonDelete(), 0, 2, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton7(), 1, 0, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton8(), 1, 1, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton9(), 1, 2, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton4(), 2, 0, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton5(), 2, 1, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton6(), 2, 2, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton1(), 3, 0, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton2(), 3, 1, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButton3(), 3, 2, 1, 1, 1.0, 1.0);
-//        // TODO try getButtonBlank1().clone()
-//        addComponentToNumbersPanel(calculator.getButtonBlank2(), 4, 0, 1, 1, 1.0, 1.0);
-//        addComponentToNumbersPanel(calculator.getButtonDot(), 4, 1, 1, 1, 1.0, 1.0);
-//        calculator.getButton0().setPreferredSize(new Dimension(35, 35));
-//        addComponentToNumbersPanel(calculator.getButton0(), 4, 2, 1, 1, 1.0, 1.0);
-        LOGGER.info("Ending " + nameOfConverter + " Converter setup");
+        LOGGER.info("Ending {} Converter setup", nameOfConverter);
     }
 
     /**
@@ -537,14 +511,13 @@ public class ConverterPanel extends JPanel
         confirm(calculator, LOGGER, "IMPLEMENT: Units switched. Conversions executed");
     }
 
-    /**************** GETTERS ****************/
-    //public GridBagLayout getConverterLayout() { return converterLayout; }
+    /* GETTERS */
     public GridBagConstraints getConstraints()
     {
         return constraints;
     }
 
-    /**************** SETTERS ****************/
+    /* SETTERS */
     public void setConstraints(GridBagConstraints constraints)
     {
         this.constraints = constraints;

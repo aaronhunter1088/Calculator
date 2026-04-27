@@ -33,7 +33,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.prefs.Preferences;
-import java.util.stream.Stream;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
@@ -136,13 +135,12 @@ public class Calculator extends JFrame
     private boolean
             obtainingFirstNumber = true,
             negativeNumber, // used to determine is current value is negative or not
-    // main operators
-    isPemdasActive;
+            pemdasIsActive; // rightParenthesisClickCount != rightParenthesisInValue
     private String helpString = EMPTY,
             calculatorStyle = EMPTY;
     private OSDetector systemDetector;
 
-    /**************** CONSTRUCTORS ****************/
+    /* CONSTRUCTORS */
     /**
      * Starts the calculator with the BASIC CalculatorView
      *
@@ -255,7 +253,7 @@ public class Calculator extends JFrame
         LOGGER.debug("Finished constructing the calculator");
     }
 
-    /**************** CONFIGURATION ****************/
+    /* CONFIGURATION */
     /**
      * Configures the menu options on the bar
      */
@@ -498,7 +496,7 @@ public class Calculator extends JFrame
         LOGGER.debug("Basic History Panel configured");
     }
 
-    /**************** MENU OPTIONS ****************/
+    /* MENU OPTIONS */
     /**
      * The main operations to perform to set up
      * the Style Menu item
@@ -670,7 +668,7 @@ public class Calculator extends JFrame
         menuBar.add(helpMenu);
         LOGGER.debug("Help menu configured");
     }
-    /**************** END MENU OPTIONS ****************/
+    /* END MENU OPTIONS */
 
     /**
      * Configures the buttons used on the Basic Panel
@@ -995,7 +993,7 @@ public class Calculator extends JFrame
         return aboutCalculatorItem;
     }
 
-    /****** ADD COMPONENTS TO PANEL OR PANEL TO FRAME ******/
+    /* ADD COMPONENTS TO PANEL OR PANEL TO FRAME */
     /**
      * Used to add a component to a panel
      *
@@ -1087,10 +1085,10 @@ public class Calculator extends JFrame
             LOGGER.debug("Added {} to calculator frame", panel.getName()); // Ex: Added BasicPanel to calculator frame
         }
     }
-    /****** END ADD COMPONENTS TO PANEL OR PANEL TO FRAME ******/
-    /**************** END CONFIGURATION ****************/
+    /* END ADD COMPONENTS TO PANEL OR PANEL TO FRAME */
+    /* END CONFIGURATION */
 
-    /**************** BUTTON ACTIONS ****************/
+    /* BUTTON ACTIONS */
     /**
      * Performs the action for the Style Menu item
      *
@@ -1799,7 +1797,7 @@ public class Calculator extends JFrame
         memoryPosition = 0;
         obtainingFirstNumber = true;
         negativeNumber = false;
-        isPemdasActive = false;
+        pemdasIsActive = false;
         updateMemoryButtonsState();
         buttonDecimal.setEnabled(true);
         writeHistoryWithMessage(buttonChoice, false, " Cleared all values");
@@ -1845,7 +1843,7 @@ public class Calculator extends JFrame
         if (textPaneTextValue.isEmpty()) {
             if (calculatorView == VIEW_PROGRAMMER && !values[0].isEmpty()) {
                 // For programmer panel, continue if values[0] is not empty
-                if (!textPaneContainsLeftAndRightParentheses()) isPemdasActive = false;
+                if (!textPaneContainsLeftAndRightParentheses()) pemdasIsActive = false;
             } else {
                 logEmptyValue(buttonChoice, this, LOGGER);
                 appendTextToPane(ENTER_A_NUMBER);
@@ -2273,13 +2271,11 @@ public class Calculator extends JFrame
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         String textPaneValue = getTextPaneValue();
-//        boolean isProgrammerParenthesisExpression = calculatorView == VIEW_PROGRAMMER
-//                && (textPaneValue.contains(LEFT_PARENTHESIS) || textPaneValue.contains(RIGHT_PARENTHESIS));
 
-        if (!obtainingFirstNumber && !isPemdasActive) // second number
+        if (!obtainingFirstNumber && !pemdasIsActive) // second number
         {
             LOGGER.debug("obtaining second number...");
-            if (!isPemdasActive) {
+            if (!pemdasIsActive) {
                 if (textPaneValue.startsWith(SUBTRACTION) && textPaneValue.length() == 1) {
                     clearTextInTextPane();
                     appendTextToPane(SUBTRACTION);
@@ -2298,7 +2294,7 @@ public class Calculator extends JFrame
         }
 
         // Keep parenthesized programmer expressions in values[0] and append new digits in place.
-        if (isPemdasActive) {
+        if (pemdasIsActive) {
             int removeRightPar = programmerPanel.getRightParenthesisClickCount();
             // TODO: Not based on how many ) there are but how many times
             // the user clicks the ) button
@@ -2765,7 +2761,7 @@ public class Calculator extends JFrame
             setNegativeNumber(false);
         }
         setObtainingFirstNumber(false);
-        setIsPemdasActive(false);
+        setPemdasIsActive(false);
         values[0] = EMPTY;
         values[1] = EMPTY;
         values[2] = EMPTY;
@@ -4112,7 +4108,7 @@ public class Calculator extends JFrame
 
     public boolean isPemdasActive()
     {
-        return isPemdasActive;
+        return pemdasIsActive;
     }
 
     public boolean isDecimalPressed()
@@ -4267,8 +4263,8 @@ public class Calculator extends JFrame
         LOGGER.debug("System Detector set");
     }
 
-    public void setIsPemdasActive(boolean isPemdasActive)
+    public void setPemdasIsActive(boolean pemdasIsActive)
     {
-        this.isPemdasActive = isPemdasActive;
+        this.pemdasIsActive = pemdasIsActive;
     }
 }

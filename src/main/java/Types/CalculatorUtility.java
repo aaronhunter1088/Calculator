@@ -119,7 +119,6 @@ public class CalculatorUtility
         return number;
     }
 
-
     /**
      * Returns the number representation to the left of the decimal
      *

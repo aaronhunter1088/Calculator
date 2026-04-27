@@ -56,7 +56,7 @@ public class DatePanel extends JPanel
     private JTextField yearsTextField, monthsTextField, weeksTextField, daysTextField;
     private boolean isInitialized;
 
-    /**************** CONSTRUCTORS ****************/
+    /* CONSTRUCTORS */
     /**
      * A zero argument constructor for creating a DatePanel
      */
@@ -78,7 +78,7 @@ public class DatePanel extends JPanel
         LOGGER.info("Date panel created");
     }
 
-    /**************** START OF METHODS ****************/
+    /* START OF METHODS */
     /**
      * The main method used to define the DatePanel
      * and all of its components and their actions
@@ -948,7 +948,7 @@ public class DatePanel extends JPanel
         LOGGER.info("Difference Results updated");
     }
 
-    /**************** GETTERS ****************/
+    /* GETTERS */
     //public GridBagLayout getDateLayout() { return dateLayout; }
     public GridBagConstraints getConstraints()
     {
@@ -1032,7 +1032,7 @@ public class DatePanel extends JPanel
         return calculator;
     }
 
-    /**************** SETTERS ****************/
+    /* SETTERS */
     public void setCalculator(Calculator calculator)
     {
         this.calculator = calculator;

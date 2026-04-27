@@ -30,7 +30,7 @@ public class ScientificPanel extends JPanel
     private JPanel scientificPanel;
     private boolean isInitialized;
 
-    /**************** CONSTRUCTORS ****************/
+    /* CONSTRUCTORS */
     /**
      * A zero argument constructor for creating a OLDProgrammerPanel
      */
@@ -54,7 +54,7 @@ public class ScientificPanel extends JPanel
         LOGGER.info("Scientific panel created with calculator");
     }
 
-    /**************** START OF METHODS ****************/
+    /* START OF METHODS */
     /**
      * Sets up the Scientific Panel
      */
@@ -64,16 +64,16 @@ public class ScientificPanel extends JPanel
         LOGGER.debug("Set isInitialized to true once implemented");
     }
 
-    /**************** ACTIONS ****************/
+    /* BUTTON ACTIONS */
     /* TODO: Add actions here */
 
-    /**************** GETTERS ****************/
+    /* GETTERS */
     public Calculator getCalculator()
     {
         return calculator;
     }
 
-    /**************** SETTERS ****************/
+    /* SETTERS */
     public void setCalculator(Calculator calculator)
     {
         this.calculator = calculator;

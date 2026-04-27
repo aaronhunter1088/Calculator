@@ -45,7 +45,7 @@ public class ProgrammerPanel extends JPanel
     private static final long serialVersionUID = 4L;
     private static final Logger LOGGER = LogManager.getLogger(ProgrammerPanel.class.getSimpleName());
     // Programmer specific buttons
-    final private JButton
+    final protected JButton
             buttonModulus = new JButton(MODULUS),
             buttonLeftParenthesis = new JButton(LEFT_PARENTHESIS), buttonRightParenthesis = new JButton(RIGHT_PARENTHESIS),
             buttonRotateLeft = new JButton(ROL), buttonRotateRight = new JButton(ROR),
@@ -57,15 +57,15 @@ public class ProgrammerPanel extends JPanel
             buttonE = new JButton(E), buttonF = new JButton(F),
             buttonBytes = new JButton(BYTE.toUpperCase()), buttonBases = new JButton(BASE.toUpperCase()),
             buttonShift = new JButton(SHIFT);
-    private Calculator calculator;
-    private GridBagConstraints constraints;
-    private JPanel programmerPanel;
-    private boolean isShiftPressed, isInitialized;
-    private int rightParenthesisClickCount;
+    protected Calculator calculator;
+    protected GridBagConstraints constraints;
+    protected JPanel programmerPanel;
+    protected boolean isShiftPressed, isInitialized;
+    protected int rightParenthesisClickCount;
 
-    /**************** CONSTRUCTORS ****************/
+    /* CONSTRUCTORS */
     /**
-     * A zero argument constructor for creating a OLDProgrammerPanel
+     * A zero argument constructor for creating a ProgrammerPanel
      */
     public ProgrammerPanel()
     {
@@ -85,7 +85,7 @@ public class ProgrammerPanel extends JPanel
         LOGGER.info("Programmer panel created");
     }
 
-    /**************** START OF METHODS ****************/
+    /* START OF METHODS */
     /**
      * The main method used to define the ProgrammerPanel
      * and all of its components and their actions
@@ -327,13 +327,9 @@ public class ProgrammerPanel extends JPanel
      */
     public void setButtons2To9(boolean isEnabled)
     {
-        //Collection<JButton> buttonsWithout0Or1 = new ArrayList<>(calculator.getAllNumberButtons());
-        //buttonsWithout0Or1.removeIf(btn -> btn.getName().equals("0") || btn.getName().equals("1"));
-        //buttonsWithout0Or1.forEach(button -> button.setEnabled(isEnabled));
-
         calculator.getNumberButtons()
                 .forEach(button -> {
-                    if (!"0".equals(button.getName()) || !"0".equals(button.getName()))
+                    if (!ZERO.equals(button.getName()) || !ZERO.equals(button.getName()))
                         button.setEnabled(isEnabled);
                 });
     }
@@ -568,34 +564,7 @@ public class ProgrammerPanel extends JPanel
         return lengthsAllowed;
     }
 
-//    /**
-//     * Returns the expression index that corresponds to the current text pane caret position.
-//     * The expression is rendered after the byte/base header and a blank line.
-//     *
-//     * @param expression the expression currently shown on the value line
-//     * @return caret index within the expression text
-//     */
-//    private int getCaretIndexWithinProgrammerExpression(String expression)
-//    {
-//        int expressionStartOffset = displayByteAndBase().length() + 1;
-//        int caretPosition = calculator.getTextPane().getCaretPosition();
-//        return Math.max(0, Math.min(expression.length(), caretPosition - expressionStartOffset));
-//    }
-
-//    /**
-//     * Places the caret at the requested index inside the expression line.
-//     *
-//     * @param expressionIndex index within the expression text
-//     */
-//    private void setProgrammerExpressionCaret(int expressionIndex)
-//    {
-//        int expressionStartOffset = displayByteAndBase().length() + 1;
-//        int maxPosition = calculator.getTextPane().getDocument().getLength();
-//        int targetPosition = Math.max(0, Math.min(maxPosition, expressionStartOffset + expressionIndex));
-//        calculator.getTextPane().setCaretPosition(targetPosition);
-//    }
-
-    /**************** ACTIONS ****************/
+    /* BUTTON ACTIONS */
     /**
      * The actions to perform when the Left Shift button is clicked
      * Unary operation that shifts the bits of a number to the left.
@@ -633,39 +602,30 @@ public class ProgrammerPanel extends JPanel
     {
         String positionedValue = calculator.convertValueToBinary();
         LOGGER.debug("before shift left: {}", positionedValue);
-        String valueShiftedLeft = "";
-        for (int bit = 0; bit < positionedValue.length(); bit++) {
+        String valueShiftedLeft = EMPTY;
+        for (int bit = 0; bit < positionedValue.length(); bit++)
+        {
             if ((bit + 1) < positionedValue.length()) {
                 valueShiftedLeft += positionedValue.charAt(bit + 1);
-            } else {
+            }
+            else {
                 valueShiftedLeft += ZERO;
             }
         }
         String shiftedAndConverted = calculator.convertFromBaseToBase(BASE_BINARY, BASE_DECIMAL, valueShiftedLeft);
         LOGGER.debug("shifted left: {} or {} converted", valueShiftedLeft, shiftedAndConverted);
         valueShiftedLeft = switch (calculator.getCalculatorBase()) {
-            case BASE_BINARY -> {
-                if (!isMaximumValue(shiftedAndConverted)) {
-                    yield valueShiftedLeft;
-                } else {
-                    yield positionedValue;
-                }
-            }
-            case BASE_OCTAL -> {
+            case BASE_BINARY,
+                 BASE_OCTAL,
+                 BASE_HEXADECIMAL -> {
                 if (!isMaximumValue(shiftedAndConverted)) {
                     yield shiftedAndConverted;
-                } else {
+                }
+                else {
                     yield positionedValue;
                 }
             }
             case BASE_DECIMAL -> valueShiftedLeft;
-            case BASE_HEXADECIMAL -> {
-                if (!isMaximumValue(shiftedAndConverted)) {
-                    yield shiftedAndConverted;
-                } else {
-                    yield positionedValue;
-                }
-            }
         };
         return valueShiftedLeft;
     }
@@ -891,7 +851,6 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         String result = performNot(); // returns decimal form
-        //calculator.getValues()[calculator.getValuesPosition()] = result;
         String valueToStore = result;
         if (calculator.getCalculatorBase() != BASE_DECIMAL) { // show result in proper base
             String showInBase = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
@@ -1038,7 +997,7 @@ public class ProgrammerPanel extends JPanel
     {
         String positionedValue = calculator.convertValueToBinary();
         LOGGER.debug("before rotate left: {}", positionedValue);
-        String valueRotatedLeft = "";
+        String valueRotatedLeft = EMPTY;
         for (int bit = 0; bit < positionedValue.length(); bit++) {
             if ((bit + 1) < positionedValue.length()) {
                 valueRotatedLeft += positionedValue.charAt(bit + 1);
@@ -1114,12 +1073,14 @@ public class ProgrammerPanel extends JPanel
     {
         String positionedValue = calculator.convertValueToBinary();
         LOGGER.debug("before rotate right: {}", positionedValue); // 10000000
-        String valueRotatedRight = "";
-        String lastToFirst = "";
-        for (int bit = 0; bit < positionedValue.length(); bit++) {
+        String valueRotatedRight = EMPTY;
+        String lastToFirst = EMPTY;
+        for (int bit = 0; bit < positionedValue.length(); bit++)
+        {
             if (bit == positionedValue.length() - 1) {
                 lastToFirst += positionedValue.charAt(bit);
-            } else {
+            }
+            else {
                 valueRotatedRight += positionedValue.charAt(bit);
             }
         } // 0100 0000
@@ -1168,19 +1129,16 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         switch (calculator.getCalculatorByte()) {
-            case BYTE_BYTE -> {
-                //calculator.setPreviousByte();
+            case BYTE_BYTE ->
                 calculator.setCalculatorByte(BYTE_WORD);
-            }
-            case BYTE_WORD -> {
+            case BYTE_WORD ->
                 calculator.setCalculatorByte(BYTE_DWORD);
-            }
-            case BYTE_DWORD -> {
+
+            case BYTE_DWORD ->
                 calculator.setCalculatorByte(BYTE_QWORD);
-            }
-            case BYTE_QWORD -> {
+
+            case BYTE_QWORD ->
                 calculator.setCalculatorByte(BYTE_BYTE);
-            }
         }
         calculator.writeHistoryWithMessage(buttonBytes.getName(), false, "Updated bytes to " + calculator.getCalculatorByte().getValue());
         appendTextForProgrammerPanel(addBaseRepresentation());
@@ -1277,7 +1235,6 @@ public class ProgrammerPanel extends JPanel
     public void performModulusButtonAction(ActionEvent actionEvent)
     {
         String buttonChoice = actionEvent.getActionCommand();
-        buttonChoice = buttonChoice.equals("MOD") ? MODULUS : buttonChoice;
         logActionButton(buttonChoice, LOGGER);
         String textPaneValue = calculator.getTextPaneValue();
         if (calculator.textPaneContainsBadText()) {
@@ -1316,7 +1273,6 @@ public class ProgrammerPanel extends JPanel
                 logEmptyValue(buttonChoice, calculator, LOGGER);
                 calculator.writeHistory(buttonChoice, true);
                 calculator.setActiveOperator(buttonChoice);
-                LOGGER.info("Setting values[0] to textPane value");
                 calculator.appendTextToPane(calculator.getTextPaneValue() + SPACE + buttonChoice, true);
                 calculator.setObtainingFirstNumber(false);
                 calculator.setValuesPosition(1);
@@ -1367,9 +1323,8 @@ public class ProgrammerPanel extends JPanel
         logActionButton(buttonChoice, LOGGER);
         String updatedExpression = performLeftParenthesis();
         appendTextForProgrammerPanel(updatedExpression);
-        //setProgrammerExpressionCaret(pendingProgrammerExpressionCaretIndex);
         calculator.writeHistory(buttonChoice, false);
-        calculator.setIsPemdasActive(true);
+        calculator.setPemdasIsActive(true);
         confirm(calculator, LOGGER, pressedButton(buttonChoice));
     }
 
@@ -1382,12 +1337,17 @@ public class ProgrammerPanel extends JPanel
     public String performLeftParenthesis()
     {
         String textPaneValue = calculator.getTextPaneValue();
-        //int caretIndex = getCaretIndexWithinProgrammerExpression(textPaneValue);
+        int rightParenthesisInValue = 0;
+        for(char c : textPaneValue.toCharArray())
+        {
+            if (c == RIGHT_PARENTHESIS.toCharArray()[0]) rightParenthesisInValue++;
+        }
         String updatedExpression = !calculator.isPemdasActive()
                 ? textPaneValue + LEFT_PARENTHESIS + RIGHT_PARENTHESIS
-                : textPaneValue.substring(0, textPaneValue.length()-1)
-                  + LEFT_PARENTHESIS + RIGHT_PARENTHESIS + RIGHT_PARENTHESIS;
-        // the extra right parenthesis is because we "took one away" with the length-1 logic
+                : textPaneValue.substring(0, textPaneValue.length()-rightParenthesisInValue)
+                  + LEFT_PARENTHESIS + RIGHT_PARENTHESIS + RIGHT_PARENTHESIS.repeat(rightParenthesisInValue);
+        // the extra right parenthesis is because we "took x away" with the length-1 logic
+        LOGGER.debug("Left ( updated expression: '{}'", updatedExpression);
         return updatedExpression;
     }
 
@@ -1405,51 +1365,35 @@ public class ProgrammerPanel extends JPanel
             confirm(calculator, LOGGER, cannotPerformOperation(buttonChoice) + ". No " + LEFT_PARENTHESIS + " exists yet");
             return;
         }
-        rightParenthesisClickCount++;
-        int rightParenthesisInValue = 0;
-        for(char c : textPaneValue.toCharArray())
-        {
-            if (c == RIGHT_PARENTHESIS.toCharArray()[0]) rightParenthesisInValue++;
-        }
-        //String updatedExpression = textPaneValue + buttonChoice;
-        //appendTextForProgrammerPanel(updatedExpression);
-        //appendTextForProgrammerPanel(textPaneValue);
-        //setProgrammerExpressionCaret(pendingProgrammerExpressionCaretIndex);
-        calculator.writeHistory(buttonChoice, false);
-        calculator.setIsPemdasActive(rightParenthesisClickCount != rightParenthesisInValue);
+        performRightParenthesis(textPaneValue, buttonChoice);
         confirm(calculator, LOGGER, pressedButton(buttonChoice));
     }
 
     /**
      * The inner logic for )
      * Advances over an existing right parenthesis, or inserts one at the caret.
-     *
-     * @return the updated expression
+     * @param textPaneValue the text pane value
+     * @param buttonChoice the button choice
      */
-//    public String performRightParenthesis()
-//    {
-        //String textPaneValue = calculator.getTextPaneValue();
-        //int caretIndex = getCaretIndexWithinProgrammerExpression(textPaneValue);
+    public void performRightParenthesis(String textPaneValue, String buttonChoice)
+    {
+        rightParenthesisClickCount++;
+        int rightParenthesisInValue = 0;
+        for(char c : textPaneValue.toCharArray())
+        {
+            if (c == RIGHT_PARENTHESIS.toCharArray()[0]) rightParenthesisInValue++;
+        }
+        calculator.writeHistory(buttonChoice, false);
+        calculator.setPemdasIsActive(rightParenthesisClickCount != rightParenthesisInValue);
+    }
 
-//        if (caretIndex < textPaneValue.length() && RIGHT_PARENTHESIS.charAt(0) == textPaneValue.charAt(caretIndex)) {
-//            pendingProgrammerExpressionCaretIndex = caretIndex + 1;
-//            return textPaneValue;
-//        }
-
-//        String updatedExpression = textPaneValue
-//                + RIGHT_PARENTHESIS
-//                + textPaneValue.substring(caretIndex);
-//        pendingProgrammerExpressionCaretIndex = caretIndex + 1;
-//        return updatedExpression;
-//    }
-
-    /**************** GETTERS ****************/
+    /* GETTERS */
     public Calculator getCalculator()
     {
         return calculator;
     }
 
-    /**************** SETTERS ****************/
+    /* SETTERS */
     public void setCalculator(Calculator calculator)
     {
         this.calculator = calculator;
