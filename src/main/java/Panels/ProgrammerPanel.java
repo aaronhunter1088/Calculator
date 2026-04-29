@@ -1373,10 +1373,15 @@ public class ProgrammerPanel extends JPanel
     {
         leftParenthesisClickCount++;
         String textPaneValue = calculator.getTextPaneValue();
+        if (ZERO.equals(textPaneValue)) {
+            LOGGER.debug("textPane equals 0. Setting to blank.");
+            calculator.appendTextToPane(EMPTY);
+        }
         int rightParenthesisInValue = 0;
-        for(char c : textPaneValue.toCharArray())
+        for(char c : new StringBuffer(textPaneValue).reverse().toString().toCharArray())
         {
             if (c == RIGHT_PARENTHESIS.toCharArray()[0]) rightParenthesisInValue++;
+            else break;
         }
         String updatedExpression = !calculator.isPemdasActive()
                 ? textPaneValue + LEFT_PARENTHESIS + RIGHT_PARENTHESIS
@@ -1504,14 +1509,24 @@ public class ProgrammerPanel extends JPanel
         return buttonF;
     }
 
+    public int getLeftParenthesisClickCount()
+    {
+        return leftParenthesisClickCount;
+    }
+
+    public void setLeftParenthesisClickCount(int leftParenthesisClickCount)
+    {
+        this.leftParenthesisClickCount = leftParenthesisClickCount;
+    }
+
     public int getRightParenthesisClickCount()
     {
         return rightParenthesisClickCount;
     }
 
-    public int getLeftParenthesisClickCount()
+    public void setRightParenthesisClickCount(int rightParenthesisClickCount)
     {
-        return leftParenthesisClickCount;
+        this.rightParenthesisClickCount = rightParenthesisClickCount;
     }
 
     /**

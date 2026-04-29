@@ -1769,6 +1769,8 @@ public class Calculator extends JFrame
                 values[3] = EMPTY;
                 setValuesPosition(1);
             }
+            programmerPanel.setLeftParenthesisClickCount(0);
+            programmerPanel.setRightParenthesisClickCount(0);
             clearTextInTextPane();
             writeHistoryWithMessage(buttonChoice, false, performedOperation(buttonChoice));
             updateMemoryButtonsState();
@@ -1798,6 +1800,8 @@ public class Calculator extends JFrame
         obtainingFirstNumber = true;
         negativeNumber = false;
         pemdasIsActive = false;
+        programmerPanel.setLeftParenthesisClickCount(0);
+        programmerPanel.setRightParenthesisClickCount(0);
         updateMemoryButtonsState();
         buttonDecimal.setEnabled(true);
         writeHistoryWithMessage(buttonChoice, false, " Cleared all values");
@@ -1957,7 +1961,7 @@ public class Calculator extends JFrame
         }
         else if (textPaneContainsEqualLeftAndRightParentheses())
         {
-            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+            appendTextToPane(textPaneValue + SPACE + buttonChoice + SPACE);
         }
         else if (isMaximumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met");
@@ -2043,7 +2047,7 @@ public class Calculator extends JFrame
         }
         else if (textPaneContainsEqualLeftAndRightParentheses())
         {
-            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+            appendTextToPane(textPaneValue + SPACE + buttonChoice + SPACE);
         }
         else if (isMinimumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met");
@@ -2141,7 +2145,7 @@ public class Calculator extends JFrame
         }
         else if (textPaneContainsEqualLeftAndRightParentheses())
         {
-            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+            appendTextToPane(textPaneValue + SPACE + buttonChoice + SPACE);
         }
         else if (isMaximumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met");
@@ -2186,7 +2190,6 @@ public class Calculator extends JFrame
             else if (isOperatorActive()) {
                 confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION));
             }
-            //buttonDecimal.setEnabled(true);
             confirm(this, LOGGER, pressedButton(buttonChoice));
         }
     }
@@ -2232,7 +2235,7 @@ public class Calculator extends JFrame
         }
         else if (textPaneContainsEqualLeftAndRightParentheses())
         {
-            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+            appendTextToPane(textPaneValue + SPACE + buttonChoice + SPACE);
         }
         else if (isMinimumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met");
@@ -3127,7 +3130,7 @@ public class Calculator extends JFrame
     public boolean textPaneContainsLeftOrRightParentheses()
     {
         boolean foundParentheses = false;
-        String textPaneValue = getTextPaneValue();
+        String textPaneValue = textPane.getText();
         for(char c : textPaneValue.toCharArray())
         {
             if (c == LEFT_PARENTHESIS.toCharArray()[0] || c == RIGHT_PARENTHESIS.toCharArray()[0]) {
@@ -3511,9 +3514,15 @@ public class Calculator extends JFrame
                     .replace(NEWLINE, EMPTY)
                     .strip();
         } else if (calculatorView == VIEW_PROGRAMMER) {
-            return getTextPaneValueForProgrammerPanel()
-                    .replace(NEWLINE, EMPTY)
-                    .strip();
+            if (isPemdasActive() || textPaneContainsLeftOrRightParentheses()) {
+                return getTextPaneValueForProgrammerPanel()
+                        .replace(NEWLINE, EMPTY);
+            }
+            else {
+                return getTextPaneValueForProgrammerPanel()
+                        .replace(NEWLINE, EMPTY)
+                        .strip();
+            }
         } else if (calculatorView == VIEW_CONVERTER) {
             LOGGER.info("Return value based on active textfield");
             if (converterPanel.isTextField1Selected()) {
@@ -3565,7 +3574,13 @@ public class Calculator extends JFrame
                 case BASE_OCTAL,
                      BASE_DECIMAL,
                      BASE_HEXADECIMAL -> {
-                    currentValue = removeThousandsDelimiter(textPaneValue[2], getThousandsDelimiter());
+                    StringBuilder fullTextPaneValue = new StringBuilder(EMPTY);
+                    for(String value : textPaneValue)
+                    {
+                        if (value.equals(textPaneValue[0])) continue;
+                        else fullTextPaneValue.append(value);
+                    }
+                    currentValue = removeThousandsDelimiter(fullTextPaneValue.toString(), getThousandsDelimiter());
                 }
             }
             if (currentValue.isEmpty()) {
