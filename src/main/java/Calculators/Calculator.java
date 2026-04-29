@@ -1843,7 +1843,7 @@ public class Calculator extends JFrame
         if (textPaneTextValue.isEmpty()) {
             if (calculatorView == VIEW_PROGRAMMER && !values[0].isEmpty()) {
                 // For programmer panel, continue if values[0] is not empty
-                if (!textPaneContainsLeftAndRightParentheses()) pemdasIsActive = false;
+                if (!textPaneContainsEqualLeftAndRightParentheses()) pemdasIsActive = false;
             } else {
                 logEmptyValue(buttonChoice, this, LOGGER);
                 appendTextToPane(ENTER_A_NUMBER);
@@ -1948,7 +1948,18 @@ public class Calculator extends JFrame
             logEmptyValue(buttonChoice, this, LOGGER);
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(ADDITION));
-        } else if (isMaximumValue(values[valuesPosition])) {
+        }
+        else if (textPaneContainsLeftOrRightParentheses() &&
+                 !programmerPanel.parenthesisClickCountIsEqual())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (textPaneContainsEqualLeftAndRightParentheses())
+        {
+            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+        }
+        else if (isMaximumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met");
         }
         //else if (isMinimumValue())
@@ -2022,11 +2033,21 @@ public class Calculator extends JFrame
         String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (textPaneContainsBadText()) {
             confirm(this, LOGGER, cannotPerformOperation(SUBTRACTION));
-        } else if (isMinimumValue(values[valuesPosition])) {
+        }
+        // else if (textPaneValue.isEmpty()) --> When empty, '-' will start a new negative number
+        else if (textPaneContainsLeftOrRightParentheses() &&
+                !programmerPanel.parenthesisClickCountIsEqual())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (textPaneContainsEqualLeftAndRightParentheses())
+        {
+            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+        }
+        else if (isMinimumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met");
         }
-        //else if (isMaximumValue())
-        //{ confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met"); }
         else {
             if (isNoOperatorActive() && !values[0].isEmpty()) {
                 setActiveOperator(buttonChoice);
@@ -2112,10 +2133,15 @@ public class Calculator extends JFrame
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(MULTIPLICATION));
         }
-        else if (textPaneContainsLeftAndRightParentheses())
+        else if (textPaneContainsLeftOrRightParentheses() &&
+                !programmerPanel.parenthesisClickCountIsEqual())
         {
             textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
             appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (textPaneContainsEqualLeftAndRightParentheses())
+        {
+            appendTextToPane(textPaneValue + SPACE + buttonChoice);
         }
         else if (isMaximumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met");
@@ -2192,14 +2218,29 @@ public class Calculator extends JFrame
         String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
         if (textPaneContainsBadText()) {
             confirm(this, LOGGER, cannotPerformOperation(DIVISION));
-        } else if (textPaneValue.isEmpty()) {
+        }
+        else if (textPaneValue.isEmpty())
+        {
             appendTextToPane(ENTER_A_NUMBER);
             confirm(this, LOGGER, cannotPerformOperation(DIVISION));
-        } else if (isMinimumValue(values[valuesPosition])) {
+        }
+        else if (textPaneContainsLeftOrRightParentheses() &&
+                !programmerPanel.parenthesisClickCountIsEqual())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (textPaneContainsEqualLeftAndRightParentheses())
+        {
+            appendTextToPane(textPaneValue + SPACE + buttonChoice);
+        }
+        else if (isMinimumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Minimum number met");
-        } else if (isMaximumValue(values[valuesPosition])) {
+        }
+        else if (isMaximumValue(values[valuesPosition])) {
             confirm(this, LOGGER, PRESSED + SPACE + buttonChoice + " Maximum number met");
-        } else {
+        }
+        else {
             // No basic operator pushed, textPane has a value, and values is set
             if (isNoOperatorActive() && !values[0].isBlank()) {
                 setActiveOperator(buttonChoice);
@@ -2304,6 +2345,10 @@ public class Calculator extends JFrame
                 {
                     if (c == RIGHT_PARENTHESIS.toCharArray()[0]) removeRightPar++;
                 }
+            }
+            else
+            {
+                removeRightPar = programmerPanel.getLeftParenthesisClickCount() - removeRightPar;
             }
             String expressionWithNewNumber = textPaneValue.substring(0, textPaneValue.length()-removeRightPar)
                     + buttonChoice + RIGHT_PARENTHESIS.repeat(removeRightPar);
@@ -2487,7 +2532,7 @@ public class Calculator extends JFrame
             confirm(this, LOGGER, cannotPerformOperation(buttonChoice));
         }
         // PEMDAS EQUATION
-        else if (textPaneContainsLeftAndRightParentheses())
+        else if (textPaneContainsEqualLeftAndRightParentheses())
         {
             String equation = getTextPaneValue();
             LOGGER.info("Performing Order of Operations on {}", equation);
@@ -2798,7 +2843,7 @@ public class Calculator extends JFrame
         if (message == null) {
             LOGGER.debug("no message");
             if (BASE_DECIMAL == calculatorBase)
-                paneValue = addThousandsDelimiter(values[valuesPosition], getThousandsDelimiter());
+                paneValue = addThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
             else
                 paneValue = getTextPaneValue();
         } else {
@@ -3060,7 +3105,7 @@ public class Calculator extends JFrame
      * right parentheses count is the same.
      * @return the result of the count of parentheses.
      */
-    public boolean textPaneContainsLeftAndRightParentheses()
+    public boolean textPaneContainsEqualLeftAndRightParentheses()
     {
         String textPaneValue = getTextPaneValue();
         int leftParCount = 1;
@@ -3072,6 +3117,27 @@ public class Calculator extends JFrame
         }
         if (rightParCount != 0) leftParCount--;
         return leftParCount == rightParCount;
+    }
+
+    /**
+     * Determines if there exists either a left or
+     * a right parenthesis in the text area.
+     * @return true if '(' or ')' is present in the text area
+     */
+    public boolean textPaneContainsLeftOrRightParentheses()
+    {
+        boolean foundParentheses = false;
+        String textPaneValue = getTextPaneValue();
+        for(char c : textPaneValue.toCharArray())
+        {
+            if (c == LEFT_PARENTHESIS.toCharArray()[0] || c == RIGHT_PARENTHESIS.toCharArray()[0]) {
+                foundParentheses = true;
+                break;
+            }
+        }
+        if (foundParentheses)
+            LOGGER.debug("Found '(' or ')' in textPane");
+        return foundParentheses;
     }
 
     /**

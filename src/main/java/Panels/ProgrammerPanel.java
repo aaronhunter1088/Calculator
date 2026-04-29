@@ -61,7 +61,7 @@ public class ProgrammerPanel extends JPanel
     protected GridBagConstraints constraints;
     protected JPanel programmerPanel;
     protected boolean isShiftPressed, isInitialized;
-    protected int rightParenthesisClickCount;
+    protected int leftParenthesisClickCount, rightParenthesisClickCount;
 
     /* CONSTRUCTORS */
     /**
@@ -700,6 +700,7 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = calculator.getTextPaneValue();
         if (calculator.textPaneContainsBadText()) {
             confirm(calculator, LOGGER, cannotPerformOperation(OR));
         }
@@ -707,6 +708,16 @@ public class ProgrammerPanel extends JPanel
             logEmptyValue(buttonChoice, calculator, LOGGER);
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(OR));
+        }
+        else if (calculator.textPaneContainsLeftOrRightParentheses() &&
+                !parenthesisClickCountIsEqual())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            calculator.appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (calculator.textPaneContainsEqualLeftAndRightParentheses())
+        {
+            calculator.appendTextToPane(textPaneValue + SPACE + buttonChoice);
         }
         else if (isMaximumValue(calculator.getValueAt())) {
             confirm(calculator, LOGGER, PRESSED + SPACE + buttonChoice + ". Maximum number met");
@@ -788,11 +799,24 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = calculator.getTextPaneValue();
         if (calculator.textPaneContainsBadText()) {
             confirm(calculator, LOGGER, "Cannot perform " + XOR);
-        } else if (calculator.getTextPaneValue().isEmpty() || calculator.getValues()[0].isEmpty()) {
+        }
+        else if (textPaneValue.isEmpty() || calculator.getValues()[0].isEmpty())
+        {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, "Cannot perform " + XOR + " operation");
+        }
+        else if (calculator.textPaneContainsLeftOrRightParentheses() &&
+                !parenthesisClickCountIsEqual())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            calculator.appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (calculator.textPaneContainsEqualLeftAndRightParentheses())
+        {
+            calculator.appendTextToPane(textPaneValue + SPACE + buttonChoice);
         }
         // if v[0] is set, v[1] is not, and we have not pushed Xor yet
         else if (!calculator.getValues()[2].equals(XOR) && !calculator.getValues()[0].isEmpty() && calculator.getValues()[1].isEmpty()) {
@@ -889,12 +913,23 @@ public class ProgrammerPanel extends JPanel
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
+        String textPaneValue = calculator.getTextPaneValue();
         if (calculator.textPaneContainsBadText()) {
             confirm(calculator, LOGGER, cannotPerformOperation(AND));
         }
         else if (calculator.getValueAt().isEmpty()) {
             calculator.appendTextToPane(ENTER_A_NUMBER);
             confirm(calculator, LOGGER, cannotPerformOperation(AND));
+        }
+        else if (calculator.textPaneContainsLeftOrRightParentheses() &&
+                !parenthesisClickCountIsEqual())
+        {
+            textPaneValue = textPaneValue.substring(0, textPaneValue.length()-1);
+            calculator.appendTextToPane(textPaneValue + buttonChoice + RIGHT_PARENTHESIS);
+        }
+        else if (calculator.textPaneContainsEqualLeftAndRightParentheses())
+        {
+            calculator.appendTextToPane(textPaneValue + SPACE + buttonChoice);
         }
         else {
             if (calculator.isNoOperatorActive() && !calculator.getValueAt(0).isEmpty()) {
@@ -1336,6 +1371,7 @@ public class ProgrammerPanel extends JPanel
      */
     public String performLeftParenthesis()
     {
+        leftParenthesisClickCount++;
         String textPaneValue = calculator.getTextPaneValue();
         int rightParenthesisInValue = 0;
         for(char c : textPaneValue.toCharArray())
@@ -1471,5 +1507,20 @@ public class ProgrammerPanel extends JPanel
     public int getRightParenthesisClickCount()
     {
         return rightParenthesisClickCount;
+    }
+
+    public int getLeftParenthesisClickCount()
+    {
+        return leftParenthesisClickCount;
+    }
+
+    /**
+     * Returns the result of the left and right
+     * parentheses click count being equal or not.
+     * @return true if the click count is equal
+     */
+    public boolean parenthesisClickCountIsEqual()
+    {
+        return leftParenthesisClickCount == rightParenthesisClickCount;
     }
 }
