@@ -1908,7 +1908,8 @@ public class Calculator extends JFrame
 
         if (!endsWithOperator(value)) {
             String substringValue = value.substring(0, value.length() - 1);
-            if (calculatorView == VIEW_BASIC) {
+            if (calculatorView == VIEW_BASIC ||
+               (calculatorView == VIEW_PROGRAMMER && calculatorBase == BASE_DECIMAL)) {
                 appendTextToPane(addThousandsDelimiter(substringValue, getThousandsDelimiter()), true);
             } else {
                 appendTextToPane(substringValue, true);
@@ -2315,7 +2316,7 @@ public class Calculator extends JFrame
     {
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
-        String textPaneValue = getTextPaneValue();
+        String textPaneValue = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
 
         if (!obtainingFirstNumber && !pemdasIsActive) // second number
         {
