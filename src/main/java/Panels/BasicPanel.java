@@ -1,7 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
-import Types.CalculatorUtility;
+import Utilities.CalculatorUtility;
 import Types.Texts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +13,8 @@ import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import static Types.CalculatorUtility.addThousandsDelimiter;
-import static Types.CalculatorUtility.isFractionalNumber;
+import static Utilities.CalculatorUtility.addThousandsDelimiter;
+import static Utilities.CalculatorUtility.isFractionalNumber;
 import static Types.CalculatorView.VIEW_BASIC;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;

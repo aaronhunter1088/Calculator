@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static Parent.ArgumentsForTests.*;
-import static Types.CalculatorUtility.addThousandsDelimiter;
-import static Types.CalculatorUtility.removeThousandsDelimiter;
+import static Utilities.CalculatorUtility.addThousandsDelimiter;
+import static Utilities.CalculatorUtility.removeThousandsDelimiter;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -204,7 +204,7 @@ public abstract class TestParent
                     assertEquals(number, calculator.getValues()[calculator.getValuesPosition()], "value[valuesPosition] is not as expected");
                 } else {
                     assertEquals(addThousandsDelimiter(number.substring(0, (i + 1)), calculator.getThousandsDelimiter()), calculator.getTextPaneValue(), "textPane value is not as expected");
-                    if (calculator.isNegativeNumber() && !calculator.getValueAt().contains(SUBTRACTION)) {
+                    if (calculator.negativeNumber() && !calculator.getValueAt().contains(SUBTRACTION)) {
                         assertEquals(number.substring(0, (i + 1)), calculator.getValueAt() + SUBTRACTION, "value[valuesPosition] is not as expected");
                     } else {
                         assertEquals(number.substring(0, (i + 1)), calculator.getValueAt(), "value[valuesPosition] is not as expected");

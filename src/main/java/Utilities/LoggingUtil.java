@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import static Types.CalculatorView.VIEW_BASIC;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
@@ -71,7 +70,7 @@ public class LoggingUtil
                     logger.debug("valuesPosition: {}", calculator.getValuesPosition());
                     logger.debug("obtaining first number: {}", calculator.isObtainingFirstNumber() ? YES.toLowerCase() : NO.toLowerCase());
                     logger.debug("is dot enabled: {}", calculator.isDecimalPressed() ? YES.toLowerCase() : NO.toLowerCase());
-                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (CalculatorUtility.isNegativeNumber(calculator.getValueAt()) || calculator.isNegativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
+                    logger.debug("is value: '{}' negative?: {}", calculator.getValueAt(), (CalculatorUtility.isNegativeNumber(calculator.getValueAt()) || calculator.negativeNumber()) ? YES.toLowerCase() : NO.toLowerCase());
                 } else {
                     if (calculator.isMemoryValuesEmpty()) {
                         logger.info("no memories stored!");

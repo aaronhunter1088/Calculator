@@ -5,6 +5,7 @@ import Panels.*;
 import Parent.ArgumentsForTests;
 import Parent.TestParent;
 import Types.*;
+import Utilities.CalculatorUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
@@ -33,7 +34,7 @@ import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
 import static Types.CalculatorConverterType.ANGLE;
 import static Types.CalculatorConverterType.AREA;
-import static Types.CalculatorUtility.*;
+import static Utilities.CalculatorUtility.*;
 import static Types.CalculatorView.*;
 import static Types.DateOperation.ADD_SUBTRACT_DAYS;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
@@ -799,7 +800,7 @@ class CalculatorTests extends TestParent
         assertTrue(calculator.values[1].isEmpty(), "Expected second number to be blank");
         assertTrue(calculator.values[2].isEmpty(), "Expected operator to be blank");
         assertTrue(calculator.values[3].isEmpty(), "Expected result to be blank");
-        assertFalse(calculator.isNegativeNumber(), "Expected isNegativeNumber to be false");
+        assertFalse(calculator.negativeNumber(), "Expected isNegativeNumber to be false");
         assertFalse(calculator.isDecimalPressed(), "Expected decimalPressed to be false");
     }
 

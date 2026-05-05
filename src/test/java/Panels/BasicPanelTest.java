@@ -646,15 +646,15 @@ class BasicPanelTest extends TestParent
                 .thenReturn(SUBTRACTION).thenReturn(FIVE)
                 .thenReturn(EQUALS);
         calculator.performSubtractButtonAction(actionEvent);
-        assertTrue(calculator.isNegativeNumber(), "Expected isNumberNegative to be true");
+        assertTrue(calculator.negativeNumber(), "Expected isNumberNegative to be true");
         calculator.performNumberButtonAction(actionEvent);
         assertEquals("-5", calculator.getValues()[0], "Values[0] is not -5");
         assertEquals("-5", calculator.getTextPaneValue(), "textPane does not equal -5");
         calculator.performSubtractButtonAction(actionEvent);
-        assertFalse(calculator.isNegativeNumber(), "Expected isNumberNegative to be false");
+        assertFalse(calculator.negativeNumber(), "Expected isNumberNegative to be false");
         assertEquals(SUBTRACTION, calculator.getValueAt(2), "Expecting SUBTRACTION at values[2]");
         calculator.performSubtractButtonAction(actionEvent);
-        assertTrue(calculator.isNegativeNumber(), "Expected isNumberNegative to be true");
+        assertTrue(calculator.negativeNumber(), "Expected isNumberNegative to be true");
         calculator.performNumberButtonAction(actionEvent);
         //assertEquals(-5, Double.parseDouble(calculator.getValues()[1]), delta, "Values[1] is not -5");
         calculator.performEqualsButtonAction(actionEvent);

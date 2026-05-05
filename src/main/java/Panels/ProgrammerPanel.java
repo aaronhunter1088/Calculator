@@ -1,7 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
-import Types.CalculatorUtility;
+import Utilities.CalculatorUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static Calculators.Calculator.mainFont;
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
-import static Types.CalculatorUtility.*;
+import static Utilities.CalculatorUtility.*;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 import static Utilities.LoggingUtil.*;
