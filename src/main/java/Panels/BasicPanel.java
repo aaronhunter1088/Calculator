@@ -213,19 +213,19 @@ public class BasicPanel extends JPanel
                 
                 The remaining menu options are described below, read left to right.
                 
-                Look Menu:
-                Choosing a new Look will affect how you see the Calculator. The choices are dependent on your operating system.
+                %s:
+                Choosing a new Style will affect how you see the Calculator. The choices are dependent on your operating system.
                 
-                View Menu:
+                %s:
                 Here you can change the type of Calculator to use.
                 
-                Edit Menu:
+                %s:
                 Copy: Selecting Copy will copy the current value in the textPane. Copy your value and use it anywhere.
                 Paste: Selecting Paste will only paste the last copied from the Calculator value into the textPane.
                 Clear History: Clears the history panel.
                 Show Memories: Displays all the currently stored memories in the history panel.
                 
-                Help Menu:
+                %s:
                 View Help: Describes how to use the currently selected view.
                 About Calculator: will describe the current version and licensing information about the Calculator.
                 """
@@ -254,7 +254,11 @@ public class BasicPanel extends JPanel
                         ADDITION, ADDITION, ENTER_A_NUMBER,
                         NEGATE,
                         DECIMAL, DECIMAL, DECIMAL, DECIMAL,
-                        EQUALS));
+                        EQUALS,
+                        calculator.getStyleMenu().getName(),
+                        calculator.getViewMenu().getName(),
+                        calculator.getEditMenu().getName(),
+                        calculator.getHelpMenu().getName()));
         calculator.updateShowHelp();
     }
 

@@ -537,7 +537,7 @@ public class Calculator extends JFrame
 
         setStyleMenu(new JMenu(STYLE));
         styleMenu.setFont(mainFont);
-        styleMenu.setName(STYLE + MENU);
+        styleMenu.setName(STYLE + SPACE + MENU);
         styleMenu.add(metal);
         styleMenu.add(motif);
         styleMenu.add(apple);
@@ -600,7 +600,7 @@ public class Calculator extends JFrame
         converterMenu.add(areaConverter);
 
         setViewMenu(new JMenu(VIEW));
-        viewMenu.setName(VIEW + MENU);
+        viewMenu.setName(VIEW + SPACE + MENU);
         viewMenu.setFont(mainFont);
         viewMenu.add(basic);
         viewMenu.add(programmer);
@@ -641,7 +641,7 @@ public class Calculator extends JFrame
         showMemoriesItem.addActionListener(this::performShowMemoriesAction);
 
         setEditMenu(new JMenu(EDIT));
-        editMenu.setName(EDIT + MENU);
+        editMenu.setName(EDIT + SPACE + MENU);
         editMenu.setFont(mainFont);
         editMenu.add(copyItem);
         editMenu.add(pasteItem);
@@ -659,7 +659,7 @@ public class Calculator extends JFrame
     {
         LOGGER.debug("Configuring Help menu...");
         setHelpMenu(new JMenu(HELP));
-        helpMenu.setName(HELP + MENU);
+        helpMenu.setName(HELP + SPACE + MENU);
         helpMenu.setFont(mainFont);
         JMenuItem showHelpItem = createViewHelpJMenuItem();
         JMenuItem aboutCalculatorItem = createAboutCalculatorJMenuItem();
@@ -1427,7 +1427,7 @@ public class Calculator extends JFrame
         try (InputStream is = CalculatorMain.class.getResourceAsStream("/pom.properties")) {
             Properties p = new Properties();
             p.load(is);
-            version = p.getProperty("project.version");
+            version = p.getProperty("finalName").split("-")[1];
         }
         // String osName = System.getProperty("os.name"); TODO: Check out. There are lots of specific options
         catch (IOException | NullPointerException e) {
