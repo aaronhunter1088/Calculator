@@ -101,7 +101,8 @@ public class ArgumentsForTests
     }
 
     /**
-     * Sets the first number
+     * Sets the first number. You may pass in a number
+     * with a delimiter.
      *
      * @param firstNumber the first number to set
      * @return this test object
@@ -145,7 +146,11 @@ public class ArgumentsForTests
     }
 
     /**
-     * Sets the first unary operator
+     * Sets the first unary operator. If you expect this value
+     * to have a variation between the value and what the text
+     * pane shows, like 35 is the value but the text pane should
+     * show 35 +, then use the ARGUMENT_SEPARATOR constant to
+     * separate the values.
      *
      * @param firstUnaryOperator the first unary operator to set
      * @return this test object

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static Parent.ArgumentsForTests.*;
+import static Types.CalculatorBase.BASE_BINARY;
 import static Utilities.CalculatorUtility.addThousandsDelimiter;
 import static Utilities.CalculatorUtility.removeThousandsDelimiter;
 import static Types.Texts.*;
@@ -350,7 +351,12 @@ public abstract class TestParent
             } else {
                 assertEquals(firstUnaryValuesResult, calculator.getValues()[calculator.getValuesPosition()], "values[vP0] is not as expected");
             }
-            assertEquals(firstUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
+            if (calculator.getCalculatorBase() == BASE_BINARY) {
+                assertEquals(calculator.getProgrammerPanel().separateBits(firstUnaryTextPaneResult), calculator.getTextPaneValue(), "textPane is not as expected");
+            } else {
+                // TODO: May need to add delimiter for BASE_DECIMAL
+                assertEquals(firstUnaryTextPaneResult, calculator.getTextPaneValue(), "textPane is not as expected");
+            }
             previousHistory = calculator.getHistoryTextPane().getText();
         } else exhaustActionEvent(FIRST_UNARY_OPERATOR, actionEvent, logger);
 

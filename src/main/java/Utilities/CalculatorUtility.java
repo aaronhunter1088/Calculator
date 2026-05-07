@@ -88,7 +88,7 @@ public class CalculatorUtility
         if (adjusted.toString().endsWith(delimiter))
             adjusted = new StringBuffer(adjusted.substring(0, adjusted.length() - 1));
         if (negativeControl) adjusted = new StringBuffer(SUBTRACTION).append(adjusted);
-        LOGGER.debug("commas added: {}", adjusted);
+        LOGGER.debug("delimiter '{}' added: {}", delimiter, adjusted);
         return adjusted.toString();
     }
 

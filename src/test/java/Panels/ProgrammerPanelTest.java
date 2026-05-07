@@ -1,6 +1,7 @@
 package Panels;
 
 import Calculators.Calculator;
+import Interfaces.CalculatorType;
 import Parent.ArgumentsForTests;
 import Parent.TestParent;
 import Types.CalculatorBase;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 
 import static Types.CalculatorBase.*;
 import static Types.CalculatorByte.*;
+import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
@@ -98,7 +100,7 @@ class ProgrammerPanelTest extends TestParent
                 ArgumentsForTests.builder(NOT)
                         .firstNumber("0000 1011")
                         .firstUnaryOperator(NOT)
-                        .firstUnaryResult("1111 0100").build(),
+                        .firstUnaryResult("-12|1111 0100").build(),
                 ArgumentsForTests.builder(NOT)
                         .firstNumber("5").firstUnaryResult("...11111010").build()
         );
@@ -164,6 +166,7 @@ class ProgrammerPanelTest extends TestParent
             try {
                 LOGGER.info("Starting test");
                 calculator = spy(new Calculator());
+                calculator.performViewMenuAction(actionEvent, VIEW_PROGRAMMER);
                 Preferences.userNodeForPackage(Calculator.class).clear(); // remove keys
                 calculator.setSystemDetector(new SystemDetector());
                 calculator.getProgrammerPanel().setCalculator(calculator); // links spyCalc to ProgrammerPanel
@@ -178,8 +181,11 @@ class ProgrammerPanelTest extends TestParent
     {
         SwingUtilities.invokeAndWait(() -> {
             LOGGER.info("Test complete. Closing the calculator...");
-            calculator.setVisible(false);
-            calculator.dispose();
+            try {
+                calculator.setVisible(false);
+                calculator.dispose();
+            }
+            catch (Exception ignored) {}
         });
     }
 
@@ -250,7 +256,7 @@ class ProgrammerPanelTest extends TestParent
         if (!arguments.getFirstNumber().isEmpty()) {
             String firstNumber = arguments.getFirstNumber().replace(BLANK, EMPTY);
             // If the number contains digits > 1, it's already in decimal format
-            if (firstNumber.matches("[01 ]+")) {
+            if (calculator.getCalculatorBase() != BASE_DECIMAL) {
                 calculator.getValues()[0] = calculator.convertValueToDecimal(firstNumber);
             } else {
                 // Already in decimal format, use as-is
@@ -433,6 +439,33 @@ class ProgrammerPanelTest extends TestParent
     /* Invalid NUMBERS ?? */
 
     /* Valid OPENING ( */
+    @ParameterizedTest
+    @DisplayName("Test Valid ( Button Action")
+    @MethodSource("validLeftParenthesisButtonCases")
+    void testValidLeftParenthesisButtonCases(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+        calculator.setCalculatorBase(BASE_DECIMAL);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+
+    private static Stream<ArgumentsForTests> validLeftParenthesisButtonCases() {
+        return Stream.of(
+                ArgumentsForTests.builder(LEFT_PARENTHESIS).testName("Test ( button shows () in textPane")
+                        .firstUnaryOperator(LEFT_PARENTHESIS + ARGUMENT_SEPARATOR + EMPTY)
+                        .firstUnaryResult(EMPTY).build(),
+                ArgumentsForTests.builder(LEFT_PARENTHESIS).testName("Test 12,345 Then ( Keeps Delimiter")
+                        .firstNumber("12,345")
+                        .firstUnaryOperator(LEFT_PARENTHESIS)
+                        .firstUnaryResult("12345" + ARGUMENT_SEPARATOR + "12,345" + SPACE + LEFT_PARENTHESIS + RIGHT_PARENTHESIS).build()
+        );
+    }
 
     /* Invalid CLOSING ) */
 

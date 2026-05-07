@@ -875,15 +875,15 @@ public class ProgrammerPanel extends JPanel
         String buttonChoice = actionEvent.getActionCommand();
         logActionButton(buttonChoice, LOGGER);
         String result = performNot(); // returns decimal form
-        String valueToStore = result;
+        String valueToShow = result;
         if (calculator.getCalculatorBase() != BASE_DECIMAL) { // show result in proper base
-            String showInBase = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
-            calculator.appendTextToPane(showInBase, false);
-            valueToStore = showInBase;
-        } else {
-            calculator.appendTextToPane(result, true);
+            valueToShow = calculator.convertFromBaseToBase(BASE_DECIMAL, calculator.getCalculatorBase(), result);
+            if (calculator.getCalculatorBase() == BASE_BINARY) {
+                valueToShow = separateBits(valueToShow);
+            }
         }
-        calculator.getValues()[calculator.getValuesPosition()] = valueToStore;
+        calculator.appendTextToPane(valueToShow, false);
+        calculator.getValues()[calculator.getValuesPosition()] = result;
         calculator.writeHistory(buttonChoice, false);
         confirm(calculator, LOGGER, pressedButton(buttonChoice));
     }
@@ -1384,12 +1384,17 @@ public class ProgrammerPanel extends JPanel
             else break;
         }
         String updatedExpression = !calculator.isPemdasActive()
-                ? textPaneValue + LEFT_PARENTHESIS + RIGHT_PARENTHESIS
+                ? textPaneValue + SPACE + aPairOfParentheses()
                 : textPaneValue.substring(0, textPaneValue.length()-rightParenthesisInValue)
-                  + LEFT_PARENTHESIS + RIGHT_PARENTHESIS + RIGHT_PARENTHESIS.repeat(rightParenthesisInValue);
+                  + aPairOfParentheses() + RIGHT_PARENTHESIS.repeat(rightParenthesisInValue);
         // the extra right parenthesis is because we "took x away" with the length-1 logic
         LOGGER.debug("Left ( updated expression: '{}'", updatedExpression);
         return updatedExpression;
+    }
+
+    public String aPairOfParentheses()
+    {
+        return LEFT_PARENTHESIS + RIGHT_PARENTHESIS;
     }
 
     /**

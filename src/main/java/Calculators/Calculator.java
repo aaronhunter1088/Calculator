@@ -3553,7 +3553,8 @@ public class Calculator extends JFrame
             return textPane.getText()
                     .replace(NEWLINE, EMPTY)
                     .strip();
-        } else if (calculatorView == VIEW_PROGRAMMER) {
+        }
+        else if (calculatorView == VIEW_PROGRAMMER) {
             if (isPemdasActive() || textPaneContainsLeftOrRightParentheses()) {
                 return getTextPaneValueForProgrammerPanel()
                         .replace(NEWLINE, EMPTY);
@@ -3563,7 +3564,8 @@ public class Calculator extends JFrame
                         .replace(NEWLINE, EMPTY)
                         .strip();
             }
-        } else if (calculatorView == VIEW_CONVERTER) {
+        }
+        else if (calculatorView == VIEW_CONVERTER) {
             LOGGER.info("Return value based on active textfield");
             if (converterPanel.isTextField1Selected()) {
                 return converterPanel.getTextField1().getText()
@@ -3574,7 +3576,8 @@ public class Calculator extends JFrame
                         .replace(NEWLINE, EMPTY)
                         .strip();
             }
-        } else {
+        }
+        else {
             LOGGER.warn("Implement");
             return EMPTY;
         }
@@ -3609,7 +3612,7 @@ public class Calculator extends JFrame
                                     + textPaneValue[4] + textPaneValue[5];
                         }
                     }
-                    currentValue = currentValue.replace(SPACE, EMPTY);
+                    //currentValue = currentValue.replace(SPACE, EMPTY);
                 }
                 case BASE_OCTAL,
                      BASE_DECIMAL,
@@ -3620,7 +3623,7 @@ public class Calculator extends JFrame
                         if (value.equals(textPaneValue[0])) continue;
                         else fullTextPaneValue.append(value);
                     }
-                    currentValue = removeThousandsDelimiter(fullTextPaneValue.toString(), getThousandsDelimiter());
+                    currentValue = fullTextPaneValue.toString();//removeThousandsDelimiter(fullTextPaneValue.toString(), getThousandsDelimiter());
                 }
             }
             if (currentValue.isEmpty()) {
@@ -3770,21 +3773,7 @@ public class Calculator extends JFrame
         if (calculatorView == VIEW_BASIC) {
             textPane.setText(NEWLINE + text);
         } else if (calculatorView == VIEW_PROGRAMMER) {
-            switch (calculatorBase) {
-                case BASE_BINARY -> {
-                    // should contain separated bits
-                    programmerPanel.appendTextForProgrammerPanel(text);
-                }
-                case BASE_OCTAL -> {
-                    programmerPanel.appendTextForProgrammerPanel(convertValueToOctal().toUpperCase());
-                }
-                case BASE_DECIMAL -> {
-                    programmerPanel.appendTextForProgrammerPanel(text);
-                }
-                case BASE_HEXADECIMAL -> {
-                    programmerPanel.appendTextForProgrammerPanel(convertValueToHexadecimal().toUpperCase());
-                }
-            }
+            programmerPanel.appendTextForProgrammerPanel(text);
         } else {
             LOGGER.warn("Implement adding text for <view> here");
         }
