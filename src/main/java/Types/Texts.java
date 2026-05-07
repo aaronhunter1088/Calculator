@@ -26,10 +26,12 @@ public class Texts
     public static final String SEVEN = "7";
     public static final String EIGHT = "8";
     public static final String NINE = "9";
+    public static final String STAR = "*";
     public static final String CLEAR = "C";
     public static final String CLEAR_ENTRY = "CE";
     public static final String DELETE = "⌫";
     public static final String DECIMAL = ".";
+    public static final String DECIMAL_TEXT = "Decimal";
     public static final String FRACTION = "⅟x";
     public static final String PERCENT = "%";
     public static final String SQUARE_ROOT = "√";
@@ -75,6 +77,7 @@ public class Texts
     public static final String PASTE = "Paste";
     public static final String CLEAR_HISTORY = "Clear History";
     public static final String SHOW_MEMORIES = "Show Memories";
+    public static final String CHANGE_K_DELIMITER = "Change K Delimiter";
     public static final String NO_MEMORIES_STORED = "No Memories Stored";
     public static final String MEMORIES = "Memories:";
     public static final String RESULT = "Result: ";
@@ -98,6 +101,7 @@ public class Texts
     public static final String TEXT_PANE_WRONG_VALUE = "Text Pane has the wrong value";
     public static final String PRESSED = "Pressed";
     public static final String COMMA = ",";
+    public static final String COMMA_TEXT = "Comma";
     // Programmer
     public static final String MODULUS = "MOD";
     public static final String LEFT_PARENTHESIS = "(";

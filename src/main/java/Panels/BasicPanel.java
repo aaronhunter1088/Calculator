@@ -226,6 +226,7 @@ public class BasicPanel extends JPanel
                 Paste: Selecting Paste will only paste the last copied from the Calculator value into the textPane.
                 Clear History: Clears the history panel.
                 Show Memories: Displays all the currently stored memories in the history panel.
+                %s: Allows you to change the thousands delimiter shown in the textPane.
                 
                 %s:
                 View Help: Describes how to use the currently selected view.
@@ -259,7 +260,7 @@ public class BasicPanel extends JPanel
                         EQUALS,
                         calculator.getStyleMenu().getName(),
                         calculator.getViewMenu().getName(),
-                        calculator.getEditMenu().getName(),
+                        calculator.getEditMenu().getName(), calculator.getEditMenu().getItem(4).getName(), // Edit menu
                         calculator.getHelpMenu().getName()));
         calculator.updateShowHelp();
     }

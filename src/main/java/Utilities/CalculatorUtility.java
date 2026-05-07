@@ -85,7 +85,7 @@ public class CalculatorUtility
             }
         }
         adjusted = new StringBuffer(adjusted).reverse();
-        if (adjusted.toString().endsWith(COMMA))
+        if (adjusted.toString().endsWith(delimiter))
             adjusted = new StringBuffer(adjusted.substring(0, adjusted.length() - 1));
         if (negativeControl) adjusted = new StringBuffer(SUBTRACTION).append(adjusted);
         LOGGER.debug("commas added: {}", adjusted);

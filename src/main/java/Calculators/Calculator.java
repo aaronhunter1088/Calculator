@@ -138,7 +138,8 @@ public class Calculator extends JFrame
             negativeNumber, // used to determine is current value is negative or not
             pemdasIsActive; // rightParenthesisClickCount != rightParenthesisInValue
     private String helpString = EMPTY,
-            calculatorStyle = EMPTY;
+                   calculatorStyle = EMPTY,
+                   delimiter = COMMA;
     private OSDetector systemDetector;
 
     /* CONSTRUCTORS */
@@ -640,6 +641,34 @@ public class Calculator extends JFrame
         showMemoriesItem.setName(SHOW_MEMORIES);
         showMemoriesItem.addActionListener(this::performShowMemoriesAction);
 
+        JMenu changeDelimiterMenuItem = new JMenu(CHANGE_K_DELIMITER);
+        changeDelimiterMenuItem.setFont(mainFont);
+        changeDelimiterMenuItem.setName(CHANGE_K_DELIMITER);
+        JMenuItem commaItem = new JMenuItem(COMMA_TEXT.toUpperCase() + SPACE + STAR);
+        JMenuItem decimalItem = new JMenuItem(DECIMAL_TEXT.toUpperCase());
+        commaItem.setFont(mainFont);
+        commaItem.setName(COMMA_TEXT);
+        decimalItem.setFont(mainFont);
+        decimalItem.setName(DECIMAL_TEXT);
+        commaItem.addActionListener(act -> {
+            LOGGER.debug("Pressed comma k delimiter");
+            String newDelimiter = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+            setThousandsDelimiter(COMMA);
+            commaItem.setText(COMMA_TEXT.toUpperCase() +  SPACE + STAR);
+            decimalItem.setText(DECIMAL_TEXT.toUpperCase());
+            appendTextToPane(addThousandsDelimiter(newDelimiter, getThousandsDelimiter()));
+        });
+        decimalItem.addActionListener(act -> {
+            LOGGER.debug("Pressed decimal k delimiter");
+            String newDelimiter = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+            setThousandsDelimiter(DECIMAL);
+            decimalItem.setText(DECIMAL_TEXT.toUpperCase() +  SPACE + STAR);
+            commaItem.setText(COMMA_TEXT.toUpperCase());
+            appendTextToPane(addThousandsDelimiter(newDelimiter, getThousandsDelimiter()));
+        });
+        changeDelimiterMenuItem.add(commaItem);
+        changeDelimiterMenuItem.add(decimalItem);
+
         setEditMenu(new JMenu(EDIT));
         editMenu.setName(EDIT + SPACE + MENU);
         editMenu.setFont(mainFont);
@@ -647,6 +676,7 @@ public class Calculator extends JFrame
         editMenu.add(pasteItem);
         editMenu.add(clearHistoryItem);
         editMenu.add(showMemoriesItem);
+        editMenu.add(changeDelimiterMenuItem);
         menuBar.add(editMenu);
         LOGGER.debug("Edit menu configured");
     }
@@ -3191,7 +3221,12 @@ public class Calculator extends JFrame
     public String getThousandsDelimiter()
     {
         // TODO: Setup menu option to allow user to choose this value
-        return COMMA;
+        return delimiter;
+    }
+
+    public void setThousandsDelimiter(String delimiter)
+    {
+        this.delimiter = delimiter;
     }
 
     /**
