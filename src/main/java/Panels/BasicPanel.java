@@ -165,9 +165,11 @@ public class BasicPanel extends JPanel
                 SquareRoot: %s
                 Pressing this button will take the current value in the textPane and return the square root of that value. It will return the result in decimal form.
                 If there is no value available in the textPane it will return a message '%s'. Attempting to get the square root of a negative number will return '%s'.
+                Ex: 25 -> %s -> 5
                 
                 Squared: %s
                 Pressing this button will return the value in the textPane squared, or a message '%s', if no value is available in the textPane.
+                Ex: 5 -> %s -> 25
                 
                 Fraction: %s
                 Pressing this button will return the value in the textPane as a fraction, performing 1 divided by the value in the textPane. If no value is available, it will display a message '%s'.
@@ -183,7 +185,7 @@ public class BasicPanel extends JPanel
                 
                 Delete: %s
                 Pressing this button will remove the right most value from the textPane until the entire number is gone.
-                It will only remove a single value, so 15.2 will become 15., allowing for exact replacement or deletion.
+                It will only remove a single value, so 15.2 will become 15., allowing for exact replacement or ultimately deleting the entire value.
                 
                 Divide: %s
                 Pressing this button will append the %s sign to the value in the textPane, or a message '%s', if no value is available in the textPane.
@@ -240,8 +242,8 @@ public class BasicPanel extends JPanel
                         MEMORY_SUBTRACT,
                         HISTORY_CLOSED, HISTORY_OPEN, PERCENT, PERCENT, // H^, Hv, PERCENT, Ex:Percent
                         PERCENT, ENTER_A_NUMBER, PERCENT, // Percent
-                        SQUARE_ROOT, NOT_A_NUMBER, Texts.ERROR,
-                        SQUARED, ENTER_A_NUMBER,
+                        SQUARE_ROOT, NOT_A_NUMBER, Texts.ERROR, SQUARE_ROOT, // Square Root
+                        SQUARED, ENTER_A_NUMBER, SQUARED, // Squared
                         FRACTION, ENTER_A_NUMBER, FRACTION,
                         CLEAR_ENTRY,
                         CLEAR,
