@@ -1,7 +1,6 @@
 package Panels;
 
 import Calculators.Calculator;
-import Interfaces.CalculatorType;
 import Parent.ArgumentsForTests;
 import Parent.TestParent;
 import Types.CalculatorBase;
@@ -55,110 +54,6 @@ class ProgrammerPanelTest extends TestParent
         LOGGER.info("Finished running {}", ProgrammerPanel.class.getSimpleName());
     }
 
-    private static Stream<ArgumentsForTests> validOrButtonCases()
-    {
-        return Stream.of(
-                ArgumentsForTests.builder(OR)
-                        .firstNumber("5").secondUnaryResult(OR).firstUnaryResult("5 OR").build(),
-                ArgumentsForTests.builder(OR)
-                        .firstNumber("5").firstBinaryOperator(OR).firstBinaryResult("5 OR")
-                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("7").build(),
-                ArgumentsForTests.builder(OR).testName("Test 5.5 OR 7.4 =")
-                        .firstNumber("5.5").firstBinaryOperator(OR).firstBinaryResult("5.5 OR")
-                        .secondNumber("7.4").secondBinaryOperator(EQUALS).secondBinaryResult("7").build()
-        );
-    }
-
-    private static Stream<ArgumentsForTests> invalidOrButtonCases()
-    {
-        return Stream.of(
-                ArgumentsForTests.builder(OR).firstBinaryResult(OR).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
-                //, more
-        );
-    }
-
-    /* Valid LSH */
-
-    /* Invalid LSH */
-
-    /* Valid RSH */
-
-    /* Invalid RSH */
-
-    private static Stream<ArgumentsForTests> invalidXorButtonCases()
-    {
-        return Stream.of(
-                // TODO: Add cases
-                ArgumentsForTests.builder(XOR).firstBinaryResult(XOR).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
-        );
-    }
-
-    private static Stream<ArgumentsForTests> validNotButtonCases()
-    {
-        // TODO: Need a way to set the base and byte
-        return Stream.of(
-                ArgumentsForTests.builder(NOT)
-                        .firstNumber("0000 1011")
-                        .firstUnaryOperator(NOT)
-                        .firstUnaryResult("-12|1111 0100").build(),
-                ArgumentsForTests.builder(NOT)
-                        .firstNumber("5").firstUnaryResult("...11111010").build()
-        );
-    }
-
-    private static Stream<ArgumentsForTests> validAndButtonCases()
-    {
-        return Stream.of(
-                ArgumentsForTests.builder(AND).firstNumber("5").firstBinaryOperator(AND).firstBinaryResult("5|5 " + AND)
-                        .secondNumber("6").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY + "|4").build()
-        );
-    }
-
-    private static Stream<ArgumentsForTests> invalidAndButtonCases()
-    {
-        /*
-         * case 1: Clicked AND when textPane is blank, expect prompt to enter a number
-         * case 2: Clicked AND when textPane contains badText (ENTER_A_NUMBER), expect prompt to enter a number
-         * case 3: Enter 1 number. Click AND. Click AND again. Expect prompt to enter a number
-         */
-        return Stream.of(
-                ArgumentsForTests.builder(AND).firstBinaryOperator(AND).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build(),
-                ArgumentsForTests.builder(AND).firstNumber(ENTER_A_NUMBER).firstUnaryResult(AND).firstUnaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build(),
-                ArgumentsForTests.builder(AND).firstNumber(FIVE).firstBinaryOperator(AND).firstBinaryResult("5|5 " + AND)
-                        .secondBinaryOperator(AND).secondBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
-        );
-    }
-
-    /* Valid XOR */
-
-    private static Stream<Arguments> getModulusCases()
-    {
-        return Stream.of(
-                Arguments.of(BASE_BINARY, FIVE, THREE, EQUALS, "0000 0010"),
-                Arguments.of(BASE_DECIMAL, FIVE, THREE, EQUALS, TWO),
-                Arguments.of(BASE_DECIMAL, FOUR, THREE, EQUALS, ONE),
-                Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, INFINITY),
-                Arguments.of(BASE_DECIMAL, SUBTRACTION + FOUR, TWO, EQUALS, ZERO),
-                Arguments.of(BASE_DECIMAL, ONE + ZERO, THREE, EQUALS, ONE),
-                Arguments.of(BASE_DECIMAL, ONE + SEVEN, FIVE, EQUALS, TWO),
-                Arguments.of(BASE_DECIMAL, THREE, SEVEN, EQUALS, THREE),
-                Arguments.of(BASE_DECIMAL, FOUR, ONE + ZERO, EQUALS, FOUR),
-                Arguments.of(BASE_DECIMAL, SEVEN, SEVEN, EQUALS, ZERO),
-                Arguments.of(BASE_DECIMAL, TWO + FIVE, FOUR, EQUALS, ONE),
-                Arguments.of(BASE_DECIMAL, ONE + ZERO + ZERO, THREE + ZERO, EQUALS, ONE + ZERO),
-                Arguments.of(BASE_DECIMAL, TWO + FOUR, SIX, EQUALS, ZERO),
-                Arguments.of(BASE_DECIMAL, EIGHT + ONE, NINE, EQUALS, ZERO),
-                Arguments.of(BASE_DECIMAL, SUBTRACTION + ONE + ZERO, THREE, EQUALS, TWO),
-                Arguments.of(BASE_DECIMAL, SUBTRACTION + FIVE, SEVEN, EQUALS, TWO),
-                Arguments.of(BASE_DECIMAL, ONE + ZERO, SUBTRACTION + THREE, EQUALS, ONE),
-                Arguments.of(BASE_DECIMAL, SUBTRACTION + TWO + ZERO, SUBTRACTION + SIX, EQUALS, FOUR),
-                Arguments.of(BASE_DECIMAL, ONE + ZERO.repeat(5), SEVEN, EQUALS, FIVE),
-                Arguments.of(BASE_DECIMAL, TWO + TWO, FIVE, EQUALS, TWO),
-                Arguments.of(BASE_DECIMAL, TWO + ZERO, SIX, EQUALS, TWO),
-                Arguments.of(BASE_DECIMAL, TWO, FOUR, EQUALS, TWO)
-        );
-    }
-
     @BeforeEach
     void beforeEach() throws InterruptedException, InvocationTargetException
     {
@@ -205,6 +100,20 @@ class ProgrammerPanelTest extends TestParent
         assertHistory(arguments, previousHistory);
     }
 
+    private static Stream<ArgumentsForTests> validOrButtonCases()
+    {
+        return Stream.of(
+                ArgumentsForTests.builder(OR)
+                        .firstNumber("5").secondUnaryResult(OR).firstUnaryResult("5 OR").build(),
+                ArgumentsForTests.builder(OR)
+                        .firstNumber("5").firstBinaryOperator(OR).firstBinaryResult("5 OR")
+                        .secondNumber("7").secondBinaryOperator(EQUALS).secondBinaryResult("7").build(),
+                ArgumentsForTests.builder(OR).testName("Test 5.5 OR 7.4 =")
+                        .firstNumber("5.5").firstBinaryOperator(OR).firstBinaryResult("5.5 OR")
+                        .secondNumber("7.4").secondBinaryOperator(EQUALS).secondBinaryResult("7").build()
+        );
+    }
+
     /* Invalid NOT */
 
     /* Invalid OR */
@@ -223,6 +132,14 @@ class ProgrammerPanelTest extends TestParent
         assertHistory(arguments, previousHistory);
     }
 
+    private static Stream<ArgumentsForTests> invalidOrButtonCases()
+    {
+        return Stream.of(
+                ArgumentsForTests.builder(OR).firstBinaryResult(OR).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
+                //, more
+        );
+    }
+
     /* Invalid XOR */
     @ParameterizedTest
     @DisplayName("Test Invalid XOR Button Cases")
@@ -239,6 +156,14 @@ class ProgrammerPanelTest extends TestParent
         assertHistory(arguments, previousHistory);
     }
 
+    private static Stream<ArgumentsForTests> invalidXorButtonCases()
+    {
+        return Stream.of(
+                // TODO: Add cases
+                ArgumentsForTests.builder(XOR).firstBinaryResult(XOR).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
+        );
+    }
+
     /* Valid NOT */
     @ParameterizedTest
     @DisplayName("Test Valid NOT Button Cases")
@@ -249,26 +174,51 @@ class ProgrammerPanelTest extends TestParent
 
         setupWhenThen(actionEvent, arguments);
 
-        calculator.setCalculatorBase(BASE_BINARY);
-        calculator.setPreviousBase(BASE_BINARY);
-        calculator.setCalculatorByte(BYTE_BYTE);
+        calculator.setCalculatorBase(arguments.getCurrentBase());
+        calculator.setPreviousBase(arguments.getPreviousBase());
+        calculator.setCalculatorByte(arguments.getCalculatorByte());
         // copilot edit
         if (!arguments.getFirstNumber().isEmpty()) {
             String firstNumber = arguments.getFirstNumber().replace(BLANK, EMPTY);
-            // If the number contains digits > 1, it's already in decimal format
             if (calculator.getCalculatorBase() != BASE_DECIMAL) {
-                calculator.getValues()[0] = calculator.convertValueToDecimal(firstNumber);
+                // Convert from the explicitly set current base to decimal
+                calculator.getValues()[0] = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, firstNumber);
             } else {
                 // Already in decimal format, use as-is
                 calculator.getValues()[0] = firstNumber;
             }
         }
-        if (!arguments.getSecondNumber().isEmpty())
-            calculator.getValues()[1] = calculator.convertValueToDecimal(arguments.getSecondNumber().replace(BLANK, EMPTY));
+        if (!arguments.getSecondNumber().isEmpty()) {
+            String secondNumber = arguments.getSecondNumber().replace(BLANK, EMPTY);
+            if (calculator.getCalculatorBase() != BASE_DECIMAL) {
+                calculator.getValues()[1] = calculator.convertFromBaseToBase(calculator.getCalculatorBase(), BASE_DECIMAL, secondNumber);
+            } else {
+                calculator.getValues()[1] = secondNumber;
+            }
+        }
         String previousHistory = calculator.getHistoryTextPaneValue();
         previousHistory = performTest(arguments, previousHistory, LOGGER);
 
         assertHistory(arguments, previousHistory);
+    }
+
+    private static Stream<ArgumentsForTests> validNotButtonCases()
+    {
+        // TODO: Need a way to set the base and byte
+        return Stream.of(
+                ArgumentsForTests.builder(NOT)
+                        .currentBase(BASE_BINARY)
+                        .previousBase(BASE_HEXADECIMAL)
+                        .calculatorByte(BYTE_BYTE)
+                        .firstNumber("0000 1011")
+                        .firstUnaryOperator(NOT)
+                        .firstUnaryResult("-12|1111 0100").build(),
+                ArgumentsForTests.builder(NOT)
+                        .currentBase(BASE_DECIMAL)
+                        .previousBase(BASE_OCTAL)
+                        .calculatorByte(BYTE_BYTE)
+                        .firstNumber("5").firstUnaryResult("...11111010").build()
+        );
     }
 
     /* Valid AND */
@@ -287,6 +237,46 @@ class ProgrammerPanelTest extends TestParent
         assertHistory(arguments, previousHistory);
     }
 
+    private static Stream<ArgumentsForTests> validAndButtonCases()
+    {
+        return Stream.of(
+                ArgumentsForTests.builder(AND).firstNumber("5").firstBinaryOperator(AND).firstBinaryResult("5|5 " + AND)
+                        .secondNumber("6").secondBinaryOperator(EQUALS).secondBinaryResult(EMPTY + "|4").build()
+        );
+    }
+
+    /* Invalid AND */
+    @ParameterizedTest
+    @DisplayName("Test Invalid AND Button Cases")
+    @MethodSource("invalidAndButtonCases")
+    void testClickedButtonAndWhenTextPaneBlank(ArgumentsForTests arguments)
+    {
+        postConstructCalculator();
+
+        setupWhenThen(actionEvent, arguments);
+
+        String previousHistory = calculator.getHistoryTextPaneValue();
+        previousHistory = performTest(arguments, previousHistory, LOGGER);
+
+        assertHistory(arguments, previousHistory);
+    }
+
+    private static Stream<ArgumentsForTests> invalidAndButtonCases()
+    {
+        /*
+         * case 1: Clicked AND when textPane is blank, expect prompt to enter a number
+         * case 2: Clicked AND when textPane contains badText (ENTER_A_NUMBER), expect prompt to enter a number
+         * case 3: Enter 1 number. Click AND. Click AND again. Expect prompt to enter a number
+         */
+        return Stream.of(
+                ArgumentsForTests.builder(AND).firstBinaryOperator(AND).firstBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build(),
+                ArgumentsForTests.builder(AND).firstNumber(ENTER_A_NUMBER).firstUnaryResult(AND).firstUnaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build(),
+                ArgumentsForTests.builder(AND).firstNumber(FIVE).firstBinaryOperator(AND).firstBinaryResult("5|5 " + AND)
+                        .secondBinaryOperator(AND).secondBinaryResult(EMPTY + ARGUMENT_SEPARATOR + ENTER_A_NUMBER).build()
+        );
+    }
+
+    // TODO: Place these single tests within their corresponding Parameterized test.
     @Test
     @DisplayName("Test OR with negative decimal and positive decimal")
     void testPerformOrWithNegativeDecimalValue()
@@ -360,30 +350,11 @@ class ProgrammerPanelTest extends TestParent
         assertEquals(EMPTY, calculator.getValues()[0], "Expected values[0] to be empty");
         assertEquals(ENTER_A_NUMBER, calculator.getTextPaneValue(), "Expected textPane to say " + ENTER_A_NUMBER);
     }
-
-    /* Valid SHIFT */
-
-    /* Invalid SHIFT ?? */
-
-    /* Invalid AND */
-    @ParameterizedTest
-    @DisplayName("Test Invalid AND Button Cases")
-    @MethodSource("invalidAndButtonCases")
-    void testClickedButtonAndWhenTextPaneBlank(ArgumentsForTests arguments)
-    {
-        postConstructCalculator();
-
-        setupWhenThen(actionEvent, arguments);
-
-        String previousHistory = calculator.getHistoryTextPaneValue();
-        previousHistory = performTest(arguments, previousHistory, LOGGER);
-
-        assertHistory(arguments, previousHistory);
-    }
+    // END TODO
 
     /* Valid MODULUS */
     @ParameterizedTest()
-    @MethodSource("getModulusCases")
+    @MethodSource("getValidModulusCases")
     @DisplayName("Test Modulus Button")
     void testModulusButton(CalculatorBase base, String firstNumber, String secondNumber,
                            String nextOperator, String expectedResult)
@@ -402,6 +373,34 @@ class ProgrammerPanelTest extends TestParent
         assertEquals(EMPTY, calculator.getValueAt(0), "values[0] result should be EMPTY");
         assertEquals(EMPTY, calculator.getValueAt(1), "values[1] result should be EMPTY");
         assertEquals(EMPTY, calculator.getValueAt(2), "values[2] result should be EMPTY");
+    }
+
+    private static Stream<Arguments> getValidModulusCases()
+    {
+        return Stream.of(
+                Arguments.of(BASE_BINARY, FIVE, THREE, EQUALS, "0000 0010"),
+                Arguments.of(BASE_DECIMAL, FIVE, THREE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, FOUR, THREE, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, FOUR, ZERO, EQUALS, INFINITY),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION + FOUR, TWO, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, ONE + ZERO, THREE, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, ONE + SEVEN, FIVE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, THREE, SEVEN, EQUALS, THREE),
+                Arguments.of(BASE_DECIMAL, FOUR, ONE + ZERO, EQUALS, FOUR),
+                Arguments.of(BASE_DECIMAL, SEVEN, SEVEN, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, TWO + FIVE, FOUR, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, ONE + ZERO + ZERO, THREE + ZERO, EQUALS, ONE + ZERO),
+                Arguments.of(BASE_DECIMAL, TWO + FOUR, SIX, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, EIGHT + ONE, NINE, EQUALS, ZERO),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION + ONE + ZERO, THREE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION + FIVE, SEVEN, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, ONE + ZERO, SUBTRACTION + THREE, EQUALS, ONE),
+                Arguments.of(BASE_DECIMAL, SUBTRACTION + TWO + ZERO, SUBTRACTION + SIX, EQUALS, FOUR),
+                Arguments.of(BASE_DECIMAL, ONE + ZERO.repeat(5), SEVEN, EQUALS, FIVE),
+                Arguments.of(BASE_DECIMAL, TWO + TWO, FIVE, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, TWO + ZERO, SIX, EQUALS, TWO),
+                Arguments.of(BASE_DECIMAL, TWO, FOUR, EQUALS, TWO)
+        );
     }
 
     /* Invalid MODULUS */

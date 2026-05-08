@@ -37,8 +37,17 @@ public class CalculatorUtility
         if (valueToAdjust.isEmpty()) return valueToAdjust;
         if (valueToAdjust.contains(delimiter)) valueToAdjust = removeThousandsDelimiter(valueToAdjust, delimiter);
         boolean containsParentheses = valueToAdjust.contains(LEFT_PARENTHESIS) || valueToAdjust.contains(RIGHT_PARENTHESIS);
-        if (containsParentheses)
-            valueToAdjust = valueToAdjust.replace(LEFT_PARENTHESIS, EMPTY).replace(RIGHT_PARENTHESIS, EMPTY).trim();
+        String parentheticalSuffix = EMPTY;
+        if (containsParentheses) {
+            int parenIndex = valueToAdjust.indexOf(LEFT_PARENTHESIS);
+            int closeIndex = valueToAdjust.lastIndexOf(RIGHT_PARENTHESIS);
+            String innerContent = (parenIndex >= 0 && closeIndex > parenIndex)
+                    ? valueToAdjust.substring(parenIndex + 1, closeIndex).trim()
+                    : EMPTY;
+            String formattedInner = innerContent.isEmpty() ? EMPTY : addThousandsDelimiter(innerContent, delimiter);
+            parentheticalSuffix = BLANK + LEFT_PARENTHESIS + formattedInner + RIGHT_PARENTHESIS;
+            valueToAdjust = (parenIndex >= 0) ? valueToAdjust.substring(0, parenIndex).trim() : valueToAdjust;
+        }
         try {
             new BigDecimal(valueToAdjust);
         }
@@ -65,10 +74,10 @@ public class CalculatorUtility
                 return valueToAdjust;
             }
             else if (numberOnLeft.length() <= 3 ) { // && containsParentheses) {
-                 return valueToAdjust + LEFT_PARENTHESIS + RIGHT_PARENTHESIS;
+                 return valueToAdjust + parentheticalSuffix;
             }
             else if (negativeControl && numberOnLeft.length() == 4) { //&& containsParentheses) {
-                return valueToAdjust + LEFT_PARENTHESIS + RIGHT_PARENTHESIS;
+                return valueToAdjust + parentheticalSuffix;
             }
         }
         LOGGER.debug("Adding delimiter: '{}' to '{}'", delimiter, valueToAdjust);
@@ -103,7 +112,7 @@ public class CalculatorUtility
             adjusted = new StringBuffer(adjusted.substring(0, adjusted.length() - 1));
         if (negativeControl) adjusted = new StringBuffer(SUBTRACTION).append(adjusted);
         LOGGER.debug("delimiter '{}' added: {}", delimiter, adjusted);
-        return adjusted.toString();
+        return adjusted.toString() + parentheticalSuffix;
     }
 
     /**

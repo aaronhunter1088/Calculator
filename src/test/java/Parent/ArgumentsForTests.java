@@ -1,5 +1,8 @@
 package Parent;
 
+import Types.CalculatorBase;
+import Types.CalculatorByte;
+
 import static Types.Texts.*;
 
 /**
@@ -51,6 +54,9 @@ public class ArgumentsForTests
     public static final String SECOND_BINARY_RESULT = "secondBinaryResult";
     public static final String OPERATOR_UNDER_TEST = "operatorUnderTest";
     public static final String INITIAL_STATE = "initialState";
+    public static final String CURRENT_BASE = "currentBase";
+    public static final String PREVIOUS_BASE = "previousBase";
+    public static final String CALCULATOR_BYTE = "calculatorByte";
     private String testName = EMPTY;
     private String firstNumber = EMPTY;
     private String secondNumber = EMPTY;
@@ -64,6 +70,9 @@ public class ArgumentsForTests
     private String secondBinaryResult = EMPTY;
     private String operatorUnderTest = EMPTY;
     private ArgumentsForTests initialState = null;
+    private CalculatorBase currentBase = null;
+    private CalculatorBase previousBase = null;
+    private CalculatorByte calculatorByte = null;
 
     /**
      * Begins building a test argument object
@@ -375,6 +384,75 @@ public class ArgumentsForTests
     public ArgumentsForTests getInitialState()
     {
         return initialState;
+    }
+
+    /**
+     * Sets the current calculator base for this test.
+     * When set, the test setup will apply this base before running.
+     *
+     * @param currentBase the {@link CalculatorBase} to set as the current base
+     * @return this test object
+     */
+    public ArgumentsForTests currentBase(CalculatorBase currentBase)
+    {
+        this.currentBase = currentBase;
+        return this;
+    }
+
+    /**
+     * Gets the current calculator base for this test
+     *
+     * @return the current {@link CalculatorBase}, or {@code null} if not set
+     */
+    public CalculatorBase getCurrentBase()
+    {
+        return currentBase;
+    }
+
+    /**
+     * Sets the previous calculator base for this test.
+     * When set, the test setup will apply this as the previous base before running.
+     *
+     * @param previousBase the {@link CalculatorBase} to set as the previous base
+     * @return this test object
+     */
+    public ArgumentsForTests previousBase(CalculatorBase previousBase)
+    {
+        this.previousBase = previousBase;
+        return this;
+    }
+
+    /**
+     * Gets the previous calculator base for this test
+     *
+     * @return the previous {@link CalculatorBase}, or {@code null} if not set
+     */
+    public CalculatorBase getPreviousBase()
+    {
+        return previousBase;
+    }
+
+    /**
+     * Sets the calculator byte size for this test.
+     * When set, the test setup will apply this byte size before running.
+     *
+     * @param calculatorByte the {@link CalculatorByte} to set
+     * @return this test object
+     */
+    public ArgumentsForTests calculatorByte(CalculatorByte calculatorByte)
+    {
+        this.calculatorByte = calculatorByte;
+        return this;
+    }
+
+    /**
+     * Gets the calculator byte size for this test
+     *
+     * @return the {@link CalculatorByte}, or {@code null} if not set
+     */
+    public CalculatorByte getCalculatorByte()
+    {
+        return calculatorByte;
     }
 
     /**

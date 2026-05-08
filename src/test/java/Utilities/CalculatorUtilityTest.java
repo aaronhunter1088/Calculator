@@ -65,6 +65,8 @@ public class CalculatorUtilityTest extends TestParent
                 Arguments.of("0", "0", COMMA),
                 Arguments.of("-1000", "-1,000", COMMA),
                 Arguments.of("-1234567.89", "-1,234,567.89", COMMA),
+                Arguments.of("12345 ()", "12,345 ()", COMMA),
+                Arguments.of("1234 (1234)", "1,234 (1,234)", COMMA),
 
                 // Decimal
                 Arguments.of("1000", "1.000", DECIMAL),
