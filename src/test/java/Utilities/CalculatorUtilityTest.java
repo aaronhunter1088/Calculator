@@ -31,6 +31,12 @@ public class CalculatorUtilityTest extends TestParent
         System.setProperty("appName", PemdasUtiltyTest.class.getSimpleName());
     }
 
+    /**
+     * Test cases for method: {@link CalculatorUtility#addThousandsDelimiter(String input, String delimiter)}
+     * @param input argument 1, the number to add the thousands delimiter to
+     * @param expected argument 2, the expected output
+     * @param delimiter argument 3, the delimiter to enforce
+     */
     @ParameterizedTest
     @MethodSource("addThousandsDelimiterTestCases")
     @DisplayName("Test addThousandsDelimiter")
@@ -42,6 +48,10 @@ public class CalculatorUtilityTest extends TestParent
         assertEquals(expected, result);
     }
 
+    /**
+     * Test cases for the {@link CalculatorUtility#addThousandsDelimiter(String input, String delimiter)} method.
+     * @return various test cases to check
+     */
     private static Stream<Arguments> addThousandsDelimiterTestCases()
     {
         return Stream.of(
