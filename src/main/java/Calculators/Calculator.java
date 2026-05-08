@@ -652,11 +652,11 @@ public class Calculator extends JFrame
         decimalItem.setName(DECIMAL_TEXT);
         commaItem.addActionListener(act -> {
             LOGGER.debug("Pressed comma k delimiter");
-            String newDelimiter = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
+            String withoutDelimiter = removeThousandsDelimiter(getTextPaneValue(), getThousandsDelimiter());
             setThousandsDelimiter(COMMA);
             commaItem.setText(COMMA_TEXT.toUpperCase() +  SPACE + STAR);
             decimalItem.setText(DECIMAL_TEXT.toUpperCase());
-            appendTextToPane(addThousandsDelimiter(newDelimiter, getThousandsDelimiter()));
+            appendTextToPane(addThousandsDelimiter(withoutDelimiter, getThousandsDelimiter()));
         });
         decimalItem.addActionListener(act -> {
             LOGGER.debug("Pressed decimal k delimiter");

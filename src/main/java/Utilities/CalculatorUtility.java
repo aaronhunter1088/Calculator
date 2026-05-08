@@ -36,6 +36,9 @@ public class CalculatorUtility
     {
         if (valueToAdjust.isEmpty()) return valueToAdjust;
         if (valueToAdjust.contains(delimiter)) valueToAdjust = removeThousandsDelimiter(valueToAdjust, delimiter);
+        boolean containsParentheses = valueToAdjust.contains(LEFT_PARENTHESIS) || valueToAdjust.contains(RIGHT_PARENTHESIS);
+        if (containsParentheses)
+            valueToAdjust = valueToAdjust.replace(LEFT_PARENTHESIS, EMPTY).replace(RIGHT_PARENTHESIS, EMPTY).trim();
         try {
             new BigDecimal(valueToAdjust);
         }
@@ -44,17 +47,28 @@ public class CalculatorUtility
         }
         boolean negativeControl = isNegativeNumber(valueToAdjust);
         valueToAdjust = getValueWithoutAnyOperator(valueToAdjust);
+        boolean fractional = isFractionalNumber(valueToAdjust);
+
+        if (!fractional && !containsParentheses && valueToAdjust.length() <= 3) {
+            return valueToAdjust;
+        }
         // Keep negative sign just for length checks
-        if (!isFractionalNumber(valueToAdjust) && valueToAdjust.length() <= 3) {
+        else if (!fractional && !containsParentheses && negativeControl && valueToAdjust.length() <= 4) {
             return valueToAdjust;
-        } else if (!isFractionalNumber(valueToAdjust) && negativeControl && valueToAdjust.length() <= 4) {
-            return valueToAdjust;
-        } else {
+        }
+        else {
             String numberOnLeft = getNumberOnLeftSideOfDecimal(valueToAdjust);
-            if (numberOnLeft.length() <= 3) {
+            if (numberOnLeft.length() <= 3 && !containsParentheses) {
                 return valueToAdjust;
-            } else if (negativeControl && numberOnLeft.length() <= 4) {
+            }
+            else if (negativeControl && numberOnLeft.length() <= 4 && !containsParentheses) {
                 return valueToAdjust;
+            }
+            else if (numberOnLeft.length() <= 3 ) { // && containsParentheses) {
+                 return valueToAdjust + LEFT_PARENTHESIS + RIGHT_PARENTHESIS;
+            }
+            else if (negativeControl && numberOnLeft.length() == 4) { //&& containsParentheses) {
+                return valueToAdjust + LEFT_PARENTHESIS + RIGHT_PARENTHESIS;
             }
         }
         LOGGER.debug("Adding delimiter: '{}' to '{}'", delimiter, valueToAdjust);
