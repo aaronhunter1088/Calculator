@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class CalculatorUtilityTest extends TestParent
 {
-    private static final Logger LOGGER = LogManager.getLogger(PemdasUtiltyTest.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger(CalculatorUtilityTest.class.getSimpleName());
 
     static {
-        System.setProperty("appName", PemdasUtiltyTest.class.getSimpleName());
+        System.setProperty("appName", CalculatorUtilityTest.class.getSimpleName());
     }
 
     /**
