@@ -25,7 +25,7 @@ import java.time.Month;
 import java.util.Locale;
 
 import static Types.DateOperation.ADD_SUBTRACT_DAYS;
-import static Utilities.LoggingUtil.confirm;
+import static Utilities.LoggingUtility.confirm;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 

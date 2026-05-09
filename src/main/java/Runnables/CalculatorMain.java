@@ -14,7 +14,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import static Types.CalculatorConverterType.*;
 import static Types.CalculatorView.*;
 import static Types.DateOperation.*;
-import static Utilities.LoggingUtil.confirm;
+import static Utilities.LoggingUtility.confirm;
 
 /**
  * CalculatorMain

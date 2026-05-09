@@ -43,7 +43,7 @@ import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
 import static Utilities.CalculatorUtility.*;
 import static Utilities.PemdasUtility.*;
-import static Utilities.LoggingUtil.*;
+import static Utilities.LoggingUtility.*;
 import static java.util.Arrays.stream;
 
 /**
@@ -3568,13 +3568,23 @@ public class Calculator extends JFrame
         else if (calculatorView == VIEW_CONVERTER) {
             LOGGER.info("Return value based on active textfield");
             if (converterPanel.isTextField1Selected()) {
-                return converterPanel.getTextField1().getText()
-                        .replace(NEWLINE, EMPTY)
-                        .strip();
+                JTextField field1 = converterPanel.getTextField1();
+                if (field1 != null) {
+                    return field1.getText()
+                            .replace(NEWLINE, EMPTY)
+                            .strip();
+                } else {
+                    return EMPTY;
+                }
             } else {
-                return converterPanel.getTextField2().getText()
-                        .replace(NEWLINE, EMPTY)
-                        .strip();
+                JTextField field2 = converterPanel.getTextField2();
+                if (field2 != null) {
+                    return field2.getText()
+                            .replace(NEWLINE, EMPTY)
+                            .strip();
+                } else {
+                    return EMPTY;
+                }
             }
         }
         else {

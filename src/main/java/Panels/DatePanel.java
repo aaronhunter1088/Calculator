@@ -21,8 +21,8 @@ import static Types.CalculatorView.VIEW_DATE;
 import static Types.DateOperation.ADD_SUBTRACT_DAYS;
 import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
-import static Utilities.LoggingUtil.confirm;
-import static Utilities.LoggingUtil.logActionButton;
+import static Utilities.LoggingUtility.confirm;
+import static Utilities.LoggingUtility.logActionButton;
 
 /**
  * DatePanel
@@ -521,7 +521,8 @@ public class DatePanel extends JPanel
      */
     public int getTheYearFromTheFromDatePicker()
     {
-        return fromDatePicker.getModel().getYear();
+        if (fromDatePicker == null) return LocalDate.now().getYear();
+        else return fromDatePicker.getModel().getYear();
     }
 
     /**
@@ -531,7 +532,8 @@ public class DatePanel extends JPanel
      */
     public int getTheMonthFromTheFromDatePicker()
     {
-        return fromDatePicker.getModel().getMonth();
+        if (fromDatePicker == null) return LocalDate.now().getMonthValue();
+        else return fromDatePicker.getModel().getMonth();
     }
 
     /**
@@ -563,7 +565,8 @@ public class DatePanel extends JPanel
      */
     public int getTheDayOfTheMonthFromTheFromDatePicker()
     {
-        return fromDatePicker.getModel().getDay();
+        if (fromDatePicker == null) return LocalDate.now().getDayOfMonth();
+        else return fromDatePicker.getModel().getDay();
     }
 
     /**
@@ -573,7 +576,8 @@ public class DatePanel extends JPanel
      */
     public int getTheYearFromTheToDatePicker()
     {
-        return toDatePicker.getModel().getYear();
+        if (toDatePicker == null) return LocalDate.now().getYear();
+        else return toDatePicker.getModel().getYear();
     }
 
     /**
@@ -583,7 +587,8 @@ public class DatePanel extends JPanel
      */
     public int getTheMonthFromTheToDatePicker()
     {
-        return toDatePicker.getModel().getMonth();
+        if (toDatePicker == null) return LocalDate.now().getMonthValue();
+        else return toDatePicker.getModel().getMonth();
     }
 
     /**
@@ -615,7 +620,8 @@ public class DatePanel extends JPanel
      */
     public int getTheDayOfTheMonthFromTheToDatePicker()
     {
-        return toDatePicker.getModel().getDay();
+        if (toDatePicker == null) return LocalDate.now().getDayOfMonth();
+        else return toDatePicker.getModel().getDay();
     }
 
     /**

@@ -17,7 +17,7 @@ import static Utilities.CalculatorUtility.addThousandsDelimiter;
 import static Utilities.CalculatorUtility.isFractionalNumber;
 import static Types.CalculatorView.VIEW_BASIC;
 import static Types.Texts.*;
-import static Utilities.LoggingUtil.*;
+import static Utilities.LoggingUtility.*;
 
 /**
  * BasicPanel

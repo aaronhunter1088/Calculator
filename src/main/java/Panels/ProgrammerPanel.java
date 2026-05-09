@@ -28,7 +28,7 @@ import static Types.CalculatorByte.*;
 import static Utilities.CalculatorUtility.*;
 import static Types.CalculatorView.VIEW_PROGRAMMER;
 import static Types.Texts.*;
-import static Utilities.LoggingUtil.*;
+import static Utilities.LoggingUtility.*;
 
 /**
  * ProgrammerPanel

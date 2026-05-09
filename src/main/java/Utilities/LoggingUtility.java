@@ -4,6 +4,7 @@ import Calculators.Calculator;
 import Types.*;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,7 +15,7 @@ import static Types.DateOperation.DIFFERENCE_BETWEEN_DATES;
 import static Types.Texts.*;
 
 /**
- * LoggingUtil
+ * LoggingUtility
  * <p>
  * This class contains static methods used
  * for logging throughout the Calculator application
@@ -22,9 +23,8 @@ import static Types.Texts.*;
  * @author Michael Ball
  * @version 4.0
  */
-public class LoggingUtil
+public class LoggingUtility
 {
-
     /**
      * This method is used after any result to verify
      * the result of the previous method and see the
@@ -96,6 +96,17 @@ public class LoggingUtil
                 // TODO: add to first case once ready
                 logger.warn("Confirm message not setup for {}", currentView);
             }
+            case VIEW_CONVERTER -> {
+                logger.info("Converter: {}", calculator.getConverterPanel().getConverterType());
+                JTextField field1 = calculator.getConverterPanel().getTextField1();
+                JComboBox<CalculatorConverterUnits> box1 = calculator.getConverterPanel().getUnitOptions1();
+                logger.info("text field 1: '{}' {}", field1 != null ? field1.getText() : EMPTY,
+                        box1 != null ? box1.getSelectedItem() : EMPTY);
+                JTextField field2 = calculator.getConverterPanel().getTextField2();
+                JComboBox<CalculatorConverterUnits> box2 = calculator.getConverterPanel().getUnitOptions2();
+                logger.info("text field 2: '{}' {}", field2 != null ? field2.getText() : EMPTY,
+                        box2 != null ? box2.getSelectedItem() : EMPTY);
+            }
             case VIEW_DATE -> {
                 DateOperation currentDateOperation = calculator.getDateOperation();
                 logger.info("dateOperation: {}", currentDateOperation);
@@ -132,13 +143,6 @@ public class LoggingUtil
                     if (!addSubDays.isBlank()) logger.info("Days: {}", addSubDays);
                     logger.info("Result: " + calculator.getDatePanel().getResultsLabel().getText());
                 }
-            }
-            case VIEW_CONVERTER -> {
-                logger.info("Converter: {}", calculator.getConverterPanel().getConverterType());
-                logger.info("text field 1: '{}' {}", calculator.getConverterPanel().getTextField1().getText(),
-                        calculator.getConverterPanel().getUnitOptions1().getSelectedItem());
-                logger.info("text field 2: '{}' {}", calculator.getConverterPanel().getTextField2().getText(),
-                        calculator.getConverterPanel().getUnitOptions2().getSelectedItem());
             }
         }
         logger.info("--- End Confirm Results ---{}", NEWLINE);

@@ -20,8 +20,8 @@ import static Types.CalculatorConverterType.AREA;
 import static Types.CalculatorConverterUnits.*;
 import static Types.CalculatorView.VIEW_CONVERTER;
 import static Types.Texts.ZERO;
-import static Utilities.LoggingUtil.confirm;
-import static Utilities.LoggingUtil.logActionButton;
+import static Utilities.LoggingUtility.confirm;
+import static Utilities.LoggingUtility.logActionButton;
 
 /**
  * ConverterPanel
