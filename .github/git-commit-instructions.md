@@ -13,9 +13,9 @@ Summary:
 - A brief description of the change
 
 Rules for Summary Line:
-- Use imperative tense (e.g., "add", "fix", "update")
+- Use the tense (e.g., "add" instead of "added" or vise versa) that best fits the change
 - Try to keep it under 72 characters but not mandatory
-- Focus on what was changed and why, rather than how
+- Focus on what was changed or introduced and why, rather than how
 
 Examples:
 feat: add hexadecimal conversion support
