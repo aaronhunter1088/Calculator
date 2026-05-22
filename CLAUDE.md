@@ -252,4 +252,5 @@ Managed in the parent POM (`com.skvllprodvctions:parent:1.0.0`). Do **not** add 
 | Mockito (core + junit-jupiter) | Test mocking |
 
 ## Claude Agent Specific Capabilities
+
 None at the moment. Add as necessary.
