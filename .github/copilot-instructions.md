@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a Java Swing-based Calculator application (v4.6.2) that provides multiple calculator views:
+This is a Java Swing-based Calculator application that provides multiple calculator views:
 - **Basic**: Standard arithmetic calculator
 - **Programmer**: Binary, hexadecimal, and other programming-related calculations
 - **Scientific**: Advanced mathematical operations
@@ -53,18 +53,14 @@ src/
   ```
 
 ### Code Style
-- Use Log4j2 for logging: `Logger LOGGER = LogManager.getLogger(ClassName.class.getSimpleName());`
+- Use Log4j2 for logging: `private final Logger LOGGER = LogManager.getLogger(ClassName.class.getSimpleName());`
   - Note: Some classes use `ClassName.class` instead of `ClassName.class.getSimpleName()` - both patterns are acceptable
 - Follow JavaDoc conventions for class and method documentation
 - Use meaningful variable names
 - Keep methods focused and single-purpose
 
 ### Testing
-- Use JUnit 5 (Jupiter) for all tests
-- Use Mockito for mocking dependencies
-- Test classes should extend `TestParent` when applicable
-- Use parameterized tests with `@ParameterizedTest` and `@MethodSource` for testing multiple scenarios
-- Follow the naming convention: `[ClassName]Test.java` or `[ClassName]Tests.java`
+- Read the .github/instructions/test.instructions.md file for detailed testing guidelines
 
 ## Build and Test Commands
 
@@ -83,7 +79,7 @@ mvn test
 mvn install -DskipTests
 ```
 
-### Create JAR with Dependencies
+### Create Calculator-version-jar-with-dependencies.jar
 ```bash
 mvn clean package -Dmaven.test.skip=true
 ```
@@ -111,7 +107,7 @@ mvn clean package -Dmaven.test.skip=true
 
 ### Constants and Enums
 - Use `CalculatorView` enum for view types
-- Use `CalculatorBase` enum for number bases (BASE_BINARY, BASE_OCTAL, BASE_DECIMAL, BASE_HEXADECIMAL)
+- Use `CalculatorBase` enum for bases (BASE_BINARY, BASE_OCTAL, BASE_DECIMAL, BASE_HEXADECIMAL)
 - Use `CalculatorByte` enum for byte sizes
 - Use `CalculatorConverterType` enum for converter types
 - Use `DateOperation` enum for date operations
@@ -139,7 +135,7 @@ mvn clean package -Dmaven.test.skip=true
 - Output JAR files are placed in `dist/version4/`
 - Parent POM manages dependency versions
 - Some features (Programmer and Scientific calculators) may have incomplete logic
-- The project uses custom UI built manually (not JavaFX)
+- The project uses custom UI built manually (JavaFX was not used)
 
 ## Dependencies Management
 
@@ -150,6 +146,8 @@ mvn clean package -Dmaven.test.skip=true
 ## When Working with Copilot
 
 - Ask for code that follows existing patterns in the codebase
-- Request tests that match the existing test structure
+- Request tests that match the existing test structure.
+- If there are multiple scenarios for a test, use parameterized tests with @MethodSource and
+  place the method for the parameterized test directly below the test method for quick access.
 - Ensure any generated code uses the project's logging, constants, and utility classes
 - Verify that Swing UI code is compatible with the manual UI approach used in this project
