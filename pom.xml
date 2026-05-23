@@ -9,7 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>Calculator</artifactId>
+    <artifactId>calculator</artifactId>
     <version>4.6.3</version>
     <name>Calculator</name>
     <description>This is a Calculator Swing App</description>
@@ -17,7 +17,7 @@
     <properties>
         <outputDirectory>${basedir}/dist/version4</outputDirectory>
         <finalName>${project.artifactId}-${project.version}</finalName>
-        <main.class>Runnables.CalculatorMain</main.class>
+        <main.class>calculator.CalculatorMain</main.class>
     </properties>
 
     <dependencies>
@@ -40,13 +40,13 @@
             <artifactId>jdatepicker</artifactId>
         </dependency>
         <!-- log4j2-core --><!--
-             Managed in Parent Dependency Management section -->
+             Managed in test Dependency Management section -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
         </dependency>
         <!-- log4j2-api --><!--
-             Managed in Parent Dependency Management section -->
+             Managed in test Dependency Management section -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -55,14 +55,14 @@
         <!-- Test dependencies -->
 
         <!-- jupiter junit-api --><!--
-             Managed in Parent Test Dependency Management section -->
+             Managed in test Test Dependency Management section -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- jupiter junit-engine --><!--
-             Managed in Parent Test Dependency Management section -->
+             Managed in test Test Dependency Management section -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>

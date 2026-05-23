@@ -1,6 +1,6 @@
 # Calculator – Claude Agent Guide
 
-Java 25 + Swing calculator app, built with Apache Maven. Entry point: `Runnables.CalculatorMain`. Output JARs land in `dist/version#/`.
+Java 25 + Swing calculator app, built with Apache Maven. Entry point: `calculator.CalculatorMain`. Output JARs land in `dist/version#/`.
 
 ---
 
@@ -40,25 +40,29 @@ Set `logLevel` as an environment variable to control log verbosity. If unset, a 
 ## Package Structure
 
 ```
-src/main/java/
-  Calculators/     Calculator.java, CalculatorError.java
-  Converters/      AngleMethods.java, AreaMethods.java
-  Interfaces/      CalculatorType.java, OSDetector.java
-  Panels/          BasicPanel, ProgrammerPanel, ScientificPanel, DatePanel, ConverterPanel
-  Runnables/       CalculatorMain.java  ← entry point
-  Types/           Enums, constants, listeners, SystemDetector
-  Utilities/       CalculatorUtility, LoggingUtility, PemdasUtility
+src/main/java/calculator/
+  CalculatorMain.java        ← entry point
+  contracts/                 CalculatorType.java, OSDetector.java
+  entities/                  Calculator.java, AngleMethods.java, AreaMethods.java,
+                             CalculatorBase.java, CalculatorByte.java,
+                             CalculatorConverterType.java, CalculatorConverterUnits.java,
+                             CalculatorView.java, DateOperation.java, SystemDetector.java,
+                             CalculatorKeyListener.java, CalculatorMouseListener.java,
+                             Texts.java
+  exceptions/                CalculatorError.java
+  panels/                    BasicPanel.java, ProgrammerPanel.java, ScientificPanel.java,
+                             DatePanel.java, ConverterPanel.java
+  utilities/                 CalculatorUtility.java, LoggingUtility.java, PemdasUtility.java
 
-src/test/java/
-  Calculators/     CalculatorTests.java
-  Converters/      AngleMethodsTest.java, AreaMethodsTest.java
-  Panels/          BasicPanelTest, ConverterPanelTest, DatePanelTest,
-                   ProgrammerPanelTest, ScientificPanelTest
-  Parent/          TestParent.java, ArgumentsForTests.java  ← test infrastructure
-  Utilities/       CalculatorUtilityTest, LoggingUtilityTest, PemdasUtiltyTest
+src/test/java/calculator/
+  entities/                  CalculatorTests.java, AngleMethodsTest.java, AreaMethodsTest.java
+  panels/                    BasicPanelTest.java, ConverterPanelTest.java, DatePanelTest.java,
+                             ProgrammerPanelTest.java, ScientificPanelTest.java
+  test/                      TestParent.java, ArgumentsForTests.java  ← test infrastructure
+  utilities/                 CalculatorUtilityTest.java, LoggingUtilityTest.java, PemdasUtiltyTest.java
 ```
 
-All packages use **capitalised names** (e.g. `Calculators`, `Panels`, `Types`).
+All packages use **lowercase names** under the root `calculator` package (e.g. `calculator.entities`, `calculator.panels`, `calculator.utilities`).
 
 ---
 
@@ -66,20 +70,21 @@ All packages use **capitalised names** (e.g. `Calculators`, `Panels`, `Types`).
 
 | Symbol | Source | Notes |
 |---|---|---|
-| `CalculatorView` | `Types.CalculatorView` | `VIEW_BASIC`, `VIEW_PROGRAMMER`, `VIEW_SCIENTIFIC`, `VIEW_DATE`, `VIEW_CONVERTER` |
-| `CalculatorBase` | `Types.CalculatorBase` | `BASE_BINARY`, `BASE_OCTAL`, `BASE_DECIMAL`, `BASE_HEXADECIMAL` |
-| `CalculatorByte` | `Types.CalculatorByte` | `BYTE_BYTE`, `BYTE_WORD`, `BYTE_DWORD`, `BYTE_QWORD` |
-| `CalculatorConverterType` | `Types.CalculatorConverterType` | `AREA`, `ANGLE` |
-| `DateOperation` | `Types.DateOperation` | `DIFFERENCE_BETWEEN_DATES`, `ADD_SUBTRACT_DAYS` |
-| All string literals | `Types.Texts` | Import with `import static Types.Texts.*` |
+| `CalculatorView` | `calculator.entities.CalculatorView` | `VIEW_BASIC`, `VIEW_PROGRAMMER`, `VIEW_SCIENTIFIC`, `VIEW_DATE`, `VIEW_CONVERTER` |
+| `CalculatorBase` | `calculator.entities.CalculatorBase` | `BASE_BINARY`, `BASE_OCTAL`, `BASE_DECIMAL`, `BASE_HEXADECIMAL` |
+| `CalculatorByte` | `calculator.entities.CalculatorByte` | `BYTE_BYTE`, `BYTE_WORD`, `BYTE_DWORD`, `BYTE_QWORD` |
+| `CalculatorConverterType` | `calculator.entities.CalculatorConverterType` | `AREA`, `ANGLE` |
+| `CalculatorConverterUnits` | `calculator.entities.CalculatorConverterUnits` | `DEGREES`, `RADIANS`, `GRADIANS`, `SQUARE_METERS`, `HECTARES`, etc. |
+| `DateOperation` | `calculator.entities.DateOperation` | `DIFFERENCE_BETWEEN_DATES`, `ADD_SUBTRACT_DAYS` |
+| All string literals | `calculator.entities.Texts` | Import with `import static calculator.entities.Texts.*` |
 
-Never hard-code button labels or error strings — always reference `Types.Texts` constants (e.g. `ADDITION`, `ENTER_A_NUMBER`, `INFINITY`, `ARGUMENT_SEPARATOR`).
+Never hard-code button labels or error strings — always reference `calculator.entities.Texts` constants (e.g. `ADDITION`, `ENTER_A_NUMBER`, `INFINITY`, `ARGUMENT_SEPARATOR`).
 
 ---
 
 ## Architecture: Calculator State
 
-`Calculator` extends `JFrame` and is the single stateful object. Key state fields:
+`Calculator` (`calculator.entities.Calculator`) extends `JFrame` and is the single stateful object. Key state fields:
 
 ```java
 String[] values = new String[]{"", "", "", ""};
@@ -130,7 +135,7 @@ LoggingUtility.logOperation(LOGGER, calculator);
 - `MetalLookAndFeel` is the default look; users can switch via the Style menu.
 - OS detection: use `SystemDetector` (implements `OSDetector`) injected into `Calculator`.
 - Use `CalculatorKeyListener` for keyboard events; `CalculatorMouseListener` for mouse events.
-- Button action strings map 1-to-1 with `Types.Texts` constants (e.g. button labelled `"+"` is `ADDITION`).
+- Button action strings map 1-to-1 with `calculator.entities.Texts` constants (e.g. button labelled `"+"` is `ADDITION`).
 - `textPane` (`JTextPane`) displays the current expression; `historyTextPane` displays a running log.
 - `calculator.appendTextToPane(String)` adds text to the display.
 - `calculator.getTextPaneValue()` / `calculator.getHistoryTextPaneValue()` read display state.
@@ -142,7 +147,7 @@ LoggingUtility.logOperation(LOGGER, calculator);
 ### Infrastructure
 
 All test classes:
-1. Extend `TestParent` (provides `calculator`, `actionEvent` mock, `systemDetector` mock, and helper methods).
+1. Extend `TestParent` (`calculator.test.TestParent`) (provides `calculator`, `actionEvent` mock, `systemDetector` mock, and helper methods).
 2. Declare a `static Logger LOGGER`.
 3. Set `System.setProperty("appName", TheTestClass.class.getSimpleName())` in a `static {}` block.
 4. Use `@BeforeAll` / `@AfterAll` to open and close Mockito mocks.

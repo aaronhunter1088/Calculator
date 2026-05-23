@@ -48,8 +48,8 @@ src/
 - Group imports by package (standard Java, third-party, project)
 - Examples:
   ```java
-  import static Types.CalculatorBase.*;
-  import static Types.CalculatorView.*;
+
+
   ```
 
 ### Code Style
@@ -131,7 +131,7 @@ mvn clean package -Dmaven.test.skip=true
 
 ## Important Notes
 
-- The main entry point is `Runnables.CalculatorMain`
+- The main entry point is `calculator.CalculatorMain`
 - Output JAR files are placed in `dist/version4/`
 - Parent POM manages dependency versions
 - Some features (Programmer and Scientific calculators) may have incomplete logic
