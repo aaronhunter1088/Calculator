@@ -66,19 +66,17 @@ public class CalculatorMain
                     case VIEW_PROGRAMMER -> new Calculator(VIEW_PROGRAMMER);
                     case VIEW_SCIENTIFIC -> new Calculator(VIEW_SCIENTIFIC);
                     case VIEW_DATE -> {
-                        if (args.length == 1) throw new CalculatorError("No dateView provided. Please provide a dateView to start the calculator in.");
-                        final DateOperation dateView = args[1].equals("1")
-                                ? DIFFERENCE_BETWEEN_DATES
-                                : args[1].equals("2")
-                                    ? ADD_SUBTRACT_DAYS
-                                    : DIFFERENCE_BETWEEN_DATES;
+                        if (args.length == 1) throw new CalculatorError("No DateOperation provided. Please provide a DateOperation to start the calculator in.");
+                        final DateOperation dateView = args[1].equals("2")
+                                ? ADD_SUBTRACT_DAYS
+                                : DIFFERENCE_BETWEEN_DATES;
                         yield switch (dateView) {
                             case DIFFERENCE_BETWEEN_DATES -> new Calculator(DIFFERENCE_BETWEEN_DATES);
                             case ADD_SUBTRACT_DAYS -> new Calculator(ADD_SUBTRACT_DAYS);
                         };
                     }
                     case VIEW_CONVERTER -> {
-                        if (args.length == 1) throw new CalculatorError("No converterView provided. Please provide a converterView to start the calculator in.");
+                        if (args.length == 1) throw new CalculatorError("No CalculatorConverterType provided. Please provide a CalculatorConverterType to start the calculator in.");
                         final CalculatorConverterType converterView = CalculatorConverterType.valueOf(args[1].toUpperCase());
                         yield switch (converterView) {
                             case AREA -> new Calculator(AREA);

@@ -24,13 +24,17 @@ mvn clean package -Dmaven.test.skip=true
 
 ```bash
 # Views: basic, programmer, scientific, date, converter
-java -jar Calculator-4.6.3-jar-with-dependencies.jar basic
+java -jar calculator-4.6.3-jar-with-dependencies.jar basic
+or
+java -jar calculator-4.6.3-jar-with-dependencies.jar programmer
+or
+java -jar calculator-4.6.3-jar-with-dependencies.jar scientific
 
-# Date requires a sub-option: 1 = difference between dates, 2 = add/subtract days
-java -jar Calculator-4.6.3-jar-with-dependencies.jar date 1
+# Date requires a DateOperation: 1 = difference between dates, 2 = add/subtract days
+java -jar calculator-4.6.3-jar-with-dependencies.jar date 1
 
-# Converter requires a type: area, angle
-java -jar Calculator-4.6.3-jar-with-dependencies.jar converter area
+# Converter requires a CalculatorConverterType: area, angle
+java -jar calculator-4.6.3-jar-with-dependencies.jar converter area
 ```
 
 Set `logLevel` as an environment variable to control log verbosity. If unset, a warning is logged and `all` is used.

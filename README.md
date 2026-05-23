@@ -1,20 +1,20 @@
 # Calculator v4.6.3
 
-## How to start the jar file
-```
-# Start a calculator:
-java -jar Calculator-version-jar-with-dependencies.jar <calculator view>
-Views: basic, programmer, scientific, date, converter
+### Running the JAR
 
-# Start the jar file with a specific date view:
-# Date options are: 1 or 2
-java -jar Calculator-version-jar-with-dependencies.jar date 1 
+```bash
+# Views: basic, programmer, scientific, date, converter
+java -jar calculator-4.6.3-jar-with-dependencies.jar basic
 or
-java -jar Calculator-version-jar-with-dependencies.jar date 2
+java -jar calculator-4.6.3-jar-with-dependencies.jar programmer
+or
+java -jar calculator-4.6.3-jar-with-dependencies.jar scientific
 
-# Start the jar file with a specific converter view:
-# Converter type options are: area, angle
-java -jar Calculator-version-jar-with-dependencies.jar converter <converter type>
+# Date requires a DateOperation: 1 = difference between dates, 2 = add/subtract days
+java -jar calculator-4.6.3-jar-with-dependencies.jar date 1
+
+# Converter requires a CalculatorConverterType: area, angle
+java -jar calculator-4.6.3-jar-with-dependencies.jar converter area
 ```
 
 ## History of the project
