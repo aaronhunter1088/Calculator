@@ -941,11 +941,11 @@ public class Calculator extends JFrame
         });
         if (calculatorView == VIEW_PROGRAMMER) {
             programmerPanel.getButtonA().setName(A);
-            programmerPanel.getButtonA().setName(B);
-            programmerPanel.getButtonA().setName(C);
-            programmerPanel.getButtonA().setName(D);
-            programmerPanel.getButtonA().setName(E);
-            programmerPanel.getButtonA().setName(F);
+            programmerPanel.getButtonB().setName(B);
+            programmerPanel.getButtonC().setName(C);
+            programmerPanel.getButtonD().setName(D);
+            programmerPanel.getButtonE().setName(E);
+            programmerPanel.getButtonF().setName(F);
             programmerPanel.getAllHexadecimalButtons().forEach(hexadecimalNumberButton ->
                     hexadecimalNumberButton.addActionListener(this::performNumberButtonAction)
             );
@@ -2441,7 +2441,7 @@ public class Calculator extends JFrame
         {
             String converted = convertFromBaseToBase(calculatorBase, BASE_DECIMAL, textPaneValue);
             values[valuesPosition] = converted;
-            appendTextToPane(buttonChoice);
+            appendTextToPane(textPaneValue);
         }
 
         writeHistory(buttonChoice, false);
@@ -3480,6 +3480,7 @@ public class Calculator extends JFrame
         if (BASE_BINARY == toBase) {
             convertedNumber = programmerPanel.separateBits(adjustBinaryNumber(convertedNumber));
         }
+        convertedNumber = convertedNumber.toUpperCase();
         LOGGER.debug("converted: {}", convertedNumber);
         return convertedNumber;
     }

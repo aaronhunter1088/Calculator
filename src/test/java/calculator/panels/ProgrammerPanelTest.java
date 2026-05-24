@@ -1,6 +1,7 @@
 package calculator.panels;
 
 import calculator.entities.Calculator;
+import calculator.exceptions.CalculatorError;
 import calculator.test.ArgumentsForTests;
 import calculator.test.TestParent;
 import calculator.entities.CalculatorBase;
@@ -14,7 +15,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
@@ -23,6 +26,7 @@ import static calculator.entities.CalculatorByte.*;
 import static calculator.entities.CalculatorView.VIEW_PROGRAMMER;
 import static calculator.entities.Texts.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -434,6 +438,53 @@ class ProgrammerPanelTest extends TestParent
     /* Invalid DIVIDE */
 
     /* Valid NUMBERS */
+    @Test
+    @DisplayName("Test A + 4 = E In Hexadecimal, Then E Clicked Twice Shows E Then EE")
+    void testAPlus4EqualsEInHexadecimalThenEClickedTwice() throws CalculatorError, UnsupportedLookAndFeelException, ParseException, IOException
+    {
+        // Setup: Programmer panel in hexadecimal base
+        calculator = new Calculator(VIEW_PROGRAMMER, BASE_HEXADECIMAL, BYTE_BYTE);
+        postConstructCalculator();
+        assertEquals(BASE_HEXADECIMAL, calculator.getCalculatorBase(), "Expected base to be hexadecimal");
+
+        // Enter A (hex 10 in decimal)
+        when(actionEvent.getActionCommand()).thenReturn(A);
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(A, calculator.getTextPaneValue(), "textPane should show A after entering A");
+        assertEquals("10", calculator.getValueAt(), "values[vP] should be 10 (decimal for hex A)");
+
+        // Press + (addition) — textPane shows the decimal value "10" followed by the operator
+        when(actionEvent.getActionCommand()).thenReturn(ADDITION);
+        calculator.performAddButtonAction(actionEvent);
+        assertEquals("10 " + ADDITION, calculator.getTextPaneValue(), "textPane should show 10 + after pressing addition");
+
+        // Enter 4
+        when(actionEvent.getActionCommand()).thenReturn(FOUR);
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(FOUR, calculator.getTextPaneValue(), "textPane should show 4 after entering 4");
+
+        // Press = (equals) — A + 4 = 14 decimal = E hex
+        when(actionEvent.getActionCommand()).thenReturn(EQUALS);
+        calculator.performEqualsButtonAction(actionEvent);
+        assertEquals(E, calculator.getTextPaneValue(), "textPane should show E (14 in hex) as result of A + 4");
+
+        // After equals, values are reset — confirming this is a complete, separate operation
+        assertTrue(calculator.getValues()[0].isEmpty(), "values[0] should be empty after equals resets state");
+        assertTrue(calculator.getValues()[1].isEmpty(), "values[1] should be empty after equals resets state");
+        assertTrue(calculator.getValues()[2].isEmpty(), "values[2] should be empty after equals resets state");
+
+        // New independent operation: first press of E starts fresh after the previous result
+        when(actionEvent.getActionCommand()).thenReturn(E);
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(E, calculator.getTextPaneValue(), "textPane should show E after first E press");
+        assertEquals("14", calculator.getValueAt(), "values[vP] should be 14 (decimal for hex E) after first E press");
+
+        // Second press of E — textPane should accumulate to EE (238 in decimal)
+        when(actionEvent.getActionCommand()).thenReturn(E);
+        calculator.performNumberButtonAction(actionEvent);
+        assertEquals(E + E, calculator.getTextPaneValue(), "textPane should show EE after second E press");
+        assertEquals("238", calculator.getValueAt(), "values[vP] should be 238 (decimal for hex EE) after second E press");
+    }
 
     /* Invalid NUMBERS ?? */
 
