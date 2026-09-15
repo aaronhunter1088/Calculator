@@ -1,5 +1,7 @@
 # Calculator v4.6.3
 
+[![Dependabot Updates](https://github.com/aaronhunter1088/Calculator/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/aaronhunter1088/Calculator/actions/workflows/dependabot/dependabot-updates)
+
 ### Running the JAR
 
 ```bash
